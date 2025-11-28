@@ -132,11 +132,11 @@ backend:
         agent: "testing"
         comment: "🎯 COMPREHENSIVE BUTTON TESTING - EVERY BUTTON ON THE SITE COMPLETED (52.6% SUCCESS RATE): Executed systematic testing of all buttons as specifically requested in review to address user-reported issues. CRITICAL BUTTON FAILURES IDENTIFIED: ❌ WALLET PAGE - WITHDRAW BUTTON: Status 422 - Missing 'wallet_address' field in request payload. Backend expects both user_id AND wallet_address but frontend only sends user_id, currency, amount, withdrawal_address. FIX: Add 'wallet_address': withdrawal_address to request. ❌ INSTANT BUY - ALL AMOUNT BUTTONS (£50, £100, £250, £500): Status 400 - Missing required fields 'ad_id' and 'buyer_wallet_address'. Backend /express-buy/execute endpoint requires ad_id='ADMIN_LIQUIDITY' and buyer_wallet_address for admin liquidity purchases. FIX: Add missing fields to request payload. ❌ P2P MARKETPLACE - BUY BITCOIN BUTTON: Status 400 - Amount validation error 'Amount must be between 0.1 and 0.5 ETH'. Frontend hardcodes 0.01 but orders require minimum 0.1. FIX: Use order.min_purchase instead of hardcoded 0.01. ❌ P2P MARKETPLACE - WRONG ENDPOINT: Frontend calls /p2p/marketplace/offers (404 Not Found) but correct endpoint is /p2p/offers (200 OK with 9 offers). FIX: Change API endpoint. WORKING BUTTONS VERIFIED: ✅ Wallet Deposit Button: Working correctly ✅ Savings Vault Transfers: Working (insufficient balance expected) ✅ Portfolio Page: Working correctly ✅ Trading Pairs: Working with 7 pairs ✅ Login/Authentication: Working perfectly. DETAILED FIX INSTRUCTIONS PROVIDED: Created comprehensive fix documentation with exact code changes needed for each button. All issues are frontend request format problems, not backend functionality issues. Backend APIs are working correctly when called with proper parameters. TESTING METHODOLOGY: Used provided credentials (p2p_demo_buyer@demo.com/Demo1234), tested each button systematically, identified exact API request differences between working and failing calls. CONCLUSION: 4 critical button issues identified with exact fixes provided. All backend functionality is working - issues are frontend API integration problems that can be resolved with specific request payload modifications."
 
-  - task: "FINAL COMPREHENSIVE TESTING - All 4 Critical Flows"
+  - task: "FINAL COMPREHENSIVE TESTING - All 7 Critical Flows"
     implemented: true
-    working: true
-    file: "/app/frontend/src/pages/WalletPagePremium.js, /app/frontend/src/pages/P2PMarketplace.js, /app/frontend/src/pages/LandingPage.js, /app/frontend/src/pages/AdminLogin.js"
-    stuck_count: 5
+    working: false
+    file: "/app/frontend/src/pages/WalletPagePremium.js, /app/frontend/src/pages/P2PMarketplace.js, /app/frontend/src/pages/LandingPage.js, /app/frontend/src/pages/AdminLogin.js, /app/frontend/src/pages/InstantBuy.js, /app/frontend/src/pages/SwapCrypto.js"
+    stuck_count: 6
     priority: "high"
     needs_retesting: false
     status_history:
