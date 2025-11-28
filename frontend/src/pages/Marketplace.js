@@ -62,7 +62,7 @@ export default function Marketplace() {
 
   const loadPlatformConfig = async () => {
     try {
-      const response = await axios.get(`${API}/p2p/config`);
+      const response = await axios.get(`${API}/api/p2p/config`);
       if (response.data.success) {
         // Load cryptocurrencies
         if (response.data.cryptocurrencies) {
