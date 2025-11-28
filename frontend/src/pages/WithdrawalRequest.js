@@ -306,6 +306,20 @@ export default function WithdrawalRequest() {
           </Button>
         </Card>
       </div>
+
+      {/* OTP Modal for Withdrawal Verification */}
+      <OTPModal
+        isOpen={showOTPModal}
+        onClose={() => {
+          setShowOTPModal(false);
+          setPendingWithdrawal(null);
+        }}
+        onVerify={executeWithdrawal}
+        title="Verify Withdrawal"
+        description={pendingWithdrawal ? `You are withdrawing ${pendingWithdrawal.amount} ${pendingWithdrawal.currency} (Fee: ${pendingWithdrawal.fee.toFixed(8)} ${pendingWithdrawal.currency}). Enter the 6-digit OTP code sent to your email.` : 'Verify your identity to process withdrawal.'}
+        userId={user?.user_id}
+        action="withdrawal"
+      />
     </Layout>
   );
 }
