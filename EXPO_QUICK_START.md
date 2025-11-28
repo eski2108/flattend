@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://coinhubxrepo.preview.emergentagent.com/api
+https://crypto-exchange-159.preview.emergentagent.com/api
 ```
 
 This means:

@@ -18,7 +18,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://coinhubxrepo.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-exchange-159.preview.emergentagent.com/api"
 
 # Test User as requested
 TEST_USER = {

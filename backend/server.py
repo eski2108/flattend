@@ -2736,7 +2736,7 @@ async def get_user_seller_link(user_id: str):
             raise HTTPException(status_code=404, detail="User not found")
         
         # Generate seller link
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://coinhubxrepo.preview.emergentagent.com")
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://crypto-exchange-159.preview.emergentagent.com")
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         return {
@@ -5489,7 +5489,7 @@ async def google_callback(code: str):
         tokens = token_response.json()
         
         if 'error' in tokens:
-            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://coinhubxrepo.preview.emergentagent.com')}/register?error=google_auth_failed")
+            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://crypto-exchange-159.preview.emergentagent.com')}/register?error=google_auth_failed")
         
         # Get user info
         access_token = tokens.get('access_token')
@@ -5512,7 +5512,7 @@ async def google_callback(code: str):
             token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
             
             # Redirect to a callback page that will handle the token
-            frontend_url = os.environ.get('FRONTEND_URL', 'https://coinhubxrepo.preview.emergentagent.com')
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://crypto-exchange-159.preview.emergentagent.com')
             user_json = json.dumps({
                 "user_id": existing_user["user_id"],
                 "email": existing_user["email"],
@@ -5525,7 +5525,7 @@ async def google_callback(code: str):
             import base64
             import json
             user_data_encoded = base64.b64encode(json.dumps(user_data).encode()).decode()
-            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://coinhubxrepo.preview.emergentagent.com')}/auth/verify-phone?google_data={user_data_encoded}")
+            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://crypto-exchange-159.preview.emergentagent.com')}/auth/verify-phone?google_data={user_data_encoded}")
 
 @api_router.post("/auth/complete-google-signup")
 async def complete_google_signup(request: dict):
@@ -5600,7 +5600,7 @@ async def complete_google_signup(request: dict):
     <html>
     <head>
         <title>Email Verified - Coin Hub X</title>
-        <meta http-equiv="refresh" content="3;url=https://coinhubxrepo.preview.emergentagent.com/login">
+        <meta http-equiv="refresh" content="3;url=https://crypto-exchange-159.preview.emergentagent.com/login">
         <style>
             body { 
                 font-family: Arial, sans-serif; 
@@ -5644,7 +5644,7 @@ async def complete_google_signup(request: dict):
             <h1>Email Verified Successfully!</h1>
             <p>Your account has been activated. You can now log in and start trading.</p>
             <p style="font-size: 14px; color: #ccc;">Redirecting to login page in 3 seconds...</p>
-            <a href="https://coinhubxrepo.preview.emergentagent.com/login">Go to Login</a>
+            <a href="https://crypto-exchange-159.preview.emergentagent.com/login">Go to Login</a>
         </div>
     </body>
     </html>
@@ -6135,7 +6135,7 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
         
-        reset_link = f"https://coinhubxrepo.preview.emergentagent.com/reset-password?token={reset_token}"
+        reset_link = f"https://crypto-exchange-159.preview.emergentagent.com/reset-password?token={reset_token}"
         
         message = Mail(
             from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -6561,7 +6561,7 @@ async def send_broadcast_message(request: dict):
                                 <div style="color: #fff; font-size: 16px; line-height: 1.6; text-align: left;">
                                     {message_content.replace(chr(10), '<br>')}
                                 </div>
-                                <a href="https://coinhubxrepo.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
+                                <a href="https://crypto-exchange-159.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
                                     View on Platform
                                 </a>
                             </div>
@@ -10034,7 +10034,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
             
-            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://coinhubxrepo.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
+            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://crypto-exchange-159.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
             
             message = Mail(
                 from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -18643,7 +18643,7 @@ async def get_my_seller_link(request: Request):
             return {"success": False, "error": "User not found"}
         
         # Create seller link with current domain
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://coinhubxrepo.preview.emergentagent.com")
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://crypto-exchange-159.preview.emergentagent.com")
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         # Get username/email for display
