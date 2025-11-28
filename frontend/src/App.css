@@ -3948,8 +3948,72 @@ html {
   }
 }
 
-/* Responsive Styles */
-@media (max-width: 1024px) {
+/* Responsive Styles - MOBILE FIRST */
+@media (max-width: 768px) {
+  /* Force mobile header to show */
+  .mobile-header {
+    display: block !important;
+  }
+
+  /* Hide overlay by default */
+  .mobile-menu-overlay {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Show overlay only when menu is open */
+  .mobile-menu-overlay.active {
+    display: block !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* FORCE HIDE sidebar completely on mobile by default */
+  aside.sidebar {
+    display: none !important;
+    transform: translateX(-100%) !important;
+    visibility: hidden !important;
+  }
+
+  /* FORCE SHOW sidebar only when mobile menu is open */
+  aside.sidebar.mobile-open {
+    display: flex !important;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+  }
+
+  /* Force main content to take full width */
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-top: 70px !important;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .positions-grid,
+  .offers-grid,
+  .loans-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet sizes */
+@media (min-width: 769px) and (max-width: 1024px) {
   .mobile-header {
     display: block;
   }
@@ -3966,22 +4030,20 @@ html {
     pointer-events: auto;
   }
 
-  /* HIDE sidebar completely on mobile by default */
   .sidebar {
     display: none;
     transform: translateX(-100%);
   }
 
-  /* SHOW sidebar only when mobile menu is open */
   .sidebar.mobile-open {
     display: flex;
     transform: translateX(0);
   }
 
   .main-content {
-    margin-left: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
     padding-top: 70px;
   }
 
