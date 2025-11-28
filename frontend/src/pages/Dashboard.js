@@ -200,7 +200,7 @@ export default function Dashboard() {
     <Layout>
       <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
         {/* Account Overview Section */}
-        <div style={{ marginBottom: '12px' }}>
+        <div style={{ margin: '0', marginTop: '0px', marginBottom: '12px' }}>
           <h2 style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '600',
@@ -208,8 +208,8 @@ export default function Dashboard() {
             color: '#E8EAED',
             letterSpacing: '-0.3px',
             margin: '0',
-            marginTop: '0',
-            paddingLeft: '16px'
+            paddingLeft: '16px',
+            lineHeight: '1'
           }}>
             Account Overview
           </h2>
@@ -221,7 +221,8 @@ export default function Dashboard() {
             letterSpacing: '-0.2px',
             margin: '0',
             marginTop: '4px',
-            paddingLeft: '16px'
+            paddingLeft: '16px',
+            lineHeight: '1'
           }}>
             Open Orders: 0 • Completed Trades: 0
           </p>
@@ -339,6 +340,8 @@ export default function Dashboard() {
             padding: '16px',
             marginTop: '6px',
             marginBottom: '14px',
+            marginLeft: '0',
+            marginRight: '0',
             boxShadow: '0 0 18px rgba(0, 255, 255, 0.12)',
             position: 'relative'
           }}
@@ -351,7 +354,8 @@ export default function Dashboard() {
             letterSpacing: '-0.2px',
             margin: '0',
             marginBottom: '4px',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            lineHeight: '1'
           }}>
             TOTAL PORTFOLIO VALUE
           </p>
@@ -374,12 +378,19 @@ export default function Dashboard() {
             fontWeight: '500',
             color: '#00FF8A', 
             margin: '0',
-            marginBottom: '14px'
+            marginBottom: '14px',
+            lineHeight: '1'
           }}>
             +0.00% (24h)
           </p>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '6px' }}>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '12px', 
+            marginTop: '6px',
+            padding: '0'
+          }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
@@ -389,6 +400,7 @@ export default function Dashboard() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
+                padding: '0',
                 background: '#00E8FF',
                 border: 'none',
                 borderRadius: '14px',
@@ -421,6 +433,7 @@ export default function Dashboard() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
+                padding: '0',
                 background: '#B36CFF',
                 border: 'none',
                 borderRadius: '14px',
