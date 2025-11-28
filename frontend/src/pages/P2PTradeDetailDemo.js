@@ -35,7 +35,7 @@ export default function P2PTradeDetailDemo() {
 
   const loadTradeDetails = async () => {
     try {
-      const response = await axios.get(`${API}/api/p2p/trade/${tradeId}`);
+      const response = await axios.get(`${API}/p2p/trade/${tradeId}`);
       if (response.data.success) {
         setTrade(response.data.trade);
         setTimeRemaining(response.data.time_remaining_seconds || 0);
