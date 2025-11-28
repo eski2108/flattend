@@ -731,192 +731,54 @@ export default function Dashboard() {
             marginTop: '1.5rem'
           }}>
             {/* Instant Buy */}
-            <button 
-              onClick={() => navigate('/instant-buy')}
-              data-testid="instant-buy-btn"
-              style={{
-                background: 'linear-gradient(135deg, #22C55E, #16A34A)',
-                border: '2px solid rgba(34, 197, 94, 0.4)',
-                borderRadius: '12px',
-                padding: '1.25rem 1.5rem',
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)',
-                color: '#ffffff'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(34, 197, 94, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(34, 197, 94, 0.4)';
-              }}
-            >
-              <Zap size={32} style={{ flexShrink: 0, color: '#ffffff' }} fill="#ffffff" />
-              <div style={{ textAlign: 'left', flex: 1 }}>
-                <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
-                  Instant Buy
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.9)' }}>
-                  One-click purchases
-                </div>
-              </div>
-            </button>
+            <div className="card-instant-buy" style={{ borderRadius: '20px', border: '2px solid rgba(74, 222, 128, 0.22)', boxShadow: '0 0 18px rgba(74, 222, 128, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(74, 222, 128, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(74, 222, 128, 0.15)'; }}
+            onClick={() => navigate('/instant-buy')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#6EE7B7', marginBottom: '8px' }}>Instant Buy</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>One-click purchases</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }} data-testid="instant-buy-btn">Buy Crypto →</button>
+            </div>
 
             {/* P2P Express */}
-            <button 
-              onClick={() => navigate('/p2p-express')}
-              data-testid="p2p-express-btn"
-              style={{
-                background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
-                border: '2px solid rgba(14, 165, 233, 0.4)',
-                borderRadius: '12px',
-                padding: '1.25rem 1.5rem',
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(14, 165, 233, 0.4)',
-                color: '#ffffff'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(14, 165, 233, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(14, 165, 233, 0.4)';
-              }}
-            >
-              <TrendingUp size={32} style={{ flexShrink: 0, color: '#ffffff' }} />
-              <div style={{ textAlign: 'left', flex: 1 }}>
-                <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
-                  P2P Express
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.9)' }}>
-                  Fast P2P matching
-                </div>
-              </div>
-            </button>
+            <div className="card-p2p-express" style={{ borderRadius: '20px', border: '2px solid rgba(96, 165, 250, 0.22)', boxShadow: '0 0 18px rgba(96, 165, 250, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(96, 165, 250, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(96, 165, 250, 0.15)'; }}
+            onClick={() => navigate('/p2p-express')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#7DD3FC', marginBottom: '8px' }}>P2P Express</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Fast P2P matching</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }} data-testid="p2p-express-btn">Start Express →</button>
+            </div>
 
             {/* Instant Sell */}
-            <button
-              onClick={() => navigate('/instant-sell')}
-              style={{
-                background: 'linear-gradient(135deg, #EF4444, #DC2626)',
-                border: '2px solid rgba(239, 68, 68, 0.4)',
-                borderRadius: '12px',
-                padding: '1.25rem 1.5rem',
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(239, 68, 68, 0.3)',
-                color: '#FFFFFF'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(239, 68, 68, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(239, 68, 68, 0.3)';
-              }}
-            >
-              <div style={{ fontSize: '32px', flexShrink: 0 }}>⚡</div>
-              <div style={{ textAlign: 'left', flex: 1 }}>
-                <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>
-                  Instant Sell
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.9)' }}>
-                  Sell to admin instantly
-                </div>
-              </div>
-            </button>
+            <div className="card-instant-sell" style={{ borderRadius: '20px', border: '2px solid rgba(248, 113, 113, 0.22)', boxShadow: '0 0 18px rgba(248, 113, 113, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(248, 113, 113, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(248, 113, 113, 0.15)'; }}
+            onClick={() => navigate('/instant-sell')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>Instant Sell</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Sell to admin instantly</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Sell Now →</button>
+            </div>
 
             {/* P2P Marketplace */}
-            <button 
-              onClick={() => navigate('/p2p-marketplace')}
-              data-testid="marketplace-btn"
-              style={{
-                background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
-                border: '2px solid rgba(168, 85, 247, 0.4)',
-                borderRadius: '12px',
-                padding: '1.25rem 1.5rem',
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(168, 85, 247, 0.3)',
-                color: '#FFFFFF'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(168, 85, 247, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(168, 85, 247, 0.3)';
-              }}
-            >
-              <TrendingUp size={32} style={{ flexShrink: 0, color: '#FFFFFF' }} />
-              <div style={{ textAlign: 'left', flex: 1 }}>
-                <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>
-                  P2P Marketplace
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.9)' }}>
-                  Buy & sell with traders
-                </div>
-              </div>
-            </button>
+            <div className="card-p2p-marketplace" style={{ borderRadius: '20px', border: '2px solid rgba(129, 140, 248, 0.22)', boxShadow: '0 0 18px rgba(129, 140, 248, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(129, 140, 248, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(129, 140, 248, 0.15)'; }}
+            onClick={() => navigate('/p2p-marketplace')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#C084FC', marginBottom: '8px' }}>P2P Marketplace</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Buy & sell with traders</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }} data-testid="marketplace-btn">Open Marketplace →</button>
+            </div>
 
-            {/* OTC Desk - Large Volume Trading */}
-            <button 
-              onClick={() => navigate('/otc-desk')}
-              style={{
-                background: 'linear-gradient(135deg, #FFA500, #FF8C00)',
-                border: '2px solid rgba(255, 165, 0, 0.4)',
-                borderRadius: '12px',
-                padding: '1.25rem 1.5rem',
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(255, 165, 0, 0.3)',
-                color: '#FFFFFF'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 165, 0, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(255, 165, 0, 0.3)';
-              }}
-            >
-              <div style={{ fontSize: '24px', flexShrink: 0, fontWeight: '700' }}>OTC</div>
-              <div style={{ textAlign: 'left', flex: 1 }}>
-                <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>
-                  OTC Desk
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.9)' }}>
-                  Large volume trades (£2000+)
-                </div>
-              </div>
-            </button>
+            {/* OTC Desk */}
+            <div className="card-otc" style={{ borderRadius: '20px', border: '2px solid rgba(251, 191, 36, 0.22)', boxShadow: '0 0 18px rgba(251, 191, 36, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(251, 191, 36, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(251, 191, 36, 0.15)'; }}
+            onClick={() => navigate('/otc')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>OTC Desk</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Large volume trades (£2000+)</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Trade OTC →</button>
+            </div>
           </div>
         </div>
 
