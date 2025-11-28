@@ -3984,8 +3984,8 @@ html {
   .main-content {
     margin-left: 0;
     width: 100%;
-    padding: 16px;
-    padding-top: 0;
+    padding: 8px;
+    padding-top: 48px;
   }
 
   .page-header {
