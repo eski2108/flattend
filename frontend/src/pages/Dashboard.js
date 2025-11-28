@@ -199,107 +199,32 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
-        <div style={{ 
-          padding: '0',
-          margin: '0'
-        }}>
+        {/* Account Overview Section */}
+        <div style={{ marginBottom: '12px' }}>
           <h2 style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '600',
             fontSize: '16px',
-            color: '#FFFFFF',
+            color: '#E8EAED',
+            letterSpacing: '-0.3px',
             margin: '0',
-            marginTop: '6px',
-            marginBottom: '2px',
-            lineHeight: '19px'
+            marginTop: '0',
+            paddingLeft: '16px'
           }}>
             Account Overview
           </h2>
           <p style={{
             fontFamily: 'Inter, sans-serif',
-            fontWeight: '500',
+            fontWeight: '400',
             fontSize: '13px',
-            color: '#B5B5B5',
+            color: '#9BA0A5',
+            letterSpacing: '-0.2px',
             margin: '0',
-            marginBottom: '6px',
-            lineHeight: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
+            marginTop: '4px',
+            paddingLeft: '16px'
           }}>
-            <span>Open Orders: 0</span>
-            <span>•</span>
-            <span>Completed Trades: 0</span>
+            Open Orders: 0 • Completed Trades: 0
           </p>
-          <div style={{
-            height: '1px',
-            backgroundColor: '#1A1A1A',
-            opacity: '0.35',
-            marginTop: '8px',
-            marginBottom: '10px'
-          }} />
-        </div>
-
-        <div className="dashboard-header-premium" style={{ display: 'none' }}>
-          <div className="header-content-animated">
-            <h1 className="page-title-premium" data-testid="dashboard-title">
-              <span className="gradient-text">Welcome Back</span>
-            </h1>
-            <p className="page-subtitle-premium">
-              {(currentUser?.full_name || currentUser?.name || 'Trader').replace(/admin/gi, '').replace(/CoinHubEx/gi, '').replace(/Coin Hub X/gi, '').trim() || 'Trader'}
-            </p>
-          </div>
-          <div className="quick-stats-mini">
-            <div className="mini-stat">
-              <span className="mini-stat-label">Active Orders:</span>
-              <span className="mini-stat-value" style={{ marginLeft: '0.5rem' }}>0</span>
-            </div>
-            <div className="mini-stat">
-              <span className="mini-stat-label">Completed:</span>
-              <span className="mini-stat-value" style={{ marginLeft: '0.5rem' }}>0</span>
-            </div>
-          </div>
-          {/* Messages/Notifications Badge */}
-          {unreadCount > 0 && (
-            <div 
-              onClick={() => setShowMessages(true)}
-              style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15))',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(168, 85, 247, 0.25))';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15))';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <span style={{ fontSize: '16px' }}>💬</span>
-              <span style={{ color: '#00F0FF', fontWeight: '600', fontSize: '14px' }}>
-                {unreadCount} message{unreadCount > 1 ? 's' : ''}
-              </span>
-              {unreadCount > 0 && (
-                <span style={{
-                  width: '8px',
-                  height: '8px',
-                  background: '#00F0FF',
-                  borderRadius: '50%',
-                  display: 'inline-block',
-                  animation: 'pulse 2s infinite'
-                }} />
-              )}
-            </div>
-          )}
         </div>
 
         {/* Messages Inbox Modal */}
