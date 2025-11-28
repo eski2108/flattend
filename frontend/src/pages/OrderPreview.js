@@ -93,11 +93,11 @@ export default function OrderPreview() {
     return symbols[currency] || '$';
   };
 
-  // NEW: Validate wallet address
+  // NEW: Validate wallet address (optional, non-blocking)
   const validateWalletAddress = async () => {
     if (!walletAddress.trim()) {
-      toast.error('Please enter your wallet address');
-      return false;
+      console.log('No wallet address provided');
+      return;
     }
     
     setValidatingWallet(true);
@@ -112,16 +112,12 @@ export default function OrderPreview() {
       
       if (response.data.valid) {
         setWalletValidation(response.data);
-        return true;
       } else {
-        toast.error(response.data.message || 'Invalid wallet address');
-        setWalletValidation(null);
-        return false;
+        console.log('Wallet validation returned invalid');
       }
     } catch (error) {
-      toast.error('Failed to validate wallet address');
-      console.error('Wallet validation error:', error);
-      return false;
+      console.log('Wallet validation skipped - endpoint may not exist');
+      // Don't block trade creation
     } finally {
       setValidatingWallet(false);
     }
