@@ -200,12 +200,14 @@ export default function WalletPagePremium() {
 
   const generateDepositAddress = async (currency) => {
     try {
-      const res = await axios.post(`${API}/api/nowpayments/create-address`, {
+      const res = await axios.post(`${API}/api/nowpayments/create-deposit`, {
         user_id: user.user_id,
         currency: currency.toLowerCase()
       });
       if (res.data.success) {
-        setDepositAddress(res.data.address);
+        setDepositAddress(res.data.deposit_address || res.data.address);
+      } else {
+        toast.error(res.data.message || 'Failed to generate deposit address');
       }
     } catch (error) {
       console.error('Failed to generate deposit address:', error);
