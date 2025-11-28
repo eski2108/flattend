@@ -5392,7 +5392,7 @@ async def google_callback(code: str):
         existing_user = await db.user_accounts.find_one({"email": user_data['email']}, {"_id": 0})
         
         if existing_user:
-            # User exists - generate token and redirect to dashboard
+            # User exists - generate token and redirect to login callback page
             token_data = {
                 "user_id": existing_user["user_id"],
                 "email": existing_user["email"],
@@ -5400,7 +5400,15 @@ async def google_callback(code: str):
             }
             token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
             
-            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://coinhubx-ui-refresh.preview.emergentagent.com')}/dashboard?token={token}")
+            # Redirect to a callback page that will handle the token
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://coinhubx-ui-refresh.preview.emergentagent.com')
+            user_json = json.dumps({
+                "user_id": existing_user["user_id"],
+                "email": existing_user["email"],
+                "full_name": existing_user.get("full_name", ""),
+                "role": existing_user.get("role", "user")
+            })
+            return RedirectResponse(url=f"{frontend_url}/login?google_success=true&token={token}&user={user_json}")
         else:
             # New user - redirect to phone verification with user data
             import base64
