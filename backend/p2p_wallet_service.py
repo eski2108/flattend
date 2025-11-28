@@ -88,7 +88,7 @@ async def p2p_create_trade_with_wallet(
             price_per_unit=sell_order["price_per_unit"],
             payment_method=payment_method,
             buyer_wallet_address=buyer_wallet_address,
-            buyer_wallet_network=wallet_validation.get("network"),
+            buyer_wallet_network=buyer_wallet_network or "mainnet",
             escrow_locked=True,
             timer_minutes=timer_minutes,
             payment_deadline=datetime.now(timezone.utc) + timedelta(minutes=timer_minutes)
