@@ -102,7 +102,7 @@ export default function OrderPreview() {
     
     setValidatingWallet(true);
     try {
-      const response = await axios.post(`${API}/wallet/validate`, null, {
+      const response = await axios.post(`${API}/api/wallet/validate`, null, {
         params: {
           address: walletAddress,
           cryptocurrency: offer.crypto_currency,
