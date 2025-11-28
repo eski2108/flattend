@@ -239,21 +239,15 @@ function P2PMarketplace() {
       return;
     }
 
-    // Map offer fields to match OrderPreview expectations
-    const mappedOffer = {
-      ...offer,
-      min_purchase: offer.min_order_limit,
-      max_purchase: offer.max_order_limit,
-      order_id: offer.offer_id  // OrderPreview might need this
-    };
-    
-    console.log('🚀 Navigating to order-preview with offer:', mappedOffer);
+    // The offer already has all the correct fields from the API
+    // Just pass it through directly - no mapping needed!
+    console.log('🚀 Navigating to order-preview with offer:', offer);
     
     // Store offer details for purchase flow
-    localStorage.setItem('pending_offer', JSON.stringify(mappedOffer));
+    localStorage.setItem('pending_offer', JSON.stringify(offer));
     
     // Navigate to order preview to enter purchase details
-    navigate('/order-preview', { state: { offer: mappedOffer } });
+    navigate('/order-preview', { state: { offer: offer } });
     
     console.log('✅ Navigate called');
   };
