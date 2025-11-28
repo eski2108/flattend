@@ -30,7 +30,7 @@ export default function AdminLogin() {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/admin/login`, {
+      const response = await axios.post(`${API}/api/admin/login`, {
         email,
         password,
         admin_code: adminCode,
