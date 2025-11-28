@@ -519,21 +519,20 @@ export default function WalletPagePremium() {
                         }}
                         onClick={() => setExpandedAsset(expandedAsset === index ? null : index)}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4 flex-1">
-                            {/* Coin Avatar */}
+                        <div className="flex items-center w-full">
+                          {/* Coin Avatar & Info */}
+                          <div className="flex items-center gap-4" style={{ flex: '0 0 280px' }}>
                             <div 
-                              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
                               style={{ background: 'linear-gradient(135deg, #2563EB 0%, #9333EA 100%)' }}
                             >
                               {asset.currency.substring(0, 1)}
                             </div>
                             
-                            {/* Coin Info */}
-                            <div className="flex-1 min-w-0">
+                            <div className="min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <div className="text-white font-semibold text-base">{asset.currency}</div>
-                                <div className="text-xs px-2 py-0.5 rounded bg-white/5 text-gray-400">
+                                <div className="text-xs px-2 py-0.5 rounded bg-white/5 text-gray-400 whitespace-nowrap">
                                   {asset.currency} Network
                                 </div>
                               </div>
@@ -544,7 +543,7 @@ export default function WalletPagePremium() {
                           </div>
                           
                           {/* Balance Value */}
-                          <div className="text-right mx-8">
+                          <div className="text-right" style={{ flex: '0 0 180px' }}>
                             <div className="text-white font-semibold text-lg mb-1">
                               £{(asset.available_balance * (asset.price_gbp || 0)).toFixed(2)}
                             </div>
@@ -554,7 +553,7 @@ export default function WalletPagePremium() {
                           </div>
                           
                           {/* 24h Change & Sparkline */}
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-4" style={{ flex: '0 0 200px' }}>
                             <div className="text-right">
                               <div 
                                 className={`text-sm font-semibold mb-1 ${isPositive ? 'text-green-400' : 'text-red-400'}`}
@@ -572,7 +571,7 @@ export default function WalletPagePremium() {
                           </div>
                           
                           {/* Expand Icon */}
-                          <div className="ml-4">
+                          <div className="ml-auto flex-shrink-0">
                             {expandedAsset === index ? 
                               <ChevronUp className="w-5 h-5 text-gray-400" /> : 
                               <ChevronDown className="w-5 h-5 text-gray-400" />
