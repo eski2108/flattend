@@ -97,7 +97,7 @@ export default function WalletPagePremium() {
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [totalLocked, setTotalLocked] = useState(0);
   const [change24h, setChange24h] = useState(0);
-  const [expandedAsset, setExpandedAsset] = useState(null);
+  const [expandedAsset, setExpandedAsset] = useState(0); // Auto-expand first asset by default
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
