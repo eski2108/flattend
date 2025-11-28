@@ -337,6 +337,33 @@ export default function P2PTradeDetailDemo() {
                   ✅ Trade Completed
                 </div>
               )}
+              {(trade.status === 'waiting_payment' || trade.status === 'paid') && (
+                <>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to cancel this trade? Funds will be returned to seller.')) {
+                        // Cancel trade logic
+                        toast.info('Cancel trade functionality coming soon');
+                      }
+                    }}
+                    className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-4 rounded-xl transition-colors"
+                  >
+                    Cancel Trade
+                  </button>
+                  <button
+                    onClick={() => {
+                      const reason = window.prompt('Please describe the issue:');
+                      if (reason) {
+                        // Open dispute logic
+                        toast.info('Dispute opened. Admin will review shortly.');
+                      }
+                    }}
+                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-4 rounded-xl transition-colors"
+                  >
+                    Open Dispute
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
