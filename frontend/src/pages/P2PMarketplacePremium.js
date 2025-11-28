@@ -119,15 +119,15 @@ export default function P2PMarketplacePremium() {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-8">
           
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">P2P Marketplace</h1>
-                <p className="text-gray-400">Trade directly with other users at the best rates</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">P2P Marketplace</h1>
+                <p className="text-sm sm:text-base text-gray-400">Trade directly with other users at the best rates</p>
               </div>
               <button 
                 onClick={() => navigate('/p2p/create-offer')}
-                className="px-6 py-3 rounded-xl font-medium text-white transition-all"
+                className="px-6 py-3 rounded-xl font-medium text-white transition-all w-full sm:w-auto"
                 style={{ background: 'linear-gradient(135deg, #2563EB 0%, #38BDF8 100%)' }}
               >
                 + Create Offer
@@ -135,7 +135,7 @@ export default function P2PMarketplacePremium() {
             </div>
             
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
               <div 
                 className="rounded-xl p-5"
                 style={{
