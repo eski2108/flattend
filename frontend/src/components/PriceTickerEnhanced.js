@@ -5,14 +5,26 @@ import axios from 'axios';
 const TICKER_COINS = [
   { id: 'bitcoin', symbol: 'BTC', color: '#F7931A' },
   { id: 'ethereum', symbol: 'ETH', color: '#627EEA' },
+  { id: 'tether', symbol: 'USDT', color: '#26A17B' },
   { id: 'binancecoin', symbol: 'BNB', color: '#F3BA2F' },
   { id: 'solana', symbol: 'SOL', color: '#14F195' },
   { id: 'ripple', symbol: 'XRP', color: '#00AAE4' },
+  { id: 'usd-coin', symbol: 'USDC', color: '#2775CA' },
   { id: 'cardano', symbol: 'ADA', color: '#0033AD' },
+  { id: 'avalanche-2', symbol: 'AVAX', color: '#E84142' },
   { id: 'dogecoin', symbol: 'DOGE', color: '#C2A633' },
   { id: 'tron', symbol: 'TRX', color: '#FF0013' },
+  { id: 'polkadot', symbol: 'DOT', color: '#E6007A' },
+  { id: 'matic-network', symbol: 'MATIC', color: '#8247E5' },
+  { id: 'litecoin', symbol: 'LTC', color: '#345D9D' },
   { id: 'chainlink', symbol: 'LINK', color: '#2A5ADA' },
-  { id: 'uniswap', symbol: 'UNI', color: '#FF007A' }
+  { id: 'stellar', symbol: 'XLM', color: '#14B6E7' },
+  { id: 'monero', symbol: 'XMR', color: '#FF6600' },
+  { id: 'cosmos', symbol: 'ATOM', color: '#2E3148' },
+  { id: 'bitcoin-cash', symbol: 'BCH', color: '#8DC351' },
+  { id: 'uniswap', symbol: 'UNI', color: '#FF007A' },
+  { id: 'filecoin', symbol: 'FIL', color: '#0090FF' },
+  { id: 'aptos', symbol: 'APT', color: '#00D4AA' }
 ];
 
 const API = process.env.REACT_APP_BACKEND_URL;
