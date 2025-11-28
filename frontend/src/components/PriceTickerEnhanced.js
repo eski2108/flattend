@@ -24,7 +24,12 @@ const TICKER_COINS = [
   { id: 'bitcoin-cash', symbol: 'BCH', color: '#8DC351' },
   { id: 'uniswap', symbol: 'UNI', color: '#FF007A' },
   { id: 'filecoin', symbol: 'FIL', color: '#0090FF' },
-  { id: 'aptos', symbol: 'APT', color: '#00D4AA' }
+  { id: 'aptos', symbol: 'APT', color: '#00D4AA' },
+  { id: 'algorand', symbol: 'ALGO', color: '#000000' },
+  { id: 'vechain', symbol: 'VET', color: '#15BDFF' },
+  { id: 'internet-computer', symbol: 'ICP', color: '#29ABE2' },
+  { id: 'hedera-hashgraph', symbol: 'HBAR', color: '#000000' },
+  { id: 'near', symbol: 'NEAR', color: '#000000' }
 ];
 
 const API = process.env.REACT_APP_BACKEND_URL;
