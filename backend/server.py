@@ -5555,6 +5555,14 @@ async def register_user(request: RegisterRequest, req: Request):
     # Check if email already exists
     existing = await db.user_accounts.find_one({"email": request.email}, {"_id": 0})
     if existing:
+        # Log failed signup attempt
+        await security_logger.log_signup_attempt(
+            email=request.email,
+            success=False,
+            ip_address=client_ip,
+            user_agent=user_agent,
+            failure_reason="Email already registered"
+        )
         raise HTTPException(status_code=400, detail="Email already registered")
     
     # Hash password using bcrypt
