@@ -153,7 +153,7 @@ export default function OrderPreview() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/p2p/create-trade`, {
+      const response = await axios.post(`${API}/api/p2p/create-trade`, {
         sell_order_id: offer.order_id,
         buyer_id: currentUser.user_id,
         crypto_amount: parseFloat(cryptoAmount),
