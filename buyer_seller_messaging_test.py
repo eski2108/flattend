@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://coinhubx-ui-refresh.preview.emergentagent.com/api"
+BASE_URL = "https://coinhubxrepo.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class BuyerSellerMessagingTest:
