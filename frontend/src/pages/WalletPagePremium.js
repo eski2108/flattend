@@ -218,8 +218,6 @@ export default function WalletPagePremium() {
   const handleWithdrawClick = (asset) => {
     navigate(`/withdraw/${asset.symbol.toLowerCase()}`);
   };
-    setWithdrawFee(estimatedFee);
-  };
 
   const sendOTP = async () => {
     setSendingOTP(true);
