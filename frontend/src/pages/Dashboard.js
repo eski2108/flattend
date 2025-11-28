@@ -763,7 +763,7 @@ export default function Dashboard() {
             </button>
 
             <button
-              onClick={() => navigate('/marketplace')}
+              onClick={() => navigate('/p2p-marketplace')}
               style={{
                 background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(0, 0, 0, 0.4))',
                 border: '2px solid rgba(239, 68, 68, 0.4)',
