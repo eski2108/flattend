@@ -19,6 +19,8 @@ export default function WithdrawalRequest() {
   const [addresses, setAddresses] = useState({});
   const [withdrawalAddress, setWithdrawalAddress] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [pendingWithdrawal, setPendingWithdrawal] = useState(null);
   
   // DYNAMIC: Fetch crypto list from backend
   const [cryptoList, setCryptoList] = useState([
