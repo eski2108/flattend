@@ -100,6 +100,18 @@ export default function PriceTickerEnhanced() {
       position: 'relative',
       boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
     }}>
+      {/* Slow-moving neon gradient line at top */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.6), rgba(56, 189, 248, 0.8), rgba(0, 217, 255, 0.6), transparent)',
+        animation: 'gradientSlide 8s linear infinite',
+        zIndex: 10
+      }} />
+      
       {/* Animated gradient background */}
       <div style={{
         position: 'absolute',
@@ -111,7 +123,7 @@ export default function PriceTickerEnhanced() {
       
       <div style={{
         display: 'flex',
-        animation: 'scroll 40s linear infinite',
+        animation: 'scroll 20s linear infinite',
         gap: '3rem',
         position: 'relative',
         zIndex: 1
