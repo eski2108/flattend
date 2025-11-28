@@ -84,35 +84,58 @@ export default function WithdrawalRequest() {
 
   const handleSubmitWithdrawal = async () => {
     if (!amount || parseFloat(amount) <= 0) {
-      alert('Please enter a valid amount');
+      toast.error('Please enter a valid amount');
       return;
     }
 
     if (!withdrawalAddress.trim()) {
-      alert('Please enter a withdrawal address');
+      toast.error('Please enter a withdrawal address');
       return;
     }
 
     const fee = parseFloat(amount) * 0.01;
     const total = parseFloat(amount) + fee;
 
-    if (!confirm(`Withdraw ${amount} ${selectedCrypto}?\n\nFee (1%): ${fee.toFixed(8)} ${selectedCrypto}\nTotal deducted: ${total.toFixed(8)} ${selectedCrypto}`)) {
-      return;
-    }
+    // Store withdrawal details and show OTP modal
+    setPendingWithdrawal({
+      currency: selectedCrypto,
+      amount: parseFloat(amount),
+      address: withdrawalAddress.trim(),
+      fee: fee,
+      total: total
+    });
+    setShowOTPModal(true);
+  };
+
+  const executeWithdrawal = async (otpCode) => {
+    if (!pendingWithdrawal) return;
 
     setSubmitting(true);
     try {
-      await axios.post(`${API}/wallet/request-withdrawal`, {
+      const response = await axios.post(`${API}/api/nowpayments/create-withdrawal`, {
         user_id: user.user_id,
-        currency: selectedCrypto,
-        amount: parseFloat(amount),
-        withdrawal_address: withdrawalAddress.trim()
+        currency: pendingWithdrawal.currency,
+        amount: pendingWithdrawal.amount,
+        withdrawal_address: pendingWithdrawal.address,
+        otp_code: otpCode
       });
 
-      alert('Withdrawal request submitted! Pending admin approval.');
-      setAmount('');
+      if (response.data.success) {
+        toast.success('Withdrawal initiated successfully!');
+        setAmount('');
+        setWithdrawalAddress('');
+        setPendingWithdrawal(null);
+        
+        // Refresh balance
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        toast.error(response.data.message || 'Withdrawal failed');
+      }
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to submit withdrawal');
+      console.error('Withdrawal error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to process withdrawal');
     } finally {
       setSubmitting(false);
     }
