@@ -6087,8 +6087,8 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin: 0;
+  padding: 1rem;
   background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(168, 85, 247, 0.1));
   border-radius: var(--radius-xl);
   border: 1px solid rgba(0, 217, 255, 0.3);
