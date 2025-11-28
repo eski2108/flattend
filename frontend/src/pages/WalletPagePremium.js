@@ -181,9 +181,12 @@ export default function WalletPagePremium() {
         const bals = balRes.data.balances || [];
         setBalances(bals);
         
-        const total = bals.reduce((sum, bal) => sum + (bal.value_gbp || 0), 0);
-        const available = bals.reduce((sum, bal) => sum + (bal.available_balance * (bal.price_gbp || 0)), 0);
-        const locked = bals.reduce((sum, bal) => sum + ((bal.locked_balance || 0) * (bal.price_gbp || 0)), 0);
+        // Convert USD to GBP (rough conversion: 1 GBP = 1.27 USD)
+        const USD_TO_GBP = 0.79;
+        
+        const total = bals.reduce((sum, bal) => sum + ((bal.usd_value || 0) * USD_TO_GBP), 0);
+        const available = bals.reduce((sum, bal) => sum + (bal.available_balance * ((bal.usd_price || 0) * USD_TO_GBP)), 0);
+        const locked = bals.reduce((sum, bal) => sum + ((bal.locked_balance || 0) * ((bal.usd_price || 0) * USD_TO_GBP)), 0);
         
         setTotalPortfolioGBP(total);
         setTotalAvailable(available);
