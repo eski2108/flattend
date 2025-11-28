@@ -38,7 +38,7 @@ export default function Transactions() {
   const fetchTransactions = async (userId) => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/crypto-bank/transactions/${userId}?limit=100`);
+      const response = await axios.get(`${API}/api/crypto-bank/transactions/${userId}?limit=100`);
       
       if (response.data.success) {
         setTransactions(response.data.transactions);
