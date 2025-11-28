@@ -102,9 +102,39 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
         await wallet_service.credit(user_id=user_id, currency=to_currency, amount=to_amount, transaction_type="swap_in", reference_id=swap_id, metadata={"from_currency": from_currency})
         await wallet_service.credit(user_id="admin_fee_wallet", currency=from_currency, amount=swap_fee_crypto, transaction_type="swap_fee", reference_id=swap_id, metadata={"user_id": user_id})
         
-        await db.swap_history.insert_one({"swap_id": swap_id, "user_id": user_id, "from_currency": from_currency, "from_amount": from_amount, "to_currency": to_currency, "to_amount": to_amount, "status": "completed", "created_at": datetime.now(timezone.utc).isoformat()})
+        # Save swap with complete fee information for audit trail
+        await db.swap_history.insert_one({
+            "swap_id": swap_id,
+            "user_id": user_id,
+            "from_currency": from_currency,
+            "from_amount": from_amount,
+            "to_currency": to_currency,
+            "to_amount": to_amount,
+            "from_value_gbp": from_value_gbp,
+            "to_value_gbp": net_value_gbp,
+            "swap_fee_percent": swap_fee_percent,
+            "swap_fee_gbp": swap_fee_gbp,
+            "swap_fee_crypto": swap_fee_crypto,
+            "swap_fee_currency": from_currency,
+            "from_price": from_price,
+            "to_price": to_price,
+            "rate": to_amount / from_amount if from_amount > 0 else 0,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
         
-        return {"success": True, "swap_id": swap_id, "from_currency": from_currency, "from_amount": from_amount, "to_currency": to_currency, "to_amount": to_amount}
+        logger.info(f"✅ Swap completed: {user_id} swapped {from_amount} {from_currency} → {to_amount} {to_currency}, Fee: {swap_fee_crypto} {from_currency}")
+        
+        return {
+            "success": True,
+            "swap_id": swap_id,
+            "from_currency": from_currency,
+            "from_amount": from_amount,
+            "to_currency": to_currency,
+            "to_amount": to_amount,
+            "fee_amount": swap_fee_crypto,
+            "fee_currency": from_currency
+        }
     except Exception as e:
         logger.error(f"Swap error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
