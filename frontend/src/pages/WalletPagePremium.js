@@ -216,16 +216,8 @@ export default function WalletPagePremium() {
   };
 
   const handleWithdrawClick = (asset) => {
-    setSelectedAsset(asset);
-    setShowWithdrawModal(true);
-    setOtpVerified(false);
-    setShowOTPInput(false);
-    setWithdrawAddress('');
-    setWithdrawAmount('');
-    setOtpCode('');
-    
-    // Calculate estimated fee (0.5% platform fee + network fee)
-    const estimatedFee = 0.005;
+    navigate(`/withdraw/${asset.symbol.toLowerCase()}`);
+  };
     setWithdrawFee(estimatedFee);
   };
 
