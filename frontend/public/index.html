@@ -3,8 +3,23 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="description" content="A product of emergent.sh" />
+        <meta name="theme-color" content="#000D1A" />
+        <meta name="color-scheme" content="dark" />
+        <meta name="description" content="Coin Hub X - Secure P2P Cryptocurrency Trading Platform" />
+        
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+        
+        <!-- iOS Meta Tags for PWA -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Coin Hub X" />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+        <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/logo512.png" />
+        
+        <!-- Google reCAPTCHA -->
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        
         <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -20,6 +35,34 @@
     -->
         <title>Emergent | Fullstack App</title>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
+        <!--
+        These two scripts have been added for the testing, please do not edit or remove them
+        -->
+        <script src="https://unpkg.com/rrweb@latest/dist/rrweb.min.js"></script>
+        <script src="https://d2adkz2s9zrlge.cloudfront.net/rrweb-recorder-20250919-1.js"></script>
+        <!--
+        These two scripts have been added for the Visual Edits, please do not edit or remove them
+        -->
+        <script>
+            // Only load visual edit scripts when inside an iframe and visual edits are enabled
+            if (window.self !== window.top && '%REACT_APP_ENABLE_VISUAL_EDITS%' === 'true') {
+                // Load debug monitor script
+                var debugScript = document.createElement('script');
+                debugScript.src = 'https://assets.emergent.sh/scripts/debug-monitor.js';
+                document.head.appendChild(debugScript);
+
+                // Configure Tailwind
+                window.tailwind = window.tailwind || {};
+                tailwind.config = {
+                    corePlugins: { preflight: false },
+                };
+
+                // Load Tailwind CDN
+                var tailwindScript = document.createElement('script');
+                tailwindScript.src = 'https://cdn.tailwindcss.com';
+                document.head.appendChild(tailwindScript);
+            }
+        </script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -34,53 +77,25 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-        <a
-            id="emergent-badge"
-            target="_blank"
-            href="https://app.emergent.sh/?utm_source=emergent-badge"
-            style="
-                display: flex !important;
-                align-items: center !important;
-                position: fixed !important;
-                bottom: 20px;
-                right: 20px;
-                text-decoration: none;
-                padding: 6px 10px;
-                font-family: -apple-system, BlinkMacSystemFont,
-                    &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell,
-                    &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;,
-                    sans-serif !important;
-                font-size: 12px !important;
-                z-index: 9999 !important;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-                border-radius: 8px !important;
-                background-color: #ffffff !important;
-                border: 1px solid rgba(255, 255, 255, 0.25) !important;
-            "
-        >
-            <div
-                style="display: flex; flex-direction: row; align-items: center"
-            >
-                <img
-                    style="width: 20px; height: 20px; margin-right: 8px"
-                    src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
-                />
-                <p
-                    style="
-                        color: #000000;
-                        font-family: -apple-system, BlinkMacSystemFont,
-                            &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu,
-                            Cantarell, &quot;Open Sans&quot;,
-                            &quot;Helvetica Neue&quot;, sans-serif !important;
-                        font-size: 12px !important;
-                        align-items: center;
-                        margin-bottom: 0;
-                    "
-                >
-                    Made with Emergent
-                </p>
-            </div>
-        </a>
+        <!-- Tawk.to Live Chat Widget - Integrated with AI System -->
+        <script type="text/javascript">
+            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+            (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/691f23e9351c3d1963d273aa/1id0o19mu';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+            })();
+            
+            // Hide Tawk.to widget on load - will show only when escalated from AI
+            Tawk_API.onLoad = function(){
+                Tawk_API.hideWidget();
+            };
+        </script>
+        <!-- End Tawk.to -->
+        
         <script>
             !(function (t, e) {
                 var o, n, p, r;
