@@ -1,322 +1,182 @@
-# Trader Badge System
-# Automatically awards performance-based badges to traders
+"""
+P2P Badge System
+Calculates and manages trader badge levels based on performance
+"""
 
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
-from datetime import datetime, timezone, timedelta
-import uuid
+import logging
+from datetime import datetime, timezone
+from typing import Dict, Optional
 
-class Badge(BaseModel):
-    """Individual badge model"""
-    badge_id: str
-    name: str
-    icon: str  # Emoji or icon identifier
-    description: str
-    color: str  # Hex color for styling
-    earned_date: str
-    
-class TraderBadges(BaseModel):
-    """Complete badge collection for a trader"""
-    trader_id: str
-    badges: List[Badge] = []
-    last_calculated: str
-    total_badges: int = 0
+logger = logging.getLogger(__name__)
 
-# Badge Definitions
-BADGE_DEFINITIONS = {
-    "elite_trader": {
-        "name": "Elite Trader",
-        "icon": "🏆",
-        "description": "95%+ completion rate with 100+ completed trades",
-        "color": "#FFD700",
-        "criteria": {
-            "completion_rate": 95,
-            "total_trades": 100
-        }
-    },
-    "pro_trader": {
-        "name": "Pro Trader",
-        "icon": "⭐",
-        "description": "85%+ completion rate with 50+ completed trades",
-        "color": "#00F0FF",
-        "criteria": {
-            "completion_rate": 85,
-            "total_trades": 50
-        }
+# Badge level definitions
+BADGE_LEVELS = {
+    "new": {
+        "name": "New",
+        "color": "#6B7280",
+        "icon": "👤",
+        "min_trades": 0,
+        "min_completion_rate": 0,
+        "max_avg_release_time": None
     },
     "verified": {
         "name": "Verified",
-        "icon": "✅",
-        "description": "Identity verified through KYC",
-        "color": "#00FF88",
-        "criteria": {
-            "kyc_verified": True
-        }
+        "color": "#3B82F6",
+        "icon": "✓",
+        "min_trades": 20,
+        "min_completion_rate": 90,
+        "max_avg_release_time": None
     },
-    "fast_responder": {
-        "name": "Fast Responder",
-        "icon": "🎯",
-        "description": "Average response time under 5 minutes",
-        "color": "#FF00FF",
-        "criteria": {
-            "avg_response_time": 300  # 5 minutes in seconds
-        }
+    "pro": {
+        "name": "Pro",
+        "color": "#8B5CF6",
+        "icon": "⭐",
+        "min_trades": 100,
+        "min_completion_rate": 95,
+        "max_avg_release_time": 15  # minutes
     },
-    "high_volume": {
-        "name": "High Volume",
-        "icon": "💎",
-        "description": "Total trading volume exceeds $100,000",
-        "color": "#9D4EDD",
-        "criteria": {
-            "total_volume_usd": 100000
-        }
-    },
-    "active_today": {
-        "name": "Active Today",
-        "icon": "🔥",
-        "description": "Completed a trade in the last 24 hours",
-        "color": "#FF6B35",
-        "criteria": {
-            "last_trade_hours": 24
-        }
-    },
-    "trusted": {
-        "name": "Trusted",
-        "icon": "🛡️",
-        "description": "4.5+ star rating with 20+ reviews",
-        "color": "#06FFA5",
-        "criteria": {
-            "rating": 4.5,
-            "review_count": 20
-        }
+    "elite": {
+        "name": "Elite",
+        "color": "#F59E0B",
+        "icon": "👑",
+        "min_trades": 500,
+        "min_completion_rate": 98,
+        "max_avg_release_time": 10  # minutes
     }
 }
 
-
-async def calculate_trader_badges(db, trader_id: str) -> Dict:
-    """
-    Calculate and award badges to a trader based on their performance stats.
+class BadgeSystem:
+    def __init__(self, db):
+        self.db = db
     
-    Returns: {"success": bool, "badges": List[Badge], "stats": dict}
-    """
-    
-    # Get trader profile/stats
-    trader = await db.trader_profiles.find_one({"user_id": trader_id})
-    
-    if not trader:
-        # Try to get basic user info
-        user = await db.users.find_one({"user_id": trader_id})
-        if not user:
-            return {
-                "success": False,
-                "message": "Trader not found",
-                "badges": []
-            }
-        
-        # Initialize trader stats if not exists
-        trader = {
-            "user_id": trader_id,
-            "completion_rate": 0,
-            "total_trades": 0,
-            "total_volume_usd": 0,
-            "rating": 0,
-            "review_count": 0,
-            "avg_response_time": 999999,  # Very high default
-            "last_trade_date": None,
-            "kyc_verified": user.get("kyc_verified", False)
-        }
-    
-    # Extract stats
-    stats = {
-        "completion_rate": trader.get("completion_rate", 0),
-        "total_trades": trader.get("total_trades", 0),
-        "total_volume_usd": trader.get("total_volume_usd", 0),
-        "rating": trader.get("rating", 0),
-        "review_count": trader.get("review_count", 0),
-        "avg_response_time": trader.get("avg_response_time", 999999),
-        "last_trade_date": trader.get("last_trade_date"),
-        "kyc_verified": trader.get("kyc_verified", False)
-    }
-    
-    # Calculate hours since last trade
-    last_trade_hours = 999999
-    if stats["last_trade_date"]:
+    async def calculate_user_badge(self, user_id: str) -> Dict:
+        """
+        Calculate badge level for a user based on their trading performance
+        """
         try:
-            last_trade = datetime.fromisoformat(stats["last_trade_date"].replace('Z', '+00:00'))
-            hours_ago = (datetime.now(timezone.utc) - last_trade).total_seconds() / 3600
-            last_trade_hours = hours_ago
-        except:
-            pass
+            # Get user's completed trades as seller
+            completed_trades = await self.db.p2p_trades.find({
+                "seller_id": user_id,
+                "status": "completed"
+            }).to_list(10000)
+            
+            total_trades = len(completed_trades)
+            
+            if total_trades == 0:
+                return {
+                    "level": "new",
+                    "badge_data": BADGE_LEVELS["new"],
+                    "stats": {
+                        "total_trades": 0,
+                        "completion_rate": 0,
+                        "avg_release_time_minutes": 0
+                    }
+                }
+            
+            # Calculate completion rate
+            all_seller_trades = await self.db.p2p_trades.find({
+                "seller_id": user_id,
+                "status": {"$in": ["completed", "cancelled", "dispute_resolved"]}
+            }).to_list(10000)
+            
+            total_trades_attempted = len(all_seller_trades)
+            completion_rate = (total_trades / total_trades_attempted * 100) if total_trades_attempted > 0 else 0
+            
+            # Calculate average release time
+            release_times = []
+            for trade in completed_trades:
+                if trade.get("paid_at") and trade.get("completed_at"):
+                    try:
+                        paid_time = datetime.fromisoformat(trade["paid_at"].replace('Z', '+00:00'))
+                        completed_time = datetime.fromisoformat(trade["completed_at"].replace('Z', '+00:00'))
+                        diff_seconds = (completed_time - paid_time).total_seconds()
+                        release_times.append(diff_seconds / 60)  # Convert to minutes
+                    except:
+                        pass
+            
+            avg_release_time = sum(release_times) / len(release_times) if release_times else 0
+            
+            # Determine badge level
+            badge_level = "new"
+            
+            if (total_trades >= BADGE_LEVELS["elite"]["min_trades"] and 
+                completion_rate >= BADGE_LEVELS["elite"]["min_completion_rate"] and
+                avg_release_time <= BADGE_LEVELS["elite"]["max_avg_release_time"]):
+                badge_level = "elite"
+            elif (total_trades >= BADGE_LEVELS["pro"]["min_trades"] and 
+                  completion_rate >= BADGE_LEVELS["pro"]["min_completion_rate"] and
+                  avg_release_time <= BADGE_LEVELS["pro"]["max_avg_release_time"]):
+                badge_level = "pro"
+            elif (total_trades >= BADGE_LEVELS["verified"]["min_trades"] and 
+                  completion_rate >= BADGE_LEVELS["verified"]["min_completion_rate"]):
+                badge_level = "verified"
+            
+            stats = {
+                "total_trades": total_trades,
+                "completion_rate": round(completion_rate, 2),
+                "avg_release_time_minutes": round(avg_release_time, 2)
+            }
+            
+            # Update user's badge in database
+            await self.db.user_accounts.update_one(
+                {"user_id": user_id},
+                {"$set": {
+                    "p2p_badge_level": badge_level,
+                    "p2p_stats": stats,
+                    "badge_updated_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            
+            logger.info(f"Updated badge for {user_id}: {badge_level} - {stats}")
+            
+            return {
+                "level": badge_level,
+                "badge_data": BADGE_LEVELS[badge_level],
+                "stats": stats
+            }
+            
+        except Exception as e:
+            logger.error(f"Error calculating badge for {user_id}: {str(e)}")
+            return {
+                "level": "new",
+                "badge_data": BADGE_LEVELS["new"],
+                "stats": {
+                    "total_trades": 0,
+                    "completion_rate": 0,
+                    "avg_release_time_minutes": 0
+                }
+            }
     
-    stats["last_trade_hours"] = last_trade_hours
+    async def get_user_badge(self, user_id: str) -> Dict:
+        """
+        Get user's current badge (from cache or recalculate)
+        """
+        try:
+            user = await self.db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+            
+            if user and user.get("p2p_badge_level"):
+                badge_level = user.get("p2p_badge_level", "new")
+                stats = user.get("p2p_stats", {})
+                
+                return {
+                    "level": badge_level,
+                    "badge_data": BADGE_LEVELS[badge_level],
+                    "stats": stats
+                }
+            else:
+                # Recalculate if not exists
+                return await self.calculate_user_badge(user_id)
+                
+        except Exception as e:
+            logger.error(f"Error getting badge for {user_id}: {str(e)}")
+            return {
+                "level": "new",
+                "badge_data": BADGE_LEVELS["new"],
+                "stats": {}
+            }
     
-    # Check each badge criteria
-    earned_badges = []
-    
-    # Elite Trader
-    if (stats["completion_rate"] >= BADGE_DEFINITIONS["elite_trader"]["criteria"]["completion_rate"] and
-        stats["total_trades"] >= BADGE_DEFINITIONS["elite_trader"]["criteria"]["total_trades"]):
-        earned_badges.append(Badge(
-            badge_id="elite_trader",
-            name=BADGE_DEFINITIONS["elite_trader"]["name"],
-            icon=BADGE_DEFINITIONS["elite_trader"]["icon"],
-            description=BADGE_DEFINITIONS["elite_trader"]["description"],
-            color=BADGE_DEFINITIONS["elite_trader"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # Pro Trader (only if not Elite)
-    elif (stats["completion_rate"] >= BADGE_DEFINITIONS["pro_trader"]["criteria"]["completion_rate"] and
-          stats["total_trades"] >= BADGE_DEFINITIONS["pro_trader"]["criteria"]["total_trades"]):
-        earned_badges.append(Badge(
-            badge_id="pro_trader",
-            name=BADGE_DEFINITIONS["pro_trader"]["name"],
-            icon=BADGE_DEFINITIONS["pro_trader"]["icon"],
-            description=BADGE_DEFINITIONS["pro_trader"]["description"],
-            color=BADGE_DEFINITIONS["pro_trader"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # Verified
-    if stats["kyc_verified"]:
-        earned_badges.append(Badge(
-            badge_id="verified",
-            name=BADGE_DEFINITIONS["verified"]["name"],
-            icon=BADGE_DEFINITIONS["verified"]["icon"],
-            description=BADGE_DEFINITIONS["verified"]["description"],
-            color=BADGE_DEFINITIONS["verified"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # Fast Responder
-    if stats["avg_response_time"] <= BADGE_DEFINITIONS["fast_responder"]["criteria"]["avg_response_time"]:
-        earned_badges.append(Badge(
-            badge_id="fast_responder",
-            name=BADGE_DEFINITIONS["fast_responder"]["name"],
-            icon=BADGE_DEFINITIONS["fast_responder"]["icon"],
-            description=BADGE_DEFINITIONS["fast_responder"]["description"],
-            color=BADGE_DEFINITIONS["fast_responder"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # High Volume
-    if stats["total_volume_usd"] >= BADGE_DEFINITIONS["high_volume"]["criteria"]["total_volume_usd"]:
-        earned_badges.append(Badge(
-            badge_id="high_volume",
-            name=BADGE_DEFINITIONS["high_volume"]["name"],
-            icon=BADGE_DEFINITIONS["high_volume"]["icon"],
-            description=BADGE_DEFINITIONS["high_volume"]["description"],
-            color=BADGE_DEFINITIONS["high_volume"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # Active Today
-    if last_trade_hours <= BADGE_DEFINITIONS["active_today"]["criteria"]["last_trade_hours"]:
-        earned_badges.append(Badge(
-            badge_id="active_today",
-            name=BADGE_DEFINITIONS["active_today"]["name"],
-            icon=BADGE_DEFINITIONS["active_today"]["icon"],
-            description=BADGE_DEFINITIONS["active_today"]["description"],
-            color=BADGE_DEFINITIONS["active_today"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # Trusted
-    if (stats["rating"] >= BADGE_DEFINITIONS["trusted"]["criteria"]["rating"] and
-        stats["review_count"] >= BADGE_DEFINITIONS["trusted"]["criteria"]["review_count"]):
-        earned_badges.append(Badge(
-            badge_id="trusted",
-            name=BADGE_DEFINITIONS["trusted"]["name"],
-            icon=BADGE_DEFINITIONS["trusted"]["icon"],
-            description=BADGE_DEFINITIONS["trusted"]["description"],
-            color=BADGE_DEFINITIONS["trusted"]["color"],
-            earned_date=datetime.now(timezone.utc).isoformat()
-        ))
-    
-    # Store badges in database
-    trader_badges = TraderBadges(
-        trader_id=trader_id,
-        badges=earned_badges,
-        last_calculated=datetime.now(timezone.utc).isoformat(),
-        total_badges=len(earned_badges)
-    )
-    
-    await db.trader_badges.update_one(
-        {"trader_id": trader_id},
-        {"$set": trader_badges.model_dump()},
-        upsert=True
-    )
-    
-    return {
-        "success": True,
-        "badges": [badge.model_dump() for badge in earned_badges],
-        "stats": stats,
-        "total_badges": len(earned_badges)
-    }
-
-
-async def get_trader_badges(db, trader_id: str) -> Dict:
-    """Get cached badges for a trader"""
-    badges = await db.trader_badges.find_one({"trader_id": trader_id}, {"_id": 0})
-    
-    if not badges:
-        # Calculate badges if not cached
-        return await calculate_trader_badges(db, trader_id)
-    
-    return {
-        "success": True,
-        "badges": badges.get("badges", []),
-        "last_calculated": badges.get("last_calculated"),
-        "total_badges": badges.get("total_badges", 0)
-    }
-
-
-async def update_trader_stats_for_badges(db, trader_id: str, trade_data: Dict):
-    """
-    Update trader stats when a trade completes to keep badge calculations current.
-    Called after trade completion.
-    """
-    # Get current trader profile
-    trader = await db.trader_profiles.find_one({"user_id": trader_id})
-    
-    if not trader:
-        # Initialize trader profile
-        trader = {
-            "user_id": trader_id,
-            "completion_rate": 0,
-            "total_trades": 0,
-            "completed_trades": 0,
-            "cancelled_trades": 0,
-            "total_volume_usd": 0,
-            "rating": 0,
-            "review_count": 0,
-            "avg_response_time": 0,
-            "last_trade_date": datetime.now(timezone.utc).isoformat()
-        }
-    
-    # Update stats based on trade
-    if trade_data.get("status") == "completed":
-        trader["completed_trades"] = trader.get("completed_trades", 0) + 1
-        trader["total_volume_usd"] = trader.get("total_volume_usd", 0) + trade_data.get("amount_usd", 0)
-    elif trade_data.get("status") == "cancelled":
-        trader["cancelled_trades"] = trader.get("cancelled_trades", 0) + 1
-    
-    trader["total_trades"] = trader.get("completed_trades", 0) + trader.get("cancelled_trades", 0)
-    
-    # Calculate completion rate
-    if trader["total_trades"] > 0:
-        trader["completion_rate"] = (trader.get("completed_trades", 0) / trader["total_trades"]) * 100
-    
-    trader["last_trade_date"] = datetime.now(timezone.utc).isoformat()
-    
-    # Update database
-    await db.trader_profiles.update_one(
-        {"user_id": trader_id},
-        {"$set": trader},
-        upsert=True
-    )
-    
-    # Recalculate badges
-    await calculate_trader_badges(db, trader_id)
-    
-    return {"success": True, "stats_updated": True}
+    def get_badge_levels(self) -> Dict:
+        """
+        Return all badge level definitions
+        """
+        return BADGE_LEVELS
