@@ -5536,10 +5536,14 @@ async def complete_google_signup(request: dict):
 async def register_user(request: RegisterRequest, req: Request):
     """Register new user with email/password"""
     from security import password_hasher
+    from security_logger import SecurityLogger
     
     # Get client IP and user agent for anti-abuse tracking
     client_ip = req.client.host if req.client else "Unknown"
     user_agent = req.headers.get("user-agent", "Unknown")
+    
+    # Initialize security logger
+    security_logger = SecurityLogger(db)
     
     # Check rate limit
     if not check_rate_limit(client_ip, "registration"):
