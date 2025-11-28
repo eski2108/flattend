@@ -145,10 +145,41 @@ export default function Login() {
           </div>
         </div>
 
-        <Card className="auth-card">
+        <Card className="auth-card" style={{ 
+          background: 'linear-gradient(135deg, rgba(0, 30, 60, 0.95) 0%, rgba(0, 15, 35, 0.98) 100%)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(0, 217, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 217, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+        }}>
           <div className="auth-card-content">
-            <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Log in to your Coin Hub X account</p>
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <div style={{ 
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '64px',
+                height: '64px',
+                borderRadius: '16px',
+                background: 'linear-gradient(135deg, #00D9FF 0%, #0099FF 100%)',
+                marginBottom: '20px',
+                boxShadow: '0 8px 24px rgba(0, 217, 255, 0.3)'
+              }}>
+                <ShieldCheck size={32} color="white" />
+              </div>
+              <h1 className="auth-title" style={{ 
+                fontSize: '32px',
+                fontWeight: '700',
+                background: 'linear-gradient(135deg, #FFFFFF 0%, #00D9FF 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                marginBottom: '12px'
+              }}>Welcome Back</h1>
+              <p className="auth-subtitle" style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '15px',
+                fontWeight: '400'
+              }}>Log in to your Coin Hub X account</p>
+            </div>
 
             <form onSubmit={handleSubmit} className="auth-form">
               <div className="form-group">
