@@ -58,7 +58,7 @@ export default function SavingsPage() {
       const user = JSON.parse(userData);
       const userId = user.user_id;
 
-      const response = await axios.post(`${API}/savings/transfer`, {
+      const response = await axios.post(`${API}/api/savings/transfer`, {
         user_id: userId,
         currency: selectedCurrency,
         amount: parseFloat(transferAmount),
