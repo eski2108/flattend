@@ -446,14 +446,15 @@ export default function Dashboard() {
                 padding: '0.5rem 0.875rem',
                 background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                borderRadius: '10px',
+                fontSize: '0.875rem',
                 fontWeight: '600',
                 color: '#FFFFFF',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 16px rgba(168, 85, 247, 0.3)',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                height: '36px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -464,7 +465,7 @@ export default function Dashboard() {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.3)';
               }}
             >
-              <ArrowUpRight size={window.innerWidth < 768 ? 16 : 20} />
+              <ArrowUpRight size={16} />
               Withdraw
             </button>
           </div>
