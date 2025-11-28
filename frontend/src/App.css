@@ -3947,7 +3947,7 @@ html {
   }
 }
 
-/* Responsive Styles - MOBILE FIRST */
+/* Responsive Styles */
 @media (max-width: 768px) {
   .mobile-header {
     display: block;
