@@ -80,7 +80,7 @@ export default function PriceTickerEnhanced() {
       <div style={{
         background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
         borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
-        height: '32px',
+        height: '30px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -100,7 +100,7 @@ export default function PriceTickerEnhanced() {
     <div style={{
       background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
       borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
-      height: '32px',
+      height: '30px',
       overflow: 'hidden',
       margin: 0,
       padding: 0,
