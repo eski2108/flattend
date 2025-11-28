@@ -8231,3 +8231,71 @@ a[class*="btn"] {
 
 }
 
+/* ==========================================
+   TOAST NOTIFICATIONS (Override Sonner's nasty green)
+   ========================================== */
+[data-sonner-toast] {
+  background: rgba(0, 19, 37, 0.95) !important;
+  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  backdrop-filter: blur(20px) !important;
+  color: var(--text-primary) !important;
+}
+
+/* SUCCESS TOAST - Replace green with cyan */
+[data-sonner-toast][data-type="success"] {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(0, 153, 255, 0.15) 100%) !important;
+  border: 1px solid rgba(0, 217, 255, 0.4) !important;
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.2) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--primary-cyan) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-content] {
+  color: var(--text-primary) !important;
+}
+
+/* ERROR TOAST - Keep red but match theme */
+[data-sonner-toast][data-type="error"] {
+  background: linear-gradient(135deg, rgba(255, 75, 75, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%) !important;
+  border: 1px solid rgba(255, 75, 75, 0.4) !important;
+  box-shadow: 0 8px 32px rgba(255, 75, 75, 0.2) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--loss-red) !important;
+}
+
+/* WARNING/INFO TOASTS */
+[data-sonner-toast][data-type="warning"] {
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.15) 0%, rgba(234, 179, 8, 0.15) 100%) !important;
+  border: 1px solid rgba(255, 184, 0, 0.4) !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(0, 153, 255, 0.15) 100%) !important;
+  border: 1px solid rgba(0, 217, 255, 0.4) !important;
+}
+
+/* Toast text */
+[data-sonner-toast] [data-title] {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+[data-sonner-toast] [data-description] {
+  color: var(--text-secondary) !important;
+}
+
+/* Toast close button */
+[data-sonner-toast] [data-close-button] {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
