@@ -355,7 +355,7 @@ export default function WalletPagePremium() {
           
           {/* Premium Portfolio Summary Card with Glassmorphism */}
           <div 
-            className="mb-8 rounded-[22px] p-8 relative overflow-hidden"
+            className="mb-6 sm:mb-8 rounded-[18px] sm:rounded-[22px] p-5 sm:p-8 relative overflow-hidden"
             style={{
               background: 'linear-gradient(135deg, #050C1E 0%, #1C1540 100%)',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
@@ -367,12 +367,12 @@ export default function WalletPagePremium() {
             
             <div className="relative z-10">
               <div className="text-xs uppercase tracking-wider text-gray-400 mb-3 font-semibold">Total Portfolio Value</div>
-              <div className="flex items-end gap-4 mb-8">
-                <div className="text-5xl font-bold text-white tracking-tight">
+              <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight break-all">
                   <AnimatedCounter value={totalPortfolioGBP} decimals={2} />
                 </div>
                 <div 
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold mb-2"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold sm:mb-2 w-fit"
                   style={{
                     background: change24h >= 0 
                       ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%)' 
