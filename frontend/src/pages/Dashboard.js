@@ -730,7 +730,7 @@ export default function Dashboard() {
             gap: '1rem'
           }}>
             <button
-              onClick={() => navigate('/marketplace')}
+              onClick={() => navigate('/instant-buy')}
               style={{
                 background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(0, 0, 0, 0.4))',
                 border: '2px solid rgba(34, 197, 94, 0.4)',
@@ -759,7 +759,7 @@ export default function Dashboard() {
             >
               <TrendingUp size={24} color="#22C55E" />
               <span>Buy Crypto</span>
-              <span style={{ fontSize: '13px', color: '#888' }}>Start trading now</span>
+              <span style={{ fontSize: '13px', color: '#888' }}>Instant purchase</span>
             </button>
 
             <button
