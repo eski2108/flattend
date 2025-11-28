@@ -388,22 +388,22 @@ export default function WalletPagePremium() {
               </div>
               
               {/* Quick Metrics Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 <div 
-                  className="rounded-xl p-5 backdrop-blur-sm"
+                  className="rounded-xl p-3 sm:p-5 backdrop-blur-sm"
                   style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     border: '1px solid rgba(255, 255, 255, 0.08)'
                   }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
-                      <Wallet className="w-4 h-4 text-green-400" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center flex-shrink-0">
+                      <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" />
                     </div>
-                    <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Available</div>
+                    <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider font-semibold">Available</div>
                   </div>
-                  <div className="text-2xl font-bold text-white">
-                    £{totalAvailable.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <div className="text-lg sm:text-2xl font-bold text-white break-all">
+                    £{totalAvailable.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                 </div>
                 
