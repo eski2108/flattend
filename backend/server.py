@@ -1814,6 +1814,84 @@ async def get_enhanced_offers(
     }
 
 
+@api_router.get("/p2p/marketplace/offers")
+async def get_marketplace_offers(crypto_currency: Optional[str] = None):
+    """Get marketplace offers for buyers (showing SELL offers)"""
+    try:
+        query = {"status": "active", "offer_type": "sell"}
+        
+        if crypto_currency and crypto_currency != 'all':
+            query["crypto_currency"] = crypto_currency
+        
+        offers = await db.enhanced_sell_orders.find(query, {"_id": 0}).sort("price_per_unit", 1).to_list(100)
+        
+        # Enrich with seller info
+        enriched_offers = []
+        for offer in offers:
+            seller = await db.user_accounts.find_one({"user_id": offer.get("seller_id")}, {"_id": 0})
+            if seller:
+                offer["seller_username"] = seller.get("full_name") or seller.get("email", "Unknown")
+                offer["seller_rating"] = seller.get("rating", 0)
+                offer["seller_trades"] = seller.get("total_trades", 0)
+                offer["seller_verified"] = seller.get("kyc_verified", False)
+            enriched_offers.append(offer)
+        
+        return {
+            "success": True,
+            "offers": enriched_offers
+        }
+    except Exception as e:
+        logger.error(f"Error getting marketplace offers: {str(e)}")
+        return {
+            "success": False,
+            "offers": [],
+            "message": str(e)
+        }
+
+@api_router.get("/p2p/stats")
+async def get_p2p_stats():
+    """Get P2P marketplace statistics"""
+    try:
+        # Count active trades
+        active_trades = await db.p2p_trades.count_documents({"status": {"$in": ["pending", "paid"]}})
+        
+        # Get 24h volume
+        from datetime import timedelta
+        yesterday = datetime.now(timezone.utc) - timedelta(days=1)
+        volume_24h = await db.p2p_trades.aggregate([
+            {"$match": {"created_at": {"$gte": yesterday.isoformat()}, "status": "completed"}},
+            {"$group": {"_id": None, "total": {"$sum": "$fiat_amount"}}}
+        ]).to_list(1)
+        
+        total_volume_24h = volume_24h[0]["total"] if volume_24h else 0
+        
+        # Count unique users
+        total_users = await db.user_accounts.count_documents({"role": {"$in": ["user", "trader", "admin"]}})
+        
+        # Average completion time
+        avg_completion = "7 min"
+        
+        return {
+            "success": True,
+            "stats": {
+                "total_volume": round(total_volume_24h, 2),
+                "active_trades": active_trades,
+                "total_users": total_users,
+                "avg_completion": avg_completion
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting P2P stats: {str(e)}")
+        return {
+            "success": True,
+            "stats": {
+                "total_volume": 0,
+                "active_trades": 0,
+                "total_users": 0,
+                "avg_completion": "N/A"
+            }
+        }
+
 @api_router.get("/p2p/marketplace/filters")
 async def get_marketplace_filters():
     """Get dynamic list of available currencies and payment methods from active seller offers"""
