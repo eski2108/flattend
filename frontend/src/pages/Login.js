@@ -31,10 +31,40 @@ export default function Login() {
         // Not logged in, continue
       }
     };
-    checkSession();
-  }, [navigate]);
+    
+    // Handle Google OAuth callback
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('google_success') === 'true') {
+      const token = urlParams.get('token');
+      const userParam = urlParams.get('user');
+      
+      if (token && userParam) {
+        try {
+          const userData = JSON.parse(userParam);
+          
+          // Store user data and token
+          localStorage.setItem('user', JSON.stringify(userData));
+          localStorage.setItem('cryptobank_user', JSON.stringify(userData));
+          localStorage.setItem('token', token);
+          
+          console.log('✅ Google login successful - stored user:', userData);
+          toast.success('Logged in successfully with Google!');
+          
+          // Small delay then redirect
+          setTimeout(() => {
+            navigate('/wallet');
+          }, 100);
+        } catch (error) {
+          console.error('Error parsing Google login data:', error);
+          toast.error('Login failed. Please try again.');
+        }
+      }
+    } else {
+      checkSession();
+    }
+  }, [navigate, location]);
 
-  // Google OAuth handling removed
+  // Google OAuth handling
 
   const handleChange = (e) => {
     setFormData({
