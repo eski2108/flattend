@@ -179,6 +179,7 @@ from referral_abuse_detection import (
     get_abuse_detection_config
 )
 from otp_service import get_otp_service
+from live_market_data_service import get_live_market_service
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
