@@ -154,7 +154,7 @@ export default function AdminDashboard() {
 
   const fetchLiquidity = async () => {
     try {
-      const response = await axios.get(`${API}/admin/liquidity/balances`);
+      const response = await axios.get(`${API}/api/admin/liquidity/balances`);
       if (response.data.success) {
         setLiquidityWallets(response.data.wallets);
       }
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
 
   const fetchFeeBalances = async () => {
     try {
-      const response = await axios.get(`${API}/admin/internal-balances`);
+      const response = await axios.get(`${API}/api/admin/internal-balances`);
       if (response.data.success) {
         setFeeBalances(response.data.balances);
       }
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
 
   const fetchLiquidityHistory = async () => {
     try {
-      const response = await axios.get(`${API}/admin/liquidity/history`);
+      const response = await axios.get(`${API}/api/admin/liquidity/history`);
       if (response.data.success) {
         setLiquidityHistory(response.data.history);
       }
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
 
   const fetchCustomerAnalytics = async () => {
     try {
-      const response = await axios.get(`${API}/admin/customer-analytics`);
+      const response = await axios.get(`${API}/api/admin/customer-analytics`);
       if (response.data.success) {
         setCustomerAnalytics(response.data.analytics);
       }
@@ -265,7 +265,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await axios.post(`${API}/admin/broadcast-message`, broadcastMessage);
+      const response = await axios.post(`${API}/api/admin/broadcast-message`, broadcastMessage);
       if (response.data.success) {
         toast.success(`Message sent to ${response.data.messages_created} users!`);
         setShowBroadcastModal(false);
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
 
   const fetchPlatformSettings = async () => {
     try {
-      const response = await axios.get(`${API}/admin/platform-settings`);
+      const response = await axios.get(`${API}/api/admin/platform-settings`);
       if (response.data.success) {
         setPlatformSettings(response.data.settings);
       }
@@ -290,7 +290,7 @@ export default function AdminDashboard() {
 
   const updatePlatformSettings = async (newSettings) => {
     try {
-      const response = await axios.post(`${API}/admin/platform-settings`, newSettings);
+      const response = await axios.post(`${API}/api/admin/platform-settings`, newSettings);
       if (response.data.success) {
         toast.success('Fee settings updated successfully!');
         fetchPlatformSettings();
@@ -445,12 +445,12 @@ export default function AdminDashboard() {
 
     try {
       const [statsResp, customersResp, configResp, refConfigResp, refEarningsResp, disputesResp] = await Promise.all([
-        axios.get(`${API}/admin/dashboard-stats`),
-        axios.get(`${API}/admin/customers`),
-        axios.get(`${API}/admin/platform-config`),
-        axios.get(`${API}/admin/referral-config`),
-        axios.get(`${API}/admin/referral-earnings`),
-        axios.get(`${API}/admin/disputes/all`)
+        axios.get(`${API}/api/admin/dashboard-stats`),
+        axios.get(`${API}/api/admin/customers`),
+        axios.get(`${API}/api/admin/platform-config`),
+        axios.get(`${API}/api/admin/referral-config`),
+        axios.get(`${API}/api/admin/referral-earnings`),
+        axios.get(`${API}/api/admin/disputes/all`)
       ]);
       
       fetchLiquidity();
@@ -500,7 +500,7 @@ export default function AdminDashboard() {
 
   const handleUpdateCommission = async (settingKey, newValue) => {
     try {
-      const resp = await axios.post(`${API}/admin/update-commission`, {
+      const resp = await axios.post(`${API}/api/admin/update-commission`, {
         setting_key: settingKey,
         new_value: parseFloat(newValue)
       });
@@ -508,7 +508,7 @@ export default function AdminDashboard() {
       if (resp.data.success) {
         toast.success(resp.data.message);
         // Refresh config
-        const configResp = await axios.get(`${API}/admin/platform-config`);
+        const configResp = await axios.get(`${API}/api/admin/platform-config`);
         if (configResp.data.success) {
           setPlatformConfig(configResp.data);
         }
@@ -522,7 +522,7 @@ export default function AdminDashboard() {
 
   const handleUpdateReferralConfig = async (updates) => {
     try {
-      const resp = await axios.post(`${API}/admin/update-referral-config`, updates);
+      const resp = await axios.post(`${API}/api/admin/update-referral-config`, updates);
       if (resp.data.success) {
         toast.success('Referral configuration updated successfully');
         setReferralConfig(resp.data.config);
@@ -535,14 +535,14 @@ export default function AdminDashboard() {
 
   const handleMarkPaid = async (userId, amount) => {
     try {
-      const resp = await axios.post(`${API}/admin/mark-referral-paid`, {
+      const resp = await axios.post(`${API}/api/admin/mark-referral-paid`, {
         user_id: userId,
         amount_paid: parseFloat(amount)
       });
       if (resp.data.success) {
         toast.success(resp.data.message);
         // Refresh earnings
-        const refEarningsResp = await axios.get(`${API}/admin/referral-earnings`);
+        const refEarningsResp = await axios.get(`${API}/api/admin/referral-earnings`);
         if (refEarningsResp.data.success) {
           setReferralEarnings(refEarningsResp.data.earnings);
         }
@@ -561,7 +561,7 @@ export default function AdminDashboard() {
     const notes = prompt('Admin notes (optional):');
     
     try {
-      const resp = await axios.post(`${API}/admin/resolve-dispute-final`, {
+      const resp = await axios.post(`${API}/api/admin/resolve-dispute-final`, {
         dispute_id: disputeId,
         resolution: resolution,
         admin_notes: notes || ''
@@ -569,7 +569,7 @@ export default function AdminDashboard() {
       if (resp.data.success) {
         toast.success(resp.data.message);
         // Refresh disputes
-        const disputesResp = await axios.get(`${API}/admin/disputes/all`);
+        const disputesResp = await axios.get(`${API}/api/admin/disputes/all`);
         if (disputesResp.data.success) {
           setDisputes(disputesResp.data.disputes);
         }
@@ -583,12 +583,12 @@ export default function AdminDashboard() {
   const handleSearch = async (type, query) => {
     try {
       if (type === 'users') {
-        const resp = await axios.get(`${API}/admin/search/users?q=${query}`);
+        const resp = await axios.get(`${API}/api/admin/search/users?q=${query}`);
         if (resp.data.success) {
           setCustomers(resp.data.users);
         }
       } else if (type === 'trades') {
-        const resp = await axios.get(`${API}/admin/search/trades?q=${query}`);
+        const resp = await axios.get(`${API}/api/admin/search/trades?q=${query}`);
         if (resp.data.success) {
           // Handle trades display
           console.log('Trades:', resp.data.trades);
@@ -2885,7 +2885,7 @@ export default function AdminDashboard() {
                     <Button
                       onClick={async () => {
                         try {
-                          const response = await axios.post(`${API}/admin/liquidity/add`, {
+                          const response = await axios.post(`${API}/api/admin/liquidity/add`, {
                             currency: newLiquidity.currency,
                             amount: parseFloat(newLiquidity.amount),
                             admin_id: admin?.user_id || 'admin'
@@ -3217,7 +3217,7 @@ export default function AdminDashboard() {
                       onClick={async () => {
                         setWithdrawing(true);
                         try {
-                          const response = await axios.post(`${API}/admin/withdraw`, {
+                          const response = await axios.post(`${API}/api/admin/withdraw`, {
                             admin_id: admin?.user_id || 'admin',
                             currency: confirmWithdrawal.currency,
                             amount: confirmWithdrawal.amount,

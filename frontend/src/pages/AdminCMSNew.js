@@ -74,10 +74,10 @@ export default function AdminCMSNew() {
   const fetchAllSettings = async () => {
     try {
       const [feesRes, limitsRes, visibilityRes, displayRes] = await Promise.all([
-        axios.get(`${API}/cms/settings/fees`),
-        axios.get(`${API}/cms/settings/seller-limits`),
-        axios.get(`${API}/cms/settings/marketplace-visibility`),
-        axios.get(`${API}/cms/settings/display`)
+        axios.get(`${API}/api/cms/settings/fees`),
+        axios.get(`${API}/api/cms/settings/seller-limits`),
+        axios.get(`${API}/api/cms/settings/marketplace-visibility`),
+        axios.get(`${API}/api/cms/settings/display`)
       ]);
 
       if (feesRes.data.success) {
@@ -107,7 +107,7 @@ export default function AdminCMSNew() {
   const saveFeeSettings = async () => {
     setSaving(true);
     try {
-      const response = await axios.put(`${API}/cms/settings/fees`, feeSettings);
+      const response = await axios.put(`${API}/api/cms/settings/fees`, feeSettings);
       
       if (response.data.success) {
         toast.success('Fee settings saved successfully!');
@@ -123,7 +123,7 @@ export default function AdminCMSNew() {
   const saveSellerLimits = async () => {
     setSaving(true);
     try {
-      const response = await axios.put(`${API}/cms/settings/seller-limits`, sellerLimits);
+      const response = await axios.put(`${API}/api/cms/settings/seller-limits`, sellerLimits);
       
       if (response.data.success) {
         toast.success('Seller limits saved successfully!');
@@ -139,7 +139,7 @@ export default function AdminCMSNew() {
   const saveMarketplaceVisibility = async () => {
     setSaving(true);
     try {
-      const response = await axios.put(`${API}/cms/settings/marketplace-visibility`, marketplaceVisibility);
+      const response = await axios.put(`${API}/api/cms/settings/marketplace-visibility`, marketplaceVisibility);
       
       if (response.data.success) {
         toast.success('Marketplace visibility saved successfully!');
@@ -155,7 +155,7 @@ export default function AdminCMSNew() {
   const saveDisplaySettings = async () => {
     setSaving(true);
     try {
-      const response = await axios.put(`${API}/cms/settings/display`, displaySettings);
+      const response = await axios.put(`${API}/api/cms/settings/display`, displaySettings);
       
       if (response.data.success) {
         toast.success('Display settings saved successfully!');

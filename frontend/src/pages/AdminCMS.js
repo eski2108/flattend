@@ -60,10 +60,10 @@ export default function AdminCMS() {
   const fetchAllData = async () => {
     try {
       const [settingsRes, walletRes, kycRes, txRes] = await Promise.all([
-        axios.get(`${API}/admin/platform-settings`),
-        axios.get(`${API}/admin/wallet-balances`),
-        axios.get(`${API}/admin/kyc-submissions`),
-        axios.get(`${API}/admin/all-transactions`)
+        axios.get(`${API}/api/admin/platform-settings`),
+        axios.get(`${API}/api/admin/wallet-balances`),
+        axios.get(`${API}/api/admin/kyc-submissions`),
+        axios.get(`${API}/api/admin/all-transactions`)
       ]);
 
       if (settingsRes.data.success) {
@@ -92,7 +92,7 @@ export default function AdminCMS() {
 
   const updatePlatformSettings = async () => {
     try {
-      const response = await axios.post(`${API}/admin/platform-settings`, platformSettings);
+      const response = await axios.post(`${API}/api/admin/platform-settings`, platformSettings);
       
       if (response.data.success) {
         toast.success('Platform settings updated successfully!');
@@ -107,7 +107,7 @@ export default function AdminCMS() {
   const approveKYC = async (verificationId, approved) => {
     try {
       const adminData = JSON.parse(localStorage.getItem('cryptobank_admin'));
-      const response = await axios.post(`${API}/admin/kyc/review`, {
+      const response = await axios.post(`${API}/api/admin/kyc/review`, {
         verification_id: verificationId,
         approved: approved,
         tier: approved ? 1 : 0,
