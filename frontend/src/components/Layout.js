@@ -100,9 +100,10 @@ export default function Layout({ children }) {
       </header>
 
       {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)} />
-      )}
+      <div 
+        className={`mobile-menu-overlay ${isMobileMenuOpen ? 'active' : ''}`} 
+        onClick={() => setIsMobileMenuOpen(false)} 
+      />
 
       {/* Sidebar */}
       <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} data-testid="sidebar">
