@@ -162,10 +162,21 @@ export default function OrderPreview() {
         buyer_wallet_network: walletNetwork || null  // NEW: Include network if specified
       });
 
+      console.log('✅ API Response:', response.data);
+      
       if (response.data.success) {
+        const tradeId = response.data.trade_id || response.data.trade?.trade_id || response.data.id;
+        console.log('🚀 Navigating to trade:', tradeId);
+        
+        if (!tradeId) {
+          console.error('❌ No trade_id in response!', response.data);
+          toast.error('Trade created but ID missing');
+          return;
+        }
+        
         toast.success('Trade created! Crypto locked in escrow.');
         setTimeout(() => {
-          navigate(`/p2p/trade/${response.data.trade.trade_id}`);
+          navigate(`/p2p/trade/${tradeId}`);
         }, 1500);
       }
     } catch (error) {
