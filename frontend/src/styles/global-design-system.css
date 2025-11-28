@@ -325,6 +325,29 @@ p {
   h1 { font-size: 24px; }
   h2 { font-size: 22px; }
   h3 { font-size: 20px; }
+  
+  /* Mobile button adjustments */
+  button, .btn {
+    min-height: 44px; /* Touch-friendly size */
+    font-size: 14px;
+  }
+  
+  /* Mobile input adjustments */
+  input, textarea, select {
+    min-height: 44px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Mobile card spacing */
+  .card, .premium-card {
+    padding: var(--space-l);
+  }
+  
+  /* Mobile navigation */
+  .nav-menu {
+    width: 100%;
+    max-width: 280px;
+  }
 }
 
 /* PREMIUM ANIMATION UTILITIES */
