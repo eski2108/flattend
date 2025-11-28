@@ -200,7 +200,7 @@ export default function Dashboard() {
     <Layout>
       <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
         {/* Account Overview Section */}
-        <div style={{ padding: '0 1rem', marginBottom: '0.75rem' }}>
+        <div style={{ padding: '0 1rem', margin: '0', marginBottom: '0.5rem' }}>
           <h2 style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '600',
@@ -208,6 +208,7 @@ export default function Dashboard() {
             color: '#E8EAED',
             letterSpacing: '-0.3px',
             margin: '0',
+            padding: '0',
             marginBottom: '0.25rem'
           }}>
             Account Overview
@@ -218,7 +219,8 @@ export default function Dashboard() {
             fontSize: 'clamp(12px, 3.5vw, 13px)',
             color: '#9BA0A5',
             letterSpacing: '-0.2px',
-            margin: '0'
+            margin: '0',
+            padding: '0'
           }}>
             Open Orders: 0 • Completed Trades: 0
           </p>
