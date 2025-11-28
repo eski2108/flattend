@@ -370,14 +370,12 @@ export default function Dashboard() {
             background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
             border: '2px solid rgba(0, 217, 255, 0.4)',
             borderRadius: '8px',
-            paddingTop: '8px',
-            paddingBottom: '8px',
-            paddingLeft: '12px',
-            paddingRight: '12px',
+            padding: '12px',
             marginBottom: '0.5rem',
             marginTop: '4px',
             boxShadow: '0 0 40px rgba(0, 217, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.3)',
-            position: 'relative'
+            position: 'relative',
+            height: 'auto'
           }}
         >
           <div className="balance-content-premium">
@@ -396,11 +394,11 @@ export default function Dashboard() {
               </p>
               <p style={{ color: '#10B981', fontSize: '0.5rem', fontWeight: '600', margin: '0', lineHeight: '1' }}>+0.00% (24h)</p>
             </div>
-            <div className="balance-icon-premium">
+            <div className="balance-icon-premium" style={{ marginTop: '-6px' }}>
               <WalletIcon size={15} className="wallet-icon-glow" />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '8px', paddingTop: '12px', paddingBottom: '12px', flexWrap: 'wrap' }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
