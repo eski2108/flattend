@@ -1136,10 +1136,17 @@ html {
 .dashboard-page {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0;
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 0 0.5rem;
+    max-width: 100vw;
+  }
 }
 
 .dashboard-header {
