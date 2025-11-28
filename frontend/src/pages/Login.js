@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Zap, Mail, Lock } from 'lucide-react';
+import { Zap, Mail, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -17,6 +17,7 @@ export default function Login() {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Check for existing session on mount
   useEffect(() => {
