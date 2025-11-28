@@ -200,21 +200,18 @@ export default function Dashboard() {
     <Layout>
       <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
         <div style={{ 
-          marginTop: '6px', 
-          marginBottom: '4px', 
-          paddingBottom: '8px',
-          borderBottom: '1px solid #1A1A1A'
+          padding: '0',
+          margin: '0'
         }}>
           <h2 style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '600',
-            fontSize: '18px',
-            letterSpacing: '0.2px',
+            fontSize: '16px',
             color: '#FFFFFF',
-            opacity: '0.92',
             margin: '0',
-            marginBottom: '4px',
-            lineHeight: '1'
+            marginTop: '6px',
+            marginBottom: '2px',
+            lineHeight: '19px'
           }}>
             Account Overview
           </h2>
@@ -222,13 +219,25 @@ export default function Dashboard() {
             fontFamily: 'Inter, sans-serif',
             fontWeight: '500',
             fontSize: '13px',
-            color: '#A4A4A4',
+            color: '#B5B5B5',
             margin: '0',
-            marginTop: '2px',
-            lineHeight: '16px'
+            marginBottom: '6px',
+            lineHeight: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
           }}>
-            Open Orders: 0 • Completed Trades: 0
+            <span>Open Orders: 0</span>
+            <span>•</span>
+            <span>Completed Trades: 0</span>
           </p>
+          <div style={{
+            height: '1px',
+            backgroundColor: '#1A1A1A',
+            opacity: '0.35',
+            marginTop: '8px',
+            marginBottom: '10px'
+          }} />
         </div>
 
         <div className="dashboard-header-premium" style={{ display: 'none' }}>
