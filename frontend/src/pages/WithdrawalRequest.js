@@ -289,21 +289,35 @@ export default function WithdrawalRequest() {
             </div>
           </div>
 
-          <Button
+          <button
             onClick={handleSubmitWithdrawal}
             disabled={submitting}
             style={{
               width: '100%',
-              background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+              background: submitting ? '#666' : 'linear-gradient(135deg, #00F0FF, #A855F7)',
               border: 'none',
               padding: '1rem',
               fontSize: '16px',
               fontWeight: '700',
-              opacity: submitting ? 0.5 : 1
+              borderRadius: '12px',
+              color: '#fff',
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              opacity: submitting ? 0.5 : 1,
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              if (!submitting) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.5)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            {submitting ? 'Submitting...' : 'Request Withdrawal'}
-          </Button>
+            {submitting ? 'Processing...' : 'Request Withdrawal'}
+          </button>
         </Card>
       </div>
 
