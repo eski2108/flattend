@@ -403,23 +403,24 @@ export default function Dashboard() {
             <button 
               onClick={() => navigate('/wallet')}
               style={{
-                flex: '1 1 calc(50% - 0.375rem)',
-                minWidth: '120px',
+                flex: '1 1 calc(50% - 0.25rem)',
+                minWidth: '100px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.5rem',
-                padding: 'clamp(0.625rem, 2vw, 0.875rem) clamp(0.75rem, 3vw, 1.5rem)',
+                gap: '0.375rem',
+                padding: '0.5rem 0.875rem',
                 background: 'linear-gradient(135deg, #00F0FF, #00B8E6)',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                borderRadius: '10px',
+                fontSize: '0.875rem',
                 fontWeight: '600',
                 color: '#000000',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 16px rgba(0, 240, 255, 0.3)',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                height: '36px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -430,19 +431,19 @@ export default function Dashboard() {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 240, 255, 0.3)';
               }}
             >
-              <ArrowDownLeft size={window.innerWidth < 768 ? 16 : 20} />
+              <ArrowDownLeft size={16} />
               Deposit
             </button>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
-                flex: '1 1 calc(50% - 0.375rem)',
-                minWidth: '120px',
+                flex: '1 1 calc(50% - 0.25rem)',
+                minWidth: '100px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.5rem',
-                padding: 'clamp(0.625rem, 2vw, 0.875rem) clamp(0.75rem, 3vw, 1.5rem)',
+                gap: '0.375rem',
+                padding: '0.5rem 0.875rem',
                 background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
                 border: 'none',
                 borderRadius: '12px',
