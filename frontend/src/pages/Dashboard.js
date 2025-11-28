@@ -199,7 +199,39 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
-        <div className="dashboard-header-premium">
+        <div style={{ 
+          marginTop: '6px', 
+          marginBottom: '4px', 
+          paddingBottom: '8px',
+          borderBottom: '1px solid #1A1A1A'
+        }}>
+          <h2 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '600',
+            fontSize: '18px',
+            letterSpacing: '0.2px',
+            color: '#FFFFFF',
+            opacity: '0.92',
+            margin: '0',
+            marginBottom: '4px',
+            lineHeight: '1'
+          }}>
+            Account Overview
+          </h2>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '500',
+            fontSize: '13px',
+            color: '#A4A4A4',
+            margin: '0',
+            marginTop: '2px',
+            lineHeight: '16px'
+          }}>
+            Open Orders: 0 • Completed Trades: 0
+          </p>
+        </div>
+
+        <div className="dashboard-header-premium" style={{ display: 'none' }}>
           <div className="header-content-animated">
             <h1 className="page-title-premium" data-testid="dashboard-title">
               <span className="gradient-text">Welcome Back</span>
