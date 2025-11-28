@@ -227,29 +227,34 @@ function P2PMarketplace() {
     }
   };
 
-  const handleBuyOffer = async (offer) => {
-    console.log('🔥 handleBuyOffer called!', offer);
-    
-    const userData = localStorage.getItem('cryptobank_user');
-    const user = userData ? JSON.parse(userData) : null;
-    
-    if (!user?.user_id) {
-      toast.error('Please log in to buy');
-      navigate('/login');
-      return;
-    }
+  const handleBuyOffer = (offer) => {
+    try {
+      console.log('🔥 handleBuyOffer called!', offer);
+      
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = userData ? JSON.parse(userData) : null;
+      
+      if (!user?.user_id) {
+        toast.error('Please log in to buy');
+        setTimeout(() => navigate('/login'), 100);
+        return;
+      }
 
-    // The offer already has all the correct fields from the API
-    // Just pass it through directly - no mapping needed!
-    console.log('🚀 Navigating to order-preview with offer:', offer);
-    
-    // Store offer details for purchase flow
-    localStorage.setItem('pending_offer', JSON.stringify(offer));
-    
-    // Navigate to order preview to enter purchase details
-    navigate('/order-preview', { state: { offer: offer } });
-    
-    console.log('✅ Navigate called');
+      console.log('🚀 Navigating to order-preview with offer:', offer);
+      
+      // Store offer details for purchase flow
+      localStorage.setItem('pending_offer', JSON.stringify(offer));
+      
+      // Navigate to order preview - use setTimeout to ensure it executes
+      setTimeout(() => {
+        navigate('/order-preview', { state: { offer: offer }, replace: false });
+      }, 0);
+      
+      console.log('✅ Navigate queued');
+    } catch (error) {
+      console.error('❌ Error in handleBuyOffer:', error);
+      toast.error('Failed to process offer');
+    }
   };
 
   return (
