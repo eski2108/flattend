@@ -958,7 +958,8 @@ html {
   z-index: 1001;
   background: rgba(10, 10, 15, 0.95);
   backdrop-filter: blur(30px);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: none;
+  box-shadow: none;
 }
 
 .mobile-header-content {
