@@ -228,6 +228,9 @@ function P2PMarketplace() {
   };
 
   const handleBuyOffer = async (offer) => {
+    console.log('🔥 handleBuyOffer called!', offer);
+    toast.info('Processing offer...', { duration: 2000 });
+    
     const userData = localStorage.getItem('cryptobank_user');
     const user = userData ? JSON.parse(userData) : null;
     
@@ -245,11 +248,15 @@ function P2PMarketplace() {
       order_id: offer.offer_id  // OrderPreview might need this
     };
     
+    console.log('🚀 Navigating to order-preview with offer:', mappedOffer);
+    
     // Store offer details for purchase flow
     localStorage.setItem('pending_offer', JSON.stringify(mappedOffer));
     
     // Navigate to order preview to enter purchase details
     navigate('/order-preview', { state: { offer: mappedOffer } });
+    
+    console.log('✅ Navigate called');
   };
 
   return (
