@@ -1580,7 +1580,7 @@ export default function Dashboard() {
               <Clock size={48} style={{ color: '#00D9FF', marginBottom: '1rem', opacity: 0.6 }} />
               <h3 style={{ color: '#FFFFFF', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>No Activity Yet</h3>
               <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '1.5rem' }}>Start trading to see your transaction history here</p>
-              <Button onClick={() => navigate('/marketplace')} data-testid="start-trading-btn" style={{
+              <Button onClick={() => navigate('/p2p-marketplace')} data-testid="start-trading-btn" style={{
                 background: 'linear-gradient(135deg, #00D9FF, #A855F7)',
                 border: 'none',
                 padding: '0.75rem 2rem',
