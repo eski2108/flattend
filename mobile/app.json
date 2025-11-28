@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Coin Hub X",
+    "slug": "coinhubx",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0e27"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.coinhubx.app",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0e27"
+      },
+      "package": "com.coinhubx.app",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "53718716-1e03-41b2-8e26-4a15f39bf84d"
+      }
+    },
+    "owner": "eski210"
+  }
+}
