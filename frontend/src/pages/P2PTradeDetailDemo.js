@@ -19,7 +19,7 @@ export default function P2PTradeDetailDemo() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
     setUser(userData);
     loadTradeDetails();
   }, [tradeId]);
