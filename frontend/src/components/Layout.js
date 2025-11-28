@@ -16,17 +16,6 @@ export default function Layout({ children }) {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showExpressBuy, setShowExpressBuy] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detect mobile on mount and resize
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const navItems = [
     { path: '/dashboard', label: 'Home', icon: LayoutDashboard },
