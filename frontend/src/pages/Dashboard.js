@@ -774,7 +774,7 @@ export default function Dashboard() {
             <div className="card-otc" style={{ borderRadius: '20px', border: '2px solid rgba(251, 191, 36, 0.22)', boxShadow: '0 0 18px rgba(251, 191, 36, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
             onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(251, 191, 36, 0.25)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(251, 191, 36, 0.15)'; }}
-            onClick={() => navigate('/otc')}>
+            onClick={() => navigate('/otc-desk')}>
               <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>OTC Desk</div>
               <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Large volume trades (£2000+)</div>
               <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Trade OTC →</button>
