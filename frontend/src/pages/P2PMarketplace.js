@@ -825,7 +825,10 @@ function P2PMarketplace() {
 
                   {/* Action Button */}
                   <button
-                    onClick={() => handleBuyOffer(offer)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBuyOffer(offer);
+                    }}
                     style={{
                       padding: '0.75rem 1.5rem',
                       background: activeTab === 'buy' ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'linear-gradient(135deg, #EF4444, #DC2626)',
