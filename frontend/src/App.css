@@ -6603,8 +6603,8 @@ html {
   .dashboard-header-premium {
     flex-direction: column;
     gap: 4px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     margin: 0;
