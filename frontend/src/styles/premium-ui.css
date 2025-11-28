@@ -1,13 +1,13 @@
 /* Premium UI Refinements for CoinHubX */
 
-/* Global Card Shadows */
-.card, [class*="card"], [class*="Card"] {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 1px rgba(255, 255, 255, 0.1) !important;
+/* Global Card Shadows - Only apply to specific classes to avoid breaking layouts */
+.premium-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 1px rgba(255, 255, 255, 0.1);
   transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card:hover, [class*="card"]:hover {
-  box-shadow: 0 4px 16px rgba(0, 217, 255, 0.15), 0 0 1px rgba(255, 255, 255, 0.15) !important;
+.premium-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 217, 255, 0.15), 0 0 1px rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
 }
 
