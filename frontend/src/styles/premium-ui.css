@@ -24,27 +24,11 @@
   }
 }
 
-/* Premium Shadows for Dropdowns */
-select, .dropdown, [role="listbox"], [role="menu"] {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 217, 255, 0.3) !important;
-}
+/* Premium Shadows for Dropdowns - Removed to avoid conflicts */
 
-/* Modal Shadows */
-.modal, [role="dialog"], [class*="Modal"] {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 2px rgba(0, 217, 255, 0.5) !important;
-}
+/* Modal Shadows - Removed to avoid conflicts */
 
-/* Icon Consistency */
-svg, [class*="icon"] {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2;
-  transition: all 0.15s ease;
-}
-
-svg:hover {
-  transform: scale(1.1);
-}
+/* Icon Consistency - Removed to avoid breaking existing icons */
 
 /* Button Micro-interactions */
 button, .btn, [class*="button"], [class*="Button"] {
