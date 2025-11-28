@@ -353,17 +353,19 @@ export default function WalletPagePremium() {
             </button>
           </div>
           
-          {/* Premium Portfolio Summary Card with Glassmorphism */}
+          {/* Premium Portfolio Summary Card with Glassmorphism & Glow */}
           <div 
             className="mb-6 sm:mb-8 rounded-[18px] sm:rounded-[22px] p-5 sm:p-8 relative overflow-hidden"
             style={{
               background: 'linear-gradient(135deg, #050C1E 0%, #1C1540 100%)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.05)'
+              boxShadow: '0 8px 32px rgba(56, 189, 248, 0.2), 0 0 80px rgba(56, 189, 248, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(56, 189, 248, 0.2)'
             }}
           >
+            {/* Animated glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-purple-500/10 pointer-events-none animate-pulse" style={{ animationDuration: '3s' }} />
             {/* Glassmorphism overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
             
             <div className="relative z-10">
               <div className="text-xs uppercase tracking-wider text-gray-400 mb-3 font-semibold">Total Portfolio Value</div>
