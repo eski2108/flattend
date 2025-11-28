@@ -944,137 +944,45 @@ export default function Dashboard() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-            {/* Seller Verification */}
-            <button
-              onClick={() => navigate('/subscriptions')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05))',
-                border: '2px solid rgba(168, 85, 247, 0.4)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'left',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(168, 85, 247, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ fontSize: '24px', marginBottom: '0.5rem', fontWeight: '700' }}></div>
-              <div style={{ color: '#A855F7', fontSize: '18px', fontWeight: '700', marginBottom: '0.25rem' }}>
-                Get Verified
-              </div>
-              <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>
-                Build trust with buyers
-              </div>
-              <div style={{ color: '#00F0FF', fontSize: '20px', fontWeight: '900' }}>
-                £25
-              </div>
-            </button>
+            {/* Get Verified */}
+            <div className="card-verified" style={{ borderRadius: '20px', border: '2px solid rgba(168, 85, 247, 0.22)', boxShadow: '0 0 18px rgba(168, 85, 247, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(168, 85, 247, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(168, 85, 247, 0.15)'; }}
+            onClick={() => navigate('/verification')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#C084FC', marginBottom: '8px' }}>Get Verified</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Build trust with buyers</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Get Verified →</button>
+            </div>
 
-            {/* Seller Levels */}
-            <button
-              onClick={() => navigate('/subscriptions')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.05))',
-                border: '2px solid rgba(255, 215, 0, 0.4)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'left',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 215, 0, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ fontSize: '24px', marginBottom: '0.5rem', fontWeight: '700' }}></div>
-              <div style={{ color: '#FFD700', fontSize: '18px', fontWeight: '700', marginBottom: '0.25rem' }}>
-                Upgrade Level
-              </div>
-              <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>
-                Priority + Lower fees
-              </div>
-              <div style={{ color: '#00F0FF', fontSize: '20px', fontWeight: '900' }}>
-                From £20
-              </div>
-            </button>
+            {/* Upgrade Level */}
+            <div className="card-upgrade" style={{ borderRadius: '20px', border: '2px solid rgba(163, 230, 53, 0.22)', boxShadow: '0 0 18px rgba(163, 230, 53, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(163, 230, 53, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(163, 230, 53, 0.15)'; }}
+            onClick={() => navigate('/account/upgrade')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FACC15', marginBottom: '8px' }}>Upgrade Level</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Priority + Lower fees</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Upgrade Level →</button>
+            </div>
 
             {/* Boost Listings */}
-            <button
-              onClick={() => navigate('/p2p/merchant')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.2), rgba(255, 165, 0, 0.05))',
-                border: '2px solid rgba(255, 165, 0, 0.4)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'left',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 165, 0, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ fontSize: '24px', marginBottom: '0.5rem', fontWeight: '700' }}></div>
-              <div style={{ color: '#FFA500', fontSize: '18px', fontWeight: '700', marginBottom: '0.25rem' }}>
-                Boost Listings
-              </div>
-              <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>
-                Get more visibility
-              </div>
-              <div style={{ color: '#00F0FF', fontSize: '20px', fontWeight: '900' }}>
-                From £10
-              </div>
-            </button>
+            <div className="card-boost" style={{ borderRadius: '20px', border: '2px solid rgba(249, 115, 22, 0.22)', boxShadow: '0 0 18px rgba(249, 115, 22, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(249, 115, 22, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(249, 115, 22, 0.15)'; }}
+            onClick={() => navigate('/p2p/boost')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>Boost Listings</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Get more visibility</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Boost Listing →</button>
+            </div>
 
-            {/* Arbitrage Alerts */}
-            <button
-              onClick={() => navigate('/subscriptions')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05))',
-                border: '2px solid rgba(0, 240, 255, 0.4)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'left',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 240, 255, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ fontSize: '24px', marginBottom: '0.5rem', fontWeight: '700' }}></div>
-              <div style={{ color: '#00F0FF', fontSize: '18px', fontWeight: '700', marginBottom: '0.25rem' }}>
-                Price Alerts
-              </div>
-              <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>
-                Arbitrage opportunities
-              </div>
-              <div style={{ color: '#00F0FF', fontSize: '20px', fontWeight: '900' }}>
-                £10/month
-              </div>
-            </button>
+            {/* Price Alerts */}
+            <div className="card-alerts" style={{ borderRadius: '20px', border: '2px solid rgba(34, 211, 238, 0.22)', boxShadow: '0 0 18px rgba(34, 211, 238, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(34, 211, 238, 0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(34, 211, 238, 0.15)'; }}
+            onClick={() => navigate('/price-alerts')}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#7DD3FC', marginBottom: '8px' }}>Price Alerts</div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Arbitrage opportunities</div>
+              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Manage Alerts →</button>
+            </div>
 
             {/* Internal Transfer */}
             <button
