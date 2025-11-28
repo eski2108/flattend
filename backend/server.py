@@ -5803,9 +5803,17 @@ async def login_user(login_req: LoginRequest, request: Request):
     """Login with email/password"""
     import jwt
     from security import rate_limiter
+    from security_logger import SecurityLogger
+    
+    # Get client info for security logging
+    client_ip = request.client.host if request.client else "Unknown"
+    user_agent = request.headers.get("user-agent", "Unknown")
+    
+    # Initialize security logger
+    security_logger = SecurityLogger(db)
+    device_fingerprint = security_logger.generate_device_fingerprint(client_ip, user_agent)
     
     # Rate limiting - 10 attempts per 15 minutes per IP (relaxed for testing)
-    client_ip = request.client.host if request.client else "Unknown"
     is_allowed, wait_time = rate_limiter.check_rate_limit(
         identifier=client_ip,
         action="login",
@@ -5825,19 +5833,25 @@ async def login_user(login_req: LoginRequest, request: Request):
     user = await db.user_accounts.find_one({"email": login_req.email}, {"_id": 0})
     if not user:
         logger.info(f"User not found: {login_req.email}")
+        # Log failed attempt
+        await security_logger.log_login_attempt(
+            user_id=None,
+            email=login_req.email,
+            success=False,
+            ip_address=client_ip,
+            user_agent=user_agent,
+            device_fingerprint=device_fingerprint,
+            failure_reason="User not found"
+        )
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     logger.info(f"User found: {login_req.email}")
     
-    # Check if email is verified (DISABLED - all users can login)
-    # email_verified = user.get("email_verified", True)
-    # logger.info(f"email_verified={email_verified}, type={type(email_verified)}")
-    # if not email_verified:
-    #     raise HTTPException(status_code=403, detail="Please verify your email before logging in. Check your inbox for the verification link.")
-    
     # Verify password - handle both old SHA256 and new bcrypt hashes
     from security import password_hasher
     stored_hash = user["password_hash"]
+    
+    password_valid = False
     
     # Check if it's an old SHA256 hash (64 characters, hex)
     if len(stored_hash) == 64 and all(c in '0123456789abcdef' for c in stored_hash):
@@ -5845,6 +5859,7 @@ async def login_user(login_req: LoginRequest, request: Request):
         import hashlib
         sha256_hash = hashlib.sha256(login_req.password.encode()).hexdigest()
         if stored_hash == sha256_hash:
+            password_valid = True
             # Password correct, migrate to bcrypt
             new_hash = password_hasher.hash_password(login_req.password)
             await db.user_accounts.update_one(
@@ -5852,14 +5867,23 @@ async def login_user(login_req: LoginRequest, request: Request):
                 {"$set": {"password_hash": new_hash}}
             )
             logger.info(f"Migrated password hash for {login_req.email} from SHA256 to bcrypt")
-        else:
-            logger.error(f"PASSWORD MISMATCH for {login_req.email}")
-            raise HTTPException(status_code=401, detail="Invalid credentials")
     else:
         # New bcrypt hash
-        if not password_hasher.verify_password(login_req.password, stored_hash):
-            logger.error(f"PASSWORD MISMATCH for {login_req.email}")
-            raise HTTPException(status_code=401, detail="Invalid credentials")
+        password_valid = password_hasher.verify_password(login_req.password, stored_hash)
+    
+    if not password_valid:
+        logger.error(f"PASSWORD MISMATCH for {login_req.email}")
+        # Log failed attempt
+        await security_logger.log_login_attempt(
+            user_id=user["user_id"],
+            email=login_req.email,
+            success=False,
+            ip_address=client_ip,
+            user_agent=user_agent,
+            device_fingerprint=device_fingerprint,
+            failure_reason="Invalid password"
+        )
+        raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Clear rate limit on successful login
     rate_limiter.clear_rate_limit(client_ip, "login")
