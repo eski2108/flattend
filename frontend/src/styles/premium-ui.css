@@ -132,10 +132,7 @@ tr:hover, .row:hover, [class*="row"]:hover {
   }
 }
 
-/* Consistent Border Radius */
-.card, .modal, .dropdown, button, input, select, textarea {
-  border-radius: 12px !important;
-}
+/* Consistent Border Radius - Removed to avoid breaking layouts */
 
 /* Neon Accents on Focus */
 *:focus-visible {
