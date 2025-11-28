@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://coinhubxrepo.preview.emergentagent.com
+**Test it now at:** https://crypto-exchange-159.preview.emergentagent.com
