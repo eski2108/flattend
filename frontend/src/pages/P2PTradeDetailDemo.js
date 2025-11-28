@@ -298,12 +298,28 @@ export default function P2PTradeDetailDemo() {
               </div>
             )}
 
+            {/* Seller: Payment Proof View */}
+            {isSeller && trade.status === 'paid' && (
+              <div className="bg-slate-800/50 backdrop-blur-sm border border-green-500/30 rounded-xl p-6">
+                <h2 className="text-xl font-semibold text-white mb-4">✅ Buyer Marked Payment Complete</h2>
+                <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                  <div className="text-green-400 font-semibold mb-2">Payment Confirmation Received</div>
+                  <div className="text-gray-300 text-sm mb-3">
+                    The buyer has marked the payment as complete. Please verify the payment in your bank account before releasing crypto.
+                  </div>
+                  <div className="text-xs text-yellow-400">
+                    ⚠️ Only release crypto after confirming the payment has arrived in your account!
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex gap-4">
               {isBuyer && trade.status === 'waiting_payment' && (
                 <button
                   onClick={handleMarkPaid}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors shadow-lg hover:shadow-green-500/50"
                 >
                   ✓ I Have Paid
                 </button>
@@ -311,10 +327,15 @@ export default function P2PTradeDetailDemo() {
               {isSeller && trade.status === 'paid' && (
                 <button
                   onClick={handleReleaseCrypto}
-                  className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                  className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 px-6 rounded-xl transition-colors shadow-lg hover:shadow-cyan-500/50"
                 >
                   🔓 Release Crypto
                 </button>
+              )}
+              {trade.status === 'completed' && (
+                <div className="flex-1 bg-green-900/30 border border-green-500/30 text-green-400 font-bold py-4 px-6 rounded-xl text-center">
+                  ✅ Trade Completed
+                </div>
               )}
             </div>
           </div>
