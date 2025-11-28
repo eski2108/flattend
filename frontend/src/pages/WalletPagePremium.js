@@ -193,7 +193,12 @@ export default function WalletPagePremium() {
   };
 
   const handleDepositClick = (asset) => {
-    navigate(`/deposit/${asset.symbol.toLowerCase()}`);
+    const currency = asset.currency || asset.symbol;
+    if (!currency) {
+      toast.error('Invalid currency');
+      return;
+    }
+    navigate(`/deposit/${currency.toLowerCase()}`);
   };
 
   const generateDepositAddress = async (currency) => {
@@ -216,7 +221,12 @@ export default function WalletPagePremium() {
   };
 
   const handleWithdrawClick = (asset) => {
-    navigate(`/withdraw/${asset.symbol.toLowerCase()}`);
+    const currency = asset.currency || asset.symbol;
+    if (!currency) {
+      toast.error('Invalid currency');
+      return;
+    }
+    navigate(`/withdraw/${currency.toLowerCase()}`);
   };
 
   const sendOTP = async () => {
