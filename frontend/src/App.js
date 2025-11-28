@@ -25,8 +25,6 @@ const CreateAd = lazy(() => import("@/pages/CreateAd"));
 const PremiumAuth = lazy(() => import("@/pages/PremiumAuth"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
-const Marketplace = lazy(() => import("@/pages/Marketplace"));
-const MarketplaceExpress = lazy(() => import("@/pages/MarketplaceExpress"));
 const TraderBalance = lazy(() => import("@/pages/TraderBalance"));
 const MyOrders = lazy(() => import("@/pages/MyOrders"));
 const OrderDetails = lazy(() => import("@/pages/OrderDetails"));
