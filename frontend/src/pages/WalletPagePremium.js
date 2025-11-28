@@ -335,7 +335,7 @@ export default function WalletPagePremium() {
   return (
     <Layout>
       <div className="min-h-screen pb-12" style={{ background: 'linear-gradient(to bottom, #05060B, #050814)' }}>
-        <div className="max-w-[1280px] mx-auto px-6 py-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-4 sm:py-8">
           
           {/* Header with Refresh */}
           <div className="flex items-center justify-between mb-6">
