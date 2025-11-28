@@ -169,6 +169,7 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/p2p/merchant" element={<MerchantCenter />} />
             <Route path="/p2p/create-ad" element={<CreateAd />} />
+            <Route path="/p2p/trade/:tradeId" element={<P2PTradeDetailDemo />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/disputes" element={<AdminDisputes />} />
