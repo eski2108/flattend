@@ -127,15 +127,12 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/markets" element={<Markets />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/marketplace/express" element={<MarketplaceExpress />} />
             <Route path="/create-offer" element={<CreateOffer />} />
             <Route path="/buy-crypto" element={<BuyCrypto />} />
             <Route path="/sell-crypto" element={<SellCrypto />} />
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/order-preview/:orderId" element={<OrderPreview />} />
             <Route path="/order-preview" element={<OrderPreview />} />
-            <Route path="/preview-order" element={<PreviewOrder />} />
             <Route path="/trade/:tradeId" element={<TradePage />} />
             <Route path="/p2p" element={<P2PMarketplace />} />
             <Route path="/p2p-marketplace" element={<P2PMarketplace />} />
