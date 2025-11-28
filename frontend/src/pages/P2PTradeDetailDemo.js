@@ -197,17 +197,31 @@ export default function P2PTradeDetailDemo() {
                 <Shield className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-xl font-semibold text-white">Escrow Protection</h2>
               </div>
-              <div className="bg-cyan-900/20 border border-cyan-500/30 rounded-lg p-4">
+              <div className={`border rounded-lg p-4 ${
+                trade.status === 'completed' 
+                  ? 'bg-green-900/20 border-green-500/30' 
+                  : 'bg-cyan-900/20 border-cyan-500/30'
+              }`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-300">Amount in Escrow:</span>
                   <span className="text-cyan-400 font-bold text-lg">{trade.crypto_amount} {trade.crypto_currency}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-300">Escrow Status:</span>
-                  <span className="text-green-400 font-semibold">✓ Locked</span>
+                  {trade.status === 'completed' ? (
+                    <span className="text-green-400 font-semibold">✓ Released</span>
+                  ) : trade.escrow_locked ? (
+                    <span className="text-yellow-400 font-semibold">🔒 Locked</span>
+                  ) : (
+                    <span className="text-gray-400 font-semibold">○ Not Locked</span>
+                  )}
                 </div>
                 <div className="mt-3 text-xs text-gray-400">
-                  🔒 Funds are safely held in escrow and will be released once seller confirms payment.
+                  {trade.status === 'completed' ? (
+                    '✅ Funds have been successfully released to the buyer.'
+                  ) : (
+                    '🔒 Funds are safely held in escrow and will be released once seller confirms payment.'
+                  )}
                 </div>
               </div>
             </div>
