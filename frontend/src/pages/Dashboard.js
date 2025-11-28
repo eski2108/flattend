@@ -881,65 +881,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Market Overview - Live Prices */}
-        <div className="market-overview-section">
-          <h2 className="section-title-premium">
-            <span className="gradient-text">Live Market Prices</span>
-          </h2>
-          <div className="market-prices-grid">
-            <div className="price-card" style={{
-              background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(251, 146, 60, 0.05))',
-              border: '2px solid rgba(249, 115, 22, 0.4)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <div className="crypto-icon btc">BTC</div>
-                <div>
-                  <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>Bitcoin</p>
-                  <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#F59E0B' }}>£72,500</p>
-                </div>
-              </div>
-              <p style={{ fontSize: '0.875rem', color: '#10B981' }}>+2.4% (24h)</p>
-            </div>
-
-            <div className="price-card" style={{
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.05))',
-              border: '2px solid rgba(139, 92, 246, 0.4)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <div className="crypto-icon eth">ETH</div>
-                <div>
-                  <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>Ethereum</p>
-                  <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#8B5CF6' }}>£2,400</p>
-                </div>
-              </div>
-              <p style={{ fontSize: '0.875rem', color: '#EF4444' }}>-0.8% (24h)</p>
-            </div>
-
-            <div className="price-card" style={{
-              background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(74, 222, 128, 0.05))',
-              border: '2px solid rgba(34, 197, 94, 0.4)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <div className="crypto-icon usdt">USDT</div>
-                <div>
-                  <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>Tether</p>
-                  <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#22C55E' }}>£0.79</p>
-                </div>
-              </div>
-              <p style={{ fontSize: '0.875rem', color: '#10B981' }}>+0.1% (24h)</p>
-            </div>
-          </div>
-        </div>
-
         {/* Trading Stats */}
         <div className="trading-stats-section">
           <h2 className="section-title-premium">
