@@ -53,26 +53,25 @@ export default function Layout({ children }) {
   return (
     <div className="layout" data-testid="layout">
       {/* Mobile Header */}
-      <header className="mobile-header">
+      <header className="mobile-header" style={{ position: 'relative' }}>
+        {/* Full-width premium neon gradient line at top */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          width: '100%',
+          height: '1.5px',
+          background: 'linear-gradient(90deg, rgba(0, 217, 255, 0.8) 0%, rgba(56, 189, 248, 0.9) 25%, rgba(0, 217, 255, 1) 50%, rgba(56, 189, 248, 0.9) 75%, rgba(0, 217, 255, 0.8) 100%)',
+          boxShadow: '0 0 12px rgba(0, 217, 255, 0.6), 0 0 24px rgba(0, 217, 255, 0.3)',
+          animation: 'premiumPulse 4s ease-in-out infinite',
+          zIndex: 10
+        }} />
+        
         <div className="mobile-header-content">
           <div className="mobile-logo" onClick={() => navigate('/dashboard')}>
             <Logo size={32} showText={false} />
           </div>
-          
-          {/* Neon gradient line in header center */}
-          <div style={{
-            position: 'absolute',
-            left: '120px',
-            right: '120px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.4), rgba(56, 189, 248, 0.6), rgba(0, 217, 255, 0.4), transparent)',
-            borderRadius: '2px',
-            boxShadow: '0 0 8px rgba(0, 217, 255, 0.3)',
-            animation: 'headerGlow 3s ease-in-out infinite',
-            zIndex: 0
-          }} />
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
             <NotificationBell />
@@ -87,12 +86,14 @@ export default function Layout({ children }) {
         </div>
         
         <style>{`
-          @keyframes headerGlow {
+          @keyframes premiumPulse {
             0%, 100% {
-              opacity: 0.6;
+              opacity: 0.85;
+              filter: brightness(1);
             }
             50% {
               opacity: 1;
+              filter: brightness(1.2);
             }
           }
         `}</style>
