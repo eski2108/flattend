@@ -107,7 +107,7 @@ export default function Marketplace() {
         fiat_currency: selectedFiat
       });
       
-      const response = await axios.get(`${API}/p2p/offers?${params}`);
+      const response = await axios.get(`${API}/api/p2p/offers?${params}`);
       setOffers(response.data.offers || []);
     } catch (error) {
       console.error('Failed to load offers:', error);
