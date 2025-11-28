@@ -112,7 +112,7 @@ export default function WithdrawalRequest() {
 
     setSubmitting(true);
     try {
-      const response = await axios.post(`${API}/api/nowpayments/create-withdrawal`, {
+      const response = await axios.post(`${API}/api/wallet/withdraw`, {
         user_id: user.user_id,
         currency: pendingWithdrawal.currency,
         amount: pendingWithdrawal.amount,
