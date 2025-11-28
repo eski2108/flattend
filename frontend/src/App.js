@@ -190,6 +190,10 @@ function App() {
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/transfer" element={<Transfer />} />
             <Route path="/instant-sell" element={<InstantSell />} />
+            <Route path="/verification" element={<Verification />} />
+            <Route path="/account/upgrade" element={<AccountUpgrade />} />
+            <Route path="/p2p/boost" element={<P2PBoost />} />
+            <Route path="/price-alerts" element={<PriceAlerts />} />
             <Route path="/help" element={<FAQ />} />
             <Route path="/upload-apk" element={<UploadAPK />} />
             <Route path="/verify-email" element={<EmailVerified />} />
