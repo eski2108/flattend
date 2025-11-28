@@ -153,14 +153,23 @@ export default function OrderPreview() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/api/p2p/create-trade`, {
+      const tradePayload = {
         sell_order_id: offer.order_id,
         buyer_id: currentUser.user_id,
         crypto_amount: parseFloat(cryptoAmount),
         payment_method: offer.payment_methods[0],
-        buyer_wallet_address: walletAddress,  // NEW: Include wallet address
-        buyer_wallet_network: walletNetwork || null  // NEW: Include network if specified
+        buyer_wallet_address: walletAddress,
+        buyer_wallet_network: walletNetwork || null
+      };
+      
+      console.log('🚀 Creating trade with payload:', tradePayload);
+      console.log('📊 Offer data:', {
+        order_id: offer.order_id,
+        payment_methods: offer.payment_methods,
+        crypto_currency: offer.crypto_currency
       });
+      
+      const response = await axios.post(`${API}/api/p2p/create-trade`, tradePayload);
 
       console.log('✅ API Response:', response.data);
       
