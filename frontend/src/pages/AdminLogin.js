@@ -30,19 +30,31 @@ export default function AdminLogin() {
 
     setLoading(true);
     try {
+      console.log('🔐 Attempting admin login...', { email, adminCode });
+      
       const response = await axios.post(`${API}/api/admin/login`, {
         email,
         password,
         admin_code: adminCode,
       });
 
+      console.log('📊 Admin login response:', response.data);
+
       if (response.data.success) {
         localStorage.setItem('admin_user', JSON.stringify(response.data.admin));
         toast.success('Admin login successful!');
-        navigate('/admin/dashboard');
+        console.log('🚀 Navigating to admin dashboard...');
+        
+        // Force navigation with setTimeout
+        setTimeout(() => {
+          navigate('/admin/dashboard', { replace: true });
+        }, 500);
+      } else {
+        console.error('❌ Login failed:', response.data);
+        toast.error(response.data.message || 'Login failed');
       }
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('❌ Error logging in:', error);
       toast.error(error.response?.data?.detail || 'Invalid credentials');
     } finally {
       setLoading(false);
