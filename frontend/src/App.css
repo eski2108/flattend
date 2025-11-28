@@ -3952,14 +3952,18 @@ html {
 @media (max-width: 768px) {
   .mobile-header {
     display: block;
+    height: 60px;
   }
 
   .mobile-menu-overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.7);
     z-index: 999;
     backdrop-filter: blur(5px);
@@ -3974,11 +3978,15 @@ html {
     transform: translateX(0);
   }
 
+  .sidebar.mobile-open ~ .main-content {
+    pointer-events: none;
+  }
+
   .main-content {
     margin-left: 0;
     width: 100%;
     padding: 16px;
-    padding-top: 70px;
+    padding-top: 76px;
   }
 
   .page-header {
