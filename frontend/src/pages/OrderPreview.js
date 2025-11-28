@@ -147,7 +147,7 @@ export default function OrderPreview() {
       if (response.data.success) {
         toast.success('Trade created! Crypto locked in escrow.');
         setTimeout(() => {
-          navigate(`/trade/${response.data.trade.trade_id}`);
+          navigate(`/p2p/trade/${response.data.trade.trade_id}`);
         }, 1500);
       }
     } catch (error) {
