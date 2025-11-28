@@ -132,7 +132,7 @@ export default function CreateOffer() {
 
       if (response.data.success) {
         toast.success('Offer created successfully!');
-        navigate('/marketplace');
+        navigate('/p2p-marketplace');
       }
     } catch (error) {
       console.error('Error creating offer:', error);
@@ -168,7 +168,7 @@ export default function CreateOffer() {
         {/* Header */}
         <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button
-            onClick={() => navigate('/marketplace')}
+            onClick={() => navigate('/p2p-marketplace')}
             style={{
               padding: '0.75rem',
               background: 'rgba(0, 240, 255, 0.1)',
@@ -545,7 +545,7 @@ export default function CreateOffer() {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
               type="button"
-              onClick={() => navigate('/marketplace')}
+              onClick={() => navigate('/p2p-marketplace')}
               style={{
                 flex: 1,
                 padding: '1rem',

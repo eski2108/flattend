@@ -206,7 +206,7 @@ export default function MyOrders() {
               Start trading on the marketplace to see your orders here
             </p>
             <button
-              onClick={() => navigate('/marketplace')}
+              onClick={() => navigate('/p2p-marketplace')}
               style={{
                 padding: '0.875rem 2rem',
                 background: 'linear-gradient(135deg, #00F0FF, #A855F7)',

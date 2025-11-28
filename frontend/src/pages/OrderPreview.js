@@ -42,7 +42,7 @@ export default function OrderPreview() {
     if (!offer) {
       console.log('❌ No offer found!');
       toast.error('No offer data received');
-      navigate('/marketplace');
+      navigate('/p2p-marketplace');
       return;
     }
     
@@ -55,7 +55,7 @@ export default function OrderPreview() {
     if (!offer.min_purchase || !offer.max_purchase || !offer.price_per_unit) {
       console.log('❌ Missing required fields!');
       toast.error('Invalid or incomplete offer data');
-      navigate('/marketplace');
+      navigate('/p2p-marketplace');
       return;
     }
     
@@ -201,7 +201,7 @@ export default function OrderPreview() {
       <Layout>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
           <p style={{ color: '#888', fontSize: '18px' }}>No offer selected</p>
-          <Button onClick={() => navigate('/marketplace')}>Back to Marketplace</Button>
+          <Button onClick={() => navigate('/p2p-marketplace')}>Back to Marketplace</Button>
         </div>
       </Layout>
     );

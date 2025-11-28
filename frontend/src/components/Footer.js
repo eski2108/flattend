@@ -62,7 +62,7 @@ export default function Footer() {
           <div>
             <h4 style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '700', marginBottom: '1rem' }}>Products</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <button onClick={() => navigate('/marketplace')} style={{
+              <button onClick={() => navigate('/p2p-marketplace')} style={{
                 background: 'none',
                 border: 'none',
                 color: '#888',

@@ -205,7 +205,7 @@ export default function Fees() {
         {/* CTA */}
         <div style={{ textAlign: 'center' }}>
           <button
-            onClick={() => navigate('/marketplace')}
+            onClick={() => navigate('/p2p-marketplace')}
             style={{
               padding: '1rem 2.5rem',
               background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
