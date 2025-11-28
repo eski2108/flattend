@@ -106,7 +106,18 @@ export default function Layout({ children }) {
       />
 
       {/* Sidebar */}
-      <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} data-testid="sidebar">
+      <aside 
+        className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} 
+        data-testid="sidebar"
+        style={{
+          // Force hide on mobile when not open
+          ...(typeof window !== 'undefined' && window.innerWidth <= 768 && !isMobileMenuOpen ? {
+            display: 'none',
+            visibility: 'hidden',
+            transform: 'translateX(-100%)'
+          } : {})
+        }}
+      >
         <div className="sidebar-header">
           <div className="sidebar-logo" data-testid="sidebar-logo">
             <Logo size={36} showText={true} />
