@@ -5839,6 +5839,11 @@ async def login_user(login_req: LoginRequest, request: Request):
     from security import password_hasher
     stored_hash = user["password_hash"]
     
+    logger.info(f"DEBUG: Password from request: '{login_req.password}'")
+    logger.info(f"DEBUG: Password length: {len(login_req.password)}")
+    logger.info(f"DEBUG: Stored hash: {stored_hash[:30]}...")
+    logger.info(f"DEBUG: Hash length: {len(stored_hash)}")
+    
     # Check if it's an old SHA256 hash (64 characters, hex)
     if len(stored_hash) == 64 and all(c in '0123456789abcdef' for c in stored_hash):
         # Old SHA256 hash - verify and migrate
@@ -5857,7 +5862,9 @@ async def login_user(login_req: LoginRequest, request: Request):
             raise HTTPException(status_code=401, detail="Invalid credentials")
     else:
         # New bcrypt hash
-        if not password_hasher.verify_password(login_req.password, stored_hash):
+        verification_result = password_hasher.verify_password(login_req.password, stored_hash)
+        logger.info(f"DEBUG: Verification result: {verification_result}")
+        if not verification_result:
             logger.error(f"PASSWORD MISMATCH for {login_req.email}")
             raise HTTPException(status_code=401, detail="Invalid credentials")
     
