@@ -413,39 +413,34 @@ export default function P2PTradeDetailDemo() {
       </div>
 
       {/* OTP Modal */}
-      {showOtpModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-slate-800 border border-cyan-500/30 rounded-xl p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-white mb-4">🔐 Confirm Release</h2>
-            <p className="text-gray-300 mb-6">
-              You are about to release <span className="text-cyan-400 font-bold">{trade.crypto_amount} {trade.crypto_currency}</span> to the buyer.
-            </p>
-            <p className="text-gray-400 text-sm mb-4">Enter the OTP code sent to your phone:</p>
-            <input
-              type="text"
-              value={otpCode}
-              onChange={(e) => setOtpCode(e.target.value)}
-              placeholder="000000"
-              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-center text-2xl tracking-widest mb-6"
-              maxLength={6}
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowOtpModal(false)}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmRelease}
-                className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white py-3 rounded-lg font-bold"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <OTPModal
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        onVerify={async (otpCode) => {
+          try {
+            const response = await axios.post(`${API}/api/p2p/release-crypto`, {
+              trade_id: tradeId,
+              seller_id: user.user_id,
+              otp_code: otpCode
+            });
+            
+            if (response.data.success) {
+              toast.success('Crypto released successfully!');
+              setShowOtpModal(false);
+              loadTradeDetails();
+            } else {
+              toast.error(response.data.message || 'Failed to release crypto');
+            }
+          } catch (error) {
+            console.error('Error releasing crypto:', error);
+            toast.error(error.response?.data?.detail || 'Failed to release crypto');
+          }
+        }}
+        title="🔐 Confirm Release"
+        description={trade ? `You are about to release ${trade.crypto_amount} ${trade.crypto_currency} to the buyer. Enter the 6-digit OTP code sent to your email.` : 'Verify your identity to release crypto.'}
+        userId={user?.user_id}
+        action="p2p_release"
+      />
     </div>
   );
 }
