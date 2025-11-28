@@ -5660,6 +5660,15 @@ async def register_user(request: RegisterRequest, req: Request):
     except Exception as e:
         logger.error(f"Failed to send verification email: {str(e)}")
     
+    # Log successful signup
+    await security_logger.log_signup_attempt(
+        email=request.email,
+        success=True,
+        ip_address=client_ip,
+        user_agent=user_agent,
+        user_id=user_account.user_id
+    )
+    
     return {
         "success": True,
         "message": "Registration successful! Please verify your phone number with the SMS code sent.",
