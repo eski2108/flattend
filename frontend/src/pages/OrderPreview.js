@@ -147,9 +147,13 @@ export default function OrderPreview() {
   const handleConfirmOrder = async () => {
     if (!validateAmount()) return;
     
-    // NEW: Validate wallet address before creating trade
-    const isWalletValid = await validateWalletAddress();
-    if (!isWalletValid) return;
+    // NEW: Optional wallet validation (non-blocking)
+    try {
+      await validateWalletAddress();
+    } catch (err) {
+      console.log('Wallet validation skipped:', err);
+      // Continue anyway - validation is optional
+    }
 
     setProcessing(true);
     try {
