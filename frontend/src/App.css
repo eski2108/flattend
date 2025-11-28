@@ -6602,20 +6602,20 @@ html {
 @media (max-width: 768px) {
   .dashboard-header-premium {
     flex-direction: column;
-    gap: 6px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    gap: 4px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     margin: 0;
-    margin-top: 6px;
+    margin-top: 4px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
   
   .dashboard-page {
-    margin-top: 6px !important;
+    margin-top: 4px !important;
     padding-top: 0 !important;
   }
 
