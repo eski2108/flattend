@@ -19659,6 +19659,143 @@ async def get_user_subscription(user_id: str):
 
 # Duplicate Google OAuth callback removed - using the one at line 4748
 
+# ==========================================
+# ADMIN SECURITY LOGS ENDPOINTS
+# ==========================================
+
+@api_router.get("/admin/security-logs")
+async def get_security_logs(
+    event_type: str = "all",
+    success: str = "all",
+    startDate: str = "",
+    endDate: str = "",
+    search: str = ""
+):
+    """Get security logs for admin dashboard"""
+    try:
+        from security_logger import SecurityLogger
+        security_logger = SecurityLogger(db)
+        
+        # Build query filter
+        query = {}
+        
+        if event_type != "all":
+            query["event_type"] = event_type
+        
+        if success == "success":
+            query["success"] = True
+        elif success == "failed":
+            query["success"] = False
+        
+        if search:
+            query["$or"] = [
+                {"email": {"$regex": search, "$options": "i"}},
+                {"ip_address": {"$regex": search, "$options": "i"}}
+            ]
+        
+        if startDate:
+            if "timestamp" not in query:
+                query["timestamp"] = {}
+            query["timestamp"]["$gte"] = startDate
+        
+        if endDate:
+            if "timestamp" not in query:
+                query["timestamp"] = {}
+            query["timestamp"]["$lte"] = endDate
+        
+        # Get logs
+        logs = await db.security_logs.find(query, {"_id": 0}).sort("timestamp", -1).limit(500).to_list(500)
+        
+        # Get stats
+        total_attempts = await db.security_logs.count_documents({})
+        successful_logins = await db.security_logs.count_documents({"event_type": "login", "success": True})
+        failed_logins = await db.security_logs.count_documents({"event_type": "login", "success": False})
+        new_devices = await db.security_logs.count_documents({"is_new_device": True})
+        
+        return {
+            "success": True,
+            "logs": logs,
+            "stats": {
+                "totalAttempts": total_attempts,
+                "successfulLogins": successful_logins,
+                "failedLogins": failed_logins,
+                "newDevices": new_devices
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting security logs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/security-logs/export")
+async def export_security_logs(
+    event_type: str = "all",
+    success: str = "all",
+    startDate: str = "",
+    endDate: str = "",
+    search: str = ""
+):
+    """Export security logs as CSV"""
+    try:
+        import csv
+        import io
+        from fastapi.responses import StreamingResponse
+        
+        # Build query filter (same as above)
+        query = {}
+        if event_type != "all":
+            query["event_type"] = event_type
+        if success == "success":
+            query["success"] = True
+        elif success == "failed":
+            query["success"] = False
+        if search:
+            query["$or"] = [
+                {"email": {"$regex": search, "$options": "i"}},
+                {"ip_address": {"$regex": search, "$options": "i"}}
+            ]
+        if startDate:
+            if "timestamp" not in query:
+                query["timestamp"] = {}
+            query["timestamp"]["$gte"] = startDate
+        if endDate:
+            if "timestamp" not in query:
+                query["timestamp"] = {}
+            query["timestamp"]["$lte"] = endDate
+        
+        # Get logs
+        logs = await db.security_logs.find(query, {"_id": 0}).sort("timestamp", -1).to_list(1000)
+        
+        # Create CSV
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(["Timestamp", "Event Type", "Email", "Success", "IP Address", "Country", "City", "Device Type", "Browser", "OS", "New Device", "Failure Reason"])
+        
+        for log in logs:
+            writer.writerow([
+                log.get("timestamp", ""),
+                log.get("event_type", ""),
+                log.get("email", ""),
+                "Yes" if log.get("success") else "No",
+                log.get("ip_address", ""),
+                log.get("country", ""),
+                log.get("city", ""),
+                log.get("device_type", ""),
+                log.get("browser", ""),
+                log.get("os", ""),
+                "Yes" if log.get("is_new_device") else "No",
+                log.get("failure_reason", "")
+            ])
+        
+        output.seek(0)
+        return StreamingResponse(
+            iter([output.getvalue()]),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename=security_logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+        )
+    except Exception as e:
+        logger.error(f"Error exporting security logs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # Include the router in the main app (after all endpoints are defined)
 app.include_router(api_router)
