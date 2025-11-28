@@ -135,7 +135,7 @@ function App() {
             <Route path="/order-preview" element={<OrderPreview />} />
             <Route path="/preview-order" element={<PreviewOrder />} />
             <Route path="/trade/:tradeId" element={<TradePage />} />
-            <Route path="/p2p" element={<P2PTrading />} />
+            <Route path="/p2p" element={<P2PMarketplace />} />
             <Route path="/p2p-marketplace" element={<P2PMarketplace />} />
             <Route path="/disputes/:disputeId" element={<DisputeCentre />} />
             <Route path="/trading" element={<SpotTrading />} />
