@@ -334,6 +334,13 @@ class NOWPaymentsService:
         Verify IPN webhook signature for security
         CRITICAL: Always validate webhooks to prevent fake deposits
         
+        NOWPayments IPN Signature Verification Process:
+        1. Decode JSON body
+        2. Sort JSON keys alphabetically
+        3. Re-encode to JSON string (without escaped slashes)
+        4. Calculate HMAC SHA512 with IPN secret
+        5. Compare with received signature
+        
         Args:
             request_data: Raw request body bytes
             signature: Signature from x-nowpayments-sig header
@@ -349,44 +356,38 @@ class NOWPaymentsService:
             # Debug logging for signature troubleshooting
             logger.info(f"🔍 IPN Secret (first 10 chars): {self.ipn_secret[:10]}...")
             logger.info(f"🔍 Request body length: {len(request_data)} bytes")
-            logger.info(f"🔍 Request body (first 200 chars): {request_data[:200]}")
+            logger.info(f"🔍 Request body: {request_data.decode('utf-8')}")
             logger.info(f"🔍 Received signature: {signature}")
             
-            # Calculate HMAC SHA512 signature
-            # Try with the raw bytes first
+            # Step 1: Decode JSON body
+            import json
+            json_data = json.loads(request_data.decode('utf-8'))
+            
+            # Step 2: Sort JSON keys alphabetically (CRITICAL for NOWPayments)
+            sorted_json = json.dumps(json_data, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+            logger.info(f"🔍 Sorted JSON: {sorted_json}")
+            
+            # Step 3: Calculate HMAC SHA512 signature with sorted JSON
             calculated_sig = hmac.new(
                 self.ipn_secret.encode('utf-8'),
-                request_data,
+                sorted_json.encode('utf-8'),
                 hashlib.sha512
             ).hexdigest()
-            
-            # Alternative: Try with sorted JSON (some APIs require this)
-            try:
-                import json
-                json_data = json.loads(request_data.decode('utf-8'))
-                sorted_json = json.dumps(json_data, sort_keys=True, separators=(',', ':'))
-                calculated_sig_sorted = hmac.new(
-                    self.ipn_secret.encode('utf-8'),
-                    sorted_json.encode('utf-8'),
-                    hashlib.sha512
-                ).hexdigest()
-                logger.info(f"🔍 Calculated signature (sorted JSON): {calculated_sig_sorted}")
-            except:
-                pass
             
             logger.info(f"🔍 Calculated signature: {calculated_sig}")
             logger.info(f"🔍 Signatures match: {calculated_sig == signature}")
             
-            # Constant-time comparison to prevent timing attacks
+            # Step 4: Constant-time comparison to prevent timing attacks
             is_valid = hmac.compare_digest(calculated_sig, signature)
             
             if is_valid:
                 logger.info("✅ IPN signature validated successfully")
             else:
                 logger.warning("⚠️ IPN signature validation FAILED - possible fake callback")
-                # Log detailed comparison for debugging
                 logger.warning(f"⚠️ Expected: {calculated_sig}")
                 logger.warning(f"⚠️ Received: {signature}")
+                logger.warning(f"⚠️ JSON Data: {json_data}")
+                logger.warning(f"⚠️ Sorted JSON: {sorted_json}")
             
             return is_valid
             
