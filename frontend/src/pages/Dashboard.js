@@ -404,23 +404,23 @@ export default function Dashboard() {
               onClick={() => navigate('/wallet')}
               style={{
                 flex: '1 1 calc(50% - 0.25rem)',
-                minWidth: '90px',
+                minWidth: '80px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.25rem',
-                padding: '0.375rem 0.75rem',
+                padding: '0.25rem 0.625rem',
                 background: 'linear-gradient(135deg, #00F0FF, #00B8E6)',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '0.8125rem',
+                borderRadius: '6px',
+                fontSize: '0.75rem',
                 fontWeight: '600',
                 color: '#000000',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 16px rgba(0, 240, 255, 0.3)',
                 whiteSpace: 'nowrap',
-                height: '29px'
+                height: '22px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -431,30 +431,30 @@ export default function Dashboard() {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 240, 255, 0.3)';
               }}
             >
-              <ArrowDownLeft size={14} />
+              <ArrowDownLeft size={12} />
               Deposit
             </button>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
                 flex: '1 1 calc(50% - 0.25rem)',
-                minWidth: '90px',
+                minWidth: '80px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.25rem',
-                padding: '0.375rem 0.75rem',
+                padding: '0.25rem 0.625rem',
                 background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '0.8125rem',
+                borderRadius: '6px',
+                fontSize: '0.75rem',
                 fontWeight: '600',
                 color: '#FFFFFF',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 16px rgba(168, 85, 247, 0.3)',
                 whiteSpace: 'nowrap',
-                height: '29px'
+                height: '22px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -465,7 +465,7 @@ export default function Dashboard() {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.3)';
               }}
             >
-              <ArrowUpRight size={14} />
+              <ArrowUpRight size={12} />
               Withdraw
             </button>
           </div>
