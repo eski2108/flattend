@@ -58,7 +58,23 @@ export default function Layout({ children }) {
           <div className="mobile-logo" onClick={() => navigate('/dashboard')}>
             <Logo size={32} showText={false} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          
+          {/* Neon gradient line in header center */}
+          <div style={{
+            position: 'absolute',
+            left: '120px',
+            right: '120px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.4), rgba(56, 189, 248, 0.6), rgba(0, 217, 255, 0.4), transparent)',
+            borderRadius: '2px',
+            boxShadow: '0 0 8px rgba(0, 217, 255, 0.3)',
+            animation: 'headerGlow 3s ease-in-out infinite',
+            zIndex: 0
+          }} />
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
             <NotificationBell />
             <button
               className="mobile-menu-btn"
@@ -69,6 +85,17 @@ export default function Layout({ children }) {
             </button>
           </div>
         </div>
+        
+        <style>{`
+          @keyframes headerGlow {
+            0%, 100% {
+              opacity: 0.6;
+            }
+            50% {
+              opacity: 1;
+            }
+          }
+        `}</style>
       </header>
 
       {/* Mobile Menu Overlay */}
