@@ -57,9 +57,32 @@ async def execute_express_buy_with_wallet(db, wallet_service, user_id: str, cryp
             metadata={"user_id": user_id}
         )
         
-        logger.info(f"✅ Express Buy: {user_id} bought {crypto_amount} {crypto_currency} for {total_cost} {fiat_currency}")
+        # Save express buy transaction with complete fee information for audit trail
+        await db.express_buy_transactions.insert_one({
+            "transaction_id": order_id,
+            "user_id": user_id,
+            "crypto_currency": crypto_currency,
+            "crypto_amount": crypto_amount,
+            "fiat_currency": fiat_currency,
+            "fiat_amount": fiat_amount,
+            "fee_amount": fee_amount,
+            "fee_currency": fiat_currency,
+            "fee_percent": fee_percent,
+            "total_cost": total_cost,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
         
-        return {"success": True, "order_id": order_id, "crypto_amount": crypto_amount, "total_cost": total_cost}
+        logger.info(f"✅ Express Buy: {user_id} bought {crypto_amount} {crypto_currency} for {total_cost} {fiat_currency} (Fee: {fee_amount} {fiat_currency})")
+        
+        return {
+            "success": True,
+            "order_id": order_id,
+            "crypto_amount": crypto_amount,
+            "total_cost": total_cost,
+            "fee_amount": fee_amount,
+            "base_cost": base_cost
+        }
     except Exception as e:
         logger.error(f"❌ Express buy error: {str(e)}")
         raise
