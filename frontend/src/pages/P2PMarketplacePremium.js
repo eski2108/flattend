@@ -116,7 +116,7 @@ export default function P2PMarketplacePremium() {
   return (
     <Layout>
       <div className="min-h-screen pb-12" style={{ background: 'linear-gradient(to bottom, #05060B, #050814)' }}>
-        <div className="max-w-[1400px] mx-auto px-6 py-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-8">
           
           {/* Header */}
           <div className="mb-8">
