@@ -1853,7 +1853,7 @@ async def get_p2p_stats():
     """Get P2P marketplace statistics"""
     try:
         # Count active trades
-        active_trades = await db.p2p_trades.count_documents({"status": {"$in": ["pending", "paid"]}})
+        active_trades = await db.p2p_trades.count_documents({"status": {"$in": ["waiting_payment", "paid"]}})
         
         # Get 24h volume
         from datetime import timedelta
@@ -1866,10 +1866,30 @@ async def get_p2p_stats():
         total_volume_24h = volume_24h[0]["total"] if volume_24h else 0
         
         # Count unique users
-        total_users = await db.user_accounts.count_documents({"role": {"$in": ["user", "trader", "admin"]}})
+        total_users = await db.user_accounts.count_documents({})
         
-        # Average completion time
-        avg_completion = "7 min"
+        # Calculate average completion time from completed trades
+        completed_trades = await db.p2p_trades.find({
+            "status": "completed",
+            "paid_at": {"$exists": True},
+            "completed_at": {"$exists": True}
+        }).to_list(100)
+        
+        if completed_trades:
+            total_minutes = 0
+            count = 0
+            for trade in completed_trades:
+                try:
+                    paid_time = datetime.fromisoformat(trade["paid_at"].replace('Z', '+00:00'))
+                    completed_time = datetime.fromisoformat(trade["completed_at"].replace('Z', '+00:00'))
+                    minutes = (completed_time - paid_time).total_seconds() / 60
+                    total_minutes += minutes
+                    count += 1
+                except:
+                    pass
+            avg_completion = f"{int(total_minutes / count)} min" if count > 0 else "N/A"
+        else:
+            avg_completion = "N/A"
         
         return {
             "success": True,
@@ -1891,6 +1911,26 @@ async def get_p2p_stats():
                 "avg_completion": "N/A"
             }
         }
+
+@api_router.get("/p2p/badges")
+async def get_badge_levels():
+    """Get all badge level definitions"""
+    from badge_system import BADGE_LEVELS
+    return {
+        "success": True,
+        "badges": BADGE_LEVELS
+    }
+
+@api_router.get("/p2p/user/{user_id}/badge")
+async def get_user_badge(user_id: str):
+    """Get user's current badge"""
+    from badge_system import BadgeSystem
+    badge_system = BadgeSystem(db)
+    result = await badge_system.get_user_badge(user_id)
+    return {
+        "success": True,
+        "badge": result
+    }
 
 @api_router.get("/p2p/marketplace/filters")
 async def get_marketplace_filters():
