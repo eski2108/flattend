@@ -31,7 +31,7 @@ const OrderDetails = lazy(() => import("@/pages/OrderDetails"));
 const OrderPreview = lazy(() => import("@/pages/OrderPreview"));
 const PreviewOrder = lazy(() => import("@/pages/PreviewOrder"));
 const P2PTrading = lazy(() => import("@/pages/P2PTrading"));
-const P2PMarketplace = lazy(() => import("@/pages/P2PMarketplace"));
+const P2PMarketplace = lazy(() => import("@/pages/P2PMarketplacePremium"));
 const DisputeCentre = lazy(() => import("@/pages/DisputeCentre"));
 const AdminDisputes = lazy(() => import("@/pages/AdminDisputes"));
 const SpotTrading = lazy(() => import("@/pages/SpotTrading"));
