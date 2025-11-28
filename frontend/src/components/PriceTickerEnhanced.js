@@ -80,12 +80,13 @@ export default function PriceTickerEnhanced() {
       <div style={{
         background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
         borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
-        height: '40px',
+        height: '48px',
+        minHeight: '48px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         margin: 0,
-        padding: 0,
+        padding: '0.5rem 0',
         boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
       }}>
         <div className="flex items-center justify-center gap-2">
@@ -100,10 +101,13 @@ export default function PriceTickerEnhanced() {
     <div style={{
       background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
       borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
-      height: '40px',
-      overflow: 'hidden',
+      height: '48px',
+      minHeight: '48px',
+      overflow: 'visible',
       margin: 0,
-      padding: 0,
+      padding: '0.5rem 0',
+      display: 'flex',
+      alignItems: 'center',
       boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
     }}>
       {/* Slow-moving neon gradient line at top */}
