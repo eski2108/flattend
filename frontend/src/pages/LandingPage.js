@@ -280,7 +280,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/marketplace');
+                navigate('/p2p-marketplace');
               }}
               data-testid="landing-buy-btn"
               style={{
@@ -324,7 +324,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/marketplace');
+                navigate('/p2p-marketplace');
               }}
               data-testid="landing-sell-btn"
               style={{
@@ -530,7 +530,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/marketplace');
+                navigate('/p2p-marketplace');
               }} 
               data-testid="feature-instant"
               style={{
@@ -667,7 +667,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/marketplace');
+                navigate('/p2p-marketplace');
               }} 
               data-testid="step-2"
               style={{
@@ -686,7 +686,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/marketplace');
+                navigate('/p2p-marketplace');
               }} 
               data-testid="step-3"
               style={{

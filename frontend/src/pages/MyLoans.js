@@ -215,7 +215,7 @@ export default function MyLoans() {
                 <AlertCircle size={48} className="empty-icon" />
                 <h3>No Borrowing Activity</h3>
                 <p>You haven't borrowed any loans yet</p>
-                <Button onClick={() => navigate('/marketplace')} data-testid="browse-marketplace-btn">Browse Marketplace</Button>
+                <Button onClick={() => navigate('/p2p-marketplace')} data-testid="browse-marketplace-btn">Browse Marketplace</Button>
               </Card>
             )}
           </TabsContent>

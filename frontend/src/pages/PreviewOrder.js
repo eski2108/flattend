@@ -39,7 +39,7 @@ export default function PreviewOrder() {
     
     if (!offer) {
       toast.error('No offer selected');
-      navigate('/marketplace');
+      navigate('/p2p-marketplace');
       return;
     }
     
@@ -180,7 +180,7 @@ export default function PreviewOrder() {
       <Layout>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
           <p style={{ color: '#888', fontSize: '18px' }}>No offer selected</p>
-          <Button onClick={() => navigate('/marketplace')}>Back to Marketplace</Button>
+          <Button onClick={() => navigate('/p2p-marketplace')}>Back to Marketplace</Button>
         </div>
       </Layout>
     );
