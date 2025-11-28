@@ -234,12 +234,12 @@ export default function WalletPagePremium() {
   const sendOTP = async () => {
     setSendingOTP(true);
     try {
-      const res = await axios.post(`${API}/api/otp/send`, {
+      const res = await axios.post(`${API}/api/auth/send-otp`, {
         user_id: user.user_id,
         action: 'withdrawal'
       });
       if (res.data.success) {
-        toast.success('OTP sent to your phone');
+        toast.success('OTP sent to your email');
         setShowOTPInput(true);
         setOtpCountdown(300); // 5 minutes
       } else {
@@ -260,7 +260,7 @@ export default function WalletPagePremium() {
     }
     
     try {
-      const res = await axios.post(`${API}/api/otp/verify`, {
+      const res = await axios.post(`${API}/api/auth/verify-otp`, {
         user_id: user.user_id,
         otp_code: otpCode,
         action: 'withdrawal'
