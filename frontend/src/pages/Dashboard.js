@@ -408,55 +408,58 @@ export default function Dashboard() {
           className="total-balance-card-premium animated-card" 
           data-testid="total-balance"
           style={{
-            background: 'rgba(10, 25, 40, 0.6)',
+            background: 'rgba(5, 15, 30, 0.95)',
             border: '2px solid #00D9FF',
-            borderRadius: '16px',
-            padding: '20px',
-            marginBottom: '1rem',
+            borderRadius: '20px',
+            padding: '24px 20px',
+            marginBottom: '16px',
             marginTop: '0',
-            boxShadow: '0 0 40px rgba(0, 217, 255, 0.2)',
+            boxShadow: '0 0 30px rgba(0, 217, 255, 0.25)',
             position: 'relative'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-            <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+            <div style={{ flex: 1 }}>
               <p style={{ 
-                color: 'rgba(255,255,255,0.5)', 
-                fontSize: '11px', 
+                color: 'rgba(255,255,255,0.4)', 
+                fontSize: '10px', 
                 textTransform: 'uppercase', 
-                letterSpacing: '1px',
+                letterSpacing: '1.5px',
                 margin: '0',
-                marginBottom: '8px',
-                fontWeight: '400'
+                marginBottom: '12px',
+                fontWeight: '500',
+                fontFamily: 'Inter, sans-serif'
               }}>
                 TOTAL PORTFOLIO VALUE
               </p>
               <p style={{ 
-                fontSize: '2.5rem', 
+                fontSize: '3rem', 
                 fontWeight: '700', 
                 color: '#00D9FF', 
-                textShadow: '0 0 20px rgba(0, 217, 255, 0.6)',
+                textShadow: '0 0 30px rgba(0, 217, 255, 0.8)',
                 margin: '0',
                 lineHeight: '1',
-                marginBottom: '8px'
+                marginBottom: '10px',
+                fontFamily: 'Inter, sans-serif'
               }}>
                 ${getTotalBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
               <p style={{ 
                 color: '#10B981', 
-                fontSize: '14px', 
+                fontSize: '13px', 
                 fontWeight: '600', 
-                margin: '0'
+                margin: '0',
+                fontFamily: 'Inter, sans-serif'
               }}>
                 +0.00% (24h)
               </p>
             </div>
-            <div>
-              <WalletIcon size={60} style={{ color: '#00D9FF', opacity: 0.8 }} />
+            <div style={{ marginTop: '4px' }}>
+              <WalletIcon size={56} style={{ color: '#00D9FF', opacity: 0.7, strokeWidth: 1.5 }} />
             </div>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
@@ -464,28 +467,29 @@ export default function Dashboard() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                padding: '16px',
+                gap: '10px',
+                padding: '18px',
                 background: '#00D9FF',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
+                borderRadius: '14px',
+                fontSize: '15px',
                 fontWeight: '600',
                 color: '#000000',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 16px rgba(0, 217, 255, 0.4)'
+                boxShadow: '0 4px 20px rgba(0, 217, 255, 0.4)',
+                fontFamily: 'Inter, sans-serif'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0, 217, 255, 0.6)';
+                e.currentTarget.style.boxShadow = '0 6px 28px rgba(0, 217, 255, 0.6)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 217, 255, 0.4)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 217, 255, 0.4)';
               }}
             >
-              <ArrowDownLeft size={20} />
+              <ArrowDownLeft size={18} strokeWidth={2.5} />
               Deposit
             </button>
             <button 
@@ -495,28 +499,29 @@ export default function Dashboard() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                padding: '16px',
+                gap: '10px',
+                padding: '18px',
                 background: '#A855F7',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
+                borderRadius: '14px',
+                fontSize: '15px',
                 fontWeight: '600',
                 color: '#FFFFFF',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 16px rgba(168, 85, 247, 0.4)'
+                boxShadow: '0 4px 20px rgba(168, 85, 247, 0.4)',
+                fontFamily: 'Inter, sans-serif'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(168, 85, 247, 0.6)';
+                e.currentTarget.style.boxShadow = '0 6px 28px rgba(168, 85, 247, 0.6)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.4)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(168, 85, 247, 0.4)';
               }}
             >
-              <ArrowUpRight size={20} />
+              <ArrowUpRight size={18} strokeWidth={2.5} />
               Withdraw
             </button>
           </div>
