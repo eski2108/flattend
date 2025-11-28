@@ -191,7 +191,7 @@ export default function WalletPagePremium() {
         setChange24h((Math.random() * 10 - 5));
       }
       
-      const txRes = await axios.get(`${API}/api/wallet/transactions/${userId}`);
+      const txRes = await axios.get(`${API}/api/wallets/transactions/${userId}`);
       if (txRes.data.success) {
         setTransactions(txRes.data.transactions || []);
       }
