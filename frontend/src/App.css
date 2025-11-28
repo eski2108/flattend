@@ -124,15 +124,21 @@ body {
   font-size: 15px;
   font-weight: 400;
   
-  /* CRITICAL: Prevent horizontal overflow on mobile */
-  overflow-x: hidden;
+  /* CRITICAL: Prevent horizontal overflow AND hide off-screen content */
+  overflow-x: hidden !important;
   max-width: 100vw;
   line-height: 1.6;
+  position: relative;
   
   /* Force color profile for consistent rendering */
   -webkit-color-adjust: exact;
   color-adjust: exact;
   print-color-adjust: exact;
+}
+
+html {
+  overflow-x: hidden !important;
+  max-width: 100vw;
 }
 
 h1, h2, h3, h4, h5, h6 {
