@@ -33,7 +33,7 @@ export default function SavingsPage() {
       const user = JSON.parse(userData);
       const userId = user.user_id;
 
-      const response = await axios.get(`${API}/savings/balances/${userId}`);
+      const response = await axios.get(`${API}/api/savings/balances/${userId}`);
       if (response.data.success) {
         setSavingsBalances(response.data.balances);
         setTotalValue(response.data.total_value_usd);
