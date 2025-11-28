@@ -4,7 +4,7 @@ import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
 import { Zap, LayoutDashboard, ShoppingBag, TrendingUp, TrendingDown, FileText, DollarSign, CreditCard, LogOut, Menu, X, Gift, MessageCircle, BarChart3, PiggyBank, PieChart, Target } from 'lucide-react';
 import Logo from '@/components/Logo';
-import PriceTicker from '@/components/PriceTicker';
+import PriceTickerEnhanced from '@/components/PriceTickerEnhanced';
 import ExpressBuyModal from '@/components/ExpressBuyModal';
 import NotificationBell from '@/components/NotificationBell';
 import PromoBanner from '@/components/PromoBanner';
