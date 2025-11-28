@@ -408,106 +408,115 @@ export default function Dashboard() {
           className="total-balance-card-premium animated-card" 
           data-testid="total-balance"
           style={{
-            background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
-            border: '2px solid rgba(0, 217, 255, 0.4)',
-            borderRadius: '8px',
-            padding: '12px',
-            marginBottom: '0.5rem',
-            marginTop: '4px',
-            boxShadow: '0 0 40px rgba(0, 217, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.3)',
-            position: 'relative',
-            height: 'auto'
+            background: 'rgba(10, 25, 40, 0.6)',
+            border: '2px solid #00D9FF',
+            borderRadius: '16px',
+            padding: '20px',
+            marginBottom: '1rem',
+            marginTop: '0',
+            boxShadow: '0 0 40px rgba(0, 217, 255, 0.2)',
+            position: 'relative'
           }}
         >
-          <div className="balance-content-premium">
-            <div className="balance-main">
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.5rem', textTransform: 'uppercase', margin: '0', lineHeight: '1', marginBottom: '2px' }}>Total Portfolio Value</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+            <div>
               <p style={{ 
-                fontSize: '1.125rem', 
-                fontWeight: '900', 
+                color: 'rgba(255,255,255,0.5)', 
+                fontSize: '11px', 
+                textTransform: 'uppercase', 
+                letterSpacing: '1px',
+                margin: '0',
+                marginBottom: '8px',
+                fontWeight: '400'
+              }}>
+                TOTAL PORTFOLIO VALUE
+              </p>
+              <p style={{ 
+                fontSize: '2.5rem', 
+                fontWeight: '700', 
                 color: '#00D9FF', 
-                textShadow: '0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4)',
+                textShadow: '0 0 20px rgba(0, 217, 255, 0.6)',
                 margin: '0',
                 lineHeight: '1',
-                marginBottom: '2px'
+                marginBottom: '8px'
               }}>
                 ${getTotalBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
-              <p style={{ color: '#10B981', fontSize: '0.5rem', fontWeight: '600', margin: '0', lineHeight: '1' }}>+0.00% (24h)</p>
+              <p style={{ 
+                color: '#10B981', 
+                fontSize: '14px', 
+                fontWeight: '600', 
+                margin: '0'
+              }}>
+                +0.00% (24h)
+              </p>
             </div>
-            <div className="balance-icon-premium" style={{ marginTop: '-6px' }}>
-              <WalletIcon size={15} className="wallet-icon-glow" />
+            <div>
+              <WalletIcon size={60} style={{ color: '#00D9FF', opacity: 0.8 }} />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '8px', paddingTop: '12px', paddingBottom: '12px', flexWrap: 'wrap' }}>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
-                flex: '1 1 calc(50% - 3px)',
-                minWidth: '60px',
+                width: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '3px',
-                padding: '2px 8px',
-                background: 'linear-gradient(135deg, #00F0FF, #00B8E6)',
+                gap: '8px',
+                padding: '16px',
+                background: '#00D9FF',
                 border: 'none',
-                borderRadius: '4px',
-                fontSize: '0.625rem',
+                borderRadius: '12px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: '#000000',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 16px rgba(0, 240, 255, 0.3)',
-                whiteSpace: 'nowrap',
-                height: '10px',
-                lineHeight: '1'
+                boxShadow: '0 4px 16px rgba(0, 217, 255, 0.4)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0, 240, 255, 0.5)';
+                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0, 217, 255, 0.6)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 240, 255, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 217, 255, 0.4)';
               }}
             >
-              <ArrowDownLeft size={8} />
+              <ArrowDownLeft size={20} />
               Deposit
             </button>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
-                flex: '1 1 calc(50% - 3px)',
-                minWidth: '60px',
+                width: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '3px',
-                padding: '2px 8px',
-                background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
+                gap: '8px',
+                padding: '16px',
+                background: '#A855F7',
                 border: 'none',
-                borderRadius: '4px',
-                fontSize: '0.625rem',
+                borderRadius: '12px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: '#FFFFFF',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 16px rgba(168, 85, 247, 0.3)',
-                whiteSpace: 'nowrap',
-                height: '10px',
-                lineHeight: '1'
+                boxShadow: '0 4px 16px rgba(168, 85, 247, 0.4)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(168, 85, 247, 0.5)';
+                e.currentTarget.style.boxShadow = '0 6px 24px rgba(168, 85, 247, 0.6)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(168, 85, 247, 0.4)';
               }}
             >
-              <ArrowUpRight size={8} />
+              <ArrowUpRight size={20} />
               Withdraw
             </button>
           </div>
