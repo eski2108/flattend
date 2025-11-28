@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { ArrowDownUp, TrendingUp, Info, RefreshCw } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://finflowfix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://coinhubx-ui-refresh.preview.emergentagent.com';
 
 // Fiat currencies remain static (managed separately)
 const FIATS = [

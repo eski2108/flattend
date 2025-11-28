@@ -6,7 +6,7 @@ Check internal balances collection directly
 import requests
 import json
 
-BACKEND_URL = "https://finflowfix.preview.emergentagent.com"
+BACKEND_URL = "https://coinhubx-ui-refresh.preview.emergentagent.com"
 
 def check_collections():
     print("=== CHECKING INTERNAL BALANCE COLLECTIONS ===")

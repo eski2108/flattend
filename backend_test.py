@@ -34,7 +34,7 @@ Tests all critical P2P trading platform backend endpoints as requested in review
 - Admin can view and withdraw earnings
 - Trade flow complete with escrow
 
-**Backend URL:** https://finflowfix.preview.emergentagent.com/api
+**Backend URL:** https://coinhubx-ui-refresh.preview.emergentagent.com/api
 """
 
 import requests
@@ -44,7 +44,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://finflowfix.preview.emergentagent.com/api"
+BASE_URL = "https://coinhubx-ui-refresh.preview.emergentagent.com/api"
 
 # Test Users for comprehensive testing
 TEST_USER = {

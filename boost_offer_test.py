@@ -21,7 +21,7 @@ import sys
 from datetime import datetime, timezone
 
 # Configuration
-BASE_URL = "https://finflowfix.preview.emergentagent.com/api"
+BASE_URL = "https://coinhubx-ui-refresh.preview.emergentagent.com/api"
 
 class BoostOfferTester:
     def __init__(self):
