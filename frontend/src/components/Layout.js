@@ -110,128 +110,124 @@ export default function Layout({ children }) {
         `}</style>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      <div 
-        className={`mobile-menu-overlay ${isMobileMenuOpen ? 'active' : ''}`} 
-        onClick={() => setIsMobileMenuOpen(false)} 
-      />
+      {/* Mobile Menu Overlay - only show on mobile when menu is open */}
+      {isMobile && isMobileMenuOpen && (
+        <div 
+          className="mobile-menu-overlay active" 
+          onClick={() => setIsMobileMenuOpen(false)} 
+        />
+      )}
 
-      {/* Sidebar */}
-      <aside 
-        className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} 
-        data-testid="sidebar"
-        style={{
-          // Force hide on mobile when not open
-          ...(typeof window !== 'undefined' && window.innerWidth <= 768 && !isMobileMenuOpen ? {
-            display: 'none',
-            visibility: 'hidden',
-            transform: 'translateX(-100%)'
-          } : {})
-        }}
-      >
-        <div className="sidebar-header">
-          <div className="sidebar-logo" data-testid="sidebar-logo">
-            <Logo size={36} showText={true} />
+      {/* Sidebar - conditionally render based on device */}
+      {(!isMobile || isMobileMenuOpen) && (
+        <aside 
+          className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} 
+          data-testid="sidebar"
+        >
+          <div className="sidebar-header">
+            <div className="sidebar-logo" data-testid="sidebar-logo">
+              <Logo size={36} showText={true} />
+            </div>
           </div>
-        </div>
 
-        <nav className="sidebar-nav">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            
-            return (
-              <button
-                key={item.path}
-                onClick={() => handleNavClick(item.path)}
-                className={`nav-item ${item.highlight ? 'nav-item-highlight' : ''} ${isActive ? 'active' : ''}`}
-                data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                style={{
-                  background: item.highlight && isActive
-                    ? 'linear-gradient(135deg, #16A34A, #15803D)' 
-                    : item.highlight 
-                    ? 'linear-gradient(135deg, #22C55E, #16A34A)'
-                    : undefined,
-                  color: item.highlight ? '#fff' : undefined,
-                  fontWeight: item.highlight ? '700' : undefined
-                }}
-              >
-                <Icon size={20} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+          <nav className="sidebar-nav">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => handleNavClick(item.path)}
+                  className={`nav-item ${item.highlight ? 'nav-item-highlight' : ''} ${isActive ? 'active' : ''}`}
+                  data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                  style={{
+                    background: item.highlight && isActive
+                      ? 'linear-gradient(135deg, #16A34A, #15803D)' 
+                      : item.highlight 
+                      ? 'linear-gradient(135deg, #22C55E, #16A34A)'
+                      : undefined,
+                    color: item.highlight ? '#fff' : undefined,
+                    fontWeight: item.highlight ? '700' : undefined
+                  }}
+                >
+                  <Icon size={20} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
 
-        <div className="sidebar-footer" style={{ 
-          marginTop: 'auto', 
-          padding: '1rem',
-          borderTop: '1px solid rgba(0, 240, 255, 0.2)'
-        }}>
-          <button
-            onClick={handleSupportClick}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem',
-              background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
-              border: 'none',
-              borderRadius: '10px',
-              fontSize: '0.9375rem',
-              fontWeight: '600',
-              color: '#000',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              marginBottom: '0.75rem'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 240, 255, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <MessageCircle size={18} />
-            <span>Support / Chat</span>
-          </button>
-          <button
-            onClick={handleDisconnect}
-            data-testid="disconnect-btn"
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem',
-              background: 'linear-gradient(135deg, #EF4444, #DC2626)',
-              border: 'none',
-              borderRadius: '10px',
-              fontSize: '0.9375rem',
-              fontWeight: '600',
-              color: '#FFFFFF',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(239, 68, 68, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <LogOut size={18} />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+          <div className="sidebar-footer" style={{ 
+            marginTop: 'auto', 
+            padding: '1rem',
+            borderTop: '1px solid rgba(0, 240, 255, 0.2)'
+          }}>
+            <button
+              onClick={handleSupportClick}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '0.9375rem',
+                fontWeight: '600',
+                color: '#000',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                marginBottom: '0.75rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 240, 255, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <MessageCircle size={18} />
+              <span>Support / Chat</span>
+            </button>
+            <button
+              onClick={handleDisconnect}
+              data-testid="disconnect-btn"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem',
+                background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '0.9375rem',
+                fontWeight: '600',
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(239, 68, 68, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
