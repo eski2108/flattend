@@ -76,7 +76,7 @@ export default function P2PTradeDetailDemo() {
 
   const confirmRelease = async () => {
     try {
-      const response = await axios.post(`${API}/api/p2p/release-crypto`, {
+      const response = await axios.post(`${API}/p2p/release-crypto`, {
         trade_id: tradeId,
         seller_id: user.user_id,
         otp_code: otpCode
