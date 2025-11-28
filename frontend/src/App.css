@@ -950,11 +950,11 @@ html {
 /* Mobile Header */
 .mobile-header {
   display: none;
-  width: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 200;
+  right: 0;
+  z-index: 1001;
   background: rgba(10, 10, 15, 0.95);
   backdrop-filter: blur(30px);
   border-bottom: 1px solid var(--border-color);
