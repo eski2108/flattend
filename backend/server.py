@@ -5888,6 +5888,16 @@ async def login_user(login_req: LoginRequest, request: Request):
     # Clear rate limit on successful login
     rate_limiter.clear_rate_limit(client_ip, "login")
     
+    # Log successful login attempt
+    security_info = await security_logger.log_login_attempt(
+        user_id=user["user_id"],
+        email=login_req.email,
+        success=True,
+        ip_address=client_ip,
+        user_agent=user_agent,
+        device_fingerprint=device_fingerprint
+    )
+    
     # Generate JWT token
     token_data = {
         "user_id": user["user_id"],
@@ -5902,54 +5912,26 @@ async def login_user(login_req: LoginRequest, request: Request):
         {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
     )
     
-    # Send login security alert and create notification
-    try:
-        # Extract login details
-        from fastapi import Request as FastAPIRequest
-        import user_agents
-        
-        # Get IP address (try multiple headers for proxies)
-        ip_address = request.client.host if hasattr(request, 'client') else "Unknown"
-        
-        # Parse user agent
-        user_agent_string = request.headers.get('user-agent', 'Unknown') if hasattr(request, 'headers') else "Unknown"
-        ua = user_agents.parse(user_agent_string)
-        device_info = f"{ua.browser.family} on {ua.os.family}"
-        
-        # Format timestamp
-        login_time = datetime.now(timezone.utc)
-        timestamp_str = login_time.strftime("%B %d, %Y at %H:%M UTC")
-        
-        # Create in-app notification
-        await create_notification(
-            db,
-            user_id=user["user_id"],
-            notification_type='login_alert',
-            title='New login to your account',
-            message=f'Login from {device_info} at {ip_address}',
-            metadata={
-                'ip_address': ip_address,
-                'device_info': device_info,
-                'timestamp': login_time.isoformat()
-            }
-        )
-        
-        # Send email alert if user has it enabled
-        user_settings = user.get('security', {})
-        login_email_alerts_enabled = user_settings.get('login_email_alerts_enabled', True)
-        
-        if login_email_alerts_enabled:
-            await email_service.send_login_security_alert(
-                user_email=user["email"],
-                user_name=user["full_name"],
-                timestamp=timestamp_str,
-                ip_address=ip_address,
-                device_info=device_info
+    # Send login security alert and create notification (only if new device)
+    if security_info.get("is_new_device"):
+        try:
+            # Create in-app notification
+            await create_notification(
+                db,
+                user_id=user["user_id"],
+                notification_type='login_alert',
+                title='New device detected',
+                message=f'Login from new device in {security_info.get("location")}',
+                metadata={
+                    'ip_address': client_ip,
+                    'location': security_info.get("location"),
+                    'timestamp': datetime.now(timezone.utc).isoformat()
+                }
             )
-            logger.info(f"Login security alert sent to {user['email']}")
-    except Exception as e:
-        # Don't fail login if notification/email fails
-        logger.error(f"Failed to send login alert: {str(e)}")
+            logger.info(f"New device alert sent for {user['email']}")
+        except Exception as e:
+            # Don't fail login if notification fails
+            logger.error(f"Failed to send new device alert: {str(e)}")
     
     return {
         "success": True,
@@ -5961,7 +5943,11 @@ async def login_user(login_req: LoginRequest, request: Request):
             "wallet_address": user.get("wallet_address"),
             "role": user.get("role", "user")
         },
-        "message": "Login successful"
+        "message": "Login successful",
+        "security": {
+            "is_new_device": security_info.get("is_new_device", False),
+            "location": security_info.get("location", "Unknown")
+        }
     }
 
 @api_router.post("/auth/forgot-password")
