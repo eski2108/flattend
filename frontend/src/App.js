@@ -163,6 +163,9 @@ function App() {
             <Route path="/wallet/settings" element={<WalletSettings />} />
             <Route path="/wallet/deposit" element={<DepositInstructions />} />
             <Route path="/wallet/withdraw" element={<WithdrawalRequest />} />
+            {/* Spec-compliant routes for deposit/withdraw */}
+            <Route path="/deposit/:coin" element={<DepositInstructions />} />
+            <Route path="/withdraw/:coin" element={<WithdrawalRequest />} />
             <Route path="/kyc-verification" element={<KYCVerification />} />
             <Route path="/admin/cms" element={<AdminCMS />} />
             <Route path="/transactions" element={<Transactions />} />
