@@ -55,7 +55,7 @@ export default function P2PTradeDetailDemo() {
 
   const handleMarkPaid = async () => {
     try {
-      const response = await axios.post(`${API}/api/p2p/mark-paid`, {
+      const response = await axios.post(`${API}/p2p/mark-paid`, {
         trade_id: tradeId,
         buyer_id: user.user_id
       });
