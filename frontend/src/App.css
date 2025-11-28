@@ -6558,15 +6558,28 @@ html {
   .dashboard-header-premium {
     flex-direction: column;
     gap: 1rem;
+    padding: 1rem;
   }
 
   .quick-stats-mini {
     width: 100%;
     justify-content: space-around;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .page-title-premium {
-    font-size: 2rem;
+    font-size: 1.75rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .page-subtitle-premium {
+    font-size: 1rem;
+  }
+  
+  .header-content-animated {
+    width: 100%;
   }
 
   .balance-value-premium {
