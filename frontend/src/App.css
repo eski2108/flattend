@@ -3949,45 +3949,35 @@ html {
 
 /* Responsive Styles - MOBILE FIRST */
 @media (max-width: 768px) {
-  /* Force mobile header to show */
   .mobile-header {
-    display: block !important;
+    display: block;
   }
 
-  /* Hide overlay by default */
   .mobile-menu-overlay {
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 99;
+    backdrop-filter: blur(5px);
   }
 
-  /* Show overlay only when menu is open */
-  .mobile-menu-overlay.active {
-    display: block !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 100;
   }
 
-  /* FORCE HIDE sidebar completely on mobile by default */
-  aside.sidebar {
-    display: none !important;
-    transform: translateX(-100%) !important;
-    visibility: hidden !important;
+  .sidebar.mobile-open {
+    transform: translateX(0);
   }
 
-  /* FORCE SHOW sidebar only when mobile menu is open */
-  aside.sidebar.mobile-open {
-    display: flex !important;
-    transform: translateX(0) !important;
-    visibility: visible !important;
-  }
-
-  /* Force main content to take full width */
   .main-content {
-    margin-left: 0 !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    padding-top: 70px !important;
+    margin-left: 0;
+    width: 100%;
+    padding: 16px;
+    padding-top: 70px;
   }
 
   .page-header {
