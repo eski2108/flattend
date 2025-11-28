@@ -215,7 +215,6 @@ export default function Layout({ children }) {
             </button>
           </div>
         </aside>
-      )}
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
