@@ -178,6 +178,7 @@ from referral_abuse_detection import (
     get_ip_referral_stats,
     get_abuse_detection_config
 )
+from otp_service import get_otp_service
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
