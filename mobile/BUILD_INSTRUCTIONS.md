@@ -150,7 +150,7 @@ Once built, you can distribute the APK by:
 
 1. **Backend URL:** The app is configured to connect to:
    ```
-   https://crypto-exchange-159.preview.emergentagent.com/api
+   https://cryptoex-preview-1.preview.emergentagent.com/api
    ```
 
 2. **Permissions:** The app requests:

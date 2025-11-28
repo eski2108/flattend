@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://crypto-exchange-159.preview.emergentagent.com/api"
+BASE_URL = "https://cryptoex-preview-1.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)
