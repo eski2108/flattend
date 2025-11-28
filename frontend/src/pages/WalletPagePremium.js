@@ -193,9 +193,7 @@ export default function WalletPagePremium() {
   };
 
   const handleDepositClick = (asset) => {
-    setSelectedAsset(asset);
-    setShowDepositModal(true);
-    generateDepositAddress(asset.currency);
+    navigate(`/deposit/${asset.symbol.toLowerCase()}`);
   };
 
   const generateDepositAddress = async (currency) => {
