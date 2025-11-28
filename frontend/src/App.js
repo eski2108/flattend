@@ -82,6 +82,10 @@ const EmailVerified = lazy(() => import("@/pages/EmailVerified"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const PublicSellerProfile = lazy(() => import("@/pages/PublicSellerProfile"));
 const Security = lazy(() => import("@/pages/Security"));
+const Verification = lazy(() => import("@/pages/Verification"));
+const AccountUpgrade = lazy(() => import("@/pages/AccountUpgrade"));
+const P2PBoost = lazy(() => import("@/pages/P2PBoost"));
+const PriceAlerts = lazy(() => import("@/pages/PriceAlerts"));
 import ChatWidget from "@/components/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 
