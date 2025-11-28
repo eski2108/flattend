@@ -369,37 +369,37 @@ export default function Dashboard() {
           style={{
             background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
             border: '2px solid rgba(0, 217, 255, 0.4)',
-            borderRadius: '16px',
-            paddingTop: '12px',
-            paddingBottom: '12px',
-            paddingLeft: '1rem',
-            paddingRight: '1rem',
-            marginBottom: '1rem',
-            marginTop: '6px',
+            borderRadius: '14px',
+            paddingTop: '10px',
+            paddingBottom: '10px',
+            paddingLeft: '0.875rem',
+            paddingRight: '0.875rem',
+            marginBottom: '0.875rem',
+            marginTop: '4px',
             boxShadow: '0 0 40px rgba(0, 217, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.3)',
             position: 'relative'
           }}
         >
           <div className="balance-content-premium">
             <div className="balance-main">
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem', textTransform: 'uppercase', marginBottom: '4px' }}>Total Portfolio Value</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '3px' }}>Total Portfolio Value</p>
               <p style={{ 
-                fontSize: '2.5rem', 
+                fontSize: '2rem', 
                 fontWeight: '900', 
                 color: '#00D9FF', 
                 textShadow: '0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4)',
-                marginBottom: '4px',
+                marginBottom: '3px',
                 lineHeight: '1'
               }}>
                 ${getTotalBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
-              <p style={{ color: '#10B981', fontSize: '0.875rem', fontWeight: '600', marginTop: '4px' }}>+0.00% (24h)</p>
+              <p style={{ color: '#10B981', fontSize: '0.75rem', fontWeight: '600', marginTop: '3px' }}>+0.00% (24h)</p>
             </div>
             <div className="balance-icon-premium">
-              <WalletIcon size={54} className="wallet-icon-glow" />
+              <WalletIcon size={43} className="wallet-icon-glow" />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '6px', flexWrap: 'wrap' }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
