@@ -229,7 +229,6 @@ function P2PMarketplace() {
 
   const handleBuyOffer = async (offer) => {
     console.log('🔥 handleBuyOffer called!', offer);
-    toast.info('Processing offer...', { duration: 2000 });
     
     const userData = localStorage.getItem('cryptobank_user');
     const user = userData ? JSON.parse(userData) : null;
