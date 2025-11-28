@@ -73,14 +73,7 @@ from escrow_balance_system import (
     add_funds_to_trader
 )
 from collections import defaultdict
-from badge_system import (
-    Badge,
-    TraderBadges,
-    BADGE_DEFINITIONS,
-    calculate_trader_badges,
-    get_trader_badges,
-    update_trader_stats_for_badges
-)
+# Badge system imported inline where needed
 from wallet_validator import validate_wallet_address
 from password_reset import (
     PasswordResetRequest,
