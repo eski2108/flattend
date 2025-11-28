@@ -200,29 +200,25 @@ export default function Dashboard() {
     <Layout>
       <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
         {/* Account Overview Section */}
-        <div style={{ margin: '0', marginTop: '0px', marginBottom: '12px' }}>
+        <div style={{ padding: '0 1rem', marginBottom: '0.75rem' }}>
           <h2 style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '600',
-            fontSize: '16px',
+            fontSize: 'clamp(15px, 4vw, 16px)',
             color: '#E8EAED',
             letterSpacing: '-0.3px',
             margin: '0',
-            paddingLeft: '16px',
-            lineHeight: '1'
+            marginBottom: '0.25rem'
           }}>
             Account Overview
           </h2>
           <p style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '400',
-            fontSize: '13px',
+            fontSize: 'clamp(12px, 3.5vw, 13px)',
             color: '#9BA0A5',
             letterSpacing: '-0.2px',
-            margin: '0',
-            marginTop: '4px',
-            paddingLeft: '16px',
-            lineHeight: '1'
+            margin: '0'
           }}>
             Open Orders: 0 • Completed Trades: 0
           </p>
@@ -336,50 +332,42 @@ export default function Dashboard() {
           style={{
             background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
             border: '2px solid rgba(0, 217, 255, 0.4)',
-            borderRadius: '18px',
-            padding: '16px',
-            marginTop: '6px',
-            marginBottom: '14px',
-            marginLeft: '0',
-            marginRight: '0',
+            borderRadius: 'clamp(16px, 5vw, 18px)',
+            padding: 'clamp(14px, 4vw, 16px)',
+            margin: '0 0.5rem 1rem 0.5rem',
             boxShadow: '0 0 18px rgba(0, 255, 255, 0.12)',
             position: 'relative'
           }}
         >
           <p style={{ 
             fontFamily: 'Inter, sans-serif',
-            fontSize: '14px', 
+            fontSize: 'clamp(12px, 3.5vw, 14px)', 
             fontWeight: '500',
             color: '#A8B0BC', 
             letterSpacing: '-0.2px',
-            margin: '0',
-            marginBottom: '4px',
-            textTransform: 'uppercase',
-            lineHeight: '1'
+            margin: '0 0 0.25rem 0',
+            textTransform: 'uppercase'
           }}>
             TOTAL PORTFOLIO VALUE
           </p>
           <p style={{ 
             fontFamily: 'Inter, sans-serif',
-            fontSize: '40px', 
+            fontSize: 'clamp(32px, 10vw, 40px)', 
             fontWeight: '700', 
             color: '#27F4FF', 
             letterSpacing: '-1px',
             textShadow: '0 0 20px rgba(39, 244, 255, 0.5)',
-            margin: '0',
-            marginBottom: '6px',
+            margin: '0 0 0.375rem 0',
             lineHeight: '1'
           }}>
             ${getTotalBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
           <p style={{ 
             fontFamily: 'Inter, sans-serif',
-            fontSize: '13px',
+            fontSize: 'clamp(12px, 3.5vw, 13px)',
             fontWeight: '500',
             color: '#00FF8A', 
-            margin: '0',
-            marginBottom: '14px',
-            lineHeight: '1'
+            margin: '0 0 0.875rem 0'
           }}>
             +0.00% (24h)
           </p>
@@ -387,24 +375,23 @@ export default function Dashboard() {
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            gap: '12px', 
-            marginTop: '6px',
-            padding: '0'
+            gap: 'clamp(10px, 3vw, 12px)',
+            marginTop: '0.375rem'
           }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
                 width: '100%',
-                height: '52px',
+                height: 'clamp(48px, 13vw, 52px)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '0.5rem',
                 padding: '0',
                 background: '#00E8FF',
                 border: 'none',
-                borderRadius: '14px',
-                fontSize: '16px',
+                borderRadius: 'clamp(12px, 3.5vw, 14px)',
+                fontSize: 'clamp(15px, 4vw, 16px)',
                 fontWeight: '600',
                 color: '#000000',
                 cursor: 'pointer',
@@ -428,16 +415,16 @@ export default function Dashboard() {
               onClick={() => navigate('/wallet')}
               style={{
                 width: '100%',
-                height: '52px',
+                height: 'clamp(48px, 13vw, 52px)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '0.5rem',
                 padding: '0',
                 background: '#B36CFF',
                 border: 'none',
-                borderRadius: '14px',
-                fontSize: '16px',
+                borderRadius: 'clamp(12px, 3.5vw, 14px)',
+                fontSize: 'clamp(15px, 4vw, 16px)',
                 fontWeight: '600',
                 color: '#FFFFFF',
                 cursor: 'pointer',
