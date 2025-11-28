@@ -28,6 +28,8 @@ export default function OrderPreview() {
   const [validatingWallet, setValidatingWallet] = useState(false);
 
   useEffect(() => {
+    console.log('🔍 OrderPreview loaded. Offer:', offer);
+    
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
       navigate('/login');
@@ -37,11 +39,27 @@ export default function OrderPreview() {
     const user = JSON.parse(userData);
     setCurrentUser(user);
     
-    if (!offer || !offer.min_purchase || !offer.max_purchase || !offer.price_per_unit) {
+    if (!offer) {
+      console.log('❌ No offer found!');
+      toast.error('No offer data received');
+      navigate('/marketplace');
+      return;
+    }
+    
+    console.log('📊 Offer fields:', {
+      min_purchase: offer.min_purchase,
+      max_purchase: offer.max_purchase,
+      price_per_unit: offer.price_per_unit
+    });
+    
+    if (!offer.min_purchase || !offer.max_purchase || !offer.price_per_unit) {
+      console.log('❌ Missing required fields!');
       toast.error('Invalid or incomplete offer data');
       navigate('/marketplace');
       return;
     }
+    
+    console.log('✅ Offer is valid!');
     
     // Set default to mid-range
     const midCrypto = (offer.min_purchase + offer.max_purchase) / 2;
