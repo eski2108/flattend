@@ -78,7 +78,8 @@ export default function Layout({ children }) {
           width: '100%',
           height: '1px',
           backgroundColor: '#00E8F8',
-          opacity: '1'
+          opacity: '0.35',
+          boxShadow: 'none'
         }} />
       </header>
 
