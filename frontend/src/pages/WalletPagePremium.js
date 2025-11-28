@@ -202,16 +202,18 @@ export default function WalletPagePremium() {
     try {
       const res = await axios.post(`${API}/api/nowpayments/create-deposit`, {
         user_id: user.user_id,
-        currency: currency.toLowerCase()
+        amount: 50, // Minimum deposit amount in GBP
+        currency: 'gbp',
+        pay_currency: currency.toLowerCase()
       });
       if (res.data.success) {
-        setDepositAddress(res.data.deposit_address || res.data.address);
+        setDepositAddress(res.data.deposit_address || res.data.address || res.data.pay_address);
       } else {
         toast.error(res.data.message || 'Failed to generate deposit address');
       }
     } catch (error) {
       console.error('Failed to generate deposit address:', error);
-      toast.error('Failed to generate deposit address');
+      toast.error(error.response?.data?.message || 'Failed to generate deposit address');
     }
   };
 
