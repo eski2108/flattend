@@ -3947,7 +3947,15 @@ html {
   }
 
   .mobile-menu-overlay {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mobile-menu-overlay.active {
     display: block;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .sidebar {
