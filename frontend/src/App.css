@@ -4001,62 +4001,6 @@ html {
   }
 }
 
-/* Tablet sizes */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .mobile-header {
-    display: block;
-  }
-
-  .mobile-menu-overlay {
-    display: none;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .mobile-menu-overlay.active {
-    display: block;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .sidebar {
-    display: none;
-    transform: translateX(-100%);
-  }
-
-  .sidebar.mobile-open {
-    display: flex;
-    transform: translateX(0);
-  }
-
-  .main-content {
-    margin-left: 0;
-    width: 100%;
-    max-width: 100%;
-    padding-top: 70px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .positions-grid,
-  .offers-grid,
-  .loans-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
   .hero-content {
     padding-top: 7rem;
