@@ -173,6 +173,7 @@ function App() {
             <Route path="/admin/support" element={<AdminSupport />} />
             <Route path="/admin/earnings" element={<AdminEarnings />} />
             <Route path="/admin/fees" element={<AdminFees />} />
+            <Route path="/admin/security-logs" element={<AdminSecurityLogs />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/faq" element={<FAQ />} />
