@@ -30,20 +30,7 @@
 
 /* Icon Consistency - Removed to avoid breaking existing icons */
 
-/* Button Micro-interactions */
-button, .btn, [class*="button"], [class*="Button"] {
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-button:hover, .btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.25);
-}
-
-button:active, .btn:active {
-  transform: translateY(0);
-}
+/* Button Micro-interactions - Removed to avoid breaking existing buttons */
 
 /* Input Fields */
 input, textarea, select {
