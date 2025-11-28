@@ -3952,7 +3952,6 @@ html {
 @media (max-width: 768px) {
   .mobile-header {
     display: block;
-    height: 60px;
   }
 
   .mobile-menu-overlay {
