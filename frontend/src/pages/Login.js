@@ -85,7 +85,7 @@ export default function Login() {
     try {
       setLoading(true);
       // Get the backend URL without /api, then add the full path
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://finflowfix.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://coinhubx-ui-refresh.preview.emergentagent.com';
       const redirectUrl = encodeURIComponent(`${backendUrl}/api/auth/google/callback`);
       const clientId = '823558232364-e4b48l01o9frh6vbltic2633fn3pgs0o.apps.googleusercontent.com';
       const scope = encodeURIComponent('openid email profile');

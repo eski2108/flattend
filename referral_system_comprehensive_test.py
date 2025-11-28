@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Get backend URL from environment
-BACKEND_URL = "https://finflowfix.preview.emergentagent.com"
+BACKEND_URL = "https://coinhubx-ui-refresh.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 def log_test(message):

@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://finflowfix.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://coinhubx-ui-refresh.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {
