@@ -3960,14 +3960,13 @@ html {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 99;
+    z-index: 999;
     backdrop-filter: blur(5px);
   }
 
   .sidebar {
-    margin-top: 0;
     transform: translateX(-100%);
-    z-index: 100;
+    z-index: 1000;
   }
 
   .sidebar.mobile-open {
@@ -3978,7 +3977,7 @@ html {
     margin-left: 0;
     width: 100%;
     padding: 16px;
-    padding-top: 100px;
+    padding-top: 70px;
   }
 
   .page-header {
