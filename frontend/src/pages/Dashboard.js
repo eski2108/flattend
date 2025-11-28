@@ -370,31 +370,35 @@ export default function Dashboard() {
             background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
             border: '2px solid rgba(0, 217, 255, 0.4)',
             borderRadius: '20px',
-            padding: '2.5rem',
-            marginBottom: '2.5rem',
+            paddingTop: '12px',
+            paddingBottom: '12px',
+            paddingLeft: '1.5rem',
+            paddingRight: '1.5rem',
+            marginBottom: '1.5rem',
+            marginTop: '8px',
             boxShadow: '0 0 40px rgba(0, 217, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.3)',
             position: 'relative'
           }}
         >
           <div className="balance-content-premium">
             <div className="balance-main">
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Total Portfolio Value</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', textTransform: 'uppercase', marginBottom: '6px' }}>Total Portfolio Value</p>
               <p style={{ 
                 fontSize: '3.5rem', 
                 fontWeight: '900', 
                 color: '#00D9FF', 
                 textShadow: '0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4)',
-                marginBottom: '0.5rem'
+                marginBottom: '6px'
               }}>
                 ${getTotalBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
-              <p style={{ color: '#10B981', fontSize: '1rem', fontWeight: '600' }}>+0.00% (24h)</p>
+              <p style={{ color: '#10B981', fontSize: '1rem', fontWeight: '600', marginTop: '6px' }}>+0.00% (24h)</p>
             </div>
             <div className="balance-icon-premium">
               <WalletIcon size={64} className="wallet-icon-glow" />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '12px', flexWrap: 'wrap' }}>
             <button 
               onClick={() => navigate('/wallet')}
               style={{
