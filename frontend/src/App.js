@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import "@/App.css";
 import "@/styles/premium-ui.css";
+import "@/styles/global-design-system.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import { WalletProvider } from "@/contexts/WalletContext";
