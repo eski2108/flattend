@@ -99,20 +99,19 @@ export default function Layout({ children }) {
         `}</style>
       </header>
 
-      {/* Mobile Menu Overlay - only show on mobile when menu is open */}
-      {isMobile && isMobileMenuOpen && (
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
         <div 
-          className="mobile-menu-overlay active" 
+          className="mobile-menu-overlay" 
           onClick={() => setIsMobileMenuOpen(false)} 
         />
       )}
 
-      {/* Sidebar - conditionally render based on device */}
-      {(!isMobile || isMobileMenuOpen) && (
-        <aside 
-          className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} 
-          data-testid="sidebar"
-        >
+      {/* Sidebar */}
+      <aside 
+        className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} 
+        data-testid="sidebar"
+      >
           <div className="sidebar-header">
             <div className="sidebar-logo" data-testid="sidebar-logo">
               <Logo size={36} showText={true} />
