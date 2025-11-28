@@ -72,20 +72,18 @@ export default function Layout({ children }) {
         </div>
         <div style={{
           position: 'absolute',
-          bottom: '0',
-          left: '0',
-          right: '0',
+          bottom: 0,
+          left: 0,
+          right: 0,
           width: '100%',
           height: '1px',
-          backgroundColor: '#00E8F8',
-          opacity: '0.35',
+          backgroundColor: 'rgba(0, 232, 248, 0.35)',
+          margin: 0,
+          padding: 0,
+          border: 'none',
           boxShadow: 'none',
           filter: 'none',
-          textShadow: 'none',
-          border: 'none',
-          outline: 'none',
-          margin: '0',
-          padding: '0'
+          outline: 'none'
         }} />
       </header>
 
