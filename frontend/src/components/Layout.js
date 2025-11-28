@@ -70,22 +70,6 @@ export default function Layout({ children }) {
             </button>
           </div>
         </div>
-        <div style={{
-          position: 'absolute',
-          bottom: '-6px',
-          left: 0,
-          right: 0,
-          width: '100%',
-          height: '1px',
-          backgroundColor: 'rgba(0, 232, 248, 0.15)',
-          margin: 0,
-          padding: 0,
-          border: 'none',
-          boxShadow: 'none',
-          filter: 'none',
-          outline: 'none',
-          backdropFilter: 'none'
-        }} />
       </header>
 
       {/* Mobile Menu Overlay */}
