@@ -3966,18 +3966,22 @@ html {
     pointer-events: auto;
   }
 
+  /* HIDE sidebar completely on mobile by default */
   .sidebar {
+    display: none;
     transform: translateX(-100%);
   }
 
+  /* SHOW sidebar only when mobile menu is open */
   .sidebar.mobile-open {
+    display: flex;
     transform: translateX(0);
   }
 
   .main-content {
-    margin-left: 0;
-    width: 100%;
-    max-width: 100%;
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     padding-top: 70px;
   }
 
