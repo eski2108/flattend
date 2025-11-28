@@ -5094,6 +5094,104 @@ async def verify_phone_otp(request: dict):
             "message": "Invalid or expired code"
         }
 
+# ═══════════════════════════════════════════════════════════════════════════
+# OTP-PROTECTED SENSITIVE ACTIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+@api_router.post("/otp/send")
+async def send_otp_for_action(request: dict):
+    """Send OTP for sensitive action (withdrawal, escrow release, etc.)"""
+    user_id = request.get("user_id")
+    action = request.get("action")  # withdrawal, escrow_release, p2p_release, etc.
+    
+    if not user_id or not action:
+        raise HTTPException(status_code=400, detail="user_id and action are required")
+    
+    try:
+        # Get user's phone number
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        phone_number = user.get("phone")
+        if not phone_number:
+            raise HTTPException(status_code=400, detail="User has no phone number registered")
+        
+        # Send OTP via new OTP service
+        otp_service = get_otp_service(db)
+        result = await otp_service.send_otp(user_id, phone_number, action)
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to send OTP for action: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/otp/verify")
+async def verify_otp_for_action(request: dict):
+    """Verify OTP before allowing sensitive action"""
+    user_id = request.get("user_id")
+    otp_code = request.get("otp_code")
+    action = request.get("action")
+    
+    if not user_id or not otp_code or not action:
+        raise HTTPException(status_code=400, detail="user_id, otp_code, and action are required")
+    
+    try:
+        # Get user's phone number
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        phone_number = user.get("phone")
+        if not phone_number:
+            raise HTTPException(status_code=400, detail="User has no phone number registered")
+        
+        # Verify OTP via new OTP service
+        otp_service = get_otp_service(db)
+        result = await otp_service.verify_otp(user_id, phone_number, otp_code, action)
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to verify OTP: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/otp/resend")
+async def resend_otp_for_action(request: dict):
+    """Resend OTP for action"""
+    user_id = request.get("user_id")
+    action = request.get("action")
+    
+    if not user_id or not action:
+        raise HTTPException(status_code=400, detail="user_id and action are required")
+    
+    try:
+        # Get user's phone number
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        phone_number = user.get("phone")
+        if not phone_number:
+            raise HTTPException(status_code=400, detail="User has no phone number registered")
+        
+        # Resend OTP via new OTP service
+        otp_service = get_otp_service(db)
+        result = await otp_service.resend_otp(user_id, phone_number, action)
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to resend OTP: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/auth/complete-phone-signup")
 async def complete_phone_signup(request: dict):
     """Complete phone-based signup with profile info"""
