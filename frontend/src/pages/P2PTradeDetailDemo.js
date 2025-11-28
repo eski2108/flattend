@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Clock, MessageCircle, Upload, Shield, AlertCircle, CheckCircle } from 'lucide-react';
+import OTPModal from '@/components/OTPModal';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function P2PTradeDetailDemo() {
