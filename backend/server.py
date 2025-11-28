@@ -2930,7 +2930,7 @@ async def create_trade(request: CreateTradeRequest):
 @api_router.get("/p2p/trade/{trade_id}")
 async def get_trade_details(trade_id: str):
     """Get trade details with escrow status"""
-    trade = await db.trades.find_one({"trade_id": trade_id}, {"_id": 0})
+    trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
     if not trade:
         raise HTTPException(status_code=404, detail="Trade not found")
     
