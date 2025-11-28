@@ -2356,98 +2356,24 @@ async def get_all_coins_cms():
         
         # If no coins exist, create default list
         if not coins:
-            default_coins = [
-                {
+            # Generate default coins from SUPPORTED_CRYPTOCURRENCIES
+            default_coins = []
+            for symbol, info in SUPPORTED_CRYPTOCURRENCIES.items():
+                default_coins.append({
                     "coin_id": str(uuid.uuid4()),
-                    "symbol": "BTC",
-                    "name": "Bitcoin",
+                    "symbol": symbol,
+                    "name": info["name"],
                     "enabled": True,
                     "nowpay_wallet_id": None,
                     "supports_p2p": True,
                     "supports_trading": True,
                     "supports_instant_buy": True,
                     "supports_express_buy": True,
-                    "min_trade_amount": 0.0001,
-                    "max_trade_amount": 100.0,
+                    "min_trade_amount": 0.01 if symbol not in ["BTC", "ETH"] else 0.0001,
+                    "max_trade_amount": 100000.0 if symbol in ["USDT", "USDC", "DAI"] else 10000.0,
                     "created_at": datetime.now(timezone.utc).isoformat(),
                     "updated_at": datetime.now(timezone.utc).isoformat()
-                },
-                {
-                    "coin_id": str(uuid.uuid4()),
-                    "symbol": "ETH",
-                    "name": "Ethereum",
-                    "enabled": True,
-                    "nowpay_wallet_id": None,
-                    "supports_p2p": True,
-                    "supports_trading": True,
-                    "supports_instant_buy": True,
-                    "supports_express_buy": True,
-                    "min_trade_amount": 0.001,
-                    "max_trade_amount": 1000.0,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                },
-                {
-                    "coin_id": str(uuid.uuid4()),
-                    "symbol": "USDT",
-                    "name": "Tether",
-                    "enabled": True,
-                    "nowpay_wallet_id": None,
-                    "supports_p2p": True,
-                    "supports_trading": True,
-                    "supports_instant_buy": True,
-                    "supports_express_buy": True,
-                    "min_trade_amount": 1.0,
-                    "max_trade_amount": 100000.0,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                },
-                {
-                    "coin_id": str(uuid.uuid4()),
-                    "symbol": "BNB",
-                    "name": "Binance Coin",
-                    "enabled": True,
-                    "nowpay_wallet_id": None,
-                    "supports_p2p": True,
-                    "supports_trading": True,
-                    "supports_instant_buy": True,
-                    "supports_express_buy": True,
-                    "min_trade_amount": 0.01,
-                    "max_trade_amount": 1000.0,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                },
-                {
-                    "coin_id": str(uuid.uuid4()),
-                    "symbol": "SOL",
-                    "name": "Solana",
-                    "enabled": True,
-                    "nowpay_wallet_id": None,
-                    "supports_p2p": True,
-                    "supports_trading": True,
-                    "supports_instant_buy": True,
-                    "supports_express_buy": True,
-                    "min_trade_amount": 0.1,
-                    "max_trade_amount": 5000.0,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                },
-                {
-                    "coin_id": str(uuid.uuid4()),
-                    "symbol": "LTC",
-                    "name": "Litecoin",
-                    "enabled": True,
-                    "nowpay_wallet_id": None,
-                    "supports_p2p": True,
-                    "supports_trading": True,
-                    "supports_instant_buy": True,
-                    "supports_express_buy": True,
-                    "min_trade_amount": 0.01,
-                    "max_trade_amount": 1000.0,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                }
-            ]
+                })
             await db.supported_coins.insert_many(default_coins)
             coins = default_coins
         
