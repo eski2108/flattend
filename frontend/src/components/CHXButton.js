@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 
 /**
- * CHXButton - Reusable premium button component for CoinHubX
+ * CHXButton - Premium reusable button component for CoinHubX
  * 
- * Features:
- * - Hover glow matching coin color
- * - Pressed state with darkening and inner glow
- * - Disabled state with reduced opacity
- * - Smooth animations
- * - Dynamic coin color support
+ * Specifications:
+ * - Hover glow: 18-22px radius matching coin color
+ * - Pressed state: 8% darker, inner glow for 120ms
+ * - Disabled state: 40% opacity, no glow, pointer-events disabled
+ * - Border radius: 14px
+ * - Font: Inter SemiBold 16px for main label
+ * - Padding: 18px top/bottom, 20px left/right
  */
 export default function CHXButton({ 
   onClick, 
@@ -32,84 +33,77 @@ export default function CHXButton({
       borderRadius: '14px',
       fontFamily: 'Inter, sans-serif',
       fontWeight: '600',
+      fontSize: '16px',
       cursor: disabled ? 'not-allowed' : 'pointer',
       border: 'none',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
       width: fullWidth ? '100%' : 'auto',
-      pointerEvents: disabled ? 'none' : 'auto'
+      pointerEvents: disabled ? 'none' : 'auto',
+      padding: size === 'small' ? '12px 16px' : size === 'large' ? '20px 24px' : '18px 20px'
     };
 
-    // Size variants
-    const sizeStyles = {
-      small: {
-        fontSize: '14px',
-        padding: '12px 16px'
-      },
-      medium: {
-        fontSize: '16px',
-        padding: '18px 20px'
-      },
-      large: {
-        fontSize: '18px',
-        padding: '20px 24px'
-      }
-    };
-
-    // Variant styles
-    if (variant === 'primary') {
+    if (disabled) {
       return {
         ...baseStyles,
-        ...sizeStyles[size],
-        background: disabled ? 'rgba(0, 198, 255, 0.2)' : `linear-gradient(135deg, ${coinColor}, ${coinColor}DD)`,
-        color: disabled ? 'rgba(255, 255, 255, 0.4)' : '#FFFFFF',
-        opacity: disabled ? 0.4 : 1,
-        boxShadow: disabled 
-          ? 'none'
-          : isPressed
-          ? `inset 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 22px ${coinColor}88`
-          : isHovered
-          ? `0 0 22px ${coinColor}AA, 0 4px 16px ${coinColor}66`
-          : `0 0 18px ${coinColor}55`,
-        filter: disabled
-          ? 'none'
-          : isPressed
-          ? 'brightness(0.92)'
-          : isHovered
-          ? 'brightness(1.08)'
-          : 'brightness(1.0)',
-        transform: isPressed ? 'scale(0.98)' : 'scale(1.0)'
-      };
-    } else {
-      // Secondary variant
-      return {
-        ...baseStyles,
-        ...sizeStyles[size],
-        background: disabled 
-          ? 'rgba(0, 198, 255, 0.05)'
-          : isHovered
-          ? `rgba(${hexToRgb(coinColor)}, 0.15)`
-          : `rgba(${hexToRgb(coinColor)}, 0.08)`,
-        border: disabled
-          ? '1px solid rgba(0, 198, 255, 0.2)'
-          : `1px solid ${coinColor}66`,
-        color: disabled ? 'rgba(0, 198, 255, 0.4)' : coinColor,
-        opacity: disabled ? 0.4 : 1,
-        boxShadow: disabled
-          ? 'none'
-          : isPressed
-          ? `inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 18px ${coinColor}66`
-          : isHovered
-          ? `0 0 20px ${coinColor}77`
-          : `0 0 12px ${coinColor}44`,
-        filter: isPressed ? 'brightness(0.92)' : 'brightness(1.0)',
-        transform: isPressed ? 'scale(0.98)' : 'scale(1.0)'
+        background: variant === 'primary' 
+          ? `linear-gradient(135deg, ${coinColor}66, ${coinColor}44)`
+          : `rgba(${hexToRgb(coinColor)}, 0.1)`,
+        border: variant === 'secondary' ? `1px solid rgba(${hexToRgb(coinColor)}, 0.2)` : 'none',
+        color: variant === 'primary' ? 'rgba(255, 255, 255, 0.4)' : `rgba(${hexToRgb(coinColor)}, 0.4)`,
+        opacity: 0.4,
+        boxShadow: 'none',
+        transition: 'none'
       };
     }
+
+    // Active (pressed) state
+    if (isPressed) {
+      return {
+        ...baseStyles,
+        background: variant === 'primary'
+          ? `linear-gradient(135deg, ${adjustBrightness(coinColor, 0.92)}, ${adjustBrightness(coinColor, 0.92)}DD)`
+          : `rgba(${hexToRgb(coinColor)}, 0.12)`,
+        border: variant === 'secondary' ? `1px solid ${coinColor}88` : 'none',
+        color: variant === 'primary' ? '#FFFFFF' : coinColor,
+        boxShadow: `inset 0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 20px ${coinColor}44`,
+        transform: 'scale(0.98)',
+        transition: 'all 0.12s cubic-bezier(0.4, 0, 0.2, 1)'
+      };
+    }
+
+    // Hover state
+    if (isHovered) {
+      return {
+        ...baseStyles,
+        background: variant === 'primary'
+          ? `linear-gradient(135deg, ${coinColor}, ${coinColor}DD)`
+          : `rgba(${hexToRgb(coinColor)}, 0.15)`,
+        border: variant === 'secondary' ? `1px solid ${coinColor}AA` : 'none',
+        color: variant === 'primary' ? '#FFFFFF' : coinColor,
+        boxShadow: `0 0 20px ${coinColor}AA, 0 4px 16px ${coinColor}66`,
+        transform: 'translateY(-1px)',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+      };
+    }
+
+    // Default state
+    return {
+      ...baseStyles,
+      background: variant === 'primary'
+        ? `linear-gradient(135deg, ${coinColor}, ${coinColor}DD)`
+        : `rgba(${hexToRgb(coinColor)}, 0.1)`,
+      border: variant === 'secondary' ? `1px solid ${coinColor}66` : 'none',
+      color: variant === 'primary' ? '#FFFFFF' : coinColor,
+      boxShadow: `0 0 18px ${coinColor}77`,
+      transform: 'translateY(0)',
+      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+    };
   };
 
   const handleClick = (e) => {
     if (!disabled && onClick) {
+      // Keep pressed state for 120ms as per spec
       onClick(e);
+      setTimeout(() => setIsPressed(false), 120);
     }
   };
 
@@ -122,20 +116,32 @@ export default function CHXButton({
         setIsPressed(false);
       }}
       onMouseDown={() => !disabled && setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
+      onMouseUp={() => setTimeout(() => setIsPressed(false), 120)}
       style={getStyles()}
       disabled={disabled}
     >
       {icon && <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>}
-      <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: '600' }}>{children}</span>
+      <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: '600', fontSize: '16px' }}>{children}</span>
     </button>
   );
 }
 
-// Helper function to convert hex to rgb
+// Helper: Convert hex to rgb string
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
     : '0, 198, 255';
+}
+
+// Helper: Adjust brightness (0.92 = 8% darker)
+function adjustBrightness(hex, factor) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return hex;
+  
+  const r = Math.round(parseInt(result[1], 16) * factor);
+  const g = Math.round(parseInt(result[2], 16) * factor);
+  const b = Math.round(parseInt(result[3], 16) * factor);
+  
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
