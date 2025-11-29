@@ -534,7 +534,7 @@ function TransactionHistory({ user }) {
 
   const filters = ['All', 'Deposit', 'Withdraw', 'P2P', 'Swap'];
 
-  const loadTransactions = async () => {
+  const loadTransactions = React.useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/api/transactions/${user.user_id}`);
@@ -552,7 +552,13 @@ function TransactionHistory({ user }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, activeFilter]);
+
+  useEffect(() => {
+    if (user) {
+      loadTransactions();
+    }
+  }, [user, loadTransactions]);
 
   return (
     <div style={{ marginTop: '32px' }}>
