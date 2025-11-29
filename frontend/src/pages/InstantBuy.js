@@ -272,20 +272,43 @@ function InstantBuy() {
 }
 
 function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onBuy, amounts, userBalance, processing }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+
   return (
     <div
       onClick={onToggle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setIsPressed(false);
+      }}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
       style={{
-        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
-        border: '1px solid rgba(0, 198, 255, 0.12)',
+        background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+        border: expanded 
+          ? `1px solid ${coin.color}88`
+          : isHovered 
+          ? `1px solid rgba(0, 198, 255, 0.35)`
+          : `1px solid rgba(0, 198, 255, 0.25)`,
         borderRadius: '16px',
-        padding: '20px',
+        padding: '22px',
         cursor: 'pointer',
-        transition: 'all 0.2s ease',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         boxShadow: expanded 
-          ? `0 0 25px rgba(${hexToRgb(coin.color)}, 0.15), inset 0 0 30px rgba(${hexToRgb(coin.color)}, 0.05)`
-          : `0 0 15px rgba(0, 198, 255, 0.1)`,
-        opacity: 0.94
+          ? `0 0 30px rgba(${hexToRgb(coin.color)}, 0.25), inset 0 0 25px rgba(${hexToRgb(coin.color)}, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3)`
+          : isPressed
+          ? `0 0 20px rgba(0, 198, 255, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.4)`
+          : isHovered
+          ? `0 0 25px rgba(0, 198, 255, 0.22), 0 4px 16px rgba(0, 198, 255, 0.15)`
+          : `0 0 18px rgba(0, 198, 255, 0.18), 0 2px 8px rgba(0, 0, 0, 0.2)`,
+        opacity: 0.96,
+        minHeight: expanded ? 'auto' : '140px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        transform: isPressed ? 'scale(0.98)' : isHovered && !expanded ? 'translateY(-2px)' : 'translateY(0)'
       }}
     >
       {/* Coin Header */}
