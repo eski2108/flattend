@@ -27,7 +27,7 @@ def test_environment_variables():
     
     try:
         # Test the backend endpoint that uses environment variables
-        response = requests.get(f"{AUTH_BASE}/auth/google", allow_redirects=False)
+        response = requests.get(f"{API_BASE}/auth/google", allow_redirects=False)
         
         if response.status_code == 302:
             log_test("✅ Google OAuth endpoint returns 302 redirect (environment variables loaded)", "PASS")
