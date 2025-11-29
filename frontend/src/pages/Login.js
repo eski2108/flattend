@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, ShieldCheck, Zap, Mail, Lock, Chrome } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
@@ -55,28 +55,20 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, formData);
+      const response = await axios.post(`${API}/api/auth/login`, formData);
       
-      if (response.data.success && response.data.token) {
-        const userData = {
-          user_id: response.data.user.user_id,
-          email: response.data.user.email,
-          full_name: response.data.user.full_name || response.data.user.email,
-          role: response.data.user.role || 'user'
-        };
-        
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('cryptobank_user', JSON.stringify(userData));
+      if (response.data.success) {
+        localStorage.setItem('cryptobank_user', JSON.stringify(response.data.user));
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
-        
-        toast.success('✅ Login successful!');
-        setTimeout(() => navigate('/dashboard'), 500);
+        toast.success('✅ Logged in successfully!');
+        navigate('/dashboard');
       } else {
-        toast.error('Login failed - no authentication token received');
+        toast.error(response.data.message || 'Login failed');
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.response?.data?.detail || 'Login failed. Please check your credentials.');
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -85,8 +77,7 @@ export default function Login() {
   const handleGoogleSignIn = () => {
     try {
       setLoading(true);
-      // Redirect directly to backend Google OAuth endpoint
-      const googleAuthUrl = `${API}/auth/google`;
+      const googleAuthUrl = `${API}/api/auth/google`;
       console.log('🔍 Redirecting to Google OAuth:', googleAuthUrl);
       window.location.href = googleAuthUrl;
     } catch (error) {
@@ -125,7 +116,7 @@ export default function Login() {
         right: '10%',
         width: '350px',
         height: '350px',
-        background: 'radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(123, 44, 255, 0.15) 0%, transparent 70%)',
         borderRadius: '50%',
         filter: 'blur(60px)',
         animation: 'float 10s ease-in-out infinite reverse'
@@ -133,10 +124,11 @@ export default function Login() {
 
       {/* Login Card */}
       <div style={{
-        maxWidth: '520px',
         width: '100%',
-        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.97) 0%, rgba(5, 16, 24, 0.99) 100%)',
-        backdropFilter: 'blur(25px)',
+        maxWidth: '480px',
+        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.95) 0%, rgba(5, 16, 24, 0.95) 100%)',
+        backdropFilter: 'blur(30px)',
+        WebkitBackdropFilter: 'blur(30px)',
         border: '1px solid rgba(0, 229, 255, 0.3)',
         borderRadius: '28px',
         padding: '56px 48px',
@@ -198,30 +190,27 @@ export default function Login() {
             background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 50%, #0080FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '14px',
-            letterSpacing: '-0.5px',
-            textShadow: '0 0 30px rgba(0, 229, 255, 0.3)'
-          }}>Welcome Back</h1>
-          
-          <p style={{
-            color: 'rgba(255, 255, 255, 0.7)',
+            marginBottom: '12px',
+            letterSpacing: '0.5px',
+            lineHeight: '1.2'
+          }}>
+            Welcome Back
+          </h1>
+          <p style={{ 
+            color: '#8F9BB3',
             fontSize: '16px',
             fontWeight: '500',
-            lineHeight: '1.5',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px'
+            marginBottom: 0,
+            letterSpacing: '0.3px'
           }}>
-            <ShieldCheck size={18} color="#00C6FF" strokeWidth={2.5} />
-            Secure access to your crypto portfolio
+            Sign in to your account
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
+        <form onSubmit={handleSubmit}>
           {/* Email Field */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label style={{ 
               display: 'flex',
               alignItems: 'center',
@@ -254,7 +243,8 @@ export default function Login() {
                 outline: 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 fontFamily: 'Inter, sans-serif',
-                fontWeight: '500'
+                fontWeight: '500',
+                boxSizing: 'border-box'
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
@@ -304,7 +294,8 @@ export default function Login() {
                   outline: 'none',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   fontFamily: 'Inter, sans-serif',
-                  fontWeight: '500'
+                  fontWeight: '500',
+                  boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
@@ -325,25 +316,37 @@ export default function Login() {
                   right: '16px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  background: 'transparent',
-                  border: 'none',
+                  background: 'rgba(0, 229, 255, 0.1)',
+                  border: '1px solid rgba(0, 229, 255, 0.3)',
+                  borderRadius: '8px',
                   cursor: 'pointer',
-                  color: '#8F9BB3',
-                  padding: '4px',
+                  color: '#00E5FF',
+                  padding: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  transition: 'color 0.2s'
+                  justifyContent: 'center',
+                  transition: 'all 0.3s ease',
+                  width: '36px',
+                  height: '36px'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#00C6FF'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#8F9BB3'}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 229, 255, 0.2)';
+                  e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 229, 255, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 229, 255, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.3)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} strokeWidth={2.5} /> : <Eye size={18} strokeWidth={2.5} />}
               </button>
             </div>
           </div>
 
           {/* Forgot Password Link */}
-          <div style={{ textAlign: 'right', marginBottom: '24px' }}>
+          <div style={{ textAlign: 'right', marginBottom: '28px' }}>
             <Link 
               to="/forgot-password" 
               style={{ 
@@ -351,10 +354,17 @@ export default function Login() {
                 fontSize: '14px',
                 fontWeight: '600',
                 textDecoration: 'none',
-                transition: 'opacity 0.2s'
+                transition: 'all 0.3s ease',
+                textShadow: '0 0 10px rgba(0, 198, 255, 0.3)'
               }}
-              onMouseEnter={(e) => e.target.style.opacity = '0.7'}
-              onMouseLeave={(e) => e.target.style.opacity = '1'}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#00E5FF';
+                e.target.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#00C6FF';
+                e.target.style.textShadow = '0 0 10px rgba(0, 198, 255, 0.3)';
+              }}
             >
               Forgot Password?
             </Link>
@@ -388,44 +398,94 @@ export default function Login() {
           <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.3) 50%, transparent 100%)' }} />
         </div>
 
-        {/* Google Sign In */}
-        <CHXButton
+        {/* Google Sign In Button */}
+        <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          coinColor="#FFFFFF"
-          variant="secondary"
-          size="large"
-          fullWidth
-          icon={<Chrome size={20} />}
+          style={{
+            width: '100%',
+            padding: '16px 24px',
+            background: 'rgba(255, 255, 255, 0.98)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '14px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '14px',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            fontWeight: '600',
+            color: '#1F1F1F',
+            opacity: loading ? 0.6 : 1,
+            boxSizing: 'border-box'
+          }}
+          onMouseEnter={(e) => {
+            if (!loading) {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+              e.currentTarget.style.boxShadow = '0 6px 30px rgba(0, 229, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!loading) {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.98)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }
+          }}
         >
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
           Continue with Google
-        </CHXButton>
+        </button>
 
         {/* Sign Up Link */}
         <div style={{ textAlign: 'center', marginTop: '32px' }}>
-          <span style={{ color: '#8F9BB3', fontSize: '15px' }}>Don&apos;t have an account? </span>
-          <Link 
-            to="/register" 
-            style={{ 
-              color: '#00C6FF', 
-              fontSize: '15px',
-              fontWeight: '600',
-              textDecoration: 'none',
-              transition: 'opacity 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.opacity = '0.7'}
-            onMouseLeave={(e) => e.target.style.opacity = '1'}
-          >
-            Sign Up
-          </Link>
+          <p style={{ color: '#8F9BB3', fontSize: '15px', marginBottom: 0 }}>
+            Don't have an account?{' '}
+            <Link 
+              to="/register" 
+              style={{ 
+                color: '#00C6FF',
+                fontWeight: '700',
+                textDecoration: 'none',
+                transition: 'all 0.3s ease',
+                textShadow: '0 0 10px rgba(0, 198, 255, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#00E5FF';
+                e.target.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#00C6FF';
+                e.target.style.textShadow = '0 0 10px rgba(0, 198, 255, 0.3)';
+              }}
+            >
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
 
-      {/* CSS Animation */}
       <style>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(5deg); }
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(20px, 20px); }
+        }
+        
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+          -webkit-text-fill-color: #FFFFFF !important;
+          -webkit-box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.4) inset !important;
+          transition: background-color 5000s ease-in-out 0s;
         }
       `}</style>
     </div>
