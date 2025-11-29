@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import "@/App.css";\nimport "@/styles/responsive.css";
+import "@/App.css";
+import "@/styles/responsive.css";
 import "@/styles/premium-ui.css";
 import "@/styles/global-design-system.css";
 import "@/styles/global-interactions.css";
