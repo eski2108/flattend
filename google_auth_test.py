@@ -153,7 +153,7 @@ def test_callback_endpoint():
     
     try:
         # Test callback endpoint without parameters (should handle error)
-        response = requests.get(f"{API_BASE}/auth/google/callback", allow_redirects=False)
+        response = requests.get(f"{AUTH_BASE}/auth/google/callback", allow_redirects=False)
         
         log_test(f"Callback Status Code: {response.status_code}", "INFO")
         
