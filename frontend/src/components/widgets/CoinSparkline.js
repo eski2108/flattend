@@ -50,6 +50,29 @@ const CoinSparkline = ({ symbol, color = '#00C6FF', height = 40 }) => {
     }
   };
 
+  if (hasError || !Chart) {
+    // Silent fail - don't show error, just show simplified line
+    return (
+      <div style={{
+        height: `${height}px`,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 8px'
+      }}>
+        <svg width="100%" height={height} style={{ opacity: 0.6 }}>
+          <polyline
+            points="0,30 25,20 50,25 75,15 100,18 125,22 150,12 175,20 200,16 225,25 250,28"
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            opacity="0.8"
+          />
+        </svg>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div style={{
