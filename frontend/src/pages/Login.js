@@ -289,7 +289,7 @@ export default function Login() {
               marginBottom: '10px',
               letterSpacing: '0.2px'
             }}>
-              <Lock size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)' }} />
+              <Lock size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-2px)' }} />
               Password
             </label>
             <div style={{ position: 'relative' }}>
