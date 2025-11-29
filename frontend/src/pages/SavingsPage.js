@@ -1,12 +1,111 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowUpRight, ArrowDownLeft, TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, TrendingUp, MessageCircle, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
+import CHXButton from '@/components/CHXButton';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;
+
+// CHXCard Component
+const CHXCard = ({ children, className = '' }) => (
+  <div className={`rounded-[22px] border border-cyan-400/25 bg-[#030A14]/80 shadow-[0_0_25px_rgba(0,234,255,0.15)] backdrop-blur-sm ${className}`}
+    style={{
+      boxShadow: '0 0 25px rgba(0, 234, 255, 0.15), inset 0 0 25px rgba(0, 234, 255, 0.05)'
+    }}>
+    {children}
+  </div>
+);
+
+// CHXMetricTile Component
+const CHXMetricTile = ({ icon, title, value, description, disabled = false }) => (
+  <div className={`rounded-[18px] border ${disabled ? 'border-gray-600/30' : 'border-cyan-400/25'} bg-[#030A14]/70 p-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,234,255,0.2)]`}
+    style={{
+      opacity: disabled ? 0.6 : 1
+    }}>
+    <div style={{ fontSize: '28px', marginBottom: '12px' }}>{icon}</div>
+    <div style={{ fontSize: '13px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', fontWeight: '600' }}>
+      {title}
+    </div>
+    <div style={{ fontSize: '28px', fontWeight: '700', color: disabled ? '#6B7280' : '#00E5FF', marginBottom: '4px' }}>
+      {value}
+    </div>
+    {description && (
+      <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '4px' }}>
+        {description}
+      </div>
+    )}
+  </div>
+);
+
+// CHXHeaderHero Component
+const CHXHeaderHero = ({ title, subtitle, icon }) => (
+  <div style={{
+    padding: '28px 0 20px 0',
+    background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)',
+    borderRadius: '16px',
+    marginBottom: '32px',
+    border: '1px solid rgba(0, 229, 255, 0.1)'
+  }}>
+    <h1 style={{
+      fontSize: '42px',
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginBottom: '12px',
+      textAlign: 'center',
+      letterSpacing: '-0.5px'
+    }}>
+      {title}
+    </h1>
+    <p style={{
+      fontSize: '16px',
+      color: '#D1D5DB',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px'
+    }}>
+      <span style={{ fontSize: '20px' }}>{icon}</span>
+      {subtitle}
+    </p>
+  </div>
+);
+
+// CHXFloatingChatBubble Component
+const CHXFloatingChatBubble = ({ onClick }) => (
+  <div
+    onClick={onClick}
+    style={{
+      position: 'fixed',
+      bottom: '32px',
+      right: '32px',
+      width: '62px',
+      height: '62px',
+      borderRadius: '50%',
+      background: 'linear-gradient(135deg, #00E5FF, #A855F7)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      boxShadow: '0 0 30px rgba(0, 229, 255, 0.5)',
+      transition: 'all 0.3s ease',
+      zIndex: 1000
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)';
+      e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 229, 255, 0.7)';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+      e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 229, 255, 0.5)';
+    }}
+  >
+    <MessageCircle size={28} color="white" strokeWidth={2.5} />
+  </div>
+);
 
 export default function SavingsPage() {
   const navigate = useNavigate();
@@ -14,7 +113,7 @@ export default function SavingsPage() {
   const [savingsBalances, setSavingsBalances] = useState([]);
   const [totalValue, setTotalValue] = useState(0);
   const [showTransferModal, setShowTransferModal] = useState(false);
-  const [transferDirection, setTransferDirection] = useState('to_savings'); // or 'to_spot'
+  const [transferDirection, setTransferDirection] = useState('to_savings');
   const [selectedCurrency, setSelectedCurrency] = useState('BTC');
   const [transferAmount, setTransferAmount] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -69,7 +168,7 @@ export default function SavingsPage() {
         toast.success(response.data.message);
         setShowTransferModal(false);
         setTransferAmount('');
-        fetchSavings(); // Refresh balances
+        fetchSavings();
       } else {
         toast.error(response.data.message || 'Transfer failed');
       }
@@ -81,11 +180,15 @@ export default function SavingsPage() {
     }
   };
 
+  const totalValueGBP = (totalValue * 0.79).toFixed(2);
+  const savingsRatio = 0; // Calculate from portfolio
+  const estimatedAPY = '4.5%';
+
   if (loading) {
     return (
       <Layout>
-        <div style={{ minHeight: '100vh', background: '#0B0E13', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ color: '#FFF' }}>Loading savings...</div>
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ color: '#00E5FF', fontSize: '18px', fontWeight: '600' }}>Loading savings...</div>
         </div>
       </Layout>
     );
@@ -93,192 +196,194 @@ export default function SavingsPage() {
 
   return (
     <Layout>
-      <div style={{ minHeight: '100vh', background: '#0B0E13', padding: '2rem' }}>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
+        padding: '20px 16px',
+        paddingBottom: '100px'
+      }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        
-        {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: '900', color: '#FFF', marginBottom: '0.5rem' }}>
-            Crypto Savings
-          </h1>
-          <p style={{ color: '#A8A8A8' }}>
-            Store your crypto safely and track your portfolio performance
-          </p>
-        </div>
+          
+          {/* SECTION 1: Hero Title Block */}
+          <CHXHeaderHero
+            title="Crypto Savings"
+            subtitle="Earn passive rewards and grow your crypto automatically."
+            icon="💹"
+          />
 
-        {/* Total Savings Card */}
-        <div style={{
-          background: 'linear-gradient(135deg, #11141A 0%, #1A1D26 100%)',
-          border: '2px solid #00E0FF',
-          borderRadius: '16px',
-          padding: '2rem',
-          marginBottom: '2rem'
-        }}>
-          <div style={{ fontSize: '0.875rem', color: '#A8A8A8', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-            Total Savings Balance
-          </div>
-          <div style={{ fontSize: '3rem', fontWeight: '900', color: '#00F6FF', marginBottom: '1rem' }}>
-            ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-          <button
-            onClick={() => {
-              setTransferDirection('to_savings');
-              setShowTransferModal(true);
-            }}
-            style={{
-              padding: '0.75rem 1.5rem',
-              background: 'linear-gradient(135deg, #00E0FF, #7A3CFF)',
-              color: '#FFF',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '0.875rem',
-              fontWeight: '700',
-              cursor: 'pointer',
-              marginRight: '1rem'
-            }}
-          >
-            Transfer to Savings
-          </button>
-          <button
-            onClick={() => {
-              setTransferDirection('to_spot');
-              setShowTransferModal(true);
-            }}
-            style={{
-              padding: '0.75rem 1.5rem',
-              background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
-              color: '#FFF',
-              border: 'none',
-              borderRadius: '12px',
-              fontSize: '0.875rem',
-              fontWeight: '700',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(168, 85, 247, 0.4)',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(168, 85, 247, 0.6)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(168, 85, 247, 0.4)';
-            }}
-          >
-            ← Move Back to Wallet
-          </button>
-        </div>
+          {/* SECTION 2: Main Savings Balance Card */}
+          <CHXCard className="mb-6">
+            <div style={{ padding: '24px' }}>
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '13px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', fontWeight: '600' }}>
+                  TOTAL SAVINGS BALANCE
+                </div>
+                <div style={{ fontSize: '56px', fontWeight: '700', color: '#00E5FF', marginBottom: '8px', textShadow: '0 0 30px rgba(0, 229, 255, 0.5)' }}>
+                  ${totalValue.toFixed(2)}
+                </div>
+                <div style={{ fontSize: '16px', color: '#9CA3AF', fontWeight: '500' }}>
+                  ≈ £{totalValueGBP} GBP
+                </div>
+              </div>
 
-        {/* Savings Balances */}
-        {savingsBalances.length === 0 ? (
-          <div style={{
-            background: '#11141A',
-            border: '1px solid rgba(0, 224, 255, 0.3)',
-            borderRadius: '16px',
-            padding: '3rem',
-            textAlign: 'center'
-          }}>
-            <p style={{ color: '#A8A8A8', marginBottom: '1rem' }}>
-              No savings yet. Transfer crypto from your Spot wallet to start saving!
-            </p>
-            <button
-              onClick={() => {
-                setTransferDirection('to_savings');
-                setShowTransferModal(true);
-              }}
-              style={{
-                padding: '0.75rem 1.5rem',
-                background: '#00E0FF',
-                color: '#000',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '0.875rem',
-                fontWeight: '700',
-                cursor: 'pointer'
-              }}
-            >
-              Start Saving
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-            {savingsBalances.map((saving, index) => {
-              const isProfit = saving.unrealized_pl_usd >= 0;
-              return (
-                <div
-                  key={index}
-                  style={{
-                    background: '#11141A',
-                    border: '1px solid rgba(0, 224, 255, 0.3)',
-                    borderRadius: '16px',
-                    padding: '1.5rem'
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr',
+                gap: '12px'
+              }}>
+                <CHXButton
+                  onClick={() => {
+                    setTransferDirection('to_savings');
+                    setShowTransferModal(true);
                   }}
+                  coinColor="#00E5FF"
+                  variant="primary"
+                  size="large"
+                  fullWidth
+                  icon={<ArrowUpRight size={20} />}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#FFF' }}>
-                        {saving.currency}
-                      </div>
-                      <div style={{ fontSize: '0.875rem', color: '#A8A8A8' }}>
-                        {saving.amount?.toFixed(8)} {saving.currency}
-                      </div>
-                    </div>
-                    {isProfit ? (
-                      <TrendingUp size={32} style={{ color: '#22C55E' }} />
-                    ) : (
-                      <TrendingDown size={32} style={{ color: '#EF4444' }} />
-                    )}
-                  </div>
+                  Transfer to Savings
+                </CHXButton>
+                
+                <CHXButton
+                  onClick={() => {
+                    setTransferDirection('to_spot');
+                    setShowTransferModal(true);
+                  }}
+                  coinColor="#00E5FF"
+                  variant="secondary"
+                  size="large"
+                  fullWidth
+                  icon={<ArrowDownLeft size={20} />}
+                >
+                  Move Back to Wallet
+                </CHXButton>
+              </div>
+            </div>
+          </CHXCard>
 
-                  <div style={{ marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#A8A8A8', marginBottom: '0.25rem' }}>
-                      Current Value
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#00F6FF' }}>
-                      ${saving.current_value_usd?.toFixed(2)}
-                    </div>
-                  </div>
+          {/* SECTION 3: Savings Stats Widget Row */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: window.innerWidth < 768 ? '1fr' : 'repeat(3, 1fr)',
+            gap: '14px',
+            marginBottom: '24px'
+          }}>
+            <CHXMetricTile
+              icon="📈"
+              title="Estimated APY"
+              value={estimatedAPY}
+              description="Annual percentage yield"
+            />
+            
+            <CHXMetricTile
+              icon="🧮"
+              title="Portfolio Savings Ratio"
+              value={`${savingsRatio}%`}
+              description="of your holdings earning"
+            />
+            
+            <CHXMetricTile
+              icon="⏳"
+              title="Locked Rewards"
+              value="Coming Soon"
+              description="Feature in development"
+              disabled
+            />
+          </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.75rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: '#A8A8A8' }}>Avg Buy Price</div>
-                      <div style={{ fontSize: '0.875rem', color: '#FFF' }}>
-                        ${saving.avg_buy_price?.toFixed(2)}
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: '#A8A8A8' }}>Current Price</div>
-                      <div style={{ fontSize: '0.875rem', color: '#FFF' }}>
-                        ${saving.current_price?.toFixed(2)}
-                      </div>
-                    </div>
-                  </div>
+          {/* SECTION 4: Empty State Card (if no savings) */}
+          {savingsBalances.length === 0 && (
+            <CHXCard>
+              <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+                <div style={{ fontSize: '64px', marginBottom: '24px' }}>💰</div>
+                <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px' }}>
+                  No savings yet
+                </h3>
+                <p style={{ fontSize: '16px', color: '#9CA3AF', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
+                  Move crypto from your Spot Wallet to start earning daily rewards.
+                </p>
+                <CHXButton
+                  onClick={() => {
+                    setTransferDirection('to_savings');
+                    setShowTransferModal(true);
+                  }}
+                  coinColor="#00E5FF"
+                  variant="primary"
+                  size="large"
+                  icon={<Rocket size={20} />}
+                >
+                  🚀 Start Saving
+                </CHXButton>
+              </div>
+            </CHXCard>
+          )}
 
-                  <div style={{
-                    padding: '0.75rem',
-                    background: isProfit ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                    borderRadius: '8px',
-                    border: `1px solid ${isProfit ? '#22C55E' : '#EF4444'}`
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: '#A8A8A8', marginBottom: '0.25rem' }}>
-                          Unrealized P/L
-                        </div>
-                        <div style={{ fontSize: '1.125rem', fontWeight: '700', color: isProfit ? '#22C55E' : '#EF4444' }}>
-                          {isProfit ? '+' : ''} ${saving.unrealized_pl_usd?.toFixed(2)}
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '700', color: isProfit ? '#22C55E' : '#EF4444' }}>
-                        {isProfit ? '+' : ''}{saving.unrealized_pl_percent?.toFixed(2)}%
-                      </div>
-                    </div>
+          {/* SECTION 6: Reserve Area for Earnings Chart (Future) */}
+          {savingsBalances.length > 0 && (
+            <CHXCard className="mt-6">
+              <div style={{ padding: '24px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Earnings Chart
+                </h3>
+                <div style={{
+                  height: '200px',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px dashed rgba(0, 229, 255, 0.2)'
+                }}>
+                  <div style={{ textAlign: 'center', color: '#6B7280' }}>
+                    <TrendingUp size={48} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+                    <p style={{ fontSize: '14px', fontWeight: '600' }}>Chart Coming Soon</p>
+                    <p style={{ fontSize: '12px' }}>Track your daily earnings over time</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            </CHXCard>
+          )}
+
+          {/* Savings Balances List */}
+          {savingsBalances.length > 0 && (
+            <div style={{ marginTop: '24px' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>
+                Your Savings Assets
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {savingsBalances.map((balance, index) => (
+                  <CHXCard key={index}>
+                    <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>
+                          {balance.currency}
+                        </div>
+                        <div style={{ fontSize: '14px', color: '#9CA3AF' }}>
+                          Balance: {balance.savings_balance.toFixed(8)}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#00E5FF' }}>
+                          ${balance.value_usd.toFixed(2)}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#22C55E' }}>
+                          +{estimatedAPY} APY
+                        </div>
+                      </div>
+                    </div>
+                  </CHXCard>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* SECTION 5: Bottom Floating Chat Icon */}
+        <CHXFloatingChatBubble
+          onClick={() => toast.info('Support chat coming soon!')}
+        />
 
         {/* Transfer Modal */}
         {showTransferModal && (
@@ -292,119 +397,86 @@ export default function SavingsPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 9999
+            zIndex: 1000,
+            padding: '20px'
           }}>
-            <div style={{
-              background: '#11141A',
-              border: '2px solid #00E0FF',
-              borderRadius: '16px',
-              padding: '2rem',
-              maxWidth: '500px',
-              width: '90%'
-            }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FFF', marginBottom: '1.5rem' }}>
-                {transferDirection === 'to_savings' ? (
-                  <>
-                    <ArrowUpRight style={{ display: 'inline', marginRight: '0.5rem' }} />
-                    Transfer to Savings
-                  </>
-                ) : (
-                  <>
-                    <ArrowDownLeft style={{ display: 'inline', marginRight: '0.5rem' }} />
-                    Move Back to Wallet
-                  </>
-                )}
-              </h2>
+            <CHXCard style={{ maxWidth: '500px', width: '100%' }}>
+              <div style={{ padding: '32px' }}>
+                <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF', marginBottom: '24px' }}>
+                  {transferDirection === 'to_savings' ? 'Transfer to Savings' : 'Move to Spot Wallet'}
+                </h2>
+                
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '8px', display: 'block' }}>
+                    Currency
+                  </label>
+                  <select
+                    value={selectedCurrency}
+                    onChange={(e) => setSelectedCurrency(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(0, 229, 255, 0.3)',
+                      borderRadius: '12px',
+                      color: '#FFFFFF',
+                      fontSize: '16px'
+                    }}
+                  >
+                    <option value="BTC">BTC</option>
+                    <option value="ETH">ETH</option>
+                    <option value="USDT">USDT</option>
+                  </select>
+                </div>
 
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ fontSize: '0.875rem', color: '#A8A8A8', display: 'block', marginBottom: '0.5rem' }}>
-                  Currency
-                </label>
-                <select
-                  value={selectedCurrency}
-                  onChange={(e) => setSelectedCurrency(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: '#1A1D26',
-                    border: '1px solid #00E0FF',
-                    borderRadius: '8px',
-                    color: '#FFF',
-                    fontSize: '1rem'
-                  }}
-                >
-                  <option value="BTC">Bitcoin (BTC)</option>
-                  <option value="ETH">Ethereum (ETH)</option>
-                  <option value="USDT">Tether (USDT)</option>
-                  <option value="BNB">BNB</option>
-                  <option value="SOL">Solana (SOL)</option>
-                </select>
-              </div>
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '8px', display: 'block' }}>
+                    Amount
+                  </label>
+                  <input
+                    type="number"
+                    value={transferAmount}
+                    onChange={(e) => setTransferAmount(e.target.value)}
+                    placeholder="0.00"
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(0, 229, 255, 0.3)',
+                      borderRadius: '12px',
+                      color: '#FFFFFF',
+                      fontSize: '16px'
+                    }}
+                  />
+                </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ fontSize: '0.875rem', color: '#A8A8A8', display: 'block', marginBottom: '0.5rem' }}>
-                  Amount
-                </label>
-                <input
-                  type="number"
-                  value={transferAmount}
-                  onChange={(e) => setTransferAmount(e.target.value)}
-                  placeholder="0.00"
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: '#1A1D26',
-                    border: '1px solid #00E0FF',
-                    borderRadius: '8px',
-                    color: '#FFF',
-                    fontSize: '1rem'
-                  }}
-                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <CHXButton
+                    onClick={() => setShowTransferModal(false)}
+                    coinColor="#6B7280"
+                    variant="secondary"
+                    size="medium"
+                    fullWidth
+                  >
+                    Cancel
+                  </CHXButton>
+                  
+                  <CHXButton
+                    onClick={handleTransfer}
+                    coinColor="#00E5FF"
+                    variant="primary"
+                    size="medium"
+                    fullWidth
+                    disabled={processing}
+                  >
+                    {processing ? 'Processing...' : 'Confirm'}
+                  </CHXButton>
+                </div>
               </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button
-                  onClick={handleTransfer}
-                  disabled={processing}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    background: processing ? '#666' : 'linear-gradient(135deg, #00E0FF, #7A3CFF)',
-                    color: '#FFF',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '1rem',
-                    fontWeight: '700',
-                    cursor: processing ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {processing ? 'Processing...' : 'Confirm Transfer'}
-                </button>
-                <button
-                  onClick={() => {
-                    setShowTransferModal(false);
-                    setTransferAmount('');
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: '#FFF',
-                    border: '1px solid #00E0FF',
-                    borderRadius: '8px',
-                    fontSize: '1rem',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+            </CHXCard>
           </div>
         )}
       </div>
-    </div>
     </Layout>
   );
 }
