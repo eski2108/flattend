@@ -145,6 +145,7 @@ function App() {
             <Route path="/trading" element={<SpotTrading />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/swap-crypto" element={<SwapCrypto />} />
+            <Route path="/swap/:coin" element={<SwapCrypto />} />
             <Route path="/instant-buy" element={<InstantBuy />} />
             <Route path="/p2p-express" element={<P2PExpress />} />
             <Route path="/referrals" element={<ReferralLinkGenerator />} />
