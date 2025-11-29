@@ -65,7 +65,7 @@ def test_google_auth_endpoint():
     log_test("🔍 TEST 2: Testing /api/auth/google Endpoint", "TEST")
     
     try:
-        response = requests.get(f"{AUTH_BASE}/auth/google", allow_redirects=False)
+        response = requests.get(f"{API_BASE}/auth/google", allow_redirects=False)
         
         log_test(f"Status Code: {response.status_code}", "INFO")
         log_test(f"Headers: {dict(response.headers)}", "INFO")
