@@ -58,7 +58,7 @@ const EnhancedReferralDashboard = lazy(() => import("@/pages/EnhancedReferralDas
 const ReferralsPage = lazy(() => import("@/pages/ReferralsPage"));
 const ReferralsPageNew = lazy(() => import("@/pages/ReferralsPageNew"));
 const ReferralLinkGenerator = lazy(() => import("@/pages/ReferralLinkGenerator"));
-const SavingsPage = lazy(() => import("@/pages/SavingsPage"));
+const SavingsPage = lazy(() => import("@/pages/Savings"));
 const PortfolioPage = lazy(() => import("@/pages/PortfolioPage"));
 const AllocationsPage = lazy(() => import("@/pages/AllocationsPage"));
 const AllocationsDemo = lazy(() => import("@/pages/AllocationsDemo"));
