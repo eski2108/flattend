@@ -82,17 +82,13 @@ export default function Login() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     try {
       setLoading(true);
-      // Get the Google OAuth URL from backend
-      const response = await axios.get(`${API}/auth/google`);
-      if (response.data.auth_url) {
-        console.log('🔍 Redirecting to Google OAuth:', response.data.auth_url);
-        window.location.href = response.data.auth_url;
-      } else {
-        throw new Error('No auth URL received');
-      }
+      // Redirect directly to backend Google OAuth endpoint
+      const googleAuthUrl = `${API}/auth/google`;
+      console.log('🔍 Redirecting to Google OAuth:', googleAuthUrl);
+      window.location.href = googleAuthUrl;
     } catch (error) {
       console.error('Google sign-in error:', error);
       toast.error('Failed to initiate Google sign-in');
