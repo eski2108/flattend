@@ -1,197 +1,149 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowUpRight, ArrowDownLeft, Wallet as WalletIcon, Clock, TrendingUp, Zap } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import '../styles/premium-dashboard.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = BACKEND_URL;
+// Import all widgets
+import PortfolioGraph from '@/components/widgets/PortfolioGraph';
+import PLSummaryRow from '@/components/widgets/PLSummaryRow';
+import AllocationWidget from '@/components/widgets/AllocationWidget';
+import PieChartWidget from '@/components/widgets/PieChartWidget';
+import RecentTransactionWidget from '@/components/widgets/RecentTransactionWidget';
+import AssetTable from '@/components/widgets/AssetTable';
 
-export default function Dashboard() {
+const API = process.env.REACT_APP_BACKEND_URL;
+
+// Coin colors and emojis
+const COIN_COLORS = {
+  'BTC': '#FF8A00',
+  'ETH': '#7A4CFF',
+  'USDT': '#00D181',
+  'BNB': '#F3BA2F',
+  'SOL': '#9945FF',
+  'XRP': '#23292F',
+  'ADA': '#0033AD',
+  'DOGE': '#C3A634',
+  'LTC': '#345D9D',
+  'GBP': '#00C6FF',
+  'USD': '#85BB65'
+};
+
+function Dashboard() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [balances, setBalances] = useState([]);
-  const [transactions, setTransactions] = useState([]);
+  const [totalValue, setTotalValue] = useState(0);
+  const [spotBalance, setSpotBalance] = useState(0);
+  const [savingsBalance, setSavingsBalance] = useState(0);
+  const [lastTransaction, setLastTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [showMessages, setShowMessages] = useState(false);
 
   useEffect(() => {
-    const handleAuth = async () => {
-      // Check for session_id in URL fragment (from Google Sign-In)
-      const hash = window.location.hash;
-      if (hash && hash.includes('session_id=')) {
-        const sessionId = hash.split('session_id=')[1].split('&')[0];
-        
-        try {
-          // Exchange session_id for user data and session_token
-          const response = await axios.get('https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data', {
-            headers: { 'X-Session-ID': sessionId }
-          });
-          
-          if (response.data) {
-            const { id, email, name, picture, session_token } = response.data;
-            
-            // Store session_token via backend (sets httpOnly cookie)
-            await axios.post(`${API}/api/auth/emergent-session`, {
-              session_token,
-              user_data: { id, email, name, picture }
-            });
-            
-            // Store user data locally
-            const userData = { user_id: id, email, full_name: name };
-            localStorage.setItem('cryptobank_user', JSON.stringify(userData));
-            setCurrentUser(userData);
-            
-            // Clean URL
-            window.history.replaceState(null, '', window.location.pathname);
-            
-            // Fetch dashboard data
-            fetchDashboardData(id);
-            return;
-          }
-        } catch (error) {
-          console.error('Authentication error:', error);
-          toast.error('Authentication failed. Please try again.');
-          navigate('/');
-          return;
-        }
-      }
-      
-      // Check if user is already logged in (traditional email/password)
-      const userData = localStorage.getItem('cryptobank_user');
-      if (!userData) {
-        navigate('/');
-        return;
-      }
-      
-      const user = JSON.parse(userData);
-      setCurrentUser(user);
-      fetchDashboardData(user.user_id);
-    };
-    
-    handleAuth();
+    const userData = localStorage.getItem('cryptobank_user');
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    const parsedUser = JSON.parse(userData);
+    setUser(parsedUser);
+    loadDashboardData(parsedUser.user_id);
   }, [navigate]);
 
-  const fetchDashboardData = async (userId) => {
+  const loadDashboardData = async (userId) => {
     try {
-      setLoading(true);
-      
-      // Fetch balances
-      const balancesResponse = await axios.get(`${API}/crypto-bank/balances/${userId}`);
-      if (balancesResponse.data.success) {
-        setBalances(balancesResponse.data.balances);
-      }
-      
-      // Fetch recent transactions (limit 5)
-      const transactionsResponse = await axios.get(`${API}/crypto-bank/transactions/${userId}?limit=5`);
-      if (transactionsResponse.data.success) {
-        setTransactions(transactionsResponse.data.transactions);
+      // Load balances
+      const balancesRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
+      if (balancesRes.data.success) {
+        const userBalances = balancesRes.data.balances || [];
+        setBalances(userBalances);
+        
+        // Calculate total value
+        const total = userBalances.reduce((sum, bal) => {
+          return sum + (bal.total_balance * (bal.price_gbp || 0));
+        }, 0);
+        setTotalValue(total);
+        
+        // Calculate spot balance (all balances are spot for now)
+        setSpotBalance(total);
+        setSavingsBalance(0); // TODO: Get from savings API
       }
 
-      // Fetch messages
-      const messagesResponse = await axios.get(`${API}/user/messages?user_id=${userId}`);
-      if (messagesResponse.data.success) {
-        setMessages(messagesResponse.data.messages);
-        setUnreadCount(messagesResponse.data.unread_count);
+      // Load last transaction
+      const txRes = await axios.get(`${API}/api/transactions/${userId}`);
+      if (txRes.data.success && txRes.data.transactions.length > 0) {
+        setLastTransaction({
+          type: txRes.data.transactions[0].transaction_type,
+          amount: txRes.data.transactions[0].amount,
+          currency: txRes.data.transactions[0].currency,
+          timestamp: txRes.data.transactions[0].created_at
+        });
       }
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      // Silently handle error - don't show annoying toast
+      console.error('Error loading dashboard data:', error);
+      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
   };
 
-  const markMessageAsRead = async (messageId) => {
-    try {
-      await axios.post(`${API}/user/messages/${messageId}/read`);
-      // Refresh messages
-      if (currentUser) {
-        const messagesResponse = await axios.get(`${API}/user/messages?user_id=${currentUser.user_id}`);
-        if (messagesResponse.data.success) {
-          setMessages(messagesResponse.data.messages);
-          setUnreadCount(messagesResponse.data.unread_count);
-        }
+  // Prepare assets for table
+  const prepareAssetsForTable = () => {
+    return balances.map(bal => ({
+      symbol: bal.currency,
+      name: bal.currency === 'BTC' ? 'Bitcoin' : bal.currency === 'ETH' ? 'Ethereum' : bal.currency === 'USDT' ? 'Tether' : bal.currency,
+      holdings: bal.total_balance,
+      avgBuyPrice: bal.price_gbp || 0, // Mock - should come from cost basis calculation
+      currentPrice: bal.price_gbp || 0,
+      color: COIN_COLORS[bal.currency] || '#00C6FF'
+    }));
+  };
+
+  // Prepare assets for pie chart
+  const prepareAssetsForPieChart = () => {
+    return balances.map(bal => ({
+      symbol: bal.currency,
+      value: bal.total_balance * (bal.price_gbp || 0),
+      color: COIN_COLORS[bal.currency] || '#00C6FF'
+    }));
+  };
+
+  const handleDeposit = (asset) => {
+    navigate(`/deposit/${asset.symbol.toLowerCase()}`, {
+      state: {
+        currency: asset.symbol,
+        name: asset.name,
+        color: asset.color
       }
-    } catch (error) {
-      console.error('Error marking message as read:', error);
-    }
+    });
   };
 
-
-  const [liveMarketPrices, setLiveMarketPrices] = useState({
-    BTC: { price: 0, change: 0 },
-    ETH: { price: 0, change: 0 },
-    USDT: { price: 0, change: 0 }
-  });
-
-  // Fetch live prices
-  useEffect(() => {
-    const fetchLivePrices = async () => {
-      try {
-        const response = await axios.get(`${API}/api/prices/live`);
-        if (response.data.success) {
-          const prices = response.data.prices;
-          setLiveMarketPrices({
-            BTC: { 
-              price: prices.BTC?.price_gbp || 0,
-              change: 0 // 24h change not provided by current API
-            },
-            ETH: { 
-              price: prices.ETH?.price_gbp || 0,
-              change: 0
-            },
-            USDT: { 
-              price: prices.USDT?.price_gbp || 0,
-              change: 0
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching live prices:', error);
+  const handleWithdraw = (asset) => {
+    navigate(`/withdraw/${asset.symbol.toLowerCase()}`, {
+      state: {
+        currency: asset.symbol,
+        name: asset.name,
+        available_balance: asset.holdings,
+        color: asset.color
       }
-    };
-
-    fetchLivePrices();
-    // Update prices every minute
-    const interval = setInterval(fetchLivePrices, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const getTotalBalance = () => {
-    return balances.reduce((total, b) => {
-      // Use live market prices
-      const usdValue = {
-        'BTC': b.balance * liveMarketPrices.BTC.price,
-        'ETH': b.balance * liveMarketPrices.ETH.price,
-        'USDT': b.balance * liveMarketPrices.USDT.price
-      };
-      return total + (usdValue[b.currency] || 0);
-    }, 0);
+    });
   };
 
-  const formatCurrency = (amount, currency) => {
-    if (currency === 'USDT') {
-      return `$${amount.toFixed(2)}`;
-    }
-    return `${amount.toFixed(6)} ${currency}`;
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString();
+  const handleSwap = (asset) => {
+    navigate(`/swap-crypto?from=${asset.symbol.toLowerCase()}`, {
+      state: {
+        from_currency: asset.symbol,
+        from_balance: asset.holdings,
+        color: asset.color
+      }
+    });
   };
 
   if (loading) {
     return (
       <Layout>
-        <div className="loading-container" data-testid="loading-spinner">
-          <div className="spinner"></div>
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)' }}>
+          <div style={{ fontSize: '20px', color: '#00C6FF', fontWeight: '700' }}>Loading dashboard...</div>
         </div>
       </Layout>
     );
@@ -199,917 +151,66 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="dashboard-page premium-dashboard" data-testid="dashboard-page">
-        {/* Account Overview Section */}
-        <div style={{ padding: '14px 1rem 0 1rem', margin: '0', marginTop: '18px', marginBottom: '8px' }}>
-          <h2 style={{
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: '600',
-            fontSize: 'clamp(15px, 4vw, 16px)',
-            color: '#E8EAED',
-            letterSpacing: '-0.3px',
-            margin: '0',
-            padding: '0',
-            marginBottom: '4px'
-          }}>
-            Account Overview
-          </h2>
-          <p style={{
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: '400',
-            fontSize: 'clamp(12px, 3.5vw, 13px)',
-            color: '#9BA0A5',
-            letterSpacing: '-0.2px',
-            margin: '0',
-            padding: '0'
-          }}>
-            Open Orders: 0 • Completed Trades: 0
-          </p>
-        </div>
-
-        {/* Messages Inbox Modal */}
-        {showMessages && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.9)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '1rem'
-          }}>
-            <div style={{
-              background: 'linear-gradient(135deg, #1a1f3a, #0a0f1e)',
-              border: '2px solid rgba(0, 240, 255, 0.3)',
-              borderRadius: '16px',
-              padding: '2rem',
-              maxWidth: '700px',
-              width: '100%',
-              maxHeight: '80vh',
-              overflow: 'auto'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '900', margin: 0 }}>
-                  📬 Your Messages
-                </h2>
-                <button
-                  onClick={() => setShowMessages(false)}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: 'none',
-                    color: '#fff',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: '700'
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-
-              {messages.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '1rem' }}>📭</div>
-                  <div style={{ fontSize: '18px' }}>No messages yet</div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {messages.map(message => (
-                    <div
-                      key={message.message_id}
-                      onClick={() => !message.read && markMessageAsRead(message.message_id)}
-                      style={{
-                        padding: '1.5rem',
-                        background: message.read ? 'rgba(0, 0, 0, 0.3)' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
-                        border: `2px solid ${message.read ? 'rgba(255, 255, 255, 0.1)' : 'rgba(239, 68, 68, 0.3)'}`,
-                        borderRadius: '12px',
-                        cursor: message.read ? 'default' : 'pointer',
-                        position: 'relative'
-                      }}
-                    >
-                      {!message.read && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          width: '12px',
-                          height: '12px',
-                          background: '#EF4444',
-                          borderRadius: '50%',
-                          animation: 'pulse 2s infinite'
-                        }} />
-                      )}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
-                        <h3 style={{ color: '#00F0FF', fontSize: '18px', fontWeight: '700', margin: 0 }}>
-                          {message.title}
-                        </h3>
-                        <span style={{ fontSize: '12px', color: '#888', whiteSpace: 'nowrap', marginLeft: '1rem' }}>
-                          {new Date(message.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div style={{ color: '#fff', fontSize: '14px', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
-                        {message.content}
-                      </div>
-                      {!message.read && (
-                        <div style={{ marginTop: '1rem', fontSize: '12px', color: '#EF4444', fontWeight: '600' }}>
-                          Click to mark as read
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Portfolio Card */}
-        <div 
-          className="total-balance-card-premium animated-card" 
-          data-testid="total-balance"
-          style={{
-            background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
-            border: '2px solid rgba(0, 217, 255, 0.4)',
-            borderRadius: 'clamp(16px, 5vw, 18px)',
-            padding: 'clamp(14px, 4vw, 16px)',
-            margin: '0 0.5rem 1rem 0.5rem',
-            boxShadow: '0 0 18px rgba(0, 255, 255, 0.12)',
-            position: 'relative'
-          }}
-        >
-          <p style={{ 
-            fontFamily: 'Inter, sans-serif',
-            fontSize: 'clamp(12px, 3.5vw, 14px)', 
-            fontWeight: '500',
-            color: '#A8B0BC', 
-            letterSpacing: '-0.2px',
-            margin: '0 0 0.25rem 0',
-            textTransform: 'uppercase'
-          }}>
-            TOTAL PORTFOLIO VALUE
-          </p>
-          <p style={{ 
-            fontFamily: 'Inter, sans-serif',
-            fontSize: 'clamp(32px, 10vw, 40px)', 
-            fontWeight: '700', 
-            color: '#27F4FF', 
-            letterSpacing: '-1px',
-            textShadow: '0 0 20px rgba(39, 244, 255, 0.5)',
-            margin: '0 0 0.375rem 0',
-            lineHeight: '1'
-          }}>
-            ${getTotalBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
-          <p style={{ 
-            fontFamily: 'Inter, sans-serif',
-            fontSize: 'clamp(12px, 3.5vw, 13px)',
-            fontWeight: '500',
-            color: '#00FF8A', 
-            margin: '0 0 0.875rem 0'
-          }}>
-            +0.00% (24h)
-          </p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
+        padding: '24px 20px'
+      }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8px' }}>
           
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: 'clamp(10px, 3vw, 12px)',
-            marginTop: '0.375rem'
-          }}>
-            <button 
-              onClick={() => navigate('/wallet')}
-              style={{
-                width: '100%',
-                height: 'clamp(48px, 13vw, 52px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                padding: '0',
-                background: '#00E8FF',
-                border: 'none',
-                borderRadius: 'clamp(12px, 3.5vw, 14px)',
-                fontSize: 'clamp(15px, 4vw, 16px)',
-                fontWeight: '600',
-                color: '#000000',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 16px rgba(0, 232, 255, 0.4)',
-                fontFamily: 'Inter, sans-serif'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0, 232, 255, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 232, 255, 0.4)';
-              }}
-            >
-              <ArrowDownLeft size={20} strokeWidth={2.5} />
-              Deposit
-            </button>
-            <button 
-              onClick={() => navigate('/wallet')}
-              style={{
-                width: '100%',
-                height: 'clamp(48px, 13vw, 52px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                padding: '0',
-                background: '#B36CFF',
-                border: 'none',
-                borderRadius: 'clamp(12px, 3.5vw, 14px)',
-                fontSize: 'clamp(15px, 4vw, 16px)',
-                fontWeight: '600',
-                color: '#FFFFFF',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 16px rgba(179, 108, 255, 0.4)',
-                fontFamily: 'Inter, sans-serif'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 24px rgba(179, 108, 255, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(179, 108, 255, 0.4)';
-              }}
-            >
-              <ArrowUpRight size={20} strokeWidth={2.5} />
-              Withdraw
-            </button>
-          </div>
-        </div>
-
-        {/* Referral Earnings Widget */}
-        <div 
-          className="referral-widget animated-card"
-          onClick={() => navigate('/referrals')}
-          style={{
-            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(0, 240, 255, 0.05))',
-            border: '2px solid rgba(168, 85, 247, 0.4)',
-            borderRadius: '20px',
-            padding: '2rem',
-            marginBottom: '2.5rem',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 0 30px rgba(168, 85, 247, 0.2)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 0 40px rgba(168, 85, 247, 0.4)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.2)';
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: window.innerWidth < 768 ? 'column' : 'row', justifyContent: 'space-between', alignItems: window.innerWidth < 768 ? 'stretch' : 'center', gap: '1.5rem' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                <div style={{ fontSize: '32px' }}>🎁</div>
-                <h3 style={{ color: '#A855F7', fontSize: '20px', fontWeight: '900', margin: 0 }}>
-                  Referral Program
-                </h3>
-              </div>
-              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginBottom: '1rem' }}>
-                Invite friends and earn <strong style={{ color: '#00F0FF' }}>20% commission</strong> on their trading fees for 12 months
-              </p>
-              <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-                <div>
-                  <div style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '900' }}>0</div>
-                  <div style={{ color: '#888', fontSize: '13px' }}>Signups</div>
-                </div>
-                <div>
-                  <div style={{ color: '#22C55E', fontSize: '24px', fontWeight: '900' }}>$0.00</div>
-                  <div style={{ color: '#888', fontSize: '13px' }}>Earned</div>
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <button
-                style={{
-                  background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '12px 24px',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  boxShadow: '0 0 20px rgba(168, 85, 247, 0.4)',
-                  transition: 'all 0.3s ease',
-                  width: window.innerWidth < 768 ? '100%' : 'auto'
-                }}
-              >
-                View Dashboard →
-              </button>
-            </div>
-          </div>
-        </div>
-
-
-        {/* Quick Actions - Professional */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <h2 style={{
-            fontSize: '24px',
-            fontWeight: '900',
-            marginBottom: '1.5rem',
-            color: '#fff'
-          }}>
-            Quick Actions
-          </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '1rem'
-          }}>
-            <button
-              onClick={() => navigate('/instant-buy')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(0, 0, 0, 0.4))',
-                border: '2px solid rgba(34, 197, 94, 0.4)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                color: '#fff',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                textAlign: 'left',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.8)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(34, 197, 94, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.4)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <TrendingUp size={24} color="#22C55E" />
-              <span>Buy Crypto</span>
-              <span style={{ fontSize: '13px', color: '#888' }}>Instant purchase</span>
-            </button>
-
-            <button
-              onClick={() => navigate('/p2p-marketplace')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(0, 0, 0, 0.4))',
-                border: '2px solid rgba(239, 68, 68, 0.4)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                color: '#fff',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                textAlign: 'left',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.8)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <TrendingUp size={24} color="#EF4444" style={{ transform: 'rotate(180deg)' }} />
-              <span>Sell Crypto</span>
-              <span style={{ fontSize: '13px', color: '#888' }}>Create sell order</span>
-            </button>
-
-            <button
-              onClick={() => navigate('/my-orders')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 0, 0, 0.4))',
-                border: '2px solid rgba(0, 240, 255, 0.4)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                color: '#fff',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                textAlign: 'left',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.8)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 240, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <Clock size={24} color="#00F0FF" />
-              <span>My Orders</span>
-              <span style={{ fontSize: '13px', color: '#888' }}>View active orders</span>
-            </button>
-
-            <button
-              onClick={() => navigate('/referrals')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(0, 0, 0, 0.4))',
-                border: '2px solid rgba(168, 85, 247, 0.4)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                color: '#fff',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                textAlign: 'left',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.8)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(168, 85, 247, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.4)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <span style={{ fontSize: '24px' }}>🎁</span>
-              <span>Referrals</span>
-              <span style={{ fontSize: '13px', color: '#888' }}>Earn 20% commission</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Crypto Balances - Premium */}
-        <div className="balances-section-premium">
-          <h2 className="section-title-premium">
-            <span className="gradient-text">Your Crypto Assets</span>
-          </h2>
-          <div className="balances-grid-premium">
-            {balances.map((balance, index) => (
-              <div 
-                key={balance.currency} 
-                className="balance-card-premium animated-card" 
-                data-testid={`balance-${balance.currency}`}
-                style={{ 
-                  animationDelay: `${index * 0.1}s`,
-                  background: 'rgba(30, 39, 73, 0.8)',
-                  border: '2px solid rgba(0, 217, 255, 0.3)',
-                  borderRadius: '16px',
-                  padding: '2rem',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                <div className="balance-card-content-premium">
-                  <div className="balance-card-header-premium">
-                    <div className={`crypto-icon ${balance.currency.toLowerCase()}`}>
-                      {balance.currency}
-                    </div>
-                    <span className="currency-label-premium">
-                      {balance.currency === 'BTC' ? 'Bitcoin' : balance.currency === 'ETH' ? 'Ethereum' : 'Tether'}
-                    </span>
-                  </div>
-                  <p style={{ 
-                    fontSize: '1.75rem', 
-                    fontWeight: '800', 
-                    color: '#FFFFFF',
-                    textShadow: '0 0 10px rgba(0, 217, 255, 0.4)',
-                    margin: '0.5rem 0'
-                  }}>{formatCurrency(balance.balance, balance.currency)}</p>
-                  {balance.locked_balance > 0 && (
-                    <p className="locked-balance-premium">🔒 Locked: {formatCurrency(balance.locked_balance, balance.currency)}</p>
-                  )}
-                  <div className="balance-usd-value">
-                    ≈ ${({
-                      'BTC': balance.balance * 45000,
-                      'ETH': balance.balance * 2500,
-                      'USDT': balance.balance * 1
-                    }[balance.currency] || 0).toFixed(2)}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Actions - Redesigned */}
-        <div className="quick-actions-section-premium" style={{ marginBottom: '2.5rem' }}>
-          <h2 className="section-title-premium">
-            <span className="gradient-text">Quick Actions</span>
-          </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.5rem',
-            marginTop: '1.5rem'
-          }}>
-            {/* Instant Buy */}
-            <div className="card-instant-buy" style={{ borderRadius: '20px', border: '2px solid rgba(74, 222, 128, 0.22)', boxShadow: '0 0 18px rgba(74, 222, 128, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(74, 222, 128, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(74, 222, 128, 0.15)'; }}
-            onClick={() => navigate('/instant-buy')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#6EE7B7', marginBottom: '8px' }}>Instant Buy</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>One-click purchases</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }} data-testid="instant-buy-btn">Buy Crypto →</button>
-            </div>
-
-            {/* P2P Express */}
-            <div className="card-p2p-express" style={{ borderRadius: '20px', border: '2px solid rgba(96, 165, 250, 0.22)', boxShadow: '0 0 18px rgba(96, 165, 250, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(96, 165, 250, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(96, 165, 250, 0.15)'; }}
-            onClick={() => navigate('/p2p-express')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#7DD3FC', marginBottom: '8px' }}>P2P Express</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Fast P2P matching</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }} data-testid="p2p-express-btn">Start Express →</button>
-            </div>
-
-            {/* Instant Sell */}
-            <div className="card-instant-sell" style={{ borderRadius: '20px', border: '2px solid rgba(248, 113, 113, 0.22)', boxShadow: '0 0 18px rgba(248, 113, 113, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(248, 113, 113, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(248, 113, 113, 0.15)'; }}
-            onClick={() => navigate('/instant-sell')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>Instant Sell</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Sell to admin instantly</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Sell Now →</button>
-            </div>
-
-            {/* P2P Marketplace */}
-            <div className="card-p2p-marketplace" style={{ borderRadius: '20px', border: '2px solid rgba(129, 140, 248, 0.22)', boxShadow: '0 0 18px rgba(129, 140, 248, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(129, 140, 248, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(129, 140, 248, 0.15)'; }}
-            onClick={() => navigate('/p2p-marketplace')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#C084FC', marginBottom: '8px' }}>P2P Marketplace</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Buy & sell with traders</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }} data-testid="marketplace-btn">Open Marketplace →</button>
-            </div>
-
-            {/* OTC Desk */}
-            <div className="card-otc" style={{ borderRadius: '20px', border: '2px solid rgba(251, 191, 36, 0.22)', boxShadow: '0 0 18px rgba(251, 191, 36, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(251, 191, 36, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(251, 191, 36, 0.15)'; }}
-            onClick={() => navigate('/otc-desk')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>OTC Desk</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Large volume trades (£2000+)</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Trade OTC →</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Premium Features Quick Access */}
-        <div className="market-overview-section" style={{ marginTop: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 className="section-title-premium">
-              <span className="gradient-text">Premium Features</span>
-            </h2>
-            <button
-              onClick={() => navigate('/subscriptions')}
-              style={{
-                padding: '0.75rem 1.5rem',
-                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#000',
-                fontSize: '14px',
-                fontWeight: '700',
-                cursor: 'pointer'
-              }}
-            >
-              View All Features
-            </button>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-            {/* Get Verified */}
-            <div className="card-verified" style={{ borderRadius: '20px', border: '2px solid rgba(168, 85, 247, 0.22)', boxShadow: '0 0 18px rgba(168, 85, 247, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(168, 85, 247, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(168, 85, 247, 0.15)'; }}
-            onClick={() => navigate('/verification')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#C084FC', marginBottom: '8px' }}>Get Verified</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Build trust with buyers</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Get Verified →</button>
-            </div>
-
-            {/* Upgrade Level */}
-            <div className="card-upgrade" style={{ borderRadius: '20px', border: '2px solid rgba(163, 230, 53, 0.22)', boxShadow: '0 0 18px rgba(163, 230, 53, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(163, 230, 53, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(163, 230, 53, 0.15)'; }}
-            onClick={() => navigate('/account/upgrade')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FACC15', marginBottom: '8px' }}>Upgrade Level</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Priority + Lower fees</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Upgrade Level →</button>
-            </div>
-
-            {/* Boost Listings */}
-            <div className="card-boost" style={{ borderRadius: '20px', border: '2px solid rgba(249, 115, 22, 0.22)', boxShadow: '0 0 18px rgba(249, 115, 22, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(249, 115, 22, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(249, 115, 22, 0.15)'; }}
-            onClick={() => navigate('/p2p/boost')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#FDBA74', marginBottom: '8px' }}>Boost Listings</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Get more visibility</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Boost Listing →</button>
-            </div>
-
-            {/* Price Alerts */}
-            <div className="card-alerts" style={{ borderRadius: '20px', border: '2px solid rgba(34, 211, 238, 0.22)', boxShadow: '0 0 18px rgba(34, 211, 238, 0.15)', padding: '22px 22px 18px', marginBottom: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'all 0.3s ease', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(34, 211, 238, 0.25)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 18px rgba(34, 211, 238, 0.15)'; }}
-            onClick={() => navigate('/price-alerts')}>
-              <div style={{ fontSize: '18px', fontWeight: '600', color: '#7DD3FC', marginBottom: '8px' }}>Price Alerts</div>
-              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', marginBottom: '12px' }}>Arbitrage opportunities</div>
-              <button className="premium-button" style={{ width: '78%', height: '45px', marginTop: 'auto' }}>Manage Alerts →</button>
-            </div>
-
-            {/* Internal Transfer */}
-            <button
-              onClick={() => navigate('/transfer')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05))',
-                border: '2px solid rgba(34, 197, 94, 0.4)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'left',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(34, 197, 94, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ fontSize: '24px', marginBottom: '0.5rem', fontWeight: '700' }}></div>
-              <div style={{ color: '#22C55E', fontSize: '18px', fontWeight: '700', marginBottom: '0.25rem' }}>
-                Send Crypto
-              </div>
-              <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>
-                Instant internal transfer
-              </div>
-              <div style={{ color: '#22C55E', fontSize: '20px', fontWeight: '900' }}>
-                0.3% fee
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Trading Stats */}
-        <div className="trading-stats-section">
-          <h2 className="section-title-premium">
-            <span className="gradient-text">Your Trading Stats</span>
-          </h2>
-          <div className="stats-grid">
-            <div className="stat-card-premium" style={{
-              background: 'rgba(30, 39, 73, 0.8)',
-              border: '2px solid rgba(0, 217, 255, 0.3)',
-              borderRadius: '16px',
-              padding: '1.5rem'
-            }}>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>Total Trades</p>
-              <p style={{ fontSize: '2rem', fontWeight: '800', color: '#00D9FF' }}>0</p>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>All time</p>
-            </div>
-            <div className="stat-card-premium" style={{
-              background: 'rgba(30, 39, 73, 0.8)',
-              border: '2px solid rgba(168, 85, 247, 0.3)',
-              borderRadius: '16px',
-              padding: '1.5rem'
-            }}>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>Trading Volume</p>
-              <p style={{ fontSize: '2rem', fontWeight: '800', color: '#A855F7' }}>£0.00</p>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>30 days</p>
-            </div>
-            <div className="stat-card-premium" style={{
-              background: 'rgba(30, 39, 73, 0.8)',
-              border: '2px solid rgba(34, 197, 94, 0.3)',
-              borderRadius: '16px',
-              padding: '1.5rem'
-            }}>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>Success Rate</p>
-              <p style={{ fontSize: '2rem', fontWeight: '800', color: '#22C55E' }}>—</p>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Start trading!</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Features & Benefits */}
-        <div className="features-section">
-          <h2 className="section-title-premium">
-            <span className="gradient-text">Why Trade on Coin Hub X?</span>
-          </h2>
-          <div className="features-grid">
-            <div className="feature-card" style={{
-              background: 'rgba(30, 39, 73, 0.6)',
-              border: '1px solid rgba(0, 217, 255, 0.2)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔒</div>
-              <h3 style={{ color: '#00D9FF', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>Secure Escrow</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>Your funds are protected with our secure escrow system until trade completion</p>
-            </div>
-            <div className="feature-card" style={{
-              background: 'rgba(30, 39, 73, 0.6)',
-              border: '1px solid rgba(168, 85, 247, 0.2)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⚡</div>
-              <h3 style={{ color: '#A855F7', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>Instant Trading</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>Connect directly with buyers and sellers for fast, peer-to-peer trading</p>
-            </div>
-            <div className="feature-card" style={{
-              background: 'rgba(30, 39, 73, 0.6)',
-              border: '1px solid rgba(34, 197, 94, 0.2)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>💰</div>
-              <h3 style={{ color: '#22C55E', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>Low Fees</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>Competitive trading fees with no hidden charges or surprises</p>
-            </div>
-            <div className="feature-card" style={{
-              background: 'rgba(30, 39, 73, 0.6)',
-              border: '1px solid rgba(249, 115, 22, 0.2)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🌍</div>
-              <h3 style={{ color: '#F59E0B', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>Multiple Payment Methods</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>Bank transfer, Revolut, Monzo, Wise and more payment options available</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Transactions */}
-        <div className="transactions-section">
-          <div className="section-header">
-            <h2 className="section-title-premium">
-              <span className="gradient-text">Recent Activity</span>
-            </h2>
-            <Button variant="link" onClick={() => navigate('/transactions')} data-testid="view-all-btn" style={{ color: '#00D9FF' }}>
-              View All →
-            </Button>
-          </div>
-          
-          {transactions.length > 0 ? (
-            <div 
-              onClick={() => navigate('/my-orders')}
-              style={{
-                background: 'rgba(30, 39, 73, 0.6)',
-                border: '2px solid rgba(0, 217, 255, 0.3)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 217, 255, 0.6)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 217, 255, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 217, 255, 0.3)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {transactions.map((tx) => (
-                  <div 
-                    key={tx.transaction_id} 
-                    data-testid="transaction-item"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '1rem',
-                      padding: '1rem',
-                      background: 'rgba(10, 20, 45, 0.6)',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(0, 217, 255, 0.2)'
-                    }}
-                  >
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
-                      background: tx.transaction_type === 'deposit' 
-                        ? 'rgba(34, 197, 94, 0.2)' 
-                        : 'rgba(168, 85, 247, 0.2)',
-                      border: tx.transaction_type === 'deposit'
-                        ? '2px solid rgba(34, 197, 94, 0.4)'
-                        : '2px solid rgba(168, 85, 247, 0.4)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      {tx.transaction_type === 'deposit' ? (
-                        <ArrowDownLeft size={24} style={{ color: '#22C55E' }} />
-                      ) : (
-                        <ArrowUpRight size={24} style={{ color: '#A855F7' }} />
-                      )}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ 
-                        fontSize: '1rem', 
-                        fontWeight: '600', 
-                        color: '#FFFFFF',
-                        marginBottom: '0.25rem'
-                      }}>
-                        {tx.transaction_type.charAt(0).toUpperCase() + tx.transaction_type.slice(1)}
-                      </p>
-                      <p style={{ 
-                        fontSize: '0.8125rem', 
-                        color: 'rgba(255,255,255,0.6)'
-                      }}>
-                        {formatDate(tx.created_at)}
-                      </p>
-                    </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p style={{
-                        fontSize: '1.125rem',
-                        fontWeight: '700',
-                        color: tx.transaction_type === 'deposit' ? '#22C55E' : '#A855F7',
-                        marginBottom: '0.25rem'
-                      }}>
-                        {tx.transaction_type === 'deposit' ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
-                      </p>
-                      <p style={{
-                        fontSize: '0.75rem',
-                        padding: '0.25rem 0.5rem',
-                        background: 'rgba(0, 217, 255, 0.15)',
-                        border: '1px solid rgba(0, 217, 255, 0.3)',
-                        borderRadius: '6px',
-                        color: '#00D9FF',
-                        fontWeight: '600',
-                        display: 'inline-block'
-                      }}>
-                        {tx.status}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
+          {/* Header */}
+          <div style={{ marginBottom: '28px' }}>
+            <h1 style={{ fontSize: '30px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Portfolio Overview</h1>
+            <p style={{ color: '#A3AEC2', fontSize: '17px', marginBottom: '12px', lineHeight: '1.4' }}>Your complete financial dashboard</p>
+            
+            {/* Total Value */}
             <div style={{
-              background: 'rgba(30, 39, 73, 0.6)',
-              border: '2px dashed rgba(0, 217, 255, 0.3)',
+              background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+              border: '1px solid rgba(0, 198, 255, 0.3)',
               borderRadius: '16px',
-              padding: '3rem 2rem',
-              textAlign: 'center'
-            }} data-testid="empty-transactions">
-              <Clock size={48} style={{ color: '#00D9FF', marginBottom: '1rem', opacity: 0.6 }} />
-              <h3 style={{ color: '#FFFFFF', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>No Activity Yet</h3>
-              <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '1.5rem' }}>Start trading to see your transaction history here</p>
-              <Button onClick={() => navigate('/p2p-marketplace')} data-testid="start-trading-btn" style={{
-                background: 'linear-gradient(135deg, #00D9FF, #A855F7)',
-                border: 'none',
-                padding: '0.75rem 2rem',
-                borderRadius: '10px',
-                color: '#FFFFFF',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}>
-                Explore Marketplace
-              </Button>
+              padding: '24px',
+              boxShadow: '0 0 25px rgba(0, 198, 255, 0.2)',
+              marginBottom: '24px'
+            }}>
+              <div style={{ fontSize: '15px', color: '#8F9BB3', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: '600' }}>Total Portfolio Value</div>
+              <div style={{ fontSize: '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>£{totalValue.toFixed(2)}</div>
+              <div style={{ fontSize: '16px', color: '#6EE7B7', fontWeight: '600' }}>≈ ${(totalValue * 1.27).toFixed(2)} USD</div>
             </div>
-          )}
+          </div>
+
+          {/* 1. Portfolio Line Graph */}
+          <PortfolioGraph data={null} totalValue={totalValue} />
+
+          {/* 2. P/L Summary Row */}
+          <PLSummaryRow 
+            todayPL={150.50} 
+            weekPL={520.75} 
+            monthPL={1250.30} 
+          />
+
+          {/* 3. Spot vs Savings Allocation */}
+          <AllocationWidget 
+            spotBalance={spotBalance} 
+            savingsBalance={savingsBalance} 
+          />
+
+          {/* 4. Portfolio Allocation Pie Chart */}
+          <PieChartWidget assets={prepareAssetsForPieChart()} />
+
+          {/* 5. Recent Transactions Widget */}
+          <RecentTransactionWidget lastTransaction={lastTransaction} />
+
+          {/* 6. Full Asset Table */}
+          <AssetTable 
+            assets={prepareAssetsForTable()}
+            onDeposit={handleDeposit}
+            onWithdraw={handleWithdraw}
+            onSwap={handleSwap}
+          />
         </div>
       </div>
     </Layout>
   );
 }
+
+export default Dashboard;
