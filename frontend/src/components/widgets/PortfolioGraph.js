@@ -47,7 +47,7 @@ const PortfolioGraph = ({ data, totalValue }) => {
       </div>
 
       <div style={{ position: 'relative', height: '240px', marginTop: '16px' }}>
-        <svg width="100%" height="100%" style={{ overflow: 'visible' }}>
+        <svg width="100%" height="240" viewBox="0 0 800 240" preserveAspectRatio="none" style={{ display: 'block' }}>
           <defs>
             <linearGradient id="graphGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" style={{ stopColor: '#00C6FF', stopOpacity: 0.3 }} />
@@ -62,12 +62,22 @@ const PortfolioGraph = ({ data, totalValue }) => {
             </filter>
           </defs>
           
-          {/* Graph line and area */}
+          {/* Graph area fill */}
+          <path
+            d={`${graphData.map((point, i) => {
+              const x = (i / (graphData.length - 1)) * 800;
+              const y = 240 - ((point.value - minValue) / (maxValue - minValue)) * 200;
+              return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+            }).join(' ')} L 800 240 L 0 240 Z`}
+            fill="url(#graphGradient)"
+          />
+          
+          {/* Graph line */}
           <path
             d={graphData.map((point, i) => {
-              const x = (i / (graphData.length - 1)) * 100;
-              const y = 100 - ((point.value - minValue) / (maxValue - minValue)) * 100;
-              return `${i === 0 ? 'M' : 'L'} ${x}% ${y}%`;
+              const x = (i / (graphData.length - 1)) * 800;
+              const y = 240 - ((point.value - minValue) / (maxValue - minValue)) * 200;
+              return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
             }).join(' ')}
             fill="none"
             stroke="#00C6FF"
@@ -75,14 +85,25 @@ const PortfolioGraph = ({ data, totalValue }) => {
             filter="url(#glow)"
           />
           
-          <path
-            d={`${graphData.map((point, i) => {
-              const x = (i / (graphData.length - 1)) * 100;
-              const y = 100 - ((point.value - minValue) / (maxValue - minValue)) * 100;
-              return `${i === 0 ? 'M' : 'L'} ${x}% ${y}%`;
-            }).join(' ')} L 100% 100% L 0% 100% Z`}
-            fill="url(#graphGradient)"
-          />
+          {/* Data points */}
+          {graphData.map((point, i) => {
+            const x = (i / (graphData.length - 1)) * 800;
+            const y = 240 - ((point.value - minValue) / (maxValue - minValue)) * 200;
+            return (
+              <circle
+                key={i}
+                cx={x}
+                cy={y}
+                r="4"
+                fill="#00C6FF"
+                stroke="#FFFFFF"
+                strokeWidth="2"
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setHoveredPoint(point)}
+                onMouseLeave={() => setHoveredPoint(null)}
+              />
+            );
+          })}
         </svg>
 
         {hoveredPoint && (
@@ -91,16 +112,18 @@ const PortfolioGraph = ({ data, totalValue }) => {
             top: '10px',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: 'rgba(0, 198, 255, 0.9)',
-            padding: '8px 12px',
-            borderRadius: '8px',
+            background: 'rgba(0, 198, 255, 0.95)',
+            padding: '10px 16px',
+            borderRadius: '10px',
             color: '#FFFFFF',
             fontSize: '13px',
             fontWeight: '600',
-            boxShadow: '0 0 15px rgba(0, 198, 255, 0.5)'
+            boxShadow: '0 0 20px rgba(0, 198, 255, 0.6)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            zIndex: 10
           }}>
-            <div>{hoveredPoint.date.toLocaleDateString()}</div>
-            <div>£{hoveredPoint.value.toFixed(2)}</div>
+            <div style={{ marginBottom: '4px' }}>{hoveredPoint.date.toLocaleDateString()}</div>
+            <div style={{ fontSize: '16px', fontWeight: '700' }}>£{hoveredPoint.value.toFixed(2)}</div>
           </div>
         )}
       </div>
