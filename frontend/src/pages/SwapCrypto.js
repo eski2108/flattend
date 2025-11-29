@@ -173,12 +173,14 @@ function SwapCrypto() {
   const getFromCryptoColor = () => cryptos.find(c => c.code === fromCrypto)?.color || '#00E8FF';
   const getToCryptoColor = () => cryptos.find(c => c.code === toCrypto)?.color || '#9B4DFF';
 
+  const isMobile = window.innerWidth < 768;
+
   return (
     <Layout>
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #07111A 0%, #0C1A27 100%)',
-        padding: '20px',
+        padding: isMobile ? '16px' : '20px',
         paddingBottom: '60px'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
