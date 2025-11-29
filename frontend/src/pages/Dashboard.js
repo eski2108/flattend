@@ -185,11 +185,13 @@ function Dashboard() {
               {/* Export Button */}
               <CHXButton
                 onClick={handleExportPDF}
-                coinColor=\"#00C6FF\"
-                variant=\"secondary\"
-                size=\"small\"
+                coinColor="#00C6FF"
+                variant="secondary"
+                size="small"
                 icon={<FileText size={16} />}
-              >\n                📄 Export PDF\n              </CHXButton>
+              >
+                Export PDF
+              </CHXButton>
             </div>
             
             {/* Glowing Divider */}
