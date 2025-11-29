@@ -208,7 +208,7 @@ export default function SpotTrading() {
     const handleResize = () => {
       if (chartContainerRef.current && chartRef.current) {
         const newWidth = chartContainerRef.current.clientWidth;
-        const newHeight = window.innerWidth <= 1200 ? 300 : 450;
+        const newHeight = window.innerWidth <= 1200 ? 360 : 480;
         chartRef.current.applyOptions({
           width: newWidth,
           height: newHeight
