@@ -208,13 +208,13 @@ function Dashboard() {
               background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
               border: '1px solid rgba(0, 198, 255, 0.3)',
               borderRadius: '16px',
-              padding: '24px',
+              padding: '20px',
               boxShadow: '0 0 25px rgba(0, 198, 255, 0.2)',
-              marginBottom: '24px'
+              marginBottom: '16px'
             }}>
-              <div style={{ fontSize: '15px', color: '#8F9BB3', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: '600' }}>Total Portfolio Value</div>
-              <div style={{ fontSize: '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>£{totalValue.toFixed(2)}</div>
-              <div style={{ fontSize: '16px', color: '#6EE7B7', fontWeight: '600' }}>≈ ${(totalValue * 1.27).toFixed(2)} USD</div>
+              <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: '600' }}>Total Portfolio Value</div>
+              <div style={{ fontSize: '38px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px', lineHeight: '1.1' }}>£{totalValue.toFixed(2)}</div>
+              <div style={{ fontSize: '15px', color: '#6EE7B7', fontWeight: '600' }}>≈ ${(totalValue * 1.27).toFixed(2)} USD</div>
             </div>
           </div>
 
