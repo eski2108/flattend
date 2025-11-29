@@ -142,59 +142,65 @@ export default function Login() {
         position: 'relative',
         zIndex: 1
       }}>
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        {/* Logo & Header */}
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          {/* Main Logo */}
           <div 
             onClick={() => navigate('/')} 
             style={{ 
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: '20px',
-              cursor: 'pointer'
+              marginBottom: '32px',
+              cursor: 'pointer',
+              position: 'relative'
             }}
           >
             <img 
               src="/logo1-transparent.png" 
               alt="Coin Hub X" 
               style={{ 
-                height: '64px', 
+                height: '85px', 
                 width: 'auto',
-                filter: 'drop-shadow(0 0 20px rgba(0, 198, 255, 0.6))'
+                filter: 'drop-shadow(0 0 25px rgba(0, 198, 255, 0.7)) drop-shadow(0 0 50px rgba(0, 198, 255, 0.4))',
+                transition: 'all 0.3s ease'
               }} 
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'scale(1.05)';
+                e.target.style.filter = 'drop-shadow(0 0 35px rgba(0, 198, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.5))';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.filter = 'drop-shadow(0 0 25px rgba(0, 198, 255, 0.7)) drop-shadow(0 0 50px rgba(0, 198, 255, 0.4))';
+              }}
             />
           </div>
           
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '72px',
-            height: '72px',
-            borderRadius: '18px',
-            background: 'linear-gradient(135deg, #00C6FF 0%, #0080FF 100%)',
-            marginBottom: '24px',
-            boxShadow: '0 0 30px rgba(0, 198, 255, 0.4), 0 8px 24px rgba(0, 198, 255, 0.3)'
-          }}>
-            <ShieldCheck size={40} color="white" strokeWidth={2.5} />
-          </div>
-          
+          {/* Welcome Text */}
           <h1 style={{ 
-            fontSize: '36px',
+            fontSize: '38px',
             fontWeight: '700',
-            background: 'linear-gradient(135deg, #FFFFFF 0%, #00C6FF 100%)',
+            background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 50%, #0080FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '12px',
-            letterSpacing: '-0.5px'
+            marginBottom: '14px',
+            letterSpacing: '-0.5px',
+            textShadow: '0 0 30px rgba(0, 229, 255, 0.3)'
           }}>Welcome Back</h1>
           
           <p style={{
-            color: 'rgba(255, 255, 255, 0.65)',
+            color: 'rgba(255, 255, 255, 0.7)',
             fontSize: '16px',
-            fontWeight: '400',
-            lineHeight: '1.5'
-          }}>Secure access to your crypto portfolio</p>
+            fontWeight: '500',
+            lineHeight: '1.5',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}>
+            <ShieldCheck size={18} color="#00C6FF" strokeWidth={2.5} />
+            Secure access to your crypto portfolio
+          </p>
         </div>
 
         {/* Login Form */}
