@@ -201,7 +201,14 @@ export default function SavingsPage() {
     }
   };
 
-  const totalValueGBP = (totalValue * 0.79).toFixed(2);
+  // Convert USD to selected display currency
+  const convertCurrency = (usdAmount) => {
+    const rate = CURRENCIES[displayCurrency].rate / CURRENCIES['USD'].rate;
+    return (usdAmount * rate).toFixed(2);
+  };
+
+  const currencySymbol = CURRENCIES[displayCurrency].symbol;
+  const displayValue = convertCurrency(totalValue);
   const savingsRatio = 0; // Calculate from portfolio
   const estimatedAPY = '4.5%';
 
