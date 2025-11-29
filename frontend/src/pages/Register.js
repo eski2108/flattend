@@ -118,25 +118,40 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+    // Skip password validation for Google signup
+    if (!isGoogleSignup) {
+      if (formData.password !== formData.confirmPassword) {
+        toast.error('Passwords do not match');
+        return;
+      }
 
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
+      if (formData.password.length < 6) {
+        toast.error('Password must be at least 6 characters');
+        return;
+      }
     }
 
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/api/auth/register`, {
+      const payload = {
         full_name: formData.full_name,
         email: formData.email,
-        phone_number: formData.phone_number,
-        password: formData.password
-      });
+        phone_number: formData.phone_number
+      };
+      
+      // Add password only for regular signup
+      if (!isGoogleSignup) {
+        payload.password = formData.password;
+      }
+      
+      // Add Google ID if Google signup
+      if (isGoogleSignup && formData.google_id) {
+        payload.google_id = formData.google_id;
+        payload.email_verified = true;
+      }
+      
+      const response = await axios.post(`${API}/api/auth/register`, payload);
       
       if (response.data.success) {
         const userId = response.data.user.user_id;
