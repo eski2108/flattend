@@ -201,16 +201,7 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        <div style={{
-          width: '100%',
-          padding: '20px 0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxSizing: 'border-box'
-        }}>
-          <PriceTickerEnhanced />
-        </div>
+        <PriceTickerEnhanced />
         
         <PromoBanner />
         
