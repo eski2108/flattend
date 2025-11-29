@@ -116,25 +116,26 @@ const PieChartWidget = ({ assets }) => {
           {/* Center text showing total */}
           <text
             x="100"
-            y="95"
-            textAnchor="middle"
-            fill="#8F9BB3"
-            fontSize="12"
-            fontWeight="600"
-            fontFamily="Inter, sans-serif"
-          >
-            TOTAL
-          </text>
-          <text
-            x="100"
-            y="110"
+            y="100"
             textAnchor="middle"
             fill="#00E5FF"
-            fontSize="14"
+            fontSize="18"
             fontWeight="700"
             fontFamily="Inter, sans-serif"
           >
             {slices.length}
+          </text>
+          <text
+            x="100"
+            y="115"
+            textAnchor="middle"
+            fill="#8F9BB3"
+            fontSize="11"
+            fontWeight="500"
+            fontFamily="Inter, sans-serif"
+            letterSpacing="1"
+          >
+            ASSETS
           </text>
         </svg>
 
