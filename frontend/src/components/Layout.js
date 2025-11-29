@@ -201,21 +201,6 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        <PriceTickerEnhanced />
-        
-        {/* Divider Line */}
-        <div style={{
-          width: '100%',
-          height: '1px',
-          backgroundColor: 'rgba(0, 232, 248, 0.15)',
-          marginTop: '10px',
-          marginBottom: '0',
-          border: 'none',
-          boxShadow: 'none',
-          filter: 'none',
-          borderRadius: '0'
-        }} />
-        
         {/* Promo Banner */}
         <PromoBanner />
         
