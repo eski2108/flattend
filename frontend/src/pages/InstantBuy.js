@@ -318,32 +318,68 @@ function InstantBuy() {
           ) : (
             <div style={{ background: 'rgba(15,23,42,0.6)', border: '2px solid rgba(0,240,255,0.3)', borderRadius: '24px', overflow: 'hidden' }}>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '180px 120px 120px 1fr', padding: '1rem 1.5rem', background: 'rgba(0,240,255,0.1)', borderBottom: '1px solid rgba(0,240,255,0.3)', fontWeight: '700', fontSize: '13px', color: '#00F0FF', textTransform: 'uppercase' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '180px 120px 120px 150px 1fr', padding: '1rem 1.5rem', background: 'rgba(0,240,255,0.1)', borderBottom: '1px solid rgba(0,240,255,0.3)', fontWeight: '700', fontSize: '13px', color: '#00F0FF', textTransform: 'uppercase' }}>
                 <div>Crypto</div>
                 <div>Price</div>
                 <div>Stock</div>
+                <div>Liquidity</div>
                 <div style={{ textAlign: 'center' }}>Quick Buy</div>
               </div>
 
               <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
                 {filtered.map(coin => (
-                  <div key={coin.symbol} style={{ display: 'grid', gridTemplateColumns: '180px 120px 120px 1fr', padding: '0.75rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', alignItems: 'center', transition: 'background 0.2s' }}
+                  <div key={coin.symbol} style={{ display: 'grid', gridTemplateColumns: '180px 120px 120px 150px 1fr', padding: '0.75rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', alignItems: 'center', transition: 'background 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                     
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <div style={{ fontSize: '18px', fontWeight: '900', color: '#fff' }}>{coin.symbol}</div>
-                      <div style={{ fontSize: '11px', color: '#666' }}>
-                        {coin.symbol === 'BTC' ? 'Bitcoin' : coin.symbol === 'ETH' ? 'Ethereum' : coin.symbol === 'USDT' ? 'Tether' : coin.symbol === 'SOL' ? 'Solana' : coin.symbol === 'GBP' ? 'Pound' : ''}
-                      </div>
+                      <div style={{ fontSize: '11px', color: '#666' }}>{coin.name}</div>
                     </div>
 
-                    <div style={{ color: '#22C55E', fontWeight: '700', fontSize: '15px' }}>£{(coin.price_gbp || 0).toLocaleString()}</div>
+                    <div style={{ color: coin.has_liquidity ? '#22C55E' : '#888', fontWeight: '700', fontSize: '15px' }}>
+                      {coin.has_liquidity ? `£${(coin.price_gbp || 0).toLocaleString()}` : 'N/A'}
+                    </div>
 
-                    <div style={{ color: '#888', fontSize: '13px' }}>{(coin.available || 0).toFixed(2)}</div>
+                    <div style={{ color: coin.has_liquidity ? '#fff' : '#666', fontSize: '13px' }}>
+                      {coin.has_liquidity ? (coin.available_amount || 0).toFixed(4) : '0.00'}
+                    </div>
+
+                    <div>
+                      {coin.has_liquidity ? (
+                        <span style={{ padding: '4px 12px', background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)', borderRadius: '8px', fontSize: '11px', color: '#22C55E', fontWeight: '600' }}>
+                          ✓ Active
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => navigate(`/admin/dashboard?tab=liquidity&coin=${coin.symbol}`)}
+                          style={{
+                            padding: '6px 12px',
+                            background: 'rgba(0, 240, 255, 0.1)',
+                            border: '1px solid rgba(0, 240, 255, 0.3)',
+                            borderRadius: '8px',
+                            fontSize: '11px',
+                            color: '#00F0FF',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = 'rgba(0, 240, 255, 0.2)';
+                            e.target.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = 'rgba(0, 240, 255, 0.1)';
+                            e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                          }}
+                        >
+                          + Add Liquidity
+                        </button>
+                      )}
+                    </div>
 
                     <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                      {amounts.map(amt => {
+                      {coin.has_liquidity ? amounts.map(amt => {
                         const isProc = processingCoin === `${coin.symbol}-${amt}`;
                         const crypto = coin.price_gbp ? (amt / coin.price_gbp).toFixed(6) : '0';
                         const btnKey = `${coin.symbol}-${amt}`;
