@@ -6,6 +6,7 @@ import uuid
 
 # Global Payment Methods Configuration
 GLOBAL_PAYMENT_METHODS = {
+    # UK & Europe
     "faster_payments": {
         "id": "faster_payments",
         "name": "Faster Payments",
@@ -20,6 +21,15 @@ GLOBAL_PAYMENT_METHODS = {
         "estimated_time_minutes": 60,
         "icon": "🇪🇺"
     },
+    "sepa_instant": {
+        "id": "sepa_instant",
+        "name": "SEPA Instant",
+        "region": "EU",
+        "estimated_time_minutes": 10,
+        "icon": "⚡"
+    },
+    
+    # Global Wire Transfers
     "swift": {
         "id": "swift",
         "name": "SWIFT",
@@ -27,6 +37,54 @@ GLOBAL_PAYMENT_METHODS = {
         "estimated_time_minutes": 240,
         "icon": "🌍"
     },
+    "wire_transfer": {
+        "id": "wire_transfer",
+        "name": "Wire Transfer",
+        "region": "Global",
+        "estimated_time_minutes": 120,
+        "icon": "💳"
+    },
+    
+    # US Payment Methods
+    "ach": {
+        "id": "ach",
+        "name": "ACH Transfer",
+        "region": "USA",
+        "estimated_time_minutes": 180,
+        "icon": "🇺🇸"
+    },
+    "zelle": {
+        "id": "zelle",
+        "name": "Zelle",
+        "region": "USA",
+        "estimated_time_minutes": 15,
+        "icon": "⚡"
+    },
+    "venmo": {
+        "id": "venmo",
+        "name": "Venmo",
+        "region": "USA",
+        "estimated_time_minutes": 10,
+        "icon": "💙"
+    },
+    "cash_app": {
+        "id": "cash_app",
+        "name": "Cash App",
+        "region": "USA",
+        "estimated_time_minutes": 10,
+        "icon": "💵"
+    },
+    
+    # Canada
+    "interac": {
+        "id": "interac",
+        "name": "Interac e-Transfer",
+        "region": "Canada",
+        "estimated_time_minutes": 30,
+        "icon": "🇨🇦"
+    },
+    
+    # Digital Wallets & Neobanks
     "wise": {
         "id": "wise",
         "name": "Wise",
@@ -37,7 +95,7 @@ GLOBAL_PAYMENT_METHODS = {
     "revolut": {
         "id": "revolut",
         "name": "Revolut",
-        "region": "EU/UK",
+        "region": "EU/UK/USA",
         "estimated_time_minutes": 15,
         "icon": "🔄"
     },
@@ -48,6 +106,29 @@ GLOBAL_PAYMENT_METHODS = {
         "estimated_time_minutes": 30,
         "icon": "💰"
     },
+    "skrill": {
+        "id": "skrill",
+        "name": "Skrill",
+        "region": "Global",
+        "estimated_time_minutes": 30,
+        "icon": "💳"
+    },
+    "neteller": {
+        "id": "neteller",
+        "name": "Neteller",
+        "region": "Global",
+        "estimated_time_minutes": 30,
+        "icon": "💼"
+    },
+    "payoneer": {
+        "id": "payoneer",
+        "name": "Payoneer",
+        "region": "Global",
+        "estimated_time_minutes": 60,
+        "icon": "🌐"
+    },
+    
+    # Latin America
     "pix": {
         "id": "pix",
         "name": "PIX",
@@ -55,6 +136,22 @@ GLOBAL_PAYMENT_METHODS = {
         "estimated_time_minutes": 5,
         "icon": "🇧🇷"
     },
+    "mercado_pago": {
+        "id": "mercado_pago",
+        "name": "Mercado Pago",
+        "region": "Latin America",
+        "estimated_time_minutes": 15,
+        "icon": "💙"
+    },
+    "nequi": {
+        "id": "nequi",
+        "name": "Nequi",
+        "region": "Colombia",
+        "estimated_time_minutes": 10,
+        "icon": "🇨🇴"
+    },
+    
+    # Asia
     "upi": {
         "id": "upi",
         "name": "UPI",
@@ -62,12 +159,132 @@ GLOBAL_PAYMENT_METHODS = {
         "estimated_time_minutes": 10,
         "icon": "🇮🇳"
     },
+    "paytm": {
+        "id": "paytm",
+        "name": "Paytm",
+        "region": "India",
+        "estimated_time_minutes": 15,
+        "icon": "💳"
+    },
+    "imps": {
+        "id": "imps",
+        "name": "IMPS",
+        "region": "India",
+        "estimated_time_minutes": 10,
+        "icon": "⚡"
+    },
+    "alipay": {
+        "id": "alipay",
+        "name": "Alipay",
+        "region": "China",
+        "estimated_time_minutes": 10,
+        "icon": "🇨🇳"
+    },
+    "wechat_pay": {
+        "id": "wechat_pay",
+        "name": "WeChat Pay",
+        "region": "China",
+        "estimated_time_minutes": 10,
+        "icon": "💚"
+    },
+    "gcash": {
+        "id": "gcash",
+        "name": "GCash",
+        "region": "Philippines",
+        "estimated_time_minutes": 10,
+        "icon": "🇵🇭"
+    },
+    "paymaya": {
+        "id": "paymaya",
+        "name": "PayMaya",
+        "region": "Philippines",
+        "estimated_time_minutes": 10,
+        "icon": "💳"
+    },
+    "grabpay": {
+        "id": "grabpay",
+        "name": "GrabPay",
+        "region": "Southeast Asia",
+        "estimated_time_minutes": 15,
+        "icon": "🚗"
+    },
+    
+    # Africa
     "m_pesa": {
         "id": "m_pesa",
         "name": "M-Pesa",
-        "region": "Africa",
+        "region": "Kenya/Africa",
         "estimated_time_minutes": 15,
         "icon": "🇰🇪"
+    },
+    "airtel_money": {
+        "id": "airtel_money",
+        "name": "Airtel Money",
+        "region": "Africa",
+        "estimated_time_minutes": 15,
+        "icon": "📱"
+    },
+    "mtn_mobile_money": {
+        "id": "mtn_mobile_money",
+        "name": "MTN Mobile Money",
+        "region": "Africa",
+        "estimated_time_minutes": 15,
+        "icon": "💛"
+    },
+    "chipper_cash": {
+        "id": "chipper_cash",
+        "name": "Chipper Cash",
+        "region": "Africa",
+        "estimated_time_minutes": 15,
+        "icon": "🐿️"
+    },
+    
+    # Australia & New Zealand
+    "osko": {
+        "id": "osko",
+        "name": "Osko",
+        "region": "Australia",
+        "estimated_time_minutes": 10,
+        "icon": "🇦🇺"
+    },
+    
+    # Middle East
+    "sadad": {
+        "id": "sadad",
+        "name": "Sadad",
+        "region": "Saudi Arabia",
+        "estimated_time_minutes": 30,
+        "icon": "🇸🇦"
+    },
+    
+    # Cash & Others
+    "cash_in_person": {
+        "id": "cash_in_person",
+        "name": "Cash (In Person)",
+        "region": "Local",
+        "estimated_time_minutes": 60,
+        "icon": "💵"
+    },
+    "gift_cards": {
+        "id": "gift_cards",
+        "name": "Gift Cards",
+        "region": "Global",
+        "estimated_time_minutes": 30,
+        "icon": "🎁"
+    },
+    "western_union": {
+        "id": "western_union",
+        "name": "Western Union",
+        "region": "Global",
+        "estimated_time_minutes": 60,
+        "icon": "🌎"
+    },
+    "moneygram": {
+        "id": "moneygram",
+        "name": "MoneyGram",
+        "region": "Global",
+        "estimated_time_minutes": 60,
+        "icon": "💸"
     }
 }
 
