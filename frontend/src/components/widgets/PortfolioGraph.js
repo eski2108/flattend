@@ -239,14 +239,40 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
       border: '1px solid rgba(0, 229, 255, 0.25)',
       borderRadius: '18px',
-      padding: '24px',
+      padding: '20px 16px',
       marginTop: '16px',
       marginBottom: '16px',
-      boxShadow: '0 0 35px rgba(0, 229, 255, 0.18)'
+      boxShadow: '0 0 35px rgba(0, 229, 255, 0.18)',
+      overflow: 'hidden',
+      width: '100%',
+      boxSizing: 'border-box'
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Portfolio Value</h3>
-        <div style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        <h3 style={{ 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          color: '#FFFFFF', 
+          margin: 0, 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.5px',
+          width: '100%',
+          marginBottom: '8px'
+        }}>Portfolio Value</h3>
+        <div style={{ 
+          display: 'flex', 
+          gap: '8px',
+          width: '100%',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          paddingBottom: '4px'
+        }}>
           {timeRanges.map(range => (
             <CHXButton
               key={range}
@@ -254,6 +280,7 @@ const PortfolioGraph = ({ totalValue, userId }) => {
               coinColor="#00E5FF"
               variant={timeRange === range ? 'primary' : 'secondary'}
               size="small"
+              style={{ minWidth: '60px', flex: '1' }}
             >
               {range}
             </CHXButton>
@@ -262,8 +289,11 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       </div>
 
       <div style={{ 
-        height: '340px',
-        marginTop: '12px'
+        height: '300px',
+        marginTop: '12px',
+        width: '100%',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
         {loading ? (
           <div style={{ 
@@ -296,7 +326,8 @@ const PortfolioGraph = ({ totalValue, userId }) => {
             options={chartOptions}
             series={series}
             type="area"
-            height={340}
+            height={300}
+            width="100%"
           />
         )}
       </div>
