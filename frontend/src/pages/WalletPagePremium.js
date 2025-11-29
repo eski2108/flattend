@@ -176,9 +176,7 @@ export default function WalletPagePremium() {
       }
     } catch (error) {
       console.error('Failed to load wallet data:', error);
-      if (!silent) {
-        toast.error('Failed to load wallet data');
-      }
+      // Silently fail - don't show annoying error toast
     } finally {
       if (!silent) setLoading(false);
       if (silent) setRefreshing(false);
