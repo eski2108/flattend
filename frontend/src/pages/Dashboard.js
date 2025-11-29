@@ -222,9 +222,10 @@ function Dashboard() {
           {/* 2. P/L Summary Row with Donut Widget */}
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '20px', 
-            marginBottom: '24px'
+            marginBottom: '24px',
+            width: '100%'
           }}>
             <PLSummaryRow 
               todayPL={150.50} 
