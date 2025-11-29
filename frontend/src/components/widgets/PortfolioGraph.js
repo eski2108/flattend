@@ -73,7 +73,7 @@ const PortfolioGraph = ({ totalValue, userId }) => {
   const chartOptions = {
     chart: {
       type: 'area',
-      height: 320,
+      height: 300,
       background: 'transparent',
       toolbar: {
         show: false
