@@ -274,10 +274,10 @@ function Dashboard() {
                     fontFamily: 'Inter, sans-serif'
                   }}
                 >
-                  <option value=\"value\">Sort by Value</option>
-                  <option value=\"name\">Sort by Name</option>
-                  <option value=\"change\">Sort by 24h Change</option>
-                  <option value=\"pl\">Sort by Profit/Loss</option>
+                  <option value="value">Sort by Value</option>
+                  <option value="name">Sort by Name</option>
+                  <option value="change">Sort by 24h Change</option>
+                  <option value="pl">Sort by Profit/Loss</option>
                 </select>
                 <ChevronDown size={16} color=\"#00C6FF\" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
               </div>
