@@ -150,60 +150,78 @@ export default function Login() {
           borderRadius: '0 0 50% 50%'
         }} />
         {/* Logo & Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          {/* Main Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          {/* Main Logo with Premium Glow */}
           <div 
             onClick={() => navigate('/')} 
             style={{ 
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: '32px',
+              marginBottom: '40px',
               cursor: 'pointer',
-              position: 'relative'
+              position: 'relative',
+              padding: '20px'
             }}
           >
+            {/* Glow Effect Circle Behind Logo */}
+            <div style={{
+              position: 'absolute',
+              width: '180px',
+              height: '180px',
+              background: 'radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 198, 255, 0.1) 40%, transparent 70%)',
+              borderRadius: '50%',
+              filter: 'blur(30px)',
+              animation: 'pulse 3s ease-in-out infinite',
+              zIndex: 0
+            }} />
+            
             <img 
               src="/logo1-transparent.png" 
               alt="Coin Hub X" 
               style={{ 
-                height: '85px', 
+                height: '120px', 
                 width: 'auto',
-                filter: 'drop-shadow(0 0 25px rgba(0, 198, 255, 0.7)) drop-shadow(0 0 50px rgba(0, 198, 255, 0.4))',
-                transition: 'all 0.3s ease'
+                filter: 'drop-shadow(0 0 35px rgba(0, 229, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.6)) drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5))',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                zIndex: 1
               }} 
               onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.05)';
-                e.target.style.filter = 'drop-shadow(0 0 35px rgba(0, 198, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.5))';
+                e.target.style.transform = 'scale(1.08) translateY(-5px)';
+                e.target.style.filter = 'drop-shadow(0 0 50px rgba(0, 229, 255, 1)) drop-shadow(0 0 100px rgba(0, 198, 255, 0.8)) drop-shadow(0 15px 50px rgba(0, 0, 0, 0.6))';
               }}
               onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1)';
-                e.target.style.filter = 'drop-shadow(0 0 25px rgba(0, 198, 255, 0.7)) drop-shadow(0 0 50px rgba(0, 198, 255, 0.4))';
+                e.target.style.transform = 'scale(1) translateY(0)';
+                e.target.style.filter = 'drop-shadow(0 0 35px rgba(0, 229, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.6)) drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5))';
               }}
             />
           </div>
           
-          {/* Welcome Text */}
+          {/* Welcome Text with Enhanced Styling */}
           <h1 style={{ 
-            fontSize: '38px',
-            fontWeight: '700',
-            background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 50%, #0080FF 100%)',
+            fontSize: '44px',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 40%, #00C6FF 70%, #0080FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '12px',
-            letterSpacing: '0.5px',
-            lineHeight: '1.2'
+            marginBottom: '16px',
+            letterSpacing: '1px',
+            lineHeight: '1.2',
+            textShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
           }}>
             Welcome Back
           </h1>
           <p style={{ 
-            color: '#8F9BB3',
-            fontSize: '16px',
+            color: '#A3AEC2',
+            fontSize: '17px',
             fontWeight: '500',
             marginBottom: 0,
-            letterSpacing: '0.3px'
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+            opacity: 0.9
           }}>
-            Sign in to your account
+            Premium Crypto Exchange Platform
           </p>
         </div>
 
