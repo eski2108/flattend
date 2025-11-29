@@ -229,7 +229,7 @@ function SwapCrypto() {
             <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 232, 255, 0.5) 50%, transparent 100%)' }} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 1024 ? '1fr' : '1fr 400px', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: isMobile ? '16px' : '20px' }}>
             
             {/* Main Swap Panel */}
             <div>
