@@ -1,0 +1,57 @@
+/* Premium Button Styles - Consistent Glow Effects Across App */
+
+.premium-glow-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.premium-glow-btn:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.premium-glow-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Green Glow Buttons */
+.premium-glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.premium-glow-green:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.7);
+  filter: brightness(1.1);
+}
+
+/* Red Glow Buttons */
+.premium-glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+.premium-glow-red:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.7);
+  filter: brightness(1.1);
+}
+
+/* Purple Glow Buttons */
+.premium-glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.premium-glow-purple:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.7);
+  filter: brightness(1.1);
+}
+
+/* Cyan Glow Buttons */
+.premium-glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+.premium-glow-cyan:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.7);
+  filter: brightness(1.1);
+}
