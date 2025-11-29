@@ -462,7 +462,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             {/* Quick Buy Buttons */}
             {coin.has_liquidity && (
               <div>
-                <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', fontWeight: '600' }}>Quick Buy</div>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Quick Buy</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                   {amounts.map(amt => {
                     const cryptoAmount = coin.price_gbp ? (amt / coin.price_gbp).toFixed(6) : '0';
