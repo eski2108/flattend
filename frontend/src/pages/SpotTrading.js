@@ -127,7 +127,7 @@ export default function SpotTrading() {
     }
 
     const containerWidth = chartContainerRef.current.clientWidth;
-    const chartHeight = isMobile ? 300 : 450;
+    const chartHeight = isMobile ? 360 : 480;
 
     const chart = LightweightCharts.createChart(chartContainerRef.current, {
       width: containerWidth,
