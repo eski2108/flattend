@@ -363,10 +363,18 @@ export default function Login() {
         </form>
 
         {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '32px 0' }}>
-          <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }} />
-          <span style={{ color: '#8F9BB3', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>OR</span>
-          <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '36px 0' }}>
+          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.3) 50%, transparent 100%)' }} />
+          <span style={{ 
+            color: '#00E5FF', 
+            fontSize: '13px', 
+            fontWeight: '700', 
+            textTransform: 'uppercase', 
+            letterSpacing: '1.5px',
+            padding: '0 8px',
+            textShadow: '0 0 15px rgba(0, 229, 255, 0.5)'
+          }}>OR</span>
+          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.3) 50%, transparent 100%)' }} />
         </div>
 
         {/* Google Sign In */}
