@@ -39,8 +39,9 @@ function Dashboard() {
   const [totalValue, setTotalValue] = useState(0);
   const [spotBalance, setSpotBalance] = useState(0);
   const [savingsBalance, setSavingsBalance] = useState(0);
-  const [lastTransaction, setLastTransaction] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('value');
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
