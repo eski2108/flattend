@@ -173,7 +173,7 @@ def test_callback_endpoint():
                     return False
             
             # Test with invalid code parameter
-            response_invalid = requests.get(f"{AUTH_BASE}/auth/google/callback?code=invalid_code", allow_redirects=False)
+            response_invalid = requests.get(f"{API_BASE}/auth/google/callback?code=invalid_code", allow_redirects=False)
             
             if response_invalid.status_code in [302, 400, 500]:
                 log_test("✅ Callback handles invalid code parameter", "PASS")
