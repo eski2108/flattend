@@ -131,7 +131,7 @@ export default function Login() {
         WebkitBackdropFilter: 'blur(30px)',
         border: '1px solid rgba(0, 229, 255, 0.3)',
         borderRadius: '28px',
-        padding: '56px 48px',
+        padding: '40px 44px',
         boxShadow: '0 0 50px rgba(0, 229, 255, 0.25), 0 25px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
         position: 'relative',
         zIndex: 1,
