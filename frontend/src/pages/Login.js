@@ -233,23 +233,26 @@ export default function Login() {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '16px',
-                background: 'rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(0, 198, 255, 0.2)',
-                borderRadius: '12px',
+                padding: '18px 20px',
+                background: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(0, 229, 255, 0.25)',
+                borderRadius: '14px',
                 color: '#FFFFFF',
-                fontSize: '15px',
+                fontSize: '16px',
                 outline: 'none',
-                transition: 'all 0.2s',
-                fontFamily: 'Inter, sans-serif'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: '500'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.5)';
-                e.target.style.boxShadow = '0 0 20px rgba(0, 198, 255, 0.15)';
+                e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                e.target.style.boxShadow = '0 0 25px rgba(0, 229, 255, 0.2), inset 0 0 20px rgba(0, 229, 255, 0.05)';
+                e.target.style.background = 'rgba(0, 0, 0, 0.5)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.2)';
+                e.target.style.borderColor = 'rgba(0, 229, 255, 0.25)';
                 e.target.style.boxShadow = 'none';
+                e.target.style.background = 'rgba(0, 0, 0, 0.4)';
               }}
             />
           </div>
