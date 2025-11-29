@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import Chart from 'react-apexcharts';
+
+// Dynamically import ApexCharts
+let Chart = null;
+try {
+  Chart = require('react-apexcharts').default;
+} catch (e) {
+  console.warn('ApexCharts not loaded:', e);
+}
 
 const CoinSparkline = ({ symbol, color = '#00C6FF', height = 40 }) => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     loadSparklineData();
