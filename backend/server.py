@@ -15782,9 +15782,12 @@ async def get_unified_balances(user_id: str):
             prices['USDT'] = 1.0
             prices['USDC'] = 1.0
         
-        # Calculate USD values
+        # Calculate USD and GBP values
         total_usd = 0.0
         enriched_balances = []
+        
+        # GBP conversion rate (1 GBP = ~1.27 USD, so 1 USD = ~0.787 GBP)
+        usd_to_gbp = 0.787
         
         for balance in balances:
             currency = balance['currency']
@@ -15792,8 +15795,21 @@ async def get_unified_balances(user_id: str):
             available = balance['available_balance']
             locked = balance['locked_balance']
             
-            price = prices.get(currency, 0)
-            usd_value = total * price
+            # Get price in USD
+            if currency == 'GBP':
+                # For GBP, 1 GBP = 1 GBP
+                price_usd = 1.27  # GBP to USD
+                price_gbp = 1.0   # GBP to GBP is always 1
+            elif currency in ['USD', 'EUR']:
+                price_usd = prices.get(currency, 1.0)
+                price_gbp = price_usd * usd_to_gbp
+            else:
+                # For crypto, get USD price and convert to GBP
+                price_usd = prices.get(currency, 0)
+                price_gbp = price_usd * usd_to_gbp
+            
+            usd_value = total * price_usd
+            gbp_value = total * price_gbp
             total_usd += usd_value
             
             enriched_balances.append({
@@ -15801,8 +15817,10 @@ async def get_unified_balances(user_id: str):
                 "available_balance": available,
                 "locked_balance": locked,
                 "total_balance": total,
-                "usd_price": price,
-                "usd_value": usd_value
+                "usd_price": price_usd,
+                "usd_value": usd_value,
+                "price_gbp": price_gbp,
+                "gbp_value": gbp_value
             })
         
         # Sort by USD value descending
