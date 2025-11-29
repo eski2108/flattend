@@ -5399,14 +5399,26 @@ async def google_auth():
     return RedirectResponse(url=auth_url)
 
 @api_router.get("/auth/google/callback")
-async def google_callback(code: str):
+async def google_callback(code: str = None, error: str = None):
     """Handle Google OAuth callback"""
     import httpx
     from fastapi.responses import RedirectResponse
     
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://coinhubuix.preview.emergentagent.com')
+    
+    # Check for OAuth errors
+    if error:
+        logger.error(f"Google OAuth error: {error}")
+        return RedirectResponse(url=f"{frontend_url}/login?error=google_oauth_denied")
+    
+    if not code:
+        logger.error("No authorization code received from Google")
+        return RedirectResponse(url=f"{frontend_url}/login?error=no_code")
+    
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-    redirect_uri = f"{os.environ.get('BACKEND_URL')}/api/auth/google/callback"
+    backend_url = os.environ.get('BACKEND_URL', 'https://coinhubuix.preview.emergentagent.com')
+    redirect_uri = f"{backend_url}/api/auth/google/callback"
     
     # Exchange code for tokens
     token_url = "https://oauth2.googleapis.com/token"
@@ -5418,12 +5430,14 @@ async def google_callback(code: str):
         'grant_type': 'authorization_code'
     }
     
-    async with httpx.AsyncClient() as client:
-        token_response = await client.post(token_url, data=token_data)
-        tokens = token_response.json()
-        
-        if 'error' in tokens:
-            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://coinhubuix.preview.emergentagent.com')}/register?error=google_auth_failed")
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            token_response = await client.post(token_url, data=token_data)
+            tokens = token_response.json()
+            
+            if 'error' in tokens:
+                logger.error(f"Token exchange error: {tokens.get('error_description', tokens['error'])}")
+                return RedirectResponse(url=f"{frontend_url}/login?error=token_exchange_failed")
         
         # Get user info
         access_token = tokens.get('access_token')
