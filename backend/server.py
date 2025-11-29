@@ -5438,36 +5438,44 @@ async def google_callback(code: str = None, error: str = None):
             if 'error' in tokens:
                 logger.error(f"Token exchange error: {tokens.get('error_description', tokens['error'])}")
                 return RedirectResponse(url=f"{frontend_url}/login?error=token_exchange_failed")
-        
-        # Get user info
-        access_token = tokens.get('access_token')
-        user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-        headers = {'Authorization': f'Bearer {access_token}'}
-        
-        user_response = await client.get(user_info_url, headers=headers)
-        user_data = user_response.json()
-        
-        # Check if user exists
-        existing_user = await db.user_accounts.find_one({"email": user_data['email']}, {"_id": 0})
-        
-        if existing_user:
-            # User exists - generate token and redirect to login callback page
-            token_data = {
-                "user_id": existing_user["user_id"],
-                "email": existing_user["email"],
-                "exp": datetime.now(timezone.utc) + timedelta(days=30)
-            }
-            token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
             
-            # Redirect to a callback page that will handle the token
-            frontend_url = os.environ.get('FRONTEND_URL', 'https://coinhubuix.preview.emergentagent.com')
-            user_json = json.dumps({
-                "user_id": existing_user["user_id"],
-                "email": existing_user["email"],
-                "full_name": existing_user.get("full_name", ""),
-                "role": existing_user.get("role", "user")
-            })
-            return RedirectResponse(url=f"{frontend_url}/login?google_success=true&token={token}&user={user_json}")
+            # Get user info
+            access_token = tokens.get('access_token')
+            if not access_token:
+                logger.error("No access token received from Google")
+                return RedirectResponse(url=f"{frontend_url}/login?error=no_access_token")
+            
+            user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+            headers = {'Authorization': f'Bearer {access_token}'}
+            
+            user_response = await client.get(user_info_url, headers=headers)
+            user_data = user_response.json()
+            
+            logger.info(f"Google OAuth user info received: {user_data.get('email')}")
+            
+            # Check if user exists
+            existing_user = await db.user_accounts.find_one({"email": user_data['email']}, {"_id": 0})
+            
+            if existing_user:
+                # User exists - generate token and redirect to login callback page
+                token_data = {
+                    "user_id": existing_user["user_id"],
+                    "email": existing_user["email"],
+                    "exp": datetime.now(timezone.utc) + timedelta(days=30)
+                }
+                token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
+                
+                # Redirect to a callback page that will handle the token
+                user_json = json.dumps({
+                    "user_id": existing_user["user_id"],
+                    "email": existing_user["email"],
+                    "full_name": existing_user.get("full_name", ""),
+                    "role": existing_user.get("role", "user")
+                })
+                
+                from urllib.parse import quote
+                logger.info(f"Redirecting existing user {existing_user['email']} to login with token")
+                return RedirectResponse(url=f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}")
         else:
             # New user - redirect to phone verification with user data
             import base64
