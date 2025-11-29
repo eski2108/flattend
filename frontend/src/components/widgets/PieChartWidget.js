@@ -79,25 +79,63 @@ const PieChartWidget = ({ assets }) => {
     }}>
       <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Portfolio Allocation</h3>
       
-      <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
         {/* Pie Chart */}
-        <svg width="180" height="180" style={{ flexShrink: 0 }}>
-          {slices.map((slice, index) => (
-            <path
-              key={index}
-              d={describeArc(90, 90, 80, slice.startAngle, slice.endAngle)}
-              fill={slice.color}
-              opacity={selectedAsset === slice.symbol ? 1 : 0.8}
-              style={{
-                cursor: 'pointer',
-                transition: 'opacity 0.2s',
-                filter: `drop-shadow(0 0 ${selectedAsset === slice.symbol ? '12px' : '6px'} ${slice.color}66)`
-              }}
-              onClick={() => setSelectedAsset(slice.symbol === selectedAsset ? null : slice.symbol)}
-              onMouseEnter={(e) => e.target.style.opacity = '1'}
-              onMouseLeave={(e) => e.target.style.opacity = selectedAsset === slice.symbol ? '1' : '0.8'}
-            />
-          ))}
+        <svg width="200" height="200" viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
+          {/* Center circle for donut effect */}
+          <circle cx="100" cy="100" r="30" fill="#0A1929" />
+          
+          {slices.map((slice, index) => {
+            // Only render slice if it's visible (>0.5%)
+            if (slice.percent < 0.5) return null;
+            
+            return (
+              <path
+                key={index}
+                d={describeArc(100, 100, 85, slice.startAngle, slice.endAngle)}
+                fill={slice.color}
+                opacity={selectedAsset === slice.symbol ? 1 : 0.85}
+                style={{
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  filter: `drop-shadow(0 0 ${selectedAsset === slice.symbol ? '15px' : '8px'} ${slice.color}88)`
+                }}
+                onClick={() => setSelectedAsset(slice.symbol === selectedAsset ? null : slice.symbol)}
+                onMouseEnter={(e) => {
+                  e.target.style.opacity = '1';
+                  e.target.style.filter = `drop-shadow(0 0 18px ${slice.color}BB)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.opacity = selectedAsset === slice.symbol ? '1' : '0.85';
+                  e.target.style.filter = `drop-shadow(0 0 ${selectedAsset === slice.symbol ? '15px' : '8px'} ${slice.color}88)`;
+                }}
+              />
+            );
+          })}
+          
+          {/* Center text showing total */}
+          <text
+            x="100"
+            y="95"
+            textAnchor="middle"
+            fill="#8F9BB3"
+            fontSize="12"
+            fontWeight="600"
+            fontFamily="Inter, sans-serif"
+          >
+            TOTAL
+          </text>
+          <text
+            x="100"
+            y="110"
+            textAnchor="middle"
+            fill="#00E5FF"
+            fontSize="14"
+            fontWeight="700"
+            fontFamily="Inter, sans-serif"
+          >
+            {slices.length}
+          </text>
         </svg>
 
         {/* Legend */}
