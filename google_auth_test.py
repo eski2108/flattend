@@ -196,7 +196,7 @@ def test_backend_logs():
     
     try:
         # Trigger OAuth flow to generate logs
-        response = requests.get(f"{API_BASE}/auth/google", allow_redirects=False)
+        response = requests.get(f"{AUTH_BASE}/auth/google", allow_redirects=False)
         
         # Check supervisor logs for backend
         import subprocess
