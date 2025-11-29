@@ -1,13 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowUpRight, ArrowDownLeft, TrendingUp, MessageCircle, Rocket } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, TrendingUp, MessageCircle, Rocket, PiggyBank, ChartLine, Calculator, Lock, DollarSign, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;
+
+// Currency configuration
+const CURRENCIES = {
+  'GBP': { symbol: '£', name: 'British Pound', rate: 1.0 },
+  'USD': { symbol: '$', name: 'US Dollar', rate: 1.27 },
+  'EUR': { symbol: '€', name: 'Euro', rate: 1.17 },
+  'CAD': { symbol: 'C$', name: 'Canadian Dollar', rate: 1.71 },
+  'AUD': { symbol: 'A$', name: 'Australian Dollar', rate: 1.96 },
+  'JPY': { symbol: '¥', name: 'Japanese Yen', rate: 194.5 },
+  'CHF': { symbol: 'Fr', name: 'Swiss Franc', rate: 1.13 },
+  'CNY': { symbol: '¥', name: 'Chinese Yuan', rate: 9.18 },
+  'INR': { symbol: '₹', name: 'Indian Rupee', rate: 106.5 },
+  'BRL': { symbol: 'R$', name: 'Brazilian Real', rate: 6.25 },
+  'ZAR': { symbol: 'R', name: 'South African Rand', rate: 22.8 },
+  'NGN': { symbol: '₦', name: 'Nigerian Naira', rate: 1950 },
+  'AED': { symbol: 'د.إ', name: 'UAE Dirham', rate: 4.66 },
+  'SAR': { symbol: '﷼', name: 'Saudi Riyal', rate: 4.76 }
+};
 
 // CHXCard Component
 const CHXCard = ({ children, className = '' }) => (
