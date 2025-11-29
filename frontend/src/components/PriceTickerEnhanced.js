@@ -123,7 +123,7 @@ export default function PriceTickerEnhanced() {
       height: '56px',
       minHeight: '56px',
       overflow: 'visible',
-      margin: '0 auto',
+      margin: '16px 0',
       padding: '12px 0',
       display: 'flex',
       alignItems: 'center',
