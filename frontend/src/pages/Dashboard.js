@@ -80,7 +80,7 @@ function Dashboard() {
       }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      toast.error('Failed to load dashboard data');
+      // Silently fail - don't show error toast on initial load
     } finally {
       setLoading(false);
     }
