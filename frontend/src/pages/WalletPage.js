@@ -7,24 +7,6 @@ import { Wallet, ArrowDownLeft, ArrowUpRight, RefreshCw, Repeat } from 'lucide-r
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// GLOBAL COIN CONFIGURATION - NO HARDCODED REFERENCES ANYWHERE
-const COIN_CONFIG = {
-  'BTC': { name: 'Bitcoin', network: 'Bitcoin', icon: '₿', color: '#F7931A', decimals: 8, nowpayments_code: 'btc' },
-  'ETH': { name: 'Ethereum', network: 'Ethereum', icon: 'Ξ', color: '#627EEA', decimals: 18, nowpayments_code: 'eth' },
-  'USDT': { name: 'Tether', network: 'Tron (TRC20)', icon: '₮', color: '#26A17B', decimals: 6, nowpayments_code: 'usdttrc20' },
-  'BNB': { name: 'Binance Coin', network: 'BSC', icon: 'B', color: '#F3BA2F', decimals: 18, nowpayments_code: 'bnb' },
-  'SOL': { name: 'Solana', network: 'Solana', icon: 'S', color: '#9945FF', decimals: 9, nowpayments_code: 'sol' },
-  'ADA': { name: 'Cardano', network: 'Cardano', icon: 'A', color: '#0033AD', decimals: 6, nowpayments_code: 'ada' },
-  'XRP': { name: 'Ripple', network: 'XRP Ledger', icon: 'X', color: '#23292F', decimals: 6, nowpayments_code: 'xrp' },
-  'LTC': { name: 'Litecoin', network: 'Litecoin', icon: 'Ł', color: '#345D9D', decimals: 8, nowpayments_code: 'ltc' },
-  'DOGE': { name: 'Dogecoin', network: 'Dogecoin', icon: 'Ð', color: '#C3A634', decimals: 8, nowpayments_code: 'doge' },
-  'AVAX': { name: 'Avalanche', network: 'Avalanche C-Chain', icon: 'A', color: '#E84142', decimals: 18, nowpayments_code: 'avax' },
-  'DOT': { name: 'Polkadot', network: 'Polkadot', icon: 'D', color: '#E6007A', decimals: 10, nowpayments_code: 'dot' },
-  'MATIC': { name: 'Polygon', network: 'Polygon', icon: 'M', color: '#8247E5', decimals: 18, nowpayments_code: 'matic' },
-  'GBP': { name: 'British Pound', network: 'Fiat', icon: '£', color: '#00F0FF', decimals: 2, nowpayments_code: 'gbp' },
-  'USD': { name: 'US Dollar', network: 'Fiat', icon: '$', color: '#85BB65', decimals: 2, nowpayments_code: 'usd' }
-};
-
 export default function WalletPage() {
   const navigate = useNavigate();
   const [balances, setBalances] = useState([]);
@@ -32,6 +14,7 @@ export default function WalletPage() {
   const [user, setUser] = useState(null);
   const [totalGBP, setTotalGBP] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [coinMetadata, setCoinMetadata] = useState({});
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -41,8 +24,25 @@ export default function WalletPage() {
     }
     const u = JSON.parse(userData);
     setUser(u);
+    loadCoinMetadata();
     loadBalances(u.user_id);
   }, [navigate]);
+
+  const loadCoinMetadata = async () => {
+    try {
+      const response = await axios.get(`${API}/api/wallets/coin-metadata`);
+      if (response.data.success) {
+        // Convert array to object keyed by symbol for easy lookup
+        const metadata = {};
+        response.data.coins.forEach(coin => {
+          metadata[coin.symbol] = coin;
+        });
+        setCoinMetadata(metadata);
+      }
+    } catch (error) {
+      console.error('Failed to load coin metadata:', error);
+    }
+  };
 
   const loadBalances = async (userId) => {
     try {
@@ -72,13 +72,13 @@ export default function WalletPage() {
   };
 
   const formatBalance = (balance, currency) => {
-    const config = COIN_CONFIG[currency];
-    const decimals = config ? config.decimals : (currency === 'GBP' || currency === 'USD' ? 2 : 8);
+    const config = coinMetadata[currency];
+    const decimals = config?.decimals || (currency === 'GBP' || currency === 'USD' ? 2 : 8);
     return balance.toFixed(decimals);
   };
 
   const getCoinColor = (currency) => {
-    return COIN_CONFIG[currency]?.color || '#00F0FF';
+    return coinMetadata[currency]?.color || '#00F0FF';
   };
 
   if (loading) {
@@ -190,7 +190,7 @@ export default function WalletPage() {
               getCoinColor={getCoinColor} 
               formatBalance={formatBalance}
               userId={user.user_id}
-              coinConfig={COIN_CONFIG[asset.currency]}
+              coinMetadata={coinMetadata[asset.currency] || {}}
             />
           ))
         )}
@@ -202,23 +202,22 @@ export default function WalletPage() {
   );
 }
 
-function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinConfig }) {
+function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinMetadata }) {
   const coinColor = getCoinColor(asset.currency);
   const [expanded, setExpanded] = useState(false);
   
-  // DYNAMIC COIN METADATA - FALLS BACK TO SENSIBLE DEFAULTS IF NOT IN CONFIG
+  // FULLY DYNAMIC METADATA - ALL FROM BACKEND
   const coinSymbol = asset.currency.toLowerCase();
-  const coinName = coinConfig?.name || asset.currency;
-  const coinNetwork = coinConfig?.network || `${asset.currency} Network`;
-  const coinIcon = coinConfig?.icon || asset.currency.substring(0, 1);
-  const decimalPrecision = coinConfig?.decimals || 8;
-  const nowpaymentsCode = coinConfig?.nowpayments_code || coinSymbol;
+  const coinName = coinMetadata.name || asset.currency;
+  const coinNetwork = coinMetadata.network || `${asset.currency} Network`;
+  const coinIcon = coinMetadata.icon || asset.currency.substring(0, 1);
+  const decimalPrecision = coinMetadata.decimals || 8;
+  const nowpaymentsCode = coinMetadata.nowpayments_code || coinSymbol;
 
   // FULLY DYNAMIC HANDLERS - WORK FOR ANY COIN - GUARANTEED ROUTING
   const handleDeposit = (e) => {
     e.stopPropagation();
     console.log(`[WALLET] Deposit clicked for ${asset.currency}`);
-    // Navigate with full metadata
     navigate(`/deposit/${coinSymbol}`, { 
       state: { 
         currency: asset.currency,
@@ -234,7 +233,6 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinC
   const handleWithdraw = (e) => {
     e.stopPropagation();
     console.log(`[WALLET] Withdraw clicked for ${asset.currency}`);
-    // Navigate with full metadata
     navigate(`/withdraw/${coinSymbol}`, { 
       state: { 
         currency: asset.currency,
@@ -251,8 +249,8 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinC
   const handleSwap = (e) => {
     e.stopPropagation();
     console.log(`[WALLET] Swap clicked for ${asset.currency}`);
-    // Navigate with full metadata
-    navigate(`/swap/${coinSymbol}`, { 
+    // Route to /swap?from={coin} as per requirements
+    navigate(`/swap-crypto?from=${coinSymbol}`, { 
       state: { 
         from_currency: asset.currency,
         from_balance: asset.available_balance,
@@ -447,20 +445,20 @@ function WalletButton({ onClick, icon, label, type = 'primary', coinColor = '#00
         default: {
           background: 'linear-gradient(135deg, #00E8FF 0%, #008CFF 100%)',
           border: `1px solid ${coinColor}22`,
-          boxShadow: `0 0 2px ${coinColor}`, // 2px outer glow
-          color: '#0A0A0A', // Text locked to dark for bright buttons
+          boxShadow: `0 0 2px ${coinColor}`,
+          color: '#0A0A0A',
           filter: 'brightness(1.0)',
           transform: 'translateY(0) scale(1)'
         },
         hover: {
-          filter: 'brightness(1.1)', // +10% brightness
+          filter: 'brightness(1.1)',
           boxShadow: `0 0 8px ${coinColor}`,
           transform: 'translateY(-1px) scale(1)'
         },
         pressed: {
           filter: 'brightness(0.9)',
           boxShadow: `inset 0 2px 8px rgba(0, 0, 0, 0.2)`,
-          transform: 'translateY(0) scale(0.96)' // 96% scale on tap
+          transform: 'translateY(0) scale(0.96)'
         }
       };
     } else {
@@ -468,20 +466,20 @@ function WalletButton({ onClick, icon, label, type = 'primary', coinColor = '#00
         default: {
           background: 'rgba(0, 232, 255, 0.1)',
           border: `1px solid ${coinColor}44`,
-          boxShadow: `0 0 2px ${coinColor}55`, // 2px outer glow
-          color: '#FFFFFF', // Text locked to white for dark buttons
+          boxShadow: `0 0 2px ${coinColor}55`,
+          color: '#FFFFFF',
           filter: 'brightness(1.0)',
           transform: 'translateY(0) scale(1)'
         },
         hover: {
-          filter: 'brightness(1.1)', // +10% brightness
+          filter: 'brightness(1.1)',
           boxShadow: `0 0 8px ${coinColor}77`,
           transform: 'translateY(-1px) scale(1)'
         },
         pressed: {
           filter: 'brightness(0.9)',
           boxShadow: `inset 0 2px 8px rgba(0, 0, 0, 0.2)`,
-          transform: 'translateY(0) scale(0.96)' // 96% scale on tap
+          transform: 'translateY(0) scale(0.96)'
         }
       };
     }
@@ -502,7 +500,7 @@ function WalletButton({ onClick, icon, label, type = 'primary', coinColor = '#00
       onMouseUp={() => setIsPressed(false)}
       style={{
         width: '100%',
-        borderRadius: '12px', // Exact 12px radius
+        borderRadius: '12px',
         padding: '18px 14px',
         fontSize: '14px',
         fontWeight: '600',
