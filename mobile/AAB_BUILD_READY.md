@@ -168,7 +168,7 @@ You'll get:
 **Version:** 1.0.0
 **Version Code:** 1
 
-**Backend URL:** `https://crypto-hub-xchange.preview.emergentagent.com`
+**Backend URL:** `https://coinhubuix.preview.emergentagent.com`
 - Configured in `/app/mobile/src/config/api.js`
 - All marketplace data from production backend
 - 12 seeded sellers ready
