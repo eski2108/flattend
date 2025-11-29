@@ -55,8 +55,19 @@ export default function Layout({ children }) {
       {/* Mobile Header */}
       <header className="mobile-header">
         <div className="mobile-header-content">
-          <div className="mobile-logo" onClick={() => navigate('/dashboard')}>
-            <Logo size={32} showText={false} />
+          <div 
+            className="mobile-logo" 
+            onClick={() => navigate('/dashboard')}
+            style={{
+              height: '54px',
+              padding: '10px',
+              marginLeft: '18px',
+              display: 'flex',
+              alignItems: 'center',
+              filter: 'drop-shadow(0 0 14px rgba(0, 198, 255, 0.8))'
+            }}
+          >
+            <Logo size={48} showText={false} style={{ height: '48px', width: 'auto' }} />
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
