@@ -55,7 +55,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/api/auth/login`, formData);
+      const response = await axios.post(`${API}/auth/login`, formData);
       
       if (response.data.success && response.data.token) {
         const userData = {
