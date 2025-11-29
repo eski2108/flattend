@@ -458,6 +458,39 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
   );
 }
 
+// QUICK ACTION BUTTON - COMPACT VERSION FOR COLLAPSED CARDS
+function QuickActionButton({ onClick, icon, label, coinColor = '#00F0FF' }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '6px',
+        padding: '10px 12px',
+        background: isHovered ? 'rgba(0, 240, 255, 0.15)' : 'rgba(0, 240, 255, 0.08)',
+        border: `1px solid ${isHovered ? 'rgba(0, 240, 255, 0.4)' : 'rgba(0, 240, 255, 0.2)'}`,
+        borderRadius: '10px',
+        color: '#00F0FF',
+        fontSize: '13px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        boxShadow: isHovered ? `0 0 12px ${coinColor}44` : 'none'
+      }}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
+
 // GLOBAL WALLET BUTTON COMPONENT - EXACT USER SPECIFICATIONS
 function WalletButton({ onClick, icon, label, type = 'primary', coinColor = '#00F0FF' }) {
   const [isPressed, setIsPressed] = useState(false);
