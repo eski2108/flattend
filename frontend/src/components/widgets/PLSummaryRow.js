@@ -35,11 +35,11 @@ const PLSummaryRow = ({ todayPL, weekPL, monthPL }) => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: '2.5%', marginBottom: '20px', flexWrap: 'wrap' }}>
+    <>
       {renderPLWidget('Today', todayPL, (todayPL / 50000) * 100, '📈')}
       {renderPLWidget('7 Days', weekPL, (weekPL / 50000) * 100, '📊')}
       {renderPLWidget('30 Days', monthPL, (monthPL / 50000) * 100, '💰')}
-    </div>
+    </>
   );
 };
 
