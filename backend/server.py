@@ -5373,9 +5373,15 @@ async def store_emergent_session(request: dict):
 async def google_auth():
     """Initiate Google OAuth flow"""
     from urllib.parse import urlencode
+    from fastapi.responses import RedirectResponse
     
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-    redirect_uri = f"{os.environ.get('BACKEND_URL')}/api/auth/google/callback"
+    backend_url = os.environ.get('BACKEND_URL', 'https://coinhubuix.preview.emergentagent.com')
+    redirect_uri = f"{backend_url}/api/auth/google/callback"
+    
+    if not google_client_id:
+        logger.error("GOOGLE_CLIENT_ID not set in environment")
+        return {"error": "Google OAuth not configured"}
     
     params = {
         'client_id': google_client_id,
@@ -5387,8 +5393,10 @@ async def google_auth():
     }
     
     auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"
+    logger.info(f"Google OAuth initiated. Redirect URI: {redirect_uri}")
     
-    return {"auth_url": auth_url}
+    # Redirect directly to Google OAuth
+    return RedirectResponse(url=auth_url)
 
 @api_router.get("/auth/google/callback")
 async def google_callback(code: str):
