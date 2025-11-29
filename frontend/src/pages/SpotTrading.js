@@ -644,7 +644,17 @@ export default function SpotTrading() {
                 ))}
               </div>
 
-              <div ref={chartContainerRef} style={{ width: '100%', borderRadius: '8px' }} />
+              <div 
+                ref={chartContainerRef} 
+                style={{ 
+                  width: '100%', 
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  background: '#0A0F24',
+                  border: '1px solid rgba(0, 240, 255, 0.15)',
+                  boxShadow: '0 0 25px rgba(0, 240, 255, 0.12)'
+                }} 
+              />
             </div>
 
             {/* Recent Trades - Desktop Only / Mobile Collapsible */}
