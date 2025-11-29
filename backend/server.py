@@ -16068,7 +16068,7 @@ async def get_portfolio_history(
         interval_ms = config["interval_hours"] * 3600 * 1000
         
         for i in range(config["points"]):
-            point_time = start_time + timedelta(hours=i * config["interval_hours"])
+            point_time_dt = start_time + timedelta(hours=i * config["interval_hours"])
             
             # Calculate total portfolio value at this point
             total_value_gbp = 0.0
@@ -16080,8 +16080,11 @@ async def get_portfolio_history(
                     price_gbp = price_usd * usd_to_gbp
                     total_value_gbp += balance * price_gbp
             
+            # Convert to timestamp in milliseconds
+            timestamp_ms = int(point_time_dt.replace(tzinfo=timezone.utc).timestamp() * 1000)
+            
             history_data.append({
-                "timestamp": int(point_time.timestamp() * 1000),
+                "timestamp": timestamp_ms,
                 "value": round(total_value_gbp, 2)
             })
         
