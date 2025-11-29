@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownLeft, RefreshCw, Search, Copy } from 'lucide-react';
-import '@/styles/premiumButtons.css';
+import { Wallet, ArrowDownLeft, ArrowUpRight, RefreshCw, Copy, TrendingUp, TrendingDown } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -14,47 +13,7 @@ export default function WalletPage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [totalGBP, setTotalGBP] = useState(0);
-  const [totalUSD, setTotalUSD] = useState(0);
-  const [change24h, setChange24h] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [recentActivity, setRecentActivity] = useState([]);
-  const [showDepositModal, setShowDepositModal] = useState(false);
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState('');
-  const [selectedNetwork, setSelectedNetwork] = useState('');
-  const [depositAddresses, setDepositAddresses] = useState({});
-  const [loadingAddress, setLoadingAddress] = useState(false);
-  const [availableCurrencies, setAvailableCurrencies] = useState([]);
-  const [loadingCurrencies, setLoadingCurrencies] = useState(false);
-
-  const networkOptions = {
-    'BTC': ['Bitcoin'],
-    'ETH': ['Ethereum (ERC20)'],
-    'USDT': ['Ethereum (ERC20)', 'Tron (TRC20)', 'BSC (BEP20)'],
-    'USDC': ['Ethereum (ERC20)', 'Tron (TRC20)', 'BSC (BEP20)'],
-    'BNB': ['BSC (BEP20)'],
-    'SOL': ['Solana'],
-    'ADA': ['Cardano'],
-    'XRP': ['Ripple'],
-    'LTC': ['Litecoin'],
-    'BCH': ['Bitcoin Cash'],
-    'DOGE': ['Dogecoin'],
-    'TRX': ['Tron'],
-    'MATIC': ['Polygon'],
-    'DOT': ['Polkadot'],
-    'AVAX': ['Avalanche'],
-    'LINK': ['Ethereum (ERC20)'],
-    'UNI': ['Ethereum (ERC20)'],
-    'ATOM': ['Cosmos'],
-    'XLM': ['Stellar'],
-    'ALGO': ['Algorand'],
-    'VET': ['VeChain'],
-    'FIL': ['Filecoin'],
-    'NEAR': ['NEAR Protocol'],
-    'APT': ['Aptos'],
-    'OP': ['Optimism'],
-    'ARB': ['Arbitrum']
-  };
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -65,30 +24,7 @@ export default function WalletPage() {
     const u = JSON.parse(userData);
     setUser(u);
     loadBalances(u.user_id);
-    loadRecentActivity(u.user_id);
-    loadAvailableCurrencies();
-  }, []);
-
-  const loadAvailableCurrencies = async () => {
-    setLoadingCurrencies(true);
-    try {
-      const response = await axios.get(`${API}/api/nowpayments/currencies`);
-      if (response.data.success && response.data.currencies) {
-        // Filter and format currencies
-        const currencies = response.data.currencies
-          .filter(c => c && c.length >= 3)
-          .map(c => c.toUpperCase())
-          .sort();
-        setAvailableCurrencies(currencies);
-      }
-    } catch (error) {
-      console.error('Failed to load currencies:', error);
-      // Fallback to basic list if API fails
-      setAvailableCurrencies(['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'ADA', 'XRP', 'LTC', 'DOGE', 'TRX', 'MATIC']);
-    } finally {
-      setLoadingCurrencies(false);
-    }
-  };
+  }, [navigate]);
 
   const loadBalances = async (userId) => {
     try {
@@ -97,626 +33,363 @@ export default function WalletPage() {
         const bals = response.data.balances || [];
         setBalances(bals);
         
-        // Calculate totals
-        let gbpTotal = 0;
-        bals.forEach(b => {
-          gbpTotal += (b.total_balance || 0) * (b.gbp_price || 0);
-        });
-        setTotalGBP(gbpTotal);
-        setTotalUSD(gbpTotal * 1.27); // Rough GBP to USD conversion
-        setChange24h(2.34); // Mock 24h change - would come from backend
+        const total = bals.reduce((sum, bal) => {
+          return sum + (bal.total_balance * (bal.price_gbp || 0));
+        }, 0);
+        setTotalGBP(total);
       }
     } catch (error) {
       console.error('Failed to load balances:', error);
-      toast.error('Failed to load wallet');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  const loadRecentActivity = async (userId) => {
-    try {
-      // Mock recent activity - would fetch from backend
-      setRecentActivity([
-        { type: 'P2P Trade', amount: '0.001 BTC', value: '£47.50', status: 'Completed', time: '2 hours ago' },
-        { type: 'Deposit', amount: '100 USDT', value: '£79.00', status: 'Completed', time: '1 day ago' },
-        { type: 'Instant Buy', amount: '0.02 ETH', value: '£50.00', status: 'Completed', time: '2 days ago' },
-        { type: 'Withdraw', amount: '50 GBP', value: '£50.00', status: 'Processing', time: '3 days ago' },
-        { type: 'P2P Trade', amount: '0.5 ETH', value: '£1,250.00', status: 'Completed', time: '5 days ago' }
-      ]);
-    } catch (error) {
-      console.error('Failed to load activity:', error);
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadBalances(user.user_id);
+  };
+
+  const formatBalance = (balance, currency) => {
+    if (currency === 'GBP' || currency === 'USD') {
+      return balance.toFixed(2);
     }
+    return balance.toFixed(8);
   };
 
-  const loadDepositAddress = async (currency, network) => {
-    const key = `${currency}-${network}`;
-    if (depositAddresses[key]) return; // Already loaded
-    
-    setLoadingAddress(true);
-    try {
-      // Call NOWPayments API to create a deposit payment
-      const orderId = `deposit-${user.user_id}-${Date.now()}`;
-      
-      const response = await axios.post(`${API}/api/nowpayments/create-deposit`, {
-        user_id: user.user_id,
-        pay_currency: currency.toLowerCase(),
-        currency: 'usd',
-        amount: 100 // Example amount in USD
-      });
-      
-      if (response.data.success && response.data.deposit_address) {
-        const address = response.data.deposit_address;
-        const amountToSend = response.data.amount_to_send;
-        setDepositAddresses(prev => ({
-          ...prev,
-          [key]: {
-            address: address,
-            amount: amountToSend,
-            currency: response.data.currency
-          }
-        }));
-        toast.success('Deposit address generated!');
-      } else {
-        const errorMsg = response.data.message || 'Failed to generate deposit address';
-        toast.error(errorMsg);
-      }
-    } catch (error) {
-      console.error('Failed to load deposit address:', error);
-      toast.error('Failed to generate deposit address');
-    } finally {
-      setLoadingAddress(false);
-    }
+  const getCoinColor = (currency) => {
+    const colors = {
+      'BTC': '#F7931A',
+      'ETH': '#627EEA',
+      'USDT': '#26A17B',
+      'BNB': '#F3BA2F',
+      'SOL': '#9945FF',
+      'ADA': '#0033AD',
+      'XRP': '#23292F',
+      'GBP': '#00F0FF',
+      'USD': '#85BB65'
+    };
+    return colors[currency] || '#00F0FF';
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard!');
-  };
-
-  const filteredBalances = balances.filter(b => 
-    b.currency.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const changeValue = totalGBP * (change24h / 100);
-  const changePercent = change24h;
-  const isPositive = changePercent >= 0;
-
-  // Premium neon button styles - Binance/Crypto.com style
-  const neonButtonBase = {
-    flex: '1 1 184px',  // 15% wider
-    minWidth: '184px',
-    maxWidth: '230px',
-    padding: '18px 28px',  // 15% taller
-    background: 'linear-gradient(180deg, #020611 0%, #0A0F1C 100%)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '10px',  // Tighter radius for sharper, modern look
-    color: '#FFFFFF',  // Pure white
-    fontSize: '15px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',  // Smoother
-    position: 'relative',
-    overflow: 'hidden'
-  };
-
-  const depositButtonStyle = {
-    ...neonButtonBase,
-    border: '1.5px solid #00FF8A',
-    boxShadow: '0 0 25px rgba(0, 214, 115, 0.35), inset 0 0 15px rgba(0, 255, 138, 0.08)',
-  };
-
-  const withdrawButtonStyle = {
-    ...neonButtonBase,
-    border: '1.5px solid #FF3B3B',
-    boxShadow: '0 0 25px rgba(230, 41, 41, 0.35), inset 0 0 15px rgba(255, 59, 59, 0.08)',
-  };
-
-  const convertButtonStyle = {
-    ...neonButtonBase,
-    border: '1.5px solid #9B5CFF',
-    boxShadow: '0 0 25px rgba(123, 59, 255, 0.35), inset 0 0 15px rgba(155, 92, 255, 0.08)',
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #05060B 0%, #080B14 100%)' }}>
+          <div style={{ fontSize: '20px', color: '#00F0FF', fontWeight: '700' }}>Loading wallet...</div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#fff', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Wallet size={32} style={{ color: '#00F0FF' }} />
-              Your Wallet
-            </h1>
-            <p style={{ color: '#888', fontSize: '16px' }}>Manage your crypto assets</p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #05060B 0%, #080B14 100%)',
+        padding: '16px'
+      }}>
+        {/* Header */}
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>Your Assets</h1>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              style={{
+                background: 'rgba(0, 240, 255, 0.1)',
+                border: '1px solid rgba(0, 240, 255, 0.3)',
+                borderRadius: '12px',
+                padding: '8px 12px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                transform: refreshing ? 'rotate(360deg)' : 'rotate(0deg)'
+              }}
+            >
+              <RefreshCw size={18} color="#00F0FF" />
+            </button>
           </div>
+          <div style={{
+            height: '2px',
+            width: '100%',
+            background: 'linear-gradient(90deg, #00F0FF 0%, transparent 100%)',
+            boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)'
+          }} />
         </div>
 
-        {/* Portfolio Overview Section - Premium Neon Style */}
-        <div style={{ 
-          marginBottom: '2.5rem',
-          background: 'linear-gradient(180deg, #020611 0%, #0A0F1C 100%)',
-          border: '2px solid transparent',
-          backgroundImage: 'linear-gradient(180deg, #020611 0%, #0A0F1C 100%), linear-gradient(135deg, #00E5FF 0%, #0077FF 100%)',
-          backgroundOrigin: 'border-box',
-          backgroundClip: 'padding-box, border-box',
-          borderRadius: '20px',
-          boxShadow: '0 0 40px rgba(0, 229, 255, 0.35), 0 0 80px rgba(0, 119, 255, 0.35), 0 8px 32px rgba(0, 0, 0, 0.5)',
-          padding: '2rem'
+        {/* Portfolio Summary */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0B1220 0%, #101828 100%)',
+          border: '1px solid rgba(0, 240, 255, 0.2)',
+          borderRadius: '22px',
+          padding: '20px',
+          marginBottom: '24px',
+          boxShadow: '0 0 18px rgba(0, 240, 255, 0.15)'
         }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'space-between', alignItems: 'center' }}>
-            
-            {/* Left: Portfolio Value */}
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ 
-                color: '#00E5FF', 
-                fontSize: '14px', 
-                fontWeight: '700', 
-                marginBottom: '0.5rem', 
-                letterSpacing: '1px',
-                textTransform: 'uppercase',
-                textShadow: '0 0 20px rgba(0, 229, 255, 0.8), 0 0 40px rgba(0, 229, 255, 0.4), 0 0 60px rgba(0, 229, 255, 0.2)'
-              }}>
-                TOTAL PORTFOLIO VALUE
-              </div>
-              <div style={{ fontSize: '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '0.5rem' }}>
-                £{totalGBP.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-              </div>
-              <div style={{ color: '#6D7A8D', fontSize: '15px', marginBottom: '1rem' }}>
-                ≈ ${totalUSD.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD
-              </div>
-              
-              {/* 24h Change */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                {isPositive ? <TrendingUp size={20} color="#00FFAB" /> : <TrendingDown size={20} color="#FF4D67" />}
-                <span style={{ color: isPositive ? '#00FFAB' : '#FF4D67', fontSize: '18px', fontWeight: '700' }}>
-                  {isPositive ? '+' : ''}{changePercent.toFixed(2)}%
-                </span>
-                <span style={{ color: '#888', fontSize: '14px' }}>
-                  ({isPositive ? '+' : ''}£{Math.abs(changeValue).toFixed(2)}) 24h
-                </span>
-              </div>
-            </div>
+          <div style={{ fontSize: '13px', color: '#A3AEC2', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total Portfolio Value</div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>£{totalGBP.toFixed(2)}</div>
+          <div style={{ fontSize: '14px', color: '#6EE7B7' }}>≈ ${(totalGBP * 1.27).toFixed(2)} USD</div>
+        </div>
 
-            {/* Right: Premium Neon Action Buttons - REDESIGNED */}
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button
-                onClick={() => navigate('/deposit/btc')}
-                style={depositButtonStyle}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 214, 115, 0.6), 0 0 80px rgba(0, 214, 115, 0.3), inset 0 0 20px rgba(0, 255, 138, 0.12)';
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.background = 'linear-gradient(180deg, rgba(0, 255, 138, 0.15) 0%, rgba(2, 6, 17, 0.9) 100%)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 214, 115, 0.35), inset 0 0 15px rgba(0, 255, 138, 0.08)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #020611 0%, #0A0F1C 100%)';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(0.97)';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px) scale(1)';
-                }}
-              >
-                <ArrowDownLeft size={18} />
-                Deposit
-              </button>
-              <button
-                onClick={() => navigate('/withdraw/btc')}
-                style={withdrawButtonStyle}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 40px rgba(230, 41, 41, 0.6), 0 0 80px rgba(230, 41, 41, 0.3), inset 0 0 20px rgba(255, 59, 59, 0.12)';
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.background = 'linear-gradient(180deg, rgba(255, 59, 59, 0.15) 0%, rgba(2, 6, 17, 0.9) 100%)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(230, 41, 41, 0.35), inset 0 0 15px rgba(255, 59, 59, 0.08)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #020611 0%, #0A0F1C 100%)';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(0.97)';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px) scale(1)';
-                }}
-              >
-                <ArrowUpRight size={18} />
-                Withdraw
-              </button>
-              <button
-                onClick={() => navigate('/swap-crypto')}
-                style={convertButtonStyle}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 40px rgba(123, 59, 255, 0.6), 0 0 80px rgba(123, 59, 255, 0.3), inset 0 0 20px rgba(155, 92, 255, 0.12)';
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.background = 'linear-gradient(180deg, rgba(155, 92, 255, 0.15) 0%, rgba(2, 6, 17, 0.9) 100%)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(123, 59, 255, 0.35), inset 0 0 15px rgba(155, 92, 255, 0.08)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #020611 0%, #0A0F1C 100%)';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(0.97)';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px) scale(1)';
-                }}
-              >
-                <RefreshCw size={18} />
-                Convert
-              </button>
-            </div>
+        {/* Assets List */}
+        {balances.length === 0 ? (
+          <div style={{
+            background: 'linear-gradient(135deg, #0B1220 0%, #101828 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
+            borderRadius: '22px',
+            padding: '40px 20px',
+            textAlign: 'center'
+          }}>
+            <Wallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
+            <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600', marginBottom: '8px' }}>No Assets Yet</div>
+            <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '20px' }}>Start by depositing crypto</div>
+            <button
+              onClick={() => navigate('/deposit/btc')}
+              style={{
+                background: 'linear-gradient(145deg, #00F0FF, #7B2FFF)',
+                border: 'none',
+                borderRadius: '16px',
+                padding: '12px 32px',
+                color: '#FFFFFF',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 0 12px rgba(0, 240, 255, 0.4)',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 0 18px rgba(0, 240, 255, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1.0)';
+                e.currentTarget.style.boxShadow = '0 0 12px rgba(0, 240, 255, 0.4)';
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = 'scale(0.96)';
+                e.currentTarget.style.boxShadow = 'inset 0 0 8px rgba(0,0,0,0.45)';
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 0 18px rgba(0, 240, 255, 0.6)';
+              }}
+            >
+              Deposit Crypto
+            </button>
+          </div>
+        ) : (
+          balances.map((asset, index) => (
+            <AssetCard key={index} asset={asset} navigate={navigate} getCoinColor={getCoinColor} formatBalance={formatBalance} />
+          ))
+        )}
+      </div>
+    </Layout>
+  );
+}
+
+function AssetCard({ asset, navigate, getCoinColor, formatBalance }) {
+  const coinColor = getCoinColor(asset.currency);
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div
+      style={{
+        background: 'linear-gradient(135deg, #0B1220 0%, #101828 100%)',
+        border: `1px solid ${coinColor}33`,
+        borderRadius: '22px',
+        padding: '18px',
+        marginBottom: '16px',
+        boxShadow: `0 0 12px ${coinColor}22`,
+        transition: 'all 0.15s ease',
+        cursor: 'pointer'
+      }}
+      onClick={() => setExpanded(!expanded)}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'scale(1.015)';
+        e.currentTarget.style.boxShadow = `0 0 18px ${coinColor}55`;
+        e.currentTarget.style.border = `1px solid ${coinColor}66`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1.0)';
+        e.currentTarget.style.boxShadow = `0 0 12px ${coinColor}22`;
+        e.currentTarget.style.border = `1px solid ${coinColor}33`;
+      }}
+    >
+      {/* Header Row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '16px' : '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Icon */}
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${coinColor}, ${coinColor}CC)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px',
+            fontWeight: '700',
+            color: '#FFFFFF',
+            boxShadow: `0 0 12px ${coinColor}66`
+          }}>
+            {asset.currency.substring(0, 1)}
+          </div>
+          
+          {/* Name & Network */}
+          <div>
+            <div style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>{asset.currency}</div>
+            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{asset.currency} Network</div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '2rem', alignItems: 'start' }}>
-          
-          {/* Left: Assets List */}
-          <div>
-            {/* Search Bar */}
-            <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-              <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
-              <input
-                type="text"
-                placeholder="Search assets..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 12px 12px 48px',
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '2px solid rgba(0,240,255,0.3)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '14px',
-                  outline: 'none'
-                }}
-              />
-            </div>
-
-            {/* Assets Table */}
-            <div style={{ background: 'rgba(15,23,42,0.6)', border: '2px solid rgba(0,240,255,0.3)', borderRadius: '24px', overflow: 'hidden' }}>
-              
-              {/* Table Header */}
-              <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr 150px 150px', padding: '1rem 1.5rem', background: 'rgba(0,240,255,0.1)', borderBottom: '1px solid rgba(0,240,255,0.3)', fontWeight: '700', fontSize: '13px', color: '#00F0FF', textTransform: 'uppercase' }}>
-                <div></div>
-                <div>Asset</div>
-                <div style={{ textAlign: 'right' }}>Balance</div>
-                <div style={{ textAlign: 'right' }}>Value (GBP)</div>
-              </div>
-
-              {/* Scrollable Rows */}
-              <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                {loading ? (
-                  <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>Loading assets...</div>
-                ) : filteredBalances.length === 0 ? (
-                  <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>No assets found</div>
-                ) : (
-                  filteredBalances.map((balance, idx) => {
-                    const gbpValue = (balance.total_balance || 0) * (balance.gbp_price || 0);
-                    return (
-                      <div 
-                        key={idx}
-                        style={{ 
-                          display: 'grid', 
-                          gridTemplateColumns: '60px 1fr 150px 150px', 
-                          padding: '1rem 1.5rem', 
-                          borderBottom: '1px solid rgba(255,255,255,0.05)',
-                          alignItems: 'center',
-                          cursor: 'pointer',
-                          transition: 'background 0.2s'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.05)'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                      >
-                        {/* Icon */}
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #00F0FF, #0099FF)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '16px' }}>
-                          {balance.currency.charAt(0)}
-                        </div>
-                        
-                        {/* Asset Name */}
-                        <div>
-                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>
-                            {balance.currency}
-                          </div>
-                          <div style={{ fontSize: '13px', color: '#888' }}>
-                            {balance.currency === 'BTC' ? 'Bitcoin' : 
-                             balance.currency === 'ETH' ? 'Ethereum' : 
-                             balance.currency === 'USDT' ? 'Tether' : 
-                             balance.currency === 'GBP' ? 'British Pound' : 
-                             balance.currency}
-                          </div>
-                        </div>
-                        
-                        {/* Balance */}
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '15px', fontWeight: '600', color: '#fff' }}>
-                            {parseFloat(balance.total_balance || 0).toFixed(8)}
-                          </div>
-                          {balance.locked_balance > 0 && (
-                            <div style={{ fontSize: '12px', color: '#FFA500' }}>
-                              {parseFloat(balance.locked_balance).toFixed(8)} locked
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Value */}
-                        <div style={{ textAlign: 'right', fontSize: '15px', fontWeight: '600', color: '#00F0FF' }}>
-                          £{gbpValue.toFixed(2)}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
+        {/* Balance */}
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
+            {formatBalance(asset.total_balance, asset.currency)} {asset.currency}
           </div>
-
-          {/* Right: Recent Activity */}
-          <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Recent Activity</h3>
-            <div style={{ background: 'rgba(15,23,42,0.6)', border: '2px solid rgba(0,240,255,0.3)', borderRadius: '24px', overflow: 'hidden' }}>
-              <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                {recentActivity.map((activity, idx) => (
-                  <div 
-                    key={idx}
-                    style={{ 
-                      padding: '1rem 1.5rem', 
-                      borderBottom: idx < recentActivity.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' 
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#fff' }}>
-                        {activity.type}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#888' }}>
-                        {activity.time}
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ fontSize: '13px', color: '#888' }}>
-                        {activity.amount}
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '600', color: activity.status === 'Completed' ? '#00FFAB' : '#FFA500' }}>
-                        {activity.value}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div style={{ fontSize: '13px', color: '#A3AEC2' }}>
+            ≈ £{(asset.total_balance * (asset.price_gbp || 0)).toFixed(2)}
           </div>
         </div>
       </div>
 
-      {/* Deposit Modal */}
-      {showDepositModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'linear-gradient(180deg, #0F1429 0%, #090D1A 100%)',
-            border: '2px solid #00E5FF',
-            borderRadius: '24px',
-            padding: '2rem',
-            maxWidth: '500px',
-            width: '90%',
-            boxShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
-          }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Deposit Crypto</h2>
-            
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem', fontSize: '14px' }}>
-                Select Currency {loadingCurrencies && '(Loading...)'}
-              </label>
-              <select
-                value={selectedCurrency}
-                onChange={(e) => {
-                  setSelectedCurrency(e.target.value);
-                  setSelectedNetwork('');
-                }}
-                disabled={loadingCurrencies}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '2px solid rgba(0,240,255,0.3)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '14px',
-                  outline: 'none',
-                  cursor: loadingCurrencies ? 'wait' : 'pointer'
-                }}
-              >
-                <option value="">Choose currency...</option>
-                {availableCurrencies.map(currency => (
-                  <option key={currency} value={currency}>
-                    {currency} {currency === 'BTC' ? '(Bitcoin)' : 
-                             currency === 'ETH' ? '(Ethereum)' : 
-                             currency === 'USDT' ? '(Tether)' : 
-                             currency === 'USDC' ? '(USD Coin)' : 
-                             currency === 'BNB' ? '(Binance Coin)' : 
-                             currency === 'SOL' ? '(Solana)' : 
-                             currency === 'ADA' ? '(Cardano)' : 
-                             currency === 'XRP' ? '(Ripple)' : 
-                             currency === 'LTC' ? '(Litecoin)' : 
-                             currency === 'DOGE' ? '(Dogecoin)' : 
-                             currency === 'TRX' ? '(Tron)' : 
-                             currency === 'MATIC' ? '(Polygon)' : ''}
-                  </option>
-                ))}
-              </select>
-              <div style={{ color: '#6D7A8D', fontSize: '12px', marginTop: '0.5rem' }}>
-                {availableCurrencies.length} cryptocurrencies available via NOWPayments
+      {/* Expanded Section */}
+      {expanded && (
+        <div onClick={(e) => e.stopPropagation()}>
+          {/* Balance Breakdown */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Balance Breakdown</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+              <div style={{
+                background: 'rgba(34, 197, 94, 0.05)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                borderRadius: '12px',
+                padding: '12px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '11px', color: '#6EE7B7', marginBottom: '4px' }}>Available</div>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF' }}>{formatBalance(asset.available_balance, asset.currency)}</div>
+                <div style={{ fontSize: '10px', color: '#6B7280' }}>{asset.currency}</div>
+              </div>
+              
+              <div style={{
+                background: 'rgba(251, 191, 36, 0.05)',
+                border: '1px solid rgba(251, 191, 36, 0.3)',
+                borderRadius: '12px',
+                padding: '12px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '11px', color: '#FBBF24', marginBottom: '4px' }}>Locked</div>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF' }}>{formatBalance(asset.locked_balance, asset.currency)}</div>
+                <div style={{ fontSize: '10px', color: '#6B7280' }}>{asset.currency}</div>
+              </div>
+              
+              <div style={{
+                background: 'rgba(59, 130, 246, 0.05)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '12px',
+                padding: '12px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '11px', color: '#60A5FA', marginBottom: '4px' }}>Total</div>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF' }}>{formatBalance(asset.total_balance, asset.currency)}</div>
+                <div style={{ fontSize: '10px', color: '#6B7280' }}>{asset.currency}</div>
               </div>
             </div>
+          </div>
 
-            {selectedCurrency && (
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem', fontSize: '14px' }}>Select Network</label>
-                <select
-                  value={selectedNetwork}
-                  onChange={(e) => {
-                    setSelectedNetwork(e.target.value);
-                    loadDepositAddress(selectedCurrency, e.target.value);
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(0,0,0,0.4)',
-                    border: '2px solid rgba(0,240,255,0.3)',
-                    borderRadius: '12px',
-                    color: '#fff',
-                    fontSize: '14px',
-                    outline: 'none'
-                  }}
-                >
-                  <option value="">Choose network...</option>
-                  {networkOptions[selectedCurrency] ? (
-                    networkOptions[selectedCurrency].map(network => (
-                      <option key={network} value={network}>{network}</option>
-                    ))
-                  ) : (
-                    <option value={selectedCurrency}>{selectedCurrency} Network</option>
-                  )}
-                </select>
-                {!networkOptions[selectedCurrency] && (
-                  <div style={{ color: '#FFA500', fontSize: '12px', marginTop: '0.5rem' }}>
-                    ℹ️ Using default {selectedCurrency} network
-                  </div>
-                )}
-              </div>
-            )}
-
-            {selectedCurrency && selectedNetwork && depositAddresses[`${selectedCurrency}-${selectedNetwork}`] && (
-              <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'rgba(0,240,255,0.05)', border: '2px solid rgba(0,240,255,0.3)', borderRadius: '12px' }}>
-                <div style={{ color: '#00E5FF', fontSize: '14px', fontWeight: '600', marginBottom: '1rem' }}>
-                  Deposit {depositAddresses[`${selectedCurrency}-${selectedNetwork}`].currency}
-                </div>
-                
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>Amount to Send</div>
-                  <div style={{ color: '#fff', fontSize: '20px', fontWeight: '700' }}>
-                    {depositAddresses[`${selectedCurrency}-${selectedNetwork}`].amount} {depositAddresses[`${selectedCurrency}-${selectedNetwork}`].currency}
-                  </div>
-                </div>
-                
-                <div>
-                  <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>Deposit Address</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <div style={{ flex: 1, color: '#fff', fontSize: '14px', wordBreak: 'break-all', fontFamily: 'monospace' }}>
-                      {depositAddresses[`${selectedCurrency}-${selectedNetwork}`].address}
-                    </div>
-                    <button
-                      onClick={() => copyToClipboard(depositAddresses[`${selectedCurrency}-${selectedNetwork}`].address)}
-                      style={{
-                        padding: '10px',
-                        background: 'linear-gradient(135deg, #00FF8A 0%, #00D673 100%)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        color: '#020611',
-                        fontWeight: '600',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                      }}
-                    >
-                      <Copy size={16} />
-                    </button>
-                  </div>
-                </div>
-                
-                <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(255,165,0,0.1)', border: '1px solid rgba(255,165,0,0.3)', borderRadius: '8px' }}>
-                  <div style={{ color: '#FFA500', fontSize: '12px' }}>
-                    ⚠️ Send exactly this amount to the address above. Network: {selectedNetwork}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {loadingAddress && (
-              <div style={{ textAlign: 'center', color: '#888', padding: '1rem' }}>Generating address...</div>
-            )}
-
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+          {/* Actions */}
+          <div>
+            <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Actions</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {/* Deposit Button */}
               <button
-                onClick={() => setShowDepositModal(false)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/deposit/${asset.currency.toLowerCase()}`);
+                }}
                 style={{
-                  flex: 1,
+                  background: 'linear-gradient(135deg, #22D3EE, #38BDF8)',
+                  border: 'none',
+                  borderRadius: '14px',
                   padding: '12px',
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  cursor: 'pointer'
+                  color: '#020617',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: '0 0 12px rgba(34, 211, 238, 0.4)',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 0 18px rgba(34, 211, 238, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.0)';
+                  e.currentTarget.style.boxShadow = '0 0 12px rgba(34, 211, 238, 0.4)';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.96)';
+                  e.currentTarget.style.boxShadow = 'inset 0 0 8px rgba(0,0,0,0.45)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
                 }}
               >
-                Close
+                <ArrowDownLeft size={16} />
+                Deposit
+              </button>
+
+              {/* Withdraw Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/withdraw/${asset.currency.toLowerCase()}`);
+                }}
+                style={{
+                  background: 'rgba(34, 211, 238, 0.1)',
+                  border: '1px solid rgba(34, 211, 238, 0.5)',
+                  borderRadius: '14px',
+                  padding: '12px',
+                  color: '#22D3EE',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: '0 0 8px rgba(34, 211, 238, 0.2)',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 0 12px rgba(34, 211, 238, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.0)';
+                  e.currentTarget.style.boxShadow = '0 0 8px rgba(34, 211, 238, 0.2)';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.96)';
+                  e.currentTarget.style.boxShadow = 'inset 0 0 8px rgba(0,0,0,0.45)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                }}
+              >
+                <ArrowUpRight size={16} />
+                Withdraw
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Withdraw Modal (placeholder) */}
-      {showWithdrawModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'linear-gradient(180deg, #0F1429 0%, #090D1A 100%)',
-            border: '2px solid #00E5FF',
-            borderRadius: '24px',
-            padding: '2rem',
-            maxWidth: '500px',
-            width: '90%',
-            boxShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
-          }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Withdraw Crypto</h2>
-            <p style={{ color: '#888', marginBottom: '1.5rem' }}>Withdraw feature coming soon...</p>
-            <button
-              onClick={() => setShowWithdrawModal(false)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '12px',
-                color: '#fff',
-                cursor: 'pointer'
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </Layout>
+    </div>
   );
 }
