@@ -251,6 +251,44 @@ export default function P2PExpress() {
                 }}>
                   Amount to Spend (GBP)
                 </label>
+                
+                {/* Preset Amount Buttons */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1rem' }}>
+                  {[50, 100, 200, 500].map(amount => (
+                    <button
+                      key={amount}
+                      onClick={() => setFiatAmount(amount.toString())}
+                      style={{
+                        padding: '0.75rem',
+                        background: fiatAmount === amount.toString() 
+                          ? 'linear-gradient(135deg, #00F0FF, #7B2FFF)' 
+                          : 'rgba(0, 240, 255, 0.1)',
+                        border: '2px solid rgba(0, 240, 255, 0.3)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontSize: '0.95rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (fiatAmount !== amount.toString()) {
+                          e.currentTarget.style.background = 'rgba(0, 240, 255, 0.2)';
+                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (fiatAmount !== amount.toString()) {
+                          e.currentTarget.style.background = 'rgba(0, 240, 255, 0.1)';
+                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                        }
+                      }}
+                    >
+                      £{amount}
+                    </button>
+                  ))}
+                </div>
+                
                 <div style={{ position: 'relative' }}>
                   <span style={{
                     position: 'absolute',
