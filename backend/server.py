@@ -20192,6 +20192,11 @@ async def google_callback_direct(code: str = None, error: str = None):
     # Forward to the main callback handler
     return await google_callback(code=code, error=error)
 
+@app.get("/auth/callback")
+async def google_callback_alt(code: str = None, error: str = None):
+    """Alternative callback route for localhost"""
+    return await google_callback(code=code, error=error)
+
 
 # Include the router in the main app (after all endpoints are defined)
 app.include_router(api_router)
