@@ -166,11 +166,9 @@ function Dashboard() {
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
-        padding: '20px 20px 20px 20px',
-        width: '100%',
-        boxSizing: 'border-box'
+        padding: '20px'
       }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           
           {/* Header */}
           <div style={{ marginBottom: '24px' }}>
