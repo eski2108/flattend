@@ -77,7 +77,7 @@ export default function Login() {
   const handleGoogleSignIn = () => {
     try {
       setLoading(true);
-      const googleAuthUrl = `${API}/api/auth/google`;
+      const googleAuthUrl = `${API}/auth/google`;
       console.log('🔍 Redirecting to Google OAuth:', googleAuthUrl);
       window.location.href = googleAuthUrl;
     } catch (error) {
