@@ -176,6 +176,16 @@ export default function PriceTickerEnhanced() {
                 transition: 'all 0.3s ease'
               }}
             >
+              {/* Coin Icon */}
+              <span style={{
+                fontSize: '18px',
+                color: coin.color,
+                textShadow: `0 0 10px ${coin.color}40`,
+                filter: 'brightness(1.3)'
+              }}>
+                {coin.icon || coin.symbol.charAt(0)}
+              </span>
+              
               {/* Coin Symbol with glow */}
               <span style={{
                 fontSize: '15px',
