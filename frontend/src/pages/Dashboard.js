@@ -196,7 +196,7 @@ function Dashboard() {
               width: '100%', 
               background: 'linear-gradient(90deg, #00C6FF 0%, transparent 100%)',
               boxShadow: '0 0 10px rgba(0, 198, 255, 0.5)',
-              margin: '10px 0 20px 0'
+              margin: '16px 0 20px 0'
             }} />
             
             {/* Total Value */}
