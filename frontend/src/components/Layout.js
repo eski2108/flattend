@@ -18,11 +18,10 @@ export default function Layout({ children }) {
   const [showExpressBuy, setShowExpressBuy] = useState(false);
 
   const navItems = [
-    { path: '/dashboard', label: 'Home', icon: LayoutDashboard },
+    { path: '/dashboard', label: 'Portfolio', icon: PieChart },
     { path: '/wallet', label: 'Wallet', icon: DollarSign },
     { path: '/savings', label: 'Savings Vault', icon: PiggyBank, highlight: true },
     { path: '/allocations', label: 'Allocations', icon: Target, highlight: true },
-    { path: '/portfolio', label: 'Portfolio', icon: PieChart, highlight: true },
     { path: '/instant-buy', label: 'Instant Buy', icon: Zap },
     { path: '/p2p-express', label: 'P2P Express', icon: TrendingUp },
     { path: '/p2p-marketplace', label: 'P2P Marketplace', icon: ShoppingBag },
