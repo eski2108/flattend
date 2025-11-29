@@ -107,19 +107,19 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       type: 'gradient',
       gradient: {
         shadeIntensity: 1,
-        opacityFrom: 0.45,
+        opacityFrom: 0.4,
         opacityTo: 0.05,
         stops: [0, 100],
         colorStops: [
           {
             offset: 0,
-            color: '#00E5FF',
-            opacity: 0.45
+            color: 'rgba(0, 255, 255, 0.4)',
+            opacity: 1
           },
           {
             offset: 100,
-            color: '#00E5FF',
-            opacity: 0.05
+            color: 'rgba(0, 255, 255, 0.05)',
+            opacity: 1
           }
         ]
       }
