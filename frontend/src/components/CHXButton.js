@@ -110,6 +110,7 @@ export default function CHXButton({
 
   return (
     <button
+      type={type}
       onClick={handleClick}
       onMouseEnter={() => !disabled && setIsHovered(true)}
       onMouseLeave={() => {
