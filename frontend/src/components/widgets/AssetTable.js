@@ -54,8 +54,8 @@ const AssetTable = ({ assets, onDeposit, onWithdraw, onSwap }) => {
     }}>
       <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>All Assets</h3>
       
-      {/* Desktop Table */}
-      <div style={{ display: 'none', '@media (min-width: 768px)': { display: 'block' } }}>
+      {/* Desktop Table - Hidden on mobile */}
+      <div className="desktop-table" style={{ display: 'block' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(0, 198, 255, 0.2)' }}>
