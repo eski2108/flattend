@@ -281,31 +281,40 @@ export default function OTPModal({
           disabled={loading || otp.join('').length !== 6}
           style={{
             width: '100%',
-            padding: '1rem',
-            backgroundColor: otp.join('').length === 6 ? '#00AEEF' : '#2A2E35',
+            padding: '1.125rem',
+            background: otp.join('').length === 6 ? 'linear-gradient(135deg, #00F0FF, #0080FF)' : 'rgba(40, 40, 40, 0.5)',
             color: '#fff',
             border: 'none',
-            borderRadius: '12px',
-            fontSize: '1rem',
+            borderRadius: '14px',
+            fontSize: '1.0625rem',
             fontWeight: '700',
             cursor: otp.join('').length === 6 ? 'pointer' : 'not-allowed',
             opacity: otp.join('').length === 6 ? 1 : 0.4,
-            transition: 'all 0.2s',
-            boxShadow: otp.join('').length === 6 ? '0 0 20px rgba(0, 174, 239, 0.3)' : 'none'
+            transition: 'all 0.3s',
+            boxShadow: otp.join('').length === 6 ? '0 0 30px rgba(0, 240, 255, 0.4)' : 'none',
+            position: 'relative',
+            overflow: 'hidden'
           }}
           onMouseEnter={(e) => {
             if (otp.join('').length === 6) {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 0 24px rgba(0, 174, 239, 0.5)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.6)';
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = otp.join('').length === 6 ? '0 0 20px rgba(0, 174, 239, 0.3)' : 'none';
+            e.currentTarget.style.boxShadow = otp.join('').length === 6 ? '0 0 30px rgba(0, 240, 255, 0.4)' : 'none';
           }}
         >
           {loading ? 'Verifying...' : 'Verify OTP'}
         </button>
+        
+        <style>{`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     </div>
   );
