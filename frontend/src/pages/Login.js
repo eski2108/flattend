@@ -364,7 +364,7 @@ export default function Login() {
           </div>
 
           {/* Forgot Password Link */}
-          <div style={{ textAlign: 'right', marginBottom: '28px' }}>
+          <div style={{ textAlign: 'right', marginBottom: '20px' }}>
             <Link 
               to="/forgot-password" 
               style={{ 
