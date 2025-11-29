@@ -19,7 +19,8 @@ export default function CHXButton({
   disabled = false,
   variant = 'primary', // 'primary' or 'secondary'
   fullWidth = false,
-  size = 'medium' // 'small', 'medium', 'large'
+  size = 'medium', // 'small', 'medium', 'large'
+  type = 'button' // 'button', 'submit', 'reset'
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
