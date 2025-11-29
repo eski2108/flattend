@@ -279,7 +279,7 @@ function Dashboard() {
                   <option value="change">Sort by 24h Change</option>
                   <option value="pl">Sort by Profit/Loss</option>
                 </select>
-                <ChevronDown size={16} color=\"#00C6FF\" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                <ChevronDown size={16} color="#00C6FF" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
               </div>
             </div>
           </div>
