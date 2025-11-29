@@ -171,8 +171,8 @@ function Dashboard() {
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           
           {/* Header */}
-          <div style={{ marginBottom: '24px', marginTop: '0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <div>
                 <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px' }}>Portfolio Overview</h1>
                 <p style={{ color: '#A3AEC2', fontSize: '16px', marginBottom: 0 }}>Your complete financial dashboard</p>
@@ -196,7 +196,7 @@ function Dashboard() {
               width: '100%', 
               background: 'linear-gradient(90deg, #00C6FF 0%, transparent 100%)',
               boxShadow: '0 0 10px rgba(0, 198, 255, 0.5)',
-              margin: '16px 0 20px 0'
+              margin: '20px 0'
             }} />
             
             {/* Total Value */}
@@ -220,10 +220,9 @@ function Dashboard() {
           {/* 2. P/L Summary Row with Donut Widget */}
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '20px', 
-            marginBottom: '24px',
-            width: '100%'
+            marginBottom: '24px'
           }}>
             <PLSummaryRow 
               todayPL={150.50} 
