@@ -773,10 +773,12 @@ class AdminResolveDisputeRequest(BaseModel):
 
 class RegisterRequest(BaseModel):
     email: str
-    password: str
+    password: Optional[str] = None
     full_name: str
     phone_number: str
     wallet_address: Optional[str] = None
+    google_id: Optional[str] = None
+    email_verified: Optional[bool] = False
 
 class LoginRequest(BaseModel):
     email: str
