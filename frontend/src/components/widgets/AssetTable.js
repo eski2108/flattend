@@ -203,8 +203,8 @@ const AssetTable = ({ assets, onDeposit, onWithdraw, onSwap }) => {
         </table>
       </div>
 
-      {/* Mobile Cards */}
-      <div style={{ display: 'block', '@media (min-width: 768px)': { display: 'none' } }}>
+      {/* Mobile Cards - Show on mobile */}
+      <div className="mobile-cards" style={{ display: 'none' }}>
         {assets.map((asset) => {
           const { pl, plPercent } = calculatePL(asset);
           const isPositive = pl >= 0;
