@@ -312,31 +312,43 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
       }}
     >
       {/* Coin Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '20px' : '0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '18px' : '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
           {/* Coin Icon */}
           <div style={{
-            width: '48px',
-            height: '48px',
+            width: '52px',
+            height: '52px',
             borderRadius: '50%',
-            background: `linear-gradient(135deg, ${coin.color}, ${coin.color}CC)`,
+            background: `linear-gradient(135deg, ${coin.color}, ${coin.color}DD)`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '20px',
+            fontSize: '22px',
             fontWeight: '700',
             color: '#FFFFFF',
-            boxShadow: `0 0 15px ${coin.color}44`
+            boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
+            border: `2px solid ${coin.color}22`
           }}>
             {coin.symbol[0]}
           </div>
           
           {/* Coin Info */}
-          <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
+          <div style={{ textAlign: 'left', flex: 1 }}>
+            <div style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#FFFFFF', 
+              marginBottom: '4px',
+              letterSpacing: '0.3px'
+            }}>
               {coin.symbol}
             </div>
-            <div style={{ fontSize: '13px', fontWeight: '500', color: '#8F9BB3' }}>
+            <div style={{ 
+              fontSize: '13px', 
+              fontWeight: '500', 
+              color: '#8F9BB3',
+              lineHeight: '1.3'
+            }}>
               {coin.name}
             </div>
           </div>
@@ -344,24 +356,32 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
 
         {/* Expand Arrow */}
         <ChevronDown 
-          size={20} 
-          color="#00C6FF" 
+          size={22} 
+          color={expanded ? coin.color : '#00C6FF'}
           style={{
             transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.18s ease-in-out'
+            transition: 'transform 0.18s ease-in-out, color 0.2s',
+            flexShrink: 0
           }}
         />
       </div>
 
       {/* Liquidity Status */}
       {!expanded && (
-        <div style={{ marginTop: '12px', textAlign: 'center' }}>
+        <div style={{ 
+          marginTop: '14px', 
+          textAlign: 'center',
+          padding: '8px 12px',
+          background: coin.has_liquidity ? 'rgba(34, 197, 94, 0.08)' : 'rgba(143, 155, 179, 0.08)',
+          borderRadius: '8px',
+          border: `1px solid ${coin.has_liquidity ? 'rgba(34, 197, 94, 0.2)' : 'rgba(143, 155, 179, 0.15)'}`
+        }}>
           {coin.has_liquidity ? (
-            <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600' }}>
+            <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600', letterSpacing: '0.3px' }}>
               ✓ {coin.available_amount.toFixed(4)} {coin.symbol} Available
             </div>
           ) : (
-            <div style={{ fontSize: '12px', color: '#8F9BB3', fontStyle: 'italic' }}>
+            <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '500' }}>
               No liquidity
             </div>
           )}
