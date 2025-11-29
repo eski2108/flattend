@@ -228,7 +228,7 @@ export default function Login() {
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
           {/* Email Field */}
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <label style={{ 
               display: 'flex',
               alignItems: 'center',
