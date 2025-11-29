@@ -284,7 +284,7 @@ export default function WalletPage() {
             {/* Right: Premium Neon Action Buttons - REDESIGNED */}
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button
-                onClick={() => setShowDepositModal(true)}
+                onClick={() => navigate('/deposit/btc')}
                 style={depositButtonStyle}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 214, 115, 0.6), 0 0 80px rgba(0, 214, 115, 0.3), inset 0 0 20px rgba(0, 255, 138, 0.12)';
