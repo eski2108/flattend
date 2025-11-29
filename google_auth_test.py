@@ -259,7 +259,7 @@ def test_complete_oauth_simulation():
                 return False
         
         # Step 3: Test callback with invalid code
-        invalid_callback = requests.get(f"{API_BASE}/auth/google/callback?code=test_invalid_code", allow_redirects=False)
+        invalid_callback = requests.get(f"{AUTH_BASE}/auth/google/callback?code=test_invalid_code", allow_redirects=False)
         
         if invalid_callback.status_code in [302, 400, 500]:
             log_test("✅ Invalid code properly handled", "PASS")
