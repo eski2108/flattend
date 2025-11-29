@@ -185,7 +185,7 @@ export default function SpotTrading() {
       },
     });
 
-    const candlestickSeries = chart.addCandlestickSeries({
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#00FF99',
       downColor: '#FF4D4D',
       borderUpColor: '#00FF99',
