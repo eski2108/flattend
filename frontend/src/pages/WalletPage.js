@@ -284,7 +284,7 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
       }}
     >
       {/* Header Row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '20px' : '0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '20px' : '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {/* Icon */}
           <div style={{
@@ -329,6 +329,30 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
           </div>
         </div>
       </div>
+
+      {/* Quick Action Buttons - ALWAYS VISIBLE */}
+      {!expanded && (
+        <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+          <QuickActionButton
+            onClick={handleDeposit}
+            icon={<ArrowDownLeft size={16} />}
+            label="Deposit"
+            coinColor={coinColor}
+          />
+          <QuickActionButton
+            onClick={handleWithdraw}
+            icon={<ArrowUpRight size={16} />}
+            label="Withdraw"
+            coinColor={coinColor}
+          />
+          <QuickActionButton
+            onClick={handleSwap}
+            icon={<Repeat size={16} />}
+            label="Swap"
+            coinColor={coinColor}
+          />
+        </div>
+      )}
 
       {/* Expanded Section */}
       {expanded && (
