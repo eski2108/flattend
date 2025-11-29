@@ -12,7 +12,7 @@ import { applySamsungColorFix } from "@/utils/colorFix";
 // Core pages - load immediately
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
-import WalletPage from "@/pages/WalletPagePremium";
+import WalletPage from "@/pages/WalletPage";
 // Auth pages - load immediately (user needs these first)
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
