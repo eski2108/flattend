@@ -64,9 +64,35 @@ function InstantBuy() {
 
   const fetchCoins = async () => {
     try {
-      const response = await axios.get(`${API}/api/instant-buy/available-coins`);
-      if (response.data.success) {
-        setCoins(response.data.coins);
+      // Get ALL supported coins from coin metadata
+      const metadataResponse = await axios.get(`${API}/api/wallets/coin-metadata`);
+      
+      // Get existing admin liquidity
+      const liquidityResponse = await axios.get(`${API}/api/instant-buy/available-coins`);
+      
+      if (metadataResponse.data.success) {
+        const allCoins = metadataResponse.data.coins;
+        const liquidityMap = {};
+        
+        // Map existing liquidity
+        if (liquidityResponse.data.success) {
+          liquidityResponse.data.coins.forEach(coin => {
+            liquidityMap[coin.symbol] = coin;
+          });
+        }
+        
+        // Combine all coins with liquidity data
+        const enrichedCoins = allCoins.map(coin => ({
+          symbol: coin.symbol,
+          name: coin.name,
+          color: coin.color,
+          price_gbp: liquidityMap[coin.symbol]?.price_gbp || 0,
+          available_amount: liquidityMap[coin.symbol]?.available_amount || 0,
+          has_liquidity: !!liquidityMap[coin.symbol],
+          markup_percent: liquidityMap[coin.symbol]?.markup_percent || 3.0
+        }));
+        
+        setCoins(enrichedCoins);
       }
     } catch (error) {
       console.error('Error:', error);
