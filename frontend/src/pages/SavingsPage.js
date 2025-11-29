@@ -137,6 +137,7 @@ export default function SavingsPage() {
   const [selectedCurrency, setSelectedCurrency] = useState('BTC');
   const [transferAmount, setTransferAmount] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [displayCurrency, setDisplayCurrency] = useState('GBP');
 
   useEffect(() => {
     fetchSavings();
