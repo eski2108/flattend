@@ -5751,10 +5751,14 @@ async def register_user(request: RegisterRequest, req: Request):
     
     account_dict = user_account.model_dump()
     account_dict['created_at'] = account_dict['created_at'].isoformat()
-    account_dict['email_verified'] = False  # Require phone verification
-    account_dict['phone_verified'] = False
+    account_dict['email_verified'] = request.email_verified if is_google_signup else False
+    account_dict['phone_verified'] = False  # Always require phone verification
     account_dict['phone_number'] = request.phone_number
     account_dict['verification_token'] = verification_token
+    
+    # Add Google ID if Google signup
+    if is_google_signup and request.google_id:
+        account_dict['google_id'] = request.google_id
     
     # ANTI-ABUSE: Store IP and user agent for referral fraud detection
     account_dict['ip_address'] = client_ip
