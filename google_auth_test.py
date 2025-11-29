@@ -248,7 +248,7 @@ def test_complete_oauth_simulation():
         log_test(f"✅ Got OAuth URL: {oauth_url[:50]}...", "PASS")
         
         # Step 2: Test callback with simulated error (user denial)
-        callback_response = requests.get(f"{API_BASE}/auth/google/callback?error=access_denied", allow_redirects=False)
+        callback_response = requests.get(f"{AUTH_BASE}/auth/google/callback?error=access_denied", allow_redirects=False)
         
         if callback_response.status_code == 302:
             error_redirect = callback_response.headers.get('Location', '')
