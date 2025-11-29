@@ -203,9 +203,8 @@ export default function Layout({ children }) {
       <main className="main-content" data-testid="main-content">
         <div style={{
           width: '100%',
-          padding: '16px 0',
+          padding: '20px 0',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           boxSizing: 'border-box'
@@ -213,19 +212,6 @@ export default function Layout({ children }) {
           <PriceTickerEnhanced />
         </div>
         
-        {/* Divider Line */}
-        <div style={{
-          width: '100%',
-          height: '1px',
-          backgroundColor: 'rgba(0, 232, 248, 0.15)',
-          margin: '0',
-          border: 'none',
-          boxShadow: 'none',
-          filter: 'none',
-          borderRadius: '0'
-        }} />
-        
-        {/* Promo Banner */}
         <PromoBanner />
         
         {/* Express Buy Modal */}
