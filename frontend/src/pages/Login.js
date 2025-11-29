@@ -146,6 +146,18 @@ export default function Login() {
         zIndex: 1,
         overflow: 'hidden'
       }}>
+        {/* Top Glow Decoration */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '80%',
+          height: '3px',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.8) 50%, transparent 100%)',
+          boxShadow: '0 0 20px rgba(0, 229, 255, 0.6)',
+          borderRadius: '0 0 50% 50%'
+        }} />
         {/* Logo & Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           {/* Main Logo */}
