@@ -263,13 +263,14 @@ export default function Login() {
             <label style={{ 
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '10px',
               color: '#FFFFFF',
-              fontSize: '14px',
+              fontSize: '15px',
               fontWeight: '600',
-              marginBottom: '8px'
+              marginBottom: '10px',
+              letterSpacing: '0.2px'
             }}>
-              <Lock size={16} color="#00C6FF" />
+              <Lock size={18} color="#00E5FF" strokeWidth={2.5} />
               Password
             </label>
             <div style={{ position: 'relative' }}>
