@@ -53,9 +53,50 @@ export default function ChatWidget() {
     return () => clearInterval(hideInterval);
   }, []);
 
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      sender: 'user',
+      message: inputMessage.trim(),
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const botResponse = {
+        id: (Date.now() + 1).toString(),
+        sender: 'bot',
+        message: 'Thanks for your message! Our AI is processing your request. For specific account issues, please contact our support team at support@coinhubx.com or use the live chat during business hours.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botResponse]);
+      setIsLoading(false);
+      
+      if (!isOpen) {
+        setUnreadCount(prev => prev + 1);
+      }
+    }, 1500);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const createChatSession = async () => {
     try {
-      const userId = localStorage.getItem('user_id');
+      const userData = localStorage.getItem('cryptobank_user');
+      if (!userData) return;
+      const user = JSON.parse(userData);
+      const userId = user.user_id;
       const userEmail = localStorage.getItem('user_email');
       
       const response = await axios.post(`${BACKEND_URL}/api/chat/session/create`, {
