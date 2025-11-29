@@ -1246,6 +1246,57 @@ async def get_user_profile(wallet_address: str):
         "pending_offers": pending_offers
     }
 
+@api_router.put("/user/profile")
+async def update_user_profile(update_data: dict):
+    """Update user profile information"""
+    try:
+        user_id = update_data.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id is required")
+        
+        # Find user
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Prepare update fields
+        update_fields = {}
+        
+        if "full_name" in update_data:
+            update_fields["full_name"] = update_data["full_name"]
+        
+        if "phone_number" in update_data:
+            update_fields["phone_number"] = update_data["phone_number"]
+        
+        if "country" in update_data:
+            update_fields["country"] = update_data["country"]
+        
+        if not update_fields:
+            raise HTTPException(status_code=400, detail="No valid fields to update")
+        
+        # Update user
+        await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {"$set": update_fields}
+        )
+        
+        # Get updated user
+        updated_user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        
+        logger.info(f"User profile updated: {user_id}")
+        
+        return {
+            "success": True,
+            "message": "Profile updated successfully",
+            "user": updated_user
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating user profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/user/loans/{wallet_address}")
 async def get_user_loans(wallet_address: str):
     """Get all user loans (as borrower or lender)"""
