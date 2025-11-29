@@ -239,7 +239,7 @@ def test_complete_oauth_simulation():
     
     try:
         # Step 1: Get OAuth URL
-        response = requests.get(f"{AUTH_BASE}/auth/google", allow_redirects=False)
+        response = requests.get(f"{API_BASE}/auth/google", allow_redirects=False)
         
         if response.status_code != 302:
             log_test("❌ Failed to get OAuth redirect", "FAIL")
