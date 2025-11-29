@@ -5428,10 +5428,7 @@ async def google_callback(code: str = None, error: str = None):
     
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-    backend_url = os.environ.get('BACKEND_URL', 'https://tradehub-227.preview.emergentagent.com')
-    
-    # Use redirect URI without /api (more standard for OAuth)
-    redirect_uri = f"{backend_url}/auth/google/callback"
+    redirect_uri = "http://localhost:3000/auth/callback"
     
     logger.info(f"   Using redirect_uri: {redirect_uri}")
     
