@@ -197,41 +197,7 @@ function SwapCrypto() {
         paddingBottom: '60px'
       }}>
         
-        {/* 1. PREMIUM LIVE TICKER BAR */}
-        <div style={{
-          background: 'rgba(0, 240, 255, 0.05)',
-          borderBottom: '1px solid rgba(0, 240, 255, 0.2)',
-          padding: '12px 0',
-          overflow: 'hidden',
-          position: 'relative'
-        }}>
-          <div style={{
-            display: 'flex',
-            gap: '40px',
-            animation: 'scroll 30s linear infinite',
-            whiteSpace: 'nowrap'
-          }}>
-            {[...tickerData, ...tickerData, ...tickerData].map((coin, index) => (
-              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                <span style={{ fontSize: '20px' }}>{coin.logo}</span>
-                <span style={{ fontSize: '14px', fontWeight: '700', color: '#FFF' }}>{coin.code}</span>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#00F0FF' }}>${coin.price?.toFixed(2)}</span>
-                <span style={{ fontSize: '13px', fontWeight: '600', color: parseFloat(coin.change) >= 0 ? '#22C55E' : '#EF4444' }}>
-                  {parseFloat(coin.change) >= 0 ? '+' : ''}{coin.change}%
-                </span>
-                {/* Mini Sparkline */}
-                <svg width="50" height="20" style={{ opacity: 0.7 }}>
-                  <polyline
-                    points="0,15 10,12 20,14 30,8 40,10 50,6"
-                    fill="none"
-                    stroke={parseFloat(coin.change) >= 0 ? '#22C55E' : '#EF4444'}
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Ticker removed - using global ticker from Layout */}
 
         <div style={{ padding: isMobile ? '16px' : '24px' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
