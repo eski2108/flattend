@@ -222,7 +222,12 @@ function Dashboard() {
           <PortfolioGraph data={null} totalValue={totalValue} />
 
           {/* 2. P/L Summary Row with Donut Widget */}
-          <div style={{ display: 'flex', gap: '2.5%', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '16px', 
+            marginBottom: '16px'
+          }}>
             <PLSummaryRow 
               todayPL={150.50} 
               weekPL={520.75} 
