@@ -5377,8 +5377,8 @@ async def google_auth():
     
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-        # Try multiple redirect URI formats to find one that works
-        redirect_uri = "http://localhost:3000/auth/callback"
+        # Use the production URL
+        redirect_uri = "https://tradehub-227.preview.emergentagent.com/api/auth/google/callback"
         
         if not google_client_id:
             logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
