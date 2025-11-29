@@ -180,7 +180,7 @@ export default function Login() {
               src="/logo1-transparent.png" 
               alt="Coin Hub X" 
               style={{ 
-                height: '120px', 
+                height: '95px', 
                 width: 'auto',
                 filter: 'drop-shadow(0 0 35px rgba(0, 229, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.6)) drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5))',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
