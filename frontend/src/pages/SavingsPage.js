@@ -38,12 +38,14 @@ const CHXCard = ({ children, className = '' }) => (
 );
 
 // CHXMetricTile Component
-const CHXMetricTile = ({ icon, title, value, description, disabled = false }) => (
+const CHXMetricTile = ({ icon: Icon, title, value, description, disabled = false }) => (
   <div className={`rounded-[18px] border ${disabled ? 'border-gray-600/30' : 'border-cyan-400/25'} bg-[#030A14]/70 p-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,234,255,0.2)]`}
     style={{
       opacity: disabled ? 0.6 : 1
     }}>
-    <div style={{ fontSize: '28px', marginBottom: '12px' }}>{icon}</div>
+    <div style={{ marginBottom: '12px', color: disabled ? '#6B7280' : '#00E5FF' }}>
+      <Icon size={32} strokeWidth={2.5} />
+    </div>
     <div style={{ fontSize: '13px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', fontWeight: '600' }}>
       {title}
     </div>
