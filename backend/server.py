@@ -1251,11 +1251,13 @@ async def update_user_profile(update_data: dict):
     """Update user profile information"""
     try:
         user_id = update_data.get("user_id")
+        logger.info(f"Profile update request for user_id: {user_id}")
         if not user_id:
             raise HTTPException(status_code=400, detail="user_id is required")
         
         # Find user
         user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        logger.info(f"User lookup result: {user is not None}")
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
