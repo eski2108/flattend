@@ -61,7 +61,7 @@ const CHXMetricTile = ({ icon: Icon, title, value, description, disabled = false
 );
 
 // CHXHeaderHero Component
-const CHXHeaderHero = ({ title, subtitle, icon }) => (
+const CHXHeaderHero = ({ title, subtitle, icon: Icon }) => (
   <div style={{
     padding: '28px 0 20px 0',
     background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)',
@@ -88,7 +88,7 @@ const CHXHeaderHero = ({ title, subtitle, icon }) => (
       justifyContent: 'center',
       gap: '8px'
     }}>
-      <span style={{ fontSize: '20px' }}>{icon}</span>
+      <Icon size={20} color="#00E5FF" strokeWidth={2.5} />
       {subtitle}
     </p>
   </div>
