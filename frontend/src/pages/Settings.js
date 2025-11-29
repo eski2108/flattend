@@ -192,7 +192,7 @@ export default function Settings() {
           marginBottom: '2rem',
           boxShadow: '0 0 30px rgba(0, 240, 255, 0.2)'
         }}>
-          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem', flexWrap: 'wrap' }}>
             <div style={{
               width: '80px',
               height: '80px',
@@ -204,15 +204,78 @@ export default function Settings() {
               fontSize: '32px',
               fontWeight: '900',
               color: '#000',
-              boxShadow: '0 0 20px rgba(0, 240, 255, 0.5)'
+              boxShadow: '0 0 20px rgba(0, 240, 255, 0.5)',
+              flexShrink: 0
             }}>
               {(currentUser.full_name || currentUser.name || 'U').substring(0, 2).toUpperCase()}
             </div>
-            <div>
-              <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: '900', marginBottom: '0.5rem' }}>
-                {(currentUser.full_name || currentUser.name || 'User').replace(/admin/gi, '').replace(/CoinHubEx/gi, '').trim() || 'User'}
-              </h2>
-              <p style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '600' }}>
+            <div style={{ flex: 1, minWidth: '250px' }}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ color: '#888', fontSize: '12px', marginBottom: '0.5rem', display: 'block', textTransform: 'uppercase' }}>Full Name</label>
+                <input
+                  type="text"
+                  value={currentUser.full_name || currentUser.name || ''}
+                  onChange={(e) => {
+                    const newName = e.target.value;
+                    setCurrentUser({...currentUser, full_name: newName});
+                  }}
+                  onBlur={async (e) => {
+                    const newName = e.target.value.trim();
+                    if (newName && newName !== (currentUser.full_name || currentUser.name)) {
+                      setLoadingSettings(true);
+                      try {
+                        const response = await fetch(`${BACKEND_URL}/api/user/profile`, {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          },
+                          body: JSON.stringify({
+                            user_id: currentUser.user_id,
+                            full_name: newName
+                          })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                          toast.success('Name updated successfully!');
+                          const updatedUser = {...currentUser, full_name: newName};
+                          setCurrentUser(updatedUser);
+                          localStorage.setItem('cryptobank_user', JSON.stringify(updatedUser));
+                        } else {
+                          toast.error('Failed to update name');
+                        }
+                      } catch (error) {
+                        toast.error('Failed to update name');
+                      } finally {
+                        setLoadingSettings(false);
+                      }
+                    }
+                  }}
+                  disabled={loadingSettings}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    border: '1px solid rgba(0, 240, 255, 0.3)',
+                    borderRadius: '12px',
+                    color: '#fff',
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                    e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+              <p style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '600', marginBottom: 0 }}>
                 {currentUser.email}
               </p>
             </div>
