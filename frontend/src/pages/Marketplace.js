@@ -10,19 +10,68 @@ const API = BACKEND_URL;
 
 // Payment method icons mapping
 const PAYMENT_ICONS = {
+  // UK & Europe
+  'faster_payments': '🏦',
   'sepa': '🇪🇺',
-  'faster_payments': '🇬🇧',
+  'sepa_instant': '⚡',
+  
+  // Global
   'swift': '🌍',
-  'ach': '🇺🇸',
-  'local_bank_transfer': '🏦',
   'wire_transfer': '💳',
-  'pix': '🇧🇷',
+  
+  // US
+  'ach': '🇺🇸',
+  'zelle': '⚡',
+  'venmo': '💙',
+  'cash_app': '💵',
+  
+  // Canada
   'interac': '🇨🇦',
-  // Legacy/additional methods
-  'wise': '💳',
+  
+  // Digital Wallets
+  'wise': '💸',
   'revolut': '🔄',
+  'paypal': '💰',
+  'skrill': '💳',
+  'neteller': '💼',
+  'payoneer': '🌐',
+  
+  // Latin America
+  'pix': '🇧🇷',
+  'mercado_pago': '💙',
+  'nequi': '🇨🇴',
+  
+  // Asia
+  'upi': '🇮🇳',
+  'paytm': '💳',
+  'imps': '⚡',
+  'alipay': '🇨🇳',
+  'wechat_pay': '💚',
+  'gcash': '🇵🇭',
+  'paymaya': '💳',
+  'grabpay': '🚗',
+  
+  // Africa
+  'm_pesa': '🇰🇪',
+  'airtel_money': '📱',
+  'mtn_mobile_money': '💛',
+  'chipper_cash': '🐿️',
+  
+  // Australia
+  'osko': '🇦🇺',
+  
+  // Middle East
+  'sadad': '🇸🇦',
+  
+  // Cash & Others
+  'cash_in_person': '💵',
+  'gift_cards': '🎁',
+  'western_union': '🌎',
+  'moneygram': '💸',
+  
+  // Legacy
   'bank_transfer': '🏦',
-  'paypal': '💰'
+  'local_bank_transfer': '🏦'
 };
 
 export default function Marketplace() {
