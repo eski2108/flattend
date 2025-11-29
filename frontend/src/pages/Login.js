@@ -200,13 +200,13 @@ export default function Login() {
           
           {/* Welcome Text with Enhanced Styling */}
           <h1 style={{ 
-            fontSize: '44px',
+            fontSize: '36px',
             fontWeight: '800',
             background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 40%, #00C6FF 70%, #0080FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '16px',
-            letterSpacing: '1px',
+            marginBottom: '10px',
+            letterSpacing: '0.8px',
             lineHeight: '1.2',
             textShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
           }}>
@@ -214,7 +214,7 @@ export default function Login() {
           </h1>
           <p style={{ 
             color: '#A3AEC2',
-            fontSize: '17px',
+            fontSize: '14px',
             fontWeight: '500',
             marginBottom: 0,
             letterSpacing: '0.5px',
