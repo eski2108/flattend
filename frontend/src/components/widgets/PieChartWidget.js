@@ -5,20 +5,22 @@ const PieChartWidget = ({ assets }) => {
 
   const total = assets.reduce((sum, asset) => sum + asset.value, 0);
   
-  let currentAngle = 0;
-  const slices = assets.map(asset => {
+  const slices = assets.reduce((acc, asset) => {
     const percent = (asset.value / total) * 100;
     const angle = (percent / 100) * 360;
-    const startAngle = currentAngle;
-    currentAngle += angle;
+    const previousAngle = acc.length > 0 ? acc[acc.length - 1].endAngle : 0;
+    const startAngle = previousAngle;
+    const endAngle = previousAngle + angle;
     
-    return {
+    acc.push({
       ...asset,
       percent,
       startAngle,
-      endAngle: currentAngle
-    };
-  });
+      endAngle
+    });
+    
+    return acc;
+  }, []);
 
   const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
     const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
