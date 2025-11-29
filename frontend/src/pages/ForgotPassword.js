@@ -19,17 +19,17 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/api/auth/forgot-password`, { email });
+      const response = await axios.post(`${API}/auth/forgot-password`, { email });
       
       if (response.data.success) {
         setEmailSent(true);
-        toast.success('✅ Password reset email sent!');
+        toast.success('✅ Password reset instructions sent!');
       } else {
         toast.error(response.data.message || 'Failed to send reset email');
       }
     } catch (error) {
       console.error('Forgot password error:', error);
-      toast.error(error.response?.data?.message || 'Failed to send reset email');
+      toast.error(error.response?.data?.message || 'Failed to send reset instructions');
     } finally {
       setLoading(false);
     }
