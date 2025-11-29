@@ -170,14 +170,36 @@ function Dashboard() {
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
-        padding: '24px 20px'
+        padding: '20px'
       }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8px' }}>
           
           {/* Header */}
-          <div style={{ marginBottom: '28px' }}>
-            <h1 style={{ fontSize: '30px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Portfolio Overview</h1>
-            <p style={{ color: '#A3AEC2', fontSize: '17px', marginBottom: '12px', lineHeight: '1.4' }}>Your complete financial dashboard</p>
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div>
+                <h1 style={{ fontSize: '30px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px', lineHeight: '1.2' }}>Portfolio Overview</h1>
+                <p style={{ color: '#A3AEC2', fontSize: '17px', marginBottom: 0, lineHeight: '1.4' }}>Your complete financial dashboard</p>
+              </div>
+              
+              {/* Export Button */}
+              <CHXButton
+                onClick={handleExportPDF}
+                coinColor=\"#00C6FF\"
+                variant=\"secondary\"
+                size=\"small\"
+                icon={<FileText size={16} />}
+              >\n                📄 Export PDF\n              </CHXButton>
+            </div>
+            
+            {/* Glowing Divider */}
+            <div style={{ 
+              height: '2px', 
+              width: '100%', 
+              background: 'linear-gradient(90deg, #00C6FF 0%, transparent 100%)',
+              boxShadow: '0 0 10px rgba(0, 198, 255, 0.5)',
+              margin: '16px 0'
+            }} />
             
             {/* Total Value */}
             <div style={{
