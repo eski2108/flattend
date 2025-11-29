@@ -500,6 +500,17 @@ export default function Login() {
           50% { transform: translate(20px, 20px); }
         }
         
+        @keyframes pulse {
+          0%, 100% { 
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          50% { 
+            transform: scale(1.1);
+            opacity: 0.8;
+          }
+        }
+        
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus {
