@@ -149,7 +149,7 @@ export default function PriceTickerEnhanced() {
       
       <div style={{
         display: 'flex',
-        animation: 'scroll 20s linear infinite',
+        animation: 'scroll 12s linear infinite',
         gap: '3rem',
         position: 'relative',
         zIndex: 1
