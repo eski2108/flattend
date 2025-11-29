@@ -191,7 +191,7 @@ export default function OTPModal({
         </div>
 
         {/* Description */}
-        <p style={{ color: '#9FA6B2', fontSize: '0.875rem', marginBottom: '2rem' }}>{description}</p>
+        <p style={{ color: '#8F9BB3', fontSize: '0.9375rem', marginBottom: '2rem', lineHeight: '1.6' }}>{description}</p>
 
         {/* OTP Input */}
         <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginBottom: '2rem' }}>
