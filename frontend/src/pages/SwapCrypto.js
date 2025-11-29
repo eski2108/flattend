@@ -237,9 +237,9 @@ function SwapCrypto() {
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 26, 39, 0.95) 0%, rgba(7, 17, 26, 0.98) 100%)',
                 border: '1px solid rgba(0, 232, 255, 0.3)',
-                borderRadius: '20px',
-                padding: '28px',
-                marginBottom: '20px',
+                borderRadius: isMobile ? '16px' : '20px',
+                padding: isMobile ? '20px' : '28px',
+                marginBottom: isMobile ? '16px' : '20px',
                 boxShadow: '0 0 40px rgba(0, 232, 255, 0.2), inset 0 0 30px rgba(0, 232, 255, 0.05)'
               }}>
                 {/* From Section */}
