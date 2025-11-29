@@ -166,44 +166,76 @@ function InstantBuy() {
 
   const amounts = [50, 100, 250, 500];
 
+  const [searchFocused, setSearchFocused] = useState(false);
+
   return (
     <Layout>
-      <div style={{ padding: '24px 16px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ padding: '24px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 8px' }}>
           
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'linear-gradient(135deg, #22C55E, #16A34A)', borderRadius: '20px', marginBottom: '16px' }}>
-              <Zap size={20} color="#fff" />
-              <span style={{ color: '#fff', fontWeight: '700', fontSize: '14px' }}>INSTANT BUY</span>
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '10px 20px', 
+              background: 'linear-gradient(135deg, #22C55E, #16A34A)', 
+              borderRadius: '20px', 
+              marginBottom: '12px',
+              boxShadow: '0 0 25px rgba(34, 197, 94, 0.6), 0 4px 16px rgba(34, 197, 94, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              <Zap size={22} color="#fff" />
+              <span style={{ color: '#fff', fontWeight: '700', fontSize: '15px', letterSpacing: '0.5px' }}>INSTANT BUY</span>
             </div>
-            <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px' }}>Buy Crypto Instantly</h1>
-            <p style={{ color: '#A3AEC2', fontSize: '16px', marginBottom: '16px' }}>Expand any coin to see Deposit, Withdraw & Swap options</p>
-            <div style={{ padding: '12px 24px', background: 'rgba(0,198,255,0.1)', border: '1px solid rgba(0,198,255,0.3)', borderRadius: '12px', display: 'inline-block' }}>
+            <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Buy Crypto Instantly</h1>
+            <p style={{ color: '#A3AEC2', fontSize: '15px', marginBottom: '16px', lineHeight: '1.4' }}>Expand any coin to see Deposit, Withdraw & Swap options</p>
+            <div style={{ 
+              padding: '12px 24px', 
+              background: 'rgba(0,198,255,0.08)', 
+              border: '1px solid rgba(0,198,255,0.3)', 
+              borderRadius: '14px', 
+              display: 'inline-block',
+              boxShadow: '0 0 15px rgba(0, 198, 255, 0.15)'
+            }}>
               <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Available Balance: </span>
               <span style={{ color: '#00C6FF', fontSize: '18px', fontWeight: '700' }}>£{userBalance.toFixed(2)}</span>
             </div>
           </div>
 
+          {/* Ticker Bar with Shadow */}
+          <div style={{ 
+            height: '2px', 
+            width: '100%', 
+            background: 'linear-gradient(90deg, transparent 0%, #00C6FF 50%, transparent 100%)',
+            boxShadow: '0 2px 8px rgba(0, 198, 255, 0.3)',
+            marginBottom: '24px'
+          }} />
+
           {/* Search */}
-          <div style={{ marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }}>
+          <div style={{ marginBottom: '28px', maxWidth: '520px', margin: '0 auto 28px' }}>
             <div style={{ position: 'relative' }}>
-              <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#8F9BB3' }} />
+              <Search size={20} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: searchFocused ? '#00C6FF' : '#8F9BB3', transition: 'color 0.2s' }} />
               <input
                 type="text"
                 placeholder="Search coins..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
                 style={{
                   width: '100%',
-                  padding: '14px 14px 14px 48px',
-                  background: 'rgba(0,0,0,0.3)',
-                  border: '1px solid rgba(0,198,255,0.2)',
+                  padding: '16px 16px 16px 50px',
+                  background: 'rgba(0,0,0,0.4)',
+                  border: searchFocused ? '1px solid rgba(0,198,255,0.5)' : '1px solid rgba(0,198,255,0.2)',
                   borderRadius: '14px',
                   color: '#FFFFFF',
                   fontSize: '16px',
                   outline: 'none',
-                  fontFamily: 'Inter, sans-serif'
+                  fontFamily: 'Inter, sans-serif',
+                  transition: 'all 0.2s ease',
+                  boxShadow: searchFocused ? '0 0 20px rgba(0, 198, 255, 0.25)' : 'none'
                 }}
               />
             </div>
