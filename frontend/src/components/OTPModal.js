@@ -147,13 +147,13 @@ export default function OTPModal({
     >
       <div
         style={{
-          backgroundColor: '#111418',
-          borderRadius: '16px',
-          padding: '2rem',
+          background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+          borderRadius: '24px',
+          padding: '2.5rem',
           width: '90%',
-          maxWidth: '480px',
-          border: '2px solid rgba(0, 174, 239, 0.3)',
-          boxShadow: '0 0 40px rgba(0, 174, 239, 0.2)'
+          maxWidth: '500px',
+          border: '2px solid rgba(0, 240, 255, 0.4)',
+          boxShadow: '0 0 60px rgba(0, 240, 255, 0.4), 0 20px 80px rgba(0, 0, 0, 0.8)'
         }}
         onClick={(e) => e.stopPropagation()}
       >
