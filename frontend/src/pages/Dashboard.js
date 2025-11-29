@@ -170,16 +170,43 @@ function Dashboard() {
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
-        padding: '20px 16px'
+        padding: '20px 16px',
+        width: '100%',
+        maxWidth: '100vw',
+        overflowX: 'hidden',
+        boxSizing: 'border-box'
       }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
           
           {/* Header */}
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <div>
-                <h1 style={{ fontSize: '30px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px', lineHeight: '1.2' }}>Portfolio Overview</h1>
-                <p style={{ color: '#A3AEC2', fontSize: '17px', marginBottom: 0, lineHeight: '1.4' }}>Your complete financial dashboard</p>
+          <div style={{ marginBottom: '20px', width: '100%' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'flex-start', 
+              marginBottom: '16px',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <div style={{ flex: '1', minWidth: '200px' }}>
+                <h1 style={{ 
+                  fontSize: 'clamp(24px, 5vw, 30px)', 
+                  fontWeight: '700', 
+                  color: '#FFFFFF', 
+                  marginBottom: '4px', 
+                  lineHeight: '1.2' 
+                }}>Portfolio Overview</h1>
+                <p style={{ 
+                  color: '#A3AEC2', 
+                  fontSize: 'clamp(14px, 3vw, 17px)', 
+                  marginBottom: 0, 
+                  lineHeight: '1.4' 
+                }}>Your complete financial dashboard</p>
               </div>
               
               {/* Export Button */}
@@ -189,6 +216,7 @@ function Dashboard() {
                 variant="secondary"
                 size="small"
                 icon={<FileText size={16} />}
+                style={{ flexShrink: 0 }}
               >
                 Export PDF
               </CHXButton>
