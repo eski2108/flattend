@@ -14,6 +14,7 @@ from datetime import datetime
 # Get backend URL from environment
 BACKEND_URL = "https://tradehub-227.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
+AUTH_BASE = f"{BACKEND_URL}"
 
 def log_test(message, status="INFO"):
     """Log test messages with timestamp"""
