@@ -8,6 +8,10 @@ export default function PromoBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Don't show banner on homepage
+    if (window.location.pathname === '/' || window.location.pathname === '/home') {
+      return;
+    }
     fetchActiveBanner();
   }, []);
 
