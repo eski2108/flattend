@@ -242,15 +242,52 @@ export default function SavingsPage() {
           {/* SECTION 2: Main Savings Balance Card */}
           <CHXCard className="mb-6">
             <div style={{ padding: '24px' }}>
-              <div style={{ marginBottom: '24px' }}>
-                <div style={{ fontSize: '13px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', fontWeight: '600' }}>
+              {/* Currency Selector */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ fontSize: '13px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '600' }}>
                   TOTAL SAVINGS BALANCE
                 </div>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    value={displayCurrency}
+                    onChange={(e) => setDisplayCurrency(e.target.value)}
+                    style={{
+                      padding: '8px 36px 8px 12px',
+                      background: 'rgba(0, 229, 255, 0.1)',
+                      border: '1px solid rgba(0, 229, 255, 0.3)',
+                      borderRadius: '10px',
+                      color: '#00E5FF',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      appearance: 'none',
+                      fontFamily: 'Inter, sans-serif'
+                    }}
+                  >
+                    {Object.entries(CURRENCIES).map(([code, data]) => (
+                      <option key={code} value={code}>
+                        {data.symbol} {code}
+                      </option>
+                    ))}
+                  </select>
+                  <Globe size={16} style={{ 
+                    position: 'absolute', 
+                    right: '12px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                    color: '#00E5FF'
+                  }} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
                 <div style={{ fontSize: '56px', fontWeight: '700', color: '#00E5FF', marginBottom: '8px', textShadow: '0 0 30px rgba(0, 229, 255, 0.5)' }}>
-                  ${totalValue.toFixed(2)}
+                  {currencySymbol}{displayValue}
                 </div>
                 <div style={{ fontSize: '16px', color: '#9CA3AF', fontWeight: '500' }}>
-                  ≈ £{totalValueGBP} GBP
+                  ≈ ${totalValue.toFixed(2)} USD
                 </div>
               </div>
 
