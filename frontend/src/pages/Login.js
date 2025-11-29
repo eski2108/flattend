@@ -205,7 +205,7 @@ export default function Login() {
             background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 40%, #00C6FF 70%, #0080FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '17px',
+            marginBottom: '6px',
             letterSpacing: '0.8px',
             lineHeight: '1.2',
             textShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
@@ -216,7 +216,7 @@ export default function Login() {
             color: '#A3AEC2',
             fontSize: '14px',
             fontWeight: '500',
-            marginBottom: 0,
+            marginBottom: '26px',
             letterSpacing: '0.5px',
             textTransform: 'uppercase',
             opacity: 0.9
