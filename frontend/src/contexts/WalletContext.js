@@ -28,6 +28,24 @@ export const WalletProvider = ({ children }) => {
   }, []);
 
   const checkConnection = async () => {
+    // First check localStorage for email/password login
+    const storedUser = localStorage.getItem('cryptobank_user');
+    const storedToken = localStorage.getItem('token');
+    
+    if (storedUser && storedToken) {
+      try {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+        console.log('✅ User loaded from localStorage:', userData.email);
+        return;
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('cryptobank_user');
+        localStorage.removeItem('token');
+      }
+    }
+    
+    // Then check MetaMask wallet connection
     if (typeof window.ethereum !== 'undefined') {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -39,7 +57,7 @@ export const WalletProvider = ({ children }) => {
           await fetchUserProfile(account);
         }
       } catch (error) {
-        console.error('Error checking connection:', error);
+        console.error('Error checking MetaMask connection:', error);
       }
     }
   };
