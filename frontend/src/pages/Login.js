@@ -402,7 +402,7 @@ export default function Login() {
         </form>
 
         {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '24px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '30px 0 24px 0' }}>
           <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.3) 50%, transparent 100%)' }} />
           <span style={{ 
             color: '#00E5FF', 
