@@ -20190,5 +20190,13 @@ async def export_security_logs(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Google OAuth routes (without /api prefix for standard OAuth compatibility)
+@app.get("/auth/google/callback")
+async def google_callback_direct(code: str = None, error: str = None):
+    """Direct Google OAuth callback (without /api prefix)"""
+    # Forward to the main callback handler
+    return await google_callback(code=code, error=error)
+
+
 # Include the router in the main app (after all endpoints are defined)
 app.include_router(api_router)
