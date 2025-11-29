@@ -150,7 +150,7 @@ export default function SpotTrading() {
         },
       },
       crosshair: {
-        mode: LightweightCharts.CrosshairMode.Normal,
+        mode: CrosshairMode.Normal,
         vertLine: {
           color: '#00F0FF',
           width: 1,
