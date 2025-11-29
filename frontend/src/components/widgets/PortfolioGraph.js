@@ -1,42 +1,229 @@
 import React, { useState, useEffect } from 'react';
+import Chart from 'react-apexcharts';
 import CHXButton from '../CHXButton';
+import axios from 'axios';
 
-const PortfolioGraph = ({ data, totalValue }) => {
+const API = process.env.REACT_APP_BACKEND_URL;
+
+const PortfolioGraph = ({ totalValue, userId }) => {
   const [timeRange, setTimeRange] = useState('7D');
-  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [portfolioHistory, setPortfolioHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const timeRanges = ['24H', '7D', '30D', '90D', '1Y', 'ALL'];
+  const timeRanges = ['24H', '7D', '30D', '90D'];
 
-  // Mock data for demonstration - should be replaced with real data
-  const generateMockData = () => {
-    const points = timeRange === '24H' ? 24 : timeRange === '7D' ? 7 : 30;
-    return Array.from({ length: points }, (_, i) => ({
-      date: new Date(Date.now() - (points - i) * 3600000),
-      value: totalValue * (0.95 + Math.random() * 0.1)
-    }));
+  useEffect(() => {
+    loadPortfolioHistory(timeRange);
+  }, [timeRange, userId]);
+
+  const loadPortfolioHistory = async (range) => {
+    setLoading(true);
+    try {
+      // TODO: Replace with real backend endpoint
+      // const response = await axios.get(`${API}/api/portfolio/history?range=${range}&user_id=${userId}`);
+      // For now, generate realistic mock data based on current total value
+      const data = generateMockData(range, totalValue);
+      setPortfolioHistory(data);
+    } catch (error) {
+      console.error('Failed to load portfolio history:', error);
+      // Fallback to mock data
+      const data = generateMockData(range, totalValue);
+      setPortfolioHistory(data);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const graphData = data || generateMockData();
-  const maxValue = Math.max(...graphData.map(d => d.value));
-  const minValue = Math.min(...graphData.map(d => d.value));
+  const generateMockData = (range, currentValue) => {
+    const points = range === '24H' ? 24 : range === '7D' ? 7 : range === '30D' ? 30 : 90;
+    const now = Date.now();
+    const interval = range === '24H' ? 3600000 : 86400000; // 1 hour or 1 day
+    
+    return Array.from({ length: points }, (_, i) => {
+      const variance = 0.95 + Math.random() * 0.1;
+      const value = currentValue * variance;
+      const timestamp = now - (points - i - 1) * interval;
+      
+      return {
+        x: timestamp,
+        y: parseFloat(value.toFixed(2))
+      };
+    });
+  };
+
+  const chartOptions = {
+    chart: {
+      type: 'area',
+      height: 320,
+      background: 'transparent',
+      toolbar: {
+        show: false
+      },
+      zoom: {
+        enabled: false
+      },
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350
+        }
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 3,
+      colors: ['#00E5FF']
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [0, 100],
+        colorStops: [
+          {
+            offset: 0,
+            color: '#00E5FF',
+            opacity: 0.45
+          },
+          {
+            offset: 100,
+            color: '#00E5FF',
+            opacity: 0.05
+          }
+        ]
+      }
+    },
+    grid: {
+      borderColor: 'rgba(255, 255, 255, 0.04)',
+      strokeDashArray: 4,
+      xaxis: {
+        lines: {
+          show: true
+        }
+      },
+      yaxis: {
+        lines: {
+          show: true
+        }
+      },
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 10
+      }
+    },
+    xaxis: {
+      type: 'datetime',
+      labels: {
+        style: {
+          colors: 'rgba(255, 255, 255, 0.55)',
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 500
+        },
+        datetimeUTC: false
+      },
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: 'rgba(255, 255, 255, 0.55)',
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 500
+        },
+        formatter: (value) => `£${value.toFixed(0)}`
+      }
+    },
+    tooltip: {
+      enabled: true,
+      theme: 'dark',
+      style: {
+        fontSize: '13px',
+        fontFamily: 'Inter, sans-serif'
+      },
+      custom: function({ series, seriesIndex, dataPointIndex, w }) {
+        const value = series[seriesIndex][dataPointIndex];
+        const timestamp = w.globals.seriesX[seriesIndex][dataPointIndex];
+        const date = new Date(timestamp);
+        
+        return `
+          <div style="
+            background: #0B1020;
+            color: #FFFFFF;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+          ">
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">
+              ${date.toLocaleDateString()} ${date.toLocaleTimeString()}
+            </div>
+            <div style="font-size: 16px; font-weight: 700; color: #00E5FF;">
+              £${value.toFixed(2)}
+            </div>
+          </div>
+        `;
+      }
+    },
+    markers: {
+      size: 0,
+      colors: ['#00E5FF'],
+      strokeColors: '#FFFFFF',
+      strokeWidth: 2,
+      hover: {
+        size: 6
+      }
+    },
+    legend: {
+      show: false
+    }
+  };
+
+  const series = [
+    {
+      name: 'Portfolio Value',
+      data: portfolioHistory
+    }
+  ];
 
   return (
     <div style={{
       background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
-      border: '1px solid rgba(0, 198, 255, 0.25)',
-      borderRadius: '16px',
-      padding: '20px',
-      marginBottom: '20px',
-      boxShadow: '0 0 20px rgba(0, 198, 255, 0.15)'
+      border: '1px solid rgba(0, 229, 255, 0.25)',
+      borderRadius: '18px',
+      padding: '24px',
+      marginTop: '16px',
+      marginBottom: '16px',
+      boxShadow: '0 0 35px rgba(0, 229, 255, 0.18)'
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', margin: 0 }}>Portfolio Value</h3>
-        <div style={{ display: 'flex', gap: '6px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Portfolio Value</h3>
+        <div style={{ display: 'flex', gap: '8px' }}>
           {timeRanges.map(range => (
             <CHXButton
               key={range}
               onClick={() => setTimeRange(range)}
-              coinColor="#00C6FF"
+              coinColor="#00E5FF"
               variant={timeRange === range ? 'primary' : 'secondary'}
               size="small"
             >
@@ -46,85 +233,28 @@ const PortfolioGraph = ({ data, totalValue }) => {
         </div>
       </div>
 
-      <div style={{ position: 'relative', height: '240px', marginTop: '16px' }}>
-        <svg width="100%" height="240" viewBox="0 0 800 240" preserveAspectRatio="none" style={{ display: 'block' }}>
-          <defs>
-            <linearGradient id="graphGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#00C6FF', stopOpacity: 0.3 }} />
-              <stop offset="100%" style={{ stopColor: '#00C6FF', stopOpacity: 0 }} />
-            </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          
-          {/* Graph area fill */}
-          <path
-            d={`${graphData.map((point, i) => {
-              const x = (i / (graphData.length - 1)) * 800;
-              const y = 240 - ((point.value - minValue) / (maxValue - minValue)) * 200;
-              return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-            }).join(' ')} L 800 240 L 0 240 Z`}
-            fill="url(#graphGradient)"
-          />
-          
-          {/* Graph line */}
-          <path
-            d={graphData.map((point, i) => {
-              const x = (i / (graphData.length - 1)) * 800;
-              const y = 240 - ((point.value - minValue) / (maxValue - minValue)) * 200;
-              return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-            }).join(' ')}
-            fill="none"
-            stroke="#00C6FF"
-            strokeWidth="3"
-            filter="url(#glow)"
-          />
-          
-          {/* Data points */}
-          {graphData.map((point, i) => {
-            const x = (i / (graphData.length - 1)) * 800;
-            const y = 240 - ((point.value - minValue) / (maxValue - minValue)) * 200;
-            return (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r="4"
-                fill="#00C6FF"
-                stroke="#FFFFFF"
-                strokeWidth="2"
-                style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredPoint(point)}
-                onMouseLeave={() => setHoveredPoint(null)}
-              />
-            );
-          })}
-        </svg>
-
-        {hoveredPoint && (
-          <div style={{
-            position: 'absolute',
-            top: '10px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'rgba(0, 198, 255, 0.95)',
-            padding: '10px 16px',
-            borderRadius: '10px',
-            color: '#FFFFFF',
-            fontSize: '13px',
-            fontWeight: '600',
-            boxShadow: '0 0 20px rgba(0, 198, 255, 0.6)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            zIndex: 10
+      <div style={{ 
+        height: '320px',
+        filter: 'drop-shadow(0px 0px 14px rgba(0, 229, 255, 0.6))'
+      }}>
+        {loading ? (
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '100%',
+            color: 'rgba(255, 255, 255, 0.5)',
+            fontSize: '14px'
           }}>
-            <div style={{ marginBottom: '4px' }}>{hoveredPoint.date.toLocaleDateString()}</div>
-            <div style={{ fontSize: '16px', fontWeight: '700' }}>£{hoveredPoint.value.toFixed(2)}</div>
+            Loading chart...
           </div>
+        ) : (
+          <Chart
+            options={chartOptions}
+            series={series}
+            type="area"
+            height={320}
+          />
         )}
       </div>
     </div>
