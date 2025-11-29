@@ -15594,6 +15594,120 @@ except Exception as e:
 # UNIFIED WALLET ENDPOINTS - Single Source of Truth
 # ============================================================
 
+@api_router.get("/wallets/coin-metadata")
+async def get_wallet_coin_metadata():
+    """
+    Get metadata for all supported coins (PUBLIC ENDPOINT)
+    Returns coin configuration for dynamic wallet rendering
+    Used by frontend to generate wallet UI automatically
+    """
+    try:
+        # Get all enabled coins from database
+        coins = await db.supported_coins.find(
+            {"enabled": True},
+            {"_id": 0}
+        ).to_list(100)
+        
+        # If no coins in DB, use default SUPPORTED_CRYPTOCURRENCIES
+        if not coins:
+            coins = []
+            for symbol, info in SUPPORTED_CRYPTOCURRENCIES.items():
+                coins.append({
+                    "symbol": symbol,
+                    "name": info["name"],
+                    "network": info["network"],
+                    "decimals": info["decimals"],
+                    "enabled": True
+                })
+        
+        # Define coin colors (can be moved to DB later)
+        COIN_COLORS = {
+            'BTC': '#F7931A',
+            'ETH': '#627EEA',
+            'USDT': '#26A17B',
+            'USDC': '#6366F1',
+            'BNB': '#F3BA2F',
+            'SOL': '#9945FF',
+            'XRP': '#23292F',
+            'ADA': '#0033AD',
+            'DOGE': '#C3A634',
+            'DOT': '#E6007A',
+            'MATIC': '#8247E5',
+            'LINK': '#2A5ADA',
+            'LTC': '#345D9D',
+            'BCH': '#8DC351',
+            'UNI': '#FF007A',
+            'ATOM': '#2E3148',
+            'ETC': '#328332',
+            'XLM': '#000000',
+            'ALGO': '#000000',
+            'VET': '#15BDFF',
+            'FIL': '#0090FF',
+            'TRX': '#FF0013',
+            'AVAX': '#E84142',
+            'SHIB': '#FFA409',
+            'DAI': '#F4B731',
+            'WBTC': '#F09242',
+            'GBP': '#00F0FF',
+            'USD': '#85BB65',
+            'EUR': '#0052FF'
+        }
+        
+        # Define NOWPayments currency codes
+        NOWPAYMENTS_CODES = {
+            'BTC': 'btc',
+            'ETH': 'eth',
+            'USDT': 'usdttrc20',
+            'USDC': 'usdc',
+            'BNB': 'bnbbsc',
+            'SOL': 'sol',
+            'XRP': 'xrp',
+            'ADA': 'ada',
+            'DOGE': 'doge',
+            'DOT': 'dot',
+            'MATIC': 'maticpolygon',
+            'LINK': 'link',
+            'LTC': 'ltc',
+            'BCH': 'bch',
+            'UNI': 'uni',
+            'ATOM': 'atom',
+            'ETC': 'etc',
+            'XLM': 'xlm',
+            'ALGO': 'algo',
+            'VET': 'vet',
+            'FIL': 'fil',
+            'TRX': 'trx',
+            'AVAX': 'avaxc',
+            'SHIB': 'shib',
+            'DAI': 'dai',
+            'WBTC': 'wbtc'
+        }
+        
+        # Enrich coins with UI metadata
+        enriched_coins = []
+        for coin in coins:
+            symbol = coin["symbol"]
+            enriched_coins.append({
+                "symbol": symbol,
+                "name": coin.get("name", symbol),
+                "network": coin.get("network", f"{symbol} Network"),
+                "decimals": coin.get("decimals", 8),
+                "color": COIN_COLORS.get(symbol, '#00F0FF'),
+                "nowpayments_code": NOWPAYMENTS_CODES.get(symbol, symbol.lower()),
+                "icon": symbol[0],  # First letter as fallback icon
+                "enabled": coin.get("enabled", True)
+            })
+        
+        return {
+            "success": True,
+            "coins": enriched_coins,
+            "count": len(enriched_coins),
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"❌ Error getting coin metadata: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/wallets/balances/{user_id}")
 async def get_unified_balances(user_id: str):
     """
