@@ -143,57 +143,30 @@ export default function WalletPage() {
         </div>
 
         {/* Assets List - FULLY DYNAMIC FOR ALL COINS */}
-        {balances.length === 0 ? (
-          <div style={{
-            background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
-            border: '1px solid rgba(0, 240, 255, 0.08)',
-            borderRadius: '16px',
-            padding: '40px 20px',
-            textAlign: 'center',
-            opacity: 0.94
-          }}>
-            <Wallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
-            <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600', marginBottom: '8px' }}>No Assets Yet</div>
-            <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '20px' }}>Start by depositing crypto</div>
-            <button
-              onClick={() => navigate('/deposit/btc')}
-              style={{
-                background: 'linear-gradient(135deg, #00E8FF 0%, #008CFF 100%)',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '12px 32px',
-                color: '#0A0A0A',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 0 12px rgba(0, 255, 255, 0.25)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.filter = 'brightness(1.1)';
-                e.target.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.filter = 'brightness(1.0)';
-                e.target.style.transform = 'translateY(0)';
-              }}
-            >
-              Deposit Crypto
-            </button>
-          </div>
-        ) : (
-          balances.map((asset, index) => (
-            <AssetCard 
-              key={`${asset.currency}-${index}`} 
-              asset={asset} 
-              navigate={navigate} 
-              getCoinColor={getCoinColor} 
-              formatBalance={formatBalance}
-              userId={user.user_id}
-              coinMetadata={coinMetadata[asset.currency] || {}}
-            />
-          ))
+        {balances.length > 0 && (
+          <>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Your Balances</div>
+            {balances.map((asset, index) => (
+              <AssetCard 
+                key={`${asset.currency}-${index}`} 
+                asset={asset} 
+                navigate={navigate} 
+                getCoinColor={getCoinColor} 
+                formatBalance={formatBalance}
+                userId={user.user_id}
+                coinMetadata={coinMetadata[asset.currency] || {}}
+              />
+            ))}
+          </>
         )}
+
+        {/* Deposit Any Coin Section - ALWAYS VISIBLE - SHOWS ALL SUPPORTED COINS */}
+        <div style={{ marginTop: balances.length > 0 ? '32px' : '0' }}>
+          <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>
+            {balances.length === 0 ? 'Start Depositing' : 'Deposit More Coins'}
+          </div>
+          <AllCoinsDepositGrid coinMetadata={coinMetadata} navigate={navigate} getCoinColor={getCoinColor} />
+        </div>
 
         {/* Transaction History */}
         <TransactionHistory user={user} />
