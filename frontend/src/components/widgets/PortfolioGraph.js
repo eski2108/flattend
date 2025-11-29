@@ -209,8 +209,10 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       colors: ['#00E5FF'],
       strokeColors: '#FFFFFF',
       strokeWidth: 2,
+      shape: 'circle',
       hover: {
-        size: 6
+        size: 7,
+        sizeOffset: 3
       }
     },
     legend: {
