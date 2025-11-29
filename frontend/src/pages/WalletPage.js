@@ -175,6 +175,139 @@ export default function WalletPage() {
   );
 }
 
+function AllCoinsDepositGrid({ coinMetadata, navigate, getCoinColor }) {
+  const allCoins = Object.values(coinMetadata);
+
+  if (allCoins.length === 0) {
+    return (
+      <div style={{
+        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
+        border: '1px solid rgba(0, 240, 255, 0.08)',
+        borderRadius: '16px',
+        padding: '40px 20px',
+        textAlign: 'center',
+        opacity: 0.94
+      }}>
+        <Wallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
+        <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600', marginBottom: '8px' }}>Loading coins...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+      gap: '12px'
+    }}>
+      {allCoins.map((coin) => {
+        const coinColor = getCoinColor(coin.symbol);
+        return (
+          <CoinDepositCard
+            key={coin.symbol}
+            coin={coin}
+            coinColor={coinColor}
+            navigate={navigate}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function CoinDepositCard({ coin, coinColor, navigate }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleDeposit = () => {
+    navigate(`/deposit/${coin.symbol.toLowerCase()}`, {
+      state: {
+        currency: coin.symbol,
+        name: coin.name,
+        network: coin.network,
+        decimals: coin.decimals,
+        nowpayments_currency: coin.nowpayments_code,
+        color: coinColor
+      }
+    });
+  };
+
+  return (
+    <div
+      onClick={handleDeposit}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
+        border: isHovered ? `1px solid ${coinColor}66` : '1px solid rgba(0, 240, 255, 0.15)',
+        borderRadius: '14px',
+        padding: '16px',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        boxShadow: isHovered ? `0 0 20px ${coinColor}44` : '0 0 12px rgba(0, 255, 255, 0.08)',
+        opacity: 0.94,
+        transform: isHovered ? 'translateY(-2px)' : 'translateY(0)'
+      }}
+    >
+      {/* Coin Icon */}
+      <div style={{
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+        background: `linear-gradient(135deg, ${coinColor}, ${coinColor}CC)`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        fontWeight: '700',
+        color: '#FFFFFF',
+        boxShadow: `0 0 16px ${coinColor}66`,
+        margin: '0 auto 12px'
+      }}>
+        {coin.icon || coin.symbol[0]}
+      </div>
+
+      {/* Coin Name */}
+      <div style={{
+        fontSize: '15px',
+        fontWeight: '600',
+        color: '#FFFFFF',
+        textAlign: 'center',
+        marginBottom: '4px'
+      }}>
+        {coin.symbol}
+      </div>
+
+      {/* Coin Full Name */}
+      <div style={{
+        fontSize: '12px',
+        color: '#8F9BB3',
+        textAlign: 'center',
+        marginBottom: '12px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }}>
+        {coin.name}
+      </div>
+
+      {/* Deposit Button */}
+      <div style={{
+        padding: '10px',
+        background: isHovered ? `${coinColor}22` : `${coinColor}11`,
+        border: `1px solid ${coinColor}44`,
+        borderRadius: '10px',
+        fontSize: '13px',
+        fontWeight: '600',
+        color: coinColor,
+        textAlign: 'center',
+        transition: 'all 0.2s ease'
+      }}>
+        Deposit
+      </div>
+    </div>
+  );
+}
+
 function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinMetadata }) {
   const coinColor = getCoinColor(asset.currency);
   const [expanded, setExpanded] = useState(false);
