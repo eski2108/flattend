@@ -73,15 +73,10 @@ function Dashboard() {
         setSavingsBalance(0); // TODO: Get from savings API
       }
 
-      // Load last transaction
+      // Load transactions
       const txRes = await axios.get(`${API}/api/transactions/${userId}`);
-      if (txRes.data.success && txRes.data.transactions.length > 0) {
-        setLastTransaction({
-          type: txRes.data.transactions[0].transaction_type,
-          amount: txRes.data.transactions[0].amount,
-          currency: txRes.data.transactions[0].currency,
-          timestamp: txRes.data.transactions[0].created_at
-        });
+      if (txRes.data.success) {
+        setTransactions(txRes.data.transactions || []);
       }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
