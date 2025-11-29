@@ -219,12 +219,18 @@ function Dashboard() {
           {/* 1. Portfolio Line Graph */}
           <PortfolioGraph data={null} totalValue={totalValue} />
 
-          {/* 2. P/L Summary Row */}
-          <PLSummaryRow 
-            todayPL={150.50} 
-            weekPL={520.75} 
-            monthPL={1250.30} 
-          />
+          {/* 2. P/L Summary Row with Donut Widget */}
+          <div style={{ display: 'flex', gap: '2.5%', marginBottom: '16px', flexWrap: 'wrap' }}>
+            <PLSummaryRow 
+              todayPL={150.50} 
+              weekPL={520.75} 
+              monthPL={1250.30} 
+            />
+            <DonutPLWidget plPercent={12.5} />
+          </div>
+
+          {/* Recent Transactions List */}
+          <RecentTransactionsList transactions={transactions} />
 
           {/* 3. Spot vs Savings Allocation */}
           <AllocationWidget 
@@ -235,8 +241,46 @@ function Dashboard() {
           {/* 4. Portfolio Allocation Pie Chart */}
           <PieChartWidget assets={prepareAssetsForPieChart()} />
 
-          {/* 5. Recent Transactions Widget */}
-          <RecentTransactionWidget lastTransaction={lastTransaction} />
+          {/* 5. Holdings List with Sort Dropdown */}
+          <div style={{
+            background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+            border: '1px solid rgba(0, 198, 255, 0.25)',
+            borderRadius: '16px',
+            padding: '20px',
+            marginBottom: '16px',
+            boxShadow: '0 0 20px rgba(0, 198, 255, 0.15)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Holdings List</h3>
+              
+              {/* Sort Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  style={{
+                    background: 'rgba(0, 198, 255, 0.1)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '10px',
+                    padding: '8px 32px 8px 12px',
+                    color: '#00C6FF',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    appearance: 'none',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                >
+                  <option value=\"value\">Sort by Value</option>
+                  <option value=\"name\">Sort by Name</option>
+                  <option value=\"change\">Sort by 24h Change</option>
+                  <option value=\"pl\">Sort by Profit/Loss</option>
+                </select>
+                <ChevronDown size={16} color=\"#00C6FF\" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+              </div>
+            </div>
+          </div>
 
           {/* 6. Full Asset Table */}
           <AssetTable 
