@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { FileText, ChevronDown } from 'lucide-react';
+import CHXButton from '@/components/CHXButton';
 
 // Import all widgets
 import PortfolioGraph from '@/components/widgets/PortfolioGraph';
 import PLSummaryRow from '@/components/widgets/PLSummaryRow';
+import DonutPLWidget from '@/components/widgets/DonutPLWidget';
 import AllocationWidget from '@/components/widgets/AllocationWidget';
 import PieChartWidget from '@/components/widgets/PieChartWidget';
-import RecentTransactionWidget from '@/components/widgets/RecentTransactionWidget';
+import RecentTransactionsList from '@/components/widgets/RecentTransactionsList';
 import AssetTable from '@/components/widgets/AssetTable';
 
 const API = process.env.REACT_APP_BACKEND_URL;
