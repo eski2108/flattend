@@ -7,6 +7,24 @@ import { Wallet, ArrowDownLeft, ArrowUpRight, RefreshCw, Repeat } from 'lucide-r
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// GLOBAL COIN CONFIGURATION - NO HARDCODED REFERENCES ANYWHERE
+const COIN_CONFIG = {
+  'BTC': { name: 'Bitcoin', network: 'Bitcoin', icon: '₿', color: '#F7931A', decimals: 8, nowpayments_code: 'btc' },
+  'ETH': { name: 'Ethereum', network: 'Ethereum', icon: 'Ξ', color: '#627EEA', decimals: 18, nowpayments_code: 'eth' },
+  'USDT': { name: 'Tether', network: 'Tron (TRC20)', icon: '₮', color: '#26A17B', decimals: 6, nowpayments_code: 'usdttrc20' },
+  'BNB': { name: 'Binance Coin', network: 'BSC', icon: 'B', color: '#F3BA2F', decimals: 18, nowpayments_code: 'bnb' },
+  'SOL': { name: 'Solana', network: 'Solana', icon: 'S', color: '#9945FF', decimals: 9, nowpayments_code: 'sol' },
+  'ADA': { name: 'Cardano', network: 'Cardano', icon: 'A', color: '#0033AD', decimals: 6, nowpayments_code: 'ada' },
+  'XRP': { name: 'Ripple', network: 'XRP Ledger', icon: 'X', color: '#23292F', decimals: 6, nowpayments_code: 'xrp' },
+  'LTC': { name: 'Litecoin', network: 'Litecoin', icon: 'Ł', color: '#345D9D', decimals: 8, nowpayments_code: 'ltc' },
+  'DOGE': { name: 'Dogecoin', network: 'Dogecoin', icon: 'Ð', color: '#C3A634', decimals: 8, nowpayments_code: 'doge' },
+  'AVAX': { name: 'Avalanche', network: 'Avalanche C-Chain', icon: 'A', color: '#E84142', decimals: 18, nowpayments_code: 'avax' },
+  'DOT': { name: 'Polkadot', network: 'Polkadot', icon: 'D', color: '#E6007A', decimals: 10, nowpayments_code: 'dot' },
+  'MATIC': { name: 'Polygon', network: 'Polygon', icon: 'M', color: '#8247E5', decimals: 18, nowpayments_code: 'matic' },
+  'GBP': { name: 'British Pound', network: 'Fiat', icon: '£', color: '#00F0FF', decimals: 2, nowpayments_code: 'gbp' },
+  'USD': { name: 'US Dollar', network: 'Fiat', icon: '$', color: '#85BB65', decimals: 2, nowpayments_code: 'usd' }
+};
+
 export default function WalletPage() {
   const navigate = useNavigate();
   const [balances, setBalances] = useState([]);
@@ -47,35 +65,20 @@ export default function WalletPage() {
   };
 
   const handleRefresh = () => {
-    setRefreshing(true);
-    loadBalances(user.user_id);
+    if (!refreshing && user) {
+      setRefreshing(true);
+      loadBalances(user.user_id);
+    }
   };
 
   const formatBalance = (balance, currency) => {
-    if (currency === 'GBP' || currency === 'USD') {
-      return balance.toFixed(2);
-    }
-    return balance.toFixed(8);
+    const config = COIN_CONFIG[currency];
+    const decimals = config ? config.decimals : (currency === 'GBP' || currency === 'USD' ? 2 : 8);
+    return balance.toFixed(decimals);
   };
 
   const getCoinColor = (currency) => {
-    const colors = {
-      'BTC': '#F7931A',
-      'ETH': '#627EEA',
-      'USDT': '#26A17B',
-      'BNB': '#F3BA2F',
-      'SOL': '#9945FF',
-      'ADA': '#0033AD',
-      'XRP': '#23292F',
-      'GBP': '#00F0FF',
-      'USD': '#85BB65',
-      'LTC': '#345D9D',
-      'DOGE': '#C3A634',
-      'AVAX': '#E84142',
-      'DOT': '#E6007A',
-      'MATIC': '#8247E5'
-    };
-    return colors[currency] || '#00F0FF';
+    return COIN_CONFIG[currency]?.color || '#00F0FF';
   };
 
   if (loading) {
@@ -95,7 +98,7 @@ export default function WalletPage() {
         background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
         padding: '24px 16px'
       }}>
-        {/* Header */}
+        {/* Header - Exact Spacing */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>Your Assets</h1>
@@ -107,9 +110,10 @@ export default function WalletPage() {
                 border: '1px solid rgba(0, 240, 255, 0.3)',
                 borderRadius: '12px',
                 padding: '8px 12px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                transform: refreshing ? 'rotate(360deg)' : 'rotate(0deg)'
+                cursor: refreshing ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s ease',
+                transform: refreshing ? 'rotate(360deg)' : 'rotate(0deg)',
+                opacity: refreshing ? 0.6 : 1
               }}
             >
               <RefreshCw size={18} color="#00F0FF" />
@@ -123,14 +127,15 @@ export default function WalletPage() {
           }} />
         </div>
 
-        {/* Portfolio Summary */}
+        {/* Portfolio Summary - Exact Gradient & Shadow */}
         <div style={{
           background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
           border: '1px solid rgba(0, 240, 255, 0.08)',
           borderRadius: '16px',
           padding: '20px',
           marginBottom: '20px',
-          boxShadow: '0 0 18px rgba(0, 255, 255, 0.08)'
+          boxShadow: '0 0 18px rgba(0, 255, 255, 0.08)',
+          opacity: 0.94
         }}>
           <div style={{ fontSize: '13px', color: '#A3AEC2', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total Portfolio Value</div>
           <div style={{ fontSize: '32px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>£{totalGBP.toFixed(2)}</div>
@@ -144,7 +149,8 @@ export default function WalletPage() {
             border: '1px solid rgba(0, 240, 255, 0.08)',
             borderRadius: '16px',
             padding: '40px 20px',
-            textAlign: 'center'
+            textAlign: 'center',
+            opacity: 0.94
           }}>
             <Wallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
             <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600', marginBottom: '8px' }}>No Assets Yet</div>
@@ -156,11 +162,20 @@ export default function WalletPage() {
                 border: 'none',
                 borderRadius: '12px',
                 padding: '12px 32px',
-                color: '#FFFFFF',
+                color: '#0A0A0A',
                 fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                boxShadow: '0 0 12px rgba(0, 255, 255, 0.15)'
+                boxShadow: '0 0 12px rgba(0, 255, 255, 0.25)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.filter = 'brightness(1.1)';
+                e.target.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.filter = 'brightness(1.0)';
+                e.target.style.transform = 'translateY(0)';
               }}
             >
               Deposit Crypto
@@ -175,6 +190,7 @@ export default function WalletPage() {
               getCoinColor={getCoinColor} 
               formatBalance={formatBalance}
               userId={user.user_id}
+              coinConfig={COIN_CONFIG[asset.currency]}
             />
           ))
         )}
@@ -186,55 +202,62 @@ export default function WalletPage() {
   );
 }
 
-function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId }) {
+function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinConfig }) {
   const coinColor = getCoinColor(asset.currency);
   const [expanded, setExpanded] = useState(false);
   
-  // DYNAMIC COIN METADATA - NO HARDCODING
+  // DYNAMIC COIN METADATA - FALLS BACK TO SENSIBLE DEFAULTS IF NOT IN CONFIG
   const coinSymbol = asset.currency.toLowerCase();
-  const coinNetwork = asset.network || `${asset.currency} Network`;
-  const coinChain = asset.chain || asset.currency;
-  const decimalPrecision = asset.decimals || 8;
-  const nowpaymentsCode = asset.nowpayments_code || coinSymbol;
+  const coinName = coinConfig?.name || asset.currency;
+  const coinNetwork = coinConfig?.network || `${asset.currency} Network`;
+  const coinIcon = coinConfig?.icon || asset.currency.substring(0, 1);
+  const decimalPrecision = coinConfig?.decimals || 8;
+  const nowpaymentsCode = coinConfig?.nowpayments_code || coinSymbol;
 
-  // FULLY DYNAMIC HANDLERS - WORK FOR ANY COIN
-  const handleDeposit = async (e) => {
+  // FULLY DYNAMIC HANDLERS - WORK FOR ANY COIN - GUARANTEED ROUTING
+  const handleDeposit = (e) => {
     e.stopPropagation();
+    console.log(`[WALLET] Deposit clicked for ${asset.currency}`);
     // Navigate with full metadata
     navigate(`/deposit/${coinSymbol}`, { 
       state: { 
         currency: asset.currency,
+        name: coinName,
         network: coinNetwork,
-        chain: coinChain,
         decimals: decimalPrecision,
-        nowpayments_currency: nowpaymentsCode
+        nowpayments_currency: nowpaymentsCode,
+        color: coinColor
       } 
     });
   };
 
-  const handleWithdraw = async (e) => {
+  const handleWithdraw = (e) => {
     e.stopPropagation();
+    console.log(`[WALLET] Withdraw clicked for ${asset.currency}`);
     // Navigate with full metadata
     navigate(`/withdraw/${coinSymbol}`, { 
       state: { 
         currency: asset.currency,
+        name: coinName,
         network: coinNetwork,
-        chain: coinChain,
         decimals: decimalPrecision,
         nowpayments_currency: nowpaymentsCode,
-        available_balance: asset.available_balance
+        available_balance: asset.available_balance,
+        color: coinColor
       } 
     });
   };
 
-  const handleSwap = async (e) => {
+  const handleSwap = (e) => {
     e.stopPropagation();
+    console.log(`[WALLET] Swap clicked for ${asset.currency}`);
     // Navigate with full metadata
     navigate(`/swap/${coinSymbol}`, { 
       state: { 
         from_currency: asset.currency,
         from_balance: asset.available_balance,
-        decimals: decimalPrecision
+        decimals: decimalPrecision,
+        color: coinColor
       } 
     });
   };
@@ -249,7 +272,8 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId }) {
         marginBottom: '20px',
         boxShadow: `0 0 18px rgba(0, 255, 255, 0.08)`,
         transition: 'all 0.2s ease',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        opacity: 0.94
       }}
       onClick={() => setExpanded(!expanded)}
       onMouseEnter={(e) => {
@@ -278,12 +302,12 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId }) {
             color: '#FFFFFF',
             boxShadow: `0 0 12px ${coinColor}66`
           }}>
-            {asset.currency.substring(0, 1)}
+            {coinIcon}
           </div>
           
           {/* Name & Network */}
           <div>
-            <div style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>{asset.currency}</div>
+            <div style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>{coinName}</div>
             <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{coinNetwork}</div>
           </div>
         </div>
@@ -311,9 +335,9 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId }) {
       {/* Expanded Section */}
       {expanded && (
         <div onClick={(e) => e.stopPropagation()}>
-          {/* Balance Breakdown */}
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Balance Breakdown</div>
+          {/* Balance Breakdown - Exact Spacing */}
+          <div style={{ paddingTop: '18px', marginBottom: '20px' }}>
+            <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>Balance Breakdown</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
               <div style={{
                 background: 'rgba(34, 197, 94, 0.05)',
@@ -374,32 +398,35 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId }) {
             </div>
           </div>
 
-          {/* Actions - FULLY DYNAMIC BUTTONS */}
+          {/* Actions - FULLY DYNAMIC BUTTONS WITH EXACT SPECS */}
           <div>
             <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Actions</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-              {/* DEPOSIT BUTTON - FULLY DYNAMIC */}
+              {/* DEPOSIT BUTTON - FULLY DYNAMIC - EXACT SPECS */}
               <WalletButton
                 onClick={handleDeposit}
                 icon={<ArrowDownLeft size={18} />}
                 label="Deposit"
                 type="primary"
+                coinColor={coinColor}
               />
 
-              {/* WITHDRAW BUTTON - FULLY DYNAMIC */}
+              {/* WITHDRAW BUTTON - FULLY DYNAMIC - EXACT SPECS */}
               <WalletButton
                 onClick={handleWithdraw}
                 icon={<ArrowUpRight size={18} />}
                 label="Withdraw"
                 type="secondary"
+                coinColor={coinColor}
               />
 
-              {/* SWAP BUTTON - FULLY DYNAMIC */}
+              {/* SWAP BUTTON - FULLY DYNAMIC - EXACT SPECS */}
               <WalletButton
                 onClick={handleSwap}
                 icon={<Repeat size={18} />}
                 label="Swap"
                 type="secondary"
+                coinColor={coinColor}
               />
             </div>
           </div>
@@ -409,8 +436,8 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId }) {
   );
 }
 
-// GLOBAL WALLET BUTTON COMPONENT - FULL INTERACTIVE STATES
-function WalletButton({ onClick, icon, label, type = 'primary' }) {
+// GLOBAL WALLET BUTTON COMPONENT - EXACT USER SPECIFICATIONS
+function WalletButton({ onClick, icon, label, type = 'primary', coinColor = '#00F0FF' }) {
   const [isPressed, setIsPressed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -419,39 +446,42 @@ function WalletButton({ onClick, icon, label, type = 'primary' }) {
       return {
         default: {
           background: 'linear-gradient(135deg, #00E8FF 0%, #008CFF 100%)',
-          boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.2), 0 0 12px rgba(0, 255, 255, 0.15)',
+          border: `1px solid ${coinColor}22`,
+          boxShadow: `0 0 2px ${coinColor}`, // 2px outer glow
+          color: '#0A0A0A', // Text locked to dark for bright buttons
           filter: 'brightness(1.0)',
-          transform: 'translateY(0)'
+          transform: 'translateY(0) scale(1)'
         },
         hover: {
-          filter: 'brightness(1.15)',
-          boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.3), 0 0 20px rgba(0, 255, 255, 0.35)',
-          transform: 'translateY(-1px)'
+          filter: 'brightness(1.1)', // +10% brightness
+          boxShadow: `0 0 8px ${coinColor}`,
+          transform: 'translateY(-1px) scale(1)'
         },
         pressed: {
-          filter: 'brightness(0.88)',
-          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.35)',
-          transform: 'translateY(0)'
+          filter: 'brightness(0.9)',
+          boxShadow: `inset 0 2px 8px rgba(0, 0, 0, 0.2)`,
+          transform: 'translateY(0) scale(0.96)' // 96% scale on tap
         }
       };
     } else {
       return {
         default: {
           background: 'rgba(0, 232, 255, 0.1)',
-          border: '1px solid rgba(0, 232, 255, 0.3)',
-          boxShadow: '0 0 12px rgba(0, 255, 255, 0.15)',
+          border: `1px solid ${coinColor}44`,
+          boxShadow: `0 0 2px ${coinColor}55`, // 2px outer glow
+          color: '#FFFFFF', // Text locked to white for dark buttons
           filter: 'brightness(1.0)',
-          transform: 'translateY(0)'
+          transform: 'translateY(0) scale(1)'
         },
         hover: {
-          filter: 'brightness(1.15)',
-          boxShadow: '0 0 20px rgba(0, 255, 255, 0.35)',
-          transform: 'translateY(-1px)'
+          filter: 'brightness(1.1)', // +10% brightness
+          boxShadow: `0 0 8px ${coinColor}77`,
+          transform: 'translateY(-1px) scale(1)'
         },
         pressed: {
-          filter: 'brightness(0.88)',
-          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.35)',
-          transform: 'translateY(0)'
+          filter: 'brightness(0.9)',
+          boxShadow: `inset 0 2px 8px rgba(0, 0, 0, 0.2)`,
+          transform: 'translateY(0) scale(0.96)' // 96% scale on tap
         }
       };
     }
@@ -472,9 +502,8 @@ function WalletButton({ onClick, icon, label, type = 'primary' }) {
       onMouseUp={() => setIsPressed(false)}
       style={{
         width: '100%',
-        borderRadius: '12px',
+        borderRadius: '12px', // Exact 12px radius
         padding: '18px 14px',
-        color: '#FFFFFF',
         fontSize: '14px',
         fontWeight: '600',
         cursor: 'pointer',
@@ -483,16 +512,17 @@ function WalletButton({ onClick, icon, label, type = 'primary' }) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '6px',
-        border: type === 'secondary' ? currentStyle.border : 'none',
+        border: currentStyle.border,
         background: currentStyle.background,
         boxShadow: currentStyle.boxShadow,
         filter: currentStyle.filter,
         transform: currentStyle.transform,
+        color: currentStyle.color,
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
     >
       {icon}
-      <span style={{ transition: 'transform 0.2s ease' }}>{label}</span>
+      <span>{label}</span>
     </button>
   );
 }
@@ -539,12 +569,15 @@ function TransactionHistory({ user }) {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={activeFilter === filter ? 'premium-tab-active' : 'premium-tab-inactive'}
             style={{
               padding: '10px 20px',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
+              borderRadius: '12px',
+              border: activeFilter === filter ? '1px solid rgba(0, 240, 255, 0.5)' : '1px solid rgba(0, 240, 255, 0.2)',
+              background: activeFilter === filter ? 'rgba(0, 240, 255, 0.15)' : 'rgba(0, 240, 255, 0.05)',
+              color: activeFilter === filter ? '#00F0FF' : '#A3AEC2',
               transition: 'all 0.15s ease'
             }}
           >
@@ -557,7 +590,8 @@ function TransactionHistory({ user }) {
         background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
         border: '1px solid rgba(0, 255, 255, 0.08)',
         borderRadius: '16px',
-        padding: '20px'
+        padding: '20px',
+        opacity: 0.94
       }}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#A3AEC2' }}>Loading transactions...</div>
