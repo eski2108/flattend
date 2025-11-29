@@ -5476,12 +5476,16 @@ async def google_callback(code: str = None, error: str = None):
                 from urllib.parse import quote
                 logger.info(f"Redirecting existing user {existing_user['email']} to login with token")
                 return RedirectResponse(url=f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}")
-        else:
-            # New user - redirect to phone verification with user data
-            import base64
-            import json
-            user_data_encoded = base64.b64encode(json.dumps(user_data).encode()).decode()
-            return RedirectResponse(url=f"{os.environ.get('FRONTEND_URL', 'https://coinhubuix.preview.emergentagent.com')}/auth/verify-phone?google_data={user_data_encoded}")
+            else:
+                # New user - redirect to phone verification with user data
+                import base64
+                user_data_encoded = base64.b64encode(json.dumps(user_data).encode()).decode()
+                logger.info(f"New Google user {user_data.get('email')}, redirecting to signup")
+                return RedirectResponse(url=f"{frontend_url}/auth/verify-phone?google_data={user_data_encoded}")
+    
+    except Exception as e:
+        logger.error(f"Google OAuth callback error: {str(e)}")
+        return RedirectResponse(url=f"{frontend_url}/login?error=callback_failed&message={str(e)[:100]}")
 
 @api_router.post("/auth/complete-google-signup")
 async def complete_google_signup(request: dict):
