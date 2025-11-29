@@ -333,36 +333,16 @@ export default function Login() {
           </div>
 
           {/* Login Button */}
-          <button
+          <CHXButton
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '18px 20px',
-              background: loading ? 'rgba(0, 198, 255, 0.5)' : 'linear-gradient(135deg, #00C6FF, #0080FF)',
-              border: 'none',
-              borderRadius: '14px',
-              color: '#FFFFFF',
-              fontSize: '16px',
-              fontWeight: '700',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: loading ? 'none' : '0 0 20px rgba(0, 198, 255, 0.4)',
-              fontFamily: 'Inter, sans-serif'
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.target.style.filter = 'brightness(1.1)';
-                e.target.style.transform = 'translateY(-1px)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.filter = 'brightness(1.0)';
-              e.target.style.transform = 'translateY(0)';
-            }}
+            coinColor="#00C6FF"
+            variant="primary"
+            size="large"
+            fullWidth
           >
             {loading ? 'Logging in...' : 'Log In'}
-          </button>
+          </CHXButton>
         </form>
 
         {/* Divider */}
