@@ -404,39 +404,37 @@ export default function Login() {
           disabled={loading}
           style={{
             width: '100%',
-            padding: '18px 24px',
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
-            border: '2px solid rgba(0, 229, 255, 0.2)',
-            borderRadius: '16px',
+            padding: '16px 24px',
+            background: 'linear-gradient(135deg, #0A1929 0%, #0D2137 100%)',
+            border: '1px solid rgba(0, 229, 255, 0.3)',
+            borderRadius: '14px',
             cursor: loading ? 'not-allowed' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '16px',
-            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+            gap: '14px',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 0 20px rgba(0, 229, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
             fontFamily: 'Inter, sans-serif',
-            fontSize: '17px',
-            fontWeight: '700',
-            color: '#2D3748',
+            fontSize: '16px',
+            fontWeight: '600',
+            color: '#FFFFFF',
             opacity: loading ? 0.6 : 1,
-            boxSizing: 'border-box',
-            position: 'relative',
-            overflow: 'hidden'
+            boxSizing: 'border-box'
           }}
           onMouseEnter={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 100%)';
-              e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.5)';
-              e.currentTarget.style.boxShadow = '0 12px 48px rgba(0, 229, 255, 0.25), 0 0 60px rgba(0, 198, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1)';
-              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.background = 'linear-gradient(135deg, #0D2137 0%, #0A1929 100%)';
+              e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 229, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
             }
           }}
           onMouseLeave={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)';
-              e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.2)';
-              e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+              e.currentTarget.style.background = 'linear-gradient(135deg, #0A1929 0%, #0D2137 100%)';
+              e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.3)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)';
               e.currentTarget.style.transform = 'translateY(0)';
             }
           }}
