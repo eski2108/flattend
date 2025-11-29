@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import * as LightweightCharts from 'lightweight-charts';
+import { createChart, CandlestickSeries, CrosshairMode } from 'lightweight-charts';
 import { 
   TrendingUp, 
   TrendingDown,
