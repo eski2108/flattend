@@ -15620,11 +15620,11 @@ async def get_wallet_coin_metadata():
                     "enabled": True
                 })
         
-        # Define coin colors (can be moved to DB later)
+        # Define coin colors matching premium design spec
         COIN_COLORS = {
-            'BTC': '#F7931A',
-            'ETH': '#627EEA',
-            'USDT': '#26A17B',
+            'BTC': '#FF8A00',  # Orange
+            'ETH': '#7A4CFF',  # Purple
+            'USDT': '#00D181', # Green
             'USDC': '#6366F1',
             'BNB': '#F3BA2F',
             'SOL': '#9945FF',
@@ -15639,7 +15639,7 @@ async def get_wallet_coin_metadata():
             'UNI': '#FF007A',
             'ATOM': '#2E3148',
             'ETC': '#328332',
-            'XLM': '#000000',
+            'XLM': '#14B6E7',
             'ALGO': '#000000',
             'VET': '#15BDFF',
             'FIL': '#0090FF',
@@ -15648,7 +15648,7 @@ async def get_wallet_coin_metadata():
             'SHIB': '#FFA409',
             'DAI': '#F4B731',
             'WBTC': '#F09242',
-            'GBP': '#00F0FF',
+            'GBP': '#00C6FF',  # Aqua
             'USD': '#85BB65',
             'EUR': '#0052FF'
         }
