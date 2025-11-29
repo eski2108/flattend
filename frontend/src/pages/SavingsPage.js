@@ -236,7 +236,7 @@ export default function SavingsPage() {
           <CHXHeaderHero
             title="Crypto Savings"
             subtitle="Earn passive rewards and grow your crypto automatically."
-            icon="💹"
+            icon={PiggyBank}
           />
 
           {/* SECTION 2: Main Savings Balance Card */}
