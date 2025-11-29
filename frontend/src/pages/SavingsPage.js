@@ -432,9 +432,10 @@ export default function SavingsPage() {
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '20px', fontWeight: '700', color: '#00E5FF' }}>
-                          ${balance.value_usd.toFixed(2)}
+                          {currencySymbol}{convertCurrency(balance.value_usd)}
                         </div>
-                        <div style={{ fontSize: '12px', color: '#22C55E' }}>
+                        <div style={{ fontSize: '12px', color: '#22C55E', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
+                          <TrendingUp size={14} />
                           +{estimatedAPY} APY
                         </div>
                       </div>
