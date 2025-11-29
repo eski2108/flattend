@@ -219,7 +219,7 @@ function Dashboard() {
           </div>
 
           {/* 1. Portfolio Line Graph */}
-          <PortfolioGraph data={null} totalValue={totalValue} />
+          <PortfolioGraph totalValue={totalValue} userId={user?.user_id} />
 
           {/* 2. P/L Summary Row with Donut Widget */}
           <div style={{ 
