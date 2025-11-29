@@ -162,7 +162,7 @@ def test_callback_endpoint():
             log_test("✅ Callback endpoint exists and responds", "PASS")
             
             # Test with error parameter
-            response_error = requests.get(f"{AUTH_BASE}/auth/google/callback?error=access_denied", allow_redirects=False)
+            response_error = requests.get(f"{API_BASE}/auth/google/callback?error=access_denied", allow_redirects=False)
             
             if response_error.status_code == 302:
                 location = response_error.headers.get('Location', '')
