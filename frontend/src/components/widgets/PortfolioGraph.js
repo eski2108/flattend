@@ -262,8 +262,8 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       </div>
 
       <div style={{ 
-        height: '320px',
-        filter: 'drop-shadow(0px 0px 14px rgba(0, 229, 255, 0.6))'
+        height: '340px',
+        marginTop: '12px'
       }}>
         {loading ? (
           <div style={{ 
@@ -272,19 +272,41 @@ const PortfolioGraph = ({ totalValue, userId }) => {
             justifyContent: 'center', 
             height: '100%',
             color: 'rgba(255, 255, 255, 0.5)',
-            fontSize: '14px'
+            fontSize: '14px',
+            fontWeight: '500'
           }}>
-            Loading chart...
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid rgba(0, 229, 255, 0.2)',
+                borderTop: '3px solid #00E5FF',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }} />
+              Loading chart...
+            </div>
           </div>
         ) : (
           <Chart
             options={chartOptions}
             series={series}
             type="area"
-            height={320}
+            height={340}
           />
         )}
       </div>
+      
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
