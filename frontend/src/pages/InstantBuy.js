@@ -429,7 +429,11 @@ function InstantBuy() {
                             )}
                           </button>
                         );
-                      })}
+                      }) : (
+                        <div style={{ textAlign: 'center', color: '#666', fontSize: '13px', fontStyle: 'italic' }}>
+                          No liquidity available
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
