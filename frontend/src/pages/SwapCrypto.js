@@ -186,34 +186,35 @@ function SwapCrypto() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
           {/* Header */}
-          <div style={{ marginBottom: '28px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ marginBottom: isMobile ? '20px' : '28px' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '12px', gap: isMobile ? '12px' : '0' }}>
               <div>
-                <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Zap size={36} color="#00E8FF" strokeWidth={2.5} />
+                <h1 style={{ fontSize: isMobile ? '28px' : '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Zap size={isMobile ? 28 : 36} color="#00E8FF" strokeWidth={2.5} />
                   Crypto Swap
                 </h1>
-                <p style={{ fontSize: '16px', color: '#8F9BB3', margin: 0 }}>Instant crypto-to-crypto exchange with best rates</p>
+                <p style={{ fontSize: isMobile ? '14px' : '16px', color: '#8F9BB3', margin: 0 }}>Instant crypto-to-crypto exchange with best rates</p>
               </div>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', width: isMobile ? '100%' : 'auto' }}>
                 <div style={{
-                  padding: '10px 16px',
+                  padding: isMobile ? '8px 12px' : '10px 16px',
                   background: 'rgba(0, 232, 255, 0.1)',
                   border: '1px solid rgba(0, 232, 255, 0.3)',
                   borderRadius: '12px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '8px',
+                  flex: isMobile ? 1 : 'auto'
                 }}>
                   <Clock size={16} color="#00E8FF" />
-                  <span style={{ fontSize: '13px', color: '#00E8FF', fontWeight: '600' }}>
+                  <span style={{ fontSize: isMobile ? '11px' : '13px', color: '#00E8FF', fontWeight: '600' }}>
                     {lastUpdate ? lastUpdate.toLocaleTimeString() : 'Loading...'}
                   </span>
                 </div>
                 <button
                   onClick={() => setShowSettings(!showSettings)}
                   style={{
-                    padding: '10px',
+                    padding: isMobile ? '8px' : '10px',
                     background: 'rgba(0, 232, 255, 0.1)',
                     border: '1px solid rgba(0, 232, 255, 0.3)',
                     borderRadius: '12px',
@@ -221,7 +222,7 @@ function SwapCrypto() {
                     transition: 'all 0.3s'
                   }}
                 >
-                  <Settings size={20} color="#00E8FF" />
+                  <Settings size={isMobile ? 18 : 20} color="#00E8FF" />
                 </button>
               </div>
             </div>
