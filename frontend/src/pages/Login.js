@@ -150,7 +150,7 @@ export default function Login() {
           borderRadius: '0 0 50% 50%'
         }} />
         {/* Logo & Header */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px', marginTop: '12px' }}>
           {/* Main Logo with Premium Glow */}
           <div 
             onClick={() => navigate('/')} 
