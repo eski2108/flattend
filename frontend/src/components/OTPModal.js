@@ -160,8 +160,8 @@ export default function OTPModal({
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Shield size={24} color="#00AEEF" />
-            <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>{title}</h2>
+            <Shield size={28} color="#00F0FF" strokeWidth={2.5} />
+            <h2 style={{ color: '#fff', fontSize: '1.75rem', fontWeight: '700', margin: 0 }}>{title}</h2>
           </div>
           <button
             onClick={handleClose}
