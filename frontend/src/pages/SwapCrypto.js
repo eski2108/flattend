@@ -246,28 +246,28 @@ function SwapCrypto() {
                 <div style={{
                   background: 'rgba(0, 0, 0, 0.3)',
                   border: '1px solid rgba(0, 232, 255, 0.2)',
-                  borderRadius: '16px',
-                  padding: '20px',
+                  borderRadius: isMobile ? '12px' : '16px',
+                  padding: isMobile ? '16px' : '20px',
                   marginBottom: '16px'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>From</span>
-                    <span style={{ fontSize: '13px', color: '#8F9BB3' }}>Balance: 0.0000</span>
+                    <span style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', fontWeight: '600' }}>From</span>
+                    <span style={{ fontSize: isMobile ? '11px' : '13px', color: '#8F9BB3' }}>Balance: 0.0000</span>
                   </div>
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '12px' : '16px', alignItems: isMobile ? 'stretch' : 'center' }}>
                     <select
                       value={fromCrypto}
                       onChange={(e) => setFromCrypto(e.target.value)}
                       style={{
-                        padding: '14px 40px 14px 14px',
+                        padding: isMobile ? '12px 32px 12px 12px' : '14px 40px 14px 14px',
                         background: 'rgba(0, 232, 255, 0.1)',
                         border: '1px solid rgba(0, 232, 255, 0.3)',
                         borderRadius: '12px',
                         color: '#FFFFFF',
-                        fontSize: '18px',
+                        fontSize: isMobile ? '16px' : '18px',
                         fontWeight: '700',
                         cursor: 'pointer',
-                        minWidth: '140px',
+                        minWidth: isMobile ? '100%' : '140px',
                         outline: 'none'
                       }}
                     >
@@ -282,19 +282,20 @@ function SwapCrypto() {
                       placeholder="0.00"
                       style={{
                         flex: 1,
-                        padding: '14px',
+                        padding: isMobile ? '12px' : '14px',
                         background: 'transparent',
                         border: 'none',
                         color: '#FFFFFF',
-                        fontSize: '24px',
+                        fontSize: isMobile ? '20px' : '24px',
                         fontWeight: '700',
                         outline: 'none',
-                        textAlign: 'right'
+                        textAlign: isMobile ? 'left' : 'right',
+                        width: isMobile ? '100%' : 'auto'
                       }}
                     />
                   </div>
                   {prices && (
-                    <div style={{ marginTop: '12px', textAlign: 'right', fontSize: '13px', color: '#8F9BB3' }}>
+                    <div style={{ marginTop: '12px', textAlign: isMobile ? 'left' : 'right', fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>
                       ≈ ${(parseFloat(fromAmount || 0) * (prices[`${fromCrypto}_USD`] || 0)).toFixed(2)}
                     </div>
                   )}
