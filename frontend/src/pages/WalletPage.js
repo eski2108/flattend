@@ -307,7 +307,7 @@ export default function WalletPage() {
                 Deposit
               </button>
               <button
-                onClick={() => setShowWithdrawModal(true)}
+                onClick={() => navigate('/withdraw/btc')}
                 style={withdrawButtonStyle}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = '0 0 40px rgba(230, 41, 41, 0.6), 0 0 80px rgba(230, 41, 41, 0.3), inset 0 0 20px rgba(255, 59, 59, 0.12)';
