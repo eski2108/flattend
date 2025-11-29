@@ -361,7 +361,9 @@ export default function SavingsPage() {
           {savingsBalances.length === 0 && (
             <CHXCard>
               <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-                <div style={{ fontSize: '64px', marginBottom: '24px' }}>💰</div>
+                <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
+                  <PiggyBank size={80} color="#00E5FF" strokeWidth={1.5} />
+                </div>
                 <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px' }}>
                   No savings yet
                 </h3>
@@ -378,7 +380,7 @@ export default function SavingsPage() {
                   size="large"
                   icon={<Rocket size={20} />}
                 >
-                  🚀 Start Saving
+                  Start Saving
                 </CHXButton>
               </div>
             </CHXCard>
