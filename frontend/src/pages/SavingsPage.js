@@ -335,21 +335,21 @@ export default function SavingsPage() {
             marginBottom: '24px'
           }}>
             <CHXMetricTile
-              icon="📈"
+              icon={ChartLine}
               title="Estimated APY"
               value={estimatedAPY}
               description="Annual percentage yield"
             />
             
             <CHXMetricTile
-              icon="🧮"
+              icon={Calculator}
               title="Portfolio Savings Ratio"
               value={`${savingsRatio}%`}
               description="of your holdings earning"
             />
             
             <CHXMetricTile
-              icon="⏳"
+              icon={Lock}
               title="Locked Rewards"
               value="Coming Soon"
               description="Feature in development"
