@@ -14,7 +14,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://coinhubuix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradehub-227.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

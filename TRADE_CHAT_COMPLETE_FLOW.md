@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://coinhubuix.preview.emergentagent.com
+**Test it now at:** https://tradehub-227.preview.emergentagent.com
