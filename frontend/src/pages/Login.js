@@ -134,16 +134,17 @@ export default function Login() {
 
       {/* Login Card */}
       <div style={{
-        maxWidth: '480px',
+        maxWidth: '520px',
         width: '100%',
-        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.95) 0%, rgba(5, 16, 24, 0.98) 100%)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(0, 198, 255, 0.25)',
-        borderRadius: '24px',
-        padding: '48px 40px',
-        boxShadow: '0 0 40px rgba(0, 198, 255, 0.2), 0 20px 60px rgba(0, 0, 0, 0.5)',
+        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.97) 0%, rgba(5, 16, 24, 0.99) 100%)',
+        backdropFilter: 'blur(25px)',
+        border: '1px solid rgba(0, 229, 255, 0.3)',
+        borderRadius: '28px',
+        padding: '56px 48px',
+        boxShadow: '0 0 50px rgba(0, 229, 255, 0.25), 0 25px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        overflow: 'hidden'
       }}>
         {/* Logo & Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
