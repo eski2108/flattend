@@ -220,6 +220,11 @@ export default function Settings() {
                     setCurrentUser({...currentUser, full_name: newName});
                   }}
                   onBlur={async (e) => {
+                    // Reset styling
+                    e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                    e.target.style.boxShadow = 'none';
+                    
+                    // Handle API update
                     const newName = e.target.value.trim();
                     if (newName && newName !== (currentUser.full_name || currentUser.name)) {
                       setLoadingSettings(true);
@@ -268,10 +273,6 @@ export default function Settings() {
                   onFocus={(e) => {
                     e.target.style.borderColor = 'rgba(0, 240, 255, 0.6)';
                     e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.2)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
-                    e.target.style.boxShadow = 'none';
                   }}
                 />
               </div>
