@@ -367,10 +367,22 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         />
       </div>
 
+      {/* 24H Sparkline Chart (Collapsed View Only) */}
+      {!expanded && (
+        <div style={{ 
+          marginTop: '16px',
+          marginBottom: '12px',
+          padding: '0 4px',
+          opacity: 0.85
+        }}>
+          <CoinSparkline symbol={coin.symbol} color={coin.color} height={40} />
+        </div>
+      )}
+
       {/* Liquidity Status */}
       {!expanded && (
         <div style={{ 
-          marginTop: '14px', 
+          marginTop: '8px', 
           textAlign: 'center',
           padding: '8px 12px',
           background: coin.has_liquidity ? 'rgba(34, 197, 94, 0.08)' : 'rgba(143, 155, 179, 0.08)',
