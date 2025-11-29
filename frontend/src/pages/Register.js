@@ -37,6 +37,26 @@ export default function Register() {
   const [recaptchaToken, setRecaptchaToken] = useState(null);
   const [isGoogleSignup, setIsGoogleSignup] = useState(false);
 
+  // Handle Google OAuth data from redirect
+  useEffect(() => {
+    if (googleData && requirePhone) {
+      try {
+        const decodedData = JSON.parse(atob(googleData));
+        setFormData(prev => ({
+          ...prev,
+          email: decodedData.email,
+          full_name: decodedData.name,
+          google_id: decodedData.google_id
+        }));
+        setIsGoogleSignup(true);
+        toast.info('Please verify your phone number to complete Google sign-up');
+      } catch (error) {
+        console.error('Error decoding Google data:', error);
+        toast.error('Invalid Google sign-up data');
+      }
+    }
+  }, [googleData, requirePhone]);
+
   // Handle Google OAuth redirect
   useEffect(() => {
     const processSessionId = async () => {
