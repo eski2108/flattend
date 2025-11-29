@@ -19,14 +19,33 @@ const PortfolioGraph = ({ totalValue, userId }) => {
   const loadPortfolioHistory = async (range) => {
     setLoading(true);
     try {
-      // TODO: Replace with real backend endpoint
-      // const response = await axios.get(`${API}/api/portfolio/history?range=${range}&user_id=${userId}`);
-      // For now, generate realistic mock data based on current total value
-      const data = generateMockData(range, totalValue);
-      setPortfolioHistory(data);
+      if (!userId) {
+        const data = generateMockData(range, totalValue);
+        setPortfolioHistory(data);
+        setLoading(false);
+        return;
+      }
+
+      // Use real backend endpoint
+      const response = await axios.get(`${API}/api/portfolio/history`, {
+        params: { user_id: userId, range: range }
+      });
+
+      if (response.data.success && response.data.data) {
+        // Transform backend data to ApexCharts format
+        const chartData = response.data.data.map(point => ({
+          x: point.timestamp,
+          y: point.value
+        }));
+        setPortfolioHistory(chartData);
+      } else {
+        // Fallback to mock data
+        const data = generateMockData(range, totalValue);
+        setPortfolioHistory(data);
+      }
     } catch (error) {
       console.error('Failed to load portfolio history:', error);
-      // Fallback to mock data
+      // Fallback to mock data on error
       const data = generateMockData(range, totalValue);
       setPortfolioHistory(data);
     } finally {
