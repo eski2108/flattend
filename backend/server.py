@@ -5692,7 +5692,7 @@ async def complete_google_signup(request: dict):
 
 @api_router.post("/auth/register")
 async def register_user(request: RegisterRequest, req: Request):
-    """Register new user with email/password"""
+    """Register new user with email/password or Google OAuth"""
     from security import password_hasher
     from security_logger import SecurityLogger
     
@@ -5723,8 +5723,17 @@ async def register_user(request: RegisterRequest, req: Request):
         )
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Hash password using bcrypt
-    password_hash = password_hasher.hash_password(request.password)
+    # Check if this is a Google signup (has google_id, no password)
+    is_google_signup = hasattr(request, 'google_id') and request.google_id
+    
+    # Hash password using bcrypt (only for regular signup)
+    if not is_google_signup:
+        if not request.password:
+            raise HTTPException(status_code=400, detail="Password is required")
+        password_hash = password_hasher.hash_password(request.password)
+    else:
+        # For Google signup, use a placeholder hash
+        password_hash = "google_oauth_" + str(uuid.uuid4())
     
     # Generate email verification token
     import secrets
