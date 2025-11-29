@@ -201,7 +201,17 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        <PriceTickerEnhanced />
+        <div style={{
+          width: '100%',
+          padding: '16px 0',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxSizing: 'border-box'
+        }}>
+          <PriceTickerEnhanced />
+        </div>
         
         {/* Divider Line */}
         <div style={{
