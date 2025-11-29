@@ -150,7 +150,7 @@ export default function Login() {
           borderRadius: '0 0 50% 50%'
         }} />
         {/* Logo & Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           {/* Main Logo with Premium Glow */}
           <div 
             onClick={() => navigate('/')} 
@@ -158,10 +158,10 @@ export default function Login() {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: '40px',
+              marginBottom: '24px',
               cursor: 'pointer',
               position: 'relative',
-              padding: '20px'
+              padding: '10px'
             }}
           >
             {/* Glow Effect Circle Behind Logo */}
