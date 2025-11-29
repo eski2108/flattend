@@ -395,24 +395,24 @@ function SwapCrypto() {
                 {exchangeRate > 0 && (
                   <div style={{
                     marginTop: '20px',
-                    padding: '16px',
+                    padding: isMobile ? '14px' : '16px',
                     background: 'rgba(0, 232, 255, 0.05)',
                     border: '1px solid rgba(0, 232, 255, 0.15)',
                     borderRadius: '12px'
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '13px', color: '#8F9BB3' }}>Exchange Rate</span>
-                      <span style={{ fontSize: '14px', color: '#00E8FF', fontWeight: '600' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', gap: '8px' }}>
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Exchange Rate</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '14px', color: '#00E8FF', fontWeight: '600', textAlign: 'right' }}>
                         1 {fromCrypto} = {exchangeRate.toFixed(6)} {toCrypto}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '13px', color: '#8F9BB3' }}>Slippage Tolerance</span>
-                      <span style={{ fontSize: '14px', color: '#F5C542', fontWeight: '600' }}>{slippage}%</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Slippage Tolerance</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '14px', color: '#F5C542', fontWeight: '600' }}>{slippage}%</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '13px', color: '#8F9BB3' }}>Estimated Fee</span>
-                      <span style={{ fontSize: '14px', color: '#8FFF4E', fontWeight: '600' }}>0.1%</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Estimated Fee</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '14px', color: '#8FFF4E', fontWeight: '600' }}>0.1%</span>
                     </div>
                   </div>
                 )}
