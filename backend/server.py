@@ -5420,19 +5420,28 @@ async def google_callback(code: str = None, error: str = None):
     
     frontend_url = os.environ.get('FRONTEND_URL', 'https://tradehub-227.preview.emergentagent.com')
     
+    logger.info(f"🔵 Google callback received - code: {'present' if code else 'missing'}, error: {error or 'none'}")
+    
     # Check for OAuth errors
     if error:
-        logger.error(f"Google OAuth error: {error}")
-        return RedirectResponse(url=f"{frontend_url}/login?error=google_oauth_denied")
+        logger.error(f"❌ Google OAuth error: {error}")
+        return RedirectResponse(url=f"{frontend_url}/login?error=google_oauth_denied", status_code=302)
     
     if not code:
-        logger.error("No authorization code received from Google")
-        return RedirectResponse(url=f"{frontend_url}/login?error=no_code")
+        logger.error("❌ No authorization code received from Google")
+        return RedirectResponse(url=f"{frontend_url}/login?error=no_code", status_code=302)
     
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
     backend_url = os.environ.get('BACKEND_URL', 'https://tradehub-227.preview.emergentagent.com')
-    redirect_uri = f"{backend_url}/api/auth/google/callback"
+    
+    # CRITICAL: Ensure backend_url has /api prefix
+    if not backend_url.endswith('/api'):
+        backend_url = f"{backend_url}/api"
+    
+    redirect_uri = f"{backend_url}/auth/google/callback"
+    
+    logger.info(f"   Using redirect_uri: {redirect_uri}")
     
     # Exchange code for tokens
     token_url = "https://oauth2.googleapis.com/token"
