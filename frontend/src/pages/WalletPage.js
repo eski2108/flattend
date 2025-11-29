@@ -534,12 +534,6 @@ function TransactionHistory({ user }) {
 
   const filters = ['All', 'Deposit', 'Withdraw', 'P2P', 'Swap'];
 
-  useEffect(() => {
-    if (user) {
-      loadTransactions();
-    }
-  }, [user, activeFilter]);
-
   const loadTransactions = async () => {
     setLoading(true);
     try {
