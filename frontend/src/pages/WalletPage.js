@@ -649,7 +649,7 @@ function TransactionHistory({ user }) {
                 </div>
               </div>
             </div>
-          )))
+          ))
         )}
       </div>
     </div>
