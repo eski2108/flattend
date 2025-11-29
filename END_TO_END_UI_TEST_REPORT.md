@@ -18,7 +18,7 @@ All wallet backend endpoints are fully functional and tested with real data flow
 
 **Test:**
 ```bash
-curl https://cryptoex-preview-1.preview.emergentagent.com/api/wallets/balances/test_user_alice
+curl https://crypto-hub-xchange.preview.emergentagent.com/api/wallets/balances/test_user_alice
 ```
 
 **Response:**
@@ -64,7 +64,7 @@ curl https://cryptoex-preview-1.preview.emergentagent.com/api/wallets/balances/t
 
 **Test:**
 ```bash
-curl https://cryptoex-preview-1.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
+curl https://crypto-hub-xchange.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
 ```
 
 **Response:**

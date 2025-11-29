@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://cryptoex-preview-1.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-hub-xchange.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {
