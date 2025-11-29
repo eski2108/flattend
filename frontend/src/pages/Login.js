@@ -157,40 +157,8 @@ export default function Login() {
           boxShadow: '0 0 20px rgba(0, 229, 255, 0.6)',
           borderRadius: '0 0 50% 50%'
         }} />
-        {/* Logo & Header */}
+        {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          {/* Main Logo */}
-          <div 
-            onClick={() => navigate('/')} 
-            style={{ 
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '32px',
-              cursor: 'pointer',
-              position: 'relative'
-            }}
-          >
-            <img 
-              src="/logo1-transparent.png" 
-              alt="Coin Hub X" 
-              style={{ 
-                height: '85px', 
-                width: 'auto',
-                filter: 'drop-shadow(0 0 25px rgba(0, 198, 255, 0.7)) drop-shadow(0 0 50px rgba(0, 198, 255, 0.4))',
-                transition: 'all 0.3s ease'
-              }} 
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.05)';
-                e.target.style.filter = 'drop-shadow(0 0 35px rgba(0, 198, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.5))';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1)';
-                e.target.style.filter = 'drop-shadow(0 0 25px rgba(0, 198, 255, 0.7)) drop-shadow(0 0 50px rgba(0, 198, 255, 0.4))';
-              }}
-            />
-          </div>
-          
           {/* Welcome Text */}
           <h1 style={{ 
             fontSize: '38px',
