@@ -206,25 +206,28 @@ export default function OTPModal({
               onChange={(e) => handleOTPChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               style={{
-                width: '3rem',
-                height: '3.5rem',
-                fontSize: '1.5rem',
+                width: '3.5rem',
+                height: '4rem',
+                fontSize: '1.75rem',
                 fontWeight: '700',
                 textAlign: 'center',
-                backgroundColor: '#0B0E11',
-                border: '2px solid rgba(0, 174, 239, 0.3)',
-                borderRadius: '12px',
-                color: '#fff',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                border: '2px solid rgba(0, 240, 255, 0.3)',
+                borderRadius: '14px',
+                color: '#00F0FF',
                 outline: 'none',
-                transition: 'all 0.2s'
+                transition: 'all 0.3s',
+                fontFamily: 'monospace'
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#00AEEF';
-                e.currentTarget.style.boxShadow = '0 0 12px rgba(0, 174, 239, 0.4)';
+                e.currentTarget.style.borderColor = '#00F0FF';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.5)';
+                e.currentTarget.style.transform = 'scale(1.05)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 174, 239, 0.3)';
+                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
                 e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'scale(1)';
               }}
             />
           ))}
