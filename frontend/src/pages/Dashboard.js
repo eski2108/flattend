@@ -98,21 +98,13 @@ function Dashboard() {
       value: bal.total_balance * (bal.price_gbp || 0)
     }));
 
-    // Sort assets
-    if (sortBy === 'name') {
-      return assets.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortBy === 'value') {
+    // Apply sorting
+    if (sortBy === 'value') {
       return assets.sort((a, b) => b.value - a.value);
-    } else if (sortBy === 'change') {
-      return assets.sort((a, b) => Math.random() - 0.5); // Mock for now
-    } else if (sortBy === 'pl') {
-      return assets.sort((a, b) => Math.random() - 0.5); // Mock for now
+    } else if (sortBy === 'name') {
+      return assets.sort((a, b) => a.name.localeCompare(b.name));
     }
     return assets;
-  };
-
-  const handleExportPDF = () => {
-    toast.success('Portfolio export feature coming soon!');
   };
 
   // Prepare assets for pie chart
@@ -155,6 +147,10 @@ function Dashboard() {
     });
   };
 
+  const handleExportPDF = () => {
+    toast.info('PDF export feature coming soon!');
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -170,43 +166,16 @@ function Dashboard() {
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
-        padding: '20px 16px',
-        width: '100%',
-        maxWidth: '100vw',
-        overflowX: 'hidden',
-        boxSizing: 'border-box'
+        padding: '20px'
       }}>
-        <div style={{ 
-          maxWidth: '1400px', 
-          margin: '0 auto',
-          width: '100%',
-          boxSizing: 'border-box'
-        }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           
           {/* Header */}
-          <div style={{ marginBottom: '20px', width: '100%' }}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'flex-start', 
-              marginBottom: '16px',
-              flexWrap: 'wrap',
-              gap: '12px'
-            }}>
-              <div style={{ flex: '1', minWidth: '200px' }}>
-                <h1 style={{ 
-                  fontSize: 'clamp(24px, 5vw, 30px)', 
-                  fontWeight: '700', 
-                  color: '#FFFFFF', 
-                  marginBottom: '4px', 
-                  lineHeight: '1.2' 
-                }}>Portfolio Overview</h1>
-                <p style={{ 
-                  color: '#A3AEC2', 
-                  fontSize: 'clamp(14px, 3vw, 17px)', 
-                  marginBottom: 0, 
-                  lineHeight: '1.4' 
-                }}>Your complete financial dashboard</p>
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div>
+                <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px' }}>Portfolio Overview</h1>
+                <p style={{ color: '#A3AEC2', fontSize: '16px', marginBottom: 0 }}>Your complete financial dashboard</p>
               </div>
               
               {/* Export Button */}
@@ -216,7 +185,6 @@ function Dashboard() {
                 variant="secondary"
                 size="small"
                 icon={<FileText size={16} />}
-                style={{ flexShrink: 0 }}
               >
                 Export PDF
               </CHXButton>
@@ -228,7 +196,7 @@ function Dashboard() {
               width: '100%', 
               background: 'linear-gradient(90deg, #00C6FF 0%, transparent 100%)',
               boxShadow: '0 0 10px rgba(0, 198, 255, 0.5)',
-              margin: '16px 0'
+              margin: '20px 0'
             }} />
             
             {/* Total Value */}
@@ -236,33 +204,13 @@ function Dashboard() {
               background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
               border: '1px solid rgba(0, 198, 255, 0.3)',
               borderRadius: '16px',
-              padding: '20px',
+              padding: '24px',
               boxShadow: '0 0 25px rgba(0, 198, 255, 0.2)',
-              marginBottom: '16px',
-              width: '100%',
-              boxSizing: 'border-box'
+              marginBottom: '24px'
             }}>
-              <div style={{ 
-                fontSize: 'clamp(12px, 2.5vw, 14px)', 
-                color: '#8F9BB3', 
-                marginBottom: '8px', 
-                textTransform: 'uppercase', 
-                letterSpacing: '0.8px', 
-                fontWeight: '600' 
-              }}>Total Portfolio Value</div>
-              <div style={{ 
-                fontSize: 'clamp(28px, 6vw, 38px)', 
-                fontWeight: '700', 
-                color: '#FFFFFF', 
-                marginBottom: '4px', 
-                lineHeight: '1.1',
-                wordBreak: 'break-word'
-              }}>£{totalValue.toFixed(2)}</div>
-              <div style={{ 
-                fontSize: 'clamp(13px, 3vw, 15px)', 
-                color: '#6EE7B7', 
-                fontWeight: '600' 
-              }}>≈ ${(totalValue * 1.27).toFixed(2)} USD</div>
+              <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '600' }}>Total Portfolio Value</div>
+              <div style={{ fontSize: '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px' }}>£{totalValue.toFixed(2)}</div>
+              <div style={{ fontSize: '16px', color: '#6EE7B7', fontWeight: '600' }}>≈ ${(totalValue * 1.27).toFixed(2)} USD</div>
             </div>
           </div>
 
@@ -272,10 +220,9 @@ function Dashboard() {
           {/* 2. P/L Summary Row with Donut Widget */}
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-            gap: '16px', 
-            marginBottom: '16px',
-            width: '100%'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '20px', 
+            marginBottom: '24px'
           }}>
             <PLSummaryRow 
               todayPL={150.50} 
@@ -302,12 +249,12 @@ function Dashboard() {
             background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
             border: '1px solid rgba(0, 198, 255, 0.25)',
             borderRadius: '16px',
-            padding: '20px',
-            marginBottom: '16px',
+            padding: '24px',
+            marginBottom: '24px',
             boxShadow: '0 0 20px rgba(0, 198, 255, 0.15)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Holdings List</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 }}>Holdings List</h3>
               
               {/* Sort Dropdown */}
               <div style={{ position: 'relative' }}>
@@ -318,9 +265,9 @@ function Dashboard() {
                     background: 'rgba(0, 198, 255, 0.1)',
                     border: '1px solid rgba(0, 198, 255, 0.3)',
                     borderRadius: '10px',
-                    padding: '8px 32px 8px 12px',
+                    padding: '10px 35px 10px 14px',
                     color: '#00C6FF',
-                    fontSize: '13px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     outline: 'none',
@@ -333,7 +280,7 @@ function Dashboard() {
                   <option value="change">Sort by 24h Change</option>
                   <option value="pl">Sort by Profit/Loss</option>
                 </select>
-                <ChevronDown size={16} color="#00C6FF" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                <ChevronDown size={16} color="#00C6FF" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
               </div>
             </div>
           </div>
