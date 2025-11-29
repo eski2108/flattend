@@ -170,8 +170,143 @@ export default function WalletPage() {
             />
           ))
         )}
+
+        {/* Transaction History */}
+        <TransactionHistory user={user} />
       </div>
     </Layout>
+  );
+}
+
+function TransactionHistory({ user }) {
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const filters = ['All', 'Deposit', 'Withdraw', 'P2P', 'Swap'];
+
+  useEffect(() => {
+    if (user) {
+      loadTransactions();
+    }
+  }, [user, activeFilter]);
+
+  const loadTransactions = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API}/api/transactions/${user.user_id}`);
+      if (response.data.success) {
+        let txs = response.data.transactions || [];
+        
+        // Filter based on active filter
+        if (activeFilter !== 'All') {
+          txs = txs.filter(tx => tx.transaction_type.toLowerCase() === activeFilter.toLowerCase());
+        }
+        
+        setTransactions(txs);
+      }
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ marginTop: '32px' }}>
+      <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Transaction History</h2>
+      
+      {/* Filter Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        {filters.map(filter => (
+          <button
+            key={filter}
+            onClick={() => setActiveFilter(filter)}
+            className={activeFilter === filter ? 'premium-tab-active' : 'premium-tab-inactive'}
+            style={{
+              padding: '10px 20px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            {filter}
+          </button>
+        ))}
+      </div>
+
+      {/* Transaction List */}
+      <div style={{
+        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
+        border: '1px solid rgba(255, 255, 255, 0.06)',
+        borderRadius: '16px',
+        padding: '20px',
+        opacity: 0.94
+      }}>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#A3AEC2' }}>Loading transactions...</div>
+        ) : transactions.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#A3AEC2' }}>No transactions yet</div>
+        ) : (
+          transactions.slice(0, 10).map((tx, index) => (
+            <div
+              key={index}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 0',
+                borderBottom: index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* Icon */}
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: tx.transaction_type === 'deposit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {tx.transaction_type === 'deposit' ? (
+                    <ArrowDownLeft size={20} color=\"#22C55E\" />
+                  ) : (
+                    <ArrowUpRight size={20} color=\"#EF4444\" />
+                  )}
+                </div>
+                
+                {/* Details */}
+                <div>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
+                    {tx.transaction_type.charAt(0).toUpperCase() + tx.transaction_type.slice(1)} {tx.currency}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#A3AEC2' }}>
+                    {new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString()}
+                  </div>
+                </div>
+              </div>
+
+              {/* Amount & Status */}
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', color: tx.transaction_type === 'deposit' ? '#22C55E' : '#EF4444' }}>
+                  {tx.transaction_type === 'deposit' ? '+' : '-'}{tx.amount} {tx.currency}
+                </div>
+                <div style={{
+                  fontSize: '12px',
+                  color: tx.status === 'completed' ? '#22C55E' : tx.status === 'pending' ? '#FBBF24' : '#EF4444',
+                  marginTop: '2px'
+                }}>
+                  {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
 
