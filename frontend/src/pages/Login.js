@@ -86,7 +86,7 @@ export default function Login() {
     try {
       setLoading(true);
       const backendUrl = API.replace('/api', '');
-      window.location.href = `${backendUrl}/api/auth/google`;
+      window.location.href = `${backendUrl}/auth/google`;
     } catch (error) {
       console.error('Google sign-in error:', error);
       toast.error('Failed to initiate Google sign-in');
