@@ -14,6 +14,8 @@ export default function Register() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const referralCode = searchParams.get('ref') || '';
+  const googleData = searchParams.get('google_data') || '';
+  const requirePhone = searchParams.get('require_phone') === 'true';
   
   const [formData, setFormData] = useState({
     full_name: '',
@@ -21,7 +23,8 @@ export default function Register() {
     phone_number: '',
     password: '',
     confirmPassword: '',
-    referral_code: referralCode
+    referral_code: referralCode,
+    google_id: ''
   });
   const [loading, setLoading] = useState(false);
   const [showPhoneVerification, setShowPhoneVerification] = useState(false);
@@ -32,6 +35,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [isGoogleSignup, setIsGoogleSignup] = useState(false);
 
   // Handle Google OAuth redirect
   useEffect(() => {
