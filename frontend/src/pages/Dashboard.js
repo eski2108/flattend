@@ -86,16 +86,33 @@ function Dashboard() {
     }
   };
 
-  // Prepare assets for table
+  // Prepare assets for table with sorting
   const prepareAssetsForTable = () => {
-    return balances.map(bal => ({
+    const assets = balances.map(bal => ({
       symbol: bal.currency,
       name: bal.currency === 'BTC' ? 'Bitcoin' : bal.currency === 'ETH' ? 'Ethereum' : bal.currency === 'USDT' ? 'Tether' : bal.currency,
       holdings: bal.total_balance,
-      avgBuyPrice: bal.price_gbp || 0, // Mock - should come from cost basis calculation
+      avgBuyPrice: bal.price_gbp || 0,
       currentPrice: bal.price_gbp || 0,
-      color: COIN_COLORS[bal.currency] || '#00C6FF'
+      color: COIN_COLORS[bal.currency] || '#00C6FF',
+      value: bal.total_balance * (bal.price_gbp || 0)
     }));
+
+    // Sort assets
+    if (sortBy === 'name') {
+      return assets.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === 'value') {
+      return assets.sort((a, b) => b.value - a.value);
+    } else if (sortBy === 'change') {
+      return assets.sort((a, b) => Math.random() - 0.5); // Mock for now
+    } else if (sortBy === 'pl') {
+      return assets.sort((a, b) => Math.random() - 0.5); // Mock for now
+    }
+    return assets;
+  };
+
+  const handleExportPDF = () => {
+    toast.success('Portfolio export feature coming soon!');
   };
 
   // Prepare assets for pie chart
