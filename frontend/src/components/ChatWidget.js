@@ -1,15 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { MessageCircle, X, Send, User, Bot, Minimize2 } from 'lucide-react';
+import { MessageCircle, X, Send, User, Bot, Minimize2, Zap, Shield } from 'lucide-react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://coinhubuix.preview.emergentagent.com';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showOptions, setShowOptions] = useState(false); // No options - direct to AI
-  const [chatMode, setChatMode] = useState('ai'); // Always start in AI mode
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [chatMode, setChatMode] = useState('ai');
   const [sessionId, setSessionId] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      id: 'welcome',
+      sender: 'bot',
+      message: 'Hi! 👋 I\\'m your Coin Hub X AI assistant. How can I help you today?',
+      timestamp: new Date()
+    }
+  ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
