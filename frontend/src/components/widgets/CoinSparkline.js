@@ -22,6 +22,12 @@ const CoinSparkline = ({ symbol, color = '#00C6FF', height = 40 }) => {
 
   const loadSparklineData = async () => {
     try {
+      if (!Chart) {
+        setHasError(true);
+        setLoading(false);
+        return;
+      }
+
       // Generate realistic 24H price movement
       // In production, this would fetch from a price feed API
       const points = 24;
@@ -39,6 +45,7 @@ const CoinSparkline = ({ symbol, color = '#00C6FF', height = 40 }) => {
       setLoading(false);
     } catch (error) {
       console.error('Failed to load sparkline data:', error);
+      setHasError(true);
       setLoading(false);
     }
   };
