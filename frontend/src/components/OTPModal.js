@@ -236,8 +236,8 @@ export default function OTPModal({
         {/* Resend OTP */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           {countdown > 0 ? (
-            <p style={{ color: '#9FA6B2', fontSize: '0.875rem' }}>
-              Resend OTP in <span style={{ color: '#00AEEF', fontWeight: '600' }}>{countdown}s</span>
+            <p style={{ color: '#8F9BB3', fontSize: '0.9375rem' }}>
+              Resend OTP in <span style={{ color: '#00F0FF', fontWeight: '700' }}>{countdown}s</span>
             </p>
           ) : (
             <button
@@ -245,27 +245,31 @@ export default function OTPModal({
               disabled={sendingOTP}
               style={{
                 background: 'none',
-                border: 'none',
-                color: '#00AEEF',
-                fontSize: '0.875rem',
+                border: '1px solid rgba(0, 240, 255, 0.3)',
+                color: '#00F0FF',
+                fontSize: '0.9375rem',
                 fontWeight: '600',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
                 margin: '0 auto',
-                padding: '0.5rem 1rem',
-                borderRadius: '8px',
-                transition: 'all 0.2s'
+                padding: '0.75rem 1.5rem',
+                borderRadius: '12px',
+                transition: 'all 0.3s'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 174, 239, 0.1)';
+                e.currentTarget.style.backgroundColor = 'rgba(0, 240, 255, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <RefreshCw size={16} className={sendingOTP ? 'animate-spin' : ''} />
+              <RefreshCw size={18} style={{ animation: sendingOTP ? 'spin 1s linear infinite' : 'none' }} />
               {sendingOTP ? 'Sending...' : 'Resend OTP'}
             </button>
           )}
