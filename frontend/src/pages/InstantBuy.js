@@ -398,17 +398,24 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         {expanded && (
           <div onClick={(e) => e.stopPropagation()}>
             {/* Price & Stock Info */}
-            <div style={{ marginBottom: '20px', padding: '16px', background: 'rgba(0, 198, 255, 0.05)', borderRadius: '12px', border: '1px solid rgba(0, 198, 255, 0.15)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ 
+              marginBottom: '18px', 
+              padding: '18px', 
+              background: 'rgba(0, 198, 255, 0.06)', 
+              borderRadius: '14px', 
+              border: '1px solid rgba(0, 198, 255, 0.2)',
+              boxShadow: '0 0 12px rgba(0, 198, 255, 0.08)'
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
                 <div>
-                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>Price</div>
-                  <div style={{ fontSize: '18px', fontWeight: '700', color: coin.has_liquidity ? '#22C55E' : '#8F9BB3' }}>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Price</div>
+                  <div style={{ fontSize: '19px', fontWeight: '700', color: coin.has_liquidity ? '#22C55E' : '#8F9BB3', letterSpacing: '0.3px' }}>
                     {coin.has_liquidity ? `£${coin.price_gbp.toLocaleString()}` : 'N/A'}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>Stock</div>
-                  <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stock</div>
+                  <div style={{ fontSize: '19px', fontWeight: '700', color: '#FFFFFF', letterSpacing: '0.3px' }}>
                     {coin.available_amount.toFixed(4)}
                   </div>
                 </div>
@@ -416,8 +423,8 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             </div>
 
             {/* Deposit/Withdraw/Swap Buttons */}
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', fontWeight: '600' }}>Actions</div>
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Actions</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
                 <CHXButton
                   onClick={onDeposit}
