@@ -120,7 +120,7 @@ def test_redirect_url_parameters(redirect_url):
         log_test(f"scope: {scope}", "INFO")
         
         # Verify redirect_uri points back to our callback
-        expected_callback = f"{BACKEND_URL}/auth/google/callback"
+        expected_callback = f"{BACKEND_URL}/api/auth/google/callback"
         if expected_callback in redirect_uri:
             log_test("✅ redirect_uri correctly points to callback endpoint", "PASS")
         else:
