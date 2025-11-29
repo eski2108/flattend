@@ -5454,39 +5454,44 @@ async def google_callback(code: str = None, error: str = None):
     }
     
     try:
+        logger.info(f"   Exchanging code for token...")
         async with httpx.AsyncClient(timeout=30.0) as client:
             token_response = await client.post(token_url, data=token_data)
             tokens = token_response.json()
             
             if 'error' in tokens:
-                logger.error(f"Token exchange error: {tokens.get('error_description', tokens['error'])}")
-                return RedirectResponse(url=f"{frontend_url}/login?error=token_exchange_failed")
+                error_msg = tokens.get('error_description', tokens['error'])
+                logger.error(f"❌ Token exchange error: {error_msg}")
+                return RedirectResponse(url=f"{frontend_url}/login?error=token_exchange_failed", status_code=302)
             
             # Get user info
             access_token = tokens.get('access_token')
             if not access_token:
-                logger.error("No access token received from Google")
-                return RedirectResponse(url=f"{frontend_url}/login?error=no_access_token")
+                logger.error("❌ No access token received from Google")
+                return RedirectResponse(url=f"{frontend_url}/login?error=no_access_token", status_code=302)
             
+            logger.info(f"   Token received, fetching user info...")
             user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
             headers = {'Authorization': f'Bearer {access_token}'}
             
             user_response = await client.get(user_info_url, headers=headers)
             user_data = user_response.json()
             
-            logger.info(f"Google OAuth user info received: {user_data.get('email')}")
+            user_email = user_data.get('email', 'unknown')
+            logger.info(f"✅ Google OAuth user info received: {user_email}")
             
             # Check if user exists
-            existing_user = await db.user_accounts.find_one({"email": user_data['email']}, {"_id": 0})
+            existing_user = await db.user_accounts.find_one({"email": user_email}, {"_id": 0})
             
             if existing_user:
                 # User exists - generate token and redirect to login callback page
-                token_data = {
+                logger.info(f"   Existing user found, generating JWT...")
+                token_payload = {
                     "user_id": existing_user["user_id"],
                     "email": existing_user["email"],
                     "exp": datetime.now(timezone.utc) + timedelta(days=30)
                 }
-                token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
+                token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
                 
                 # Redirect to a callback page that will handle the token
                 user_json = json.dumps({
@@ -5497,18 +5502,53 @@ async def google_callback(code: str = None, error: str = None):
                 })
                 
                 from urllib.parse import quote
-                logger.info(f"Redirecting existing user {existing_user['email']} to login with token")
-                return RedirectResponse(url=f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}")
+                redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
+                logger.info(f"✅ Redirecting existing user to: {frontend_url}/login?google_success=true")
+                return RedirectResponse(url=redirect_url, status_code=302)
             else:
-                # New user - redirect to phone verification with user data
-                import base64
-                user_data_encoded = base64.b64encode(json.dumps(user_data).encode()).decode()
-                logger.info(f"New Google user {user_data.get('email')}, redirecting to signup")
-                return RedirectResponse(url=f"{frontend_url}/auth/verify-phone?google_data={user_data_encoded}")
+                # New user - create account directly with Google data
+                logger.info(f"   New user, creating account...")
+                user_id = str(uuid.uuid4())
+                new_user = {
+                    "user_id": user_id,
+                    "email": user_email,
+                    "full_name": user_data.get('name', user_email.split('@')[0]),
+                    "google_id": user_data.get('id'),
+                    "role": "user",
+                    "email_verified": True,
+                    "phone_verified": False,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "wallet_address": None
+                }
+                
+                await db.user_accounts.insert_one(new_user)
+                logger.info(f"✅ New user account created: {user_id}")
+                
+                # Generate token for new user
+                token_payload = {
+                    "user_id": user_id,
+                    "email": user_email,
+                    "exp": datetime.now(timezone.utc) + timedelta(days=30)
+                }
+                token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
+                
+                user_json = json.dumps({
+                    "user_id": user_id,
+                    "email": user_email,
+                    "full_name": new_user["full_name"],
+                    "role": "user"
+                })
+                
+                from urllib.parse import quote
+                redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
+                logger.info(f"✅ Redirecting new user to: {frontend_url}/login?google_success=true")
+                return RedirectResponse(url=redirect_url, status_code=302)
     
     except Exception as e:
-        logger.error(f"Google OAuth callback error: {str(e)}")
-        return RedirectResponse(url=f"{frontend_url}/login?error=callback_failed&message={str(e)[:100]}")
+        import traceback
+        logger.error(f"❌ Google OAuth callback error: {str(e)}")
+        logger.error(f"   Traceback: {traceback.format_exc()}")
+        return RedirectResponse(url=f"{frontend_url}/login?error=callback_failed", status_code=302)
 
 @api_router.post("/auth/complete-google-signup")
 async def complete_google_signup(request: dict):
