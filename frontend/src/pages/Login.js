@@ -205,7 +205,7 @@ export default function Login() {
             background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 40%, #00C6FF 70%, #0080FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '6px',
+            marginBottom: '0px',
             letterSpacing: '0.8px',
             lineHeight: '1.2',
             textShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
