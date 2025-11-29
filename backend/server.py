@@ -5546,42 +5546,18 @@ async def google_callback(code: str = None, error: str = None):
                 logger.info(f"✅ Redirecting existing user to: {frontend_url}/login?google_success=true")
                 return RedirectResponse(url=redirect_url, status_code=302)
             else:
-                # New user - create account directly with Google data
-                logger.info(f"   New user, creating account...")
-                user_id = str(uuid.uuid4())
-                new_user = {
-                    "user_id": user_id,
+                # New user - redirect to phone verification with Google data
+                logger.info(f"   New user, redirecting to phone verification...")
+                import base64
+                google_data_to_encode = {
                     "email": user_email,
-                    "full_name": user_data.get('name', user_email.split('@')[0]),
+                    "name": user_data.get('name', user_email.split('@')[0]),
                     "google_id": user_data.get('id'),
-                    "role": "user",
-                    "email_verified": True,
-                    "phone_verified": False,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "wallet_address": None
+                    "picture": user_data.get('picture', '')
                 }
-                
-                await db.user_accounts.insert_one(new_user)
-                logger.info(f"✅ New user account created: {user_id}")
-                
-                # Generate token for new user
-                token_payload = {
-                    "user_id": user_id,
-                    "email": user_email,
-                    "exp": datetime.now(timezone.utc) + timedelta(days=30)
-                }
-                token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
-                
-                user_json = json.dumps({
-                    "user_id": user_id,
-                    "email": user_email,
-                    "full_name": new_user["full_name"],
-                    "role": "user"
-                })
-                
-                from urllib.parse import quote
-                redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
-                logger.info(f"✅ Redirecting new user to: {frontend_url}/login?google_success=true")
+                user_data_encoded = base64.b64encode(json.dumps(google_data_to_encode).encode()).decode()
+                redirect_url = f"{frontend_url}/register?google_data={user_data_encoded}&require_phone=true"
+                logger.info(f"✅ Redirecting new Google user to registration with phone verification")
                 return RedirectResponse(url=redirect_url, status_code=302)
     
     except Exception as e:
