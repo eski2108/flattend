@@ -467,7 +467,7 @@ export default function Login() {
         </button>
 
         {/* Sign Up Link */}
-        <div style={{ textAlign: 'center', marginTop: '32px' }}>
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
           <p style={{ color: '#8F9BB3', fontSize: '15px', marginBottom: 0 }}>
             Don't have an account?{' '}
             <Link 
