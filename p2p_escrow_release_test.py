@@ -16,7 +16,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://coinhubuix.preview.emergentagent.com/api"
+BACKEND_URL = "https://tradehub-227.preview.emergentagent.com/api"
 
 # Test credentials
 SELLER_EMAIL = "p2p_demo_seller@demo.com"
