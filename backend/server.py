@@ -5377,10 +5377,8 @@ async def google_auth():
     
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-        backend_url = os.environ.get('BACKEND_URL', 'https://tradehub-227.preview.emergentagent.com')
-        
-        # Use redirect URI without /api (more standard for OAuth)
-        redirect_uri = f"{backend_url}/auth/google/callback"
+        # Try multiple redirect URI formats to find one that works
+        redirect_uri = "http://localhost:3000/auth/callback"
         
         if not google_client_id:
             logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
