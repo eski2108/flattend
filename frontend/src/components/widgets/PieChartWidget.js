@@ -3,9 +3,34 @@ import React, { useState } from 'react';
 const PieChartWidget = ({ assets }) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
-  const total = assets.reduce((sum, asset) => sum + asset.value, 0);
+  // Filter out assets with zero value and calculate total
+  const validAssets = assets.filter(asset => asset.value > 0);
+  const total = validAssets.reduce((sum, asset) => sum + asset.value, 0);
   
-  const slices = assets.reduce((acc, asset) => {
+  // If no valid assets or total is 0, return empty state
+  if (validAssets.length === 0 || total === 0) {
+    return (
+      <div style={{
+        background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+        border: '1px solid rgba(0, 198, 255, 0.25)',
+        borderRadius: '16px',
+        padding: '20px',
+        marginBottom: '20px',
+        boxShadow: '0 0 20px rgba(0, 198, 255, 0.15)',
+        minHeight: '250px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center', color: '#8F9BB3' }}>
+          <p style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>No Portfolio Data</p>
+          <p style={{ fontSize: '13px' }}>Add assets to see allocation chart</p>
+        </div>
+      </div>
+    );
+  }
+  
+  const slices = validAssets.reduce((acc, asset) => {
     const percent = (asset.value / total) * 100;
     const angle = (percent / 100) * 360;
     const previousAngle = acc.length > 0 ? acc[acc.length - 1].endAngle : 0;
