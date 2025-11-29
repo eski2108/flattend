@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Logo = ({ size = 55, showText = false }) => {
+const Logo = ({ size = 55, showText = false, style = {} }) => {
   return (
     <div style={{
       display: 'flex',
@@ -8,7 +8,7 @@ const Logo = ({ size = 55, showText = false }) => {
       gap: '12px',
       cursor: 'pointer'
     }}>
-      {/* CHX Logo - Original Size */}
+      {/* CHX Logo */}
       <img
         src="/logo1-transparent.png"
         alt="Coin Hub X Logo"
@@ -16,8 +16,8 @@ const Logo = ({ size = 55, showText = false }) => {
           height: size,
           width: 'auto',
           objectFit: 'contain',
-          filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.3))',
-          imageRendering: 'crisp-edges'
+          imageRendering: 'crisp-edges',
+          ...style
         }}
       />
 
