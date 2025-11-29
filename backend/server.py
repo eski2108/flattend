@@ -16009,10 +16009,13 @@ async def get_portfolio_history(
         start_time = now - timedelta(hours=config["hours"])
         
         # Get all transactions in this time range to calculate historical balances
-        transactions = await db.transactions.find({
-            "user_id": user_id,
-            "timestamp": {"$gte": start_time, "$lte": now}
-        }).sort("timestamp", 1).to_list(None)
+        transactions = await db.transactions.find(
+            {
+                "user_id": user_id,
+                "timestamp": {"$gte": start_time, "$lte": now}
+            },
+            {"_id": 0}  # Exclude ObjectId to prevent serialization issues
+        ).sort("timestamp", 1).to_list(None)
         
         # Get current balances
         wallet_service = get_wallet_service()
