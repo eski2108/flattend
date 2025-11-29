@@ -11,7 +11,7 @@ const DonutPLWidget = ({ plPercent }) => {
 
   return (
     <div style={{
-      flex: '0 0 31%',
+      width: '100%',
       background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
       border: `1px solid ${isPositive ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
       borderRadius: '14px',
