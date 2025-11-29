@@ -133,34 +133,71 @@ export default function SpotTrading() {
       width: containerWidth,
       height: chartHeight,
       layout: {
-        background: { color: 'transparent' },
-        textColor: '#888',
+        background: { color: '#0A0F24' },
+        textColor: 'rgba(255, 255, 255, 0.7)',
+        fontFamily: 'Inter, sans-serif',
       },
       grid: {
-        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
-        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+        vertLines: { 
+          color: 'rgba(255, 255, 255, 0.06)',
+          style: 1,
+          visible: true
+        },
+        horzLines: { 
+          color: 'rgba(255, 255, 255, 0.06)',
+          style: 1,
+          visible: true
+        },
+      },
+      crosshair: {
+        mode: LightweightCharts.CrosshairMode.Normal,
+        vertLine: {
+          color: '#00F0FF',
+          width: 1,
+          style: 3,
+          labelBackgroundColor: '#00F0FF',
+        },
+        horzLine: {
+          color: '#00F0FF',
+          width: 1,
+          style: 3,
+          labelBackgroundColor: '#00F0FF',
+        },
       },
       rightPriceScale: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'rgba(0, 240, 255, 0.2)',
+        textColor: 'rgba(255, 255, 255, 0.7)',
+        scaleMargins: {
+          top: 0.1,
+          bottom: 0.1,
+        },
       },
       timeScale: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'rgba(0, 240, 255, 0.2)',
         timeVisible: true,
         secondsVisible: false,
+        rightOffset: 5,
+        barSpacing: 8,
       },
       localization: {
-        locale: 'en-US',
-        dateFormat: 'yyyy-MM-dd',
+        locale: 'en-GB',
+        dateFormat: 'dd MMM yyyy',
       },
     });
 
-    const candlestickSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
-      upColor: '#22C55E',
-      downColor: '#EF4444',
-      borderUpColor: '#22C55E',
-      borderDownColor: '#EF4444',
-      wickUpColor: '#22C55E',
-      wickDownColor: '#EF4444',
+    const candlestickSeries = chart.addCandlestickSeries({
+      upColor: '#00FF99',
+      downColor: '#FF4D4D',
+      borderUpColor: '#00FF99',
+      borderDownColor: '#FF4D4D',
+      wickUpColor: '#00FF99',
+      wickDownColor: '#FF4D4D',
+      borderVisible: true,
+      priceFormat: {
+        type: 'price',
+        precision: 2,
+        minMove: 0.01,
+      },
     });
 
     const data = generateCandlestickData();
