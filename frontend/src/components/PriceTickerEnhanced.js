@@ -121,6 +121,7 @@ export default function PriceTickerEnhanced() {
       borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
       height: '56px',
       overflow: 'visible',
+      margin: '16px 0',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
