@@ -185,6 +185,9 @@ const PortfolioGraph = ({ totalValue, userId }) => {
         const timestamp = w.globals.seriesX[seriesIndex][dataPointIndex];
         const date = new Date(timestamp);
         
+        // Calculate approx USD value
+        const usdValue = (value * 1.27).toFixed(2);
+        
         return `
           <div style="
             background: #0B1020;
@@ -193,12 +196,16 @@ const PortfolioGraph = ({ totalValue, userId }) => {
             border-radius: 10px;
             border: 1px solid rgba(0, 229, 255, 0.3);
             box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            font-family: Inter, sans-serif;
           ">
-            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">
-              ${date.toLocaleDateString()} ${date.toLocaleTimeString()}
+            <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 500;">
+              ${date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
             </div>
-            <div style="font-size: 16px; font-weight: 700; color: #00E5FF;">
+            <div style="font-size: 18px; font-weight: 700; color: #00E5FF; margin-bottom: 4px;">
               £${value.toFixed(2)}
+            </div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500;">
+              ≈ $${usdValue}
             </div>
           </div>
         `;
