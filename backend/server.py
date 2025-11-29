@@ -5375,28 +5375,42 @@ async def google_auth():
     from urllib.parse import urlencode
     from fastapi.responses import RedirectResponse
     
-    google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-    backend_url = os.environ.get('BACKEND_URL', 'https://tradehub-227.preview.emergentagent.com')
-    redirect_uri = f"{backend_url}/api/auth/google/callback"
-    
-    if not google_client_id:
-        logger.error("GOOGLE_CLIENT_ID not set in environment")
-        return {"error": "Google OAuth not configured"}
-    
-    params = {
-        'client_id': google_client_id,
-        'redirect_uri': redirect_uri,
-        'response_type': 'code',
-        'scope': 'openid email profile',
-        'access_type': 'offline',
-        'prompt': 'consent'
-    }
-    
-    auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"
-    logger.info(f"Google OAuth initiated. Redirect URI: {redirect_uri}")
-    
-    # Redirect directly to Google OAuth
-    return RedirectResponse(url=auth_url)
+    try:
+        google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+        backend_url = os.environ.get('BACKEND_URL', 'https://tradehub-227.preview.emergentagent.com')
+        
+        # CRITICAL: Ensure backend_url has /api prefix for the callback
+        if not backend_url.endswith('/api'):
+            backend_url = f"{backend_url}/api"
+        
+        redirect_uri = f"{backend_url}/auth/google/callback"
+        
+        if not google_client_id:
+            logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
+            return {"success": False, "error": "Google OAuth not configured"}
+        
+        logger.info(f"🔵 Google OAuth initiated")
+        logger.info(f"   Client ID: {google_client_id[:20]}...")
+        logger.info(f"   Redirect URI: {redirect_uri}")
+        
+        params = {
+            'client_id': google_client_id,
+            'redirect_uri': redirect_uri,
+            'response_type': 'code',
+            'scope': 'openid email profile',
+            'access_type': 'offline',
+            'prompt': 'consent'
+        }
+        
+        auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"
+        logger.info(f"   Auth URL: {auth_url[:100]}...")
+        
+        # Redirect directly to Google OAuth
+        return RedirectResponse(url=auth_url, status_code=302)
+        
+    except Exception as e:
+        logger.error(f"❌ Google auth initiation error: {str(e)}")
+        return {"success": False, "error": str(e)}
 
 @api_router.get("/auth/google/callback")
 async def google_callback(code: str = None, error: str = None):
