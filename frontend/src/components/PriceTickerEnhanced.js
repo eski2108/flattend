@@ -48,13 +48,14 @@ export default function PriceTickerEnhanced() {
       const response = await axios.get(`${API}/api/nowpayments/currencies`, { timeout: 10000 });
       if (response.data.success && response.data.currencies) {
         const currencies = response.data.currencies;
-        // Filter to show top coins and some popular ones
-        const coins = currencies.slice(0, 100).map(symbol => ({
+        // Map ALL currencies (no limit)
+        const coins = currencies.map(symbol => ({
           symbol: symbol.toUpperCase(),
           icon: COIN_EMOJIS[symbol.toUpperCase()] || '💎',
           color: COIN_COLORS[symbol.toUpperCase()] || '#00C6FF'
         }));
         setAllCoins(coins);
+        console.log(`✅ Loaded ${coins.length} coins from NOWPayments`);
       }
     } catch (error) {
       console.error('Error fetching NOWPayments currencies:', error);
