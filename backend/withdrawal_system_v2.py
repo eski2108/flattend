@@ -264,21 +264,40 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
                 }
             )
             
-            # Log to fee_transactions for business dashboard
+            # Log withdrawal fee to fee_transactions
             await db.fee_transactions.insert_one({
+                "transaction_id": f"{withdrawal_id}_wf",
                 "user_id": user_id,
                 "transaction_type": "withdrawal",
-                "fee_type": "withdrawal_fee_percent",
+                "fee_type": "withdrawal_fee",
                 "amount": amount,
-                "fee_amount": fee_amount,
+                "total_fee": fee_amount,
                 "fee_percent": withdrawal["fee_percent"],
-                "admin_fee": admin_fee,
-                "referrer_commission": referrer_commission,
+                "admin_fee": fee_amount * (admin_fee / total_fee) if total_fee > 0 else fee_amount,
+                "referrer_commission": fee_amount * (referrer_commission / total_fee) if total_fee > 0 else 0,
                 "referrer_id": referrer_id,
                 "currency": currency,
                 "reference_id": withdrawal_id,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             })
+            
+            # Log network fee separately if present
+            if network_fee_amount > 0:
+                await db.fee_transactions.insert_one({
+                    "transaction_id": f"{withdrawal_id}_nf",
+                    "user_id": user_id,
+                    "transaction_type": "withdrawal",
+                    "fee_type": "network_withdrawal_fee",
+                    "amount": amount,
+                    "total_fee": network_fee_amount,
+                    "fee_percent": withdrawal.get("network_fee_percent", 0),
+                    "admin_fee": network_fee_amount * (admin_fee / total_fee) if total_fee > 0 else network_fee_amount,
+                    "referrer_commission": network_fee_amount * (referrer_commission / total_fee) if total_fee > 0 else 0,
+                    "referrer_id": referrer_id,
+                    "currency": currency,
+                    "reference_id": withdrawal_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                })
             
             logger.info(f"✅ Withdrawal {withdrawal_id} approved by {approval.admin_id}, Fee: {fee_amount} (Admin: {admin_fee}, Referrer: {referrer_commission})")
             
