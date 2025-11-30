@@ -65,11 +65,18 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
                 "message": f"Insufficient balance. Available: {available} {currency}, Requested: {amount}"
             }
         
-        # Get fee from centralized system
+        # Get fees from centralized system
         fee_manager = get_fee_manager(db)
-        fee_percent = await fee_manager.get_fee("withdrawal_fee_percent")
-        fee_amount = amount * (fee_percent / 100)
-        net_amount = amount - fee_amount
+        withdrawal_fee_percent = await fee_manager.get_fee("withdrawal_fee_percent")
+        network_fee_percent = await fee_manager.get_fee("network_withdrawal_fee_percent")
+        
+        # Calculate both fees
+        withdrawal_fee = amount * (withdrawal_fee_percent / 100)
+        network_fee = amount * (network_fee_percent / 100)
+        total_fee = withdrawal_fee + network_fee
+        net_amount = amount - total_fee
+        
+        logger.info(f"Withdrawal fees: Base {withdrawal_fee}, Network {network_fee}, Total {total_fee}")
         
         # Create withdrawal request
         withdrawal = WithdrawalRequest(
