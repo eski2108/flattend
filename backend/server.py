@@ -2968,7 +2968,8 @@ async def create_trade(request: CreateTradeRequest):
         crypto_amount=request.crypto_amount,
         payment_method=request.payment_method,
         buyer_wallet_address=request.buyer_wallet_address,
-        buyer_wallet_network=request.buyer_wallet_network
+        buyer_wallet_network=request.buyer_wallet_network,
+        is_express=request.is_express
     )
     
     return result
