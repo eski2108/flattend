@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://cryptodash-17.preview.emergentagent.com/api
+https://crypto-validator.preview.emergentagent.com/api
 ```
 
 This means:
