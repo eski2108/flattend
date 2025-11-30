@@ -315,7 +315,7 @@ function P2PMarketplace() {
           <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.15)', flexShrink: 0 }} />
 
           {/* Fiat Currency Dropdown */}
-          <div style={{ width: '95px', flexShrink: 0 }}>
+          <div style={{ width: '115px', flexShrink: 0 }}>
             <select
               value={selectedFiatCurrency}
               onChange={(e) => setSelectedFiatCurrency(e.target.value)}
@@ -332,15 +332,24 @@ function P2PMarketplace() {
                 outline: 'none'
               }}
             >
-              <option value="" style={{ background: '#1a1f3a', color: '#fff' }}>All</option>
-              <option value="GBP" style={{ background: '#1a1f3a', color: '#fff' }}>GBP</option>
-              <option value="USD" style={{ background: '#1a1f3a', color: '#fff' }}>USD</option>
-              <option value="EUR" style={{ background: '#1a1f3a', color: '#fff' }}>EUR</option>
-              {availableCurrencies.filter(c => !['GBP', 'USD', 'EUR'].includes(c)).map(currency => (
-                <option key={currency} value={currency} style={{ background: '#1a1f3a', color: '#fff' }}>
-                  {currency}
-                </option>
-              ))}
+              <option value="" style={{ background: '#1a1f3a', color: '#fff' }}>All Currencies</option>
+              {availableCurrencies.length > 0 ? (
+                availableCurrencies.map(currency => (
+                  <option 
+                    key={typeof currency === 'object' ? currency.code : currency} 
+                    value={typeof currency === 'object' ? currency.code : currency} 
+                    style={{ background: '#1a1f3a', color: '#fff' }}
+                  >
+                    {typeof currency === 'object' ? `${currency.symbol} ${currency.code}` : currency}
+                  </option>
+                ))
+              ) : (
+                <>
+                  <option value="GBP" style={{ background: '#1a1f3a', color: '#fff' }}>£ GBP</option>
+                  <option value="USD" style={{ background: '#1a1f3a', color: '#fff' }}>$ USD</option>
+                  <option value="EUR" style={{ background: '#1a1f3a', color: '#fff' }}>€ EUR</option>
+                </>
+              )}
             </select>
           </div>
 
