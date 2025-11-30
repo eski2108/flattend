@@ -20320,6 +20320,102 @@ async def export_security_logs(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ============================================
+# CENTRALIZED FEE MANAGEMENT ENDPOINTS
+# ============================================
+
+@api_router.get("/admin/fees/test")
+async def test_fees_endpoint():
+    """Test endpoint to check if routes register"""
+    return {"success": True, "message": "Fee endpoints are working!"}
+
+@api_router.get("/admin/fees/all")
+async def get_all_fees():
+    """Get all current platform fees"""
+    try:
+        fee_manager = get_fee_manager(db)
+        fees = await fee_manager.get_all_fees()
+        return {
+            "success": True,
+            "fees": fees
+        }
+    except Exception as e:
+        logger.error(f"Error getting all fees: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/fees/update")
+async def update_fee_endpoint(request: dict):
+    """Update a specific fee - automatically propagates everywhere"""
+    try:
+        fee_type = request.get("fee_type")
+        value = float(request.get("value"))
+        
+        fee_manager = get_fee_manager(db)
+        await fee_manager.update_fee(fee_type, value)
+        
+        return {
+            "success": True,
+            "message": f"Fee {fee_type} updated to {value}% - changes applied across entire platform"
+        }
+    except Exception as e:
+        logger.error(f"Error updating fee: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/revenue/complete")
+async def get_complete_revenue(period: str = "all"):
+    """Get complete revenue breakdown for all 14+ streams"""
+    try:
+        from datetime import timedelta
+        
+        now = datetime.now(timezone.utc)
+        
+        if period == "day":
+            start_time = now - timedelta(days=1)
+        elif period == "week":
+            start_time = now - timedelta(days=7)
+        elif period == "month":
+            start_time = now - timedelta(days=30)
+        else:
+            start_time = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        
+        # Get all fee transactions from new fee_transactions collection
+        fee_txns = await db.fee_transactions.find({
+            "timestamp": {"$gte": start_time.isoformat()}
+        }, {"_id": 0}).to_list(10000)
+        
+        breakdown = {}
+        for txn in fee_txns:
+            fee_type = txn.get("fee_type", "unknown")
+            fee_amount = txn.get("admin_fee", 0)  # Only count admin portion
+            breakdown[fee_type] = breakdown.get(fee_type, 0) + fee_amount
+        
+        total = sum(breakdown.values())
+        
+        # Calculate period-specific totals
+        now_iso = now.isoformat()
+        today_start = (now - timedelta(days=1)).isoformat()
+        week_start = (now - timedelta(days=7)).isoformat()
+        month_start = (now - timedelta(days=30)).isoformat()
+        
+        today_total = sum(t.get("admin_fee", 0) for t in fee_txns if t.get("timestamp", "") >= today_start)
+        week_total = sum(t.get("admin_fee", 0) for t in fee_txns if t.get("timestamp", "") >= week_start)
+        month_total = sum(t.get("admin_fee", 0) for t in fee_txns if t.get("timestamp", "") >= month_start)
+        
+        return {
+            "success": True,
+            "revenue": {
+                "today": today_total,
+                "week": week_total,
+                "month": month_total,
+                "allTime": total,
+                "breakdown": breakdown
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting complete revenue: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Google OAuth routes (without /api prefix for standard OAuth compatibility)
 @app.get("/auth/google/callback")
 async def google_callback_direct(code: str = None, error: str = None):
