@@ -150,7 +150,7 @@ function App() {
             <Route path="/swap/:coin" element={<SwapCrypto />} />
             <Route path="/instant-buy" element={<InstantBuy />} />
             <Route path="/p2p-express" element={<P2PExpress />} />
-            <Route path="/referrals" element={<ReferralLinkGenerator />} />
+            <Route path="/referrals" element={<ReferralDashboard />} />
             <Route path="/referrals/premium" element={<ReferralsPage />} />
             <Route path="/referrals/enhanced" element={<EnhancedReferralDashboard />} />
             <Route path="/referrals/new" element={<ReferralsPageNew />} />
