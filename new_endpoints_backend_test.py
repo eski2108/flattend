@@ -670,7 +670,7 @@ class NewEndpointsBackendTester:
             try:
                 data = response.json()
                 self.log_test(
-                    "POST /api/referrals/purchase-vip",
+                    "POST /api/user/purchase-vip-tier",
                     True,
                     "VIP purchase endpoint accessible (200 OK)",
                     data,
