@@ -22,11 +22,20 @@ DEFAULT_MONETIZATION_SETTINGS = {
     "setting_id": "default_monetization",
     
     # Trading Fees
-    "buyer_express_fee_percent": 1.0,  # 1% - Buyer Express Buy fee
+    "buyer_express_fee_percent": 2.0,  # 2% - Buyer Express Buy fee (P2P Express)
+    "instant_buy_fee_percent": 3.0,  # 3% - Instant Buy fee
     "instant_sell_fee_percent": 1.0,  # 1% - Instant Sell to admin fee
-    "admin_sell_spread_percent": 3.0,  # +3% - Admin markup on Express Buy
-    "admin_buy_spread_percent": -2.5,  # -2.5% - Admin markdown on Instant Sell
+    "admin_sell_spread_percent": 1.0,  # +1% - Admin markup on liquidity sells
+    "admin_buy_spread_percent": 1.0,  # +1% - Admin markup on liquidity buys
     "p2p_seller_fee_percent": 1.0,  # 1% - P2P seller fee
+    "swap_fee_percent": 3.0,  # 3% - Swap fee
+    "paypal_to_paypal_fee_percent": 3.0,  # 3% - PayPal to PayPal fee
+    "savings_early_withdrawal_penalty_percent": 2.0,  # 2% - Early withdrawal penalty
+    "staking_admin_fee_percent": 1.0,  # 1% - Staking platform fee
+    "referral_standard_commission_percent": 20.0,  # 20% referrer payout from profit
+    "referral_golden_commission_percent": 50.0,  # 50% referrer payout from profit
+    "internal_transfer_fee_percent": 0.0,  # 0% - Internal transfers free
+    "cross_wallet_conversion_fee_percent": 1.0  # 1% - Cross-wallet conversion
     
     # Payment Method Fees (in percent, added to transaction)
     "payment_method_fees": {
