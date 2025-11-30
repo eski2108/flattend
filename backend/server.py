@@ -22970,6 +22970,185 @@ async def get_user_referral_dashboard(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ===========================
+# TWO-FACTOR AUTHENTICATION ENDPOINTS
+# ===========================
+
+from two_factor_auth import TwoFactorAuthService
+
+def get_2fa_service():
+    """Get 2FA service instance"""
+    return TwoFactorAuthService(db)
+
+
+@api_router.post("/auth/2fa/setup")
+async def setup_2fa(request: dict):
+    """Setup 2FA for user - generates QR code and backup codes"""
+    try:
+        user_id = request.get("user_id")
+        email = request.get("email")
+        
+        if not user_id or not email:
+            raise HTTPException(status_code=400, detail="user_id and email required")
+        
+        tfa_service = get_2fa_service()
+        result = await tfa_service.setup_2fa(user_id, email)
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error in 2FA setup: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/verify-setup")
+async def verify_2fa_setup(request: dict):
+    """Verify and enable 2FA"""
+    try:
+        user_id = request.get("user_id")
+        code = request.get("code")
+        
+        if not user_id or not code:
+            raise HTTPException(status_code=400, detail="user_id and code required")
+        
+        tfa_service = get_2fa_service()
+        result = await tfa_service.verify_and_enable_2fa(user_id, code)
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error verifying 2FA setup: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/verify")
+async def verify_2fa_code(request: dict):
+    """Verify 2FA code (TOTP or backup)"""
+    try:
+        user_id = request.get("user_id")
+        code = request.get("code")
+        
+        if not user_id or not code:
+            raise HTTPException(status_code=400, detail="user_id and code required")
+        
+        tfa_service = get_2fa_service()
+        result = await tfa_service.verify_2fa_code(user_id, code)
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error verifying 2FA code: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/send-email-code")
+async def send_email_2fa_code(request: dict):
+    """Send 2FA code via email (fallback method)"""
+    try:
+        user_id = request.get("user_id")
+        email = request.get("email")
+        action = request.get("action", "login")
+        
+        if not user_id or not email:
+            raise HTTPException(status_code=400, detail="user_id and email required")
+        
+        tfa_service = get_2fa_service()
+        result = await tfa_service.send_email_code(user_id, email, action)
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error sending email 2FA code: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/verify-email")
+async def verify_email_2fa_code(request: dict):
+    """Verify email 2FA code"""
+    try:
+        user_id = request.get("user_id")
+        code = request.get("code")
+        
+        if not user_id or not code:
+            raise HTTPException(status_code=400, detail="user_id and code required")
+        
+        tfa_service = get_2fa_service()
+        result = await tfa_service.verify_email_code(user_id, code)
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error verifying email code: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/disable")
+async def disable_2fa(request: dict):
+    """Disable 2FA for user"""
+    try:
+        user_id = request.get("user_id")
+        code = request.get("code")  # Require code to disable
+        
+        if not user_id or not code:
+            raise HTTPException(status_code=400, detail="user_id and code required")
+        
+        tfa_service = get_2fa_service()
+        
+        # Verify code first
+        verify_result = await tfa_service.verify_2fa_code(user_id, code)
+        if not verify_result.get("success"):
+            raise HTTPException(status_code=401, detail="Invalid code")
+        
+        result = await tfa_service.disable_2fa(user_id)
+        return result
+        
+    except Exception as e:
+        print(f"Error disabling 2FA: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/regenerate-backup-codes")
+async def regenerate_backup_codes(request: dict):
+    """Generate new backup codes"""
+    try:
+        user_id = request.get("user_id")
+        code = request.get("code")  # Require code
+        
+        if not user_id or not code:
+            raise HTTPException(status_code=400, detail="user_id and code required")
+        
+        tfa_service = get_2fa_service()
+        
+        # Verify code first
+        verify_result = await tfa_service.verify_2fa_code(user_id, code)
+        if not verify_result.get("success"):
+            raise HTTPException(status_code=401, detail="Invalid code")
+        
+        result = await tfa_service.regenerate_backup_codes(user_id)
+        return result
+        
+    except Exception as e:
+        print(f"Error regenerating backup codes: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/auth/2fa/status/{user_id}")
+async def get_2fa_status(user_id: str):
+    """Get 2FA status for user"""
+    try:
+        tfa_service = get_2fa_service()
+        enabled = await tfa_service.is_2fa_enabled(user_id)
+        
+        return {
+            "success": True,
+            "enabled": enabled
+        }
+        
+    except Exception as e:
+        print(f"Error getting 2FA status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ⚠️  WARNING: ALL ENDPOINTS MUST BE DEFINED ABOVE THIS SECTION
 # ⚠️  WARNING: THIS SECTION IS LOCKED AND PROTECTED
 #
