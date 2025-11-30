@@ -255,7 +255,7 @@ PLATFORM_CONFIG = {
     "referral_standard_commission_percent": 20.0,  # 20% referrer payout from platform profit
     "referral_golden_commission_percent": 50.0,  # 50% referrer payout from platform profit
     "internal_transfer_fee_percent": 0.0,  # 0% internal transfer
-    "cross_wallet_conversion_fee_percent": 1.0  # 1% cross-wallet conversion
+    "cross_wallet_conversion_fee_percent": 1.0,  # 1% cross-wallet conversion
     "liquidation_fee_percent": 10.0,
     "liquidation_penalty_percent": 5.0,
     "min_collateral_ratio": 150,  # 150% collateralization required
