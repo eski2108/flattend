@@ -279,7 +279,7 @@ function P2PMarketplace() {
           boxShadow: '0 0 40px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.05)'
         }}>
           {/* Cryptocurrency Dropdown */}
-          <div style={{ width: '85px', flexShrink: 0 }}>
+          <div style={{ width: '110px', flexShrink: 0 }}>
             <select
               value={selectedCrypto}
               onChange={(e) => setSelectedCrypto(e.target.value)}
@@ -296,11 +296,19 @@ function P2PMarketplace() {
                 outline: 'none'
               }}
             >
-              {availableCoins.map(coin => (
-                <option key={coin} value={coin} style={{ background: '#1a1f3a', color: '#fff' }}>
-                  {coin}
-                </option>
-              ))}
+              {coinsData.length > 0 ? (
+                coinsData.map(coin => (
+                  <option key={coin.symbol} value={coin.symbol} style={{ background: '#1a1f3a', color: '#fff' }}>
+                    {coin.emoji} {coin.symbol}
+                  </option>
+                ))
+              ) : (
+                availableCoins.map(coin => (
+                  <option key={coin} value={coin} style={{ background: '#1a1f3a', color: '#fff' }}>
+                    {coin}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
