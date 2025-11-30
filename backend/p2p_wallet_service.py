@@ -252,20 +252,48 @@ async def p2p_release_crypto_with_wallet(
                 pass
             return {"success": False, "message": f"Failed to credit buyer: {str(credit_error)}"}
         
-        # Step 3: Collect platform fee
-        admin_wallet_id = "admin_fee_wallet"
+        # Step 3: Collect admin portion of platform fee
+        admin_wallet_id = "admin_wallet"
         try:
             await wallet_service.credit(
                 user_id=admin_wallet_id,
                 currency=currency,
-                amount=platform_fee,
+                amount=admin_fee,
                 transaction_type="p2p_platform_fee",
                 reference_id=trade_id,
-                metadata={"trade_id": trade_id, "seller_id": seller_id, "buyer_id": buyer_id}
+                metadata={"trade_id": trade_id, "seller_id": seller_id, "buyer_id": buyer_id, "total_fee": platform_fee}
             )
-            logger.info(f"✅ P2P: Collected {platform_fee} {currency} platform fee")
+            logger.info(f"✅ P2P: Collected {admin_fee} {currency} admin fee")
         except Exception as fee_error:
-            logger.warning(f"⚠️ P2P: Fee collection failed: {str(fee_error)}")
+            logger.warning(f"⚠️ P2P: Admin fee collection failed: {str(fee_error)}")
+        
+        # Step 4: Pay referrer commission if applicable
+        if referrer_id and referrer_commission > 0:
+            try:
+                await wallet_service.credit(
+                    user_id=referrer_id,
+                    currency=currency,
+                    amount=referrer_commission,
+                    transaction_type="referral_commission",
+                    reference_id=trade_id,
+                    metadata={"referred_user_id": seller_id, "transaction_type": "p2p_trade"}
+                )
+                logger.info(f"✅ P2P: Paid {referrer_commission} {currency} commission to referrer {referrer_id}")
+                
+                # Log referral commission
+                await db.referral_commissions.insert_one({
+                    "referrer_id": referrer_id,
+                    "referred_user_id": seller_id,
+                    "transaction_type": "p2p_trade",
+                    "fee_amount": platform_fee,
+                    "commission_amount": referrer_commission,
+                    "commission_percent": commission_percent,
+                    "currency": currency,
+                    "trade_id": trade_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                })
+            except Exception as comm_error:
+                logger.warning(f"⚠️ P2P: Referrer commission payment failed: {str(comm_error)}")
         
         # Update trade status and save fee for audit trail
         await db.trades.update_one(
