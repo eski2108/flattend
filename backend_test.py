@@ -75,17 +75,27 @@ ADMIN_USER = {
 
 ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
 
-class CoinHubXComprehensiveTester:
+class TradingPlatformTester:
     def __init__(self):
         self.session = requests.Session()
-        self.test_user_id = None
+        self.trader_user_id = None
+        self.buyer_user_id = None
         self.seller_user_id = None
         self.admin_user_id = None
-        self.sell_order_id = None
-        self.buy_order_id = None
-        self.trade_id = None
+        
+        # Trading system IDs
+        self.position_id = None
+        self.trade_history_id = None
+        
+        # P2P system IDs
+        self.p2p_offer_id = None
+        self.p2p_trade_id = None
+        self.express_order_id = None
+        
+        # Other system IDs
         self.dispute_id = None
         self.chat_id = None
+        
         self.test_results = []
         
     def log_test(self, test_name, success, message, details=None):
