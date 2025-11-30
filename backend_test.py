@@ -2939,12 +2939,69 @@ class TradingPlatformTester:
             
         return False
     
+    def run_all_tests(self):
+        """Run comprehensive trading platform test suite"""
+        print("🚀 Starting Complete Trading Platform Testing Suite")
+        print("=" * 70)
+        
+        # Phase 1: User Registration and Setup
+        print("\n📋 PHASE 1: USER REGISTRATION AND SETUP")
+        self.test_user_registration(TEST_TRADER, "Trader")
+        self.test_user_registration(P2P_BUYER, "P2P Buyer")
+        self.test_user_registration(P2P_SELLER, "P2P Seller")
+        self.test_admin_login()
+        
+        # Phase 2: Trading Engine Testing
+        print("\n📈 PHASE 2: TRADING ENGINE TESTING")
+        self.test_trading_platform_settings()
+        self.test_live_prices_coingecko()
+        self.test_trading_orderbook()
+        self.test_open_trading_position()
+        self.test_close_trading_position()
+        self.test_trading_history()
+        self.test_wallet_balance_updates()
+        
+        # Phase 3: P2P Express Testing
+        print("\n⚡ PHASE 3: P2P EXPRESS TESTING")
+        self.test_p2p_express_check_liquidity()
+        self.test_p2p_express_create_order()
+        self.test_nowpayments_currencies()
+        
+        # Phase 4: P2P Marketplace Testing
+        print("\n🏪 PHASE 4: P2P MARKETPLACE TESTING")
+        self.test_p2p_marketplace_available_coins()
+        self.test_p2p_marketplace_filters()
+        self.test_create_sell_order()
+        self.test_get_sell_orders()
+        self.test_create_buy_order()
+        self.test_mark_as_paid()
+        self.test_release_crypto()
+        
+        # Phase 5: Business Dashboard Testing
+        print("\n📊 PHASE 5: BUSINESS DASHBOARD TESTING")
+        self.test_business_dashboard_stats()
+        self.test_referral_dashboard()
+        self.test_admin_dashboard_stats()
+        
+        # Phase 6: Additional Features Testing
+        print("\n🔧 PHASE 6: ADDITIONAL FEATURES TESTING")
+        self.test_referral_dashboard_api()
+        self.test_support_chat_send_message()
+        self.test_support_chat_get_history()
+        self.test_p2p_offers_with_filters()
+        
+        # Generate Test Report
+        self.generate_test_report()
+        
+        return self.test_results
+
     def run_comprehensive_backend_tests(self):
         """Run comprehensive backend tests for all critical endpoints as requested in review"""
-        print("🚀 COMPREHENSIVE BACKEND TESTING FOR COIN HUB X P2P MARKETPLACE")
+        print("🚀 COMPREHENSIVE BACKEND TESTING FOR COIN HUB X TRADING PLATFORM")
         print(f"🔗 Testing against: {BASE_URL}")
-        print(f"👤 Test user: {TEST_USER['email']} / {TEST_USER['password']}")
-        print(f"👤 Seller user: {SELLER_USER['email']} / {SELLER_USER['password']}")
+        print(f"👤 Trader: {TEST_TRADER['email']} / {TEST_TRADER['password']}")
+        print(f"👤 P2P Buyer: {P2P_BUYER['email']} / {P2P_BUYER['password']}")
+        print(f"👤 P2P Seller: {P2P_SELLER['email']} / {P2P_SELLER['password']}")
         print(f"👤 Admin user: {ADMIN_USER['email']} / {ADMIN_USER['password']}")
         
         # Comprehensive test sequence covering all endpoints in review request
