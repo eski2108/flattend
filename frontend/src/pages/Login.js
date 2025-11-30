@@ -61,17 +61,55 @@ export default function Login() {
       const response = await axios.post(`${API}/auth/login`, formData);
       
       if (response.data.success) {
-        localStorage.setItem('cryptobank_user', JSON.stringify(response.data.user));
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        localStorage.setItem('token', response.data.token);
-        toast.success('✅ Logged in successfully!');
-        navigate('/dashboard');
+        // Check if 2FA is required
+        if (response.data.two_factor_required) {
+          setShow2FA(true);
+          setTempUserId(response.data.user_id);
+          toast.info('Please enter your 2FA code');
+        } else {
+          // No 2FA required, login complete
+          localStorage.setItem('cryptobank_user', JSON.stringify(response.data.user));
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.setItem('token', response.data.token);
+          toast.success('✅ Logged in successfully!');
+          navigate('/dashboard');
+        }
       } else {
         toast.error(response.data.message || 'Login failed');
       }
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify2FA = async () => {
+    if (!twoFactorCode || twoFactorCode.length !== 6) {
+      toast.error('Please enter a valid 6-digit code');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API}/2fa/login-verify`, {
+        user_id: tempUserId,
+        code: twoFactorCode
+      });
+      
+      if (response.data.success) {
+        localStorage.setItem('cryptobank_user', JSON.stringify(response.data.user));
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('token', response.data.token);
+        toast.success('✅ Logged in successfully!');
+        navigate('/dashboard');
+      } else {
+        toast.error(response.data.message || 'Invalid 2FA code');
+      }
+    } catch (error) {
+      console.error('2FA verification error:', error);
+      toast.error(error.response?.data?.message || 'Verification failed');
     } finally {
       setLoading(false);
     }
