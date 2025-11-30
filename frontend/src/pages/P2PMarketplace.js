@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { Search, Filter, Star, Shield, Zap, Clock, TrendingUp, ChevronDown, X, User, MapPin, Award, CheckCircle } from 'lucide-react';
+import P2PNotifications from '@/components/P2PNotifications';
 import '../styles/globalSwapTheme.css';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-validator.preview.emergentagent.com';
