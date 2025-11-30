@@ -19440,6 +19440,10 @@ async def start_background_tasks():
     from backup_system import automated_backup_loop
     asyncio.create_task(automated_backup_loop())
     logger.info("✅ Automated database backup system started")
+    
+    # Start Express countdown checker
+    asyncio.create_task(express_countdown_checker_loop())
+    logger.info("✅ Express countdown checker started")
 
 
 @app.get("/api/admin/platform-wallet/deposit-address/{currency}")
