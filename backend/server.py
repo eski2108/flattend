@@ -19405,6 +19405,156 @@ async def price_alert_checker():
         await asyncio.sleep(300)
 
 # Start price alert checker on startup
+async def express_countdown_checker_loop():
+    """Background task to check and handle expired express countdowns"""
+    while True:
+        try:
+            await asyncio.sleep(30)  # Check every 30 seconds
+            
+            now = datetime.now(timezone.utc)
+            
+            expired_trades = await db.trades.find({
+                "type": "p2p_express",
+                "status": {"$in": ["pending_payment", "payment_confirmed"]},
+                "countdown_expires_at": {"$ne": None},
+                "is_instant_delivery": False
+            }).to_list(length=100)
+            
+            for trade in expired_trades:
+                try:
+                    expires_at = datetime.fromisoformat(trade["countdown_expires_at"])
+                    
+                    if now > expires_at:
+                        logger.warning(f"Express countdown expired for trade {trade['trade_id']}")
+                        
+                        # Mark seller as slow - permanently remove from Express
+                        await db.trader_profiles.update_one(
+                            {"user_id": trade["seller_id"]},
+                            {
+                                "$set": {"is_express_qualified": False, "express_removed_at": now.isoformat()},
+                                "$inc": {"express_timeouts": 1}
+                            }
+                        )
+                        
+                        # Try rematch with another seller
+                        new_seller = await db.trader_profiles.find_one(
+                            {
+                                "is_trader": True,
+                                "is_online": True,
+                                "is_express_qualified": True,
+                                "user_id": {"$ne": trade["seller_id"]},
+                                "trading_pairs": {"$in": [trade["crypto_currency"]]},
+                                "completion_rate": {"$gte": 95},
+                                "has_dispute_flags": False
+                            },
+                            sort=[("completion_rate", -1)]
+                        )
+                        
+                        if new_seller:
+                            new_countdown = (now + timedelta(seconds=EXPRESS_RELEASE_TIMEOUT)).isoformat()
+                            
+                            await db.trades.update_one(
+                                {"trade_id": trade["trade_id"]},
+                                {
+                                    "$set": {
+                                        "seller_id": new_seller["user_id"],
+                                        "countdown_expires_at": new_countdown,
+                                        "rematch_count": trade.get("rematch_count", 0) + 1,
+                                        "updated_at": now.isoformat()
+                                    }
+                                }
+                            )
+                            
+                            try:
+                                from p2p_notification_service import create_p2p_notification
+                                await create_p2p_notification(
+                                    user_id=new_seller["user_id"],
+                                    trade_id=trade["trade_id"],
+                                    notification_type="express_rematched",
+                                    message=f"EXPRESS RE-MATCH: {trade['crypto_amount']:.8f} {trade['crypto_currency']}. Release within 10 minutes."
+                                )
+                                await create_p2p_notification(
+                                    user_id=trade["buyer_id"],
+                                    trade_id=trade["trade_id"],
+                                    notification_type="express_rematched",
+                                    message="Previous seller was slow. Rematched with faster seller."
+                                )
+                            except:
+                                pass
+                        else:
+                            admin_liq = await db.admin_liquidity.find_one({
+                                "crypto_currency": trade["crypto_currency"],
+                                "available_amount": {"$gte": trade["crypto_amount"]}
+                            })
+                            
+                            if admin_liq:
+                                try:
+                                    from wallet_service import credit_wallet
+                                    await credit_wallet(
+                                        user_id=trade["buyer_id"],
+                                        currency=trade["crypto_currency"],
+                                        amount=trade["crypto_amount"]
+                                    )
+                                    
+                                    await db.trades.update_one(
+                                        {"trade_id": trade["trade_id"]},
+                                        {
+                                            "$set": {
+                                                "status": "completed",
+                                                "seller_id": "admin_liquidity_fallback",
+                                                "delivery_source": "admin_liquidity_fallback",
+                                                "completed_at": now.isoformat()
+                                            }
+                                        }
+                                    )
+                                    
+                                    await db.admin_liquidity.update_one(
+                                        {"crypto_currency": trade["crypto_currency"]},
+                                        {"$inc": {"available_amount": -trade["crypto_amount"]}}
+                                    )
+                                    
+                                    try:
+                                        from p2p_notification_service import create_p2p_notification
+                                        await create_p2p_notification(
+                                            user_id=trade["buyer_id"],
+                                            trade_id=trade["trade_id"],
+                                            notification_type="express_completed_fallback",
+                                            message="Order completed via platform liquidity. Crypto credited."
+                                        )
+                                    except:
+                                        pass
+                                except Exception as e:
+                                    logger.error(f"Fallback liquidity failed: {e}")
+                            else:
+                                await db.trades.update_one(
+                                    {"trade_id": trade["trade_id"]},
+                                    {
+                                        "$set": {
+                                            "status": "cancelled",
+                                            "cancel_reason": "express_timeout_no_sellers",
+                                            "cancelled_at": now.isoformat()
+                                        }
+                                    }
+                                )
+                                
+                                try:
+                                    from p2p_notification_service import create_p2p_notification
+                                    await create_p2p_notification(
+                                        user_id=trade["buyer_id"],
+                                        trade_id=trade["trade_id"],
+                                        notification_type="express_cancelled",
+                                        message="Express order cancelled due to seller delays. Refund initiated."
+                                    )
+                                except:
+                                    pass
+                except Exception as trade_error:
+                    logger.error(f"Error processing expired trade: {trade_error}")
+                    
+        except Exception as e:
+            logger.error(f"Express countdown checker error: {e}")
+            await asyncio.sleep(60)
+
+
 @app.on_event("startup")
 async def start_background_tasks():
     """
