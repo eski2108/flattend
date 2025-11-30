@@ -40,8 +40,13 @@ export default function SpotTrading() {
   }, [selectedPair]);
 
   useEffect(() => {
-    loadTradingViewChart();
-    loadTradingViewOrderBook();
+    // Small delay to ensure containers are rendered in DOM
+    const timer = setTimeout(() => {
+      loadTradingViewChart();
+      loadTradingViewOrderBook();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [selectedPair]);
 
   const fetchMarketStats = async () => {
