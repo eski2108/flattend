@@ -12,75 +12,60 @@ import ReactApexChart from 'react-apexcharts';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+const FEE_CATEGORIES = {
+  'TRADING & WALLET FEES': [
+    { key: 'instant_buy_fee_percent', label: 'Instant Buy Fee', type: 'percent' },
+    { key: 'instant_sell_fee_percent', label: 'Instant Sell Fee', type: 'percent' },
+    { key: 'crypto_swap_fee_percent', label: 'Crypto Swap Fee', type: 'percent' },
+    { key: 'p2p_express_fee_percent', label: 'P2P Express Fee', type: 'percent' },
+    { key: 'p2p_trade_fee_percent', label: 'P2P Trade Fee', type: 'percent' },
+    { key: 'crypto_withdrawal_fee_percent', label: 'Crypto Withdrawal Fee', type: 'percent' },
+    { key: 'crypto_deposit_fee_percent', label: 'Crypto Deposit Fee', type: 'percent', note: 'Must stay FREE (0%)' }
+  ],
+  'PAYMENT FEES': [
+    { key: 'paypal_to_paypal_fee_percent', label: 'PayPal → PayPal Fee', type: 'percent', note: 'Covers PayPal cost + profit' }
+  ],
+  'SAVINGS / STAKING / INTERNAL OPS': [
+    { key: 'early_withdrawal_penalty_percent', label: 'Early Withdrawal Penalty (Savings Vault)', type: 'percent' },
+    { key: 'staking_admin_fee_percent', label: 'Staking Admin Fee', type: 'percent', note: '% of staking rewards' },
+    { key: 'admin_liquidity_spread_percent', label: 'Admin Liquidity Spread', type: 'percent' },
+    { key: 'cross_wallet_conversion_fee_percent', label: 'Cross-Wallet Conversion Fee', type: 'percent' },
+    { key: 'internal_transfer_fee_percent', label: 'Internal Transfer Fee', type: 'percent', note: 'Must stay FREE (0%)' }
+  ],
+  'SERVICE / PLATFORM MONETIZATION': [
+    { key: 'priority_support_fee_gbp', label: 'Priority Support Fast-Track Fee', type: 'flat' },
+    { key: 'p2p_advert_promotion_fee_gbp', label: 'P2P Advert / Promotion Slots', type: 'flat', note: 'Per 24 hours' }
+  ],
+  'REFERRALS': [
+    { key: 'referral_commission_percent', label: 'Referral Commission', type: 'percent', isReferral: true, note: 'PAYOUT to referrer, NOT a fee' }
+  ],
+  'DISPUTE HANDLING': [
+    { key: 'p2p_dispute_fee_gbp', label: 'P2P Dispute Fee', type: 'flat', note: 'Taken from seller' }
+  ]
+};
+
 export default function AdminBusinessDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('revenue');
+  const [activeTab, setActiveTab] = useState('fees');
   
-  // Revenue data
   const [revenueData, setRevenueData] = useState({
-    today: 0,
-    week: 0,
-    month: 0,
-    allTime: 0,
-    breakdown: {}
+    today: 0, week: 0, month: 0, allTime: 0, breakdown: {}
   });
   
-  // Customer data
   const [customerData, setCustomerData] = useState({
-    newToday: 0,
-    newWeek: 0,
-    newMonth: 0,
-    totalUsers: 0,
-    activeUsers24h: 0,
-    topTraders: [],
-    topP2PSellers: []
+    newToday: 0, newWeek: 0, newMonth: 0, totalUsers: 0, activeUsers24h: 0,
+    topTraders: [], topP2PSellers: []
   });
   
-  // Referral data
   const [referralData, setReferralData] = useState({
-    totalReferrals: 0,
-    activeReferrals: 0,
-    totalCommissions: 0,
-    pendingCommissions: 0,
-    standardReferrals: 0,
-    goldenReferrals: 0
+    totalReferrals: 0, activeReferrals: 0, totalCommissions: 0,
+    pendingCommissions: 0, standardReferrals: 0, goldenReferrals: 0
   });
   
-  // Liquidity data
-  const [liquidityData, setLiquidityData] = useState({});
-  
-  // Fee management
   const [fees, setFees] = useState({});
   const [editingFee, setEditingFee] = useState(null);
   const [tempFeeValue, setTempFeeValue] = useState('');
-  
-  // Transactions
-  const [transactions, setTransactions] = useState([]);
-  const [transactionFilter, setTransactionFilter] = useState('all');
-  
-  // System health
-  const [systemHealth, setSystemHealth] = useState({
-    apiHealth: 'good',
-    nowpaymentsStatus: 'connected',
-    walletStatus: 'operational',
-    queueStatus: 'running',
-    errors: []
-  });
-  
-  // Savings & Staking
-  const [savingsData, setSavingsData] = useState({
-    products: [],
-    totalLocked: 0,
-    activeLocksCount: 0
-  });
-  
-  // Security
-  const [securityData, setSecurityData] = useState({
-    failedLogins: 0,
-    twoFAActivations: 0,
-    suspiciousActivity: []
-  });
   
   const [period, setPeriod] = useState('all');
   
@@ -104,20 +89,26 @@ export default function AdminBusinessDashboard() {
     setLoading(true);
     try {
       await Promise.all([
+        loadFees(),
         loadRevenueData(),
         loadCustomerData(),
-        loadReferralData(),
-        loadLiquidityData(),
-        loadFees(),
-        loadTransactions(),
-        loadSystemHealth(),
-        loadSavingsData(),
-        loadSecurityData()
+        loadReferralData()
       ]);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const loadFees = async () => {
+    try {
+      const response = await axios.get(`${API}/api/admin/fees/all`);
+      if (response.data.success) {
+        setFees(response.data.fees);
+      }
+    } catch (error) {
+      console.error('Failed to load fees:', error);
     }
   };
   
@@ -154,80 +145,14 @@ export default function AdminBusinessDashboard() {
     }
   };
   
-  const loadLiquidityData = async () => {
-    try {
-      const response = await axios.get(`${API}/api/admin/liquidity/status`);
-      if (response.data.success) {
-        setLiquidityData(response.data.liquidity);
-      }
-    } catch (error) {
-      console.error('Failed to load liquidity data:', error);
-    }
-  };
-  
-  const loadFees = async () => {
-    try {
-      const response = await axios.get(`${API}/api/admin/fees/all`);
-      if (response.data.success) {
-        setFees(response.data.fees);
-      }
-    } catch (error) {
-      console.error('Failed to load fees:', error);
-    }
-  };
-  
-  const loadTransactions = async () => {
-    try {
-      const response = await axios.get(`${API}/api/admin/transactions/recent?limit=100&filter=${transactionFilter}`);
-      if (response.data.success) {
-        setTransactions(response.data.transactions);
-      }
-    } catch (error) {
-      console.error('Failed to load transactions:', error);
-    }
-  };
-  
-  const loadSystemHealth = async () => {
-    try {
-      const response = await axios.get(`${API}/api/admin/system-health`);
-      if (response.data.success) {
-        setSystemHealth(response.data.health);
-      }
-    } catch (error) {
-      console.error('Failed to load system health:', error);
-    }
-  };
-  
-  const loadSavingsData = async () => {
-    try {
-      const response = await axios.get(`${API}/api/admin/savings/overview`);
-      if (response.data.success) {
-        setSavingsData(response.data.savings);
-      }
-    } catch (error) {
-      console.error('Failed to load savings data:', error);
-    }
-  };
-  
-  const loadSecurityData = async () => {
-    try {
-      const response = await axios.get(`${API}/api/admin/security/overview`);
-      if (response.data.success) {
-        setSecurityData(response.data.security);
-      }
-    } catch (error) {
-      console.error('Failed to load security data:', error);
-    }
-  };
-  
-  const handleUpdateFee = async (feeType, newValue) => {
+  const handleUpdateFee = async (feeKey, newValue) => {
     try {
       const response = await axios.post(`${API}/api/admin/fees/update`, {
-        fee_type: feeType,
+        fee_type: feeKey,
         value: parseFloat(newValue)
       });
       if (response.data.success) {
-        toast.success('Fee updated successfully - changes applied across entire platform');
+        toast.success('Fee updated - changes applied across entire platform');
         setEditingFee(null);
         setTempFeeValue('');
         await loadFees();
@@ -263,23 +188,6 @@ export default function AdminBusinessDashboard() {
     );
   }
   
-  const revenueChartOptions = {
-    chart: { type: 'line', background: 'transparent', toolbar: { show: false } },
-    stroke: { curve: 'smooth', width: 3, colors: ['#00F0FF'] },
-    xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], labels: { style: { colors: '#A3AEC2' } } },
-    yaxis: { labels: { style: { colors: '#A3AEC2' } } },
-    grid: { borderColor: 'rgba(255,255,255,0.1)' },
-    theme: { mode: 'dark' }
-  };
-  
-  const donutChartOptions = {
-    chart: { type: 'donut', background: 'transparent' },
-    labels: ['P2P', 'Swap', 'Instant Buy', 'Express Buy', 'Withdrawals', 'PayPal', 'Other'],
-    colors: ['#00F0FF', '#A855F7', '#22C55E', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6'],
-    legend: { position: 'bottom', labels: { colors: '#A3AEC2' } },
-    theme: { mode: 'dark' }
-  };
-  
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
       <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
@@ -295,9 +203,9 @@ export default function AdminBusinessDashboard() {
               WebkitTextFillColor: 'transparent',
               marginBottom: '0.5rem'
             }}>
-              Business Dashboard
+              CoinHubX Business Dashboard
             </h1>
-            <p style={{ color: '#A3AEC2', fontSize: '15px' }}>Complete platform control center - all fees and analytics</p>
+            <p style={{ color: '#A3AEC2', fontSize: '15px' }}>17 Revenue Streams - NO KYC - Complete Fee Control</p>
           </div>
           <button
             onClick={loadAllData}
@@ -329,15 +237,10 @@ export default function AdminBusinessDashboard() {
           scrollbarWidth: 'thin'
         }}>
           {[
+            { id: 'fees', label: 'Fee Management (17 Streams)', icon: Settings },
             { id: 'revenue', label: 'Revenue Analytics', icon: DollarSign },
-            { id: 'fees', label: 'Fee Management', icon: Settings },
             { id: 'customers', label: 'Customer Overview', icon: Users },
-            { id: 'referrals', label: 'Referral Analytics', icon: TrendingUp },
-            { id: 'liquidity', label: 'Liquidity', icon: Wallet },
-            { id: 'transactions', label: 'Transactions', icon: ArrowUpDown },
-            { id: 'health', label: 'System Health', icon: Activity },
-            { id: 'savings', label: 'Savings & Staking', icon: Database },
-            { id: 'security', label: 'Security', icon: Shield }
+            { id: 'referrals', label: 'Referral Tracking', icon: TrendingUp }
           ].map(tab => {
             const Icon = tab.icon;
             return (
@@ -362,9 +265,189 @@ export default function AdminBusinessDashboard() {
                 {tab.label}
               </button>
             );
-          })}</div>
+          })}
+        </div>
         
-        {/* Tab Content */}
+        {/* Fee Management Tab */}
+        {activeTab === 'fees' && (
+          <div>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Fee Management - 17 Revenue Streams</h2>
+            <p style={{ color: '#A3AEC2', marginBottom: '2rem' }}>
+              Edit any fee below - changes apply instantly across P2P, Instant Buy/Sell, Swap, Withdrawals, Savings, Staking, and Liquidity.
+              <br />All fees (except referrals) go directly to owner/admin wallet.
+            </p>
+            
+            {Object.entries(FEE_CATEGORIES).map(([categoryName, categoryFees]) => (
+              <div key={categoryName} style={{ marginBottom: '2rem' }}>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#00F0FF',
+                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}>
+                  {categoryName}
+                </h3>
+                
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {categoryFees.map(feeItem => {
+                    const currentValue = fees[feeItem.key] || 0;
+                    const isEditing = editingFee === feeItem.key;
+                    
+                    return (
+                      <div key={feeItem.key} style={{
+                        background: feeItem.isReferral ? 'rgba(168,85,247,0.1)' : 'rgba(255,255,255,0.03)',
+                        border: `2px solid ${feeItem.isReferral ? 'rgba(168,85,247,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                        borderRadius: '12px',
+                        padding: '1.5rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '1rem'
+                      }}>
+                        <div style={{ flex: '1', minWidth: '250px' }}>
+                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginBottom: '0.25rem' }}>
+                            {feeItem.label}
+                          </div>
+                          <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.25rem' }}>
+                            Current: {feeItem.type === 'flat' ? `£${currentValue.toFixed(2)}` : `${currentValue}%`}
+                          </div>
+                          {feeItem.note && (
+                            <div style={{ fontSize: '13px', color: feeItem.isReferral ? '#A855F7' : '#F59E0B', marginTop: '0.25rem' }}>
+                              {feeItem.note}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {feeItem.isReferral ? (
+                          <div style={{
+                            padding: '8px 16px',
+                            background: 'rgba(168,85,247,0.2)',
+                            borderRadius: '8px',
+                            color: '#A855F7',
+                            fontWeight: '600',
+                            fontSize: '14px'
+                          }}>
+                            Tracking Only
+                          </div>
+                        ) : (
+                          <>
+                            {isEditing ? (
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <input
+                                  type="number"
+                                  step={feeItem.type === 'flat' ? '0.01' : '0.1'}
+                                  value={tempFeeValue}
+                                  onChange={(e) => setTempFeeValue(e.target.value)}
+                                  placeholder={feeItem.type === 'flat' ? 'GBP' : '%'}
+                                  style={{
+                                    padding: '8px 12px',
+                                    background: 'rgba(0,0,0,0.3)',
+                                    border: '2px solid rgba(0,240,255,0.3)',
+                                    borderRadius: '8px',
+                                    color: '#fff',
+                                    width: '100px'
+                                  }}
+                                />
+                                <button
+                                  onClick={() => handleUpdateFee(feeItem.key, tempFeeValue)}
+                                  style={{
+                                    padding: '8px 12px',
+                                    background: '#22C55E',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    color: '#000',
+                                    fontWeight: '700',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <Check size={18} />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingFee(null);
+                                    setTempFeeValue('');
+                                  }}
+                                  style={{
+                                    padding: '8px 12px',
+                                    background: '#EF4444',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    color: '#fff',
+                                    fontWeight: '700',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <X size={18} />
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setEditingFee(feeItem.key);
+                                  setTempFeeValue(currentValue.toString());
+                                }}
+                                style={{
+                                  padding: '8px 16px',
+                                  background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                                  border: 'none',
+                                  borderRadius: '8px',
+                                  color: '#000',
+                                  fontWeight: '700',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px'
+                                }}
+                              >
+                                <Edit size={16} />
+                                Edit
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            
+            {/* Important Info Panel */}
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem',
+              background: 'rgba(0,240,255,0.1)',
+              border: '2px solid rgba(0,240,255,0.3)',
+              borderRadius: '12px'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#00F0FF', marginBottom: '0.75rem' }}>
+                ✅ How Fee Updates Work
+              </h3>
+              <ul style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.8', paddingLeft: '1.5rem' }}>
+                <li>All fees (except Referral Commission) go directly to owner/admin wallet</li>
+                <li>Referral Commission (20%) is a PAYOUT from your earnings to the referrer</li>
+                <li>When you edit a fee here, it automatically updates across:
+                  <ul style={{ marginTop: '0.5rem', marginLeft: '1rem' }}>
+                    <li>P2P marketplace</li>
+                    <li>Instant Buy/Sell pages</li>
+                    <li>Swap page</li>
+                    <li>Wallet withdrawals</li>
+                    <li>Savings vault</li>
+                    <li>Staking dashboard</li>
+                    <li>Admin liquidity operations</li>
+                  </ul>
+                </li>
+                <li>Changes take effect immediately for new transactions</li>
+                <li>No KYC fees exist - platform is completely KYC-free</li>
+              </ul>
+            </div>
+          </div>
+        )}
+        
+        {/* Revenue Tab */}
         {activeTab === 'revenue' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -390,7 +473,6 @@ export default function AdminBusinessDashboard() {
               </div>
             </div>
             
-            {/* Revenue Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
               {[
                 { label: 'Today', value: revenueData.today, color: '#00F0FF' },
@@ -410,194 +492,22 @@ export default function AdminBusinessDashboard() {
               ))}
             </div>
             
-            {/* Revenue Breakdown - 14+ streams */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue by Stream</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-                {[
-                  { name: 'P2P Trade Fees', value: revenueData.breakdown?.p2p || 0, icon: ArrowUpDown },
-                  { name: 'Swap Fees', value: revenueData.breakdown?.swap || 0, icon: RefreshCw },
-                  { name: 'Instant Buy', value: revenueData.breakdown?.instantBuy || 0, icon: Zap },
-                  { name: 'Instant Sell', value: revenueData.breakdown?.instantSell || 0, icon: TrendingDown },
-                  { name: 'Express Buy', value: revenueData.breakdown?.expressBuy || 0, icon: TrendingUp },
-                  { name: 'Withdrawal Fees', value: revenueData.breakdown?.withdrawals || 0, icon: ArrowDown },
-                  { name: 'Deposit Fees', value: revenueData.breakdown?.deposits || 0, icon: ArrowUp },
-                  { name: 'PayPal → PayPal', value: revenueData.breakdown?.paypal || 0, icon: DollarSign },
-                  { name: 'Liquidity Spread', value: revenueData.breakdown?.liquiditySpread || 0, icon: Wallet },
-                  { name: 'Early Withdrawal Penalties', value: revenueData.breakdown?.earlyWithdrawal || 0, icon: AlertCircle },
-                  { name: 'Staking Fees', value: revenueData.breakdown?.staking || 0, icon: Database },
-                  { name: 'Cross-Wallet Conversion', value: revenueData.breakdown?.crossWallet || 0, icon: ArrowUpDown },
-                  { name: 'Internal Transfers', value: revenueData.breakdown?.internalTransfer || 0, icon: RefreshCw }
-                ].map((stream, idx) => {
-                  const Icon = stream.icon;
-                  return (
-                    <div key={idx} style={{
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '2px solid rgba(255,255,255,0.1)',
-                      borderRadius: '12px',
-                      padding: '1rem'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <Icon size={16} color='#00F0FF' />
-                        <div style={{ fontSize: '14px', color: '#A3AEC2' }}>{stream.name}</div>
-                      </div>
-                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#fff' }}>{formatCurrency(stream.value)}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            
-            {/* Charts */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '2px solid rgba(255,255,255,0.1)',
-                borderRadius: '16px',
-                padding: '1.5rem'
-              }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue Trend</h3>
-                <ReactApexChart options={revenueChartOptions} series={[{ name: 'Revenue', data: [120, 230, 180, 340, 290, 410, 480] }]} type="line" height={300} />
-              </div>
-              
-              <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '2px solid rgba(255,255,255,0.1)',
-                borderRadius: '16px',
-                padding: '1.5rem'
-              }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue Distribution</h3>
-                <ReactApexChart options={donutChartOptions} series={[30, 25, 15, 10, 8, 7, 5]} type="donut" height={300} />
-              </div>
+            <div style={{ color: '#A3AEC2', textAlign: 'center', padding: '2rem' }}>
+              Revenue breakdown by stream coming soon...
             </div>
           </div>
         )}
         
-        {activeTab === 'fees' && (
-          <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Fee Management</h2>
-            <p style={{ color: '#A3AEC2', marginBottom: '2rem' }}>Update fees instantly - changes apply across entire platform automatically</p>
-            
-            <div style={{ display: 'grid', gap: '1rem' }}>
-              {Object.entries(fees).sort((a, b) => a[0].localeCompare(b[0])).map(([key, value]) => (
-                <div key={key} style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '2px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginBottom: '0.25rem' }}>
-                      {key.replace(/_/g, ' ').replace(/percent/g, '').toUpperCase()}
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#A3AEC2' }}>Current: {value}%</div>
-                  </div>
-                  
-                  {editingFee === key ? (
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={tempFeeValue}
-                        onChange={(e) => setTempFeeValue(e.target.value)}
-                        style={{
-                          padding: '8px 12px',
-                          background: 'rgba(0,0,0,0.3)',
-                          border: '2px solid rgba(0,240,255,0.3)',
-                          borderRadius: '8px',
-                          color: '#fff',
-                          width: '100px'
-                        }}
-                      />
-                      <button
-                        onClick={() => handleUpdateFee(key, tempFeeValue)}
-                        style={{
-                          padding: '8px 12px',
-                          background: '#22C55E',
-                          border: 'none',
-                          borderRadius: '8px',
-                          color: '#000',
-                          fontWeight: '700',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <Check size={18} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingFee(null);
-                          setTempFeeValue('');
-                        }}
-                        style={{
-                          padding: '8px 12px',
-                          background: '#EF4444',
-                          border: 'none',
-                          borderRadius: '8px',
-                          color: '#fff',
-                          fontWeight: '700',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <X size={18} />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setEditingFee(key);
-                        setTempFeeValue(value.toString());
-                      }}
-                      style={{
-                        padding: '8px 16px',
-                        background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        color: '#000',
-                        fontWeight: '700',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <Edit size={16} />
-                      Edit
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-            
-            <div style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              background: 'rgba(0,240,255,0.1)',
-              border: '2px solid rgba(0,240,255,0.3)',
-              borderRadius: '12px'
-            }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#00F0FF', marginBottom: '0.5rem' }}>Referral Commission Info</h3>
-              <p style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.6' }}>
-                Referral percentages (20% standard, 50% golden) are PAYOUTS to referrers from platform profit, NOT fees charged to users.
-                <br /><br />
-                Example: If an invitee pays £10 fee, standard referrer gets £2 (20%), golden referrer gets £5 (50%). These are deducted from platform's £10 profit.
-              </p>
-            </div>
-          </div>
-        )}
-        
+        {/* Customers Tab */}
         {activeTab === 'customers' && (
           <div>
             <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Customer Overview</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
               {[
                 { label: 'New Today', value: customerData.newToday, color: '#00F0FF' },
                 { label: 'New This Week', value: customerData.newWeek, color: '#A855F7' },
-                { label: 'New This Month', value: customerData.newMonth, color: '#22C55E' },
-                { label: 'Total Users', value: customerData.totalUsers, color: '#F59E0B' },
-                { label: 'Active (24h)', value: customerData.activeUsers24h, color: '#EF4444' }
+                { label: 'Total Users', value: customerData.totalUsers, color: '#22C55E' },
+                { label: 'Active (24h)', value: customerData.activeUsers24h, color: '#F59E0B' }
               ].map((stat, idx) => (
                 <div key={idx} style={{
                   background: 'rgba(255,255,255,0.03)',
@@ -610,74 +520,19 @@ export default function AdminBusinessDashboard() {
                 </div>
               ))}
             </div>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '2px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem'
-              }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Top Traders</h3>
-                {(customerData.topTraders || []).length === 0 ? (
-                  <div style={{ color: '#A3AEC2' }}>No data yet</div>
-                ) : (
-                  customerData.topTraders.map((trader, idx) => (
-                    <div key={idx} style={{
-                      padding: '0.75rem',
-                      background: 'rgba(0,0,0,0.2)',
-                      borderRadius: '8px',
-                      marginBottom: '0.5rem',
-                      display: 'flex',
-                      justifyContent: 'space-between'
-                    }}>
-                      <span style={{ color: '#fff' }}>{trader.email}</span>
-                      <span style={{ color: '#00F0FF' }}>{trader.tradeCount} trades</span>
-                    </div>
-                  ))
-                )}
-              </div>
-              
-              <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '2px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem'
-              }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Top P2P Sellers</h3>
-                {(customerData.topP2PSellers || []).length === 0 ? (
-                  <div style={{ color: '#A3AEC2' }}>No data yet</div>
-                ) : (
-                  customerData.topP2PSellers.map((seller, idx) => (
-                    <div key={idx} style={{
-                      padding: '0.75rem',
-                      background: 'rgba(0,0,0,0.2)',
-                      borderRadius: '8px',
-                      marginBottom: '0.5rem',
-                      display: 'flex',
-                      justifyContent: 'space-between'
-                    }}>
-                      <span style={{ color: '#fff' }}>{seller.email}</span>
-                      <span style={{ color: '#A855F7' }}>{seller.salesCount} sales</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
           </div>
         )}
         
+        {/* Referrals Tab */}
         {activeTab === 'referrals' && (
           <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Referral Analytics</h2>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Referral Tracking</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
               {[
                 { label: 'Total Referrals', value: referralData.totalReferrals, color: '#00F0FF' },
                 { label: 'Active Referrals', value: referralData.activeReferrals, color: '#A855F7' },
-                { label: 'Standard Tier', value: referralData.standardReferrals, color: '#22C55E' },
-                { label: 'Golden Tier', value: referralData.goldenReferrals, color: '#F59E0B' },
                 { label: 'Total Commissions', value: formatCurrency(referralData.totalCommissions), color: '#EF4444', isCurrency: true },
-                { label: 'Pending Commissions', value: formatCurrency(referralData.pendingCommissions), color: '#8B5CF6', isCurrency: true }
+                { label: 'Pending Commissions', value: formatCurrency(referralData.pendingCommissions), color: '#F59E0B', isCurrency: true }
               ].map((stat, idx) => (
                 <div key={idx} style={{
                   background: 'rgba(255,255,255,0.03)',
@@ -701,20 +556,12 @@ export default function AdminBusinessDashboard() {
             }}>
               <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#A855F7', marginBottom: '0.5rem' }}>How Referral Commissions Work</h3>
               <p style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.6' }}>
-                • Standard referrers earn 20% commission on fees generated by their invitees<br />
-                • Golden referrers earn 50% commission on fees generated by their invitees<br />
-                • Commissions are paid FROM platform profit, not added as extra fees<br />
-                • Example: User pays £10 fee → Platform profit = £10 → Standard referrer gets £2 (20%) → Platform keeps £8
+                • Referral commission is 20% of fees generated by invitees<br />
+                • This is a PAYOUT from your profit, NOT a fee charged to customers<br />
+                • Example: User pays £10 fee → Referrer gets £2 (20%) → You keep £8<br />
+                • Commissions are tracked here for transparency
               </p>
             </div>
-          </div>
-        )}
-        
-        {/* Placeholder content for other tabs */}
-        {['liquidity', 'transactions', 'health', 'savings', 'security'].includes(activeTab) && (
-          <div style={{ color: '#fff', textAlign: 'center', padding: '4rem' }}>
-            <h2 style={{ fontSize: '24px', marginBottom: '1rem' }}>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Tab</h2>
-            <p style={{ color: '#A3AEC2' }}>Content for this tab is being loaded...</p>
           </div>
         )}
       </div>
