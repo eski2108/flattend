@@ -1,22 +1,37 @@
 #!/usr/bin/env python3
 """
-P2P MARKETPLACE WALLET SERVICE INTEGRATION TESTING
-Focused testing for the P2P marketplace with wallet service integration issue.
+COMPLETE TRADING PLATFORM COMPREHENSIVE TESTING
+Testing all features requested in the review:
 
-**Issue from Agent Note:**
-Previous manual test script had issues with wallet service balance checking. 
-The seller was funded with 1.0 BTC in the crypto_balances collection 
-(user_id='ed798114-869e-45c3-b77c-a95bbec6867e', currency='BTC', balance=1.0), 
-but when creating a P2P trade, the wallet service reported 'Seller has insufficient 
-available balance. Available: 0.0'. This suggests wallet_service.py might be 
-checking a different collection or has a bug in balance retrieval.
+**TRADING ENGINE FEATURES:**
+1. Trading page - TradingView widget with all indicators
+2. Trading page - Open/close positions with 0.1% fees
+3. Trading page - P/L calculation and wallet updates
+4. Trading page - Order book with live bid/ask levels
+5. Trading page - Position tracking and trade history
+6. Business Dashboard - All fee types and trading fees
+7. Referral Dashboard - Trading fee commissions (20%/50%)
 
-**Test Focus:**
-1. Wallet Service Balance Operations
-2. P2P Trading Flow with Escrow
-3. Fee Collection System
-4. Referral Commission Distribution
-5. Transaction History Logging
+**P2P EXPRESS FEATURES:**
+8. P2P Express - Instant delivery with admin liquidity
+9. P2P Express - Express seller matching
+10. P2P Express - 10-minute countdown timer
+11. P2P Express - 2.5% fee application
+12. P2P Express - Notifications system
+13. P2P Express - Coin selector with icons
+
+**P2P MARKETPLACE FEATURES:**
+14. Normal P2P - Create sell offers
+15. Normal P2P - Start trades as buyer
+16. Normal P2P - Escrow locking system
+17. Normal P2P - Mark paid functionality
+18. Normal P2P - Release crypto by seller
+19. Normal P2P - Notifications at each step
+20. Normal P2P - Taker/maker fees
+
+**PRICING & INTEGRATION:**
+21. Real prices from CoinGecko (no placeholders)
+22. All systems integrated and working
 
 **Backend URL:** https://crypto-fixbugs.preview.emergentagent.com/api
 """
