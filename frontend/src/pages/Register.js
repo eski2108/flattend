@@ -151,7 +151,7 @@ export default function Register() {
         payload.email_verified = true;
       }
       
-      const response = await axios.post(`${API}/api/auth/register`, payload);
+      const response = await axios.post(`${API}/auth/register`, payload);
       
       if (response.data.success) {
         const userId = response.data.user.user_id;
