@@ -167,10 +167,10 @@ async def price_updater_task():
     while True:
         try:
             await fetch_live_prices()
-            await asyncio.sleep(60)  # Update every minute
+            await asyncio.sleep(180)  # Update every 3 minutes to respect rate limits
         except Exception as e:
             logger.error(f"Price updater error: {e}")
-            await asyncio.sleep(60)
+            await asyncio.sleep(180)
 
 def start_price_updater():
     """Start the background price updater"""
