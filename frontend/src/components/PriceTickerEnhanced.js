@@ -39,7 +39,7 @@ export default function PriceTickerEnhanced() {
 
         // Fetch live prices
         const pricesResponse = await axios.get(`${API}/api/prices/live`);
-        const livePrices = pricesResponse.data || {};
+        const livePrices = pricesResponse.data?.prices || {};
 
         // Merge data
         const mergedCoins = nowCoins
@@ -47,7 +47,7 @@ export default function PriceTickerEnhanced() {
           .map(coin => {
             const symbol = coin.toUpperCase();
             const priceData = livePrices[symbol] || {};
-            const price = priceData.gbp || (Math.random() * 1000 + 100);
+            const price = priceData.price_gbp || (Math.random() * 1000 + 100);
             const change = priceData.change_24h || ((Math.random() - 0.5) * 10);
 
             return {
