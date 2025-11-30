@@ -644,10 +644,10 @@ class NewEndpointsBackendTester:
     # ============================================================================
     
     def test_referrals_purchase_vip(self):
-        """Test POST /api/referrals/purchase-vip"""
-        print("\n=== TEST 5.1: Referrals Purchase VIP ===")
+        """Test POST /api/user/purchase-vip-tier"""
+        print("\n=== TEST 5.1: User Purchase VIP Tier ===")
         
-        endpoint = "/referrals/purchase-vip"
+        endpoint = "/user/purchase-vip-tier"
         data = {
             "user_id": "test"
         }
