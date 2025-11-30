@@ -178,6 +178,9 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
             "swap_fee_gbp": swap_fee_gbp,
             "swap_fee_crypto": swap_fee_crypto,
             "swap_fee_currency": from_currency,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
             "from_price": from_price,
             "to_price": to_price,
             "rate": to_amount / from_amount if from_amount > 0 else 0,
@@ -185,7 +188,23 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
             "created_at": datetime.now(timezone.utc).isoformat()
         })
         
-        logger.info(f"✅ Swap completed: {user_id} swapped {from_amount} {from_currency} → {to_amount} {to_currency}, Fee: {swap_fee_crypto} {from_currency}")
+        # Log to fee_transactions for business dashboard
+        await db.fee_transactions.insert_one({
+            "user_id": user_id,
+            "transaction_type": "swap",
+            "fee_type": "swap_fee_percent",
+            "amount": from_amount,
+            "fee_amount": swap_fee_crypto,
+            "fee_percent": swap_fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": from_currency,
+            "reference_id": swap_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"✅ Swap completed: {user_id} swapped {from_amount} {from_currency} → {to_amount} {to_currency}, Fee: {swap_fee_crypto} {from_currency} (Admin: {admin_fee}, Referrer: {referrer_commission})")
         
         return {
             "success": True,
