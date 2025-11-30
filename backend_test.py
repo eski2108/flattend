@@ -3007,9 +3007,9 @@ class TradingPlatformTester:
         # Comprehensive test sequence covering all endpoints in review request
         tests = [
             ("1. Authentication & User Setup", [
-                lambda: self.test_user_registration(TEST_USER, "Test User"),
-                lambda: self.test_user_registration(SELLER_USER, "Seller"),
-                lambda: self.test_user_registration(ADMIN_USER, "Admin"),
+                lambda: self.test_user_registration(TEST_TRADER, "Trader"),
+                lambda: self.test_user_registration(P2P_BUYER, "P2P Buyer"),
+                lambda: self.test_user_registration(P2P_SELLER, "P2P Seller"),
                 lambda: self.test_user_login(ADMIN_USER, "Admin"),
                 self.test_setup_wallets_and_bank_accounts,
             ]),
