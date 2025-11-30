@@ -191,7 +191,7 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
             user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
             referrer_id = user.get("referrer_id") if user else None
             referrer_commission = 0.0
-            admin_fee = fee_amount
+            admin_fee = total_fee
             commission_percent = 0.0
             
             if referrer_id:
@@ -203,8 +203,8 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
                 else:
                     commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
                 
-                referrer_commission = fee_amount * (commission_percent / 100.0)
-                admin_fee = fee_amount - referrer_commission
+                referrer_commission = total_fee * (commission_percent / 100.0)
+                admin_fee = total_fee - referrer_commission
             
             # Credit admin wallet with admin portion of fee
             admin_user_id = "admin_wallet"
