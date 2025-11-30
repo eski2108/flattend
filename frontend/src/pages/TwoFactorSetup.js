@@ -95,7 +95,7 @@ export default function TwoFactorSetup() {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/api/2fa/disable`, {
+      const response = await axios.post(`${API}/api/auth/2fa/disable`, {
         user_id: user.user_id
       });
       
