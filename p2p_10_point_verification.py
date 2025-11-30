@@ -231,7 +231,8 @@ class P2PVerification:
                 if resp.status == 200:
                     result = await resp.json()
                     if result.get('success'):
-                        self.offer_id = result.get('order_id')
+                        # Extract offer_id from nested structure
+                        self.offer_id = result.get('offer', {}).get('order_id') or result.get('order_id')
                         log_success(f"P2P offer created: {self.offer_id}")
                         log_data("Offer Details", result)
                         self.test_results.append({"step": 3, "status": "PASS", "message": "P2P offer created"})
