@@ -76,8 +76,8 @@ class P2PVerification:
             referrer_data = {
                 "email": referrer_email,
                 "password": "Test@12345",
-                "username": "TestReferrer",
-                "phone": "+447700900000"
+                "full_name": "Test Referrer",
+                "phone_number": "+447700900000"
             }
             
             async with self.session.post(f"{BACKEND_URL}/auth/register", json=referrer_data) as resp:
@@ -101,8 +101,8 @@ class P2PVerification:
             seller_data = {
                 "email": seller_email,
                 "password": "Test@12345",
-                "username": "TestSeller",
-                "phone": "+447700900001",
+                "full_name": "Test Seller",
+                "phone_number": "+447700900001",
                 "referral_code": self.referrer_id
             }
             
@@ -128,8 +128,8 @@ class P2PVerification:
             buyer_data = {
                 "email": buyer_email,
                 "password": "Test@12345",
-                "username": "TestBuyer",
-                "phone": "+447700900002"
+                "full_name": "Test Buyer",
+                "phone_number": "+447700900002"
             }
             
             async with self.session.post(f"{BACKEND_URL}/auth/register", json=buyer_data) as resp:
@@ -206,7 +206,7 @@ class P2PVerification:
                 "price_per_unit": 50000,
                 "min_purchase": 0.01,
                 "max_purchase": 0.1,
-                "payment_methods": ["Bank Transfer", "PayPal"],
+                "payment_methods": ["faster_payments", "paypal"],
                 "seller_requirements": []
             }
             
@@ -243,7 +243,7 @@ class P2PVerification:
                 "sell_order_id": self.offer_id,
                 "buyer_id": self.buyer_id,
                 "crypto_amount": 0.05,
-                "payment_method": "Bank Transfer",
+                "payment_method": "faster_payments",
                 "buyer_wallet_address": "bc1qtest_buyer_wallet_address_123456789",
                 "buyer_wallet_network": "mainnet"
             }
@@ -635,7 +635,7 @@ class P2PVerification:
         
         try:
             # Simulate API call to referrer dashboard endpoint
-            async with self.session.get(f"{BACKEND_URL}/referrals/dashboard?user_id={self.referrer_id}") as resp:
+            async with self.session.get(f"{BACKEND_URL}/api/referrals/dashboard?user_id={self.referrer_id}") as resp:
                 if resp.status == 200:
                     result = await resp.json()
                     log_data("Referrer Dashboard", result)
