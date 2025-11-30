@@ -18,7 +18,10 @@ export default function ReferralDashboard() {
     total_earnings: 0,
     pending_earnings: 0,
     referral_tier: 'standard',
-    referred_users: []
+    tier_info: {},
+    can_upgrade_to_vip: false,
+    referred_users: [],
+    commission_history: []
   });
 
   useEffect(() => {
