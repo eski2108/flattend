@@ -267,13 +267,14 @@ function P2PMarketplace() {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.35rem',
-          padding: '0.45rem 0.65rem',
-          background: 'rgba(15, 23, 42, 0.6)',
-          border: '1px solid rgba(0, 240, 255, 0.2)',
-          borderRadius: '6px',
-          marginBottom: '0.75rem',
-          flexWrap: 'wrap'
+          gap: '12px',
+          padding: '20px',
+          background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+          border: '2px solid rgba(0, 240, 255, 0.4)',
+          borderRadius: '16px',
+          marginBottom: '24px',
+          flexWrap: 'wrap',
+          boxShadow: '0 0 40px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.05)'
         }}>
           {/* Cryptocurrency Dropdown */}
           <div style={{ width: '85px', flexShrink: 0 }}>
