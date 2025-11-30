@@ -3832,6 +3832,8 @@ async def express_mode_match(request: ExpressMatchRequest):
 
 
 # P2P EXPRESS ENDPOINTS (2.5% FEE)
+EXPRESS_RELEASE_TIMEOUT = 600  # 10 minutes in seconds
+
 @api_router.post("/p2p/express/check-liquidity")
 async def check_express_liquidity(data: Dict):
     """Check if admin liquidity is available for instant delivery"""
@@ -3850,7 +3852,7 @@ async def check_express_liquidity(data: Dict):
         return {
             "success": True,
             "has_liquidity": admin_liquidity is not None,
-            "delivery_type": "instant" if admin_liquidity else "seller"
+            "delivery_type": "instant" if admin_liquidity else "express_seller"
         }
     except Exception as e:
         logger.error(f"Error checking liquidity: {e}")
