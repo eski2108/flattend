@@ -17,10 +17,13 @@ class WithdrawalRequest(BaseModel):
     amount: float
     wallet_address: str
     network: Optional[str] = None
+    is_fiat: bool = False
     fee_percent: float = 1.5
     fee_amount: float
     network_fee_percent: float = 1.0
     network_fee_amount: float = 0.0
+    fiat_fee_percent: float = 0.0
+    fiat_fee_amount: float = 0.0
     total_fee: float
     net_amount: float
     status: str = "pending"
