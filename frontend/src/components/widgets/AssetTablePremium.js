@@ -74,6 +74,7 @@ const AssetTablePremium = ({ assets, onDeposit, onWithdraw, onSwap }) => {
               <th style={{ padding: '16px', textAlign: 'right', fontSize: '13px', color: '#8F9BB3', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Holdings</th>
               <th style={{ padding: '16px', textAlign: 'right', fontSize: '13px', color: '#8F9BB3', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Avg Buy</th>
               <th style={{ padding: '16px', textAlign: 'right', fontSize: '13px', color: '#8F9BB3', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Current</th>
+              <th style={{ padding: '16px', textAlign: 'center', fontSize: '13px', color: '#8F9BB3', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Trend</th>
               <th style={{ padding: '16px', textAlign: 'right', fontSize: '13px', color: '#8F9BB3', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>P/L</th>
               <th style={{ padding: '16px', textAlign: 'center', fontSize: '13px', color: '#8F9BB3', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Actions</th>
             </tr>
