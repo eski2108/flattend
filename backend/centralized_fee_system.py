@@ -38,8 +38,9 @@ DEFAULT_FEES = {
     "savings_stake_fee_percent": 0.5,
     "early_unstake_penalty_percent": 3.0,
     
-    # 13: TRADING
-    "trading_fee_percent": 0.1,
+    # 13: SPOT TRADING
+    "spot_trading_fee_percent": 0.1,
+    "trading_fee_percent": 0.1,  # Alias
     
     # 14: DISPUTE
     "dispute_fee_fixed_gbp": 2.0,
