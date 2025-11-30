@@ -3967,12 +3967,13 @@ async def create_p2p_express_order(order_data: Dict):
         "price_per_unit": order_data["base_rate"],
         "status": status,
         "country": order_data["country"],
-        "payment_method": order_data["payment_method"],
+        "payment_method": payment_method,
         "express_fee": order_data["express_fee"],
         "express_fee_percent": order_data["express_fee_percent"],
         "net_amount": order_data["net_amount"],
         "estimated_delivery": estimated_delivery,
         "is_instant_delivery": has_admin_liquidity,
+        "countdown_expires_at": countdown_expires_at,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
