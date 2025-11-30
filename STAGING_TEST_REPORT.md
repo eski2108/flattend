@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://crypto-fixbugs.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://crypto-finalize.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

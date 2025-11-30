@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://crypto-fixbugs.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-finalize.preview.emergentagent.com/api"
 ADMIN_ID = "admin"
 TEST_WITHDRAWAL_ADDRESS = "1A1zP1eP5QGefi2DMPTfTLxwkDjidkpzFz"
 

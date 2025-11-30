@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { TrendingUp, TrendingDown, Zap, Info, BarChart3, Activity, DollarSign, TrendingUpDown } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-fixbugs.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();
