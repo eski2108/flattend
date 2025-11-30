@@ -46,18 +46,25 @@ import time
 BASE_URL = "https://crypto-fixbugs.preview.emergentagent.com/api"
 
 # Test Users for comprehensive testing
-TEST_USER = {
-    "email": "coinhubx_test@test.com",
+TEST_TRADER = {
+    "email": "trader@test.com",
     "password": "Test123456",
-    "full_name": "CoinHubX Test User",
-    "wallet_address": "coinhubx_test_wallet_001"
+    "full_name": "Test Trader",
+    "phone_number": "+447808184311"
 }
 
-SELLER_USER = {
-    "email": "coinhubx_seller@test.com", 
+P2P_BUYER = {
+    "email": "p2p_buyer@test.com",
+    "password": "Buyer123456", 
+    "full_name": "P2P Buyer",
+    "phone_number": "+447808184312"
+}
+
+P2P_SELLER = {
+    "email": "p2p_seller@test.com",
     "password": "Seller123456",
-    "full_name": "CoinHubX Seller",
-    "wallet_address": "coinhubx_seller_wallet_001"
+    "full_name": "P2P Seller", 
+    "phone_number": "+447808184313"
 }
 
 ADMIN_USER = {
