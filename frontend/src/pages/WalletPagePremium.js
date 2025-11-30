@@ -153,6 +153,25 @@ export default function WalletPagePremium() {
       // Load balances
       const balRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
       console.log('🔍 Wallet API Response:', balRes.data);
+      
+      // VALIDATION: Ensure response has correct structure
+      if (!balRes.data || typeof balRes.data !== 'object') {
+        throw new Error('Invalid wallet response: not an object');
+      }
+      if (!Array.isArray(balRes.data.balances)) {
+        throw new Error('Invalid wallet response: balances is not an array');
+      }
+      
+      // VALIDATION: Check each balance has required fields
+      balRes.data.balances.forEach((bal, idx) => {
+        if (!bal.currency) {
+          throw new Error(`Balance ${idx} missing currency field`);
+        }
+        if (bal.total_balance === undefined) {
+          throw new Error(`Balance ${idx} (${bal.currency}) missing total_balance`);
+        }
+      });
+      
       if (balRes.data.success) {
         const bals = balRes.data.balances || [];
         console.log('🔍 Balances array:', bals);
