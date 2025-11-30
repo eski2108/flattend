@@ -159,6 +159,11 @@ class P2PVerification:
         """Step 2: Fund Seller's Wallet with BTC"""
         log_step(2, "Fund Seller's Wallet")
         
+        if not self.seller_id:
+            log_error("Seller ID not set. Skipping step.")
+            self.test_results.append({" step": 2, "status": "SKIP", "message": "Seller ID not set"})
+            return False
+        
         try:
             # Credit 1.0 BTC to seller
             btc_amount = 1.0
@@ -196,6 +201,11 @@ class P2PVerification:
     async def step_3_create_p2p_offer(self):
         """Step 3: Seller Creates P2P Sell Order"""
         log_step(3, "Create P2P Sell Order")
+        
+        if not self.seller_id:
+            log_error("Seller ID not set. Skipping step.")
+            self.test_results.append({"step": 3, "status": "SKIP", "message": "Seller ID not set"})
+            return False
         
         try:
             offer_data = {
@@ -237,6 +247,11 @@ class P2PVerification:
     async def step_4_buyer_creates_trade(self):
         """Step 4: Buyer Creates Trade (Locks Seller's Crypto in Escrow)"""
         log_step(4, "Buyer Creates Trade & Locks Escrow")
+        
+        if not self.offer_id or not self.buyer_id:
+            log_error("Offer ID or Buyer ID not set. Skipping step.")
+            self.test_results.append({"step": 4, "status": "SKIP", "message": "Offer or Buyer ID not set"})
+            return False
         
         try:
             trade_data = {
