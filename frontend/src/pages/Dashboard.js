@@ -186,7 +186,7 @@ function Dashboard() {
     <Layout>
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
+        background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 50%, rgba(2, 6, 24, 0.98) 100%)',
         padding: '24px 20px'
       }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 0 }}>
