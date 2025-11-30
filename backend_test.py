@@ -293,12 +293,12 @@ class TradingPlatformTester:
             )
             
             if response.status_code == 200:
-                self.log_test("Test User Wallet Setup", True, "Test user wallet connected successfully")
+                self.log_test("Trader Wallet Setup", True, "Trader wallet connected successfully")
             else:
-                self.log_test("Test User Wallet Setup", False, f"Failed with status {response.status_code}")
+                self.log_test("Trader Wallet Setup", False, f"Failed with status {response.status_code}")
                 success = False
         except Exception as e:
-            self.log_test("Test User Wallet Setup", False, f"Request failed: {str(e)}")
+            self.log_test("Trader Wallet Setup", False, f"Request failed: {str(e)}")
             success = False
         
         # Connect seller wallet
