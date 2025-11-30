@@ -246,11 +246,11 @@ function Dashboard() {
             marginBottom: '24px'
           }}>
             <PLSummaryRow 
-              todayPL={150.50} 
-              weekPL={520.75} 
-              monthPL={1250.30} 
+              todayPL={portfolioData.todayPL} 
+              weekPL={portfolioData.weekPL} 
+              monthPL={portfolioData.monthPL} 
             />
-            <DonutPLWidget plPercent={12.5} />
+            <DonutPLWidget plPercent={portfolioData.plPercent} />
           </div>
 
           {/* Recent Transactions List */}
