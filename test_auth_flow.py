@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://signx-repair.preview.emergentagent.com/api"
+BASE_URL = "https://coinhubx-refresh.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

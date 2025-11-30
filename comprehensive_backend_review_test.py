@@ -22,7 +22,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://signx-repair.preview.emergentagent.com/api"
+BASE_URL = "https://coinhubx-refresh.preview.emergentagent.com/api"
 TEST_USERS = [
     {"email": "alice@test.com", "password": "Test123456", "name": "Alice Test"},
     {"email": "bob@test.com", "password": "Test123456", "name": "Bob Test"}

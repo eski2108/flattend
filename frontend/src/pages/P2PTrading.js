@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://signx-repair.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://coinhubx-refresh.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {
