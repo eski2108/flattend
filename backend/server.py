@@ -4752,6 +4752,73 @@ async def validate_wallet(request: WalletValidationRequest):
     }
 
 
+# P2P NOTIFICATION API ENDPOINTS
+@api_router.get("/p2p/notifications/{user_id}")
+async def get_p2p_notifications(user_id: str, trade_id: str = None, unread_only: bool = False):
+    """Get P2P notifications for a user"""
+    try:
+        notification_service = get_notification_service()
+        notifications = await notification_service.get_user_notifications(
+            user_id=user_id,
+            trade_id=trade_id,
+            unread_only=unread_only,
+            limit=100
+        )
+        
+        unread_count = await notification_service.get_unread_count(user_id, trade_id)
+        
+        return {
+            "success": True,
+            "notifications": notifications,
+            "unread_count": unread_count
+        }
+    except Exception as e:
+        logger.error(f"Failed to get notifications: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/notifications/mark-read")
+async def mark_notification_read(request: dict):
+    """Mark notification as read"""
+    try:
+        notification_service = get_notification_service()
+        notification_id = request.get("notification_id")
+        user_id = request.get("user_id")
+        
+        if not notification_id or not user_id:
+            raise HTTPException(status_code=400, detail="notification_id and user_id required")
+        
+        success = await notification_service.mark_as_read(notification_id, user_id)
+        
+        return {"success": success}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to mark notification as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/notifications/mark-all-read")
+async def mark_all_notifications_read(request: dict):
+    """Mark all notifications as read for a user"""
+    try:
+        notification_service = get_notification_service()
+        user_id = request.get("user_id")
+        trade_id = request.get("trade_id")
+        
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        count = await notification_service.mark_all_read(user_id, trade_id)
+        
+        return {"success": True, "marked_count": count}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to mark all as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # WALLET SERVICE API ENDPOINTS (Required for P2P System)
 @api_router.get("/wallet/balance/{user_id}/{currency}")
 async def get_wallet_balance(user_id: str, currency: str):
