@@ -630,7 +630,7 @@ class NewEndpointsBackendTester:
                 )
         else:
             self.log_test(
-                "GET /api/referrals/dashboard",
+                "GET /api/referral/dashboard/{user_id}",
                 False,
                 f"HTTP {response.status_code}",
                 response.text,
