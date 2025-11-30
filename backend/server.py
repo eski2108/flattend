@@ -21721,18 +21721,34 @@ async def get_user_referral_dashboard(user_id: str):
         
         # Get detailed commission history
         commission_history = []
+        earnings_by_fee_type = {}
+        
         for commission in commissions:
+            fee_type = commission.get("transaction_type", "unknown")
+            amount = commission.get("commission_amount", 0)
+            
             commission_history.append({
-                "amount": commission.get("commission_amount", 0),
-                "fee_type": commission.get("transaction_type", "unknown"),
+                "amount": amount,
+                "fee_type": fee_type,
                 "referred_user_id": commission.get("referred_user_id", ""),
                 "timestamp": commission.get("timestamp", ""),
                 "currency": commission.get("currency", "GBP"),
                 "commission_percent": commission.get("commission_percent", 0)
             })
+            
+            # Aggregate by fee type
+            if fee_type not in earnings_by_fee_type:
+                earnings_by_fee_type[fee_type] = 0.0
+            earnings_by_fee_type[fee_type] += amount
         
         # Sort by timestamp (newest first)
         commission_history.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        
+        # Create earnings breakdown list
+        earnings_breakdown = [
+            {"fee_type": ft, "total": amt} 
+            for ft, amt in sorted(earnings_by_fee_type.items(), key=lambda x: x[1], reverse=True)
+        ]
         
         return {
             "success": True,
