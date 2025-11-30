@@ -285,8 +285,8 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* 6. Full Asset Table - Premium with Emojis */}
-          <AssetTablePremium 
+          {/* 6. Full Asset Table */}
+          <AssetTable 
             assets={prepareAssetsForTable()}
             onDeposit={handleDeposit}
             onWithdraw={handleWithdraw}
