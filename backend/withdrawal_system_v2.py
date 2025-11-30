@@ -167,20 +167,70 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
                     "message": f"Failed to release balance: {str(release_error)}"
                 }
             
-            # Credit admin wallet with fee
-            admin_user_id = "admin_fee_wallet"
+            # Calculate referral commission split
+            from centralized_fee_system import get_fee_manager
+            fee_manager = get_fee_manager(db)
+            
+            user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+            referrer_id = user.get("referrer_id") if user else None
+            referrer_commission = 0.0
+            admin_fee = fee_amount
+            commission_percent = 0.0
+            
+            if referrer_id:
+                referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+                referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+                
+                if referrer_tier == "golden":
+                    commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+                else:
+                    commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+                
+                referrer_commission = fee_amount * (commission_percent / 100.0)
+                admin_fee = fee_amount - referrer_commission
+            
+            # Credit admin wallet with admin portion of fee
+            admin_user_id = "admin_wallet"
             try:
                 await wallet_service.credit(
                     user_id=admin_user_id,
                     currency=currency,
-                    amount=fee_amount,
+                    amount=admin_fee,
                     transaction_type="withdrawal_fee",
                     reference_id=withdrawal_id,
-                    metadata={"user_id": user_id, "withdrawal_id": withdrawal_id}
+                    metadata={"user_id": user_id, "withdrawal_id": withdrawal_id, "total_fee": fee_amount}
                 )
-                logger.info(f"✅ Collected {fee_amount} {currency} withdrawal fee")
+                logger.info(f"✅ Collected {admin_fee} {currency} admin withdrawal fee")
             except Exception as fee_error:
-                logger.warning(f"⚠️ Failed to collect fee: {str(fee_error)}")
+                logger.warning(f"⚠️ Failed to collect admin fee: {str(fee_error)}")
+            
+            # Credit referrer commission if applicable
+            if referrer_id and referrer_commission > 0:
+                try:
+                    await wallet_service.credit(
+                        user_id=referrer_id,
+                        currency=currency,
+                        amount=referrer_commission,
+                        transaction_type="referral_commission",
+                        reference_id=withdrawal_id,
+                        metadata={"referred_user_id": user_id, "transaction_type": "withdrawal"}
+                    )
+                    logger.info(f"✅ Paid {referrer_commission} {currency} commission to referrer {referrer_id}")
+                    
+                    # Log referral commission
+                    await db.referral_commissions.insert_one({
+                        "referrer_id": referrer_id,
+                        "referred_user_id": user_id,
+                        "transaction_type": "withdrawal",
+                        "fee_amount": fee_amount,
+                        "commission_amount": referrer_commission,
+                        "commission_percent": commission_percent,
+                        "currency": currency,
+                        "withdrawal_id": withdrawal_id,
+                        "timestamp": datetime.now(timezone.utc).isoformat()
+                    })
+                except Exception as comm_error:
+                    logger.warning(f"⚠️ Failed to pay referrer commission: {str(comm_error)}")
             
             # Update withdrawal status
             await db.withdrawal_requests.update_one(
