@@ -7362,6 +7362,119 @@ async def resolve_dispute_final(request: dict):
         }
     )
     
+    # Calculate dispute fee (£2 or 1% of trade value, whichever is higher)
+    from centralized_fee_system import get_fee_manager
+    fee_manager = get_fee_manager(db)
+    
+    dispute_fee_percent = await fee_manager.get_fee("dispute_fee_percent")
+    dispute_fee_fixed_gbp = await fee_manager.get_fee("dispute_fee_fixed_gbp")
+    
+    # Convert crypto amount to GBP for fee calculation
+    crypto_amount = trade.get("crypto_amount", 0)
+    price_per_unit = trade.get("price_per_unit", 0)
+    trade_value_gbp = crypto_amount * price_per_unit
+    
+    # Calculate percentage fee
+    dispute_fee_percent_amount = trade_value_gbp * (dispute_fee_percent / 100.0)
+    
+    # Use whichever is higher
+    dispute_fee = max(dispute_fee_fixed_gbp, dispute_fee_percent_amount)
+    
+    # Determine losing party (who pays the fee)
+    losing_party = trade["seller_id"] if resolution == "release_to_buyer" else trade["buyer_id"]
+    winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
+    
+    # Check for referrer of losing party
+    loser = await db.user_accounts.find_one({"user_id": losing_party}, {"_id": 0})
+    referrer_id = loser.get("referrer_id") if loser else None
+    referrer_commission = 0.0
+    admin_fee = dispute_fee
+    commission_percent = 0.0
+    
+    if referrer_id:
+        referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+        referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+        
+        if referrer_tier == "golden":
+            commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+        else:
+            commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+        
+        referrer_commission = dispute_fee * (commission_percent / 100.0)
+        admin_fee = dispute_fee - referrer_commission
+    
+    # Deduct dispute fee from losing party's balance
+    wallet_service = get_wallet_service()
+    try:
+        await wallet_service.debit(
+            user_id=losing_party,
+            currency="GBP",
+            amount=dispute_fee,
+            transaction_type="dispute_fee",
+            reference_id=dispute_id,
+            metadata={"dispute_id": dispute_id, "trade_id": trade["trade_id"], "resolution": resolution}
+        )
+    except Exception as fee_error:
+        logger.warning(f"⚠️ Failed to deduct dispute fee from {losing_party}: {str(fee_error)}")
+    
+    # Credit admin wallet
+    try:
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency="GBP",
+            amount=admin_fee,
+            transaction_type="dispute_fee",
+            reference_id=dispute_id,
+            metadata={"losing_party": losing_party, "total_fee": dispute_fee}
+        )
+    except Exception as admin_error:
+        logger.warning(f"⚠️ Failed to credit admin dispute fee: {str(admin_error)}")
+    
+    # Credit referrer if applicable
+    if referrer_id and referrer_commission > 0:
+        try:
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency="GBP",
+                amount=referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=dispute_id,
+                metadata={"referred_user_id": losing_party, "transaction_type": "dispute"}
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": losing_party,
+                "transaction_type": "dispute",
+                "fee_amount": dispute_fee,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": "GBP",
+                "dispute_id": dispute_id,
+                "trade_id": trade["trade_id"],
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+        except Exception as comm_error:
+            logger.warning(f"⚠️ Failed to pay referrer commission: {str(comm_error)}")
+    
+    # Log to fee_transactions
+    await db.fee_transactions.insert_one({
+        "user_id": losing_party,
+        "transaction_type": "dispute",
+        "fee_type": "dispute_fee",
+        "amount": trade_value_gbp,
+        "fee_amount": dispute_fee,
+        "fee_percent": dispute_fee_percent,
+        "admin_fee": admin_fee,
+        "referrer_commission": referrer_commission,
+        "referrer_id": referrer_id,
+        "currency": "GBP",
+        "reference_id": dispute_id,
+        "trade_id": trade["trade_id"],
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
     # Update trade based on resolution
     if resolution == "release_to_buyer":
         await db.p2p_trades.update_one(
@@ -7370,6 +7483,8 @@ async def resolve_dispute_final(request: dict):
                 "$set": {
                     "status": "completed",
                     "escrow_released": True,
+                    "dispute_fee": dispute_fee,
+                    "dispute_fee_charged_to": losing_party,
                     "completed_at": datetime.now(timezone.utc)
                 }
             }
@@ -7381,7 +7496,7 @@ async def resolve_dispute_final(request: dict):
             {"$inc": {f"crypto_balances.{trade['crypto_currency']}": trade["crypto_amount"]}}
         )
         
-        action = "Crypto released to buyer"
+        action = f"Crypto released to buyer. Dispute fee of £{dispute_fee:.2f} charged to seller."
     else:
         await db.p2p_trades.update_one(
             {"trade_id": dispute["trade_id"]},
@@ -7389,6 +7504,8 @@ async def resolve_dispute_final(request: dict):
                 "$set": {
                     "status": "cancelled",
                     "escrow_released": True,
+                    "dispute_fee": dispute_fee,
+                    "dispute_fee_charged_to": losing_party,
                     "cancelled_at": datetime.now(timezone.utc)
                 }
             }
@@ -7400,7 +7517,7 @@ async def resolve_dispute_final(request: dict):
             {"$inc": {f"crypto_balances.{trade['crypto_currency']}": trade["crypto_amount"]}}
         )
         
-        action = "Crypto returned to seller"
+        action = f"Crypto returned to seller. Dispute fee of £{dispute_fee:.2f} charged to buyer."
     
     return {
         "success": True,
