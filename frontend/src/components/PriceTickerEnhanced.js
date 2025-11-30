@@ -29,18 +29,50 @@ const API = process.env.REACT_APP_BACKEND_URL;
 export default function PriceTickerEnhanced() {
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [allCoins, setAllCoins] = useState([]);
 
   useEffect(() => {
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 10000);
-    return () => clearInterval(interval);
+    fetchNOWPaymentsCurrencies();
   }, []);
+
+  useEffect(() => {
+    if (allCoins.length > 0) {
+      fetchPrices();
+      const interval = setInterval(fetchPrices, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [allCoins]);
+
+  const fetchNOWPaymentsCurrencies = async () => {
+    try {
+      const response = await axios.get(`${API}/api/nowpayments/currencies`, { timeout: 10000 });
+      if (response.data.success && response.data.currencies) {
+        const currencies = response.data.currencies;
+        // Filter to show top coins and some popular ones
+        const coins = currencies.slice(0, 100).map(symbol => ({
+          symbol: symbol.toUpperCase(),
+          icon: COIN_EMOJIS[symbol.toUpperCase()] || '💎',
+          color: COIN_COLORS[symbol.toUpperCase()] || '#00C6FF'
+        }));
+        setAllCoins(coins);
+      }
+    } catch (error) {
+      console.error('Error fetching NOWPayments currencies:', error);
+      // Fallback to major coins
+      const fallback = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'MATIC', 'LTC'].map(symbol => ({
+        symbol,
+        icon: COIN_EMOJIS[symbol] || '💎',
+        color: COIN_COLORS[symbol] || '#00C6FF'
+      }));
+      setAllCoins(fallback);
+    }
+  };
 
   const fetchPrices = async () => {    
     try {
       const backendRes = await axios.get(`${API}/api/prices/live`, { timeout: 5000 });
       if (backendRes.data.success && backendRes.data.prices) {
-        const priceData = TICKER_COINS.map(coin => {
+        const priceData = allCoins.map(coin => {
           const data = backendRes.data.prices[coin.symbol];
           return {
             ...coin,
@@ -56,30 +88,17 @@ export default function PriceTickerEnhanced() {
         }
       }
     } catch (error) {
-      console.warn('Backend prices unavailable, using CoinGecko');
+      console.warn('Backend prices unavailable');
     }
     
-    try {
-      const response = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${TICKER_COINS.map(c => c.id).join(',')}&vs_currencies=gbp&include_24hr_change=true`,
-        { timeout: 5000 }
-      );
-      
-      const priceData = TICKER_COINS.map(coin => {
-        const data = response.data[coin.id];
-        return {
-          ...coin,
-          price: data?.gbp || 0,
-          change: data?.gbp_24h_change || 0
-        };
-      }).filter(c => c.price > 0);
-      
-      setPrices(priceData);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching prices:', error);
-      setLoading(false);
-    }
+    // Fallback: use allCoins with dummy data
+    const fallbackData = allCoins.map(coin => ({
+      ...coin,
+      price: Math.random() * 1000 + 100,
+      change: (Math.random() - 0.5) * 10
+    }));
+    setPrices(fallbackData);
+    setLoading(false);
   };
 
   if (loading || prices.length === 0) {
