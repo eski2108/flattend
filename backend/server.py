@@ -21763,7 +21763,8 @@ async def get_user_referral_dashboard(user_id: str):
                 "tier_info": tier_info.get(tier, tier_info["standard"]),
                 "can_upgrade_to_vip": tier == "standard",
                 "referred_users": referred_users_data,
-                "commission_history": commission_history
+                "commission_history": commission_history,
+                "earnings_by_fee_type": earnings_breakdown
             }
         }
         
