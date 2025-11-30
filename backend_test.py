@@ -129,9 +129,11 @@ class TradingPlatformTester:
                 data = response.json()
                 if data.get("success") and data.get("user", {}).get("user_id"):
                     user_id = data["user"]["user_id"]
-                    if user_type == "Test User":
-                        self.test_user_id = user_id
-                    elif user_type == "Seller":
+                    if user_type == "Trader":
+                        self.trader_user_id = user_id
+                    elif user_type == "P2P Buyer":
+                        self.buyer_user_id = user_id
+                    elif user_type == "P2P Seller":
                         self.seller_user_id = user_id
                         
                     self.log_test(
