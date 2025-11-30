@@ -86,6 +86,7 @@ const EmailVerified = lazy(() => import("@/pages/EmailVerified"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const PublicSellerProfile = lazy(() => import("@/pages/PublicSellerProfile"));
 const Security = lazy(() => import("@/pages/Security"));
+const TwoFactorSetup = lazy(() => import("@/pages/TwoFactorSetup"));
 const Verification = lazy(() => import("@/pages/Verification"));
 const AccountUpgrade = lazy(() => import("@/pages/AccountUpgrade"));
 const P2PBoost = lazy(() => import("@/pages/P2PBoost"));
