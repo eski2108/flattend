@@ -154,50 +154,45 @@ export default function SpotTrading() {
     // Clear any existing content
     container.innerHTML = '';
 
-    // Create widget config
-    const widgetConfig = {
-      symbols: [[selectedPair]],
-      chartOnly: false,
-      width: '100%',
-      height: '100%',
-      locale: 'en',
-      colorTheme: 'dark',
-      autosize: true,
-      showVolume: true,
-      showMA: false,
-      hideDateRanges: false,
-      hideMarketStatus: false,
-      hideSymbolLogo: false,
-      scalePosition: 'right',
-      scaleMode: 'Normal',
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '12',
-      noTimeScale: false,
-      valuesTracking: '1',
-      changeMode: 'price-and-percent',
-      chartType: 'area',
-      backgroundColor: '#020618',
-      lineColor: '#9B4DFF',
-      topColor: 'rgba(155, 77, 255, 0.4)',
-      bottomColor: 'rgba(155, 77, 255, 0.0)',
-      lineWidth: 2
-    };
+    const widgetHTML = `
+      <div class="tradingview-widget-container" style="height:100%;width:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+        {
+          "symbol": "${selectedPair}",
+          "width": "100%",
+          "height": "100%",
+          "locale": "en",
+          "dateRange": "1D",
+          "colorTheme": "dark",
+          "isTransparent": false,
+          "autosize": true,
+          "largeChartUrl": "",
+          "chartType": "area",
+          "lineColor": "rgba(155, 77, 255, 1)",
+          "topColor": "rgba(155, 77, 255, 0.4)",
+          "bottomColor": "rgba(155, 77, 255, 0.05)",
+          "fontColor": "#787B86",
+          "gridLineColor": "rgba(0, 240, 255, 0.06)",
+          "backgroundColor": "rgba(2, 6, 24, 1)"
+        }
+        </script>
+      </div>
+    `;
 
-    // Create div wrapper for widget
-    const widgetDiv = document.createElement('div');
-    widgetDiv.className = 'tradingview-widget-container';
-    widgetDiv.style.width = '100%';
-    widgetDiv.style.height = '100%';
+    container.innerHTML = widgetHTML;
 
-    // Create script element
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
-    script.async = true;
-    script.innerHTML = JSON.stringify(widgetConfig);
-
-    widgetDiv.appendChild(script);
-    container.appendChild(widgetDiv);
+    // Execute the script
+    const scripts = container.getElementsByTagName('script');
+    for (let i = 0; i < scripts.length; i++) {
+      if (scripts[i].src) {
+        const newScript = document.createElement('script');
+        newScript.src = scripts[i].src;
+        newScript.async = true;
+        newScript.innerHTML = scripts[i].innerHTML;
+        scripts[i].parentNode.replaceChild(newScript, scripts[i]);
+      }
+    }
   };
 
   const handlePlaceOrder = async () => {
