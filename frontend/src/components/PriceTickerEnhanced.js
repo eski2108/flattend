@@ -26,9 +26,17 @@ const COIN_COLORS = {
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// Pre-load with coins immediately so ticker starts moving
+const INITIAL_COINS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'AVAX', 'DOGE', 'TRX', 'DOT', 'MATIC', 'LTC', 'LINK', 'XLM', 'XMR', 'ATOM', 'BCH', 'UNI', 'FIL', 'APT', 'ALGO', 'VET', 'ICP', 'NEAR', 'FTM', 'SAND', 'MANA', 'XTZ', 'AAVE', 'GRT', 'EOS', 'THETA', 'AXS', 'MKR', 'ZEC', 'DASH', 'SHIB', 'DAI', 'USDC'].map(symbol => ({
+  symbol,
+  icon: COIN_EMOJIS[symbol] || '💎',
+  color: COIN_COLORS[symbol] || '#00C6FF',
+  price: 1000 + Math.random() * 500,
+  change: (Math.random() - 0.5) * 10
+}));
+
 export default function PriceTickerEnhanced() {
-  const [prices, setPrices] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [prices, setPrices] = useState(INITIAL_COINS);
 
   useEffect(() => {
     fetchAllData();
