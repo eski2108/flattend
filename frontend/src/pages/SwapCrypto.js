@@ -418,9 +418,9 @@ function SwapCrypto() {
                         }}
                       />
                     </div>
-                    {prices && toAmount && (
+                    {prices && toAmount && prices[toCrypto] && (
                       <div style={{ marginTop: '12px', textAlign: isMobile ? 'left' : 'right', fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3' }}>
-                        ≈ ${(parseFloat(toAmount || 0) * (prices[`${toCrypto}_USD`] || 0)).toFixed(2)}
+                        ≈ £{(parseFloat(toAmount || 0) * (prices[toCrypto]?.price_gbp || 0)).toFixed(2)}
                       </div>
                     )}
                   </div>
