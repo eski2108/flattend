@@ -21,7 +21,7 @@ DEFAULT_FEES = {
     # 1-3: P2P FEES
     "p2p_maker_fee_percent": 1.0,
     "p2p_taker_fee_percent": 1.0,
-    "p2p_express_fee_percent": 2.0,
+    "p2p_express_fee_percent": 2.5,
     
     # 4-6: INSTANT BUY/SELL & SWAP
     "instant_buy_fee_percent": 3.0,
