@@ -25,6 +25,11 @@ export default function AdminEarnings() {
     total_revenue: {}
   });
   const [copied, setCopied] = useState('');
+  const [livePrices, setLivePrices] = useState({
+    BTC: 0,
+    ETH: 0,
+    USDT: 0
+  });
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -44,7 +49,24 @@ export default function AdminEarnings() {
     loadFeeStats();
     loadRevenueSummary();
     loadRevenueBreakdown();
+    loadLivePrices();
   }, [navigate, period]);
+
+  const loadLivePrices = async () => {
+    try {
+      const response = await axios.get(`${API}/api/prices/live`);
+      if (response.data) {
+        const prices = response.data.prices || response.data;
+        setLivePrices({
+          BTC: prices.BTC?.gbp || 0,
+          ETH: prices.ETH?.gbp || 0,
+          USDT: prices.USDT?.gbp || 0
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load live prices:', error);
+    }
+  };
 
   const loadEarnings = async () => {
     try {
