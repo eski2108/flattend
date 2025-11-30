@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://coinhubx-refresh.preview.emergentagent.com/api"
+BACKEND_URL = "https://fee-central.preview.emergentagent.com/api"
 
 def test_crypto_savings_portfolio_system():
     """Test complete Crypto Savings & Portfolio System"""

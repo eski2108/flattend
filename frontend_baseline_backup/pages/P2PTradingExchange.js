@@ -11,7 +11,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://coinhubx-refresh.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://fee-central.preview.emergentagent.com';
 
 export default function P2PTradingExchange() {
   const navigate = useNavigate();
