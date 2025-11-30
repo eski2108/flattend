@@ -134,7 +134,7 @@ backend:
 
   - task: "FINAL COMPREHENSIVE TESTING - All 7 Critical Flows"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/WalletPagePremium.js, /app/frontend/src/pages/P2PMarketplace.js, /app/frontend/src/pages/LandingPage.js, /app/frontend/src/pages/AdminLogin.js, /app/frontend/src/pages/InstantBuy.js, /app/frontend/src/pages/SwapCrypto.js"
     stuck_count: 6
     priority: "high"
