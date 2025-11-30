@@ -3861,8 +3861,8 @@ async def check_express_liquidity(data: Dict):
 
 @api_router.post("/p2p/express/create")
 async def create_p2p_express_order(order_data: Dict):
-    """Create a P2P Express order with 2.5% fee - Admin liquidity = instant, else use seller"""
-    required_fields = ["user_id", "crypto", "country", "payment_method", "fiat_amount", "crypto_amount", "base_rate", "express_fee", "express_fee_percent", "net_amount"]
+    """Create P2P Express order - admin liquidity first, then qualified seller"""
+    required_fields = ["user_id", "crypto", "country", "fiat_amount", "crypto_amount", "base_rate", "express_fee", "express_fee_percent", "net_amount"]
     for field in required_fields:
         if field not in order_data:
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
