@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import axios from 'axios';
 
-// Emoji mapping for major coins
 const COIN_EMOJIS = {
   'BTC': '₿', 'ETH': '🟣', 'USDT': '🟩', 'BNB': '🔶', 'SOL': '🔵',
   'XRP': '❎', 'ADA': '🔷', 'AVAX': '🔺', 'DOGE': '🐶', 'TRX': '🔻',
   'DOT': '🎯', 'MATIC': '🟪', 'LTC': '⚪', 'LINK': '🔗', 'XLM': '✴️',
   'XMR': '🟠', 'ATOM': '🪐', 'BCH': '💚', 'UNI': '🌸', 'FIL': '📁',
-  'APT': '🅰️', 'USDC': '🟩', 'DAI': '💛', 'SHIB': '🐕', 'ALGO': '🔺',
-  'VET': '✅', 'ICP': '♾️', 'NEAR': '🔵', 'FTM': '👻', 'SAND': '🏝️',
-  'MANA': '🎮', 'XTZ': '🔷', 'AAVE': '👻', 'GRT': '📊', 'EOS': '⚫',
-  'THETA': '📺', 'AXS': '🎮', 'MKR': '🏦', 'ZEC': '🔐', 'DASH': '💨'
+  'APT': '🅰️', 'USDC': '🟩', 'DAI': '💛', 'SHIB': '🐕'
 };
 
-// Color mapping for coins
 const COIN_COLORS = {
   'BTC': '#F7931A', 'ETH': '#627EEA', 'USDT': '#26A17B', 'BNB': '#F3BA2F',
   'SOL': '#14F195', 'XRP': '#00AAE4', 'ADA': '#0033AD', 'AVAX': '#E84142',
@@ -24,91 +19,18 @@ const COIN_COLORS = {
   'APT': '#00D4AA', 'USDC': '#2775CA'
 };
 
+const INITIAL_COINS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'AVAX', 'DOGE', 'TRX', 'DOT', 'MATIC', 'LTC', 'LINK', 'XLM', 'XMR', 'ATOM', 'BCH', 'UNI', 'FIL', 'APT', 'USDC', 'DAI', 'SHIB'];
+
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Pre-load with coins immediately so ticker starts moving
-const INITIAL_COINS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'AVAX', 'DOGE', 'TRX', 'DOT', 'MATIC', 'LTC', 'LINK', 'XLM', 'XMR', 'ATOM', 'BCH', 'UNI', 'FIL', 'APT', 'ALGO', 'VET', 'ICP', 'NEAR', 'FTM', 'SAND', 'MANA', 'XTZ', 'AAVE', 'GRT', 'EOS', 'THETA', 'AXS', 'MKR', 'ZEC', 'DASH', 'SHIB', 'DAI', 'USDC'].map(symbol => ({
-  symbol,
-  icon: COIN_EMOJIS[symbol] || '💎',
-  color: COIN_COLORS[symbol] || '#00C6FF',
-  price: 1000 + Math.random() * 500,
-  change: (Math.random() - 0.5) * 10
-}));
-
 export default function PriceTickerEnhanced() {
-  const [prices, setPrices] = useState(INITIAL_COINS);
-
-  useEffect(() => {
-    fetchAllData();
-    const interval = setInterval(fetchAllData, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchAllData = async () => {
-    try {
-      // Try to fetch NOWPayments currencies
-      const nowpaymentsRes = await axios.get(`${API}/api/nowpayments/currencies`, { timeout: 5000 });
-      let allCoins = [];
-      
-      if (nowpaymentsRes.data.success && nowpaymentsRes.data.currencies) {
-        allCoins = nowpaymentsRes.data.currencies.map(symbol => ({
-          symbol: symbol.toUpperCase(),
-          icon: COIN_EMOJIS[symbol.toUpperCase()] || '💎',
-          color: COIN_COLORS[symbol.toUpperCase()] || '#00C6FF'
-        }));
-      }
-      
-      // Fallback if no coins
-      if (allCoins.length === 0) {
-        allCoins = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'AVAX', 'DOGE', 'TRX', 'DOT', 'MATIC', 'LTC', 'LINK', 'XLM', 'XMR', 'ATOM', 'BCH', 'UNI', 'FIL', 'APT', 'ALGO', 'VET', 'ICP', 'NEAR', 'FTM', 'SAND', 'MANA', 'XTZ', 'AAVE', 'GRT', 'EOS', 'THETA', 'AXS', 'MKR', 'ZEC', 'DASH'].map(symbol => ({
-          symbol,
-          icon: COIN_EMOJIS[symbol] || '💎',
-          color: COIN_COLORS[symbol] || '#00C6FF'
-        }));
-      }
-      
-      // Fetch live prices
-      try {
-        const pricesRes = await axios.get(`${API}/api/prices/live`, { timeout: 3000 });
-        if (pricesRes.data.success && pricesRes.data.prices) {
-          const priceData = allCoins.map(coin => {
-            const data = pricesRes.data.prices[coin.symbol];
-            return {
-              ...coin,
-              price: data?.price_gbp || Math.random() * 500 + 50,
-              change: data?.change_24h || (Math.random() - 0.5) * 10
-            };
-          });
-          setPrices(priceData);
-          return;
-        }
-      } catch (e) {
-        // Use dummy prices if live prices fail
-      }
-      
-      // Fallback with dummy data
-      const fallbackData = allCoins.map(coin => ({
-        ...coin,
-        price: Math.random() * 500 + 50,
-        change: (Math.random() - 0.5) * 10
-      }));
-      setPrices(fallbackData);
-      
-    } catch (error) {
-      console.error('Ticker error:', error);
-      // Ultimate fallback
-      const emergency = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE'].map(symbol => ({
-        symbol,
-        icon: COIN_EMOJIS[symbol] || '💎',
-        color: COIN_COLORS[symbol] || '#00C6FF',
-        price: Math.random() * 500 + 50,
-        change: (Math.random() - 0.5) * 10
-      }));
-      setPrices(emergency);
-    }
-  };
-
-  // REMOVED LOADING CHECK - ticker always shows and animates
+  const [coins] = useState(() => INITIAL_COINS.map(symbol => ({
+    symbol,
+    icon: COIN_EMOJIS[symbol] || '💎',
+    color: COIN_COLORS[symbol] || '#00C6FF',
+    price: 1000 + Math.random() * 500,
+    change: (Math.random() - 0.5) * 10
+  })));
 
   return (
     <div style={{
@@ -122,40 +44,27 @@ export default function PriceTickerEnhanced() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+      boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15)',
       position: 'relative'
     }}>
-      {/* Neon gradient line at top - centered and clean */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         height: '1px',
-        background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)',
-        animation: 'gradientSlide 6s linear infinite',
-        zIndex: 10
-      }} />
-      
-      {/* Animated gradient background */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.05), transparent)',
-        animation: 'shimmer 3s infinite',
-        pointerEvents: 'none'
+        background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)'
       }} />
       
       <div style={{
         display: 'flex',
-        animation: 'scroll 120s linear infinite',
+        animation: 'scroll 30s linear infinite',
         gap: '2rem',
         position: 'relative',
         zIndex: 1
       }}>
-        {[...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices].map((coin, idx) => {
+        {[...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins].map((coin, idx) => {
           const isPositive = coin.change >= 0;
-          const glowColor = isPositive ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)';
           
           return (
             <div
@@ -169,27 +78,18 @@ export default function PriceTickerEnhanced() {
                 padding: '0.5rem 0.875rem',
                 borderRadius: '8px',
                 background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(8px)',
-                transition: 'all 0.3s ease'
+                border: '1px solid rgba(255, 255, 255, 0.08)'
               }}
             >
-              <span style={{
-                fontSize: '18px',
-                color: coin.color,
-                textShadow: `0 0 10px ${coin.color}40`,
-                filter: 'brightness(1.3)'
-              }}>
-                {coin.icon || coin.symbol.charAt(0)}
+              <span style={{ fontSize: '18px', color: coin.color }}>
+                {coin.icon}
               </span>
               
               <span style={{
                 fontSize: '15px',
                 fontWeight: '800',
                 color: coin.color,
-                letterSpacing: '0.5px',
-                textShadow: `0 0 10px ${coin.color}40, 0 0 20px ${coin.color}20`,
-                filter: 'brightness(1.2)'
+                letterSpacing: '0.5px'
               }}>
                 {coin.symbol}
               </span>
@@ -197,13 +97,9 @@ export default function PriceTickerEnhanced() {
               <span style={{
                 fontSize: '15px',
                 fontWeight: '700',
-                background: 'linear-gradient(135deg, #FFFFFF 0%, #E0F2FE 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                filter: 'brightness(1.3)'
+                color: '#FFFFFF'
               }}>
-                £{coin.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                £{coin.price.toFixed(2)}
               </span>
               
               <span style={{
@@ -212,14 +108,9 @@ export default function PriceTickerEnhanced() {
                 gap: '0.25rem',
                 fontSize: '13px',
                 fontWeight: '700',
-                color: isPositive ? '#22C55E' : '#EF4444',
-                textShadow: `0 0 8px ${glowColor}`,
-                padding: '0.125rem 0.375rem',
-                borderRadius: '4px',
-                background: isPositive ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                border: `1px solid ${isPositive ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
+                color: isPositive ? '#22C55E' : '#EF4444'
               }}>
-                {isPositive ? <TrendingUp size={12} strokeWidth={3} /> : <TrendingDown size={12} strokeWidth={3} />}
+                {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {Math.abs(coin.change).toFixed(2)}%
               </span>
             </div>
@@ -233,25 +124,7 @@ export default function PriceTickerEnhanced() {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-5%);
-          }
-        }
-        
-        @keyframes gradientSlide {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-        
-        @keyframes shimmer {
-          0%, 100% {
-            opacity: 0;
-          }
-          50% {
-            opacity: 1;
+            transform: translateX(-10%);
           }
         }
       `}</style>
