@@ -550,8 +550,9 @@ function SwapCrypto() {
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     {cryptos.slice(0, 6).map(crypto => {
-                      const price = prices ? (prices[`${crypto.code}_USD`] || 0) : 0;
-                      const change = (Math.random() * 10 - 5).toFixed(2);
+                      const priceData = prices ? prices[crypto.code] : null;
+                      const price = priceData?.price_usd || 0;
+                      const change = priceData?.change_24h || 0;
                       const isPositive = parseFloat(change) >= 0;
                       
                       return (
