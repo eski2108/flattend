@@ -2247,11 +2247,11 @@ class TradingPlatformTester:
         """Test POST /api/support/chat - Send message and auto-create chat"""
         print("\n=== Testing Support Chat Send Message ===")
         
-        if not self.test_user_id:
+        if not self.trader_user_id:
             self.log_test(
                 "Support Chat Send Message", 
                 False, 
-                "Cannot test support chat - no test user ID available"
+                "Cannot test support chat - no trader user ID available"
             )
             return False
         
