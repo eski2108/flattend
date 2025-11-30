@@ -83,15 +83,17 @@ export default function SpotTrading() {
 
   const loadTradingViewChart = () => {
     const container = document.getElementById('tradingview-chart');
-    if (!container) return;
+    if (!container) {
+      console.log('TradingView chart container not found');
+      return;
+    }
 
+    // Clear any existing content
     container.innerHTML = '';
 
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.async = true;
-    script.onload = () => {
-      if (window.TradingView) {
+    // Check if script already loaded
+    if (window.TradingView && window.TradingView.widget) {
+      try {
         new window.TradingView.widget({
           autosize: true,
           symbol: selectedPair,
@@ -100,7 +102,7 @@ export default function SpotTrading() {
           theme: 'dark',
           style: '1',
           locale: 'en',
-          toolbar_bg: '#05121F',
+          toolbar_bg: '#020618',
           enable_publishing: false,
           hide_top_toolbar: false,
           hide_legend: false,
@@ -110,35 +112,83 @@ export default function SpotTrading() {
             'MASimple@tv-basicstudies',
             'MAExp@tv-basicstudies',
             'RSI@tv-basicstudies',
-            'MACD@tv-basicstudies',
-            'BB@tv-basicstudies'
+            'MACD@tv-basicstudies'
           ],
-          backgroundColor: '#05121F',
-          gridColor: 'rgba(12, 235, 255, 0.1)',
+          backgroundColor: '#020618',
+          gridColor: 'rgba(0, 240, 255, 0.1)',
           allow_symbol_change: true,
           details: true,
           hotlist: true,
-          calendar: false,
-          show_popup_button: true,
-          popup_width: '1000',
-          popup_height: '650'
+          calendar: false
         });
+      } catch (error) {
+        console.error('Error loading TradingView chart:', error);
       }
+      return;
+    }
+
+    // Load script if not already loaded
+    const existingScript = document.querySelector('script[src="https://s3.tradingview.com/tv.js"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/tv.js';
+    script.async = true;
+    script.onload = () => {
+      if (window.TradingView && window.TradingView.widget) {
+        try {
+          new window.TradingView.widget({
+            autosize: true,
+            symbol: selectedPair,
+            interval: '15',
+            timezone: 'Etc/UTC',
+            theme: 'dark',
+            style: '1',
+            locale: 'en',
+            toolbar_bg: '#020618',
+            enable_publishing: false,
+            hide_top_toolbar: false,
+            hide_legend: false,
+            save_image: false,
+            container_id: 'tradingview-chart',
+            studies: [
+              'MASimple@tv-basicstudies',
+              'MAExp@tv-basicstudies',
+              'RSI@tv-basicstudies',
+              'MACD@tv-basicstudies'
+            ],
+            backgroundColor: '#020618',
+            gridColor: 'rgba(0, 240, 255, 0.1)',
+            allow_symbol_change: true,
+            details: true,
+            hotlist: true,
+            calendar: false
+          });
+        } catch (error) {
+          console.error('Error initializing TradingView widget:', error);
+        }
+      }
+    };
+    script.onerror = (error) => {
+      console.error('Error loading TradingView script:', error);
     };
     document.head.appendChild(script);
   };
 
   const loadTradingViewOrderBook = () => {
     const container = document.getElementById('tradingview-orderbook');
-    if (!container) return;
+    if (!container) {
+      console.log('TradingView orderbook container not found');
+      return;
+    }
 
+    // Clear any existing content
     container.innerHTML = '';
 
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
-    script.async = true;
-    script.type = 'text/javascript';
-    script.innerHTML = JSON.stringify({
+    // Create widget config
+    const widgetConfig = {
       symbols: [[selectedPair]],
       chartOnly: false,
       width: '100%',
@@ -159,13 +209,28 @@ export default function SpotTrading() {
       valuesTracking: '1',
       changeMode: 'price-and-percent',
       chartType: 'area',
-      backgroundColor: '#05121F',
-      lineColor: '#0CEBFF',
-      topColor: 'rgba(12, 235, 255, 0.4)',
-      bottomColor: 'rgba(12, 235, 255, 0.0)',
+      backgroundColor: '#020618',
+      lineColor: '#9B4DFF',
+      topColor: 'rgba(155, 77, 255, 0.4)',
+      bottomColor: 'rgba(155, 77, 255, 0.0)',
       lineWidth: 2
-    });
-    container.appendChild(script);
+    };
+
+    // Create div wrapper for widget
+    const widgetDiv = document.createElement('div');
+    widgetDiv.className = 'tradingview-widget-container';
+    widgetDiv.style.width = '100%';
+    widgetDiv.style.height = '100%';
+
+    // Create script element
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify(widgetConfig);
+
+    widgetDiv.appendChild(script);
+    container.appendChild(widgetDiv);
   };
 
   const handlePlaceOrder = async () => {
