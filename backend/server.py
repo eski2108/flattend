@@ -339,21 +339,32 @@ PAYMENT_METHODS = [
 
 # Supported Regions/Countries for P2P Trading
 SUPPORTED_REGIONS = [
-    {"code": "UK", "name": "United Kingdom"},
-    {"code": "EU", "name": "European Union"},
-    {"code": "US", "name": "United States"},
-    {"code": "CA", "name": "Canada"},
-    {"code": "AU", "name": "Australia"},
-    {"code": "SG", "name": "Singapore"},
-    {"code": "IN", "name": "India"},
-    {"code": "CN", "name": "China"},
-    {"code": "BR", "name": "Brazil"},
-    {"code": "MX", "name": "Mexico"},
-    {"code": "PH", "name": "Philippines"},
-    {"code": "KE", "name": "Kenya"},
-    {"code": "SA", "name": "Saudi Arabia"},
-    {"code": "AE", "name": "United Arab Emirates"},
-    {"code": "Global", "name": "Global/Other"}
+    {"code": "NG", "name": "Nigeria", "flag": "🇳🇬"},
+    {"code": "IN", "name": "India", "flag": "🇮🇳"},
+    {"code": "UK", "name": "United Kingdom", "flag": "🇬🇧"},
+    {"code": "US", "name": "United States", "flag": "🇺🇸"},
+    {"code": "PK", "name": "Pakistan", "flag": "🇵🇰"},
+    {"code": "BD", "name": "Bangladesh", "flag": "🇧🇩"},
+    {"code": "GH", "name": "Ghana", "flag": "🇬🇭"},
+    {"code": "KE", "name": "Kenya", "flag": "🇰🇪"},
+    {"code": "BR", "name": "Brazil", "flag": "🇧🇷"},
+    {"code": "AE", "name": "United Arab Emirates", "flag": "🇦🇪"},
+    {"code": "CN", "name": "China", "flag": "🇨🇳"},
+    {"code": "PH", "name": "Philippines", "flag": "🇵🇭"},
+    {"code": "ID", "name": "Indonesia", "flag": "🇮🇩"},
+    {"code": "EU", "name": "European Union", "flag": "🇪🇺"},
+    {"code": "CA", "name": "Canada", "flag": "🇨🇦"},
+    {"code": "AU", "name": "Australia", "flag": "🇦🇺"},
+    {"code": "SG", "name": "Singapore", "flag": "🇸🇬"},
+    {"code": "MX", "name": "Mexico", "flag": "🇲🇽"},
+    {"code": "SA", "name": "Saudi Arabia", "flag": "🇸🇦"},
+    {"code": "ZA", "name": "South Africa", "flag": "🇿🇦"},
+    {"code": "EG", "name": "Egypt", "flag": "🇪🇬"},
+    {"code": "TR", "name": "Turkey", "flag": "🇹🇷"},
+    {"code": "VN", "name": "Vietnam", "flag": "🇻🇳"},
+    {"code": "TH", "name": "Thailand", "flag": "🇹🇭"},
+    {"code": "MY", "name": "Malaysia", "flag": "🇲🇾"},
+    {"code": "Global", "name": "Global/Other", "flag": "🌍"}
 ]
 
 # Supported Fiat Currencies
