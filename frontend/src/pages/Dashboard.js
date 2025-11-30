@@ -215,8 +215,8 @@ function Dashboard() {
             <div style={{ 
               height: '2px', 
               width: '100%', 
-              background: 'linear-gradient(90deg, #00C6FF 0%, transparent 100%)',
-              boxShadow: '0 0 10px rgba(0, 198, 255, 0.5)',
+              background: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.6) 50%, transparent 100%)',
+              boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)',
               margin: '20px 0'
             }} />
             
