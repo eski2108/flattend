@@ -256,27 +256,123 @@ export default function SpotTrading() {
               <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.6) 50%, transparent 100%)', boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }} />
             </div>
 
-        {/* Market Stats Bar */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '200px', background: 'rgba(12, 235, 255, 0.05)', border: '1px solid rgba(12, 235, 255, 0.2)', borderRadius: '12px', padding: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>Last Price</div>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#0CEBFF' }}>${marketStats.lastPrice.toLocaleString()}</div>
-          </div>
-          <div style={{ flex: 1, minWidth: '200px', background: 'rgba(12, 235, 255, 0.05)', border: '1px solid rgba(12, 235, 255, 0.2)', borderRadius: '12px', padding: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>24h Change</div>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: marketStats.change24h >= 0 ? '#22C55E' : '#EF4444' }}>
-              {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+            {/* Premium Market Stats with Neon Glow */}
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: '16px', marginBottom: isMobile ? '20px' : '32px' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
+                border: '1px solid rgba(0, 240, 255, 0.3)',
+                borderRadius: '16px',
+                padding: isMobile ? '16px' : '20px',
+                boxShadow: '0 0 30px rgba(0, 240, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '80px',
+                  height: '80px',
+                  background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
+                  filter: 'blur(25px)',
+                  pointerEvents: 'none'
+                }} />
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Last Price</div>
+                <div style={{ fontSize: isMobile ? '22px' : '26px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 15px rgba(0, 240, 255, 0.5)' }}>
+                  ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              
+              <div style={{
+                background: marketStats.change24h >= 0 
+                  ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)'
+                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.03) 100%)',
+                border: `1px solid ${marketStats.change24h >= 0 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                borderRadius: '16px',
+                padding: isMobile ? '16px' : '20px',
+                boxShadow: marketStats.change24h >= 0 
+                  ? '0 0 30px rgba(34, 197, 94, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)'
+                  : '0 0 30px rgba(239, 68, 68, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '80px',
+                  height: '80px',
+                  background: marketStats.change24h >= 0 
+                    ? 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)'
+                    : 'radial-gradient(circle, rgba(239, 68, 68, 0.3), transparent)',
+                  filter: 'blur(25px)',
+                  pointerEvents: 'none'
+                }} />
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Change</div>
+                <div style={{ 
+                  fontSize: isMobile ? '22px' : '26px', 
+                  fontWeight: '700', 
+                  color: marketStats.change24h >= 0 ? '#22C55E' : '#EF4444',
+                  textShadow: marketStats.change24h >= 0 ? '0 0 15px rgba(34, 197, 94, 0.5)' : '0 0 15px rgba(239, 68, 68, 0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  {marketStats.change24h >= 0 ? <TrendingUp size={22} /> : <TrendingDown size={22} />}
+                  {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+                </div>
+              </div>
+              
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
+                border: '1px solid rgba(155, 77, 255, 0.3)',
+                borderRadius: '16px',
+                padding: isMobile ? '16px' : '20px',
+                boxShadow: '0 0 30px rgba(155, 77, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '80px',
+                  height: '80px',
+                  background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
+                  filter: 'blur(25px)',
+                  pointerEvents: 'none'
+                }} />
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h High</div>
+                <div style={{ fontSize: isMobile ? '20px' : '22px', fontWeight: '700', color: '#9B4DFF', textShadow: '0 0 15px rgba(155, 77, 255, 0.5)' }}>
+                  ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(245, 197, 66, 0.08) 0%, rgba(245, 197, 66, 0.03) 100%)',
+                border: '1px solid rgba(245, 197, 66, 0.3)',
+                borderRadius: '16px',
+                padding: isMobile ? '16px' : '20px',
+                boxShadow: '0 0 30px rgba(245, 197, 66, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '80px',
+                  height: '80px',
+                  background: 'radial-gradient(circle, rgba(245, 197, 66, 0.3), transparent)',
+                  filter: 'blur(25px)',
+                  pointerEvents: 'none'
+                }} />
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Low</div>
+                <div style={{ fontSize: isMobile ? '20px' : '22px', fontWeight: '700', color: '#F5C542', textShadow: '0 0 15px rgba(245, 197, 66, 0.5)' }}>
+                  ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
             </div>
-          </div>
-          <div style={{ flex: 1, minWidth: '200px', background: 'rgba(12, 235, 255, 0.05)', border: '1px solid rgba(12, 235, 255, 0.2)', borderRadius: '12px', padding: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>24h High</div>
-            <div style={{ fontSize: '20px', fontWeight: '600', color: '#FFFFFF' }}>${marketStats.high24h.toLocaleString()}</div>
-          </div>
-          <div style={{ flex: 1, minWidth: '200px', background: 'rgba(12, 235, 255, 0.05)', border: '1px solid rgba(12, 235, 255, 0.2)', borderRadius: '12px', padding: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>24h Low</div>
-            <div style={{ fontSize: '20px', fontWeight: '600', color: '#FFFFFF' }}>${marketStats.low24h.toLocaleString()}</div>
-          </div>
-        </div>
 
         {/* Main Trading Layout */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '20px' }}>
