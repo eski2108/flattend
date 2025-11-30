@@ -21671,6 +21671,14 @@ async def get_user_referral_dashboard(user_id: str):
         # Sort by earnings (highest first)
         referred_users_data.sort(key=lambda x: x["commission_earned"], reverse=True)
         
+        # Get tier information
+        tier = user.get("referral_tier", "standard")
+        tier_info = {
+            "standard": {"commission": "20%", "name": "Standard", "cost": "Free"},
+            "vip": {"commission": "20%", "name": "VIP Package", "cost": "£150 one-time"},
+            "golden": {"commission": "50%", "name": "Golden (Admin Assigned)", "cost": "Invitation Only"}
+        }
+        
         return {
             "success": True,
             "data": {
@@ -21680,7 +21688,9 @@ async def get_user_referral_dashboard(user_id: str):
                 "active_referrals": active_referrals,
                 "total_earnings": total_earnings,
                 "pending_earnings": 0.0,  # All commissions paid instantly
-                "referral_tier": user.get("referral_tier", "standard"),
+                "referral_tier": tier,
+                "tier_info": tier_info.get(tier, tier_info["standard"]),
+                "can_upgrade_to_vip": tier == "standard",
                 "referred_users": referred_users_data
             }
         }
