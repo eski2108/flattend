@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { TrendingUp, TrendingDown, Zap, Info } from 'lucide-react';
+import CHXButton from '@/components/CHXButton';
+import { TrendingUp, TrendingDown, Zap, Info, BarChart3, Activity, DollarSign, TrendingUpDown } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-fixbugs.preview.emergentagent.com';
 
