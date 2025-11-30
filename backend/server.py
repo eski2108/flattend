@@ -20293,17 +20293,50 @@ async def get_portfolio_summary(user_id: str):
             price = Decimal(str(prices.get(coin, 0)))
             current_value += amount * price
         
-        # Calculate P/L for different time periods
+        # Calculate P/L for different time periods using REAL transaction history
         now = datetime.now(timezone.utc)
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         week_start = now - timedelta(days=7)
         month_start = now - timedelta(days=30)
         
-        # Get historical portfolio values (simplified - using transaction history)
-        # In production, you'd store daily snapshots
-        todayPL = float(current_value * Decimal('0.02'))  # 2% gain example
-        weekPL = float(current_value * Decimal('0.05'))   # 5% gain example
-        monthPL = float(current_value * Decimal('0.12'))  # 12% gain example
+        # Calculate portfolio value at start of each period
+        def calculate_portfolio_at_time(cutoff_time):
+            portfolio_value = Decimal('0')
+            # Start with current balances and work backwards
+            temp_balances = {}
+            for balance in wallet_balances:
+                temp_balances[balance.get("currency")] = Decimal(str(balance.get("balance", 0)))
+            for saving in savings_balances:
+                coin = saving.get("currency")
+                temp_balances[coin] = temp_balances.get(coin, Decimal('0')) + Decimal(str(saving.get("amount", 0)))
+            
+            # Reverse transactions after cutoff time
+            for tx in reversed(sorted(transactions, key=lambda x: x.get('timestamp', now))):
+                tx_time = tx.get('timestamp')
+                if tx_time and tx_time > cutoff_time:
+                    tx_type = tx.get('type')
+                    currency = tx.get('currency', 'GBP')
+                    amount = Decimal(str(tx.get('amount', 0)))
+                    
+                    if tx_type == 'deposit':
+                        temp_balances[currency] = temp_balances.get(currency, Decimal('0')) - amount
+                    elif tx_type == 'withdraw':
+                        temp_balances[currency] = temp_balances.get(currency, Decimal('0')) + amount
+            
+            # Calculate value
+            for coin, balance in temp_balances.items():
+                price = Decimal(str(prices.get(coin, 0)))
+                portfolio_value += balance * price
+            
+            return portfolio_value
+        
+        today_value = calculate_portfolio_at_time(today_start)
+        week_value = calculate_portfolio_at_time(week_start)
+        month_value = calculate_portfolio_at_time(month_start)
+        
+        todayPL = float(current_value - today_value)
+        weekPL = float(current_value - week_value)
+        monthPL = float(current_value - month_value)
         
         # Calculate total invested
         total_invested = Decimal('0')
