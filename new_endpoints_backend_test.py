@@ -622,7 +622,7 @@ class NewEndpointsBackendTester:
                 return True
             except json.JSONDecodeError:
                 self.log_test(
-                    "GET /api/referrals/dashboard",
+                    "GET /api/referral/dashboard/{user_id}",
                     False,
                     "Invalid JSON response",
                     response.text,
