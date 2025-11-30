@@ -9808,6 +9808,18 @@ async def express_buy_execute(request: dict):
                 metadata={"source": "admin_liquidity_spread", "buyer_id": user_id}
             )
         
+        # Credit admin wallet with spread profit (after referrer commission)
+        from wallet_service import get_wallet_service
+        wallet_service = get_wallet_service()
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency="GBP",
+            amount=admin_spread_profit,
+            transaction_type="admin_liquidity_profit",
+            reference_id=str(uuid.uuid4()),
+            metadata={"buyer_id": user_id, "spread_percent": admin_sell_spread_percent}
+        )
+        
         # Log admin liquidity spread profit to fee_transactions
         await db.fee_transactions.insert_one({
             "transaction_id": str(uuid.uuid4()),
@@ -9825,7 +9837,35 @@ async def express_buy_execute(request: dict):
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
-        # Log express buy fee
+        # Calculate express buy fee referral split separately
+        express_referrer_commission = 0.0
+        express_admin_fee = express_fee_fiat
+        
+        if referrer_id:
+            express_referrer_commission = express_fee_fiat * (commission_percent / 100.0)
+            express_admin_fee = express_fee_fiat - express_referrer_commission
+            
+            # Credit referrer with express fee commission
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency="GBP",
+                amount=express_referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=str(uuid.uuid4()),
+                metadata={"source": "express_buy_fee", "buyer_id": user_id}
+            )
+        
+        # Credit admin wallet with express fee (after referrer commission)
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency="GBP",
+            amount=express_admin_fee,
+            transaction_type="express_buy_fee",
+            reference_id=str(uuid.uuid4()),
+            metadata={"buyer_id": user_id}
+        )
+        
+        # Log express buy fee to fee_transactions
         await db.fee_transactions.insert_one({
             "transaction_id": str(uuid.uuid4()),
             "user_id": user_id,
@@ -9834,8 +9874,8 @@ async def express_buy_execute(request: dict):
             "amount": fiat_amount,
             "total_fee": express_fee_fiat,
             "fee_percent": express_fee_percent,
-            "admin_fee": express_fee_fiat * (admin_spread_profit / spread_profit) if spread_profit > 0 else express_fee_fiat,
-            "referrer_commission": express_fee_fiat * (referrer_commission / spread_profit) if spread_profit > 0 else 0,
+            "admin_fee": express_admin_fee,
+            "referrer_commission": express_referrer_commission,
             "referrer_id": referrer_id,
             "currency": "GBP",
             "reference_id": str(uuid.uuid4()),
