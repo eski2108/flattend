@@ -297,6 +297,170 @@ export default function ReferralDashboard() {
           </div>
         </div>
 
+        {/* VIP Upgrade Section */}
+        {referralData.referral_tier === 'standard' && (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(123, 44, 255, 0.05) 100%)',
+            border: '2px solid rgba(168, 85, 247, 0.3)',
+            borderRadius: '20px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Glow Effect */}
+            <div style={{
+              position: 'absolute',
+              top: '-50%',
+              right: '-10%',
+              width: '300px',
+              height: '300px',
+              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%)',
+              filter: 'blur(60px)',
+              pointerEvents: 'none'
+            }} />
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
+                <Award size={32} style={{ color: '#A855F7' }} />
+                <h2 style={{
+                  fontSize: '28px',
+                  fontWeight: '900',
+                  background: 'linear-gradient(135deg, #A855F7, #7B2CFF)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
+                  Upgrade to VIP Tier
+                </h2>
+              </div>
+
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px', marginBottom: '1.5rem', lineHeight: '1.6' }}>
+                Unlock lifetime 20% commission on ALL revenue streams your referrals generate!
+              </p>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
+                marginBottom: '2rem'
+              }}>
+                {[
+                  { icon: '💰', title: 'Lifetime 20% Commission', desc: 'Earn on every transaction' },
+                  { icon: '⚡', title: 'Priority Support', desc: 'Get help faster' },
+                  { icon: '🏆', title: 'Exclusive Badge', desc: 'Stand out from the crowd' },
+                  { icon: '📈', title: 'Advanced Analytics', desc: 'Track your earnings better' }
+                ].map((benefit, idx) => (
+                  <div key={idx} style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(168, 85, 247, 0.2)',
+                    borderRadius: '12px',
+                    padding: '1rem',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '32px', marginBottom: '0.5rem' }}>{benefit.icon}</div>
+                    <h4 style={{ color: '#fff', fontSize: '14px', fontWeight: '700', marginBottom: '0.25rem' }}>
+                      {benefit.title}
+                    </h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                      {benefit.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.4)',
+                border: '2px solid rgba(168, 85, 247, 0.4)',
+                borderRadius: '16px',
+                padding: '1.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '1rem'
+              }}>
+                <div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginBottom: '0.5rem' }}>
+                    One-Time Payment
+                  </div>
+                  <div style={{
+                    fontSize: '48px',
+                    fontWeight: '900',
+                    background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}>
+                    £150
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', marginTop: '0.25rem' }}>
+                    Lifetime access • No recurring fees
+                  </div>
+                </div>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await axios.post(`${API}/api/referrals/purchase-vip`, {
+                        user_id: user.user_id
+                      });
+                      
+                      if (response.data.success) {
+                        toast.success('🎉 Upgraded to VIP! Welcome to the exclusive club!');
+                        loadReferralData(user.user_id);
+                      } else {
+                        toast.error(response.data.message || 'Upgrade failed');
+                      }
+                    } catch (error) {
+                      console.error('VIP upgrade error:', error);
+                      toast.error(error.response?.data?.detail || 'Failed to upgrade to VIP');
+                    }
+                  }}
+                  style={{
+                    padding: '16px 48px',
+                    background: 'linear-gradient(135deg, #A855F7, #7B2CFF)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    color: '#fff',
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 30px rgba(168, 85, 247, 0.5)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 0 40px rgba(168, 85, 247, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
+                  }}
+                >
+                  <Award size={24} />
+                  Upgrade to VIP Now
+                </button>
+              </div>
+
+              <div style={{
+                marginTop: '1rem',
+                padding: '1rem',
+                background: 'rgba(0, 240, 255, 0.05)',
+                border: '1px solid rgba(0, 240, 255, 0.2)',
+                borderRadius: '12px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '13px',
+                lineHeight: '1.6'
+              }}>
+                <strong style={{ color: '#00F0FF' }}>💡 Note:</strong> VIP tier gives you the same 20% commission rate as Standard,
+                but with priority support and exclusive features. To earn 50% commission, contact admin for Golden tier upgrade.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Referred Users Table */}
         <div style={{
           background: 'rgba(255,255,255,0.03)',
