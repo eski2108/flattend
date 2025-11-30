@@ -232,7 +232,7 @@ export default function PriceTickerEnhanced() {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-33.33%);
+            transform: translateX(-16.66%);
           }
         }
         
