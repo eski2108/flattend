@@ -117,26 +117,20 @@ function SwapCrypto() {
   };
 
   const calculateToAmount = () => {
-    if (!prices || !fromAmount) {
-      setToAmount('');
-      return;
-    }
-
-    const fromPrice = prices[`${fromCrypto}_USD`] || 0;
-    const toPrice = prices[`${toCrypto}_USD`] || 0;
-
-    if (fromPrice === 0 || toPrice === 0) {
-      setToAmount('0');
-      setExchangeRate(0);
-      return;
-    }
-
-    const rate = fromPrice / toPrice;
-    setExchangeRate(rate);
+    if (!fromAmount || !prices) return;
     
-    const calculatedAmount = parseFloat(fromAmount) * rate;
-    const withSlippage = calculatedAmount * (1 - slippage / 100);
-    setToAmount(withSlippage.toFixed(8));
+    const fromPriceData = prices[fromCrypto];
+    const toPriceData = prices[toCrypto];
+    
+    const fromPrice = fromPriceData?.price_gbp || 0;
+    const toPrice = toPriceData?.price_gbp || 0;
+    
+    if (fromPrice && toPrice) {
+      const rate = fromPrice / toPrice;
+      setExchangeRate(rate);
+      const calculated = (parseFloat(fromAmount) * rate).toFixed(8);
+      setToAmount(calculated);
+    }
   };
 
   const handleSwap = async () => {
