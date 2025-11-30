@@ -765,7 +765,7 @@ class NewEndpointsBackendTester:
             "P2P Notifications": [r for r in self.test_results if "p2p/notifications" in r["test"]],
             "Wallet Service": [r for r in self.test_results if "wallet/" in r["test"]],
             "Admin Management": [r for r in self.test_results if "admin/users" in r["test"]],
-            "Referral Dashboard": [r for r in self.test_results if "referrals/dashboard" in r["test"]],
+            "Referral Dashboard": [r for r in self.test_results if "referral/dashboard" in r["test"]],
             "VIP Purchase": [r for r in self.test_results if "purchase-vip-tier" in r["test"]]
         }
         
