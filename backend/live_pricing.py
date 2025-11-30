@@ -53,9 +53,9 @@ async def fetch_live_prices() -> Dict[str, float]:
             return _price_cache
     
     try:
-        # Build CoinGecko API request
+        # Build CoinGecko API request with 24h change
         coin_ids = ",".join(COINGECKO_IDS.values())
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_ids}&vs_currencies=usd,gbp"
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_ids}&vs_currencies=usd,gbp&include_24hr_change=true"
         
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(url)
@@ -69,7 +69,9 @@ async def fetch_live_prices() -> Dict[str, float]:
                     if coin_id in data:
                         prices[symbol] = {
                             "usd": data[coin_id].get("usd", 0),
-                            "gbp": data[coin_id].get("gbp", 0)
+                            "gbp": data[coin_id].get("gbp", 0),
+                            "usd_24h_change": data[coin_id].get("usd_24h_change", 0),
+                            "gbp_24h_change": data[coin_id].get("gbp_24h_change", 0)
                         }
                 
                 # Update cache
