@@ -2,30 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Zap } from 'lucide-react';
 import axios from 'axios';
 
-const TICKER_COINS = [
-  { id: 'bitcoin', symbol: 'BTC', color: '#F7931A', icon: '₿' },
-  { id: 'ethereum', symbol: 'ETH', color: '#627EEA', icon: '🟣' },
-  { id: 'tether', symbol: 'USDT', color: '#26A17B', icon: '🟩' },
-  { id: 'binancecoin', symbol: 'BNB', color: '#F3BA2F', icon: '🔶' },
-  { id: 'solana', symbol: 'SOL', color: '#14F195', icon: '🔵' },
-  { id: 'ripple', symbol: 'XRP', color: '#00AAE4', icon: '❎' },
-  { id: 'cardano', symbol: 'ADA', color: '#0033AD', icon: '🔷' },
-  { id: 'avalanche-2', symbol: 'AVAX', color: '#E84142', icon: '🔺' },
-  { id: 'dogecoin', symbol: 'DOGE', color: '#C2A633', icon: '🐶' },
-  { id: 'tron', symbol: 'TRX', color: '#FF0013', icon: '🔻' },
-  { id: 'polkadot', symbol: 'DOT', color: '#E6007A', icon: '🎯' },
-  { id: 'matic-network', symbol: 'MATIC', color: '#8247E5', icon: '🟪' },
-  { id: 'litecoin', symbol: 'LTC', color: '#345D9D', icon: '⚪' },
-  { id: 'chainlink', symbol: 'LINK', color: '#2A5ADA', icon: '🔗' },
-  { id: 'stellar', symbol: 'XLM', color: '#14B6E7', icon: '✴️' },
-  { id: 'monero', symbol: 'XMR', color: '#FF6600', icon: '🟠' },
-  { id: 'cosmos', symbol: 'ATOM', color: '#2E3148', icon: '🪐' },
-  { id: 'bitcoin-cash', symbol: 'BCH', color: '#8DC351', icon: '💚' },
-  { id: 'uniswap', symbol: 'UNI', color: '#FF007A', icon: '🌸' },
-  { id: 'filecoin', symbol: 'FIL', color: '#0090FF', icon: '📁' },
-  { id: 'aptos', symbol: 'APT', color: '#00D4AA', icon: '🅰️' },
-  { id: 'usd-coin', symbol: 'USDC', color: '#2775CA', icon: '🟩' }
-];
+// Emoji mapping for major coins
+const COIN_EMOJIS = {
+  'BTC': '₿', 'ETH': '🟣', 'USDT': '🟩', 'BNB': '🔶', 'SOL': '🔵',
+  'XRP': '❎', 'ADA': '🔷', 'AVAX': '🔺', 'DOGE': '🐶', 'TRX': '🔻',
+  'DOT': '🎯', 'MATIC': '🟪', 'LTC': '⚪', 'LINK': '🔗', 'XLM': '✴️',
+  'XMR': '🟠', 'ATOM': '🪐', 'BCH': '💚', 'UNI': '🌸', 'FIL': '📁',
+  'APT': '🅰️', 'USDC': '🟩', 'DAI': '💛', 'SHIB': '🐕', 'ALGO': '🔺',
+  'VET': '✅', 'ICP': '♾️', 'NEAR': '🔵', 'FTM': '👻', 'SAND': '🏝️',
+  'MANA': '🎮', 'XTZ': '🔷', 'AAVE': '👻', 'GRT': '📊', 'EOS': '⚫',
+  'THETA': '📺', 'AXS': '🎮', 'MKR': '🏦', 'ZEC': '🔐', 'DASH': '💨'
+};
+
+// Color mapping for coins
+const COIN_COLORS = {
+  'BTC': '#F7931A', 'ETH': '#627EEA', 'USDT': '#26A17B', 'BNB': '#F3BA2F',
+  'SOL': '#14F195', 'XRP': '#00AAE4', 'ADA': '#0033AD', 'AVAX': '#E84142',
+  'DOGE': '#C2A633', 'TRX': '#FF0013', 'DOT': '#E6007A', 'MATIC': '#8247E5',
+  'LTC': '#345D9D', 'LINK': '#2A5ADA', 'XLM': '#14B6E7', 'XMR': '#FF6600',
+  'ATOM': '#2E3148', 'BCH': '#8DC351', 'UNI': '#FF007A', 'FIL': '#0090FF',
+  'APT': '#00D4AA', 'USDC': '#2775CA'
+};
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
