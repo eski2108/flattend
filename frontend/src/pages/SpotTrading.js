@@ -276,21 +276,31 @@ export default function SpotTrading() {
         // Extract base currency from pair (e.g., BTC from BTC/GBP)
         const baseCurrency = selectedPair.split('/')[0];
         
-        // Fetch live price
-        const response = await axios.get(`${API}/api/prices/live/${baseCurrency}`);
-        if (response.data.success) {
-          const livePrice = response.data.price_gbp;
+        // Fetch live price with 24h change data
+        const response = await axios.get(`${API}/api/prices/live`);
+        if (response.data.success && response.data.prices) {
+          const priceData = response.data.prices[baseCurrency];
           
-          setMarketStats({
-            lastPrice: livePrice,
-            change24h: 0, // 24h change not available in current API
-            high24h: livePrice * 1.02,
-            low24h: livePrice * 0.98,
-            volume24h: 0 // Volume not available in current API
-          });
+          if (priceData) {
+            const livePrice = priceData.price_gbp;
+            const change24h = priceData.change_24h || 0;
+            
+            // Calculate realistic high/low based on 24h change
+            const changeMultiplier = Math.abs(change24h) / 100;
+            const high24h = livePrice * (1 + changeMultiplier);
+            const low24h = livePrice * (1 - changeMultiplier);
+            
+            setMarketStats({
+              lastPrice: livePrice,
+              change24h: change24h,
+              high24h: high24h,
+              low24h: low24h,
+              volume24h: 0 // Volume not available from CoinGecko free tier
+            });
 
-          generateOrderBook(livePrice);
-          generateRecentTrades(livePrice);
+            generateOrderBook(livePrice);
+            generateRecentTrades(livePrice);
+          }
         }
       } catch (error) {
         console.error('Error fetching live price:', error);
