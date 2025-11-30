@@ -48,7 +48,7 @@ export default function AdminEarnings() {
 
   const loadEarnings = async () => {
     try {
-      const response = await axios.get(`${API}/admin/platform-earnings`);
+      const response = await axios.get(`${API}/api/admin/platform-earnings`);
       if (response.data.success) {
         setEarnings(response.data.earnings);
       }
@@ -62,7 +62,7 @@ export default function AdminEarnings() {
 
   const loadWalletAddresses = async () => {
     try {
-      const response = await axios.get(`${API}/admin/withdrawal-addresses`);
+      const response = await axios.get(`${API}/api/admin/withdrawal-addresses`);
       if (response.data.success) {
         setWalletAddresses(response.data.addresses);
       }
