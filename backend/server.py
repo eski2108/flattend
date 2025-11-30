@@ -75,6 +75,7 @@ from escrow_balance_system import (
 from collections import defaultdict
 # Badge system imported inline where needed
 from wallet_validator import validate_wallet_address
+from centralized_fee_system import get_fee_manager
 from password_reset import (
     PasswordResetRequest,
     PasswordResetConfirm,
