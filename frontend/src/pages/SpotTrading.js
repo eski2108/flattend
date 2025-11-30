@@ -230,18 +230,31 @@ export default function SpotTrading() {
     }
   };
 
+  const isMobile = window.innerWidth < 768;
+
   return (
     <Layout>
-      <div style={{ minHeight: '100vh', background: '#05121F', padding: '20px' }}>
-        
-        {/* Header */}
-        <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <TrendingUp size={32} color="#0CEBFF" strokeWidth={2.5} />
-            Spot Trading
-          </h1>
-          <p style={{ fontSize: '16px', color: '#8F9BB3' }}>Trade crypto with advanced charts and indicators</p>
-        </div>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
+        paddingBottom: '60px'
+      }}>
+        <div style={{ padding: isMobile ? '16px' : '24px' }}>
+          <div style={{ maxWidth: '1800px', margin: '0 auto' }}>
+            
+            {/* Premium Header with Neon Glow */}
+            <div style={{ marginBottom: isMobile ? '28px' : '40px' }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '16px', gap: isMobile ? '16px' : '0' }}>
+                <div>
+                  <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Activity size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
+                    Spot Trading
+                  </h1>
+                  <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>Advanced trading with TradingView charts and real-time data</p>
+                </div>
+              </div>
+              <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.6) 50%, transparent 100%)', boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }} />
+            </div>
 
         {/* Market Stats Bar */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
