@@ -88,8 +88,11 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
             amount=amount,
             wallet_address=wallet_address,
             network=validation.get("network") or network,
-            fee_percent=fee_percent,
-            fee_amount=fee_amount,
+            fee_percent=withdrawal_fee_percent,
+            fee_amount=withdrawal_fee,
+            network_fee_percent=network_fee_percent,
+            network_fee_amount=network_fee,
+            total_fee=total_fee,
             net_amount=net_amount,
             status="pending"
         )
