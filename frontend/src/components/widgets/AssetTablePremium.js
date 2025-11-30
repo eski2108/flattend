@@ -1,6 +1,7 @@
 import React from 'react';
 import CHXButton from '../CHXButton';
 import { ArrowDownLeft, ArrowUpRight, Repeat } from 'lucide-react';
+import TradingViewSparkline from './TradingViewSparkline';
 
 // Premium emoji mapping as specified
 const COIN_EMOJIS = {
