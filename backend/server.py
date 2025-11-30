@@ -269,7 +269,7 @@ PLATFORM_CONFIG = {
     "referral_commission_percent": 20.0,
     
     # DISPUTE HANDLING (flat GBP)
-    "p2p_dispute_fee_gbp": 1.50
+    "p2p_dispute_fee_gbp": 1.50,
     "liquidation_fee_percent": 10.0,
     "liquidation_penalty_percent": 5.0,
     "min_collateral_ratio": 150,  # 150% collateralization required
