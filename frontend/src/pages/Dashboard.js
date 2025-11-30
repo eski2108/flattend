@@ -7,7 +7,7 @@ import { FileText, ChevronDown } from 'lucide-react';
 import CHXButton from '@/components/CHXButton';
 
 // Import all widgets
-import PortfolioGraphTradingView from '@/components/widgets/PortfolioGraphTradingView';
+import TradingViewMarketOverview from '@/components/widgets/TradingViewMarketOverview';
 import PLSummaryRow from '@/components/widgets/PLSummaryRow';
 import DonutPLWidget from '@/components/widgets/DonutPLWidget';
 import AllocationWidget from '@/components/widgets/AllocationWidget';
