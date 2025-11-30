@@ -58,10 +58,11 @@ export default function PriceTickerEnhanced() {
       
       <div style={{
         display: 'flex',
-        animation: 'scroll 30s linear infinite',
+        animation: 'tickerScroll 40s linear infinite',
         gap: '2rem',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        willChange: 'transform'
       }}>
         {[...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins, ...coins].map((coin, idx) => {
           const isPositive = coin.change >= 0;
