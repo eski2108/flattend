@@ -21437,6 +21437,96 @@ async def calculate_and_apply_fee(
 # will return 404 errors.
 #
 # ⚠️  WARNING: DO NOT ADD ANY @api_router ENDPOINTS BELOW THIS LINE
+@api_router.get("/user/referral-dashboard/{user_id}")
+async def get_user_referral_dashboard(user_id: str):
+    """
+    Get comprehensive referral dashboard data for a user
+    Includes: referral link, code, stats, earnings, and list of referred users
+    """
+    try:
+        # Get user info
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Generate referral code if doesn't exist
+        referral_code = user.get("referral_code")
+        if not referral_code:
+            # Generate a unique 8-character code
+            import random
+            import string
+            referral_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            await db.user_accounts.update_one(
+                {"user_id": user_id},
+                {"$set": {"referral_code": referral_code}}
+            )
+        
+        # Generate referral link
+        frontend_url = os.environ.get("FRONTEND_URL", "https://cryptodash-17.preview.emergentagent.com")
+        referral_link = f"{frontend_url}/register?ref={referral_code}"
+        
+        # Get all users referred by this user
+        referred_users = await db.user_accounts.find({
+            "referrer_id": user_id
+        }, {"_id": 0, "user_id": 1, "email": 1, "created_at": 1}).to_list(1000)
+        
+        # Calculate stats
+        total_referrals = len(referred_users)
+        
+        # Get commissions earned
+        commissions = await db.referral_commissions.find({
+            "referrer_id": user_id
+        }, {"_id": 0}).to_list(10000)
+        
+        total_earnings = sum(c.get("commission_amount", 0) for c in commissions)
+        
+        # Get active referrals (users who made at least 1 transaction)
+        active_referrals = 0
+        referred_users_data = []
+        
+        for referred_user in referred_users:
+            ref_user_id = referred_user["user_id"]
+            
+            # Check if user has any transactions
+            user_commissions = [c for c in commissions if c.get("referred_user_id") == ref_user_id]
+            user_earnings = sum(c.get("commission_amount", 0) for c in user_commissions)
+            is_active = len(user_commissions) > 0
+            
+            if is_active:
+                active_referrals += 1
+            
+            referred_users_data.append({
+                "email": referred_user.get("email", "Anonymous"),
+                "joined_at": referred_user.get("created_at", "Unknown"),
+                "is_active": is_active,
+                "total_transactions": len(user_commissions),
+                "commission_earned": user_earnings
+            })
+        
+        # Sort by earnings (highest first)
+        referred_users_data.sort(key=lambda x: x["commission_earned"], reverse=True)
+        
+        return {
+            "success": True,
+            "data": {
+                "referral_code": referral_code,
+                "referral_link": referral_link,
+                "total_referrals": total_referrals,
+                "active_referrals": active_referrals,
+                "total_earnings": total_earnings,
+                "pending_earnings": 0.0,  # All commissions paid instantly
+                "referral_tier": user.get("referral_tier", "standard"),
+                "referred_users": referred_users_data
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting referral dashboard: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ⚠️  WARNING: ALL ENDPOINTS MUST BE DEFINED ABOVE THIS SECTION
 # ⚠️  WARNING: THIS SECTION IS LOCKED AND PROTECTED
 #
@@ -21445,8 +21535,8 @@ async def calculate_and_apply_fee(
 # 2. Follow the existing endpoint organization
 # 3. Never, ever add endpoints below this line
 #
-# Last verified: 2025-11-30 13:20 UTC
-# Endpoints registered: 250+
+# Last verified: 2025-11-30 14:50 UTC
+# Endpoints registered: 251+
 # Status: LOCKED ✅
 # ═══════════════════════════════════════════════════════════════════════════════
 
