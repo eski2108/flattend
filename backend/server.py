@@ -3894,7 +3894,7 @@ async def create_p2p_express_order(order_data: Dict):
             logger.error(f"Failed to credit wallet: {e}")
         
         # Log admin liquidity trade
-        admin_liquidity_trade = {
+        await db.admin_liquidity_trades.insert_one({
             "trade_id": trade_id,
             "crypto_currency": order_data["crypto"],
             "crypto_amount": order_data["crypto_amount"],
@@ -3902,10 +3902,9 @@ async def create_p2p_express_order(order_data: Dict):
             "buyer_id": order_data["user_id"],
             "completed_at": datetime.now(timezone.utc).isoformat(),
             "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.admin_liquidity_trades.insert_one(admin_liquidity_trade)
+        })
         
-        # Update admin liquidity balance
+        # Update liquidity
         await db.admin_liquidity.update_one(
             {"crypto_currency": order_data["crypto"]},
             {"$inc": {"available_amount": -order_data["crypto_amount"]}},
@@ -3913,38 +3912,46 @@ async def create_p2p_express_order(order_data: Dict):
         )
         
         estimated_delivery = "Instant"
+        countdown_expires_at = None
     else:
-        # SELLER DELIVERY - Use fastest P2P seller
-        best_seller = await db.trader_profiles.find_one(
+        # EXPRESS SELLER - Find qualified seller
+        qualified_seller = await db.trader_profiles.find_one(
             {
                 "is_trader": True,
                 "is_online": True,
-                "trading_pairs": {"$in": [order_data["crypto"]]}
+                "is_express_qualified": True,
+                "trading_pairs": {"$in": [order_data["crypto"]]},
+                "completion_rate": {"$gte": 95},
+                "has_dispute_flags": False,
+                "average_release_time": {"$lt": 300}
             },
-            sort=[("completion_rate", -1), ("average_response_time", 1)]
+            sort=[("completion_rate", -1), ("average_release_time", 1)]
         )
         
-        if best_seller:
-            seller_id = best_seller["user_id"]
-            delivery_source = "p2p_seller_auto"
+        if qualified_seller:
+            seller_id = qualified_seller["user_id"]
+            delivery_source = "express_seller"
+            payment_method = qualified_seller.get("preferred_payment_method", "Bank Transfer")
             
-            # Notify seller
+            # Notify seller with countdown
             try:
                 from p2p_notification_service import create_p2p_notification
                 await create_p2p_notification(
                     user_id=seller_id,
                     trade_id=trade_id,
                     notification_type="express_seller_matched",
-                    message=f"Express order: Buyer wants {order_data['crypto_amount']:.8f} {order_data['crypto']}. Confirm payment to release."
+                    message=f"EXPRESS ORDER: {order_data['crypto_amount']:.8f} {order_data['crypto']}. Release within 10 minutes or auto-cancel."
                 )
             except Exception as e:
                 logger.error(f"Failed to notify seller: {e}")
         else:
-            seller_id = "admin_liquidity"
-            delivery_source = "admin_liquidity_fallback"
+            seller_id = "admin_liquidity_fallback"
+            delivery_source = "fallback"
+            payment_method = "Bank Transfer"
         
         status = "pending_payment"
         estimated_delivery = "2-5 minutes"
+        countdown_expires_at = (datetime.now(timezone.utc) + timedelta(seconds=EXPRESS_RELEASE_TIMEOUT)).isoformat()
     
     # Create trade record
     trade_record = {
