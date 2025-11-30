@@ -352,7 +352,7 @@ class TradingPlatformTester:
             response = self.session.post(
                 f"{BASE_URL}/user/deposit",
                 json={
-                    "wallet_address": SELLER_USER["wallet_address"],
+                    "wallet_address": "seller_wallet_001",
                     "amount": 1.0  # 1 BTC
                 },
                 timeout=10
