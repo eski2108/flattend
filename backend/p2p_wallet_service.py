@@ -403,6 +403,21 @@ async def p2p_release_crypto_with_wallet(
         
         logger.info(f"✅ P2P trade completed: {trade_id}, Fee: {platform_fee} {currency} (Admin: {admin_fee}, Referrer: {referrer_commission})")
         
+        # Send notifications
+        try:
+            from p2p_notification_service import get_notification_service
+            notification_service = get_notification_service()
+            await notification_service.notify_crypto_released(
+                trade_id=trade_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id,
+                crypto_amount=crypto_amount,
+                crypto_currency=currency,
+                buyer_receives=amount_to_buyer
+            )
+        except Exception as notif_error:
+            logger.error(f"Failed to send release notification: {str(notif_error)}")
+        
         return {
             "success": True,
             "message": "Crypto released to buyer",
