@@ -422,6 +422,7 @@ class CreateTradeRequest(BaseModel):
     payment_method: str
     buyer_wallet_address: str  # NEW: External wallet address where buyer will receive crypto
     buyer_wallet_network: Optional[str] = None  # NEW: Network type (optional)
+    is_express: bool = False  # NEW: Flag for express mode trades (auto-matched)
 
 class MarkPaidRequest(BaseModel):
     """Request to mark trade as paid"""
