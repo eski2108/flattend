@@ -13,7 +13,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://tradehub-227.preview.emergentagent.com/api"
+BASE_URL = "https://signx-repair.preview.emergentagent.com/api"
 
 def test_trading_issues():
     print("🔍 FOCUSED SPOT TRADING ISSUE ANALYSIS")

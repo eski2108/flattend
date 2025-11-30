@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://tradehub-227.preview.emergentagent.com/api
+https://signx-repair.preview.emergentagent.com/api
 ```
 
 This means:

@@ -1,169 +1,194 @@
 <analysis>**original_problem_statement:**
-The user wants to build a premium, full-stack cryptocurrency exchange platform, CoinHubX. The user is extremely frustrated with the current state of the application, which is plagued by non-functional dead buttons, inconsistent UI, and incomplete features.
-
-The user has provided a very large and detailed specification document (as raw text) that serves as the single source of truth for the entire platform's design and functionality. This specification dictates everything from global button animations, card styles, and input field interactions to the specific layout and functionality of every page, including the Wallet, Dashboard, P2P Marketplace, and Admin panel.
-
-The core requirements are:
-1.  **No Dead Buttons:** Every single button on the platform must be functional, animated, and connected to a real backend API endpoint.
-2.  **Full NOWPayments Integration:** Deposit and Withdraw functionality must be fully wired to the NOWPayments API for all cryptocurrencies, with dynamic address generation.
-3.  **Platform-Wide UI/UX Overhaul:** The entire application must be restyled to match the premium, Binance-level aesthetic detailed in the user's specification, using a global CSS interaction system.
-4.  **Complete All Specified Features:** All pages and features mentioned in the spec (e.g., Savings Vault, full Admin Dashboard, Account Page restructure) must be implemented.
-5.  **Continuous Work with Proof:** The user has explicitly demanded that the agent work continuously through all tasks, providing screenshot proof of progress for each major section without stopping to ask for confirmation on every small step.
+The user wants to fix several critical issues and improve the UI of the CoinHubX platform. The primary requests are:
+1.  **Fix Google Sign-in:** This is a persistent, high-priority issue. Users attempting to sign in with Google are redirected to an error page (403 or 404). The user is extremely frustrated with this.
+2.  **Redesign the Sign-up Page:** The user finds the current  page absolutely awful and wants it redesigned to match the premium, high-end look of the recently updated  page.
+3.  **Re-add Phone Verification:** The phone verification step seems to have been removed or broken during previous edits. It needs to be re-integrated into the registration flow, especially for new Google sign-ups, with a high-end UI.
+4.  **Fix UI/Layout Issues:** The user has repeatedly complained about misalignments, incorrect spacing, and duplicated components (like a ticker appearing at the bottom of pages) after visual edits were made. They have requested that the layout be restored to a previously stable state.
+5.  **Save Stable Versions:** The user wants the agent to save baselines or snapshots of the application state whenever a feature is working correctly, so it can be reverted to if future edits break it.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a FastAPI backend and a React frontend. The application has many partially implemented features. A new global CSS file, , has been created to house the user's detailed UI/UX specification for animations and styles. The agent has made several passes at fixing critical pages, notably rebuilding the main  and  to be dynamic and use the NOWPayments API. The NowPayments API key is configured and has been tested successfully via . A number of other issues have been addressed, such as consolidating duplicate P2P marketplaces and expanding backend coin support to 25 currencies. However, the implementation of the user's grand-scale UI overhaul is still in its early stages.
+A full-stack application with a FastAPI backend and a React frontend. The application includes several key pages that have undergone multiple visual and functional iterations:
+-   **Login Page:** Heavily redesigned to a premium, high-end standard with an enlarged logo, pulsing animations, and a custom-styled Google sign-in button.
+-   **Register Page:** A functional but visually outdated page that the user wants completely redesigned.
+-   **Forgot/Reset Password:** A complete, functional flow for users to reset their password via an email link.
+-   **Dashboard:** The main user portfolio page, which has been the subject of numerous layout and alignment fixes, especially for mobile responsiveness.
+-   **Other Pages:** Wallet, Swap, Savings, etc., exist with a premium design, including a global price ticker at the top.
+-   **Baselines:** The agent has created several git tags and file backups to serve as stable restore points (, , ).
 
 **Last working item**:
-- **Last item agent was working:** The agent was executing a massive, platform-wide overhaul based on the user's detailed specification. The most recent focus was on fixing core functionality. The agent added a Transaction History section to the  and then rebuilt the  page, which was previously showing a blank screen.
-- **Status:** IN PROGRESS
-- **Agent Testing Done:** Y (A screenshot test of  was performed).
-- **Which testing method agent to use?** Frontend testing agent. The agent must systematically work through the user's entire specification, applying the styles from  and wiring up all functionality for each page. For each page updated, a screenshot must be taken to verify the visual changes and provide proof of work to the user.
-- **User Testing Done:** N
+-   **Last item agent was working:** The agent was just about to begin a complete redesign of the **Register page** () to match the premium look of the Login page, while also planning to address the persistent Google Sign-in issue and re-integrate phone verification.
+-   **Status:** NOT STARTED
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** both
+    -   **Frontend:** Use the screenshot tool to verify the new Register page design on both desktop and mobile.
+    -   **Backend/Manual:** Manually test the entire Google Sign-in and registration flow, including phone verification, from start to finish.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1 (P0):**  page is broken and shows a blank/black screen.
--   **Issue 2 (P1):** The Account page () needs a complete restructure.
--   **Issue 3 (P2):** Redundant  file exists, causing potential for confusion and bugs.
+-   Issue 1: (P0) Google Sign-in is non-functional, leading to a 403/404 error.
+-   Issue 2: (P1) Phone verification is missing from the new user registration flow.
+-   Issue 3: (P2) User frequently experiences UI misalignment and layout bugs, often due to browser caching.
 
 **Issues Detail:**
-- **Issue 1:  page is broken and shows a blank/black screen.**
-    - **Attempted fixes:** The agent identified the page had no  component and rebuilt it from scratch. However, the subsequent screenshot test still showed a blank black screen, indicating the fix was unsuccessful or incomplete.
-    - **Next debug checklist:**
-        1.  Check the frontend supervisor logs () for any new compilation errors after the file was rebuilt.
-        2.  View the  file again to ensure it correctly imports and uses a  component and has no syntax errors.
-        3.  Check the browser console from the screenshot test for runtime JavaScript errors.
-    - **Why fix this issue and what will be achieved with the fix?** This is a core monetization feature allowing users to sell crypto to the platform.
-    - **Status:** IN PROGRESS
-    - **Is recurring issue?** Y
-    - **Should Test frontend/backend/both after fix?** Frontend.
-    - **Blocked on other issue:** None.
+-   **Issue 1: Google Sign-in is broken**
+    -   **Attempted fixes:** The agent has made numerous attempts to fix this by:
+        1.  Adding detailed logging to the backend OAuth endpoints.
+        2.  Changing the backend's configured  path multiple times (e.g., from  to  and back).
+        3.  Fixing a double  prefix issue in the frontend API call.
+        4.  Repeatedly instructing the user to update their Google Cloud Console.
+    -   **Next debug checklist:**
+        1.  **This issue is BLOCKED by an external user configuration.** The root cause is that the authorized redirect URI in the user's Google Cloud Console does not match the one required by the application's backend.
+        2.  The next agent MUST guide the user to add the **exact, full URI** to their Google Cloud Console's Authorized redirect URIs list.
+        3.  The correct URI is: . The agent must first confirm the current preview URL and provide the full, complete string for the user to copy.
+        4.  Do NOT modify the backend code further until the user confirms they have saved the correct URI in the Google Console.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical authentication feature. Fixing it is the user's highest priority and will resolve a major source of frustration.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** both
+    -   **Blocked on other issue:** User action required to update Google Cloud Console.
 
-- **Issue 2: The Account page () needs a complete restructure.**
-    - **Attempted fixes:** None. This is part of the larger specification that has not been started.
-    - **Next debug checklist:**
-        1.  Locate the file for the account page (likely  or similar).
-        2.  Remove the existing content as per the spec.
-        3.  Implement the new required sections: , , , , , and a  button.
-        4.  Apply the global card and button styles from .
-    - **Why fix this issue and what will be achieved with the fix?** To align with the user's explicit specification and provide a clean, functional user account section.
-    - **Status:** NOT STARTED
-    - **Is recurring issue?** N
-    - **Should Test frontend/backend/both after fix?** Frontend.
-    - **Blocked on other issue:** None.
+-   **Issue 2: Phone verification is missing**
+    -   **Attempted fixes:** The agent identified that the phone verification step was bypassed in the Google sign-up flow. The agent started adding logic to the backend and frontend to re-introduce it but this was not completed.
+    -   **Next debug checklist:**
+        1.  Integrate the  component into the  flow for new users, especially those signing up via Google.
+        2.  Ensure the backend  endpoint properly triggers OTP sending for these users.
+        3.  Verify that the user account is only created after successful phone verification.
+    -   **Why fix this issue and what will be achieved with this?** It's a required security step for user registration.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** both
 
-- **Issue 3: Redundant  file exists, causing potential for confusion and bugs.**
-    - **Attempted fixes:** The agent previously identified that the app was using  and focused all fixes there. However, the old  was never deleted.
-    - **Next debug checklist:**
-        1.  Delete the file .
-        2.  Perform a global search for WalletPagePremium to ensure no imports or routes point to it.
-    - **Why fix this issue and what will be achieved with the fix?** To eliminate a major source of recurring bugs and wasted effort, ensuring that only the correct, rebuilt wallet page is ever used.
-    - **Status:** NOT STARTED
-    - **Is recurring issue?** Y
-    - **Should Test frontend/backend/both after fix?** Frontend (regression test to ensure the main wallet page still loads correctly).
-    Side effects:
-    - **Blocked on other issue:** None.
+-   **Issue 3: UI misalignment and caching issues**
+    -   **Attempted fixes:** The agent made many CSS adjustments, reverted files using git, and performed clean rebuilds.
+    -   **Next debug checklist:**
+        1.  For any UI changes, work on local component styles only. Avoid global files like .
+        2.  After every change, instruct the user to perform a hard refresh (Ctrl+Shift+R) or use an Incognito window.
+        3.  Use the screenshot tool to provide visual proof that the changes have been applied correctly, which helps diagnose caching issues on the user's end.
+    -   **Why fix this issue and what will be achieved with this?** Prevents a frustrating loop where the user reports bugs that have already been fixed but are not visible due to caching.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend
 
 **In progress Task List**:
-- **Task 1 (P0):** Complete the platform-wide UI/UX and functionality overhaul.
-
-**Task Detail:**
-- **Task 1: Complete the platform-wide UI/UX and functionality overhaul.**
-    - **Where to resume:** The agent has created the  file and has applied it to a few key pages (, ). It also attempted a fix on . The agent must now resume its plan to systematically go through **every single page** mentioned in the user's spec, apply the global styles, fix layouts, and wire up all button functionality. The  page must be fixed first.
-    - **What will be achieved with this?** The entire platform will be visually consistent, functional, and aligned with the user's demanding premium standard.
-    - **Status:** IN PROGRESS
-    - **Should Test frontend/backend/both after fix?** Both. Frontend for visuals, and backend for API connections.
-    - **Blocked on something:** The broken  page.
+-   **Task 1: Redesign the Registration Page (P0)**
+    -   **Where to resume:** Start from scratch on .
+    -   **What will be achieved with this?** The registration page's UI will be upgraded to the same premium, high-end standard as the login page, providing a consistent user experience and addressing a major user complaint. This task also includes integrating the phone verification UI.
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
--   **(P1) P2P Marketplace Polish:** Apply global styles to offer cards and buttons. Implement the badge level system (, , , ).
--   **(P1) Account Page Restructure:** Implement the new layout as per the spec.
--   **(P2) Savings Vault Implementation:** Create and style the Savings Vault pages and wire up functionality.
--   **(P2) Swap Page Polish:** Ensure all UI elements are styled and functional.
--   **(P2) Admin Dashboard Functionality:** Implement all required admin sections (Liquidity, Revenue, Users, etc.) and connect them to the backend APIs.
--   **(P3) Referrals Page Polish:** Verify commission logic and apply global styles.
--   **(P3) Header Styling:** Add the thin neon cyan line under the header and fix its dimensions.
+-   **Upcoming Tasks:**
+    -   **(P1) Connect Dashboard & Savings to Real Data**: Currently, many widgets and charts use mock backend data.
+    -   **(P2) Fix  page**: This page was reported as rendering a blank screen and has not been addressed.
+-   **Future Tasks:**
+    -   Implement additional Earn section pages (Borrow/Lend, Staking, Launchpool).
+    -   Complete the Admin Dashboard functionality.
 
 **Completed work in this session**
--   **Core Wallet Functionality:** Rebuilt  to be fully dynamic, correctly routing Deposit/Withdraw/Swap buttons and supporting unlimited assets. Added a Transaction History section with filters.
--   **Deposit Flow:** Rebuilt  to properly use the NowPayments API and display a QR code for a dynamically generated address.
--   **Global Interaction System:** Created  to house the user's detailed specifications for button, card, and input field animations and styles.
--   **P2P Express UI:** Added preset amount buttons (£50, £100, etc.) to the P2P Express page.
--   **Error Toast Removal:** Removed the Failed to load wallet data error toast that appeared on login.
--   **Initial Overhaul Pass:** Took screenshots of numerous pages to assess их current state, and attempted a rebuild of the broken  page.
+-   **Login Page Overhaul:** Iteratively redesigned the login page to a premium standard, including a larger logo, pulsing animations, refined spacing, and a custom-styled dark-themed Google button.
+-   **Password Reset Flow:** Implemented and fixed the entire Forgot Password and Reset Password journey, including frontend pages and backend endpoints.
+-   **Layout & Alignment Fixes:** Made numerous, repeated adjustments to the Dashboard, ticker, and other components to fix alignment and spacing issues, particularly for mobile view.
+-   **Session Persistence:** Fixed a bug in  that caused users to be logged out on refresh.
+-   **Duplicate Ticker Removal:** Removed a page-specific ticker from  that was appearing at the bottom of the page.
+-   **Ticker Enhancement:** Updated the global  to have a faster scroll speed and unique emojis for each cryptocurrency.
+-   **Baseline Creation:** Created multiple file backups and git tags (, , ) at the user's request to save stable states of the application.
 
 **Earlier issues found/mentioned but not fixed**
--   **Issue 1: Admin Dashboard Functionality is not implemented.**
-    -   **Debug checklist:** Review  for  endpoints. Review the frontend admin pages and wire them up to the backend to display liquidity, revenue, users, etc.
-    -   **Why to solve this issue and what will be achieved with this?** It's a critical tool for the business owner to manage the platform.
-    -   **Should Test frontend/backend/both after fix:** Both.
+-   **Issue 1:  broken page**
+    -   **Debug checklist:** This page was reported as rendering a blank screen and has not been revisited. The agent needs to navigate to  after logging in, check the browser console for errors, and inspect the component's code.
+    -   **Why to solve this issue and what will be achieved with this?** It's a core user feature that is currently unusable.
+    -   **Should Test frontend/backend/both after fix:** Frontend
     -   **Is recurring issue?** N
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork:** Google Sign-in functionality.
+-   **Recurrence count:** 3+
+-   **Status:** BLOCKED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend:** React, , ,  (for toasts), .
--   **Styling:** A global, cascading CSS system driven by  to implement a highly specific design language with animations, gradients, and glows.
--   **Backend:** FastAPI, Python, MongoDB.
--   **API Integration:** NowPayments is critical for all deposit and withdrawal functionality.
+-   **Frontend:** React, React Router, Axios, CSS-in-JS (heavy inline styling), ApexCharts.
+-   **Backend:** FastAPI (Python), MongoDB (via ).
+-   **Authentication:** JWT-based for standard login, Google OAuth2 for Google Sign-in.
+-   **Styling:** Focus on glassmorphism, neon glows, gradients, and responsive design via media queries and flexbox.
 
 **key DB schema**
--   ****: Holds metadata for the 25+ cryptocurrencies the platform supports.
--   ****: Stores user crypto balances, including available, locked, and total.
--   ****: A log of all user financial activities (deposits, withdrawals, trades).
+-   ****: {, , , , , }
+-   ****: Stores user asset balances.
 
 **changes in tech stack**
--   The  library was added to the frontend to support the deposit flow.
+- No fundamental changes, but a heavy reliance on git for creating baselines and reverting changes.
 
 **All files**
--   **Created:**
-    -   : This file is the cornerstone of the user's UI/UX overhaul. It contains all the specifications for button, card, and input field animations and styles.
-    -   Multiple placeholder pages (, , etc.)
--   **Updated heavily:**
-    -   : Rebuilt multiple times to be dynamic and meet the user's exact specifications.
-    -   : Rebuilt to properly integrate NowPayments.
-    -   : Rebuilt to be dynamic.
-    -   : Rebuilt but is currently broken.
-    -   : Updated to import new global styles and add new routes.
+- **Created:**
+    - 
+    - 
+    -  (backup directory)
+    - ,  (docs)
+- **Updated heavily:**
+    - : Multiple visual overhauls and API path fixes.
+    - : Multiple layout and alignment fixes.
+    - : API path fix.
+    - : Updated speed and added icons.
+    - : Multiple edits and reverts to fix layout issues.
+    - : Fixed session persistence bug.
+    - : Numerous changes to authentication endpoints (, , , , , ).
 
 **Areas that need refactoring**:
--   **Component Duplication:**  is redundant and must be deleted to prevent future bugs. The agent should be vigilant for other such duplicates.
--   **Styling Consolidation:** All inline styles and styles in  or other component-specific files should be audited and migrated to the  system where appropriate to ensure a single source of truth for styling.
+-   **Styling:** The extreme use of inline styles (CSS-in-JS) within component files is brittle and leads to frequent visual bugs. Migrating styles to a more robust system like CSS Modules or styled-components would improve maintainability.
+-   **Redundant Components:** The  page contained its own ticker, which was removed. A review for other duplicated, page-specific components that could be globalized or removed is needed.
+
+**key api endpoints**
+-   
+-   
+-    (Initiates OAuth flow)
+-    (Callback from Google)
+-   
+-   
+-    (Update user details)
 
 **Critical Info for New Agent**
--   **The User's Spec is Law:** You have been provided with an extremely detailed set of instructions for the entire platform's UI, UX, and functionality. Follow it meticulously. The user is frustrated and will not tolerate deviations or incomplete work.
--   **No Dead Buttons:** Your absolute highest priority is ensuring every interactive element is functional. Wallet and payment buttons must be wired to the NowPayments API.
--   **Use the Global CSS System:** All styling must be consistent. Use the classes and principles defined in .
--   **Work Continuously with Proof:** The user wants you to work through the entire list of tasks without stopping, providing screenshots as you complete each major page/feature.
--   **Fix  First:** Before continuing the platform-wide overhaul, you must fix the broken  page.
+-   **Google Sign-in is BLOCKED by the user's external configuration.** Do not try to fix it by changing the code. Your primary task is to guide the user to add the correct, complete Redirect URI to their Google Cloud Console. The required URI is constructed from the preview URL and the path .
+-   **The user is extremely sensitive to UI changes and gets frustrated easily.** Make small, isolated changes. Avoid editing global files like .
+-   **Browser caching is a major source of confusion.** After every UI change, explicitly instruct the user to do a hard refresh or use an incognito window. Use the screenshot tool to prove your changes have been deployed.
+-   **Save baselines frequently.** The user values the ability to revert. After completing a significant, approved task, create a git tag (e.g., ).
+
+**documents created in this job**
+-   /app/STABLE_BASELINE_README.md
+-   /app/PASSWORD_RESET_BASELINE.md
+-   /app/RESTORE_BASELINE_INSTRUCTIONS.md
 
 **Last 5 User Messages and any pending user messages**
-1.  **User:** Demands the agent do everything from the spec, providing screenshots along the way without stopping for confirmation. (Status: In Progress)
-2.  **User:** Corrects the agent, stating that the previous final report was premature and that many tasks from the spec are still missing. (Status: Addressed)
-3.  **User:** Provides an extremely detailed specification for fixing the wallet page, including animations, dynamic routing, and proper API connections. (Status: Implemented)
-4.  **User:** Accuses the agent of lying, pointing out that the wallet buttons were not working despite the agent's claims. (Status: Addressed; the agent found and fixed the root cause).
-5.  **User:** Asks for confirmation on liquidity connection, profit margins, and the removal of an error toast. (Status: Addressed)
+1.  **User:** Confirmed the password reset is working and demanded that the agent save this state as a new, protected baseline. (Status: **Completed**)
+2.  **User:** Stated that phone verification has vanished and needs to be re-added with a high-end logo/UI. Also reiterated that the Google login must be fixed. (Status: **Pending**)
+3.  **User:** Complained that the sign-up page looks awful, the buttons are bad, and the Google sign-up flow goes to an error. Demanded that the sign-up page be redesigned to match the premium login page. (Status: **Pending**, this is the next primary task).
+4.  **User:** Shared a screenshot of their Google Cloud Console showing an incomplete redirect URI, asking how to fill it out. (Status: **Addressed by agent**)
+5.  **User:** Complained that the Forgot Password feature was failing. (Status: **Completed**, the agent fixed the API path).
 
 **Project Health Check:**
 -   **Broken:**
-    -    (renders a blank/black screen).
+    -   Google Sign-in
+-   **Mocked:**
+    -   Dashboard and Savings page data is likely still mocked from the initial setup, as this was never addressed.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES (via screenshot tool).
+-   **Testing agent used after significant changes:** YES (screenshot tool was used heavily).
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** []
--   **Known regressions:** The  page broke after being rebuilt.
+-   **Known regressions:**
+    -   Google Sign-in has been a persistent regression.
+    -   Phone verification was seemingly removed during other fixes.
 
 **Credentials to test flow:**
--   **Buyer/User:**  / 
--   **Admin:**  /  (Admin Code: )
+-   **User:**  / 
+-   **Admin:**  / 
 
 **What agent forgot to execute**
-The agent has repeatedly underestimated the scope of the user's requests. After being told to apply styles to every button on the entire platform, the agent only updated the Wallet page. It has yet to systematically apply the  styles and functionality fixes to all other pages as detailed in the spec, including:
--   P2P Marketplace (offer cards, buttons)
--   Home Page (feature boxes)
--   Account Page (needs full restructure)
--   Admin Dashboard (needs full implementation)
--   Swap, Savings, and Referrals pages.</analysis>
+-   The agent never addressed the broken  page mentioned in the initial problem scope.
+-   The agent did not connect the dashboard or savings pages to real backend data; they remain on mock data.
+-   The agent often got stuck in loops trying to fix issues with code changes when the root cause was external (caching, Google Console config), leading to user frustration.</analysis>
