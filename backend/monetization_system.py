@@ -49,7 +49,7 @@ DEFAULT_MONETIZATION_SETTINGS = {
     "referral_commission_percent": 20.0,
     
     # DISPUTE HANDLING (flat GBP)
-    "p2p_dispute_fee_gbp": 1.50
+    "p2p_dispute_fee_gbp": 1.50,
     
     # Payment Method Fees (in percent, added to transaction)
     "payment_method_fees": {
