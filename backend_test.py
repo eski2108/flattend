@@ -3137,7 +3137,7 @@ class TradingPlatformTester:
         return passed_tests == total_tests
 
 if __name__ == "__main__":
-    tester = CoinHubXComprehensiveTester()
+    tester = TradingPlatformTester()
     success = tester.run_comprehensive_backend_tests()
     
     if success:
