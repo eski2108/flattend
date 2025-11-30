@@ -9061,8 +9061,8 @@ async def get_orderbook(pair: str):
     try:
         # Generate simulated order book based on current price
         # In production, this would aggregate real orders
-        from live_pricing import get_live_prices
-        prices = await get_live_prices()
+        from live_pricing import fetch_live_prices
+        prices = await fetch_live_prices()
         
         base = pair[:3]
         price_data = prices.get(base, {})
