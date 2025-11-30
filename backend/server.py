@@ -20842,6 +20842,11 @@ async def get_savings_products():
 # CENTRALIZED FEE MANAGEMENT ENDPOINTS
 # ============================================
 
+@api_router.get("/admin/fees/test")
+async def test_fees_endpoint():
+    """Test endpoint to check if routes register"""
+    return {"success": True, "message": "Fee endpoints are working!"}
+
 @api_router.get("/admin/fees/all")
 async def get_all_fees():
     """Get all current platform fees"""
