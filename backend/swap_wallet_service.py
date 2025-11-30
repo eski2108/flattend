@@ -113,12 +113,31 @@ async def execute_express_buy_with_wallet(db, wallet_service, user_id: str, cryp
             "fee_amount": fee_amount,
             "fee_currency": fiat_currency,
             "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
             "total_cost": total_cost,
             "status": "completed",
             "created_at": datetime.now(timezone.utc).isoformat()
         })
         
-        logger.info(f"✅ Express Buy: {user_id} bought {crypto_amount} {crypto_currency} for {total_cost} {fiat_currency} (Fee: {fee_amount} {fiat_currency})")
+        # Log to fee_transactions for business dashboard
+        await db.fee_transactions.insert_one({
+            "user_id": user_id,
+            "transaction_type": "express_buy",
+            "fee_type": "instant_buy_fee_percent",
+            "amount": fiat_amount,
+            "fee_amount": fee_amount,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": fiat_currency,
+            "reference_id": order_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"✅ Express Buy: {user_id} bought {crypto_amount} {crypto_currency} for {total_cost} {fiat_currency} (Fee: {fee_amount}, Admin: {admin_fee}, Referrer: {referrer_commission})")
         
         return {
             "success": True,
