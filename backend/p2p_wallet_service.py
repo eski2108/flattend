@@ -153,9 +153,11 @@ async def p2p_release_crypto_with_wallet(
 ) -> Dict:
     """
     Release crypto from escrow to buyer via wallet service
-    Collects platform fee
+    Collects platform fee with referral commission support
     """
     try:
+        from centralized_fee_system import get_fee_manager
+        
         # Get trade
         trade = await db.trades.find_one({"trade_id": trade_id}, {"_id": 0})
         if not trade:
@@ -174,9 +176,33 @@ async def p2p_release_crypto_with_wallet(
         currency = trade["crypto_currency"]
         buyer_id = trade["buyer_id"]
         
-        # Calculate fees (2% platform fee)
-        platform_fee = crypto_amount * 0.02
+        # Get fee from centralized system
+        fee_manager = get_fee_manager(db)
+        # Determine if this is maker or taker trade
+        # For P2P, the seller (maker) pays the fee
+        fee_percent = await fee_manager.get_fee("p2p_maker_fee_percent")
+        
+        # Calculate platform fee
+        platform_fee = crypto_amount * (fee_percent / 100.0)
         amount_to_buyer = crypto_amount - platform_fee
+        
+        # Check for referrer (seller's referrer gets commission)
+        seller = await db.user_accounts.find_one({"user_id": seller_id}, {"_id": 0})
+        referrer_id = seller.get("referrer_id") if seller else None
+        referrer_commission = 0.0
+        admin_fee = platform_fee
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = platform_fee * (commission_percent / 100.0)
+            admin_fee = platform_fee - referrer_commission
         
         # Step 1: Release locked funds from seller (this removes from locked AND total)
         try:
