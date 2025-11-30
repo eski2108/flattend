@@ -1410,6 +1410,781 @@ class TradingPlatformTester:
         return False
     
     # ============================================================================
+    # TRADING ENGINE TESTING METHODS
+    # ============================================================================
+    
+    def test_trading_platform_settings(self):
+        """Test GET /api/admin/platform-settings - Trading fee configuration"""
+        print("\n=== Testing Trading Platform Settings ===")
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/admin/platform-settings",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "settings" in data:
+                    settings = data["settings"]
+                    trading_fee = settings.get("spot_trading_fee_percent", 0)
+                    
+                    self.log_test(
+                        "Trading Platform Settings", 
+                        True, 
+                        f"Trading fee configured: {trading_fee}% (should be 0.1%)"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Trading Platform Settings", 
+                        False, 
+                        "Platform settings response missing success or settings",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Trading Platform Settings", 
+                    False, 
+                    f"Platform settings failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Trading Platform Settings", 
+                False, 
+                f"Platform settings request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_live_prices_coingecko(self):
+        """Test GET /api/prices/live - Real prices from CoinGecko"""
+        print("\n=== Testing Live Prices from CoinGecko ===")
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/prices/live",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "prices" in data:
+                    prices = data["prices"]
+                    required_coins = ["BTC", "ETH", "SOL", "XRP", "BNB"]
+                    
+                    found_coins = []
+                    for coin in required_coins:
+                        if coin in prices and prices[coin].get("price_usd", 0) > 0:
+                            found_coins.append(f"{coin}: ${prices[coin]['price_usd']:,.2f}")
+                    
+                    if len(found_coins) >= 3:  # At least 3 coins should have prices
+                        self.log_test(
+                            "Live Prices from CoinGecko", 
+                            True, 
+                            f"Real prices retrieved: {', '.join(found_coins[:3])}"
+                        )
+                        return True
+                    else:
+                        self.log_test(
+                            "Live Prices from CoinGecko", 
+                            False, 
+                            f"Insufficient price data. Found: {found_coins}"
+                        )
+                else:
+                    self.log_test(
+                        "Live Prices from CoinGecko", 
+                        False, 
+                        "Live prices response missing success or prices",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Live Prices from CoinGecko", 
+                    False, 
+                    f"Live prices failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Live Prices from CoinGecko", 
+                False, 
+                f"Live prices request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_trading_orderbook(self):
+        """Test GET /api/trading/orderbook/{pair} - Order book with bid/ask levels"""
+        print("\n=== Testing Trading Order Book ===")
+        
+        pairs_to_test = ["BTCUSD", "ETHUSD", "SOLUSD"]
+        success_count = 0
+        
+        for pair in pairs_to_test:
+            try:
+                response = self.session.get(
+                    f"{BASE_URL}/trading/orderbook/{pair}",
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get("success") and "bids" in data and "asks" in data:
+                        bids = data["bids"]
+                        asks = data["asks"]
+                        spread = data.get("spread", 0)
+                        
+                        if len(bids) >= 10 and len(asks) >= 10:
+                            self.log_test(
+                                f"Order Book {pair}", 
+                                True, 
+                                f"{len(bids)} bids, {len(asks)} asks, spread: ${spread:.2f}"
+                            )
+                            success_count += 1
+                        else:
+                            self.log_test(
+                                f"Order Book {pair}", 
+                                False, 
+                                f"Insufficient order book depth: {len(bids)} bids, {len(asks)} asks"
+                            )
+                    else:
+                        self.log_test(
+                            f"Order Book {pair}", 
+                            False, 
+                            "Order book response missing bids/asks",
+                            data
+                        )
+                else:
+                    self.log_test(
+                        f"Order Book {pair}", 
+                        False, 
+                        f"Order book failed with status {response.status_code}"
+                    )
+                    
+            except Exception as e:
+                self.log_test(
+                    f"Order Book {pair}", 
+                    False, 
+                    f"Order book request failed: {str(e)}"
+                )
+        
+        return success_count >= 2  # At least 2 pairs should work
+    
+    def test_open_trading_position(self):
+        """Test POST /api/trading/open-position - Open position with 0.1% fee"""
+        print("\n=== Testing Open Trading Position ===")
+        
+        if not self.trader_user_id:
+            self.log_test(
+                "Open Trading Position", 
+                False, 
+                "Cannot test trading - no trader user ID available"
+            )
+            return False
+        
+        try:
+            response = self.session.post(
+                f"{BASE_URL}/trading/open-position",
+                json={
+                    "user_id": self.trader_user_id,
+                    "pair": "BTCUSD",
+                    "side": "long",
+                    "amount": 0.001,  # Small amount for testing
+                    "entry_price": 91485,
+                    "leverage": 1
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and data.get("position", {}).get("position_id"):
+                    position = data["position"]
+                    self.position_id = position["position_id"]
+                    fee = position.get("fee", 0)
+                    margin = position.get("margin", 0)
+                    
+                    # Verify 0.1% fee calculation
+                    expected_fee = margin * 0.001  # 0.1%
+                    fee_correct = abs(fee - expected_fee) < 0.01
+                    
+                    self.log_test(
+                        "Open Trading Position", 
+                        True, 
+                        f"Position opened: ID {self.position_id}, Fee: ${fee:.4f} (0.1% = ${expected_fee:.4f})"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Open Trading Position", 
+                        False, 
+                        "Open position response missing success or position_id",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Open Trading Position", 
+                    False, 
+                    f"Open position failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Open Trading Position", 
+                False, 
+                f"Open position request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_close_trading_position(self):
+        """Test POST /api/trading/close-position - Close position with P/L calculation"""
+        print("\n=== Testing Close Trading Position ===")
+        
+        if not self.position_id or not self.trader_user_id:
+            self.log_test(
+                "Close Trading Position", 
+                False, 
+                "Cannot test close position - no position ID or trader ID available"
+            )
+            return False
+        
+        try:
+            response = self.session.post(
+                f"{BASE_URL}/trading/close-position",
+                json={
+                    "position_id": self.position_id,
+                    "user_id": self.trader_user_id,
+                    "close_price": 93314.70  # Higher price for profit
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "result" in data:
+                    result = data["result"]
+                    pnl = result.get("pnl", 0)
+                    pnl_percent = result.get("pnl_percent", 0)
+                    close_fee = result.get("close_fee", 0)
+                    
+                    self.log_test(
+                        "Close Trading Position", 
+                        True, 
+                        f"Position closed: P/L ${pnl:.4f} ({pnl_percent:.2f}%), Close fee: ${close_fee:.4f}"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Close Trading Position", 
+                        False, 
+                        "Close position response missing success or result",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Close Trading Position", 
+                    False, 
+                    f"Close position failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Close Trading Position", 
+                False, 
+                f"Close position request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_trading_history(self):
+        """Test GET /api/trading/history/{user_id} - Trade history display"""
+        print("\n=== Testing Trading History ===")
+        
+        if not self.trader_user_id:
+            self.log_test(
+                "Trading History", 
+                False, 
+                "Cannot test trading history - no trader user ID available"
+            )
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/trading/history/{self.trader_user_id}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "history" in data:
+                    history = data["history"]
+                    count = data.get("count", 0)
+                    
+                    self.log_test(
+                        "Trading History", 
+                        True, 
+                        f"Trade history retrieved: {count} trades found"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Trading History", 
+                        False, 
+                        "Trading history response missing success or history",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Trading History", 
+                    False, 
+                    f"Trading history failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Trading History", 
+                False, 
+                f"Trading history request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_wallet_balance_updates(self):
+        """Test wallet balance updates after trading"""
+        print("\n=== Testing Wallet Balance Updates ===")
+        
+        if not self.trader_user_id:
+            self.log_test(
+                "Wallet Balance Updates", 
+                False, 
+                "Cannot test wallet balance - no trader user ID available"
+            )
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/wallet/balance/{self.trader_user_id}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "balances" in data:
+                    balances = data["balances"]
+                    gbp_balance = balances.get("GBP", {}).get("balance", 0)
+                    
+                    self.log_test(
+                        "Wallet Balance Updates", 
+                        True, 
+                        f"Wallet balance retrieved: £{gbp_balance:,.2f} GBP"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Wallet Balance Updates", 
+                        False, 
+                        "Wallet balance response missing success or balances",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Wallet Balance Updates", 
+                    False, 
+                    f"Wallet balance failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Wallet Balance Updates", 
+                False, 
+                f"Wallet balance request failed: {str(e)}"
+            )
+            
+        return False
+    
+    # ============================================================================
+    # P2P EXPRESS TESTING METHODS
+    # ============================================================================
+    
+    def test_p2p_express_check_liquidity(self):
+        """Test POST /api/p2p/express/check-liquidity - Admin liquidity check"""
+        print("\n=== Testing P2P Express Liquidity Check ===")
+        
+        try:
+            response = self.session.post(
+                f"{BASE_URL}/p2p/express/check-liquidity",
+                json={
+                    "crypto": "BTC",
+                    "crypto_amount": 0.001
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "has_liquidity" in data:
+                    has_liquidity = data["has_liquidity"]
+                    
+                    self.log_test(
+                        "P2P Express Liquidity Check", 
+                        True, 
+                        f"Liquidity check completed: Admin liquidity {'available' if has_liquidity else 'not available'}"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "P2P Express Liquidity Check", 
+                        False, 
+                        "Liquidity check response missing success or has_liquidity",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "P2P Express Liquidity Check", 
+                    False, 
+                    f"Liquidity check failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "P2P Express Liquidity Check", 
+                False, 
+                f"Liquidity check request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_p2p_express_create_order(self):
+        """Test POST /api/p2p/express/create - Express order with 2.5% fee"""
+        print("\n=== Testing P2P Express Create Order ===")
+        
+        if not self.buyer_user_id:
+            self.log_test(
+                "P2P Express Create Order", 
+                False, 
+                "Cannot test P2P Express - no buyer user ID available"
+            )
+            return False
+        
+        try:
+            response = self.session.post(
+                f"{BASE_URL}/p2p/express/create",
+                json={
+                    "user_id": self.buyer_user_id,
+                    "crypto": "BTC",
+                    "country": "United Kingdom",
+                    "fiat_amount": 1000.0,  # £1000
+                    "crypto_amount": 0.01,
+                    "base_rate": 100000,
+                    "express_fee": 25.0,  # 2.5% of £1000
+                    "express_fee_percent": 2.5,
+                    "net_amount": 975.0,
+                    "has_admin_liquidity": True
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and data.get("trade_id"):
+                    self.express_order_id = data["trade_id"]
+                    
+                    self.log_test(
+                        "P2P Express Create Order", 
+                        True, 
+                        f"Express order created: ID {self.express_order_id}, Fee: £25.00 (2.5%)"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "P2P Express Create Order", 
+                        False, 
+                        "Express order response missing success or trade_id",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "P2P Express Create Order", 
+                    False, 
+                    f"Express order failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "P2P Express Create Order", 
+                False, 
+                f"Express order request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_nowpayments_currencies(self):
+        """Test GET /api/nowpayments/currencies - Coin selector with icons"""
+        print("\n=== Testing NOWPayments Currencies (Coin Selector) ===")
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/nowpayments/currencies",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "currencies" in data:
+                    currencies = data["currencies"]
+                    
+                    self.log_test(
+                        "NOWPayments Currencies", 
+                        True, 
+                        f"Coin selector data retrieved: {len(currencies)} currencies available"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "NOWPayments Currencies", 
+                        False, 
+                        "Currencies response missing success or currencies",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "NOWPayments Currencies", 
+                    False, 
+                    f"Currencies failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "NOWPayments Currencies", 
+                False, 
+                f"Currencies request failed: {str(e)}"
+            )
+            
+        return False
+    
+    # ============================================================================
+    # NORMAL P2P MARKETPLACE TESTING METHODS
+    # ============================================================================
+    
+    def test_p2p_marketplace_available_coins(self):
+        """Test GET /api/p2p/marketplace/available-coins - Available coins for P2P"""
+        print("\n=== Testing P2P Marketplace Available Coins ===")
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/p2p/marketplace/available-coins",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "coins" in data:
+                    coins = data["coins"]
+                    coins_data = data.get("coins_data", [])
+                    
+                    self.log_test(
+                        "P2P Marketplace Available Coins", 
+                        True, 
+                        f"Available coins retrieved: {len(coins)} coins, {len(coins_data)} with metadata"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "P2P Marketplace Available Coins", 
+                        False, 
+                        "Available coins response missing success or coins",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "P2P Marketplace Available Coins", 
+                    False, 
+                    f"Available coins failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "P2P Marketplace Available Coins", 
+                False, 
+                f"Available coins request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_p2p_marketplace_filters(self):
+        """Test GET /api/p2p/marketplace/filters - Marketplace filter options"""
+        print("\n=== Testing P2P Marketplace Filters ===")
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/p2p/marketplace/filters",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    currencies = data.get("currencies", [])
+                    payment_methods = data.get("payment_methods", [])
+                    regions = data.get("regions", [])
+                    
+                    self.log_test(
+                        "P2P Marketplace Filters", 
+                        True, 
+                        f"Filters retrieved: {len(currencies)} currencies, {len(payment_methods)} payment methods, {len(regions)} regions"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "P2P Marketplace Filters", 
+                        False, 
+                        "Marketplace filters response missing success",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "P2P Marketplace Filters", 
+                    False, 
+                    f"Marketplace filters failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "P2P Marketplace Filters", 
+                False, 
+                f"Marketplace filters request failed: {str(e)}"
+            )
+            
+        return False
+    
+    # ============================================================================
+    # BUSINESS DASHBOARD TESTING METHODS
+    # ============================================================================
+    
+    def test_business_dashboard_stats(self):
+        """Test GET /api/admin/dashboard-stats - Business dashboard with all fee types"""
+        print("\n=== Testing Business Dashboard Stats ===")
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/admin/dashboard-stats",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "stats" in data:
+                    stats = data["stats"]
+                    
+                    # Check for all required fee types
+                    revenue = stats.get("revenue", {})
+                    fee_types = [
+                        "spot_trading_fees", "p2p_fees", "p2p_express_fees", 
+                        "swap_fees", "withdrawal_fees", "referral_commissions"
+                    ]
+                    
+                    found_fees = [fee for fee in fee_types if fee in revenue]
+                    
+                    self.log_test(
+                        "Business Dashboard Stats", 
+                        True, 
+                        f"Dashboard stats retrieved: {len(found_fees)}/{len(fee_types)} fee types found"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Business Dashboard Stats", 
+                        False, 
+                        "Dashboard stats response missing success or stats",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Business Dashboard Stats", 
+                    False, 
+                    f"Dashboard stats failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Business Dashboard Stats", 
+                False, 
+                f"Dashboard stats request failed: {str(e)}"
+            )
+            
+        return False
+    
+    def test_referral_dashboard(self):
+        """Test GET /api/referral/dashboard/{user_id} - Referral commissions (20%/50%)"""
+        print("\n=== Testing Referral Dashboard ===")
+        
+        if not self.trader_user_id:
+            self.log_test(
+                "Referral Dashboard", 
+                False, 
+                "Cannot test referral dashboard - no trader user ID available"
+            )
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{BASE_URL}/referral/dashboard/{self.trader_user_id}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    referral_code = data.get("referral_code", "")
+                    total_commissions = data.get("total_commissions", 0)
+                    commission_rate = data.get("commission_rate", 0)
+                    
+                    self.log_test(
+                        "Referral Dashboard", 
+                        True, 
+                        f"Referral dashboard working: Code {referral_code}, Rate {commission_rate}%, Commissions £{total_commissions}"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Referral Dashboard", 
+                        False, 
+                        "Referral dashboard response missing success",
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Referral Dashboard", 
+                    False, 
+                    f"Referral dashboard failed with status {response.status_code}",
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test(
+                "Referral Dashboard", 
+                False, 
+                f"Referral dashboard request failed: {str(e)}"
+            )
+            
+        return False
+    
+    # ============================================================================
     # COMPREHENSIVE TESTING METHODS FOR REVIEW REQUEST
     # ============================================================================
     
