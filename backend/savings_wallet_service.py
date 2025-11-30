@@ -128,6 +128,96 @@ async def vault_transfer_with_fee(db, wallet_service, user_id: str, currency: st
         raise HTTPException(status_code=500, detail=str(e))
 
 
+async def calculate_savings_interest_with_profit(db, wallet_service, user_id: str, currency: str, savings_balance: float, apy_rate: float, days: int) -> Dict:
+    """
+    Calculate savings interest and track platform profit spread
+    
+    Platform earns on the spread between what they earn from lending/staking
+    and what they pay to users in savings interest
+    """
+    try:
+        from centralized_fee_system import get_fee_manager
+        
+        # User's interest rate (what we pay them)
+        user_interest = savings_balance * (apy_rate / 100.0) * (days / 365.0)
+        
+        # Platform's actual earnings rate (higher than what we pay users)
+        fee_manager = get_fee_manager(db)
+        platform_spread_percent = await fee_manager.get_fee("savings_interest_profit_percent")
+        platform_apy = apy_rate + platform_spread_percent
+        
+        # Platform's total earnings from this capital
+        platform_total_earnings = savings_balance * (platform_apy / 100.0) * (days / 365.0)
+        
+        # Platform profit = difference
+        platform_profit = platform_total_earnings - user_interest
+        
+        # Credit user with their interest
+        interest_id = f"savings_interest_{user_id}_{currency}_{int(datetime.now(timezone.utc).timestamp())}"
+        
+        await wallet_service.credit(
+            user_id=user_id,
+            currency=currency,
+            amount=user_interest,
+            transaction_type="savings_interest",
+            reference_id=interest_id,
+            metadata={"apy": apy_rate, "days": days, "principal": savings_balance}
+        )
+        
+        # Log platform profit
+        await db.fee_transactions.insert_one({
+            "transaction_id": interest_id,
+            "user_id": user_id,
+            "transaction_type": "savings_interest",
+            "fee_type": "savings_interest_profit",
+            "amount": savings_balance,
+            "total_fee": platform_profit,
+            "fee_percent": platform_spread_percent,
+            "admin_fee": platform_profit,  # All profit goes to platform
+            "referrer_commission": 0.0,  # No referral on interest spread
+            "referrer_id": None,
+            "currency": currency,
+            "reference_id": interest_id,
+            "metadata": {
+                "user_apy": apy_rate,
+                "platform_apy": platform_apy,
+                "user_interest": user_interest,
+                "platform_profit": platform_profit,
+                "days": days
+            },
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Credit platform profit to admin wallet
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency=currency,
+            amount=platform_profit,
+            transaction_type="savings_interest_profit",
+            reference_id=interest_id,
+            metadata={
+                "user_id": user_id,
+                "user_apy": apy_rate,
+                "platform_apy": platform_apy,
+                "spread": platform_spread_percent
+            }
+        )
+        
+        logger.info(f"✅ Savings interest: User gets {user_interest} {currency}, Platform profit: {platform_profit} {currency}")
+        
+        return {
+            "success": True,
+            "user_interest": user_interest,
+            "platform_profit": platform_profit,
+            "platform_apy": platform_apy,
+            "interest_id": interest_id
+        }
+        
+    except Exception as e:
+        logger.error(f"Savings interest calculation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 async def transfer_to_savings_with_wallet(db, wallet_service, user_id: str, currency: str, amount: float) -> Dict:
     """Transfer from wallet to savings via wallet service with stake fee"""
     try:
