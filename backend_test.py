@@ -2316,7 +2316,7 @@ class TradingPlatformTester:
         
         try:
             response = self.session.get(
-                f"{BASE_URL}/support/chat/{self.test_user_id}",
+                f"{BASE_URL}/support/chat/{self.trader_user_id}",
                 timeout=10
             )
             
