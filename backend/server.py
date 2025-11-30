@@ -9260,7 +9260,7 @@ async def get_orderbook(pair: str):
 
 @api_router.post("/trading/place-order")
 async def place_trading_order(request: dict):
-    """Place a spot trading order (buy/sell crypto)"""
+    """Place a spot trading order (buy/sell crypto) - FIXED FOR NEW WALLET SCHEMA"""
     try:
         user_id = request.get("user_id")
         pair = request.get("pair")  # e.g., "BTCUSD"
@@ -9275,87 +9275,110 @@ async def place_trading_order(request: dict):
                 "message": "Missing or invalid required fields"
             }
         
-        # Get user
-        user = await db.users.find_one({"user_id": user_id})
-        if not user:
-            return {
-                "success": False,
-                "message": "User not found"
-            }
-        
         # Parse pair to get base and quote currencies (e.g., BTC/USD)
         # Assuming format like "BTCUSD" -> base="BTC", quote="USD"
         base = pair[:3]  # First 3 chars
-        quote = pair[3:]  # Remaining chars
+        quote = pair[3:]  # Remaining chars (USD in this case, but we use GBP)
         
-        # Calculate total in quote currency (USD)
+        # Calculate total in quote currency (convert USD to GBP - simplified 1:1 for now)
         total_amount = amount * price
         fee_amount = total_amount * (fee_percent / 100)
         
-        # Get user wallets
-        user_wallets = await db.wallets.find_one({"user_id": user_id})
-        if not user_wallets:
-            user_wallets = {
-                "user_id": user_id,
-                "balances": {},
-                "created_at": datetime.now(timezone.utc)
-            }
-            await db.wallets.insert_one(user_wallets)
+        # Get user wallets using NEW schema (separate documents per currency)
+        gbp_wallet = await db.wallets.find_one({"user_id": user_id, "currency": "GBP"})
+        crypto_wallet = await db.wallets.find_one({"user_id": user_id, "currency": base})
         
-        balances = user_wallets.get("balances", {})
+        # Create wallets if they don't exist
+        if not gbp_wallet:
+            gbp_wallet = {
+                "wallet_id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "currency": "GBP",
+                "total_balance": 0.0,
+                "locked_balance": 0.0,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+            await db.wallets.insert_one(gbp_wallet)
+        
+        if not crypto_wallet:
+            crypto_wallet = {
+                "wallet_id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "currency": base,
+                "total_balance": 0.0,
+                "locked_balance": 0.0,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+            await db.wallets.insert_one(crypto_wallet)
+        
+        # Get current balances
+        gbp_balance = gbp_wallet.get("total_balance", 0)
+        crypto_balance = crypto_wallet.get("total_balance", 0)
         
         if order_type == "buy":
-            # User wants to buy crypto with USD
-            # Check USD balance (or GBP, we'll use GBP as fiat)
-            fiat_balance = balances.get("GBP", {}).get("balance", 0)
+            # User wants to buy crypto with GBP
             total_with_fee = total_amount + fee_amount
             
-            if fiat_balance < total_with_fee:
+            if gbp_balance < total_with_fee:
                 return {
                     "success": False,
-                    "message": f"Insufficient GBP balance. Required: £{total_with_fee:.2f}, Available: £{fiat_balance:.2f}"
+                    "message": f"Insufficient GBP balance. Required: £{total_with_fee:.2f}, Available: £{gbp_balance:.2f}"
                 }
             
-            # Deduct GBP and add crypto
-            new_fiat_balance = fiat_balance - total_with_fee
-            crypto_balance = balances.get(base, {}).get("balance", 0)
-            new_crypto_balance = crypto_balance + amount
-            
-            # Update balances
+            # Update GBP wallet (deduct)
+            new_gbp_balance = gbp_balance - total_with_fee
             await db.wallets.update_one(
-                {"user_id": user_id},
+                {"user_id": user_id, "currency": "GBP"},
                 {
                     "$set": {
-                        f"balances.GBP.balance": new_fiat_balance,
-                        f"balances.{base}.balance": new_crypto_balance,
+                        "total_balance": new_gbp_balance,
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+            # Update crypto wallet (add)
+            new_crypto_balance = crypto_balance + amount
+            await db.wallets.update_one(
+                {"user_id": user_id, "currency": base},
+                {
+                    "$set": {
+                        "total_balance": new_crypto_balance,
                         "updated_at": datetime.now(timezone.utc)
                     }
                 }
             )
             
         else:  # sell
-            # User wants to sell crypto for USD
-            crypto_balance = balances.get(base, {}).get("balance", 0)
-            
+            # User wants to sell crypto for GBP
             if crypto_balance < amount:
                 return {
                     "success": False,
                     "message": f"Insufficient {base} balance. Required: {amount}, Available: {crypto_balance}"
                 }
             
-            # Deduct crypto and add GBP (minus fee)
+            # Update crypto wallet (deduct)
             new_crypto_balance = crypto_balance - amount
-            fiat_balance = balances.get("GBP", {}).get("balance", 0)
-            received_amount = total_amount - fee_amount
-            new_fiat_balance = fiat_balance + received_amount
-            
-            # Update balances
             await db.wallets.update_one(
-                {"user_id": user_id},
+                {"user_id": user_id, "currency": base},
                 {
                     "$set": {
-                        f"balances.{base}.balance": new_crypto_balance,
-                        f"balances.GBP.balance": new_fiat_balance,
+                        "total_balance": new_crypto_balance,
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+            # Update GBP wallet (add minus fee)
+            received_amount = total_amount - fee_amount
+            new_gbp_balance = gbp_balance + received_amount
+            await db.wallets.update_one(
+                {"user_id": user_id, "currency": "GBP"},
+                {
+                    "$set": {
+                        "total_balance": new_gbp_balance,
                         "updated_at": datetime.now(timezone.utc)
                     }
                 }
