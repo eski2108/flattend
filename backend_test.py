@@ -3098,7 +3098,7 @@ class TradingPlatformTester:
         
         # Authentication & Referral System
         print(f"\n1. Authentication & Referral System:")
-        auth_tests = ["Test User Registration", "Referral Dashboard API"]
+        auth_tests = ["Trader Registration", "P2P Buyer Registration", "P2P Seller Registration", "Referral Dashboard API"]
         for test_name in auth_tests:
             result = next((r for r in self.test_results if test_name in r["test"]), None)
             if result:
