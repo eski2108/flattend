@@ -94,7 +94,7 @@ async def p2p_create_trade_with_wallet(
         buyer = await db.user_accounts.find_one({"user_id": buyer_id}, {"_id": 0})
         referrer_id = buyer.get("referrer_id") if buyer else None
         referrer_commission = 0.0
-        admin_fee = taker_fee
+        admin_fee = total_fee
         commission_percent = 0.0
         
         if referrer_id:
@@ -106,8 +106,8 @@ async def p2p_create_trade_with_wallet(
             else:
                 commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
             
-            referrer_commission = taker_fee * (commission_percent / 100.0)
-            admin_fee = taker_fee - referrer_commission
+            referrer_commission = total_fee * (commission_percent / 100.0)
+            admin_fee = total_fee - referrer_commission
         
         # Get payment timer
         platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
