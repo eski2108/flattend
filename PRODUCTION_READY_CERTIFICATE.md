@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://crypto-fixbugs.preview.emergentagent.com`
-- Backend API: `https://crypto-fixbugs.preview.emergentagent.com/api`
+- Frontend: `https://crypto-finalize.preview.emergentagent.com`
+- Backend API: `https://crypto-finalize.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---
