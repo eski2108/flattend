@@ -4746,6 +4746,93 @@ async def validate_wallet(request: WalletValidationRequest):
     }
 
 
+# WALLET SERVICE API ENDPOINTS (Required for P2P System)
+@api_router.get("/wallet/balance/{user_id}/{currency}")
+async def get_wallet_balance(user_id: str, currency: str):
+    """
+    Get wallet balance for specific currency via wallet service
+    Used by P2P system to check seller balances before locking escrow
+    """
+    try:
+        wallet_service = get_wallet_service()
+        balance = await wallet_service.get_balance(user_id, currency)
+        return {
+            "success": True,
+            "balance": balance
+        }
+    except Exception as e:
+        logger.error(f"Error getting wallet balance: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/wallet/credit")
+async def credit_wallet(request: dict):
+    """
+    Credit user wallet via wallet service
+    Required for: deposits, refunds, referral commissions, test funding
+    """
+    try:
+        wallet_service = get_wallet_service()
+        user_id = request.get("user_id")
+        currency = request.get("currency")
+        amount = float(request.get("amount", 0))
+        transaction_type = request.get("transaction_type", "deposit")
+        reference_id = request.get("reference_id", f"ref_{uuid.uuid4().hex[:8]}")
+        metadata = request.get("metadata", {})
+        
+        if not user_id or not currency or amount <= 0:
+            raise HTTPException(status_code=400, detail="Invalid parameters")
+        
+        success = await wallet_service.credit(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            transaction_type=transaction_type,
+            reference_id=reference_id,
+            metadata=metadata
+        )
+        
+        if success:
+            # Get updated balance
+            balance = await wallet_service.get_balance(user_id, currency)
+            return {
+                "success": True,
+                "message": f"Credited {amount} {currency} to {user_id}",
+                "balance": balance
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to credit wallet")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error crediting wallet: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/wallet/transactions/{user_id}")
+async def get_wallet_transactions(user_id: str, currency: str = None):
+    """
+    Get transaction history for user wallet
+    """
+    try:
+        query = {"user_id": user_id}
+        if currency:
+            query["currency"] = currency
+        
+        transactions = await db.wallet_transactions.find(
+            query,
+            {"_id": 0}
+        ).sort("timestamp", -1).limit(100).to_list(100)
+        
+        return {
+            "success": True,
+            "transactions": transactions
+        }
+    except Exception as e:
+        logger.error(f"Error getting wallet transactions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.get("/wallet/supported-networks")
 async def get_supported_networks():
     """
