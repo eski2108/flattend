@@ -162,7 +162,13 @@ class TwoFactorAuthService:
                 return {"success": False, "message": "No code found"}
             
             # Check expiry
-            if datetime.now(timezone.utc) > code_data["expires_at"]:
+            expires_at = code_data["expires_at"]
+            if isinstance(expires_at, str):
+                expires_at = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+            elif expires_at.tzinfo is None:
+                expires_at = expires_at.replace(tzinfo=timezone.utc)
+            
+            if datetime.now(timezone.utc) > expires_at:
                 await self.db.email_2fa_codes.delete_one({"user_id": user_id})
                 return {"success": False, "message": "Code expired"}
             
