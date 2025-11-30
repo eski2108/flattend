@@ -239,12 +239,31 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
                     "$set": {
                         "status": "approved",
                         "approved_by": approval.admin_id,
-                        "approved_at": datetime.now(timezone.utc).isoformat()
+                        "approved_at": datetime.now(timezone.utc).isoformat(),
+                        "admin_fee": admin_fee,
+                        "referrer_commission": referrer_commission,
+                        "referrer_id": referrer_id
                     }
                 }
             )
             
-            logger.info(f"✅ Withdrawal {withdrawal_id} approved by {approval.admin_id}")
+            # Log to fee_transactions for business dashboard
+            await db.fee_transactions.insert_one({
+                "user_id": user_id,
+                "transaction_type": "withdrawal",
+                "fee_type": "withdrawal_fee_percent",
+                "amount": amount,
+                "fee_amount": fee_amount,
+                "fee_percent": withdrawal["fee_percent"],
+                "admin_fee": admin_fee,
+                "referrer_commission": referrer_commission,
+                "referrer_id": referrer_id,
+                "currency": currency,
+                "reference_id": withdrawal_id,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+            
+            logger.info(f"✅ Withdrawal {withdrawal_id} approved by {approval.admin_id}, Fee: {fee_amount} (Admin: {admin_fee}, Referrer: {referrer_commission})")
             
             return {
                 "success": True,
