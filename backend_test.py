@@ -2306,11 +2306,11 @@ class TradingPlatformTester:
         """Test GET /api/support/chat/{user_id} - Get chat history"""
         print("\n=== Testing Support Chat Get History ===")
         
-        if not self.test_user_id:
+        if not self.trader_user_id:
             self.log_test(
                 "Support Chat Get History", 
                 False, 
-                "Cannot test support chat history - no test user ID available"
+                "Cannot test support chat history - no trader user ID available"
             )
             return False
         
