@@ -6408,6 +6408,52 @@ async def complete_google_signup(request: dict):
     """
     return HTMLResponse(content=html_content)
 
+async def initialize_user_wallets(user_id: str, initial_balances: dict = None):
+    """
+    Initialize wallets for a new user using wallet_service
+    This ensures correct schema and prevents wallet issues
+    """
+    try:
+        wallet_service = get_wallet_service()
+        
+        # Default initial balances (0 for all)
+        if initial_balances is None:
+            initial_balances = {
+                'GBP': 0,
+                'BTC': 0,
+                'ETH': 0,
+                'USDT': 0
+            }
+        
+        # Create wallet entries using wallet_service
+        for currency, amount in initial_balances.items():
+            if amount > 0:
+                await wallet_service.credit(
+                    user_id=user_id,
+                    currency=currency,
+                    amount=amount,
+                    transaction_type='initial_balance',
+                    reference_id='user_registration'
+                )
+            else:
+                # Create empty wallet entry
+                await db.wallets.insert_one({
+                    "user_id": user_id,
+                    "currency": currency,
+                    "available_balance": 0.0,
+                    "locked_balance": 0.0,
+                    "total_balance": 0.0,
+                    "created_at": datetime.now(timezone.utc),
+                    "last_updated": datetime.now(timezone.utc)
+                })
+        
+        logger.info(f"✅ Initialized wallets for user {user_id}")
+        return True
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize wallets for {user_id}: {str(e)}")
+        return False
+
+
 @api_router.post("/auth/register")
 async def register_user(request: RegisterRequest, req: Request):
     """Register new user with email/password or Google OAuth"""
