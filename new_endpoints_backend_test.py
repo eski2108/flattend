@@ -696,7 +696,7 @@ class NewEndpointsBackendTester:
             return True
         else:
             self.log_test(
-                "POST /api/referrals/purchase-vip",
+                "POST /api/user/purchase-vip-tier",
                 False,
                 f"HTTP {response.status_code}",
                 response.text,
