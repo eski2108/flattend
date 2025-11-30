@@ -2192,11 +2192,11 @@ class TradingPlatformTester:
         """Test GET /api/referral/dashboard/{user_id} - Auto-create referral codes"""
         print("\n=== Testing Referral Dashboard API ===")
         
-        if not self.test_user_id:
+        if not self.trader_user_id:
             self.log_test(
                 "Referral Dashboard API", 
                 False, 
-                "Cannot test referral dashboard - no test user ID available"
+                "Cannot test referral dashboard - no trader user ID available"
             )
             return False
         
