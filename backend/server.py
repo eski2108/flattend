@@ -4016,42 +4016,44 @@ async def create_p2p_express_order(order_data: Dict):
     
     await db.fee_transactions.insert_one(fee_record)
     
-    # Update admin dashboard revenue
-    revenue_update = {
-        "$inc": {
-            "total_revenue_gbp": order_data["express_fee"],
-            "p2p_express_revenue_gbp": order_data["express_fee"],
-            "total_trades": 1
-        },
-        "$set": {
-            "last_updated": datetime.now(timezone.utc).isoformat()
-        }
-    }
-    
+    # Update admin revenue
     await db.admin_revenue.update_one(
         {"metric_id": "platform_total"},
-        revenue_update,
+        {
+            "$inc": {
+                "total_revenue_gbp": order_data["express_fee"],
+                "p2p_express_revenue_gbp": order_data["express_fee"],
+                "express_buy_revenue": order_data["express_fee"],
+                "total_trades": 1
+            },
+            "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
+        },
         upsert=True
     )
     
-    # Create P2P notification
+    # Notify buyer
     try:
         from p2p_notification_service import create_p2p_notification
+        if has_admin_liquidity:
+            msg = f"Express order completed! {order_data['crypto_amount']:.8f} {order_data['crypto']} credited instantly."
+        else:
+            msg = f"Express order created! Matched with seller. Delivery in 2-5 minutes."
+        
         await create_p2p_notification(
             user_id=order_data["user_id"],
             trade_id=trade_id,
             notification_type="express_order_created",
-            message=f"Express order created for {order_data['crypto_amount']:.8f} {order_data['crypto']}. Delivery in 2-5 minutes."
+            message=msg
         )
     except Exception as e:
-        logger.error(f"Failed to create notification: {e}")
+        logger.error(f"Failed to notify buyer: {e}")
     
     return {
         "success": True,
         "trade_id": trade_id,
-        "message": "Express order created successfully",
-        "estimated_delivery": "2-5 minutes",
-        "payment_instructions": f"Please send £{order_data['fiat_amount']:.2f} via {order_data['payment_method']} within 15 minutes."
+        "estimated_delivery": estimated_delivery,
+        "is_instant": has_admin_liquidity,
+        "message": "Express order completed" if has_admin_liquidity else "Express order created"
     }
 
 
