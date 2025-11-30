@@ -3831,6 +3831,131 @@ async def express_mode_match(request: ExpressMatchRequest):
         raise HTTPException(status_code=500, detail=f"Express matching failed: {str(e)}")
 
 
+# P2P EXPRESS ENDPOINTS (2.5% FEE)
+@api_router.post("/p2p/express/create")
+async def create_p2p_express_order(order_data: Dict):
+    """Create a P2P Express order with 2.5% fee"""
+    required_fields = ["user_id", "crypto", "country", "payment_method", "fiat_amount", "crypto_amount", "base_rate", "express_fee", "express_fee_percent", "net_amount"]
+    for field in required_fields:
+        if field not in order_data:
+            raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+    
+    # Get user info for referral
+    user = await db.users.find_one({"user_id": order_data["user_id"]}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Create trade record
+    trade_id = f"EXPRESS_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{order_data['user_id'][:8]}"
+    
+    trade_record = {
+        "trade_id": trade_id,
+        "type": "p2p_express",
+        "buyer_id": order_data["user_id"],
+        "seller_id": "admin_liquidity",
+        "crypto_currency": order_data["crypto"],
+        "fiat_currency": "GBP",
+        "crypto_amount": order_data["crypto_amount"],
+        "fiat_amount": order_data["fiat_amount"],
+        "price_per_unit": order_data["base_rate"],
+        "status": "pending_payment",
+        "country": order_data["country"],
+        "payment_method": order_data["payment_method"],
+        "express_fee": order_data["express_fee"],
+        "express_fee_percent": order_data["express_fee_percent"],
+        "net_amount": order_data["net_amount"],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.trades.insert_one(trade_record)
+    
+    # Calculate referral commission
+    referrer_id = user.get("referrer_id")
+    referral_tier = user.get("referral_tier", "standard")
+    
+    if referrer_id:
+        # Get commission rate based on tier
+        if referral_tier == "golden":
+            commission_rate = 0.50  # 50% for golden
+        else:
+            commission_rate = 0.20  # 20% for standard/vip
+        
+        admin_fee = order_data["express_fee"] * (1 - commission_rate)
+        referrer_commission = order_data["express_fee"] * commission_rate
+    else:
+        admin_fee = order_data["express_fee"]
+        referrer_commission = 0
+    
+    # Create fee transaction record
+    fee_record = {
+        "transaction_id": f"FEE_{trade_id}",
+        "trade_id": trade_id,
+        "fee_type": "p2p_express",
+        "user_id": order_data["user_id"],
+        "total_fee_amount": order_data["express_fee"],
+        "admin_fee": admin_fee,
+        "referrer_id": referrer_id if referrer_id else None,
+        "referrer_commission": referrer_commission,
+        "referral_tier": referral_tier,
+        "crypto_currency": order_data["crypto"],
+        "fiat_currency": "GBP",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.fee_transactions.insert_one(fee_record)
+    
+    # Update admin dashboard revenue
+    revenue_update = {
+        "$inc": {
+            "total_revenue_gbp": order_data["express_fee"],
+            "p2p_express_revenue_gbp": order_data["express_fee"],
+            "total_trades": 1
+        },
+        "$set": {
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+    }
+    
+    await db.admin_revenue.update_one(
+        {"metric_id": "platform_total"},
+        revenue_update,
+        upsert=True
+    )
+    
+    # Create P2P notification
+    try:
+        from p2p_notification_service import create_p2p_notification
+        await create_p2p_notification(
+            user_id=order_data["user_id"],
+            trade_id=trade_id,
+            notification_type="express_order_created",
+            message=f"P2P Express order created for {order_data['crypto_amount']} {order_data['crypto']}. Please complete payment."
+        )
+    except Exception as e:
+        logger.error(f"Failed to create notification: {e}")
+    
+    return {
+        "success": True,
+        "trade_id": trade_id,
+        "message": "Express order created successfully",
+        "payment_instructions": f"Please send £{order_data['fiat_amount']:.2f} via {order_data['payment_method']} within 15 minutes."
+    }
+
+
+@api_router.get("/p2p/express/order/{trade_id}")
+async def get_p2p_express_order(trade_id: str):
+    """Get P2P Express order details"""
+    trade = await db.trades.find_one({"trade_id": trade_id, "type": "p2p_express"}, {"_id": 0})
+    if not trade:
+        raise HTTPException(status_code=404, detail="Express order not found")
+    
+    return {
+        "success": True,
+        "order": trade
+    }
+
+
 # MANUAL MODE ENDPOINTS
 @api_router.get("/p2p/manual-mode/adverts")
 async def get_manual_mode_adverts(
