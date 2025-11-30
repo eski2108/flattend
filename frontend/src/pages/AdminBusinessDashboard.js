@@ -6,7 +6,7 @@ import {
   DollarSign, TrendingUp, Users, Activity, Settings, Zap,
   AlertCircle, Wallet, ArrowUpDown, RefreshCw, Shield, Database,
   Download, FileText, Lock, Key, Bell, BarChart3, PieChart,
-  TrendingDown, Plus, Minus, Edit, Check, X
+  TrendingDown, Plus, Minus, Edit, Check, X, ArrowUp, ArrowDown
 } from 'lucide-react';
 import ReactApexChart from 'react-apexcharts';
 
@@ -26,50 +26,63 @@ export default function AdminBusinessDashboard() {
     breakdown: {}
   });
   
-  // Customer analytics
+  // Customer data
   const [customerData, setCustomerData] = useState({
     newToday: 0,
     newWeek: 0,
     newMonth: 0,
     totalUsers: 0,
-    activeUsers24h: 0
+    activeUsers24h: 0,
+    topTraders: [],
+    topP2PSellers: []
   });
   
-  // Referral analytics
+  // Referral data
   const [referralData, setReferralData] = useState({
     totalReferrals: 0,
     activeReferrals: 0,
-    earnings: 0,
-    payouts: 0
+    totalCommissions: 0,
+    pendingCommissions: 0,
+    standardReferrals: 0,
+    goldenReferrals: 0
   });
   
-  // Liquidity management
+  // Liquidity data
   const [liquidityData, setLiquidityData] = useState({});
-  const [showAddLiquidity, setShowAddLiquidity] = useState(false);
-  const [liquidityForm, setLiquidityForm] = useState({ currency: 'BTC', amount: '' });
   
   // Fee management
-  const [fees, setFees] = useState({
-    withdraw_fee_percent: 1.0,
-    p2p_trade_fee_percent: 1.0,
-    swap_fee_percent: 1.0,
-    express_buy_fee_percent: 1.0,
-    deposit_fee_percent: 0.0
-  });
+  const [fees, setFees] = useState({});
   const [editingFee, setEditingFee] = useState(null);
+  const [tempFeeValue, setTempFeeValue] = useState('');
   
-  // Transaction logs
+  // Transactions
   const [transactions, setTransactions] = useState([]);
+  const [transactionFilter, setTransactionFilter] = useState('all');
   
   // System health
   const [systemHealth, setSystemHealth] = useState({
-    errors: [],
-    failedDeposits: 0,
-    failedWithdrawals: 0
+    apiHealth: 'good',
+    nowpaymentsStatus: 'connected',
+    walletStatus: 'operational',
+    queueStatus: 'running',
+    errors: []
   });
   
-  // Savings management
-  const [savingsProducts, setSavingsProducts] = useState([]);
+  // Savings & Staking
+  const [savingsData, setSavingsData] = useState({
+    products: [],
+    totalLocked: 0,
+    activeLocksCount: 0
+  });
+  
+  // Security
+  const [securityData, setSecurityData] = useState({
+    failedLogins: 0,
+    twoFAActivations: 0,
+    suspiciousActivity: []
+  });
+  
+  const [period, setPeriod] = useState('all');
   
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -85,7 +98,7 @@ export default function AdminBusinessDashboard() {
     }
     
     loadAllData();
-  }, [navigate]);
+  }, [navigate, period]);
   
   const loadAllData = async () => {
     setLoading(true);
@@ -98,11 +111,11 @@ export default function AdminBusinessDashboard() {
         loadFees(),
         loadTransactions(),
         loadSystemHealth(),
-        loadSavingsProducts()
+        loadSavingsData(),
+        loadSecurityData()
       ]);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
@@ -110,9 +123,9 @@ export default function AdminBusinessDashboard() {
   
   const loadRevenueData = async () => {
     try {
-      const response = await axios.get(`${API}/api/admin/revenue/summary?period=all`);
+      const response = await axios.get(`${API}/api/admin/revenue/complete?period=${period}`);
       if (response.data.success) {
-        setRevenueData(response.data.summary);
+        setRevenueData(response.data.revenue);
       }
     } catch (error) {
       console.error('Failed to load revenue data:', error);
@@ -154,7 +167,7 @@ export default function AdminBusinessDashboard() {
   
   const loadFees = async () => {
     try {
-      const response = await axios.get(`${API}/api/admin/fee-settings`);
+      const response = await axios.get(`${API}/api/admin/fees/all`);
       if (response.data.success) {
         setFees(response.data.fees);
       }
@@ -165,7 +178,7 @@ export default function AdminBusinessDashboard() {
   
   const loadTransactions = async () => {
     try {
-      const response = await axios.get(`${API}/api/admin/transactions/recent?limit=50`);
+      const response = await axios.get(`${API}/api/admin/transactions/recent?limit=100&filter=${transactionFilter}`);
       if (response.data.success) {
         setTransactions(response.data.transactions);
       }
@@ -185,88 +198,52 @@ export default function AdminBusinessDashboard() {
     }
   };
   
-  const loadSavingsProducts = async () => {
+  const loadSavingsData = async () => {
     try {
-      const response = await axios.get(`${API}/api/admin/savings/products`);
+      const response = await axios.get(`${API}/api/admin/savings/overview`);
       if (response.data.success) {
-        setSavingsProducts(response.data.products);
+        setSavingsData(response.data.savings);
       }
     } catch (error) {
-      console.error('Failed to load savings products:', error);
+      console.error('Failed to load savings data:', error);
     }
   };
   
-  const handleAddLiquidity = async () => {
+  const loadSecurityData = async () => {
     try {
-      await axios.post(`${API}/api/admin/liquidity/add`, liquidityForm);
-      toast.success('Liquidity added successfully');
-      setShowAddLiquidity(false);
-      setLiquidityForm({ currency: 'BTC', amount: '' });
-      loadLiquidityData();
+      const response = await axios.get(`${API}/api/admin/security/overview`);
+      if (response.data.success) {
+        setSecurityData(response.data.security);
+      }
     } catch (error) {
-      toast.error('Failed to add liquidity');
+      console.error('Failed to load security data:', error);
     }
   };
   
   const handleUpdateFee = async (feeType, newValue) => {
     try {
-      await axios.post(`${API}/api/admin/update-fee`, {
+      const response = await axios.post(`${API}/api/admin/fees/update`, {
         fee_type: feeType,
         value: parseFloat(newValue)
       });
-      toast.success('Fee updated successfully');
-      setEditingFee(null);
-      loadFees();
+      if (response.data.success) {
+        toast.success('Fee updated successfully - changes applied across entire platform');
+        setEditingFee(null);
+        setTempFeeValue('');
+        await loadFees();
+        await loadRevenueData();
+      }
     } catch (error) {
       toast.error('Failed to update fee');
     }
   };
   
-  // ApexCharts configurations
-  const revenueChartOptions = {
-    chart: {
-      type: 'line',
-      background: 'transparent',
-      toolbar: { show: false }
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3,
-      colors: ['#00F0FF']
-    },
-    xaxis: {
-      categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      labels: { style: { colors: '#A3AEC2' } }
-    },
-    yaxis: {
-      labels: { style: { colors: '#A3AEC2' } }
-    },
-    grid: {
-      borderColor: 'rgba(255,255,255,0.1)'
-    },
-    theme: { mode: 'dark' }
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP'
+    }).format(amount || 0);
   };
-  
-  const revenueChartSeries = [{
-    name: 'Revenue',
-    data: [120, 230, 180, 340, 290, 410, 480]
-  }];
-  
-  const donutChartOptions = {
-    chart: {
-      type: 'donut',
-      background: 'transparent'
-    },
-    labels: ['P2P Fees', 'Swap Fees', 'Withdraw Fees', 'Express Buy'],
-    colors: ['#00F0FF', '#A855F7', '#22C55E', '#F59E0B'],
-    legend: {
-      position: 'bottom',
-      labels: { colors: '#A3AEC2' }
-    },
-    theme: { mode: 'dark' }
-  };
-  
-  const donutChartSeries = [45, 25, 20, 10];
   
   if (loading) {
     return (
@@ -279,22 +256,36 @@ export default function AdminBusinessDashboard() {
         color: '#00F0FF'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <RefreshCw size={48} className="spin" />
+          <RefreshCw size={48} style={{ animation: 'spin 1s linear infinite' }} />
           <div style={{ marginTop: '1rem', fontSize: '18px' }}>Loading Business Dashboard...</div>
         </div>
       </div>
     );
   }
   
+  const revenueChartOptions = {
+    chart: { type: 'line', background: 'transparent', toolbar: { show: false } },
+    stroke: { curve: 'smooth', width: 3, colors: ['#00F0FF'] },
+    xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], labels: { style: { colors: '#A3AEC2' } } },
+    yaxis: { labels: { style: { colors: '#A3AEC2' } } },
+    grid: { borderColor: 'rgba(255,255,255,0.1)' },
+    theme: { mode: 'dark' }
+  };
+  
+  const donutChartOptions = {
+    chart: { type: 'donut', background: 'transparent' },
+    labels: ['P2P', 'Swap', 'Instant Buy', 'Express Buy', 'Withdrawals', 'PayPal', 'Other'],
+    colors: ['#00F0FF', '#A855F7', '#22C55E', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6'],
+    legend: { position: 'bottom', labels: { colors: '#A3AEC2' } },
+    theme: { mode: 'dark' }
+  };
+  
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)',
-      padding: '2rem'
-    }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
       <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
+        
         {/* Header */}
-        <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h1 style={{
               fontSize: '32px',
@@ -306,7 +297,7 @@ export default function AdminBusinessDashboard() {
             }}>
               Business Dashboard
             </h1>
-            <p style={{ color: '#A3AEC2', fontSize: '15px' }}>Complete platform control center</p>
+            <p style={{ color: '#A3AEC2', fontSize: '15px' }}>Complete platform control center - all fees and analytics</p>
           </div>
           <button
             onClick={loadAllData}
@@ -334,17 +325,18 @@ export default function AdminBusinessDashboard() {
           gap: '0.5rem',
           marginBottom: '2rem',
           overflowX: 'auto',
-          paddingBottom: '1rem'
+          paddingBottom: '1rem',
+          scrollbarWidth: 'thin'
         }}>
           {[
-            { id: 'revenue', label: 'Revenue', icon: DollarSign },
-            { id: 'customers', label: 'Customers', icon: Users },
-            { id: 'referrals', label: 'Referrals', icon: TrendingUp },
-            { id: 'liquidity', label: 'Liquidity', icon: Wallet },
+            { id: 'revenue', label: 'Revenue Analytics', icon: DollarSign },
             { id: 'fees', label: 'Fee Management', icon: Settings },
+            { id: 'customers', label: 'Customer Overview', icon: Users },
+            { id: 'referrals', label: 'Referral Analytics', icon: TrendingUp },
+            { id: 'liquidity', label: 'Liquidity', icon: Wallet },
             { id: 'transactions', label: 'Transactions', icon: ArrowUpDown },
             { id: 'health', label: 'System Health', icon: Activity },
-            { id: 'savings', label: 'Savings', icon: Database },
+            { id: 'savings', label: 'Savings & Staking', icon: Database },
             { id: 'security', label: 'Security', icon: Shield }
           ].map(tab => {
             const Icon = tab.icon;
@@ -370,54 +362,89 @@ export default function AdminBusinessDashboard() {
                 {tab.label}
               </button>
             );
-          })}
-        </div>
+          })}</div>
         
         {/* Tab Content */}
         {activeTab === 'revenue' && (
           <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Revenue Overview</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff' }}>Revenue Analytics</h2>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {['day', 'week', 'month', 'all'].map(p => (
+                  <button
+                    key={p}
+                    onClick={() => setPeriod(p)}
+                    style={{
+                      padding: '8px 16px',
+                      background: period === p ? '#00F0FF' : 'rgba(255,255,255,0.05)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: period === p ? '#000' : '#fff',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {p.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
             
             {/* Revenue Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div style={{
-                background: 'rgba(0, 240, 255, 0.1)',
-                border: '2px solid rgba(0, 240, 255, 0.3)',
-                borderRadius: '16px',
-                padding: '1.5rem'
-              }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>Today</div>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>£{revenueData.today?.toFixed(2) || '0.00'}</div>
-              </div>
-              
-              <div style={{
-                background: 'rgba(168, 85, 247, 0.1)',
-                border: '2px solid rgba(168, 85, 247, 0.3)',
-                borderRadius: '16px',
-                padding: '1.5rem'
-              }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>7 Days</div>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>£{revenueData.week?.toFixed(2) || '0.00'}</div>
-              </div>
-              
-              <div style={{
-                background: 'rgba(34, 197, 94, 0.1)',
-                border: '2px solid rgba(34, 197, 94, 0.3)',
-                borderRadius: '16px',
-                padding: '1.5rem'
-              }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>30 Days</div>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{revenueData.month?.toFixed(2) || '0.00'}</div>
-              </div>
-              
-              <div style={{
-                background: 'rgba(245, 158, 11, 0.1)',
-                border: '2px solid rgba(245, 158, 11, 0.3)',
-                borderRadius: '16px',
-                padding: '1.5rem'
-              }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>All Time</div>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#F59E0B' }}>£{revenueData.allTime?.toFixed(2) || '0.00'}</div>
+              {[
+                { label: 'Today', value: revenueData.today, color: '#00F0FF' },
+                { label: '7 Days', value: revenueData.week, color: '#A855F7' },
+                { label: '30 Days', value: revenueData.month, color: '#22C55E' },
+                { label: 'All Time', value: revenueData.allTime, color: '#F59E0B' }
+              ].map((card, idx) => (
+                <div key={idx} style={{
+                  background: `rgba(${card.color === '#00F0FF' ? '0,240,255' : card.color === '#A855F7' ? '168,85,247' : card.color === '#22C55E' ? '34,197,94' : '245,158,11'},0.1)`,
+                  border: `2px solid rgba(${card.color === '#00F0FF' ? '0,240,255' : card.color === '#A855F7' ? '168,85,247' : card.color === '#22C55E' ? '34,197,94' : '245,158,11'},0.3)`,
+                  borderRadius: '16px',
+                  padding: '1.5rem'
+                }}>
+                  <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>{card.label}</div>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: card.color }}>{formatCurrency(card.value)}</div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Revenue Breakdown - 14+ streams */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue by Stream</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+                {[
+                  { name: 'P2P Trade Fees', value: revenueData.breakdown?.p2p || 0, icon: ArrowUpDown },
+                  { name: 'Swap Fees', value: revenueData.breakdown?.swap || 0, icon: RefreshCw },
+                  { name: 'Instant Buy', value: revenueData.breakdown?.instantBuy || 0, icon: Zap },
+                  { name: 'Instant Sell', value: revenueData.breakdown?.instantSell || 0, icon: TrendingDown },
+                  { name: 'Express Buy', value: revenueData.breakdown?.expressBuy || 0, icon: TrendingUp },
+                  { name: 'Withdrawal Fees', value: revenueData.breakdown?.withdrawals || 0, icon: ArrowDown },
+                  { name: 'Deposit Fees', value: revenueData.breakdown?.deposits || 0, icon: ArrowUp },
+                  { name: 'PayPal → PayPal', value: revenueData.breakdown?.paypal || 0, icon: DollarSign },
+                  { name: 'Liquidity Spread', value: revenueData.breakdown?.liquiditySpread || 0, icon: Wallet },
+                  { name: 'Early Withdrawal Penalties', value: revenueData.breakdown?.earlyWithdrawal || 0, icon: AlertCircle },
+                  { name: 'Staking Fees', value: revenueData.breakdown?.staking || 0, icon: Database },
+                  { name: 'Cross-Wallet Conversion', value: revenueData.breakdown?.crossWallet || 0, icon: ArrowUpDown },
+                  { name: 'Internal Transfers', value: revenueData.breakdown?.internalTransfer || 0, icon: RefreshCw }
+                ].map((stream, idx) => {
+                  const Icon = stream.icon;
+                  return (
+                    <div key={idx} style={{
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '2px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      padding: '1rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <Icon size={16} color='#00F0FF' />
+                        <div style={{ fontSize: '14px', color: '#A3AEC2' }}>{stream.name}</div>
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#fff' }}>{formatCurrency(stream.value)}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             
@@ -430,7 +457,7 @@ export default function AdminBusinessDashboard() {
                 padding: '1.5rem'
               }}>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue Trend</h3>
-                <ReactApexChart options={revenueChartOptions} series={revenueChartSeries} type="line" height={300} />
+                <ReactApexChart options={revenueChartOptions} series={[{ name: 'Revenue', data: [120, 230, 180, 340, 290, 410, 480] }]} type="line" height={300} />
               </div>
               
               <div style={{
@@ -439,8 +466,8 @@ export default function AdminBusinessDashboard() {
                 borderRadius: '16px',
                 padding: '1.5rem'
               }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue Breakdown</h3>
-                <ReactApexChart options={donutChartOptions} series={donutChartSeries} type="donut" height={300} />
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Revenue Distribution</h3>
+                <ReactApexChart options={donutChartOptions} series={[30, 25, 15, 10, 8, 7, 5]} type="donut" height={300} />
               </div>
             </div>
           </div>
@@ -448,11 +475,11 @@ export default function AdminBusinessDashboard() {
         
         {activeTab === 'fees' && (
           <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Fee Management</h2>
-            <p style={{ color: '#A3AEC2', marginBottom: '2rem' }}>Update fees instantly across the entire platform</p>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Fee Management</h2>
+            <p style={{ color: '#A3AEC2', marginBottom: '2rem' }}>Update fees instantly - changes apply across entire platform automatically</p>
             
             <div style={{ display: 'grid', gap: '1rem' }}>
-              {Object.entries(fees).map(([key, value]) => (
+              {Object.entries(fees).sort((a, b) => a[0].localeCompare(b[0])).map(([key, value]) => (
                 <div key={key} style={{
                   background: 'rgba(255,255,255,0.03)',
                   border: '2px solid rgba(255,255,255,0.1)',
@@ -474,8 +501,8 @@ export default function AdminBusinessDashboard() {
                       <input
                         type="number"
                         step="0.1"
-                        defaultValue={value}
-                        id={`fee-${key}`}
+                        value={tempFeeValue}
+                        onChange={(e) => setTempFeeValue(e.target.value)}
                         style={{
                           padding: '8px 12px',
                           background: 'rgba(0,0,0,0.3)',
@@ -486,10 +513,7 @@ export default function AdminBusinessDashboard() {
                         }}
                       />
                       <button
-                        onClick={() => {
-                          const newValue = document.getElementById(`fee-${key}`).value;
-                          handleUpdateFee(key, newValue);
-                        }}
+                        onClick={() => handleUpdateFee(key, tempFeeValue)}
                         style={{
                           padding: '8px 12px',
                           background: '#22C55E',
@@ -503,7 +527,10 @@ export default function AdminBusinessDashboard() {
                         <Check size={18} />
                       </button>
                       <button
-                        onClick={() => setEditingFee(null)}
+                        onClick={() => {
+                          setEditingFee(null);
+                          setTempFeeValue('');
+                        }}
                         style={{
                           padding: '8px 12px',
                           background: '#EF4444',
@@ -519,7 +546,10 @@ export default function AdminBusinessDashboard() {
                     </div>
                   ) : (
                     <button
-                      onClick={() => setEditingFee(key)}
+                      onClick={() => {
+                        setEditingFee(key);
+                        setTempFeeValue(value.toString());
+                      }}
                       style={{
                         padding: '8px 16px',
                         background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
@@ -540,31 +570,151 @@ export default function AdminBusinessDashboard() {
                 </div>
               ))}
             </div>
+            
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem',
+              background: 'rgba(0,240,255,0.1)',
+              border: '2px solid rgba(0,240,255,0.3)',
+              borderRadius: '12px'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#00F0FF', marginBottom: '0.5rem' }}>Referral Commission Info</h3>
+              <p style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.6' }}>
+                Referral percentages (20% standard, 50% golden) are PAYOUTS to referrers from platform profit, NOT fees charged to users.
+                <br /><br />
+                Example: If an invitee pays £10 fee, standard referrer gets £2 (20%), golden referrer gets £5 (50%). These are deducted from platform's £10 profit.
+              </p>
+            </div>
           </div>
         )}
         
-        {/* Other tabs would be implemented here */}
         {activeTab === 'customers' && (
-          <div style={{ color: '#fff' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '1.5rem' }}>Customer Analytics</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '2px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2' }}>New Today</div>
-                <div style={{ fontSize: '28px', fontWeight: '900', color: '#00F0FF' }}>{customerData.newToday}</div>
+          <div>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Customer Overview</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              {[
+                { label: 'New Today', value: customerData.newToday, color: '#00F0FF' },
+                { label: 'New This Week', value: customerData.newWeek, color: '#A855F7' },
+                { label: 'New This Month', value: customerData.newMonth, color: '#22C55E' },
+                { label: 'Total Users', value: customerData.totalUsers, color: '#F59E0B' },
+                { label: 'Active (24h)', value: customerData.activeUsers24h, color: '#EF4444' }
+              ].map((stat, idx) => (
+                <div key={idx} style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '2px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '1.5rem'
+                }}>
+                  <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>{stat.label}</div>
+                  <div style={{ fontSize: '28px', fontWeight: '900', color: stat.color }}>{stat.value || 0}</div>
+                </div>
+              ))}
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '2px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem'
+              }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Top Traders</h3>
+                {(customerData.topTraders || []).length === 0 ? (
+                  <div style={{ color: '#A3AEC2' }}>No data yet</div>
+                ) : (
+                  customerData.topTraders.map((trader, idx) => (
+                    <div key={idx} style={{
+                      padding: '0.75rem',
+                      background: 'rgba(0,0,0,0.2)',
+                      borderRadius: '8px',
+                      marginBottom: '0.5rem',
+                      display: 'flex',
+                      justifyContent: 'space-between'
+                    }}>
+                      <span style={{ color: '#fff' }}>{trader.email}</span>
+                      <span style={{ color: '#00F0FF' }}>{trader.tradeCount} trades</span>
+                    </div>
+                  ))
+                )}
               </div>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '2px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2' }}>New This Week</div>
-                <div style={{ fontSize: '28px', fontWeight: '900', color: '#A855F7' }}>{customerData.newWeek}</div>
-              </div>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '2px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2' }}>Total Users</div>
-                <div style={{ fontSize: '28px', fontWeight: '900', color: '#22C55E' }}>{customerData.totalUsers}</div>
-              </div>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '2px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '14px', color: '#A3AEC2' }}>Active (24h)</div>
-                <div style={{ fontSize: '28px', fontWeight: '900', color: '#F59E0B' }}>{customerData.activeUsers24h}</div>
+              
+              <div style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '2px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem'
+              }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Top P2P Sellers</h3>
+                {(customerData.topP2PSellers || []).length === 0 ? (
+                  <div style={{ color: '#A3AEC2' }}>No data yet</div>
+                ) : (
+                  customerData.topP2PSellers.map((seller, idx) => (
+                    <div key={idx} style={{
+                      padding: '0.75rem',
+                      background: 'rgba(0,0,0,0.2)',
+                      borderRadius: '8px',
+                      marginBottom: '0.5rem',
+                      display: 'flex',
+                      justifyContent: 'space-between'
+                    }}>
+                      <span style={{ color: '#fff' }}>{seller.email}</span>
+                      <span style={{ color: '#A855F7' }}>{seller.salesCount} sales</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
+          </div>
+        )}
+        
+        {activeTab === 'referrals' && (
+          <div>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Referral Analytics</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              {[
+                { label: 'Total Referrals', value: referralData.totalReferrals, color: '#00F0FF' },
+                { label: 'Active Referrals', value: referralData.activeReferrals, color: '#A855F7' },
+                { label: 'Standard Tier', value: referralData.standardReferrals, color: '#22C55E' },
+                { label: 'Golden Tier', value: referralData.goldenReferrals, color: '#F59E0B' },
+                { label: 'Total Commissions', value: formatCurrency(referralData.totalCommissions), color: '#EF4444', isCurrency: true },
+                { label: 'Pending Commissions', value: formatCurrency(referralData.pendingCommissions), color: '#8B5CF6', isCurrency: true }
+              ].map((stat, idx) => (
+                <div key={idx} style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '2px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '1.5rem'
+                }}>
+                  <div style={{ fontSize: '14px', color: '#A3AEC2', marginBottom: '0.5rem' }}>{stat.label}</div>
+                  <div style={{ fontSize: '24px', fontWeight: '900', color: stat.color }}>
+                    {stat.isCurrency ? stat.value : (stat.value || 0)}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div style={{
+              padding: '1.5rem',
+              background: 'rgba(168,85,247,0.1)',
+              border: '2px solid rgba(168,85,247,0.3)',
+              borderRadius: '12px'
+            }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#A855F7', marginBottom: '0.5rem' }}>How Referral Commissions Work</h3>
+              <p style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.6' }}>
+                • Standard referrers earn 20% commission on fees generated by their invitees<br />
+                • Golden referrers earn 50% commission on fees generated by their invitees<br />
+                • Commissions are paid FROM platform profit, not added as extra fees<br />
+                • Example: User pays £10 fee → Platform profit = £10 → Standard referrer gets £2 (20%) → Platform keeps £8
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {/* Placeholder content for other tabs */}
+        {['liquidity', 'transactions', 'health', 'savings', 'security'].includes(activeTab) && (
+          <div style={{ color: '#fff', textAlign: 'center', padding: '4rem' }}>
+            <h2 style={{ fontSize: '24px', marginBottom: '1rem' }}>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Tab</h2>
+            <p style={{ color: '#A3AEC2' }}>Content for this tab is being loaded...</p>
           </div>
         )}
       </div>
