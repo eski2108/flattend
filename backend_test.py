@@ -320,8 +320,8 @@ class TradingPlatformTester:
         
         # Add bank accounts
         bank_accounts = [
-            (TEST_USER["wallet_address"], "Test User Bank Account", "Chase Bank", "123456789", "Test Order User"),
-            (SELLER_USER["wallet_address"], "Seller Bank Account", "Wells Fargo", "987654321", "Jane Seller")
+            ("trader_wallet_001", "Trader Bank Account", "Chase Bank", "123456789", "Test Trader"),
+            ("seller_wallet_001", "Seller Bank Account", "Wells Fargo", "987654321", "P2P Seller")
         ]
         
         for wallet_address, test_name, bank_name, account_number, account_holder in bank_accounts:
