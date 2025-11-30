@@ -17,21 +17,34 @@ _fee_cache = None
 _last_update = None
 
 DEFAULT_FEES = {
-    "deposit_fee_percent": 0.0,
-    "withdraw_fee_percent": 1.0,
+    # TRADING & WALLET FEES (percentage)
+    "instant_buy_fee_percent": 1.5,
+    "instant_sell_fee_percent": 1.0,
+    "crypto_swap_fee_percent": 2.5,
+    "p2p_express_fee_percent": 1.5,
     "p2p_trade_fee_percent": 1.0,
-    "swap_fee_percent": 3.0,
-    "instant_buy_fee_percent": 3.0,
-    "express_buy_fee_percent": 2.0,
+    "crypto_withdrawal_fee_percent": 1.0,
+    "crypto_deposit_fee_percent": 0.0,  # FREE
+    
+    # PAYMENT FEES (percentage)
     "paypal_to_paypal_fee_percent": 3.0,
-    "admin_liquidity_buy_spread_percent": 1.0,
-    "admin_liquidity_sell_spread_percent": 1.0,
-    "savings_early_withdrawal_penalty_percent": 2.0,
-    "staking_admin_fee_percent": 1.0,
-    "referral_standard_commission_percent": 20.0,
-    "referral_golden_commission_percent": 50.0,
-    "internal_transfer_fee_percent": 0.0,
-    "cross_wallet_conversion_fee_percent": 1.0
+    
+    # SAVINGS / STAKING / INTERNAL OPS (percentage)
+    "early_withdrawal_penalty_percent": 4.0,
+    "staking_admin_fee_percent": 10.0,
+    "admin_liquidity_spread_percent": 0.25,
+    "cross_wallet_conversion_fee_percent": 1.0,
+    "internal_transfer_fee_percent": 0.0,  # FREE
+    
+    # SERVICE / PLATFORM MONETIZATION (flat GBP)
+    "priority_support_fee_gbp": 2.99,
+    "p2p_advert_promotion_fee_gbp": 20.0,
+    
+    # REFERRALS (payout percentage, NOT a fee)
+    "referral_commission_percent": 20.0,
+    
+    # DISPUTE HANDLING (flat GBP)
+    "p2p_dispute_fee_gbp": 1.50
 }
 
 class CentralizedFeeManager:
