@@ -3546,6 +3546,21 @@ async def send_trade_message(message_data: Dict):
     msg_dict['created_at'] = msg_dict['created_at'].isoformat()
     await db.trade_messages.insert_one(msg_dict)
     
+    # Send notification to the other party
+    try:
+        notification_service = get_notification_service()
+        recipient_id = trade["buyer_id"] if message_data["sender_id"] == trade["seller_id"] else trade["seller_id"]
+        
+        await notification_service.notify_message_sent(
+            trade_id=message_data["trade_id"],
+            sender_id=message_data["sender_id"],
+            recipient_id=recipient_id,
+            sender_role=message_data["sender_role"],
+            message_preview=message_data["message"]
+        )
+    except Exception as notif_error:
+        logger.error(f"Failed to send message notification: {str(notif_error)}")
+    
     return {
         "success": True,
         "message": msg.model_dump()
