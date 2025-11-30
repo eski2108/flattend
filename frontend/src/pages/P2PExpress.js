@@ -3,26 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { Zap, TrendingUp, TrendingDown, Info, Clock, Shield, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { Zap, TrendingUp, TrendingDown, Clock, Shield, DollarSign, CheckCircle } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://p2ptrade-1.preview.emergentagent.com';
-
-const COINS = [
-  { symbol: 'BTC', name: 'Bitcoin', logo: '₿' },
-  { symbol: 'ETH', name: 'Ethereum', logo: 'Ξ' },
-  { symbol: 'USDT', name: 'Tether', logo: '₮' },
-  { symbol: 'USDC', name: 'USD Coin', logo: '$' },
-  { symbol: 'BNB', name: 'Binance Coin', logo: 'Ⓑ' },
-  { symbol: 'SOL', name: 'Solana', logo: '◎' },
-  { symbol: 'XRP', name: 'Ripple', logo: 'Ʀ' },
-  { symbol: 'ADA', name: 'Cardano', logo: '₳' },
-  { symbol: 'LTC', name: 'Litecoin', logo: 'Ł' },
-  { symbol: 'DOT', name: 'Polkadot', logo: '●' },
-  { symbol: 'TRX', name: 'Tron', logo: '⊺' },
-  { symbol: 'XLM', name: 'Stellar', logo: '*' },
-  { symbol: 'MATIC', name: 'Polygon', logo: '⬡' },
-  { symbol: 'DOGE', name: 'Dogecoin', logo: 'Ð' }
-];
 
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',
@@ -31,34 +14,33 @@ const COUNTRIES = [
   'Singapore', 'Hong Kong', 'Japan', 'South Korea', 'India', 'Nigeria'
 ];
 
-const PAYMENT_METHODS = [
-  'Bank Transfer', 'PayPal', 'Revolut', 'Wise', 'Monzo',
-  'Cash App', 'Venmo', 'Zelle', 'Apple Pay', 'Google Pay'
-];
-
 export default function P2PExpress() {
   const navigate = useNavigate();
   const [selectedCoin, setSelectedCoin] = useState('BTC');
   const [selectedCountry, setSelectedCountry] = useState('United Kingdom');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Bank Transfer');
   const [amount, setAmount] = useState('');
+  const [coins, setCoins] = useState([]);
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [calculating, setCalculating] = useState(false);
   const [livePrice, setLivePrice] = useState(null);
   const [hasAdminLiquidity, setHasAdminLiquidity] = useState(false);
-  const [checkingLiquidity, setCheckingLiquidity] = useState(false);
 
   const EXPRESS_FEE_PERCENT = 2.5;
 
   useEffect(() => {
-    fetchLivePrice();
-    const interval = setInterval(fetchLivePrice, 10000);
-    return () => clearInterval(interval);
+    fetchAvailableCoins();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCoin) {
+      fetchLivePrice();
+      const interval = setInterval(fetchLivePrice, 10000);
+      return () => clearInterval(interval);
+    }
   }, [selectedCoin]);
 
   useEffect(() => {
-    if (selectedCoin && amount && parseFloat(amount) > 0) {
+    if (selectedCoin && amount && parseFloat(amount) > 0 && livePrice) {
       checkAdminLiquidity();
       calculateQuote();
     } else {
@@ -66,6 +48,62 @@ export default function P2PExpress() {
       setHasAdminLiquidity(false);
     }
   }, [selectedCoin, amount, livePrice]);
+
+  const fetchAvailableCoins = async () => {
+    try {
+      const response = await axios.get(`${API}/api/nowpayments/currencies`);
+      if (response.data.success && response.data.currencies) {
+        const coinList = response.data.currencies.map(c => ({
+          symbol: c.toUpperCase(),
+          name: getCoinName(c.toUpperCase()),
+          logo: getCoinLogo(c.toUpperCase())
+        }));
+        setCoins(coinList);
+        if (coinList.length > 0 && !selectedCoin) {
+          setSelectedCoin(coinList[0].symbol);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching coins:', error);
+      const fallback = [
+        { symbol: 'BTC', name: 'Bitcoin', logo: '₿' },
+        { symbol: 'ETH', name: 'Ethereum', logo: 'Ξ' },
+        { symbol: 'USDT', name: 'Tether', logo: '₮' },
+        { symbol: 'USDC', name: 'USD Coin', logo: '$' },
+        { symbol: 'BNB', name: 'Binance Coin', logo: 'Ⓑ' },
+        { symbol: 'SOL', name: 'Solana', logo: '◎' },
+        { symbol: 'XRP', name: 'Ripple', logo: 'Ɍ' },
+        { symbol: 'ADA', name: 'Cardano', logo: '₳' },
+        { symbol: 'LTC', name: 'Litecoin', logo: 'Ł' },
+        { symbol: 'DOT', name: 'Polkadot', logo: '●' },
+        { symbol: 'TRX', name: 'Tron', logo: '⊺' },
+        { symbol: 'XLM', name: 'Stellar', logo: '*' },
+        { symbol: 'MATIC', name: 'Polygon', logo: '⬡' },
+        { symbol: 'DOGE', name: 'Dogecoin', logo: 'Ð' }
+      ];
+      setCoins(fallback);
+    }
+  };
+
+  const getCoinName = (symbol) => {
+    const names = {
+      'BTC': 'Bitcoin', 'ETH': 'Ethereum', 'USDT': 'Tether', 'USDC': 'USD Coin',
+      'BNB': 'Binance Coin', 'SOL': 'Solana', 'XRP': 'Ripple', 'ADA': 'Cardano',
+      'LTC': 'Litecoin', 'DOT': 'Polkadot', 'TRX': 'Tron', 'XLM': 'Stellar',
+      'MATIC': 'Polygon', 'DOGE': 'Dogecoin', 'AVAX': 'Avalanche', 'LINK': 'Chainlink',
+      'UNI': 'Uniswap', 'ATOM': 'Cosmos', 'XMR': 'Monero', 'ETC': 'Ethereum Classic'
+    };
+    return names[symbol] || symbol;
+  };
+
+  const getCoinLogo = (symbol) => {
+    const logos = {
+      'BTC': '₿', 'ETH': 'Ξ', 'USDT': '₮', 'USDC': '$', 'BNB': 'Ⓑ',
+      'SOL': '◎', 'XRP': 'Ɍ', 'ADA': '₳', 'LTC': 'Ł', 'DOT': '●',
+      'TRX': '⊺', 'XLM': '*', 'MATIC': '⬡', 'DOGE': 'Ð'
+    };
+    return logos[symbol] || '◆';
+  };
 
   const fetchLivePrice = async () => {
     try {
@@ -87,7 +125,6 @@ export default function P2PExpress() {
   const checkAdminLiquidity = async () => {
     if (!livePrice || !amount || parseFloat(amount) <= 0) return;
 
-    setCheckingLiquidity(true);
     try {
       const baseRate = livePrice.price_gbp;
       const fiatAmount = parseFloat(amount);
@@ -106,37 +143,28 @@ export default function P2PExpress() {
     } catch (error) {
       console.error('Error checking liquidity:', error);
       setHasAdminLiquidity(false);
-    } finally {
-      setCheckingLiquidity(false);
     }
   };
 
-  const calculateQuote = async () => {
+  const calculateQuote = () => {
     if (!livePrice) return;
     
-    setCalculating(true);
-    try {
-      const baseRate = livePrice.price_gbp;
-      const fiatAmount = parseFloat(amount);
-      const expressFeeBP = fiatAmount * (EXPRESS_FEE_PERCENT / 100);
-      const netAmount = fiatAmount - expressFeeBP;
-      const cryptoAmount = netAmount / baseRate;
+    const baseRate = livePrice.price_gbp;
+    const fiatAmount = parseFloat(amount);
+    const expressFeeBP = fiatAmount * (EXPRESS_FEE_PERCENT / 100);
+    const netAmount = fiatAmount - expressFeeBP;
+    const cryptoAmount = netAmount / baseRate;
 
-      setQuote({
-        coin: selectedCoin,
-        fiatAmount: fiatAmount,
-        baseRate: baseRate,
-        expressFee: expressFeeBP,
-        expressFeePct: EXPRESS_FEE_PERCENT,
-        netAmount: netAmount,
-        cryptoAmount: cryptoAmount,
-        estimatedDelivery: hasAdminLiquidity ? 'Instant' : '2-5 minutes'
-      });
-    } catch (error) {
-      console.error('Error calculating quote:', error);
-    } finally {
-      setCalculating(false);
-    }
+    setQuote({
+      coin: selectedCoin,
+      fiatAmount: fiatAmount,
+      baseRate: baseRate,
+      expressFee: expressFeeBP,
+      expressFeePct: EXPRESS_FEE_PERCENT,
+      netAmount: netAmount,
+      cryptoAmount: cryptoAmount,
+      estimatedDelivery: hasAdminLiquidity ? 'Instant' : '2-5 minutes'
+    });
   };
 
   const handleConfirmPurchase = async () => {
@@ -157,7 +185,6 @@ export default function P2PExpress() {
         user_id: user.user_id,
         crypto: selectedCoin,
         country: selectedCountry,
-        payment_method: hasAdminLiquidity ? 'platform_direct' : selectedPaymentMethod,
         fiat_amount: quote.fiatAmount,
         crypto_amount: quote.cryptoAmount,
         base_rate: quote.baseRate,
@@ -173,7 +200,7 @@ export default function P2PExpress() {
         if (hasAdminLiquidity) {
           toast.success('Express order completed! Crypto credited instantly.');
         } else {
-          toast.success('Express order created! Waiting for seller confirmation.');
+          toast.success('Express order created! Matched with seller.');
         }
         navigate(`/p2p/trade-detail/${response.data.trade_id}`);
       } else {
@@ -187,15 +214,12 @@ export default function P2PExpress() {
     }
   };
 
-  const selectedCoinData = COINS.find(c => c.symbol === selectedCoin);
-
   return (
     <Layout>
       <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #05121F 0%, #0A1929 100%)', padding: '40px 20px' }}>
         
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
-          {/* Header */}
           <div style={{ marginBottom: '48px', textAlign: 'center' }}>
             <h1 style={{ fontSize: '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
               <Zap size={48} color="#0CEBFF" strokeWidth={2.5} />
@@ -206,10 +230,8 @@ export default function P2PExpress() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '40px', alignItems: 'start' }}>
             
-            {/* Left Column: Main Form */}
             <div>
               
-              {/* Live Price Display */}
               {livePrice && (
                 <div style={{
                   background: 'rgba(12, 235, 255, 0.05)',
@@ -246,7 +268,6 @@ export default function P2PExpress() {
                 </div>
               )}
 
-              {/* Liquidity Status Banner */}
               {amount && parseFloat(amount) > 0 && quote && (
                 <div style={{
                   background: hasAdminLiquidity ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 197, 66, 0.1)',
@@ -263,22 +284,21 @@ export default function P2PExpress() {
                       <Zap size={20} color="#22C55E" />
                       <div>
                         <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>Instant Delivery Available</div>
-                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Crypto will be credited immediately after payment</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Crypto will be credited immediately</div>
                       </div>
                     </>
                   ) : (
                     <>
                       <Clock size={20} color="#F5C542" />
                       <div>
-                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Seller Delivery (2-5 minutes)</div>
-                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>We'll match you with the best seller</div>
+                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Express Seller (2-5 min)</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Matched with fastest qualified seller</div>
                       </div>
                     </>
                   )}
                 </div>
               )}
 
-              {/* Main Form Card */}
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.3)',
@@ -289,7 +309,6 @@ export default function P2PExpress() {
                 overflow: 'hidden'
               }}>
                 
-                {/* Floating Glow */}
                 <div style={{
                   position: 'absolute',
                   top: '-80px',
@@ -302,7 +321,6 @@ export default function P2PExpress() {
                   pointerEvents: 'none'
                 }} />
 
-                {/* Select Cryptocurrency */}
                 <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
                   <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Select Cryptocurrency</label>
                   <select
@@ -323,7 +341,7 @@ export default function P2PExpress() {
                       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
                     }}
                   >
-                    {COINS.map(coin => (
+                    {coins.map(coin => (
                       <option key={coin.symbol} value={coin.symbol}>
                         {coin.logo} {coin.name} ({coin.symbol})
                       </option>
@@ -331,7 +349,6 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                {/* Select Country */}
                 <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
                   <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Select Country</label>
                   <select
@@ -360,38 +377,6 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                {/* Payment Method (Only show when NO admin liquidity) */}
-                {!hasAdminLiquidity && amount && parseFloat(amount) > 0 && (
-                  <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Payment Method</label>
-                    <select
-                      value={selectedPaymentMethod}
-                      onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '18px 20px',
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        border: '2px solid rgba(245, 197, 66, 0.3)',
-                        borderRadius: '12px',
-                        color: '#FFFFFF',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        outline: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s',
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
-                      }}
-                    >
-                      {PAYMENT_METHODS.map(method => (
-                        <option key={method} value={method}>
-                          {method}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {/* Enter Amount */}
                 <div style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
                   <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Amount (GBP)</label>
                   <input
@@ -415,7 +400,6 @@ export default function P2PExpress() {
                   />
                 </div>
 
-                {/* Quote Breakdown */}
                 {quote && (
                   <div style={{
                     background: 'rgba(12, 235, 255, 0.08)',
@@ -458,7 +442,6 @@ export default function P2PExpress() {
                   </div>
                 )}
 
-                {/* Confirm Button */}
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{
                     position: 'absolute',
@@ -497,7 +480,7 @@ export default function P2PExpress() {
                     {loading ? 'Processing...' : (
                       <>
                         <Zap size={22} />
-                        {hasAdminLiquidity ? 'Buy Now (Instant)' : 'Confirm & Pay'}
+                        Buy Now
                       </>
                     )}
                   </button>
@@ -507,10 +490,8 @@ export default function P2PExpress() {
 
             </div>
 
-            {/* Right Column: Info Widgets */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              {/* Delivery Time */}
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.4)',
@@ -530,7 +511,6 @@ export default function P2PExpress() {
                 </div>
               </div>
 
-              {/* Express Features */}
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.4)',
