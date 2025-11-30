@@ -3065,11 +3065,21 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
     fiat_amount = trade.get("fiat_amount", 0)
     taker_fee = fiat_amount * (taker_fee_percent / 100.0)
     
+    # Check if express mode and add express fee
+    is_express = trade.get("is_express", False)
+    express_fee = 0.0
+    if is_express:
+        express_fee_percent = await fee_manager.get_fee("p2p_express_fee_percent")
+        express_fee = fiat_amount * (express_fee_percent / 100.0)
+        logger.info(f"P2P Express trade: Collecting {express_fee} express fee")
+    
+    total_fee = taker_fee + express_fee
+    
     # Check for buyer's referrer
     buyer = await db.user_accounts.find_one({"user_id": request.buyer_id}, {"_id": 0})
     referrer_id = buyer.get("referrer_id") if buyer else None
     referrer_commission = 0.0
-    admin_fee = taker_fee
+    admin_fee = total_fee
     commission_percent = 0.0
     
     if referrer_id:
@@ -3081,8 +3091,8 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
         else:
             commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
         
-        referrer_commission = taker_fee * (commission_percent / 100.0)
-        admin_fee = taker_fee - referrer_commission
+        referrer_commission = total_fee * (commission_percent / 100.0)
+        admin_fee = total_fee - referrer_commission
     
     # Deduct taker fee from buyer (using fiat currency)
     wallet_service = get_wallet_service()
