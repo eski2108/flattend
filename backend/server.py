@@ -3876,10 +3876,11 @@ async def create_p2p_express_order(order_data: Dict):
     trade_id = f"EXPRESS_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{order_data['user_id'][:8]}"
     
     if has_admin_liquidity:
-        # INSTANT DELIVERY - Admin liquidity available
+        # INSTANT DELIVERY - Admin liquidity
         seller_id = "admin_liquidity"
         delivery_source = "admin_liquidity"
-        status = "completed"  # Instant completion
+        status = "completed"
+        payment_method = "platform_direct"
         
         # Credit user wallet instantly
         try:
