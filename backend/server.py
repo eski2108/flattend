@@ -8775,6 +8775,166 @@ async def get_swap_history(user_id: str):
 
 
 # ===========================
+# SPOT TRADING ENDPOINTS
+# ===========================
+
+@api_router.post("/trading/place-order")
+async def place_trading_order(request: dict):
+    """Place a spot trading order (buy/sell crypto)"""
+    try:
+        user_id = request.get("user_id")
+        pair = request.get("pair")  # e.g., "BTCUSD"
+        order_type = request.get("type")  # "buy" or "sell"
+        amount = float(request.get("amount", 0))
+        price = float(request.get("price", 0))
+        fee_percent = float(request.get("fee_percent", 0.1))
+        
+        if not all([user_id, pair, order_type, amount > 0, price > 0]):
+            return {
+                "success": False,
+                "message": "Missing or invalid required fields"
+            }
+        
+        # Get user
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            return {
+                "success": False,
+                "message": "User not found"
+            }
+        
+        # Parse pair to get base and quote currencies (e.g., BTC/USD)
+        # Assuming format like "BTCUSD" -> base="BTC", quote="USD"
+        base = pair[:3]  # First 3 chars
+        quote = pair[3:]  # Remaining chars
+        
+        # Calculate total in quote currency (USD)
+        total_amount = amount * price
+        fee_amount = total_amount * (fee_percent / 100)
+        
+        # Get user wallets
+        user_wallets = await db.wallets.find_one({"user_id": user_id})
+        if not user_wallets:
+            user_wallets = {
+                "user_id": user_id,
+                "balances": {},
+                "created_at": datetime.now(timezone.utc)
+            }
+            await db.wallets.insert_one(user_wallets)
+        
+        balances = user_wallets.get("balances", {})
+        
+        if order_type == "buy":
+            # User wants to buy crypto with USD
+            # Check USD balance (or GBP, we'll use GBP as fiat)
+            fiat_balance = balances.get("GBP", {}).get("balance", 0)
+            total_with_fee = total_amount + fee_amount
+            
+            if fiat_balance < total_with_fee:
+                return {
+                    "success": False,
+                    "message": f"Insufficient GBP balance. Required: £{total_with_fee:.2f}, Available: £{fiat_balance:.2f}"
+                }
+            
+            # Deduct GBP and add crypto
+            new_fiat_balance = fiat_balance - total_with_fee
+            crypto_balance = balances.get(base, {}).get("balance", 0)
+            new_crypto_balance = crypto_balance + amount
+            
+            # Update balances
+            await db.wallets.update_one(
+                {"user_id": user_id},
+                {
+                    "$set": {
+                        f"balances.GBP.balance": new_fiat_balance,
+                        f"balances.{base}.balance": new_crypto_balance,
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+        else:  # sell
+            # User wants to sell crypto for USD
+            crypto_balance = balances.get(base, {}).get("balance", 0)
+            
+            if crypto_balance < amount:
+                return {
+                    "success": False,
+                    "message": f"Insufficient {base} balance. Required: {amount}, Available: {crypto_balance}"
+                }
+            
+            # Deduct crypto and add GBP (minus fee)
+            new_crypto_balance = crypto_balance - amount
+            fiat_balance = balances.get("GBP", {}).get("balance", 0)
+            received_amount = total_amount - fee_amount
+            new_fiat_balance = fiat_balance + received_amount
+            
+            # Update balances
+            await db.wallets.update_one(
+                {"user_id": user_id},
+                {
+                    "$set": {
+                        f"balances.{base}.balance": new_crypto_balance,
+                        f"balances.GBP.balance": new_fiat_balance,
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+        
+        # Create trade record
+        trade_id = str(uuid.uuid4())
+        trade_record = {
+            "trade_id": trade_id,
+            "user_id": user_id,
+            "pair": pair,
+            "type": order_type,
+            "amount": amount,
+            "price": price,
+            "total": total_amount,
+            "fee_percent": fee_percent,
+            "fee_amount": fee_amount,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.spot_trades.insert_one(trade_record)
+        
+        # Log fee transaction
+        fee_record = {
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "fee_type": "spot_trading",
+            "amount": fee_amount,
+            "currency": "GBP",
+            "related_id": trade_id,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        await db.fee_transactions.insert_one(fee_record)
+        
+        return {
+            "success": True,
+            "message": f"{order_type.upper()} order executed successfully",
+            "trade": {
+                "trade_id": trade_id,
+                "pair": pair,
+                "type": order_type,
+                "amount": amount,
+                "price": price,
+                "total": total_amount,
+                "fee": fee_amount
+            }
+        }
+        
+    except Exception as e:
+        print(f"Error placing trading order: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "message": f"Error placing order: {str(e)}"
+        }
+
+
+# ===========================
 # ADMIN LIQUIDITY WALLET ENDPOINTS
 # ===========================
 
