@@ -109,7 +109,7 @@ export default function AdminEarnings() {
     if (!address) return;
 
     try {
-      await axios.post(`${API}/admin/set-withdrawal-address`, {
+      await axios.post(`${API}/api/admin/set-withdrawal-address`, {
         currency,
         address
       });
@@ -131,7 +131,7 @@ export default function AdminEarnings() {
     }
 
     try {
-      await axios.post(`${API}/admin/withdraw-earnings`, {
+      await axios.post(`${API}/api/admin/withdraw-earnings`, {
         currency,
         amount,
         address: walletAddresses[currency]
