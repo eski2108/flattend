@@ -2677,32 +2677,37 @@ async def get_enabled_coins():
 @api_router.get("/p2p/marketplace/available-coins")
 async def get_marketplace_available_coins():
     """
-    Get list of enabled cryptocurrencies from CMS that support P2P
-    This is now fully dynamic and CMS-controlled
+    Get list of cryptocurrencies that support P2P with emojis and metadata
+    Returns all coins from SUPPORTED_CRYPTOCURRENCIES that are suitable for P2P
     """
     try:
-        # Get all enabled coins that support P2P from CMS
-        enabled_coins = await db.supported_coins.find(
-            {"enabled": True, "supports_p2p": True},
-            {"_id": 0, "symbol": 1, "name": 1}
-        ).to_list(100)
+        # Return all supported crypto with full metadata
+        coins_data = []
+        for symbol, data in SUPPORTED_CRYPTOCURRENCIES.items():
+            coin_info = {
+                "symbol": symbol,
+                "name": data["name"],
+                "emoji": data.get("emoji", ""),
+                "network": data.get("network", ""),
+                "chains": data.get("chains", [])
+            }
+            coins_data.append(coin_info)
         
-        coins_list = [coin["symbol"] for coin in enabled_coins]
-        
-        # Sort alphabetically
-        coins_list.sort()
+        # Sort alphabetically by symbol
+        coins_data.sort(key=lambda x: x["symbol"])
         
         return {
             "success": True,
-            "coins": coins_list,
-            "count": len(coins_list)
+            "coins": [coin["symbol"] for coin in coins_data],
+            "coins_data": coins_data,
+            "count": len(coins_data)
         }
     except Exception as e:
-        # Fallback - but this should rarely happen
+        # Fallback - return default coins
         return {
             "success": True,
-            "coins": ["BTC", "ETH", "USDT"],
-            "count": 3
+            "coins": ["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "XRP"],
+            "count": 7
         }
 
 
