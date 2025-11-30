@@ -21,21 +21,35 @@ import uuid
 DEFAULT_MONETIZATION_SETTINGS = {
     "setting_id": "default_monetization",
     
-    # Trading Fees
-    "buyer_express_fee_percent": 2.0,  # 2% - Buyer Express Buy fee (P2P Express)
-    "instant_buy_fee_percent": 3.0,  # 3% - Instant Buy fee
-    "instant_sell_fee_percent": 1.0,  # 1% - Instant Sell to admin fee
-    "admin_sell_spread_percent": 1.0,  # +1% - Admin markup on liquidity sells
-    "admin_buy_spread_percent": 1.0,  # +1% - Admin markup on liquidity buys
-    "p2p_seller_fee_percent": 1.0,  # 1% - P2P seller fee
-    "swap_fee_percent": 3.0,  # 3% - Swap fee
-    "paypal_to_paypal_fee_percent": 3.0,  # 3% - PayPal to PayPal fee
-    "savings_early_withdrawal_penalty_percent": 2.0,  # 2% - Early withdrawal penalty
-    "staking_admin_fee_percent": 1.0,  # 1% - Staking platform fee
-    "referral_standard_commission_percent": 20.0,  # 20% referrer payout from profit
-    "referral_golden_commission_percent": 50.0,  # 50% referrer payout from profit
-    "internal_transfer_fee_percent": 0.0,  # 0% - Internal transfers free
-    "cross_wallet_conversion_fee_percent": 1.0,  # 1% - Cross-wallet conversion
+    # OFFICIAL COINHUBX FEE STRUCTURE (17 REVENUE STREAMS)
+    # TRADING & WALLET FEES
+    "instant_buy_fee_percent": 1.5,
+    "instant_sell_fee_percent": 1.0,
+    "crypto_swap_fee_percent": 2.5,
+    "p2p_express_fee_percent": 1.5,
+    "p2p_trade_fee_percent": 1.0,
+    "crypto_withdrawal_fee_percent": 1.0,
+    "crypto_deposit_fee_percent": 0.0,  # FREE
+    
+    # PAYMENT FEES
+    "paypal_to_paypal_fee_percent": 3.0,
+    
+    # SAVINGS / STAKING / INTERNAL OPS
+    "early_withdrawal_penalty_percent": 4.0,
+    "staking_admin_fee_percent": 10.0,
+    "admin_liquidity_spread_percent": 0.25,
+    "cross_wallet_conversion_fee_percent": 1.0,
+    "internal_transfer_fee_percent": 0.0,  # FREE
+    
+    # SERVICE / PLATFORM MONETIZATION (flat GBP)
+    "priority_support_fee_gbp": 2.99,
+    "p2p_advert_promotion_fee_gbp": 20.0,
+    
+    # REFERRALS (payout, NOT a fee)
+    "referral_commission_percent": 20.0,
+    
+    # DISPUTE HANDLING (flat GBP)
+    "p2p_dispute_fee_gbp": 1.50
     
     # Payment Method Fees (in percent, added to transaction)
     "payment_method_fees": {
