@@ -154,7 +154,7 @@ export default function Register() {
       const response = await axios.post(`${API}/auth/register`, payload);
       
       if (response.data.success) {
-        const userId = response.data.user.user_id;
+        const userId = response.data.user_id;
         
         // Show phone verification modal
         setShowPhoneVerification(true);
