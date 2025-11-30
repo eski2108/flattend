@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://cryptodash-17.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-validator.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {
