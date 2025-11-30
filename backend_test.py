@@ -2259,7 +2259,7 @@ class TradingPlatformTester:
             response = self.session.post(
                 f"{BASE_URL}/support/chat",
                 json={
-                    "user_id": self.test_user_id,
+                    "user_id": self.trader_user_id,
                     "message": "Hello, I need help with my P2P trade. The seller hasn't released the crypto after I marked as paid.",
                     "sender_role": "user"
                 },
