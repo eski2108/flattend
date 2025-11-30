@@ -21719,6 +21719,21 @@ async def get_user_referral_dashboard(user_id: str):
             "golden": {"commission": "50%", "name": "Golden (Admin Assigned)", "cost": "Invitation Only"}
         }
         
+        # Get detailed commission history
+        commission_history = []
+        for commission in commissions:
+            commission_history.append({
+                "amount": commission.get("commission_amount", 0),
+                "fee_type": commission.get("transaction_type", "unknown"),
+                "referred_user_id": commission.get("referred_user_id", ""),
+                "timestamp": commission.get("timestamp", ""),
+                "currency": commission.get("currency", "GBP"),
+                "commission_percent": commission.get("commission_percent", 0)
+            })
+        
+        # Sort by timestamp (newest first)
+        commission_history.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        
         return {
             "success": True,
             "data": {
@@ -21731,7 +21746,8 @@ async def get_user_referral_dashboard(user_id: str):
                 "referral_tier": tier,
                 "tier_info": tier_info.get(tier, tier_info["standard"]),
                 "can_upgrade_to_vip": tier == "standard",
-                "referred_users": referred_users_data
+                "referred_users": referred_users_data,
+                "commission_history": commission_history
             }
         }
         
