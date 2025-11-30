@@ -576,7 +576,7 @@ export default function AdminEarnings() {
                     {formatNumber(totalETH)} ETH
                   </div>
                   <div style={{ fontSize: '14px', color: '#888', marginTop: '0.5rem' }}>
-                    ≈ £{formatNumber(totalETH * ethPrice)}
+                    ≈ £{formatNumber(totalETH * livePrices.ETH)}
                   </div>
                 </div>
                 <div style={{
@@ -685,7 +685,7 @@ export default function AdminEarnings() {
                     {formatNumber(totalUSDT)} USDT
                   </div>
                   <div style={{ fontSize: '14px', color: '#888', marginTop: '0.5rem' }}>
-                    ≈ £{formatNumber(totalUSDT * usdtPrice)}
+                    ≈ £{formatNumber(totalUSDT * livePrices.USDT)}
                   </div>
                 </div>
                 <div style={{
