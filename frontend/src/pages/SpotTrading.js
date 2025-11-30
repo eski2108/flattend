@@ -419,10 +419,30 @@ export default function SpotTrading() {
                   ))}
                 </div>
 
-            {/* TradingView Advanced Chart */}
-            <div style={{ background: 'rgba(12, 235, 255, 0.05)', border: '2px solid rgba(12, 235, 255, 0.3)', borderRadius: '16px', padding: '4px', height: '600px', boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)' }}>
-              <div id="tradingview-chart" style={{ width: '100%', height: '100%' }}></div>
-            </div>
+                {/* Premium TradingView Chart with Neon Glow */}
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                  border: '2px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '20px',
+                  padding: '6px',
+                  height: isMobile ? '400px' : '600px',
+                  boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+                  position: 'relative'
+                }}>
+                  {/* Floating Glow Effect */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '200px',
+                    height: '60px',
+                    background: 'radial-gradient(circle, rgba(0, 240, 255, 0.4), transparent)',
+                    filter: 'blur(40px)',
+                    pointerEvents: 'none'
+                  }} />
+                  <div id="tradingview-chart" style={{ width: '100%', height: '100%', borderRadius: '16px' }}></div>
+                </div>
 
             {/* Order Panel */}
             <div style={{ background: 'rgba(12, 235, 255, 0.05)', border: '2px solid rgba(12, 235, 255, 0.3)', borderRadius: '16px', padding: '24px', boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)' }}>
