@@ -3094,7 +3094,7 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
         referrer_commission = total_fee * (commission_percent / 100.0)
         admin_fee = total_fee - referrer_commission
     
-    # Deduct taker fee from buyer (using fiat currency)
+    # Deduct total fee (taker + express) from buyer (using fiat currency)
     wallet_service = get_wallet_service()
     fiat_currency = trade.get("fiat_currency", "GBP")
     
@@ -3102,10 +3102,10 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
         await wallet_service.debit(
             user_id=request.buyer_id,
             currency=fiat_currency,
-            amount=taker_fee,
-            transaction_type="p2p_taker_fee",
+            amount=total_fee,
+            transaction_type="p2p_fees",
             reference_id=request.trade_id,
-            metadata={"trade_id": request.trade_id}
+            metadata={"trade_id": request.trade_id, "taker_fee": taker_fee, "express_fee": express_fee}
         )
         
         # Credit admin wallet
