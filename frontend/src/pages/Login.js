@@ -17,6 +17,9 @@ export default function Login() {
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [show2FA, setShow2FA] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [tempUserId, setTempUserId] = useState(null);
 
   useEffect(() => {
     // Handle Google OAuth callback
