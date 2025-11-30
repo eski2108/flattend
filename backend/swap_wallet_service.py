@@ -11,11 +11,14 @@ logger = logging.getLogger(__name__)
 async def execute_express_buy_with_wallet(db, wallet_service, user_id: str, crypto_currency: str, crypto_amount: float, fiat_amount: float, fiat_currency: str = "GBP") -> Dict:
     """Execute express buy via wallet service - debit fiat, credit crypto"""
     try:
+        from centralized_fee_system import get_fee_manager
+        
         order_id = str(uuid.uuid4())
         
-        # Get express buy fee from settings
-        platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
-        fee_percent = platform_settings.get("express_buy_fee_percent", 2.0) if platform_settings else 2.0
+        # Get fee from centralized fee system
+        fee_manager = get_fee_manager(db)
+        # Express buy uses instant_buy_fee_percent (3%)
+        fee_percent = await fee_manager.get_fee("instant_buy_fee_percent")
         
         # Calculate total cost
         base_cost = fiat_amount
