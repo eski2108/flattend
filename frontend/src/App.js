@@ -180,6 +180,7 @@ function App() {
             <Route path="/p2p/trade/:tradeId" element={<P2PTradeDetailDemo />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/business" element={<AdminBusinessDashboard />} />
             <Route path="/admin/disputes" element={<AdminDisputes />} />
             <Route path="/admin/support" element={<AdminSupport />} />
             <Route path="/admin/earnings" element={<AdminEarnings />} />
