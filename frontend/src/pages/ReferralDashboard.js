@@ -353,6 +353,59 @@ export default function ReferralDashboard() {
           )}
         </div>
 
+        {/* Commission Earnings History */}
+        <div style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '2px solid rgba(255,255,255,0.1)',
+          borderRadius: '16px',
+          padding: '2rem',
+          marginTop: '2rem'
+        }}>
+          <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Commission Earnings History</h2>
+          
+          {referralData.commission_history && referralData.commission_history.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#A3AEC2' }}>
+              <DollarSign size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+              <p>No commissions yet. Share your link to start earning!</p>
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
+                    <th style={{ padding: '12px', textAlign: 'left', color: '#A3AEC2', fontSize: '14px', fontWeight: '600' }}>Date</th>
+                    <th style={{ padding: '12px', textAlign: 'left', color: '#A3AEC2', fontSize: '14px', fontWeight: '600' }}>Fee Type</th>
+                    <th style={{ padding: '12px', textAlign: 'right', color: '#A3AEC2', fontSize: '14px', fontWeight: '600' }}>Commission %</th>
+                    <th style={{ padding: '12px', textAlign: 'right', color: '#A3AEC2', fontSize: '14px', fontWeight: '600' }}>Amount Earned</th>
+                    <th style={{ padding: '12px', textAlign: 'left', color: '#A3AEC2', fontSize: '14px', fontWeight: '600' }}>From User</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {referralData.commission_history && referralData.commission_history.map((commission, index) => (
+                    <tr key={index} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <td style={{ padding: '12px', color: '#A3AEC2', fontSize: '14px' }}>
+                        {new Date(commission.timestamp).toLocaleString()}
+                      </td>
+                      <td style={{ padding: '12px', color: '#fff', fontSize: '14px' }}>
+                        {commission.fee_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </td>
+                      <td style={{ padding: '12px', textAlign: 'right', color: '#00F0FF', fontWeight: '600', fontSize: '14px' }}>
+                        {commission.commission_percent}%
+                      </td>
+                      <td style={{ padding: '12px', textAlign: 'right', color: '#22C55E', fontWeight: '700', fontSize: '16px' }}>
+                        £{commission.amount.toFixed(2)}
+                      </td>
+                      <td style={{ padding: '12px', color: '#A3AEC2', fontSize: '12px' }}>
+                        {commission.referred_user_id.substring(0, 8)}...
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
         {/* How it Works */}
         <div style={{
           marginTop: '2rem',
