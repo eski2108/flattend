@@ -19802,14 +19802,11 @@ async def subscribe_arbitrage_alerts(request: SubscribeAlertsRequest):
 
 @api_router.post("/monetization/internal-transfer")
 async def internal_wallet_transfer(request: InternalTransferRequest):
-    """Transfer crypto between internal wallets - Auto-deduct 0.3% fee"""
+    """Transfer crypto between internal wallets - Uses centralized fee system with referral support"""
     try:
-        # Get monetization settings
-        settings = await db.monetization_settings.find_one({"setting_id": "default_monetization"}, {"_id": 0})
-        if not settings:
-            settings = DEFAULT_MONETIZATION_SETTINGS
-        
-        fee_percent = settings.get("internal_transfer_fee_percent", 0.3)
+        # Get fee from centralized system
+        fee_manager = get_fee_manager(db)
+        fee_percent = await fee_manager.get_fee("cross_wallet_transfer_fee_percent")
         fee_amount = request.amount * (fee_percent / 100)
         net_amount = request.amount - fee_amount
         
