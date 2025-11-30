@@ -21,6 +21,7 @@ from decimal import Decimal
 import jwt
 import bcrypt
 import asyncio
+import random
 
 # Production performance and error logging
 from performance_logger import log_performance, log_error, log_info, log_warning, logger
