@@ -7,7 +7,7 @@ import { Search, Filter, Star, Shield, Zap, Clock, TrendingUp, ChevronDown, X, U
 import P2PNotifications from '@/components/P2PNotifications';
 import '../styles/globalSwapTheme.css';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-validator.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://p2ptrade-1.preview.emergentagent.com';
 
 function P2PMarketplace() {
   const navigate = useNavigate();

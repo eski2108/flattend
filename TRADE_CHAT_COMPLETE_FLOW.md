@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://crypto-validator.preview.emergentagent.com
+**Test it now at:** https://p2ptrade-1.preview.emergentagent.com
