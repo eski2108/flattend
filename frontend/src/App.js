@@ -161,7 +161,7 @@ function App() {
             <Route path="/wallet" element={<WalletPage />} />
             <Route path="/savings" element={<SavingsPage />} />
             {/* Portfolio route removed - Dashboard page serves as Portfolio Overview */}
-            {/* <Route path="/portfolio" element={<PortfolioPage />} /> */}
+            <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/allocations" element={<AllocationsPageDirect />} />
             <Route path="/allocations-demo" element={<AllocationsDemo />} />
             <Route path="/trader-balance" element={<TraderBalance />} />
