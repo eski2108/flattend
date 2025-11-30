@@ -41,8 +41,10 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
     """
     Create withdrawal request using wallet service
     Locks balance immediately to prevent double-spend
+    Uses centralized fee system
     """
     from wallet_validator import validate_wallet_address
+    from centralized_fee_system import get_fee_manager
     
     try:
         # Validate wallet address
@@ -63,8 +65,9 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
                 "message": f"Insufficient balance. Available: {available} {currency}, Requested: {amount}"
             }
         
-        # Calculate fees
-        fee_percent = 1.5
+        # Get fee from centralized system
+        fee_manager = get_fee_manager(db)
+        fee_percent = await fee_manager.get_fee("withdrawal_fee_percent")
         fee_amount = amount * (fee_percent / 100)
         net_amount = amount - fee_amount
         
