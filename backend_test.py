@@ -284,11 +284,11 @@ class TradingPlatformTester:
         
         success = True
         
-        # Connect test user wallet
+        # Connect trader wallet
         try:
             response = self.session.post(
                 f"{BASE_URL}/auth/connect-wallet",
-                json={"wallet_address": TEST_USER["wallet_address"]},
+                json={"wallet_address": "trader_wallet_001"},
                 timeout=10
             )
             
