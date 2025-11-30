@@ -20468,3 +20468,45 @@ async def get_portfolio_holdings(user_id: str):
         logger.error(f"Portfolio holdings error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@api_router.get("/nowpayments/currencies")
+async def get_nowpayments_currencies():
+    """Get full list of available currencies from NOWPayments"""
+    try:
+        import httpx
+        
+        api_key = os.environ.get('NOWPAYMENTS_API_KEY')
+        if not api_key:
+            raise HTTPException(status_code=500, detail="NOWPayments API key not configured")
+        
+        headers = {
+            "x-api-key": api_key
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://api.nowpayments.io/v1/currencies",
+                headers=headers,
+                timeout=10.0
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                currencies = data.get('currencies', [])
+                
+                return {
+                    "success": True,
+                    "currencies": currencies,
+                    "count": len(currencies)
+                }
+            else:
+                logger.error(f"NOWPayments API error: {response.status_code}")
+                return {
+                    "success": False,
+                    "error": "Failed to fetch currencies"
+                }
+                
+    except Exception as e:
+        logger.error(f"NOWPayments currencies error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
