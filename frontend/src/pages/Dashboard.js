@@ -222,12 +222,13 @@ function Dashboard() {
             
             {/* Total Value */}
             <div style={{
-              background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
-              border: '1px solid rgba(0, 198, 255, 0.3)',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: '0 0 25px rgba(0, 198, 255, 0.2)',
-              marginBottom: '24px'
+              background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+              border: '2px solid rgba(0, 240, 255, 0.4)',
+              borderRadius: '24px',
+              padding: '32px',
+              boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+              marginBottom: '32px',
+              position: 'relative'
             }}>
               <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '600' }}>Total Portfolio Value</div>
               <div style={{ fontSize: '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px' }}>£{totalValue.toFixed(2)}</div>
