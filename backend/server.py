@@ -19888,8 +19888,9 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
             })
         
         # Log transaction
+        transfer_id = str(uuid.uuid4())
         await db.transactions_log.insert_one({
-            "transaction_id": str(uuid.uuid4()),
+            "transaction_id": transfer_id,
             "from_user_id": request.from_user_id,
             "to_user_id": request.to_user_id,
             "type": "internal_transfer",
@@ -19897,9 +19898,28 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
             "amount": request.amount,
             "fee_percent": fee_percent,
             "fee_amount": fee_amount,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
             "net_amount": net_amount,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "status": "completed"
+        })
+        
+        # Log to fee_transactions
+        await db.fee_transactions.insert_one({
+            "user_id": request.from_user_id,
+            "transaction_type": "internal_transfer",
+            "fee_type": "cross_wallet_transfer_fee_percent",
+            "amount": request.amount,
+            "fee_amount": fee_amount,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": request.currency,
+            "reference_id": transfer_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
         return {
