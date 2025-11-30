@@ -120,7 +120,7 @@ export default function PriceTickerEnhanced() {
       </div>
 
       <style>{`
-        @keyframes scroll {
+        @keyframes tickerScroll {
           0% {
             transform: translateX(0);
           }
