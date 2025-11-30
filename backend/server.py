@@ -8775,8 +8775,342 @@ async def get_swap_history(user_id: str):
 
 
 # ===========================
-# SPOT TRADING ENDPOINTS
+# SPOT TRADING ENDPOINTS - COMPLETE ENGINE
 # ===========================
+
+@api_router.post("/trading/open-position")
+async def open_trading_position(request: dict):
+    """Open a new trading position (long/short)"""
+    try:
+        user_id = request.get("user_id")
+        pair = request.get("pair")  # e.g., "BTCUSD"
+        side = request.get("side")  # "long" or "short"
+        amount = float(request.get("amount", 0))
+        entry_price = float(request.get("entry_price", 0))
+        leverage = float(request.get("leverage", 1))  # Default 1x (spot trading)
+        
+        if not all([user_id, pair, side, amount > 0, entry_price > 0]):
+            return {"success": False, "message": "Missing or invalid required fields"}
+        
+        # Get user and check balance
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            return {"success": False, "message": "User not found"}
+        
+        # Parse pair
+        base = pair[:3]
+        quote = pair[3:] if len(pair) > 3 else "USD"
+        
+        # Calculate required margin
+        position_value = amount * entry_price
+        fee_percent = 0.1
+        fee_amount = position_value * (fee_percent / 100)
+        required_margin = (position_value / leverage) + fee_amount
+        
+        # Get wallet
+        wallet = await db.wallets.find_one({"user_id": user_id})
+        if not wallet:
+            return {"success": False, "message": "Wallet not found"}
+        
+        balances = wallet.get("balances", {})
+        gbp_balance = balances.get("GBP", {}).get("balance", 0)
+        
+        if gbp_balance < required_margin:
+            return {
+                "success": False,
+                "message": f"Insufficient balance. Required: £{required_margin:.2f}, Available: £{gbp_balance:.2f}"
+            }
+        
+        # Deduct margin from wallet
+        new_balance = gbp_balance - required_margin
+        await db.wallets.update_one(
+            {"user_id": user_id},
+            {"$set": {f"balances.GBP.balance": new_balance, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        # Create position
+        position_id = str(uuid.uuid4())
+        position = {
+            "position_id": position_id,
+            "user_id": user_id,
+            "pair": pair,
+            "side": side,
+            "amount": amount,
+            "entry_price": entry_price,
+            "current_price": entry_price,
+            "leverage": leverage,
+            "margin": required_margin - fee_amount,
+            "fee_paid": fee_amount,
+            "pnl": 0,
+            "pnl_percent": 0,
+            "status": "open",
+            "opened_at": datetime.now(timezone.utc),
+            "closed_at": None
+        }
+        await db.open_positions.insert_one(position)
+        
+        # Log fee
+        fee_record = {
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "fee_type": "spot_trading_open",
+            "amount": fee_amount,
+            "currency": "GBP",
+            "related_id": position_id,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        await db.fee_transactions.insert_one(fee_record)
+        
+        # Handle referral commission
+        if user.get("referred_by"):
+            referrer_id = user["referred_by"]
+            referrer = await db.users.find_one({"user_id": referrer_id})
+            if referrer:
+                tier = referrer.get("referral_tier", "normal")
+                commission_rate = 0.5 if tier == "golden" else 0.2
+                commission = fee_amount * commission_rate
+                
+                # Add commission to referrer
+                await db.wallets.update_one(
+                    {"user_id": referrer_id},
+                    {"$inc": {f"balances.GBP.balance": commission}}
+                )
+                
+                # Log commission
+                await db.referral_commissions.insert_one({
+                    "commission_id": str(uuid.uuid4()),
+                    "referrer_id": referrer_id,
+                    "referee_id": user_id,
+                    "source": "spot_trading",
+                    "amount": commission,
+                    "rate": commission_rate,
+                    "tier": tier,
+                    "timestamp": datetime.now(timezone.utc)
+                })
+        
+        return {
+            "success": True,
+            "message": "Position opened successfully",
+            "position": {
+                "position_id": position_id,
+                "pair": pair,
+                "side": side,
+                "amount": amount,
+                "entry_price": entry_price,
+                "margin": required_margin - fee_amount,
+                "fee": fee_amount
+            }
+        }
+        
+    except Exception as e:
+        print(f"Error opening position: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "message": str(e)}
+
+
+@api_router.post("/trading/close-position")
+async def close_trading_position(request: dict):
+    """Close an open trading position"""
+    try:
+        position_id = request.get("position_id")
+        user_id = request.get("user_id")
+        close_price = float(request.get("close_price", 0))
+        
+        if not all([position_id, user_id, close_price > 0]):
+            return {"success": False, "message": "Missing required fields"}
+        
+        # Get position
+        position = await db.open_positions.find_one({"position_id": position_id, "user_id": user_id, "status": "open"})
+        if not position:
+            return {"success": False, "message": "Position not found or already closed"}
+        
+        # Calculate P/L
+        entry_price = position["entry_price"]
+        amount = position["amount"]
+        side = position["side"]
+        
+        if side == "long":
+            pnl = (close_price - entry_price) * amount
+        else:  # short
+            pnl = (entry_price - close_price) * amount
+        
+        pnl_percent = (pnl / position["margin"]) * 100 if position["margin"] > 0 else 0
+        
+        # Calculate close fee
+        close_value = amount * close_price
+        fee_percent = 0.1
+        close_fee = close_value * (fee_percent / 100)
+        
+        # Net P/L after fee
+        net_pnl = pnl - close_fee
+        
+        # Return margin + P/L to wallet
+        total_return = position["margin"] + net_pnl
+        
+        await db.wallets.update_one(
+            {"user_id": user_id},
+            {"$inc": {f"balances.GBP.balance": total_return}, "$set": {"updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        # Update position
+        await db.open_positions.update_one(
+            {"position_id": position_id},
+            {
+                "$set": {
+                    "status": "closed",
+                    "close_price": close_price,
+                    "pnl": net_pnl,
+                    "pnl_percent": pnl_percent,
+                    "close_fee": close_fee,
+                    "closed_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Log close fee
+        await db.fee_transactions.insert_one({
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "fee_type": "spot_trading_close",
+            "amount": close_fee,
+            "currency": "GBP",
+            "related_id": position_id,
+            "timestamp": datetime.now(timezone.utc)
+        })
+        
+        # Log trade history
+        await db.trade_history.insert_one({
+            "trade_id": str(uuid.uuid4()),
+            "position_id": position_id,
+            "user_id": user_id,
+            "pair": position["pair"],
+            "side": side,
+            "amount": amount,
+            "entry_price": entry_price,
+            "close_price": close_price,
+            "pnl": net_pnl,
+            "pnl_percent": pnl_percent,
+            "open_fee": position["fee_paid"],
+            "close_fee": close_fee,
+            "total_fees": position["fee_paid"] + close_fee,
+            "opened_at": position["opened_at"],
+            "closed_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "message": "Position closed successfully",
+            "result": {
+                "position_id": position_id,
+                "close_price": close_price,
+                "pnl": net_pnl,
+                "pnl_percent": pnl_percent,
+                "close_fee": close_fee,
+                "total_return": total_return
+            }
+        }
+        
+    except Exception as e:
+        print(f"Error closing position: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "message": str(e)}
+
+
+@api_router.get("/trading/positions/{user_id}")
+async def get_user_positions(user_id: str):
+    """Get all user's open positions"""
+    try:
+        positions = await db.open_positions.find(
+            {"user_id": user_id, "status": "open"},
+            {"_id": 0}
+        ).sort("opened_at", -1).to_list(100)
+        
+        return {
+            "success": True,
+            "positions": positions,
+            "count": len(positions)
+        }
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+@api_router.get("/trading/history/{user_id}")
+async def get_trade_history(user_id: str, limit: int = 50):
+    """Get user's trade history"""
+    try:
+        history = await db.trade_history.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("closed_at", -1).limit(limit).to_list(limit)
+        
+        return {
+            "success": True,
+            "history": history,
+            "count": len(history)
+        }
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+@api_router.get("/trading/orderbook/{pair}")
+async def get_orderbook(pair: str):
+    """Get order book for a trading pair"""
+    try:
+        # Generate simulated order book based on current price
+        # In production, this would aggregate real orders
+        from live_pricing import get_live_prices
+        prices = await get_live_prices()
+        
+        base = pair[:3]
+        price_data = prices.get(base, {})
+        current_price = price_data.get("price_gbp", 0)
+        
+        if current_price == 0:
+            return {"success": False, "message": "Price not available"}
+        
+        # Generate order book
+        bids = []
+        asks = []
+        
+        # Generate 20 bid levels (below current price)
+        for i in range(20):
+            spread = (i + 1) * 0.001  # 0.1% intervals
+            price = current_price * (1 - spread)
+            amount = random.uniform(0.01, 5.0)
+            total = price * amount
+            bids.append({
+                "price": round(price, 2),
+                "amount": round(amount, 6),
+                "total": round(total, 2)
+            })
+        
+        # Generate 20 ask levels (above current price)
+        for i in range(20):
+            spread = (i + 1) * 0.001
+            price = current_price * (1 + spread)
+            amount = random.uniform(0.01, 5.0)
+            total = price * amount
+            asks.append({
+                "price": round(price, 2),
+                "amount": round(amount, 6),
+                "total": round(total, 2)
+            })
+        
+        return {
+            "success": True,
+            "pair": pair,
+            "bids": bids,
+            "asks": asks,
+            "spread": round(asks[0]["price"] - bids[0]["price"], 2),
+            "mid_price": round((asks[0]["price"] + bids[0]["price"]) / 2, 2)
+        }
+        
+    except Exception as e:
+        print(f"Error getting orderbook: {e}")
+        return {"success": False, "message": str(e)}
+
 
 @api_router.post("/trading/place-order")
 async def place_trading_order(request: dict):
