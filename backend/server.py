@@ -9770,6 +9770,78 @@ async def express_buy_execute(request: dict):
                 "created_at": datetime.now(timezone.utc)
             })
         
+        # Calculate admin liquidity spread profit
+        market_value = crypto_amount * crypto_price_gbp
+        sold_value = crypto_amount * spread_adjusted_price_gbp
+        spread_profit = sold_value - market_value
+        
+        # Check for buyer's referrer
+        buyer = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        referrer_id = buyer.get("referrer_id") if buyer else None
+        referrer_commission = 0.0
+        admin_spread_profit = spread_profit
+        commission_percent = 0.0
+        
+        if referrer_id:
+            from centralized_fee_system import get_fee_manager
+            fee_manager = get_fee_manager(db)
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = spread_profit * (commission_percent / 100.0)
+            admin_spread_profit = spread_profit - referrer_commission
+            
+            # Credit referrer
+            from wallet_service import get_wallet_service
+            wallet_service = get_wallet_service()
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency="GBP",
+                amount=referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=str(uuid.uuid4()),
+                metadata={"source": "admin_liquidity_spread", "buyer_id": user_id}
+            )
+        
+        # Log admin liquidity spread profit to fee_transactions
+        await db.fee_transactions.insert_one({
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "transaction_type": "admin_liquidity_buy",
+            "fee_type": "admin_liquidity_spread_profit",
+            "amount": fiat_amount,
+            "total_fee": spread_profit,
+            "fee_percent": admin_sell_spread_percent,
+            "admin_fee": admin_spread_profit,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": "GBP",
+            "reference_id": str(uuid.uuid4()),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Log express buy fee
+        await db.fee_transactions.insert_one({
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "transaction_type": "express_buy",
+            "fee_type": "instant_buy_fee",
+            "amount": fiat_amount,
+            "total_fee": express_fee_fiat,
+            "fee_percent": express_fee_percent,
+            "admin_fee": express_fee_fiat * (admin_spread_profit / spread_profit) if spread_profit > 0 else express_fee_fiat,
+            "referrer_commission": express_fee_fiat * (referrer_commission / spread_profit) if spread_profit > 0 else 0,
+            "referrer_id": referrer_id,
+            "currency": "GBP",
+            "reference_id": str(uuid.uuid4()),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
         # Record transaction
         trade_id = str(uuid.uuid4())
         await db.express_buy_transactions.insert_one({
@@ -9782,6 +9854,9 @@ async def express_buy_execute(request: dict):
             "fiat_amount": fiat_amount,
             "express_fee_percent": express_fee_percent,
             "express_fee_crypto": express_fee_crypto,
+            "spread_profit": spread_profit,
+            "admin_spread_profit": admin_spread_profit,
+            "referrer_commission": referrer_commission,
             "buyer_wallet_address": buyer_wallet_address,
             "status": "completed",
             "created_at": datetime.now(timezone.utc)
