@@ -4,32 +4,32 @@ import axios from 'axios';
 
 const TICKER_COINS = [
   { id: 'bitcoin', symbol: 'BTC', color: '#F7931A', icon: '₿' },
-  { id: 'ethereum', symbol: 'ETH', color: '#627EEA', icon: '⟠' },
-  { id: 'tether', symbol: 'USDT', color: '#26A17B', icon: '₮' },
+  { id: 'ethereum', symbol: 'ETH', color: '#627EEA', icon: '🌐' },
+  { id: 'tether', symbol: 'USDT', color: '#26A17B', icon: '💵' },
   { id: 'binancecoin', symbol: 'BNB', color: '#F3BA2F', icon: '🔶' },
-  { id: 'solana', symbol: 'SOL', color: '#14F195', icon: '◎' },
-  { id: 'ripple', symbol: 'XRP', color: '#00AAE4', icon: '✕' },
-  { id: 'usd-coin', symbol: 'USDC', color: '#2775CA', icon: '💵' },
-  { id: 'cardano', symbol: 'ADA', color: '#0033AD', icon: '₳' },
-  { id: 'avalanche-2', symbol: 'AVAX', color: '#E84142', icon: '🔺' },
-  { id: 'dogecoin', symbol: 'DOGE', color: '#C2A633', icon: 'Ð' },
-  { id: 'tron', symbol: 'TRX', color: '#FF0013', icon: '⊕' },
-  { id: 'polkadot', symbol: 'DOT', color: '#E6007A', icon: '●' },
-  { id: 'matic-network', symbol: 'MATIC', color: '#8247E5', icon: '⬡' },
-  { id: 'litecoin', symbol: 'LTC', color: '#345D9D', icon: 'Ł' },
+  { id: 'ripple', symbol: 'XRP', color: '#00AAE4', icon: '💠' },
+  { id: 'solana', symbol: 'SOL', color: '#14F195', icon: '🔵' },
+  { id: 'cardano', symbol: 'ADA', color: '#0033AD', icon: '🔷' },
+  { id: 'dogecoin', symbol: 'DOGE', color: '#C2A633', icon: '🐶' },
+  { id: 'matic-network', symbol: 'MATIC', color: '#8247E5', icon: '🟪' },
+  { id: 'polkadot', symbol: 'DOT', color: '#E6007A', icon: '🎯' },
+  { id: 'litecoin', symbol: 'LTC', color: '#345D9D', icon: '💎' },
+  { id: 'bitcoin-cash', symbol: 'BCH', color: '#8DC351', icon: '🟩' },
+  { id: 'tron', symbol: 'TRX', color: '#FF0013', icon: '🔺' },
+  { id: 'avalanche-2', symbol: 'AVAX', color: '#E84142', icon: '🧊' },
   { id: 'chainlink', symbol: 'LINK', color: '#2A5ADA', icon: '🔗' },
-  { id: 'stellar', symbol: 'XLM', color: '#14B6E7', icon: '*' },
-  { id: 'monero', symbol: 'XMR', color: '#FF6600', icon: 'ɱ' },
-  { id: 'cosmos', symbol: 'ATOM', color: '#2E3148', icon: '⚛' },
-  { id: 'bitcoin-cash', symbol: 'BCH', color: '#8DC351', icon: '฿' },
+  { id: 'usd-coin', symbol: 'USDC', color: '#2775CA', icon: '💵' },
+  { id: 'stellar', symbol: 'XLM', color: '#14B6E7', icon: '⭐' },
+  { id: 'monero', symbol: 'XMR', color: '#FF6600', icon: '🔐' },
+  { id: 'cosmos', symbol: 'ATOM', color: '#2E3148', icon: '⚛️' },
   { id: 'uniswap', symbol: 'UNI', color: '#FF007A', icon: '🦄' },
-  { id: 'filecoin', symbol: 'FIL', color: '#0090FF', icon: '⨎' },
-  { id: 'aptos', symbol: 'APT', color: '#00D4AA', icon: '⬢' },
+  { id: 'filecoin', symbol: 'FIL', color: '#0090FF', icon: '📁' },
+  { id: 'aptos', symbol: 'APT', color: '#00D4AA', icon: '🔶' },
   { id: 'algorand', symbol: 'ALGO', color: '#000000', icon: '△' },
-  { id: 'vechain', symbol: 'VET', color: '#15BDFF', icon: 'Ⓥ' },
+  { id: 'vechain', symbol: 'VET', color: '#15BDFF', icon: '✓' },
   { id: 'internet-computer', symbol: 'ICP', color: '#29ABE2', icon: '∞' },
   { id: 'hedera-hashgraph', symbol: 'HBAR', color: '#000000', icon: 'ℏ' },
-  { id: 'near', symbol: 'NEAR', color: '#000000', icon: 'Ⓝ' }
+  { id: 'near', symbol: 'NEAR', color: '#000000', icon: '🔵' }
 ];
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -40,13 +40,12 @@ export default function PriceTickerEnhanced() {
 
   useEffect(() => {
     fetchPrices();
-    const interval = setInterval(fetchPrices, 10000); // Update every 10 seconds
+    const interval = setInterval(fetchPrices, 10000);
     return () => clearInterval(interval);
   }, []);
 
   const fetchPrices = async () => {    
     try {
-      // Try backend first
       const backendRes = await axios.get(`${API}/api/prices/live`, { timeout: 5000 });
       if (backendRes.data.success && backendRes.data.prices) {
         const priceData = TICKER_COINS.map(coin => {
@@ -68,7 +67,6 @@ export default function PriceTickerEnhanced() {
       console.warn('Backend prices unavailable, using CoinGecko');
     }
     
-    // Fallback to CoinGecko
     try {
       const response = await axios.get(
         `https://api.coingecko.com/api/v3/simple/price?ids=${TICKER_COINS.map(c => c.id).join(',')}&vs_currencies=gbp&include_24hr_change=true`,
@@ -95,16 +93,18 @@ export default function PriceTickerEnhanced() {
   if (loading || prices.length === 0) {
     return (
       <div style={{
+        width: '100%',
         background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
-        borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
+        borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
         height: '48px',
         minHeight: '48px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         margin: 0,
-        padding: '0.5rem 0',
-        boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+        padding: 0,
+        boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        position: 'relative'
       }}>
         <div className="flex items-center justify-center gap-2">
           <Zap className="w-4 h-4 text-cyan-400 animate-pulse" />
@@ -118,23 +118,26 @@ export default function PriceTickerEnhanced() {
     <div style={{
       width: '100%',
       background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
-      borderBottom: '2px solid rgba(56, 189, 248, 0.3)',
+      borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
       height: '48px',
       overflow: 'hidden',
-      padding: '0',
+      padding: 0,
+      margin: 0,
       display: 'flex',
       alignItems: 'center',
-      boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+      justifyContent: 'center',
+      boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+      position: 'relative'
     }}>
-      {/* Slow-moving neon gradient line at top */}
+      {/* Neon gradient line at top - centered and clean */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         height: '1px',
-        background: 'linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.6), rgba(56, 189, 248, 0.8), rgba(0, 217, 255, 0.6), transparent)',
-        animation: 'gradientSlide 8s linear infinite',
+        background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)',
+        animation: 'gradientSlide 6s linear infinite',
         zIndex: 10
       }} />
       
@@ -142,19 +145,18 @@ export default function PriceTickerEnhanced() {
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.05), transparent)',
+        background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.05), transparent)',
         animation: 'shimmer 3s infinite',
         pointerEvents: 'none'
       }} />
       
       <div style={{
         display: 'flex',
-        animation: 'scroll 12s linear infinite',
+        animation: 'scroll 8s linear infinite',
         gap: '3rem',
         position: 'relative',
         zIndex: 1
       }}>
-        {/* Triple for seamless scroll */}
         {[...prices, ...prices, ...prices].map((coin, idx) => {
           const isPositive = coin.change >= 0;
           const glowColor = isPositive ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)';
@@ -176,7 +178,6 @@ export default function PriceTickerEnhanced() {
                 transition: 'all 0.3s ease'
               }}
             >
-              {/* Coin Icon */}
               <span style={{
                 fontSize: '18px',
                 color: coin.color,
@@ -186,7 +187,6 @@ export default function PriceTickerEnhanced() {
                 {coin.icon || coin.symbol.charAt(0)}
               </span>
               
-              {/* Coin Symbol with glow */}
               <span style={{
                 fontSize: '15px',
                 fontWeight: '800',
@@ -198,7 +198,6 @@ export default function PriceTickerEnhanced() {
                 {coin.symbol}
               </span>
               
-              {/* Price with bright styling */}
               <span style={{
                 fontSize: '15px',
                 fontWeight: '700',
@@ -211,7 +210,6 @@ export default function PriceTickerEnhanced() {
                 £{coin.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               
-              {/* Change indicator with glow */}
               <span style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -253,11 +251,11 @@ export default function PriceTickerEnhanced() {
         }
         
         @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
+          0%, 100% {
+            opacity: 0;
           }
-          100% {
-            transform: translateX(100%);
+          50% {
+            opacity: 1;
           }
         }
       `}</style>
