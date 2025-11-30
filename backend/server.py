@@ -404,35 +404,63 @@ SUPPORTED_FIAT_CURRENCIES = [
     {"code": "RON", "name": "Romanian Leu", "symbol": "lei", "region": "Europe"}
 ]
 
-# Supported Cryptocurrencies
+# Supported Cryptocurrencies with Emojis
 SUPPORTED_CRYPTOCURRENCIES = {
-    "BTC": {"name": "Bitcoin", "type": "Layer 1", "network": "Bitcoin", "decimals": 8},
-    "ETH": {"name": "Ethereum", "type": "Layer 1", "network": "Ethereum", "decimals": 18},
-    "USDT": {"name": "Tether", "type": "Stablecoin", "network": "Multi-chain", "decimals": 6},
-    "USDC": {"name": "USD Coin", "type": "Stablecoin", "network": "Multi-chain", "decimals": 6},
-    "BNB": {"name": "Binance Coin", "type": "Exchange", "network": "BNB Chain", "decimals": 18},
-    "SOL": {"name": "Solana", "type": "Layer 1", "network": "Solana", "decimals": 9},
-    "XRP": {"name": "Ripple", "type": "Payment", "network": "XRP Ledger", "decimals": 6},
-    "ADA": {"name": "Cardano", "type": "Layer 1", "network": "Cardano", "decimals": 6},
-    "DOGE": {"name": "Dogecoin", "type": "Meme", "network": "Dogecoin", "decimals": 8},
-    "DOT": {"name": "Polkadot", "type": "Layer 0", "network": "Polkadot", "decimals": 10},
-    "MATIC": {"name": "Polygon", "type": "Layer 2", "network": "Polygon", "decimals": 18},
-    "LINK": {"name": "Chainlink", "type": "Oracle", "network": "Ethereum", "decimals": 18},
-    "LTC": {"name": "Litecoin", "type": "Payment", "network": "Litecoin", "decimals": 8},
-    "BCH": {"name": "Bitcoin Cash", "type": "Payment", "network": "Bitcoin Cash", "decimals": 8},
-    "UNI": {"name": "Uniswap", "type": "DEX", "network": "Ethereum", "decimals": 18},
-    "ATOM": {"name": "Cosmos", "type": "Layer 0", "network": "Cosmos", "decimals": 6},
-    "ETC": {"name": "Ethereum Classic", "type": "Layer 1", "network": "Ethereum Classic", "decimals": 18},
-    "XLM": {"name": "Stellar", "type": "Payment", "network": "Stellar", "decimals": 7},
-    "ALGO": {"name": "Algorand", "type": "Layer 1", "network": "Algorand", "decimals": 6},
-    "VET": {"name": "VeChain", "type": "Enterprise", "network": "VeChain", "decimals": 18},
-    "FIL": {"name": "Filecoin", "type": "Storage", "network": "Filecoin", "decimals": 18},
-    "TRX": {"name": "Tron", "type": "Layer 1", "network": "Tron", "decimals": 6},
-    "AVAX": {"name": "Avalanche", "type": "Layer 1", "network": "Avalanche", "decimals": 18},
-    "SHIB": {"name": "Shiba Inu", "type": "Meme", "network": "Ethereum", "decimals": 18},
-    "DAI": {"name": "Dai", "type": "Stablecoin", "network": "Ethereum", "decimals": 18},
-    "WBTC": {"name": "Wrapped Bitcoin", "type": "Wrapped", "network": "Ethereum", "decimals": 8}
+    "BTC": {"name": "Bitcoin", "emoji": "₿", "type": "Layer 1", "network": "Bitcoin", "decimals": 8},
+    "ETH": {"name": "Ethereum", "emoji": "◆", "type": "Layer 1", "network": "Ethereum", "decimals": 18},
+    "USDT": {"name": "Tether", "emoji": "💵", "type": "Stablecoin", "network": "Multi-chain", "decimals": 6, "chains": ["ERC20", "TRC20", "BEP20"]},
+    "USDC": {"name": "USD Coin", "emoji": "💲", "type": "Stablecoin", "network": "Multi-chain", "decimals": 6},
+    "BNB": {"name": "Binance Coin", "emoji": "🔶", "type": "Exchange", "network": "BNB Chain", "decimals": 18},
+    "XRP": {"name": "Ripple", "emoji": "✖️", "type": "Payment", "network": "XRP Ledger", "decimals": 6},
+    "SOL": {"name": "Solana", "emoji": "☀️", "type": "Layer 1", "network": "Solana", "decimals": 9},
+    "LTC": {"name": "Litecoin", "emoji": "🌕", "type": "Payment", "network": "Litecoin", "decimals": 8},
+    "DOGE": {"name": "Dogecoin", "emoji": "🐶", "type": "Meme", "network": "Dogecoin", "decimals": 8},
+    "ADA": {"name": "Cardano", "emoji": "🌐", "type": "Layer 1", "network": "Cardano", "decimals": 6},
+    "MATIC": {"name": "Polygon", "emoji": "🔷", "type": "Layer 2", "network": "Polygon", "decimals": 18},
+    "TRX": {"name": "Tron", "emoji": "🔺", "type": "Layer 1", "network": "Tron", "decimals": 6},
+    "DOT": {"name": "Polkadot", "emoji": "🎯", "type": "Layer 0", "network": "Polkadot", "decimals": 10},
+    "AVAX": {"name": "Avalanche", "emoji": "🏔️", "type": "Layer 1", "network": "Avalanche", "decimals": 18},
+    "XLM": {"name": "Stellar", "emoji": "⭐", "type": "Payment", "network": "Stellar", "decimals": 7},
+    "BCH": {"name": "Bitcoin Cash", "emoji": "💚", "type": "Payment", "network": "Bitcoin Cash", "decimals": 8},
+    "SHIB": {"name": "Shiba Inu", "emoji": "🐾", "type": "Meme", "network": "Ethereum", "decimals": 18},
+    "TON": {"name": "Toncoin", "emoji": "🔵", "type": "Layer 1", "network": "TON", "decimals": 9},
+    "DAI": {"name": "Dai", "emoji": "🟡", "type": "Stablecoin", "network": "Ethereum", "decimals": 18},
+    "LINK": {"name": "Chainlink", "emoji": "🔗", "type": "Oracle", "network": "Ethereum", "decimals": 18},
+    "ATOM": {"name": "Cosmos", "emoji": "⚛️", "type": "Layer 0", "network": "Cosmos", "decimals": 6},
+    "XMR": {"name": "Monero", "emoji": "🕶️", "type": "Privacy", "network": "Monero", "decimals": 12},
+    "FIL": {"name": "Filecoin", "emoji": "📁", "type": "Storage", "network": "Filecoin", "decimals": 18},
+    "UNI": {"name": "Uniswap", "emoji": "🦄", "type": "DEX", "network": "Ethereum", "decimals": 18},
+    "ETC": {"name": "Ethereum Classic", "emoji": "🟢", "type": "Layer 1", "network": "Ethereum Classic", "decimals": 18},
+    "ALGO": {"name": "Algorand", "emoji": "◯", "type": "Layer 1", "network": "Algorand", "decimals": 6},
+    "VET": {"name": "VeChain", "emoji": "♦️", "type": "Enterprise", "network": "VeChain", "decimals": 18},
+    "WBTC": {"name": "Wrapped Bitcoin", "emoji": "🔄", "type": "Wrapped", "network": "Ethereum", "decimals": 8}
 }
+
+# Payment Methods with Icons
+SUPPORTED_PAYMENT_METHODS = [
+    {"name": "Bank Transfer", "icon": "🏦", "category": "Bank"},
+    {"name": "SEPA", "icon": "🏦", "category": "Bank"},
+    {"name": "Faster Payments", "icon": "⚡", "category": "Bank"},
+    {"name": "PayPal", "icon": "💳", "category": "Digital"},
+    {"name": "Revolut", "icon": "💳", "category": "Digital"},
+    {"name": "Cash App", "icon": "💵", "category": "Digital"},
+    {"name": "UPI", "icon": "📱", "category": "Mobile"},
+    {"name": "IMPS", "icon": "📱", "category": "Mobile"},
+    {"name": "Paytm", "icon": "📱", "category": "Mobile"},
+    {"name": "M-Pesa", "icon": "📲", "category": "Mobile"},
+    {"name": "MTN Mobile Money", "icon": "📲", "category": "Mobile"},
+    {"name": "Vodafone Cash", "icon": "📲", "category": "Mobile"},
+    {"name": "Skrill", "icon": "💸", "category": "Digital"},
+    {"name": "Neteller", "icon": "💸", "category": "Digital"},
+    {"name": "Wise", "icon": "🌐", "category": "Digital"},
+    {"name": "Zelle", "icon": "💰", "category": "Digital"},
+    {"name": "Apple Pay", "icon": "🍎", "category": "Mobile"},
+    {"name": "Google Pay", "icon": "📱", "category": "Mobile"},
+    {"name": "Binance Pay", "icon": "🔶", "category": "Crypto"},
+    {"name": "Cash", "icon": "💵", "category": "Cash"},
+    {"name": "Western Union", "icon": "💱", "category": "Transfer"},
+    {"name": "MoneyGram", "icon": "💱", "category": "Transfer"}
+]
 
 
 # Define Models
