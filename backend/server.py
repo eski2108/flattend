@@ -8623,8 +8623,9 @@ async def execute_trading_transaction(request: dict):
             })
         
         # Log transaction (for both buy and sell)
+        transaction_id = str(uuid.uuid4())
         await db.trading_transactions.insert_one({
-            "transaction_id": str(uuid.uuid4()),
+            "transaction_id": transaction_id,
             "user_id": user_id,
             "pair": pair,
             "type": trade_type,
@@ -8635,8 +8636,29 @@ async def execute_trading_transaction(request: dict):
             "total": total_fiat,
             "fee": fee_amount,
             "fee_percent": trading_fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
             "final_amount": final_amount,
             "source": "spot_trading",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Log to fee_transactions for business dashboard
+        await db.fee_transactions.insert_one({
+            "user_id": user_id,
+            "transaction_type": "trading",
+            "fee_type": "trading_fee_percent",
+            "amount": total_fiat,
+            "fee_amount": fee_amount,
+            "fee_percent": trading_fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": quote_currency,
+            "pair": pair,
+            "trade_type": trade_type,
+            "reference_id": transaction_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
