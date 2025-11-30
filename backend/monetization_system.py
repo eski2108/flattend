@@ -26,7 +26,7 @@ DEFAULT_MONETIZATION_SETTINGS = {
     "instant_sell_fee_percent": 1.0,  # 1% - Instant Sell to admin fee
     "admin_sell_spread_percent": 3.0,  # +3% - Admin markup on Express Buy
     "admin_buy_spread_percent": -2.5,  # -2.5% - Admin markdown on Instant Sell
-    "p2p_seller_fee_percent": 3.0,  # 3% - P2P seller fee (existing)
+    "p2p_seller_fee_percent": 1.0,  # 1% - P2P seller fee
     
     # Payment Method Fees (in percent, added to transaction)
     "payment_method_fees": {
