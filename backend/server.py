@@ -3134,7 +3134,7 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
                 "referrer_id": referrer_id,
                 "referred_user_id": request.buyer_id,
                 "transaction_type": "p2p_taker",
-                "fee_amount": taker_fee,
+                "fee_amount": total_fee,
                 "commission_amount": referrer_commission,
                 "commission_percent": commission_percent,
                 "currency": fiat_currency,
@@ -3142,21 +3142,40 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
                 "timestamp": datetime.now(timezone.utc).isoformat()
             })
         
-        # Log to fee_transactions
+        # Log taker fee to fee_transactions
         await db.fee_transactions.insert_one({
+            "transaction_id": f"{request.trade_id}_taker",
             "user_id": request.buyer_id,
             "transaction_type": "p2p_taker",
-            "fee_type": "p2p_taker_fee_percent",
+            "fee_type": "p2p_taker_fee",
             "amount": fiat_amount,
-            "fee_amount": taker_fee,
+            "total_fee": taker_fee,
             "fee_percent": taker_fee_percent,
-            "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
+            "admin_fee": taker_fee * (admin_fee / total_fee) if total_fee > 0 else taker_fee,
+            "referrer_commission": taker_fee * (referrer_commission / total_fee) if total_fee > 0 else 0,
             "referrer_id": referrer_id,
             "currency": fiat_currency,
             "reference_id": request.trade_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
+        
+        # Log express fee separately if present
+        if express_fee > 0:
+            await db.fee_transactions.insert_one({
+                "transaction_id": f"{request.trade_id}_express",
+                "user_id": request.buyer_id,
+                "transaction_type": "p2p_express",
+                "fee_type": "p2p_express_fee",
+                "amount": fiat_amount,
+                "total_fee": express_fee,
+                "fee_percent": express_fee_percent,
+                "admin_fee": express_fee * (admin_fee / total_fee) if total_fee > 0 else express_fee,
+                "referrer_commission": express_fee * (referrer_commission / total_fee) if total_fee > 0 else 0,
+                "referrer_id": referrer_id,
+                "currency": fiat_currency,
+                "reference_id": request.trade_id,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
         
         logger.info(f"✅ P2P Taker Fee collected: {taker_fee} {fiat_currency} from buyer {request.buyer_id}")
     except Exception as fee_error:
