@@ -5464,7 +5464,10 @@ async def google_auth():
 async def google_callback(code: str = None, error: str = None):
     """Handle Google OAuth callback"""
     import httpx
+    import json
+    import base64
     from fastapi.responses import RedirectResponse
+    from urllib.parse import quote
     
     frontend_url = os.environ.get('FRONTEND_URL', 'https://signx-repair.preview.emergentagent.com')
     
