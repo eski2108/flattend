@@ -173,6 +173,34 @@ async def p2p_create_trade_with_wallet(
                 {"$set": {"crypto_amount": new_amount}}
             )
         
+        # Send notifications
+        try:
+            from p2p_notification_service import get_notification_service
+            notification_service = get_notification_service()
+            
+            # Notify trade opened
+            await notification_service.notify_trade_opened(
+                trade_id=trade_id,
+                buyer_id=buyer_id,
+                seller_id=sell_order["seller_id"],
+                crypto_amount=crypto_amount,
+                crypto_currency=sell_order["crypto_currency"],
+                fiat_amount=fiat_amount,
+                fiat_currency=sell_order["fiat_currency"]
+            )
+            
+            # Notify escrow locked
+            await notification_service.notify_escrow_locked(
+                trade_id=trade_id,
+                buyer_id=buyer_id,
+                seller_id=sell_order["seller_id"],
+                crypto_amount=crypto_amount,
+                crypto_currency=sell_order["crypto_currency"]
+            )
+        except Exception as notif_error:
+            logger.error(f"Failed to send notifications: {str(notif_error)}")
+            # Don't fail the trade if notifications fail
+        
         logger.info(f"✅ P2P trade created: {trade_id}")
         
         return {
