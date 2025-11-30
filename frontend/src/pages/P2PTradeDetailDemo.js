@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Clock, MessageCircle, Upload, Shield, AlertCircle, CheckCircle } from 'lucide-react';
 import OTPModal from '@/components/OTPModal';
+import P2PNotifications from '@/components/P2PNotifications';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function P2PTradeDetailDemo() {
