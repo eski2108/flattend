@@ -91,23 +91,40 @@ async def transfer_to_savings_with_wallet(db, wallet_service, user_id: str, curr
             })
         
         # Track savings separately in savings_balances collection for interest calculations
+        # Store net amount (after fee) in savings
         savings_balance = await db.savings_balances.find_one({"user_id": user_id, "currency": currency})
         if savings_balance:
             await db.savings_balances.update_one(
                 {"user_id": user_id, "currency": currency},
-                {"$inc": {"balance": amount}, "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}}
+                {"$inc": {"balance": net_amount}, "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}}
             )
         else:
             await db.savings_balances.insert_one({
                 "user_id": user_id,
                 "currency": currency,
-                "balance": amount,
+                "balance": net_amount,
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "last_updated": datetime.now(timezone.utc).isoformat()
             })
         
-        logger.info(f"✅ Savings: {user_id} transferred {amount} {currency} to savings")
-        return {"success": True, "amount": amount, "currency": currency}
+        # Log to fee_transactions
+        await db.fee_transactions.insert_one({
+            "user_id": user_id,
+            "transaction_type": "savings_stake",
+            "fee_type": "savings_stake_fee_percent",
+            "amount": amount,
+            "fee_amount": stake_fee,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": currency,
+            "reference_id": transfer_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"✅ Savings: {user_id} staked {amount} {currency} to savings, Fee: {stake_fee} (Admin: {admin_fee}, Referrer: {referrer_commission})")
+        return {"success": True, "amount": amount, "net_amount": net_amount, "fee": stake_fee, "currency": currency}
     except Exception as e:
         logger.error(f"❌ Savings transfer error: {str(e)}")
         raise
