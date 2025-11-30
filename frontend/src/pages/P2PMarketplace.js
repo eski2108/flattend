@@ -534,7 +534,23 @@ function P2PMarketplace() {
                 style={{ width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
               >
                 <option value="">All Methods</option>
-                {availablePaymentMethods.map(method => <option key={method} value={method}>{method}</option>)}
+                {availablePaymentMethods.length > 0 ? (
+                  availablePaymentMethods.map(method => {
+                    const methodName = typeof method === 'object' ? method.name : method;
+                    const methodIcon = typeof method === 'object' ? method.icon : '';
+                    return (
+                      <option key={methodName} value={methodName}>
+                        {methodIcon} {methodName}
+                      </option>
+                    );
+                  })
+                ) : (
+                  <>
+                    <option value="Bank Transfer">🏦 Bank Transfer</option>
+                    <option value="PayPal">💳 PayPal</option>
+                    <option value="Revolut">💳 Revolut</option>
+                  </>
+                )}
               </select>
             </div>
 
@@ -547,7 +563,20 @@ function P2PMarketplace() {
                 style={{ width: '100%', padding: '0.5rem', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', fontSize: '13px' }}
               >
                 <option value="">All Regions</option>
-                {availableRegions.map(region => <option key={region.code} value={region.code}>{region.name}</option>)}
+                {availableRegions.length > 0 ? (
+                  availableRegions.map(region => (
+                    <option key={region.code} value={region.code}>
+                      {region.flag} {region.name}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="UK">🇬🇧 United Kingdom</option>
+                    <option value="US">🇺🇸 United States</option>
+                    <option value="NG">🇳🇬 Nigeria</option>
+                    <option value="IN">🇮🇳 India</option>
+                  </>
+                )}
               </select>
             </div>
 
