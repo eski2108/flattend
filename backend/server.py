@@ -241,11 +241,21 @@ PLATFORM_CONFIG = {
     "deposit_fee_percent": 0.0,  # 0% deposit fee - FREE
     "borrow_fee_percent": 1.0,
     "repay_fee_percent": 0.3,
-    "withdraw_fee_percent": 1.0,  # 1% withdrawal fee - AUTOMATED - ADJUSTABLE via Admin Dashboard
-    "p2p_trade_fee_percent": 1.0,  # 1% P2P trade fee - AUTOMATED (seller pays) - ADJUSTABLE
-    "spot_trading_fee_percent": 1.0,  # 1% Spot trading fee - ADJUSTABLE
-    "swap_fee_percent": 1.0,  # 1% Swap/Instant Buy fee - ADJUSTABLE
-    "express_buy_fee_percent": 1.0,  # 1% Express Buy fee - ADJUSTABLE
+    "withdraw_fee_percent": 1.0,  # 1% withdrawal fee
+    "p2p_trade_fee_percent": 1.0,  # 1% P2P trade fee
+    "spot_trading_fee_percent": 1.0,
+    "swap_fee_percent": 3.0,  # 3% Swap fee
+    "instant_buy_fee_percent": 3.0,  # 3% Instant Buy fee
+    "express_buy_fee_percent": 2.0,  # 2% Express Buy (P2P Express) fee
+    "paypal_to_paypal_fee_percent": 3.0,  # 3% PayPal to PayPal fee
+    "admin_liquidity_buy_spread_percent": 1.0,  # 1% buy spread
+    "admin_liquidity_sell_spread_percent": 1.0,  # 1% sell spread
+    "savings_early_withdrawal_penalty_percent": 2.0,  # 2% early withdrawal penalty
+    "staking_admin_fee_percent": 1.0,  # 1% staking fee
+    "referral_standard_commission_percent": 20.0,  # 20% referrer payout from platform profit
+    "referral_golden_commission_percent": 50.0,  # 50% referrer payout from platform profit
+    "internal_transfer_fee_percent": 0.0,  # 0% internal transfer
+    "cross_wallet_conversion_fee_percent": 1.0  # 1% cross-wallet conversion
     "liquidation_fee_percent": 10.0,
     "liquidation_penalty_percent": 5.0,
     "min_collateral_ratio": 150,  # 150% collateralization required
