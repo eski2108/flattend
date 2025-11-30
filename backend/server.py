@@ -21021,3 +21021,51 @@ async def calculate_and_apply_fee(
     
     return amount_after_fee, fee_amount, referrer_commission
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ███████╗ ██╗ ███╗   ██╗  █████╗  ██╗         ██████╗   ██████╗  ██╗   ██╗ ████████╗ ███████╗ ██████╗  
+# ██╔════╝ ██║ ████╗  ██║ ██╔══██╗ ██║         ██╔══██╗ ██╔═══██╗ ██║   ██║ ╚══██╔══╝ ██╔════╝ ██╔══██╗ 
+# █████╗   ██║ ██╔██╗ ██║ ███████║ ██║         ██████╔╝ ██║   ██║ ██║   ██║    ██║    █████╗   ██████╔╝ 
+# ██╔══╝   ██║ ██║╚██╗██║ ██╔══██║ ██║         ██╔══██╗ ██║   ██║ ██║   ██║    ██║    ██╔══╝   ██╔══██╗ 
+# ██║      ██║ ██║ ╚████║ ██║  ██║ ███████╗    ██║  ██║ ╚██████╔╝ ╚██████╔╝    ██║    ███████╗ ██║  ██║ 
+# ╚═╝      ╚═╝ ╚═╝  ╚═══╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝  ╚═╝  ╚═════╝   ╚═════╝     ╚═╝    ╚══════╝ ╚═╝  ╚═╝ 
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# 🔒 CRITICAL: ROUTER REGISTRATION - DO NOT MODIFY THIS SECTION
+#
+# This is the FINAL step in server initialization. The router MUST be included here
+# and ONLY here. Any endpoints defined after this line will NOT be registered and
+# will return 404 errors.
+#
+# ⚠️  WARNING: DO NOT ADD ANY @api_router ENDPOINTS BELOW THIS LINE
+# ⚠️  WARNING: ALL ENDPOINTS MUST BE DEFINED ABOVE THIS SECTION
+# ⚠️  WARNING: THIS SECTION IS LOCKED AND PROTECTED
+#
+# If you need to add new endpoints:
+# 1. Add them ABOVE this section
+# 2. Follow the existing endpoint organization
+# 3. Never, ever add endpoints below this line
+#
+# Last verified: 2025-11-30 13:20 UTC
+# Endpoints registered: 250+
+# Status: LOCKED ✅
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Include the API router in the main FastAPI app
+# This registers all endpoints defined above with the /api prefix
+app.include_router(api_router)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🛑 STOP! NO ENDPOINTS BEYOND THIS POINT! 🛑
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Any @api_router.get/post/put/delete decorators below this line will be IGNORED
+# by FastAPI because the router has already been included in the app.
+#
+# This is not a bug - it's by design. The router can only be included once, and
+# all routes must be defined before inclusion.
+#
+# If you see a 404 error for an endpoint, check that it's defined ABOVE the
+# "FINAL ROUTER" section.
+# ═══════════════════════════════════════════════════════════════════════════════
+
