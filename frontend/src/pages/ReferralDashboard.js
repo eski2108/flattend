@@ -21,7 +21,8 @@ export default function ReferralDashboard() {
     tier_info: {},
     can_upgrade_to_vip: false,
     referred_users: [],
-    commission_history: []
+    commission_history: [],
+    earnings_by_fee_type: []
   });
 
   useEffect(() => {
