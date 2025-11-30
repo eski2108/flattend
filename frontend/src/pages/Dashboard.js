@@ -7,13 +7,13 @@ import { FileText, ChevronDown } from 'lucide-react';
 import CHXButton from '@/components/CHXButton';
 
 // Import all widgets
-import PortfolioGraph from '@/components/widgets/PortfolioGraph';
+import PortfolioGraphTradingView from '@/components/widgets/PortfolioGraphTradingView';
 import PLSummaryRow from '@/components/widgets/PLSummaryRow';
 import DonutPLWidget from '@/components/widgets/DonutPLWidget';
 import AllocationWidget from '@/components/widgets/AllocationWidget';
 import PieChartWidget from '@/components/widgets/PieChartWidget';
 import RecentTransactionsList from '@/components/widgets/RecentTransactionsList';
-import AssetTable from '@/components/widgets/AssetTable';
+import AssetTablePremium from '@/components/widgets/AssetTablePremium';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
