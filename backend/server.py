@@ -3113,9 +3113,9 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
             user_id="admin_wallet",
             currency=fiat_currency,
             amount=admin_fee,
-            transaction_type="p2p_taker_fee",
+            transaction_type="p2p_fees",
             reference_id=request.trade_id,
-            metadata={"buyer_id": request.buyer_id, "total_fee": taker_fee}
+            metadata={"buyer_id": request.buyer_id, "total_fee": total_fee, "taker_fee": taker_fee, "express_fee": express_fee}
         )
         
         # Credit referrer if applicable
