@@ -14595,18 +14595,20 @@ async def withdraw_platform_earnings(request: dict):
 
 @api_router.get("/prices/live")
 async def get_live_prices_endpoint():
-    """Get all live crypto prices"""
+    """Get all live crypto prices with 24h change"""
     try:
-        prices_usd = await get_all_live_prices("usd")
-        prices_gbp = await get_all_live_prices("gbp")
+        # Fetch raw price data which now includes 24h change
+        all_prices = await fetch_live_prices()
         
-        # Combine into single response
+        # Build response with full data
         result = {}
-        for symbol in prices_usd.keys():
+        for symbol, data in all_prices.items():
             result[symbol] = {
                 "symbol": symbol,
-                "price_usd": prices_usd.get(symbol, 0),
-                "price_gbp": prices_gbp.get(symbol, 0),
+                "price_usd": data.get("usd", 0),
+                "price_gbp": data.get("gbp", 0),
+                "change_24h": data.get("usd_24h_change", 0),  # Use USD change as primary
+                "change_24h_gbp": data.get("gbp_24h_change", 0),
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
         
