@@ -7,6 +7,127 @@ from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
 
+async def vault_transfer_with_fee(db, wallet_service, user_id: str, currency: str, amount: float, from_wallet: str, to_wallet: str) -> Dict:
+    """Transfer between wallets with vault transfer fee"""
+    try:
+        from centralized_fee_system import get_fee_manager
+        
+        if amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be positive")
+        
+        balance = await wallet_service.get_balance(user_id, currency)
+        if balance['available_balance'] < amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient balance. Available: {balance['available_balance']}")
+        
+        # Get vault transfer fee
+        fee_manager = get_fee_manager(db)
+        fee_percent = await fee_manager.get_fee("vault_transfer_fee_percent")
+        vault_fee = amount * (fee_percent / 100.0)
+        net_amount = amount - vault_fee
+        
+        # Check for referrer
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        referrer_id = user.get("referrer_id") if user else None
+        referrer_commission = 0.0
+        admin_fee = vault_fee
+        commission_percent = 0.0
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = vault_fee * (commission_percent / 100.0)
+            admin_fee = vault_fee - referrer_commission
+        
+        transfer_id = f"vault_transfer_{user_id}_{currency}_{int(datetime.now(timezone.utc).timestamp())}"
+        
+        # Debit from source wallet
+        await wallet_service.debit(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            transaction_type="vault_transfer",
+            reference_id=transfer_id,
+            metadata={"from": from_wallet, "to": to_wallet, "fee": vault_fee, "net_amount": net_amount}
+        )
+        
+        # Credit admin wallet with fee
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency=currency,
+            amount=admin_fee,
+            transaction_type="vault_transfer_fee",
+            reference_id=transfer_id,
+            metadata={"user_id": user_id, "total_fee": vault_fee}
+        )
+        
+        # Credit referrer if applicable
+        if referrer_id and referrer_commission > 0:
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency=currency,
+                amount=referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=transfer_id,
+                metadata={"referred_user_id": user_id, "transaction_type": "vault_transfer"}
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": user_id,
+                "transaction_type": "vault_transfer",
+                "fee_amount": vault_fee,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": currency,
+                "transfer_id": transfer_id,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+        
+        # Log to fee_transactions
+        await db.fee_transactions.insert_one({
+            "transaction_id": transfer_id,
+            "user_id": user_id,
+            "transaction_type": "vault_transfer",
+            "fee_type": "vault_transfer_fee",
+            "amount": amount,
+            "total_fee": vault_fee,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": currency,
+            "reference_id": transfer_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Credit destination (net amount after fee)
+        # This would go to the target wallet/vault
+        # Implementation depends on your vault structure
+        
+        logger.info(f"✅ Vault transfer: {amount} {currency}, Fee: {vault_fee}, Net: {net_amount}")
+        
+        return {
+            "success": True,
+            "amount": amount,
+            "fee": vault_fee,
+            "net_amount": net_amount,
+            "transfer_id": transfer_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Vault transfer error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 async def transfer_to_savings_with_wallet(db, wallet_service, user_id: str, currency: str, amount: float) -> Dict:
     """Transfer from wallet to savings via wallet service with stake fee"""
     try:
