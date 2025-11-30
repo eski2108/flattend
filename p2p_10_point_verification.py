@@ -163,32 +163,44 @@ class P2PVerification:
             return False
     
     async def step_2_fund_seller_wallet(self):
-        """Step 2: Fund Seller's Wallet with BTC"""
+        """Step 2: Fund Seller's Wallet with BTC via Wallet Service"""
         log_step(2, "Fund Seller's Wallet")
         
         if not self.seller_id:
             log_error("Seller ID not set. Skipping step.")
-            self.test_results.append({" step": 2, "status": "SKIP", "message": "Seller ID not set"})
+            self.test_results.append({"step": 2, "status": "SKIP", "message": "Seller ID not set"})
             return False
         
         try:
-            # Credit 1.0 BTC to seller
+            # Credit 1.0 BTC to seller via wallet service API
             btc_amount = 1.0
             
-            await self.db.crypto_balances.update_one(
-                {"user_id": self.seller_id, "currency": "BTC"},
-                {
-                    "$inc": {"balance": btc_amount},
-                    "$setOnInsert": {"locked_balance": 0}
-                },
-                upsert=True
-            )
+            fund_data = {
+                "user_id": self.seller_id,
+                "currency": "BTC",
+                "amount": btc_amount,
+                "transaction_type": "test_funding",
+                "reference_id": f"test_fund_{uuid.uuid4().hex[:8]}"
+            }
             
-            # Verify balance
-            balance = await self.db.crypto_balances.find_one(
-                {"user_id": self.seller_id, "currency": "BTC"},
-                {"_id": 0}
-            )
+            async with self.session.post(f"{BACKEND_URL}/wallet/credit", json=fund_data) as resp:
+                if resp.status != 200:
+                    error_text = await resp.text()
+                    log_error(f"Failed to fund wallet: {error_text}")
+                    self.test_results.append({"step": 2, "status": "FAIL", "message": "Failed to fund wallet"})
+                    return False
+                
+                result = await resp.json()
+                if not result.get('success'):
+                    log_error(f"Wallet funding failed: {result}")
+                    self.test_results.append({"step": 2, "status": "FAIL", "message": "Wallet funding failed"})
+                    return False
+            
+            # Verify balance via wallet service
+            async with self.session.get(f"{BACKEND_URL}/wallet/balance/{self.seller_id}/BTC") as resp:
+                if resp.status == 200:
+                    result = await resp.json()
+                    balance = result.get('balance', {})
             
             if balance and balance.get("balance") >= btc_amount:
                 log_success(f"Seller funded with {btc_amount} BTC")
