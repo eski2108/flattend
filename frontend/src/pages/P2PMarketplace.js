@@ -34,6 +34,7 @@ function P2PMarketplace() {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [availableCoins, setAvailableCoins] = useState(['BTC']);
+  const [coinsData, setCoinsData] = useState([]);
   const [availableCurrencies, setAvailableCurrencies] = useState([]);
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
   const [availableRegions, setAvailableRegions] = useState([]);
