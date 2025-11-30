@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://p2ptrade-1.preview.emergentagent.com
+**URL:** https://crypto-fixbugs.preview.emergentagent.com
 
 **Services Status:**
 ```bash

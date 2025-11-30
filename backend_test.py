@@ -18,7 +18,7 @@ checking a different collection or has a bug in balance retrieval.
 4. Referral Commission Distribution
 5. Transaction History Logging
 
-**Backend URL:** https://p2ptrade-1.preview.emergentagent.com/api
+**Backend URL:** https://crypto-fixbugs.preview.emergentagent.com/api
 """
 
 import requests
@@ -28,7 +28,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://p2ptrade-1.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-fixbugs.preview.emergentagent.com/api"
 
 # Test Users for comprehensive testing
 TEST_USER = {

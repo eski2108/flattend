@@ -14,7 +14,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://p2ptrade-1.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-fixbugs.preview.emergentagent.com/api"
 
 class SimpleTradingSystemTester:
     def __init__(self):
