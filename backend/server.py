@@ -4748,6 +4748,70 @@ async def admin_get_all_trader_badges():
         }
 
 
+# ADMIN USER MANAGEMENT ENDPOINTS
+@api_router.get("/admin/users/all")
+async def admin_get_all_users():
+    """Get all users for admin management"""
+    try:
+        users = await db.user_accounts.find(
+            {},
+            {"_id": 0, "password_hash": 0, "salt": 0}
+        ).sort("created_at", -1).to_list(1000)
+        
+        return {
+            "success": True,
+            "users": users,
+            "count": len(users)
+        }
+    except Exception as e:
+        logger.error(f"Error getting users: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/users/update-tier")
+async def admin_update_user_tier(request: dict):
+    """Update user's referral tier (admin only)"""
+    try:
+        user_id = request.get("user_id")
+        tier = request.get("tier")
+        
+        if not user_id or not tier:
+            raise HTTPException(status_code=400, detail="user_id and tier required")
+        
+        if tier not in ["standard", "vip", "golden"]:
+            raise HTTPException(status_code=400, detail="Invalid tier. Must be standard, vip, or golden")
+        
+        # Update user tier
+        result = await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {"$set": {"referral_tier": tier, "tier_updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Log tier change
+        await db.admin_actions.insert_one({
+            "action": "tier_update",
+            "user_id": user_id,
+            "new_tier": tier,
+            "admin_id": request.get("admin_id", "admin"),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"Admin updated user {user_id} tier to {tier}")
+        
+        return {
+            "success": True,
+            "message": f"User tier updated to {tier}"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating user tier: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ============================================================================
 # END TRADER BADGE SYSTEM
 # ============================================================================
