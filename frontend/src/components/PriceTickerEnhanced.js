@@ -4,12 +4,13 @@ import Marquee from 'react-fast-marquee';
 import axios from 'axios';
 
 const COIN_EMOJIS = {
-  'BTC': '₿', 'ETH': '🟣', 'USDT': '🟩', 'BNB': '🔶', 'SOL': '🔵',
-  'XRP': '❎', 'ADA': '🔷', 'AVAX': '🔺', 'DOGE': '🐶', 'TRX': '🔻',
-  'DOT': '🎯', 'MATIC': '🟪', 'LTC': '⚪', 'LINK': '🔗', 'XLM': '✴️',
-  'XMR': '🟠', 'ATOM': '🪐', 'BCH': '💚', 'UNI': '🌸', 'FIL': '📁',
-  'APT': '🅰️', 'USDC': '🟩', 'DAI': '💛', 'SHIB': '🐕', 'ARB': '🔷',
-  'OP': '🔴', 'ICP': '♾️', 'NEAR': '🌐', 'ALGO': '⚡', 'VET': '💎'
+  'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶', 
+  'XRP': '✖️', 'SOL': '☀️', 'LTC': '🌕', 'DOGE': '🐶', 'ADA': '🌐', 
+  'MATIC': '🔷', 'TRX': '🔺', 'DOT': '🎯', 'AVAX': '🏔️', 'XLM': '⭐', 
+  'BCH': '💚', 'SHIB': '🐾', 'TON': '🔵', 'DAI': '🟡', 'LINK': '🔗', 
+  'ATOM': '⚛️', 'XMR': '🕶️', 'FIL': '📁', 'UNI': '🦄', 'ETC': '🟢', 
+  'ALGO': '◯', 'VET': '♦️', 'WBTC': '🔄', 'APT': '🅰️', 'ARB': '🔷',
+  'OP': '🔴', 'ICP': '♾️', 'NEAR': '🌐'
 };
 
 const COIN_COLORS = {
