@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { Zap, TrendingUp, TrendingDown, Info, Clock, Shield, DollarSign, CheckCircle } from 'lucide-react';
+import { Zap, TrendingUp, TrendingDown, Info, Clock, Shield, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://p2ptrade-1.preview.emergentagent.com';
 
@@ -31,15 +31,23 @@ const COUNTRIES = [
   'Singapore', 'Hong Kong', 'Japan', 'South Korea', 'India', 'Nigeria'
 ];
 
+const PAYMENT_METHODS = [
+  'Bank Transfer', 'PayPal', 'Revolut', 'Wise', 'Monzo',
+  'Cash App', 'Venmo', 'Zelle', 'Apple Pay', 'Google Pay'
+];
+
 export default function P2PExpress() {
   const navigate = useNavigate();
   const [selectedCoin, setSelectedCoin] = useState('BTC');
   const [selectedCountry, setSelectedCountry] = useState('United Kingdom');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Bank Transfer');
   const [amount, setAmount] = useState('');
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [livePrice, setLivePrice] = useState(null);
+  const [hasAdminLiquidity, setHasAdminLiquidity] = useState(false);
+  const [checkingLiquidity, setCheckingLiquidity] = useState(false);
 
   const EXPRESS_FEE_PERCENT = 2.5;
 
@@ -51,9 +59,11 @@ export default function P2PExpress() {
 
   useEffect(() => {
     if (selectedCoin && amount && parseFloat(amount) > 0) {
+      checkAdminLiquidity();
       calculateQuote();
     } else {
       setQuote(null);
+      setHasAdminLiquidity(false);
     }
   }, [selectedCoin, amount, livePrice]);
 
@@ -71,6 +81,33 @@ export default function P2PExpress() {
       }
     } catch (error) {
       console.error('Error fetching live price:', error);
+    }
+  };
+
+  const checkAdminLiquidity = async () => {
+    if (!livePrice || !amount || parseFloat(amount) <= 0) return;
+
+    setCheckingLiquidity(true);
+    try {
+      const baseRate = livePrice.price_gbp;
+      const fiatAmount = parseFloat(amount);
+      const expressFeeBP = fiatAmount * (EXPRESS_FEE_PERCENT / 100);
+      const netAmount = fiatAmount - expressFeeBP;
+      const cryptoAmount = netAmount / baseRate;
+
+      const response = await axios.post(`${API}/api/p2p/express/check-liquidity`, {
+        crypto: selectedCoin,
+        crypto_amount: cryptoAmount
+      });
+
+      if (response.data.success) {
+        setHasAdminLiquidity(response.data.has_liquidity);
+      }
+    } catch (error) {
+      console.error('Error checking liquidity:', error);
+      setHasAdminLiquidity(false);
+    } finally {
+      setCheckingLiquidity(false);
     }
   };
 
@@ -93,7 +130,7 @@ export default function P2PExpress() {
         expressFeePct: EXPRESS_FEE_PERCENT,
         netAmount: netAmount,
         cryptoAmount: cryptoAmount,
-        estimatedDelivery: '2-5 minutes'
+        estimatedDelivery: hasAdminLiquidity ? 'Instant' : '2-5 minutes'
       });
     } catch (error) {
       console.error('Error calculating quote:', error);
@@ -120,19 +157,24 @@ export default function P2PExpress() {
         user_id: user.user_id,
         crypto: selectedCoin,
         country: selectedCountry,
-        payment_method: 'Bank Transfer',
+        payment_method: hasAdminLiquidity ? 'platform_direct' : selectedPaymentMethod,
         fiat_amount: quote.fiatAmount,
         crypto_amount: quote.cryptoAmount,
         base_rate: quote.baseRate,
         express_fee: quote.expressFee,
         express_fee_percent: EXPRESS_FEE_PERCENT,
-        net_amount: quote.netAmount
+        net_amount: quote.netAmount,
+        has_admin_liquidity: hasAdminLiquidity
       };
 
       const response = await axios.post(`${API}/api/p2p/express/create`, orderData);
 
       if (response.data.success) {
-        toast.success('Express order created successfully!');
+        if (hasAdminLiquidity) {
+          toast.success('Express order completed! Crypto credited instantly.');
+        } else {
+          toast.success('Express order created! Waiting for seller confirmation.');
+        }
         navigate(`/p2p/trade-detail/${response.data.trade_id}`);
       } else {
         toast.error(response.data.message || 'Failed to create order');
@@ -201,6 +243,38 @@ export default function P2PExpress() {
                       {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Liquidity Status Banner */}
+              {amount && parseFloat(amount) > 0 && quote && (
+                <div style={{
+                  background: hasAdminLiquidity ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 197, 66, 0.1)',
+                  border: `2px solid ${hasAdminLiquidity ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 197, 66, 0.3)'}`,
+                  borderRadius: '16px',
+                  padding: '16px 20px',
+                  marginBottom: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  {hasAdminLiquidity ? (
+                    <>
+                      <Zap size={20} color="#22C55E" />
+                      <div>
+                        <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>Instant Delivery Available</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Crypto will be credited immediately after payment</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Clock size={20} color="#F5C542" />
+                      <div>
+                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Seller Delivery (2-5 minutes)</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>We'll match you with the best seller</div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -286,23 +360,36 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                {/* Payment Method (Fixed) */}
-                <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Payment Method</label>
-                  <div style={{
-                    width: '100%',
-                    padding: '18px 20px',
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: '2px solid rgba(12, 235, 255, 0.3)',
-                    borderRadius: '12px',
-                    color: '#0CEBFF',
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
-                  }}>
-                    Bank Transfer
+                {/* Payment Method (Only show when NO admin liquidity) */}
+                {!hasAdminLiquidity && amount && parseFloat(amount) > 0 && (
+                  <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Payment Method</label>
+                    <select
+                      value={selectedPaymentMethod}
+                      onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '18px 20px',
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        border: '2px solid rgba(245, 197, 66, 0.3)',
+                        borderRadius: '12px',
+                        color: '#FFFFFF',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                      }}
+                    >
+                      {PAYMENT_METHODS.map(method => (
+                        <option key={method} value={method}>
+                          {method}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                </div>
+                )}
 
                 {/* Enter Amount */}
                 <div style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
@@ -410,7 +497,7 @@ export default function P2PExpress() {
                     {loading ? 'Processing...' : (
                       <>
                         <Zap size={22} />
-                        Confirm & Pay
+                        {hasAdminLiquidity ? 'Buy Now (Instant)' : 'Confirm & Pay'}
                       </>
                     )}
                   </button>
@@ -432,11 +519,15 @@ export default function P2PExpress() {
                 boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)'
               }}>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Clock size={22} color: '#0CEBFF' strokeWidth={2.5} />
+                  <Clock size={22} color="#0CEBFF" strokeWidth={2.5} />
                   Delivery Time
                 </h3>
-                <div style={{ fontSize: '40px', fontWeight: '700', color: '#0CEBFF', marginBottom: '8px' }}>2-5 minutes</div>
-                <div style={{ fontSize: '14px', color: '#D1D5DB' }}>Express delivery to your wallet</div>
+                <div style={{ fontSize: '40px', fontWeight: '700', color: hasAdminLiquidity ? '#22C55E' : '#0CEBFF', marginBottom: '8px' }}>
+                  {hasAdminLiquidity ? 'Instant' : '2-5 minutes'}
+                </div>
+                <div style={{ fontSize: '14px', color: '#D1D5DB' }}>
+                  {hasAdminLiquidity ? 'Credited immediately' : 'Express delivery to your wallet'}
+                </div>
               </div>
 
               {/* Express Features */}
