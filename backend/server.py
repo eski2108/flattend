@@ -9065,8 +9065,14 @@ async def get_orderbook(pair: str):
         prices = await fetch_live_prices()
         
         base = pair[:3]
-        price_data = prices.get(base, {})
-        current_price = price_data.get("price_gbp", 0)
+        
+        # Get prices from response
+        if prices.get("success"):
+            price_data = prices.get("prices", {}).get(base, {})
+        else:
+            price_data = prices.get(base, {})
+            
+        current_price = price_data.get("price_usd", 0)
         
         if current_price == 0:
             return {"success": False, "message": "Price not available"}
