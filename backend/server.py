@@ -192,6 +192,11 @@ from wallet_service import initialize_wallet_service, get_wallet_service
 initialize_wallet_service(db)
 logger.info("✅ Central Wallet Service initialized")
 
+# Initialize P2P Notification Service
+from p2p_notification_service import initialize_notification_service, get_notification_service
+initialize_notification_service(db)
+logger.info("✅ P2P Notification Service initialized")
+
 # JWT Secret Key
 SECRET_KEY = "emergent_secret_key_2024"
 
