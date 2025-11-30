@@ -3056,6 +3056,101 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
         await auto_cancel_trade(request.trade_id)
         raise HTTPException(status_code=400, detail="Trade has expired")
     
+    # Collect P2P Taker Fee from buyer
+    from centralized_fee_system import get_fee_manager
+    fee_manager = get_fee_manager(db)
+    taker_fee_percent = await fee_manager.get_fee("p2p_taker_fee_percent")
+    
+    fiat_amount = trade.get("fiat_amount", 0)
+    taker_fee = fiat_amount * (taker_fee_percent / 100.0)
+    
+    # Check for buyer's referrer
+    buyer = await db.user_accounts.find_one({"user_id": request.buyer_id}, {"_id": 0})
+    referrer_id = buyer.get("referrer_id") if buyer else None
+    referrer_commission = 0.0
+    admin_fee = taker_fee
+    commission_percent = 0.0
+    
+    if referrer_id:
+        referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+        referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+        
+        if referrer_tier == "golden":
+            commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+        else:
+            commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+        
+        referrer_commission = taker_fee * (commission_percent / 100.0)
+        admin_fee = taker_fee - referrer_commission
+    
+    # Deduct taker fee from buyer (using fiat currency)
+    wallet_service = get_wallet_service()
+    fiat_currency = trade.get("fiat_currency", "GBP")
+    
+    try:
+        await wallet_service.debit(
+            user_id=request.buyer_id,
+            currency=fiat_currency,
+            amount=taker_fee,
+            transaction_type="p2p_taker_fee",
+            reference_id=request.trade_id,
+            metadata={"trade_id": request.trade_id}
+        )
+        
+        # Credit admin wallet
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency=fiat_currency,
+            amount=admin_fee,
+            transaction_type="p2p_taker_fee",
+            reference_id=request.trade_id,
+            metadata={"buyer_id": request.buyer_id, "total_fee": taker_fee}
+        )
+        
+        # Credit referrer if applicable
+        if referrer_id and referrer_commission > 0:
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency=fiat_currency,
+                amount=referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=request.trade_id,
+                metadata={"referred_user_id": request.buyer_id, "transaction_type": "p2p_taker"}
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": request.buyer_id,
+                "transaction_type": "p2p_taker",
+                "fee_amount": taker_fee,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": fiat_currency,
+                "trade_id": request.trade_id,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+        
+        # Log to fee_transactions
+        await db.fee_transactions.insert_one({
+            "user_id": request.buyer_id,
+            "transaction_type": "p2p_taker",
+            "fee_type": "p2p_taker_fee_percent",
+            "amount": fiat_amount,
+            "fee_amount": taker_fee,
+            "fee_percent": taker_fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": fiat_currency,
+            "reference_id": request.trade_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"✅ P2P Taker Fee collected: {taker_fee} {fiat_currency} from buyer {request.buyer_id}")
+    except Exception as fee_error:
+        logger.warning(f"⚠️ Failed to collect taker fee: {str(fee_error)}")
+    
     # Update trade status
     await db.trades.update_one(
         {"trade_id": request.trade_id},
@@ -3063,7 +3158,12 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
             "$set": {
                 "status": "buyer_marked_paid",
                 "buyer_marked_paid_at": datetime.now(timezone.utc).isoformat(),
-                "payment_reference": request.payment_reference
+                "payment_reference": request.payment_reference,
+                "taker_fee": taker_fee,
+                "taker_fee_percent": taker_fee_percent,
+                "taker_admin_fee": admin_fee,
+                "taker_referrer_commission": referrer_commission,
+                "taker_referrer_id": referrer_id
             }
         }
     )
