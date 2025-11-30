@@ -3859,7 +3859,7 @@ async def check_express_liquidity(data: Dict):
 
 @api_router.post("/p2p/express/create")
 async def create_p2p_express_order(order_data: Dict):
-    """Create a P2P Express order with 2.5% fee - Try admin liquidity first, then fastest P2P seller"""
+    """Create a P2P Express order with 2.5% fee - Admin liquidity = instant, else use seller"""
     required_fields = ["user_id", "crypto", "country", "payment_method", "fiat_amount", "crypto_amount", "base_rate", "express_fee", "express_fee_percent", "net_amount"]
     for field in required_fields:
         if field not in order_data:
@@ -3870,18 +3870,25 @@ async def create_p2p_express_order(order_data: Dict):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Check admin liquidity first
-    admin_liquidity = await db.admin_liquidity.find_one({
-        "crypto_currency": order_data["crypto"],
-        "available_amount": {"$gte": order_data["crypto_amount"]}
-    })
-    
+    has_admin_liquidity = order_data.get("has_admin_liquidity", False)
     trade_id = f"EXPRESS_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{order_data['user_id'][:8]}"
     
-    if admin_liquidity:
-        # Use admin liquidity (instant delivery)
+    if has_admin_liquidity:
+        # INSTANT DELIVERY - Admin liquidity available
         seller_id = "admin_liquidity"
         delivery_source = "admin_liquidity"
+        status = "completed"  # Instant completion
+        
+        # Credit user wallet instantly
+        try:
+            from wallet_service import credit_wallet
+            await credit_wallet(
+                user_id=order_data["user_id"],
+                currency=order_data["crypto"],
+                amount=order_data["crypto_amount"]
+            )
+        except Exception as e:
+            logger.error(f"Failed to credit wallet: {e}")
         
         # Log admin liquidity trade
         admin_liquidity_trade = {
@@ -3890,6 +3897,7 @@ async def create_p2p_express_order(order_data: Dict):
             "crypto_amount": order_data["crypto_amount"],
             "fiat_amount": order_data["fiat_amount"],
             "buyer_id": order_data["user_id"],
+            "completed_at": datetime.now(timezone.utc).isoformat(),
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.admin_liquidity_trades.insert_one(admin_liquidity_trade)
@@ -3897,10 +3905,13 @@ async def create_p2p_express_order(order_data: Dict):
         # Update admin liquidity balance
         await db.admin_liquidity.update_one(
             {"crypto_currency": order_data["crypto"]},
-            {"$inc": {"available_amount": -order_data["crypto_amount"]}}
+            {"$inc": {"available_amount": -order_data["crypto_amount"]}},
+            upsert=True
         )
+        
+        estimated_delivery = "Instant"
     else:
-        # Fallback to fastest P2P seller (buyer never sees this)
+        # SELLER DELIVERY - Use fastest P2P seller
         best_seller = await db.trader_profiles.find_one(
             {
                 "is_trader": True,
@@ -3913,9 +3924,24 @@ async def create_p2p_express_order(order_data: Dict):
         if best_seller:
             seller_id = best_seller["user_id"]
             delivery_source = "p2p_seller_auto"
+            
+            # Notify seller
+            try:
+                from p2p_notification_service import create_p2p_notification
+                await create_p2p_notification(
+                    user_id=seller_id,
+                    trade_id=trade_id,
+                    notification_type="express_seller_matched",
+                    message=f"Express order: Buyer wants {order_data['crypto_amount']:.8f} {order_data['crypto']}. Confirm payment to release."
+                )
+            except Exception as e:
+                logger.error(f"Failed to notify seller: {e}")
         else:
             seller_id = "admin_liquidity"
             delivery_source = "admin_liquidity_fallback"
+        
+        status = "pending_payment"
+        estimated_delivery = "2-5 minutes"
     
     # Create trade record
     trade_record = {
@@ -3929,13 +3955,14 @@ async def create_p2p_express_order(order_data: Dict):
         "crypto_amount": order_data["crypto_amount"],
         "fiat_amount": order_data["fiat_amount"],
         "price_per_unit": order_data["base_rate"],
-        "status": "pending_payment",
+        "status": status,
         "country": order_data["country"],
         "payment_method": order_data["payment_method"],
         "express_fee": order_data["express_fee"],
         "express_fee_percent": order_data["express_fee_percent"],
         "net_amount": order_data["net_amount"],
-        "estimated_delivery": "2-5 minutes",
+        "estimated_delivery": estimated_delivery,
+        "is_instant_delivery": has_admin_liquidity,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
