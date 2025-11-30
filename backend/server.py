@@ -9066,16 +9066,12 @@ async def get_orderbook(pair: str):
         
         base = pair[:3]
         
-        # Get prices from response
-        if prices.get("success"):
-            price_data = prices.get("prices", {}).get(base, {})
-        else:
-            price_data = prices.get(base, {})
-            
-        current_price = price_data.get("price_usd", 0)
+        # Get price data for the base currency
+        price_data = prices.get(base, {})
+        current_price = price_data.get("usd", 0)
         
         if current_price == 0:
-            return {"success": False, "message": "Price not available"}
+            return {"success": False, "message": f"Price not available for {base}"}
         
         # Generate order book
         bids = []
