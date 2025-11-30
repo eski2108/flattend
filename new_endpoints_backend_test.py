@@ -679,7 +679,7 @@ class NewEndpointsBackendTester:
                 return True
             except json.JSONDecodeError:
                 self.log_test(
-                    "POST /api/referrals/purchase-vip",
+                    "POST /api/user/purchase-vip-tier",
                     False,
                     "Invalid JSON response",
                     response.text,
