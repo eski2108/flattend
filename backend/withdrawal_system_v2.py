@@ -137,16 +137,24 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
         
         logger.info(f"✅ Withdrawal request created: {withdrawal_id} | {amount} {currency}")
         
+        fee_breakdown = {
+            "withdrawal_fee": withdrawal_fee,
+        }
+        if network_fee > 0:
+            fee_breakdown["network_fee"] = network_fee
+        if fiat_withdrawal_fee > 0:
+            fee_breakdown["fiat_withdrawal_fee"] = fiat_withdrawal_fee
+            
         return {
             "success": True,
             "message": "Withdrawal request submitted. Balance locked. Awaiting admin approval.",
             "withdrawal_id": withdrawal_id,
             "amount": amount,
-            "withdrawal_fee": withdrawal_fee,
-            "network_fee": network_fee,
+            "fees": fee_breakdown,
             "total_fee": total_fee,
             "net_amount": net_amount,
             "currency": currency,
+            "is_fiat": is_fiat,
             "status": "pending"
         }
         
