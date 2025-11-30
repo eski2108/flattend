@@ -260,8 +260,8 @@ function P2PMarketplace() {
 
   return (
     <Layout>
-      <div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', minHeight: '100vh' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: '900', color: '#00F0FF', marginBottom: '1.5rem' }}>P2P Marketplace</h1>
+      <div style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 50%, rgba(2, 6, 24, 0.98) 100%)', minHeight: '100vh' }}>
+        <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#00F0FF', marginBottom: '24px', textShadow: '0 0 20px rgba(0, 240, 255, 0.5)' }}>💰 P2P Marketplace</h1>
 
         {/* ENHANCED FILTER ROW */}
         <div style={{
