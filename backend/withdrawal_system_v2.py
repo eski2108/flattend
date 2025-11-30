@@ -161,6 +161,8 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
         currency = withdrawal["currency"]
         amount = withdrawal["amount"]
         fee_amount = withdrawal["fee_amount"]
+        network_fee_amount = withdrawal.get("network_fee_amount", 0.0)
+        total_fee = withdrawal.get("total_fee", fee_amount)
         net_amount = withdrawal["net_amount"]
         withdrawal_id = approval.withdrawal_id
         
