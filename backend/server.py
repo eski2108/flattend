@@ -3204,6 +3204,20 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
         }
     )
     
+    # Send notifications
+    try:
+        notification_service = get_notification_service()
+        await notification_service.notify_payment_marked(
+            trade_id=request.trade_id,
+            buyer_id=request.buyer_id,
+            seller_id=trade.get("seller_id"),
+            fiat_amount=trade.get("fiat_amount", 0),
+            fiat_currency=fiat_currency,
+            payment_reference=request.payment_reference
+        )
+    except Exception as notif_error:
+        logger.error(f"Failed to send payment marked notification: {str(notif_error)}")
+    
     # Create system messages
     await create_system_message(request.trade_id, "buyer_marked_paid")
     await create_system_message(request.trade_id, "waiting_for_seller")
