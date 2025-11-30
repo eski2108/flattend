@@ -35,7 +35,7 @@ DEFAULT_MONETIZATION_SETTINGS = {
     "referral_standard_commission_percent": 20.0,  # 20% referrer payout from profit
     "referral_golden_commission_percent": 50.0,  # 50% referrer payout from profit
     "internal_transfer_fee_percent": 0.0,  # 0% - Internal transfers free
-    "cross_wallet_conversion_fee_percent": 1.0  # 1% - Cross-wallet conversion
+    "cross_wallet_conversion_fee_percent": 1.0,  # 1% - Cross-wallet conversion
     
     # Payment Method Fees (in percent, added to transaction)
     "payment_method_fees": {
