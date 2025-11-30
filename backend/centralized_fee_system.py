@@ -52,6 +52,7 @@ DEFAULT_FEES = {
     # 17-18: LIQUIDITY PROFITS (variable, calculated)
     "admin_liquidity_spread_percent": 0.0,  # Variable
     "express_liquidity_profit_percent": 0.0,  # Variable
+    "savings_interest_profit_percent": 2.0,  # Platform keeps 2% spread on interest
     
     # REFERRAL COMMISSIONS (NOT fees - payouts to referrer)
     "referral_standard_commission_percent": 20.0,
