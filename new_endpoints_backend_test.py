@@ -589,13 +589,13 @@ class NewEndpointsBackendTester:
     # ============================================================================
     
     def test_referrals_dashboard(self):
-        """Test GET /api/referrals/dashboard?user_id=test_user"""
+        """Test GET /api/referral/dashboard/{user_id}"""
         print("\n=== TEST 4.1: Referrals Dashboard ===")
         
-        endpoint = "/referrals/dashboard"
-        params = {"user_id": "test_user"}
+        user_id = "test_user"
+        endpoint = f"/referral/dashboard/{user_id}"
         
-        result = self.make_request("GET", endpoint, params=params)
+        result = self.make_request("GET", endpoint)
         if len(result) == 3:  # Error case
             response, response_time, error = result
             self.log_test(
