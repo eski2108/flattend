@@ -2202,7 +2202,7 @@ class TradingPlatformTester:
         
         try:
             response = self.session.get(
-                f"{BASE_URL}/referral/dashboard/{self.test_user_id}",
+                f"{BASE_URL}/referral/dashboard/{self.trader_user_id}",
                 timeout=10
             )
             
