@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://p2ptrade-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-fixbugs.preview.emergentagent.com/api"
 
 class ComprehensiveWalletTester:
     def __init__(self):

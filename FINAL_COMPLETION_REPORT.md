@@ -330,7 +330,7 @@ frontend   RUNNING   pid 12346, uptime 1:00:00
 
 ### Environment
 
-- **URL:** https://p2ptrade-1.preview.emergentagent.com
+- **URL:** https://crypto-fixbugs.preview.emergentagent.com
 - **Backend Port:** 8001 (internal)
 - **Frontend Port:** 3000 (internal)
 - **Database:** MongoDB (connected)

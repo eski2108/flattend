@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { Zap, TrendingUp, TrendingDown, Clock, Shield, DollarSign, CheckCircle } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2ptrade-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-fixbugs.preview.emergentagent.com';
 
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',
