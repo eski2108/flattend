@@ -6847,6 +6847,22 @@ async def login_user(login_req: LoginRequest, request: Request):
     # Clear rate limit on successful login
     rate_limiter.clear_rate_limit(client_ip, "login")
     
+    # Check if 2FA is enabled for this user (unless exempt)
+    from two_factor_auth import TwoFactorAuthService
+    tfa_service = TwoFactorAuthService(db)
+    is_exempt = await tfa_service.is_user_exempt_from_2fa(user["user_id"], user["email"])
+    is_2fa_enabled = await tfa_service.is_2fa_enabled(user["user_id"])
+    
+    if is_2fa_enabled and not is_exempt:
+        # 2FA is required - return special response
+        return {
+            "success": False,
+            "requires_2fa": True,
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "message": "2FA code required"
+        }
+    
     # Log successful login attempt
     security_info = await security_logger.log_login_attempt(
         user_id=user["user_id"],
