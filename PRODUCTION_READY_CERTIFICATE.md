@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://crypto-validator.preview.emergentagent.com`
-- Backend API: `https://crypto-validator.preview.emergentagent.com/api`
+- Frontend: `https://p2ptrade-1.preview.emergentagent.com`
+- Backend API: `https://p2ptrade-1.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

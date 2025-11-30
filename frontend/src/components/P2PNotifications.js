@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bell, X, Check, AlertCircle, MessageCircle, Clock, CheckCircle } from 'lucide-react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://crypto-validator.preview.emergentagent.com';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://p2ptrade-1.preview.emergentagent.com';
 
 const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
   const [notifications, setNotifications] = useState([]);
