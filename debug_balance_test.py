@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://coinhubx-refresh.preview.emergentagent.com/api"
+BASE_URL = "https://fee-central.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

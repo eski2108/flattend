@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://coinhubx-refresh.preview.emergentagent.com/api"
+BASE_URL = "https://fee-central.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

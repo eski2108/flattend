@@ -20,7 +20,7 @@ Go to: https://console.cloud.google.com
 Add these exact URLs:
 ```
 http://localhost:3000/auth/google/callback
-https://coinhubx-refresh.preview.emergentagent.com/auth/google/callback
+https://fee-central.preview.emergentagent.com/auth/google/callback
 ```
 
 (Add your custom domain if you have one)
