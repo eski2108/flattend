@@ -20985,8 +20985,6 @@ async def calculate_and_apply_fee(
     Calculate fee, deduct from transaction, route to admin wallet.
     Returns: (amount_after_fee, fee_amount, referral_commission)
     """
-    from centralized_fee_system import get_fee_manager
-    
     fee_manager = get_fee_manager(db)
     fee_percent = await fee_manager.get_fee(fee_type)
     fee_amount = amount * (fee_percent / 100.0)
