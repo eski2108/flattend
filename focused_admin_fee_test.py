@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://tradehub-227.preview.emergentagent.com/api"
+BACKEND_URL = "https://signx-repair.preview.emergentagent.com/api"
 
 class FocusedAdminFeeTest:
     def __init__(self):

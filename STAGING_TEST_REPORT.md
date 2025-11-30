@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://tradehub-227.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://signx-repair.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

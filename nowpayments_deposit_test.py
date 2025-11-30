@@ -27,7 +27,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradehub-227.preview.emergentagent.com/api"
+BASE_URL = "https://signx-repair.preview.emergentagent.com/api"
 
 # Test User from review request
 TEST_USER = {
