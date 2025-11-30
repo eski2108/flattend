@@ -135,6 +135,12 @@ async def p2p_create_trade_with_wallet(
         trade_dict['created_at'] = trade_dict['created_at'].isoformat()
         trade_dict['payment_deadline'] = trade_dict['payment_deadline'].isoformat()
         
+        # Add express mode info
+        trade_dict['is_express'] = is_express
+        trade_dict['taker_fee'] = taker_fee
+        trade_dict['express_fee'] = express_fee
+        trade_dict['total_fee'] = total_fee
+        
         trade_id = trade_dict['trade_id']
         
         # LOCK seller funds via wallet service
