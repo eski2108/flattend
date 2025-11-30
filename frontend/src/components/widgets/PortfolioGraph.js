@@ -27,8 +27,8 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       }
 
       // Use real backend endpoint
-      const response = await axios.get(`${API}/api/portfolio/history`, {
-        params: { user_id: userId, range: range }
+      const response = await axios.get(`${API}/api/portfolio/chart/${userId}`, {
+        params: { timeframe: range }
       });
 
       if (response.data.success && response.data.data) {
