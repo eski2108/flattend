@@ -201,18 +201,22 @@ class P2PVerification:
                 if resp.status == 200:
                     result = await resp.json()
                     balance = result.get('balance', {})
+                    available = balance.get("available_balance", 0) or balance.get("total_balance", 0)
                     
-                    if balance and balance.get("balance") >= btc_amount:
+                    if available >= btc_amount:
                         log_success(f"Seller funded with {btc_amount} BTC")
                         log_data("Seller Balance", balance)
                         self.test_results.append({"step": 2, "status": "PASS", "message": f"Seller funded with {btc_amount} BTC"})
                         return True
                     else:
-                        log_error("Balance verification failed")
-                        self.test_results.append({"step": 2, "status": "FAIL", "message": "Balance verification failed"})
+                        log_error(f"Balance verification failed: {available} < {btc_amount}")
+                        log_data("Received Balance", balance)
+                        self.test_results.append({"step": 2, "status": "FAIL", "message": f"Balance verification failed: {available} < {btc_amount}"})
                         return False
                 else:
-                    log_error("Failed to verify balance via wallet service")
+                    log_error(f"Failed to verify balance via wallet service: status {resp.status}")
+                    error_text = await resp.text()
+                    log_error(f"Error: {error_text}")
                     self.test_results.append({"step": 2, "status": "FAIL", "message": "Failed to verify balance"})
                     return False
                 
