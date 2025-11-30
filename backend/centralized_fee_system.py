@@ -17,34 +17,45 @@ _fee_cache = None
 _last_update = None
 
 DEFAULT_FEES = {
-    # TRADING & WALLET FEES (percentage)
-    "instant_buy_fee_percent": 1.5,
-    "instant_sell_fee_percent": 1.0,
-    "crypto_swap_fee_percent": 2.5,
-    "p2p_express_fee_percent": 1.5,
-    "p2p_trade_fee_percent": 1.0,
-    "crypto_withdrawal_fee_percent": 1.0,
-    "crypto_deposit_fee_percent": 0.0,  # FREE
+    # OFFICIAL 18 REVENUE STREAMS
+    # 1-3: P2P FEES
+    "p2p_maker_fee_percent": 1.0,
+    "p2p_taker_fee_percent": 1.0,
+    "p2p_express_fee_percent": 2.0,
     
-    # PAYMENT FEES (percentage)
-    "paypal_to_paypal_fee_percent": 3.0,
+    # 4-6: INSTANT BUY/SELL & SWAP
+    "instant_buy_fee_percent": 3.0,
+    "instant_sell_fee_percent": 2.0,
+    "swap_fee_percent": 1.5,
     
-    # SAVINGS / STAKING / INTERNAL OPS (percentage)
-    "early_withdrawal_penalty_percent": 4.0,
-    "staking_admin_fee_percent": 10.0,
-    "admin_liquidity_spread_percent": 0.25,
-    "cross_wallet_conversion_fee_percent": 1.0,
-    "internal_transfer_fee_percent": 0.0,  # FREE
+    # 7-10: WITHDRAWAL & DEPOSIT
+    "withdrawal_fee_percent": 1.0,
+    "network_withdrawal_fee_percent": 1.0,  # Added to gas
+    "fiat_withdrawal_fee_percent": 1.0,
+    "deposit_fee_percent": 0.0,  # FREE
     
-    # SERVICE / PLATFORM MONETIZATION (flat GBP)
-    "priority_support_fee_gbp": 2.99,
-    "p2p_advert_promotion_fee_gbp": 20.0,
+    # 11-12: SAVINGS/STAKING
+    "savings_stake_fee_percent": 0.5,
+    "early_unstake_penalty_percent": 3.0,
     
-    # REFERRALS (payout percentage, NOT a fee)
-    "referral_commission_percent": 20.0,
+    # 13: TRADING
+    "trading_fee_percent": 0.1,
     
-    # DISPUTE HANDLING (flat GBP)
-    "p2p_dispute_fee_gbp": 1.50
+    # 14: DISPUTE
+    "dispute_fee_fixed_gbp": 2.0,
+    "dispute_fee_percent": 1.0,  # Whichever is higher
+    
+    # 15-16: INTERNAL TRANSFERS
+    "vault_transfer_fee_percent": 0.5,
+    "cross_wallet_transfer_fee_percent": 0.25,
+    
+    # 17-18: LIQUIDITY PROFITS (variable, calculated)
+    "admin_liquidity_spread_percent": 0.0,  # Variable
+    "express_liquidity_profit_percent": 0.0,  # Variable
+    
+    # REFERRAL COMMISSIONS (NOT fees - payouts to referrer)
+    "referral_standard_commission_percent": 20.0,
+    "referral_golden_commission_percent": 50.0
 }
 
 class CentralizedFeeManager:
