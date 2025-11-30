@@ -19835,12 +19835,57 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
             upsert=True
         )
         
-        # Add fee to admin
+        # Check for referrer
+        user = await db.user_accounts.find_one({"user_id": request.from_user_id}, {"_id": 0})
+        referrer_id = user.get("referrer_id") if user else None
+        referrer_commission = 0.0
+        admin_fee = fee_amount
+        commission_percent = 0.0
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = fee_amount * (commission_percent / 100.0)
+            admin_fee = fee_amount - referrer_commission
+        
+        # Add admin fee to admin wallet
         await db.internal_balances.update_one(
-            {"user_id": "ADMIN", "currency": request.currency},
-            {"$inc": {"transfer_fees": fee_amount}},
+            {"user_id": "admin_wallet", "currency": request.currency},
+            {
+                "$inc": {"balance": admin_fee},
+                "$setOnInsert": {"available": 0, "reserved": 0, "created_at": datetime.now(timezone.utc).isoformat()}
+            },
             upsert=True
         )
+        
+        # Add referrer commission if applicable
+        if referrer_id and referrer_commission > 0:
+            await db.internal_balances.update_one(
+                {"user_id": referrer_id, "currency": request.currency},
+                {
+                    "$inc": {"balance": referrer_commission},
+                    "$setOnInsert": {"available": 0, "reserved": 0, "created_at": datetime.now(timezone.utc).isoformat()}
+                },
+                upsert=True
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": request.from_user_id,
+                "transaction_type": "internal_transfer",
+                "fee_amount": fee_amount,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": request.currency,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
         
         # Log transaction
         await db.transactions_log.insert_one({
