@@ -145,6 +145,7 @@ function P2PMarketplace() {
       const response = await axios.get(`${API}/api/p2p/marketplace/available-coins`);
       if (response.data.success && response.data.coins.length > 0) {
         setAvailableCoins(response.data.coins);
+        setCoinsData(response.data.coins_data || []);
         if (!response.data.coins.includes('BTC') && response.data.coins.length > 0) {
           setSelectedCrypto(response.data.coins[0]);
         }
