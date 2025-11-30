@@ -465,7 +465,7 @@ export default function AdminEarnings() {
                     {formatNumber(totalBTC)} BTC
                   </div>
                   <div style={{ fontSize: '14px', color: '#888', marginTop: '0.5rem' }}>
-                    ≈ £{formatNumber(totalBTC * btcPrice)}
+                    ≈ £{formatNumber(totalBTC * livePrices.BTC)}
                   </div>
                 </div>
                 <div style={{
