@@ -283,3 +283,153 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
     except Exception as e:
         logger.error(f"Swap error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+async def execute_instant_sell_with_wallet(db, wallet_service, user_id: str, crypto_currency: str, crypto_amount: float, fiat_currency: str = "GBP") -> Dict:
+    """Execute instant sell via wallet service - debit crypto, credit fiat"""
+    try:
+        from centralized_fee_system import get_fee_manager
+        from live_pricing import get_live_price
+        
+        sell_id = str(uuid.uuid4())
+        
+        # Get live price
+        crypto_price = await get_live_price(crypto_currency, fiat_currency, db)
+        if not crypto_price:
+            raise HTTPException(status_code=400, detail=f"Unable to fetch price for {crypto_currency}")
+        
+        # Calculate fiat value
+        fiat_value = crypto_amount * crypto_price
+        
+        # Get fee from centralized fee system
+        fee_manager = get_fee_manager(db)
+        fee_percent = await fee_manager.get_fee("instant_sell_fee_percent")
+        
+        # Calculate fee
+        fee_amount = fiat_value * (fee_percent / 100)
+        net_fiat_amount = fiat_value - fee_amount
+        
+        # Check for referrer
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        referrer_id = user.get("referrer_id") if user else None
+        referrer_commission = 0.0
+        admin_fee = fee_amount
+        commission_percent = 0.0
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = fee_amount * (commission_percent / 100.0)
+            admin_fee = fee_amount - referrer_commission
+        
+        # Debit crypto from user
+        await wallet_service.debit(
+            user_id=user_id,
+            currency=crypto_currency,
+            amount=crypto_amount,
+            transaction_type="instant_sell_crypto",
+            reference_id=sell_id,
+            metadata={"fiat_currency": fiat_currency, "fiat_value": fiat_value, "fee": fee_amount}
+        )
+        
+        # Credit net fiat to user
+        await wallet_service.credit(
+            user_id=user_id,
+            currency=fiat_currency,
+            amount=net_fiat_amount,
+            transaction_type="instant_sell_fiat",
+            reference_id=sell_id,
+            metadata={"crypto_currency": crypto_currency, "crypto_amount": crypto_amount}
+        )
+        
+        # Credit admin wallet with admin portion of fee
+        await wallet_service.credit(
+            user_id="admin_wallet",
+            currency=fiat_currency,
+            amount=admin_fee,
+            transaction_type="instant_sell_fee",
+            reference_id=sell_id,
+            metadata={"user_id": user_id, "total_fee": fee_amount}
+        )
+        
+        # Credit referrer if applicable
+        if referrer_id and referrer_commission > 0:
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency=fiat_currency,
+                amount=referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=sell_id,
+                metadata={"referred_user_id": user_id, "transaction_type": "instant_sell"}
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": user_id,
+                "transaction_type": "instant_sell",
+                "fee_amount": fee_amount,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": fiat_currency,
+                "sell_id": sell_id,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+        
+        # Save instant sell transaction
+        await db.instant_sell_transactions.insert_one({
+            "transaction_id": sell_id,
+            "user_id": user_id,
+            "crypto_currency": crypto_currency,
+            "crypto_amount": crypto_amount,
+            "fiat_currency": fiat_currency,
+            "fiat_value": fiat_value,
+            "fee_amount": fee_amount,
+            "fee_currency": fiat_currency,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "net_fiat_received": net_fiat_amount,
+            "crypto_price": crypto_price,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Log to fee_transactions
+        await db.fee_transactions.insert_one({
+            "user_id": user_id,
+            "transaction_type": "instant_sell",
+            "fee_type": "instant_sell_fee_percent",
+            "amount": fiat_value,
+            "fee_amount": fee_amount,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": fiat_currency,
+            "reference_id": sell_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"✅ Instant Sell: {user_id} sold {crypto_amount} {crypto_currency} for {net_fiat_amount} {fiat_currency} (Fee: {fee_amount}, Admin: {admin_fee}, Referrer: {referrer_commission})")
+        
+        return {
+            "success": True,
+            "sell_id": sell_id,
+            "crypto_currency": crypto_currency,
+            "crypto_amount": crypto_amount,
+            "fiat_currency": fiat_currency,
+            "fiat_value": fiat_value,
+            "fee_amount": fee_amount,
+            "net_fiat_received": net_fiat_amount
+        }
+    except Exception as e:
+        logger.error(f"❌ Instant Sell error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
