@@ -20429,9 +20429,6 @@ async def google_callback_alt(code: str = None, error: str = None):
     return await google_callback(code=code, error=error)
 
 
-# Include the router in the main app (after all endpoints are defined)
-app.include_router(api_router)
-
 @api_router.get("/portfolio/summary/{user_id}")
 async def get_portfolio_summary(user_id: str):
     """Get portfolio P/L summary with daily/weekly/monthly stats"""
