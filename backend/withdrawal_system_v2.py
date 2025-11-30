@@ -19,6 +19,9 @@ class WithdrawalRequest(BaseModel):
     network: Optional[str] = None
     fee_percent: float = 1.5
     fee_amount: float
+    network_fee_percent: float = 1.0
+    network_fee_amount: float = 0.0
+    total_fee: float
     net_amount: float
     status: str = "pending"
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
