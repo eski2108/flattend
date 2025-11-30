@@ -91,9 +91,11 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
     try:
         from escrow_balance_system import get_trader_balance
         from unified_price_service import get_unified_price_service
+        from centralized_fee_system import get_fee_manager
         
         # Get unified price service instance
         price_service = get_unified_price_service()
+        fee_manager = get_fee_manager(db)
         
         from_coin = await db.supported_coins.find_one({"symbol": from_currency, "enabled": True}, {"_id": 0})
         to_coin = await db.supported_coins.find_one({"symbol": to_currency, "enabled": True}, {"_id": 0})
@@ -109,14 +111,32 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
         from_price = await price_service.get_price(from_currency, "GBP")
         to_price = await price_service.get_price(to_currency, "GBP")
         
-        platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
-        swap_fee_percent = platform_settings.get("swap_fee_percent", 3.0) if platform_settings else 3.0
+        # Get swap fee from centralized fee system (1.5%)
+        swap_fee_percent = await fee_manager.get_fee("swap_fee_percent")
         
         from_value_gbp = from_amount * from_price
         swap_fee_gbp = from_value_gbp * (swap_fee_percent / 100)
         net_value_gbp = from_value_gbp - swap_fee_gbp
         to_amount = net_value_gbp / to_price
         swap_fee_crypto = swap_fee_gbp / from_price
+        
+        # Check if user has referrer and calculate commission
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        referrer_id = user.get("referrer_id") if user else None
+        referrer_commission = 0.0
+        admin_fee = swap_fee_crypto
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = swap_fee_crypto * (commission_percent / 100.0)
+            admin_fee = swap_fee_crypto - referrer_commission
         
         import uuid
         swap_id = str(uuid.uuid4())
