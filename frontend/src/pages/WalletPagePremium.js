@@ -157,7 +157,7 @@ export default function WalletPagePremium() {
         setBalances(bals);
         
         // Calculate totals
-        const total = bals.reduce((sum, bal) => sum + (bal.value_gbp || 0), 0);
+        const total = bals.reduce((sum, bal) => sum + (bal.gbp_value || bal.value_gbp || 0), 0);
         const available = bals.reduce((sum, bal) => sum + (bal.available_balance * (bal.price_gbp || 0)), 0);
         const locked = bals.reduce((sum, bal) => sum + ((bal.locked_balance || 0) * (bal.price_gbp || 0)), 0);
         
