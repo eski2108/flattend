@@ -34,7 +34,7 @@ const PortfolioGraph = ({ totalValue, userId }) => {
       if (response.data.success && response.data.data) {
         // Transform backend data to ApexCharts format
         const chartData = response.data.data.map(point => ({
-          x: point.timestamp,
+          x: point.time * 1000,
           y: point.value
         }));
         setPortfolioHistory(chartData);
