@@ -50,15 +50,57 @@ async def execute_express_buy_with_wallet(db, wallet_service, user_id: str, cryp
             metadata={"fiat_currency": fiat_currency, "total_cost": total_cost}
         )
         
-        # Credit fee to admin
+        # Check for referrer and calculate commission
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        referrer_id = user.get("referrer_id") if user else None
+        referrer_commission = 0.0
+        admin_fee = fee_amount
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = fee_amount * (commission_percent / 100.0)
+            admin_fee = fee_amount - referrer_commission
+        
+        # Credit admin wallet with admin portion of fee
         await wallet_service.credit(
-            user_id="admin_fee_wallet",
+            user_id="admin_wallet",
             currency=fiat_currency,
-            amount=fee_amount,
+            amount=admin_fee,
             transaction_type="express_buy_fee",
             reference_id=order_id,
-            metadata={"user_id": user_id}
+            metadata={"user_id": user_id, "total_fee": fee_amount}
         )
+        
+        # If referrer exists, credit their commission
+        if referrer_id and referrer_commission > 0:
+            await wallet_service.credit(
+                user_id=referrer_id,
+                currency=fiat_currency,
+                amount=referrer_commission,
+                transaction_type="referral_commission",
+                reference_id=order_id,
+                metadata={"referred_user_id": user_id, "transaction_type": "express_buy"}
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": user_id,
+                "transaction_type": "express_buy",
+                "fee_amount": fee_amount,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": fiat_currency,
+                "transaction_id": order_id,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
         
         # Save express buy transaction with complete fee information for audit trail
         await db.express_buy_transactions.insert_one({
