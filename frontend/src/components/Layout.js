@@ -201,7 +201,7 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        <PriceTickerEnhanced />
+        <TradingViewTickerTape />
         
         <PromoBanner />
         
