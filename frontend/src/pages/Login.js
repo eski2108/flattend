@@ -405,41 +405,124 @@ export default function Login() {
           </div>
 
           {/* Forgot Password Link */}
-          <div style={{ textAlign: 'right', marginBottom: '20px', marginTop: '7px' }}>
-            <Link 
-              to="/forgot-password" 
-              style={{ 
-                color: '#00C6FF', 
-                fontSize: '14px',
-                fontWeight: '600',
-                textDecoration: 'none',
-                transition: 'all 0.3s ease',
-                textShadow: '0 0 10px rgba(0, 198, 255, 0.3)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.color = '#00E5FF';
-                e.target.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.color = '#00C6FF';
-                e.target.style.textShadow = '0 0 10px rgba(0, 198, 255, 0.3)';
-              }}
-            >
-              Forgot Password?
-            </Link>
-          </div>
+          {!show2FA && (
+            <div style={{ textAlign: 'right', marginBottom: '20px', marginTop: '7px' }}>
+              <Link 
+                to="/forgot-password" 
+                style={{ 
+                  color: '#00C6FF', 
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  transition: 'all 0.3s ease',
+                  textShadow: '0 0 10px rgba(0, 198, 255, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = '#00E5FF';
+                  e.target.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = '#00C6FF';
+                  e.target.style.textShadow = '0 0 10px rgba(0, 198, 255, 0.3)';
+                }}
+              >
+                Forgot Password?
+              </Link>
+            </div>
+          )}
+
+          {/* 2FA Code Input - Shown after successful password verification */}
+          {show2FA && (
+            <div style={{ marginBottom: '20px', marginTop: '20px' }}>
+              <div style={{
+                background: 'rgba(0, 229, 255, 0.05)',
+                border: '1px solid rgba(0, 229, 255, 0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <label style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  color: '#00E5FF',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  letterSpacing: '0.2px'
+                }}>
+                  <Shield size={18} strokeWidth={2.8} style={{ filter: 'brightness(1.15)' }} />
+                  Two-Factor Authentication
+                </label>
+                <p style={{ 
+                  color: '#A3AEC2', 
+                  fontSize: '13px', 
+                  marginBottom: '16px',
+                  lineHeight: '1.5'
+                }}>
+                  Enter the 6-digit code from your authenticator app
+                </p>
+                <input
+                  type="text"
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  maxLength="6"
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    padding: '18px 20px',
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    border: '1px solid rgba(0, 229, 255, 0.25)',
+                    borderRadius: '14px',
+                    color: '#FFFFFF',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    letterSpacing: '8px',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'monospace',
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                    e.target.style.boxShadow = '0 0 25px rgba(0, 229, 255, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(0, 229, 255, 0.25)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Login Button */}
-          <CHXButton
-            type="submit"
-            disabled={loading}
-            coinColor="#00C6FF"
-            variant="primary"
-            size="large"
-            fullWidth
-          >
-            {loading ? 'Logging in...' : 'Log In'}
-          </CHXButton>
+          {!show2FA ? (
+            <CHXButton
+              type="submit"
+              disabled={loading}
+              coinColor="#00C6FF"
+              variant="primary"
+              size="large"
+              fullWidth
+            >
+              {loading ? 'Logging in...' : 'Log In'}
+            </CHXButton>
+          ) : (
+            <CHXButton
+              type="button"
+              onClick={handleVerify2FA}
+              disabled={loading || twoFactorCode.length !== 6}
+              coinColor="#00C6FF"
+              variant="primary"
+              size="large"
+              fullWidth
+            >
+              {loading ? 'Verifying...' : 'Verify Code'}
+            </CHXButton>
+          )}
         </form>
 
         {/* Divider */}
