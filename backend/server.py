@@ -6595,6 +6595,9 @@ async def register_user(request: RegisterRequest, req: Request):
     except Exception as e:
         logger.error(f"Failed to send verification email: {str(e)}")
     
+    # Initialize user wallets (CRITICAL: prevents wallet balance issues)
+    await initialize_user_wallets(user_account.user_id)
+    
     # Log successful signup
     await security_logger.log_signup_attempt(
         email=request.email,
