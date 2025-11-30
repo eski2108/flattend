@@ -238,14 +238,14 @@ PLATFORM_CONFIG = {
     "lender_interest_rate": 5.0,  # Lenders earn 5%
     "borrower_interest_rate": 12.0,  # Borrowers pay 12%
     "platform_spread": 7.0,  # Platform keeps 7%
-    "deposit_fee_percent": 0.5,
+    "deposit_fee_percent": 0.0,  # 0% deposit fee - FREE
     "borrow_fee_percent": 1.0,
     "repay_fee_percent": 0.3,
-    "withdraw_fee_percent": 3.0,  # 3% withdrawal fee - AUTOMATED - ADJUSTABLE via Admin Dashboard
-    "p2p_trade_fee_percent": 3.0,  # 3% P2P trade fee - AUTOMATED (seller pays) - ADJUSTABLE
-    "spot_trading_fee_percent": 3.0,  # 3% Spot trading fee - ADJUSTABLE
-    "swap_fee_percent": 3.0,  # 3% Swap/Instant Buy fee - ADJUSTABLE
-    "express_buy_fee_percent": 3.0,  # 3% Express Buy fee - ADJUSTABLE
+    "withdraw_fee_percent": 1.0,  # 1% withdrawal fee - AUTOMATED - ADJUSTABLE via Admin Dashboard
+    "p2p_trade_fee_percent": 1.0,  # 1% P2P trade fee - AUTOMATED (seller pays) - ADJUSTABLE
+    "spot_trading_fee_percent": 1.0,  # 1% Spot trading fee - ADJUSTABLE
+    "swap_fee_percent": 1.0,  # 1% Swap/Instant Buy fee - ADJUSTABLE
+    "express_buy_fee_percent": 1.0,  # 1% Express Buy fee - ADJUSTABLE
     "liquidation_fee_percent": 10.0,
     "liquidation_penalty_percent": 5.0,
     "min_collateral_ratio": 150,  # 150% collateralization required
