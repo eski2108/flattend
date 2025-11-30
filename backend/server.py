@@ -1739,18 +1739,19 @@ async def create_enhanced_sell_offer(offer_data: Dict):
         if field not in offer_data:
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
     
-    # Validate seller has balance
-    balance = await db.crypto_balances.find_one({
-        "user_id": offer_data["seller_id"],
-        "currency": offer_data["crypto_currency"]
-    }, {"_id": 0})
+    # Validate seller has balance via wallet service
+    wallet_service = get_wallet_service()
+    balance_info = await wallet_service.get_balance(
+        offer_data["seller_id"], 
+        offer_data["crypto_currency"]
+    )
     
-    if not balance:
+    if not balance_info or balance_info.get("total_balance", 0) <= 0:
         raise HTTPException(status_code=400, detail="No balance found for this cryptocurrency")
     
-    available = balance["balance"] - balance.get("locked_balance", 0)
+    available = balance_info.get("available_balance", 0)
     if available < offer_data["crypto_amount"]:
-        raise HTTPException(status_code=400, detail="Insufficient available balance")
+        raise HTTPException(status_code=400, detail=f"Insufficient available balance. Available: {available}, Required: {offer_data['crypto_amount']}")
     
     # Validate currencies and payment methods
     if offer_data["fiat_currency"] not in GLOBAL_CURRENCIES:
