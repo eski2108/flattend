@@ -8553,22 +8553,74 @@ async def execute_trading_transaction(request: dict):
                 upsert=True
             )
         
-        # Record trading fee to separate "Trading Revenue" (for both buy and sell)
+        # Calculate referral commission split
+        from centralized_fee_system import get_fee_manager
+        fee_manager = get_fee_manager(db)
+        
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        referrer_id = user.get("referrer_id") if user else None
+        referrer_commission = 0.0
+        admin_fee = fee_amount
+        commission_percent = 0.0
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = fee_amount * (commission_percent / 100.0)
+            admin_fee = fee_amount - referrer_commission
+        
+        # Credit admin wallet with admin portion of trading fee
         await db.internal_balances.update_one(
-            {"currency": quote_currency},
+            {"user_id": "admin_wallet", "currency": quote_currency},
             {
                 "$inc": {
-                    "trading_fees": fee_amount,
-                    "total_fees": fee_amount
+                    "available": admin_fee,
+                    "balance": admin_fee
                 },
                 "$setOnInsert": {
-                    "p2p_fees": 0,
-                    "express_buy_fees": 0,
+                    "reserved": 0,
                     "created_at": datetime.now(timezone.utc).isoformat()
                 }
             },
             upsert=True
         )
+        
+        # Credit referrer if applicable
+        if referrer_id and referrer_commission > 0:
+            await db.internal_balances.update_one(
+                {"user_id": referrer_id, "currency": quote_currency},
+                {
+                    "$inc": {
+                        "available": referrer_commission,
+                        "balance": referrer_commission
+                    },
+                    "$setOnInsert": {
+                        "reserved": 0,
+                        "created_at": datetime.now(timezone.utc).isoformat()
+                    }
+                },
+                upsert=True
+            )
+            
+            # Log referral commission
+            await db.referral_commissions.insert_one({
+                "referrer_id": referrer_id,
+                "referred_user_id": user_id,
+                "transaction_type": "trading",
+                "fee_amount": fee_amount,
+                "commission_amount": referrer_commission,
+                "commission_percent": commission_percent,
+                "currency": quote_currency,
+                "pair": pair,
+                "trade_type": trade_type,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
         
         # Log transaction (for both buy and sell)
         await db.trading_transactions.insert_one({
