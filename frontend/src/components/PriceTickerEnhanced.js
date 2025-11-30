@@ -163,12 +163,12 @@ export default function PriceTickerEnhanced() {
       
       <div style={{
         display: 'flex',
-        animation: 'scroll 40s linear infinite',
+        animation: 'scroll 60s linear infinite',
         gap: '3rem',
         position: 'relative',
         zIndex: 1
       }}>
-        {[...prices, ...prices, ...prices, ...prices, ...prices, ...prices].map((coin, idx) => {
+        {[...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices, ...prices].map((coin, idx) => {
           const isPositive = coin.change >= 0;
           const glowColor = isPositive ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)';
           
