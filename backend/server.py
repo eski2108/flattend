@@ -15978,6 +15978,22 @@ try:
                         }}
                     )
                     
+                    # Log deposit to fee_transactions (0% fee but tracked for analytics)
+                    await db.fee_transactions.insert_one({
+                        "user_id": user_id,
+                        "transaction_type": "deposit",
+                        "fee_type": "deposit_fee_percent",
+                        "amount": actually_paid,
+                        "fee_amount": 0.0,
+                        "fee_percent": 0.0,
+                        "admin_fee": 0.0,
+                        "referrer_commission": 0.0,
+                        "referrer_id": None,
+                        "currency": currency,
+                        "reference_id": payment_id,
+                        "timestamp": datetime.now(timezone.utc).isoformat()
+                    })
+                    
                     logger.info(f"✅ User {user_id} credited {actually_paid} {currency} via wallet service")
                     
                     # TODO: Send notification to user
