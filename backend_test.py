@@ -2939,6 +2939,29 @@ class TradingPlatformTester:
             
         return False
     
+    def generate_test_report(self):
+        """Generate comprehensive test report"""
+        print("\n" + "="*80)
+        print("📊 COMPREHENSIVE TEST REPORT")
+        print("="*80)
+        
+        total_tests = len(self.test_results)
+        passed_tests = sum(1 for result in self.test_results if result["success"])
+        failed_tests = total_tests - passed_tests
+        
+        print(f"Total Tests: {total_tests}")
+        print(f"Passed: {passed_tests}")
+        print(f"Failed: {failed_tests}")
+        print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
+        
+        if failed_tests > 0:
+            print(f"\n❌ FAILED TESTS:")
+            for result in self.test_results:
+                if not result["success"]:
+                    print(f"   • {result['test']}: {result['message']}")
+        
+        return passed_tests == total_tests
+    
     def run_all_tests(self):
         """Run comprehensive trading platform test suite"""
         print("🚀 Starting Complete Trading Platform Testing Suite")
