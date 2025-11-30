@@ -613,7 +613,7 @@ class NewEndpointsBackendTester:
             try:
                 data = response.json()
                 self.log_test(
-                    "GET /api/referrals/dashboard",
+                    "GET /api/referral/dashboard/{user_id}",
                     True,
                     "Referrals dashboard endpoint accessible with referral data",
                     data,
