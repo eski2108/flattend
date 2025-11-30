@@ -6925,6 +6925,84 @@ async def login_user(login_req: LoginRequest, request: Request):
         }
     }
 
+@api_router.post("/auth/login-with-2fa")
+async def login_with_2fa(request: dict, req: Request):
+    """Complete login after 2FA verification"""
+    import jwt
+    from security_logger import SecurityLogger
+    
+    user_id = request.get("user_id")
+    code = request.get("code")
+    use_email = request.get("use_email", False)
+    
+    if not user_id or not code:
+        raise HTTPException(status_code=400, detail="user_id and code required")
+    
+    # Get client info
+    client_ip = req.client.host if req.client else "Unknown"
+    user_agent = req.headers.get("user-agent", "Unknown")
+    security_logger = SecurityLogger(db)
+    device_fingerprint = security_logger.generate_device_fingerprint(client_ip, user_agent)
+    
+    # Verify 2FA code
+    from two_factor_auth import TwoFactorAuthService
+    tfa_service = TwoFactorAuthService(db)
+    
+    if use_email:
+        verify_result = await tfa_service.verify_email_code(user_id, code)
+    else:
+        verify_result = await tfa_service.verify_2fa_code(user_id, code)
+    
+    if not verify_result.get("success"):
+        raise HTTPException(status_code=401, detail="Invalid 2FA code")
+    
+    # Get user
+    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Log successful login
+    security_info = await security_logger.log_login_attempt(
+        user_id=user["user_id"],
+        email=user["email"],
+        success=True,
+        ip_address=client_ip,
+        user_agent=user_agent,
+        device_fingerprint=device_fingerprint
+    )
+    
+    # Generate JWT token
+    token_data = {
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "exp": datetime.now(timezone.utc) + timedelta(days=7)
+    }
+    token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
+    
+    # Update last login
+    await db.user_accounts.update_one(
+        {"user_id": user_id},
+        {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {
+        "success": True,
+        "token": token,
+        "user": {
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "full_name": user["full_name"],
+            "wallet_address": user.get("wallet_address"),
+            "role": user.get("role", "user")
+        },
+        "message": "Login successful",
+        "security": {
+            "is_new_device": security_info.get("is_new_device", False),
+            "location": security_info.get("location", "Unknown")
+        }
+    }
+
+
 @api_router.post("/auth/forgot-password")
 async def forgot_password(request: ForgotPasswordRequest, req: Request):
     """Send password reset token"""
