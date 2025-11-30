@@ -20842,8 +20842,6 @@ async def get_savings_products():
 # CENTRALIZED FEE MANAGEMENT ENDPOINTS
 # ============================================
 
-from centralized_fee_system import get_fee_manager
-
 @api_router.get("/admin/fees/all")
 async def get_all_fees():
     """Get all current platform fees"""
