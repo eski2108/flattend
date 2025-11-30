@@ -627,41 +627,146 @@ export default function SpotTrading() {
 
               </div>
 
-          {/* Right Column: Order Book & Market Data */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
-            {/* TradingView Symbol Overview (Order Book) */}
-            <div style={{ background: 'rgba(12, 235, 255, 0.05)', border: '2px solid rgba(12, 235, 255, 0.3)', borderRadius: '16px', padding: '4px', height: '400px', boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)' }}>
-              <div id="tradingview-orderbook" style={{ width: '100%', height: '100%' }}></div>
-            </div>
+              {/* Right Column: Order Book & Market Data */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
+                
+                {/* Premium TradingView Symbol Overview */}
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                  border: '2px solid rgba(155, 77, 255, 0.4)',
+                  borderRadius: '20px',
+                  padding: '6px',
+                  height: isMobile ? '300px' : '400px',
+                  boxShadow: '0 0 60px rgba(155, 77, 255, 0.3), inset 0 0 40px rgba(155, 77, 255, 0.08)',
+                  position: 'relative'
+                }}>
+                  {/* Floating Glow Effect */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '150px',
+                    height: '60px',
+                    background: 'radial-gradient(circle, rgba(155, 77, 255, 0.4), transparent)',
+                    filter: 'blur(40px)',
+                    pointerEvents: 'none'
+                  }} />
+                  <div id="tradingview-orderbook" style={{ width: '100%', height: '100%', borderRadius: '16px' }}></div>
+                </div>
 
-            {/* Market Info */}
-            <div style={{ background: 'rgba(12, 235, 255, 0.05)', border: '2px solid rgba(12, 235, 255, 0.3)', borderRadius: '16px', padding: '20px', boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Info size={20} color="#0CEBFF" />
-                Market Info
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '14px', color: '#8F9BB3' }}>Trading Fee</span>
-                  <span style={{ fontSize: '14px', color: '#0CEBFF', fontWeight: '600' }}>{tradingFee}%</span>
+                {/* Premium Market Info Card */}
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                  border: '2px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '20px',
+                  padding: isMobile ? '20px' : '24px',
+                  boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+                  position: 'relative'
+                }}>
+                  <h3 style={{ 
+                    fontSize: isMobile ? '17px' : '19px', 
+                    fontWeight: '700', 
+                    color: '#FFFFFF', 
+                    marginBottom: '20px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '10px',
+                    textShadow: '0 0 15px rgba(0, 240, 255, 0.5)'
+                  }}>
+                    <BarChart3 size={22} color="#00F0FF" strokeWidth={2.5} />
+                    Market Info
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '12px',
+                      background: 'rgba(0, 240, 255, 0.05)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(0, 240, 255, 0.15)'
+                    }}>
+                      <span style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>Pair</span>
+                      <span style={{ fontSize: '14px', color: '#00F0FF', fontWeight: '700' }}>
+                        {tradingPairs.find(p => p.symbol === selectedPair)?.name || selectedPair}
+                      </span>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '12px',
+                      background: 'rgba(155, 77, 255, 0.05)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(155, 77, 255, 0.15)'
+                    }}>
+                      <span style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>Min Order</span>
+                      <span style={{ fontSize: '14px', color: '#9B4DFF', fontWeight: '700' }}>$10.00</span>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '12px',
+                      background: 'rgba(34, 197, 94, 0.05)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(34, 197, 94, 0.15)'
+                    }}>
+                      <span style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>Order Type</span>
+                      <span style={{ fontSize: '14px', color: '#22C55E', fontWeight: '700' }}>Market / Limit</span>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '12px',
+                      background: 'rgba(245, 197, 66, 0.05)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(245, 197, 66, 0.15)'
+                    }}>
+                      <span style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>Status</span>
+                      <span style={{ 
+                        fontSize: '14px', 
+                        color: '#F5C542', 
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: '#22C55E',
+                          boxShadow: '0 0 10px rgba(34, 197, 94, 0.8)',
+                          animation: 'pulse 2s infinite'
+                        }} />
+                        Live
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '14px', color: '#8F9BB3' }}>Min Order</span>
-                  <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>$10</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '14px', color: '#8F9BB3' }}>Order Type</span>
-                  <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>Market / Limit</span>
-                </div>
+
               </div>
+
             </div>
 
           </div>
-
         </div>
-
       </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+      `}</style>
     </Layout>
   );
 }
