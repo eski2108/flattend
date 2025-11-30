@@ -17,7 +17,8 @@ async def p2p_create_trade_with_wallet(
     crypto_amount: float,
     payment_method: str,
     buyer_wallet_address: str,
-    buyer_wallet_network: str = None
+    buyer_wallet_network: str = None,
+    is_express: bool = False
 ) -> Dict:
     """
     Create P2P trade and lock seller funds via wallet service
