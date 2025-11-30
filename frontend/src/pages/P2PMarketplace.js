@@ -264,7 +264,24 @@ function P2PMarketplace() {
   return (
     <Layout>
       <div style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 50%, rgba(2, 6, 24, 0.98) 100%)', minHeight: '100vh' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#00F0FF', marginBottom: '24px', textShadow: '0 0 20px rgba(0, 240, 255, 0.5)' }}>💰 P2P Marketplace</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 20px rgba(0, 240, 255, 0.5)' }}>💰 P2P Marketplace</h1>
+          {/* Notification Bell - shows all P2P notifications */}
+          {(() => {
+            const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
+            return userData?.user_id ? (
+              <P2PNotifications 
+                userId={userData.user_id}
+                onNotificationClick={(notification) => {
+                  // Navigate to trade if notification is trade-specific
+                  if (notification.trade_id) {
+                    navigate(`/p2p/trade/${notification.trade_id}`);
+                  }
+                }}
+              />
+            ) : null;
+          })()}
+        </div>
 
         {/* ENHANCED FILTER ROW */}
         <div style={{
