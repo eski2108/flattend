@@ -1,38 +1,22 @@
 #!/usr/bin/env python3
 """
-COMPREHENSIVE P2P TRADING PLATFORM BACKEND TESTING
-Tests all critical P2P trading platform backend endpoints as requested in review:
+P2P MARKETPLACE WALLET SERVICE INTEGRATION TESTING
+Focused testing for the P2P marketplace with wallet service integration issue.
 
-**Test Scenarios:**
-1. User Registration & Referral System
-   - Register new user with referral code
-   - Verify referral code is auto-created
-   - Check referral dashboard data
+**Issue from Agent Note:**
+Previous manual test script had issues with wallet service balance checking. 
+The seller was funded with 1.0 BTC in the crypto_balances collection 
+(user_id='ed798114-869e-45c3-b77c-a95bbec6867e', currency='BTC', balance=1.0), 
+but when creating a P2P trade, the wallet service reported 'Seller has insufficient 
+available balance. Available: 0.0'. This suggests wallet_service.py might be 
+checking a different collection or has a bug in balance retrieval.
 
-2. P2P Trading Flow
-   - Create a P2P sell order
-   - Create a P2P buy order  
-   - Test trade creation (buyer accepts seller's offer)
-   - Test "Mark as Paid" by buyer
-   - Test "Release Crypto" by seller
-   - Verify 1% trade fee is collected
-   - Verify referral commission (20%) is distributed
-
-3. Fee Collection
-   - Test withdrawal with 1% fee
-   - Verify platform admin wallet receives fees
-   - Check fee transactions are recorded
-
-4. Admin Endpoints
-   - Test platform earnings endpoint
-   - Test withdrawal address management
-   - Test admin withdrawal of earnings
-
-**Expected Results:**
-- All fees automated (1% withdrawal, 1% P2P trade)
-- Referral commissions working (20% of fees)
-- Admin can view and withdraw earnings
-- Trade flow complete with escrow
+**Test Focus:**
+1. Wallet Service Balance Operations
+2. P2P Trading Flow with Escrow
+3. Fee Collection System
+4. Referral Commission Distribution
+5. Transaction History Logging
 
 **Backend URL:** https://crypto-validator.preview.emergentagent.com/api
 """
