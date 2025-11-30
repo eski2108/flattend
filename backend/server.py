@@ -241,35 +241,45 @@ PLATFORM_CONFIG = {
     "borrow_fee_percent": 1.0,
     "repay_fee_percent": 0.3,
     
-    # OFFICIAL COINHUBX FEE STRUCTURE (17 REVENUE STREAMS)
-    # TRADING & WALLET FEES
-    "instant_buy_fee_percent": 1.5,
-    "instant_sell_fee_percent": 1.0,
-    "crypto_swap_fee_percent": 2.5,
-    "p2p_express_fee_percent": 1.5,
-    "p2p_trade_fee_percent": 1.0,
-    "crypto_withdrawal_fee_percent": 1.0,
-    "crypto_deposit_fee_percent": 0.0,  # FREE
+    # OFFICIAL 18 REVENUE STREAMS
+    # P2P FEES
+    "p2p_maker_fee_percent": 1.0,
+    "p2p_taker_fee_percent": 1.0,
+    "p2p_express_fee_percent": 2.0,
     
-    # PAYMENT FEES
-    "paypal_to_paypal_fee_percent": 3.0,
+    # INSTANT BUY/SELL & SWAP
+    "instant_buy_fee_percent": 3.0,
+    "instant_sell_fee_percent": 2.0,
+    "swap_fee_percent": 1.5,
     
-    # SAVINGS / STAKING / INTERNAL OPS
-    "early_withdrawal_penalty_percent": 4.0,
-    "staking_admin_fee_percent": 10.0,
-    "admin_liquidity_spread_percent": 0.25,
-    "cross_wallet_conversion_fee_percent": 1.0,
-    "internal_transfer_fee_percent": 0.0,  # FREE
+    # WITHDRAWAL & DEPOSIT
+    "withdrawal_fee_percent": 1.0,
+    "network_withdrawal_fee_percent": 1.0,
+    "fiat_withdrawal_fee_percent": 1.0,
+    "deposit_fee_percent": 0.0,
     
-    # SERVICE / PLATFORM MONETIZATION (flat GBP)
-    "priority_support_fee_gbp": 2.99,
-    "p2p_advert_promotion_fee_gbp": 20.0,
+    # SAVINGS/STAKING
+    "savings_stake_fee_percent": 0.5,
+    "early_unstake_penalty_percent": 3.0,
     
-    # REFERRALS (payout, NOT a fee)
-    "referral_commission_percent": 20.0,
+    # TRADING
+    "trading_fee_percent": 0.1,
     
-    # DISPUTE HANDLING (flat GBP)
-    "p2p_dispute_fee_gbp": 1.50,
+    # DISPUTE
+    "dispute_fee_fixed_gbp": 2.0,
+    "dispute_fee_percent": 1.0,
+    
+    # INTERNAL TRANSFERS
+    "vault_transfer_fee_percent": 0.5,
+    "cross_wallet_transfer_fee_percent": 0.25,
+    
+    # LIQUIDITY PROFITS
+    "admin_liquidity_spread_percent": 0.0,
+    "express_liquidity_profit_percent": 0.0,
+    
+    # REFERRAL COMMISSIONS
+    "referral_standard_commission_percent": 20.0,
+    "referral_golden_commission_percent": 50.0,
     "liquidation_fee_percent": 10.0,
     "liquidation_penalty_percent": 5.0,
     "min_collateral_ratio": 150,  # 150% collateralization required
