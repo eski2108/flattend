@@ -687,7 +687,7 @@ class NewEndpointsBackendTester:
                 )
         elif response.status_code == 400:
             self.log_test(
-                "POST /api/referrals/purchase-vip",
+                "POST /api/user/purchase-vip-tier",
                 True,
                 "VIP purchase endpoint accessible (400 - insufficient balance, expected)",
                 response.text,
