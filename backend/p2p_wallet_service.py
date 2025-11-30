@@ -78,7 +78,17 @@ async def p2p_create_trade_with_wallet(
         fee_manager = get_fee_manager(db)
         taker_fee_percent = await fee_manager.get_fee("p2p_taker_fee_percent")
         taker_fee = fiat_amount * (taker_fee_percent / 100.0)
-        total_buyer_payment = fiat_amount + taker_fee
+        
+        # Calculate P2P Express Fee if using express mode
+        express_fee = 0.0
+        total_fee = taker_fee
+        if is_express:
+            express_fee_percent = await fee_manager.get_fee("p2p_express_fee_percent")
+            express_fee = fiat_amount * (express_fee_percent / 100.0)
+            total_fee += express_fee
+            logger.info(f"P2P Express mode: Adding {express_fee} express fee ({express_fee_percent}%)")
+        
+        total_buyer_payment = fiat_amount + total_fee
         
         # Check for buyer's referrer
         buyer = await db.user_accounts.find_one({"user_id": buyer_id}, {"_id": 0})
