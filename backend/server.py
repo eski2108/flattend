@@ -11354,8 +11354,9 @@ async def apply_referral_code(request: ApplyReferralCodeRequest, req: Request):
         "suspicious": is_suspicious
     }
 
+@api_router.get("/referrals/dashboard")
 @api_router.get("/referral/dashboard/{user_id}")
-async def get_referral_dashboard(user_id: str):
+async def get_referral_dashboard(user_id: str = None):
     """Get user's referral dashboard"""
     # Get referral code
     code_data = await db.referral_codes.find_one({"user_id": user_id})
