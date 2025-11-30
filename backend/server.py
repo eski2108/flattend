@@ -3832,6 +3832,31 @@ async def express_mode_match(request: ExpressMatchRequest):
 
 
 # P2P EXPRESS ENDPOINTS (2.5% FEE)
+@api_router.post("/p2p/express/check-liquidity")
+async def check_express_liquidity(data: Dict):
+    """Check if admin liquidity is available for instant delivery"""
+    try:
+        crypto = data.get("crypto")
+        crypto_amount = data.get("crypto_amount")
+        
+        if not crypto or not crypto_amount:
+            return {"success": False, "has_liquidity": False}
+        
+        admin_liquidity = await db.admin_liquidity.find_one({
+            "crypto_currency": crypto,
+            "available_amount": {"$gte": crypto_amount}
+        })
+        
+        return {
+            "success": True,
+            "has_liquidity": admin_liquidity is not None,
+            "delivery_type": "instant" if admin_liquidity else "seller"
+        }
+    except Exception as e:
+        logger.error(f"Error checking liquidity: {e}")
+        return {"success": False, "has_liquidity": False}
+
+
 @api_router.post("/p2p/express/create")
 async def create_p2p_express_order(order_data: Dict):
     """Create a P2P Express order with 2.5% fee - Try admin liquidity first, then fastest P2P seller"""
