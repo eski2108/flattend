@@ -223,7 +223,7 @@ export default function Register() {
 
     try {
       setLoading(true);
-      const response = await axios.post(`${API}/api/auth/verify-phone`, {
+      const response = await axios.post(`${API}/auth/verify-phone`, {
         email: formData.email,
         code: verificationCode
       });
