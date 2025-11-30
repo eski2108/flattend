@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 # Cache for prices to avoid rate limiting
 _price_cache = {}
 _cache_timestamp = None
-CACHE_DURATION = 120  # seconds - Increased for better performance
+CACHE_DURATION = 300  # seconds - 5 minutes to avoid CoinGecko rate limits
 
 # CoinGecko coin ID mapping
 COINGECKO_IDS = {
