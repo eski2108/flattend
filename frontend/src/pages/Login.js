@@ -93,7 +93,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/2fa/login-verify`, {
+      const response = await axios.post(`${API}/auth/2fa/login-verify`, {
         user_id: tempUserId,
         code: twoFactorCode
       });
