@@ -126,7 +126,9 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
             "message": "Withdrawal request submitted. Balance locked. Awaiting admin approval.",
             "withdrawal_id": withdrawal_id,
             "amount": amount,
-            "fee": fee_amount,
+            "withdrawal_fee": withdrawal_fee,
+            "network_fee": network_fee,
+            "total_fee": total_fee,
             "net_amount": net_amount,
             "currency": currency,
             "status": "pending"
