@@ -96,90 +96,52 @@ export default function SpotTrading() {
     // Clear any existing content
     container.innerHTML = '';
 
-    // Check if script already loaded
-    if (window.TradingView && window.TradingView.widget) {
-      try {
-        new window.TradingView.widget({
-          autosize: true,
-          symbol: selectedPair,
-          interval: '15',
-          timezone: 'Etc/UTC',
-          theme: 'dark',
-          style: '1',
-          locale: 'en',
-          toolbar_bg: '#020618',
-          enable_publishing: false,
-          hide_top_toolbar: false,
-          hide_legend: false,
-          save_image: false,
-          container_id: 'tradingview-chart',
-          studies: [
-            'MASimple@tv-basicstudies',
-            'MAExp@tv-basicstudies',
-            'RSI@tv-basicstudies',
-            'MACD@tv-basicstudies'
+    // Create the TradingView widget HTML structure
+    const widgetHTML = `
+      <div class="tradingview-widget-container" style="height:100%;width:100%">
+        <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+        {
+          "autosize": true,
+          "symbol": "${selectedPair}",
+          "interval": "15",
+          "timezone": "Etc/UTC",
+          "theme": "dark",
+          "style": "1",
+          "locale": "en",
+          "enable_publishing": false,
+          "backgroundColor": "rgba(2, 6, 24, 1)",
+          "gridColor": "rgba(0, 240, 255, 0.06)",
+          "allow_symbol_change": true,
+          "calendar": false,
+          "hide_top_toolbar": false,
+          "hide_legend": false,
+          "save_image": false,
+          "studies": [
+            "STD;SMA",
+            "STD;EMA",
+            "STD;RSI",
+            "STD;MACD"
           ],
-          backgroundColor: '#020618',
-          gridColor: 'rgba(0, 240, 255, 0.1)',
-          allow_symbol_change: true,
-          details: true,
-          hotlist: true,
-          calendar: false
-        });
-      } catch (error) {
-        console.error('Error loading TradingView chart:', error);
-      }
-      return;
-    }
-
-    // Load script if not already loaded
-    const existingScript = document.querySelector('script[src="https://s3.tradingview.com/tv.js"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.async = true;
-    script.onload = () => {
-      if (window.TradingView && window.TradingView.widget) {
-        try {
-          new window.TradingView.widget({
-            autosize: true,
-            symbol: selectedPair,
-            interval: '15',
-            timezone: 'Etc/UTC',
-            theme: 'dark',
-            style: '1',
-            locale: 'en',
-            toolbar_bg: '#020618',
-            enable_publishing: false,
-            hide_top_toolbar: false,
-            hide_legend: false,
-            save_image: false,
-            container_id: 'tradingview-chart',
-            studies: [
-              'MASimple@tv-basicstudies',
-              'MAExp@tv-basicstudies',
-              'RSI@tv-basicstudies',
-              'MACD@tv-basicstudies'
-            ],
-            backgroundColor: '#020618',
-            gridColor: 'rgba(0, 240, 255, 0.1)',
-            allow_symbol_change: true,
-            details: true,
-            hotlist: true,
-            calendar: false
-          });
-        } catch (error) {
-          console.error('Error initializing TradingView widget:', error);
+          "support_host": "https://www.tradingview.com"
         }
+        </script>
+      </div>
+    `;
+
+    container.innerHTML = widgetHTML;
+
+    // Execute the script
+    const scripts = container.getElementsByTagName('script');
+    for (let i = 0; i < scripts.length; i++) {
+      if (scripts[i].src) {
+        const newScript = document.createElement('script');
+        newScript.src = scripts[i].src;
+        newScript.async = true;
+        newScript.innerHTML = scripts[i].innerHTML;
+        scripts[i].parentNode.replaceChild(newScript, scripts[i]);
       }
-    };
-    script.onerror = (error) => {
-      console.error('Error loading TradingView script:', error);
-    };
-    document.head.appendChild(script);
+    }
   };
 
   const loadTradingViewOrderBook = () => {
