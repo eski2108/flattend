@@ -73,13 +73,23 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
         withdrawal_fee_percent = await fee_manager.get_fee("withdrawal_fee_percent")
         network_fee_percent = await fee_manager.get_fee("network_withdrawal_fee_percent")
         
-        # Calculate both fees
+        # Check if this is a fiat currency withdrawal
+        FIAT_CURRENCIES = ["GBP", "USD", "EUR", "CAD", "AUD"]
+        is_fiat = currency.upper() in FIAT_CURRENCIES
+        
+        # Calculate fees
         withdrawal_fee = amount * (withdrawal_fee_percent / 100)
-        network_fee = amount * (network_fee_percent / 100)
-        total_fee = withdrawal_fee + network_fee
+        network_fee = amount * (network_fee_percent / 100) if not is_fiat else 0.0  # No network fee for fiat
+        fiat_withdrawal_fee = 0.0
+        
+        if is_fiat:
+            fiat_fee_percent = await fee_manager.get_fee("fiat_withdrawal_fee_percent")
+            fiat_withdrawal_fee = amount * (fiat_fee_percent / 100)
+        
+        total_fee = withdrawal_fee + network_fee + fiat_withdrawal_fee
         net_amount = amount - total_fee
         
-        logger.info(f"Withdrawal fees: Base {withdrawal_fee}, Network {network_fee}, Total {total_fee}")
+        logger.info(f"Withdrawal fees for {currency}: Base {withdrawal_fee}, Network {network_fee}, Fiat {fiat_withdrawal_fee}, Total {total_fee}")
         
         # Create withdrawal request
         withdrawal = WithdrawalRequest(
