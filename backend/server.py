@@ -2053,7 +2053,7 @@ async def get_user_badge(user_id: str):
 
 @api_router.get("/p2p/marketplace/filters")
 async def get_marketplace_filters():
-    """Get dynamic list of available currencies and payment methods from active seller offers"""
+    """Get dynamic list of available currencies, payment methods, and regions"""
     try:
         # Get all active sell orders
         active_offers = await db.enhanced_sell_orders.find(
@@ -2061,37 +2061,48 @@ async def get_marketplace_filters():
             {"_id": 0, "fiat_currency": 1, "payment_methods": 1}
         ).to_list(10000)
         
-        # Extract unique currencies
-        currencies = set()
-        payment_methods = set()
+        # Extract unique currencies from active offers
+        active_currencies = set()
+        active_payment_methods = set()
         
         for offer in active_offers:
             # Add fiat currency if exists
             if offer.get("fiat_currency"):
-                currencies.add(offer.get("fiat_currency"))
+                active_currencies.add(offer.get("fiat_currency"))
             
             # Add payment methods if exists
             if offer.get("payment_methods"):
                 methods = offer.get("payment_methods")
                 if isinstance(methods, list):
-                    payment_methods.update(methods)
+                    active_payment_methods.update(methods)
                 elif isinstance(methods, str):
-                    payment_methods.add(methods)
+                    active_payment_methods.add(methods)
         
-        # Convert sets to sorted lists
-        currency_list = sorted(list(currencies))
-        payment_method_list = sorted(list(payment_methods))
+        # Return all supported payment methods (not just active ones)
+        all_payment_methods = [
+            {"name": pm["name"], "icon": pm["icon"], "category": pm["category"]}
+            for pm in SUPPORTED_PAYMENT_METHODS
+        ]
         
-        # Return available regions
-        regions = [{"code": r["code"], "name": r["name"]} for r in SUPPORTED_REGIONS]
+        # Return all supported regions with flags
+        all_regions = [
+            {"code": r["code"], "name": r["name"], "flag": r["flag"]}
+            for r in SUPPORTED_REGIONS
+        ]
+        
+        # Return all supported fiat currencies
+        all_currencies = [
+            {"code": c["code"], "name": c["name"], "symbol": c["symbol"]}
+            for c in SUPPORTED_FIAT_CURRENCIES
+        ]
         
         return {
             "success": True,
-            "currencies": currency_list,
-            "payment_methods": payment_method_list,
-            "regions": regions,
-            "currency_count": len(currency_list),
-            "payment_method_count": len(payment_method_list)
+            "currencies": all_currencies,
+            "payment_methods": all_payment_methods,
+            "regions": all_regions,
+            "active_currencies": sorted(list(active_currencies)),
+            "active_payment_methods": sorted(list(active_payment_methods))
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
