@@ -72,6 +72,32 @@ async def p2p_create_trade_with_wallet(
         # Calculate fiat amount
         fiat_amount = crypto_amount * sell_order["price_per_unit"]
         
+        # Calculate P2P Taker Fee (buyer pays)
+        from centralized_fee_system import get_fee_manager
+        fee_manager = get_fee_manager(db)
+        taker_fee_percent = await fee_manager.get_fee("p2p_taker_fee_percent")
+        taker_fee = fiat_amount * (taker_fee_percent / 100.0)
+        total_buyer_payment = fiat_amount + taker_fee
+        
+        # Check for buyer's referrer
+        buyer = await db.user_accounts.find_one({"user_id": buyer_id}, {"_id": 0})
+        referrer_id = buyer.get("referrer_id") if buyer else None
+        referrer_commission = 0.0
+        admin_fee = taker_fee
+        commission_percent = 0.0
+        
+        if referrer_id:
+            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+            
+            if referrer_tier == "golden":
+                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+            else:
+                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+            
+            referrer_commission = taker_fee * (commission_percent / 100.0)
+            admin_fee = taker_fee - referrer_commission
+        
         # Get payment timer
         platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
         timer_minutes = platform_settings.get("payment_timer_minutes", 120) if platform_settings else 120
