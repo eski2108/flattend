@@ -81,16 +81,19 @@ function SwapCrypto() {
   const fetchPrices = async () => {
     try {
       const response = await axios.get(`${API}/api/prices/live`);
-      if (response.data.success) {
-        setPrices(response.data);
+      if (response.data.success && response.data.prices) {
+        setPrices(response.data.prices);
         setLastUpdate(new Date());
         
-        // Update ticker data
-        const ticker = cryptos.map(crypto => ({
-          ...crypto,
-          price: response.data[`${crypto.code}_USD`] || 0,
-          change: (Math.random() * 10 - 5).toFixed(2) // Mock 24h change
-        }));
+        // Update ticker data with REAL prices and changes
+        const ticker = cryptos.map(crypto => {
+          const priceData = response.data.prices[crypto.code];
+          return {
+            ...crypto,
+            price: priceData?.price_gbp || 0,
+            change: priceData?.change_24h || 0
+          };
+        });
         setTickerData(ticker);
       }
     } catch (error) {
