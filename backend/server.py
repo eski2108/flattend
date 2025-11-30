@@ -20915,3 +20915,96 @@ async def get_complete_revenue(period: str = "all"):
         logger.error(f"Error getting complete revenue: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ============================================
+# FEE CALCULATION HELPER FUNCTIONS
+# ============================================
+
+async def calculate_and_apply_fee(
+    user_id: str,
+    transaction_type: str,
+    amount: float,
+    currency: str,
+    fee_type: str
+):
+    """
+    Calculate fee, deduct from transaction, route to admin wallet.
+    Returns: (amount_after_fee, fee_amount, referral_commission)
+    """
+    from centralized_fee_system import get_fee_manager
+    
+    fee_manager = get_fee_manager(db)
+    fee_percent = await fee_manager.get_fee(fee_type)
+    fee_amount = amount * (fee_percent / 100.0)
+    amount_after_fee = amount - fee_amount
+    
+    # Check if user has referrer
+    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    referrer_id = user.get("referrer_id") if user else None
+    referrer_commission = 0.0
+    admin_fee = fee_amount
+    
+    if referrer_id:
+        # Get referrer tier
+        referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+        referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
+        
+        if referrer_tier == "golden":
+            commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
+        else:
+            commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
+        
+        referrer_commission = fee_amount * (commission_percent / 100.0)
+        admin_fee = fee_amount - referrer_commission
+        
+        # Credit referrer wallet
+        await db.crypto_balances.update_one(
+            {"user_id": referrer_id, "currency": currency},
+            {
+                "$inc": {"balance": referrer_commission},
+                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+            },
+            upsert=True
+        )
+        
+        # Log referral commission
+        await db.referral_commissions.insert_one({
+            "referrer_id": referrer_id,
+            "referred_user_id": user_id,
+            "transaction_type": transaction_type,
+            "fee_amount": fee_amount,
+            "commission_amount": referrer_commission,
+            "commission_percent": commission_percent,
+            "currency": currency,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    
+    # Credit admin wallet
+    await db.crypto_balances.update_one(
+        {"user_id": "admin_wallet", "currency": currency},
+        {
+            "$inc": {"balance": admin_fee},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        },
+        upsert=True
+    )
+    
+    # Log fee transaction
+    await db.fee_transactions.insert_one({
+        "user_id": user_id,
+        "transaction_type": transaction_type,
+        "fee_type": fee_type,
+        "amount": amount,
+        "fee_amount": fee_amount,
+        "fee_percent": fee_percent,
+        "admin_fee": admin_fee,
+        "referrer_commission": referrer_commission,
+        "referrer_id": referrer_id,
+        "currency": currency,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    logger.info(f"Fee applied: {fee_type} on {amount} {currency} = {fee_amount} {currency} (admin: {admin_fee}, referrer: {referrer_commission})")
+    
+    return amount_after_fee, fee_amount, referrer_commission
+
