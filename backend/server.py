@@ -20543,3 +20543,207 @@ async def get_nowpayments_currencies():
         logger.error(f"NOWPayments currencies error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ============================================
+# BUSINESS DASHBOARD ENDPOINTS
+# ============================================
+
+@api_router.get("/admin/customer-analytics")
+async def get_customer_analytics():
+    """Get customer analytics for business dashboard"""
+    try:
+        now = datetime.now(timezone.utc)
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        week_start = now - timedelta(days=7)
+        month_start = now - timedelta(days=30)
+        
+        # New users today
+        new_today = await db.user_accounts.count_documents({
+            "created_at": {"$gte": today_start.isoformat()}
+        })
+        
+        # New users this week
+        new_week = await db.user_accounts.count_documents({
+            "created_at": {"$gte": week_start.isoformat()}
+        })
+        
+        # New users this month
+        new_month = await db.user_accounts.count_documents({
+            "created_at": {"$gte": month_start.isoformat()}
+        })
+        
+        # Total users
+        total_users = await db.user_accounts.count_documents({})
+        
+        # Active users in last 24h (users who made a transaction)
+        active_24h = await db.transactions.distinct("user_id", {
+            "created_at": {"$gte": (now - timedelta(hours=24)).isoformat()}
+        })
+        
+        return {
+            "success": True,
+            "analytics": {
+                "newToday": new_today,
+                "newWeek": new_week,
+                "newMonth": new_month,
+                "totalUsers": total_users,
+                "activeUsers24h": len(active_24h)
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting customer analytics: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/referral-analytics")
+async def get_referral_analytics():
+    """Get referral analytics"""
+    try:
+        # Total referrals
+        total_referrals = await db.referrals.count_documents({})
+        
+        # Active referrals (users who actually signed up)
+        active_referrals = await db.user_accounts.count_documents({
+            "referral_code_used": {"$exists": True, "$ne": None}
+        })
+        
+        # Total referral earnings
+        referral_earnings = await db.referral_earnings.aggregate([
+            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        ]).to_list(1)
+        
+        # Total payouts
+        referral_payouts = await db.referral_payouts.aggregate([
+            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        ]).to_list(1)
+        
+        return {
+            "success": True,
+            "referrals": {
+                "totalReferrals": total_referrals,
+                "activeReferrals": active_referrals,
+                "earnings": referral_earnings[0]["total"] if referral_earnings else 0,
+                "payouts": referral_payouts[0]["total"] if referral_payouts else 0
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting referral analytics: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/liquidity/status")
+async def get_liquidity_status():
+    """Get current liquidity status"""
+    try:
+        liquidity = await db.admin_liquidity_wallets.find({}, {"_id": 0}).to_list(100)
+        
+        liquidity_dict = {}
+        for liq in liquidity:
+            currency = liq.get("currency")
+            liquidity_dict[currency] = {
+                "balance": liq.get("balance", 0),
+                "available": liq.get("available", 0),
+                "locked": liq.get("locked", 0)
+            }
+        
+        return {
+            "success": True,
+            "liquidity": liquidity_dict
+        }
+    except Exception as e:
+        logger.error(f"Error getting liquidity status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/liquidity/add")
+async def add_liquidity(request: dict):
+    """Add liquidity to admin wallet"""
+    try:
+        currency = request.get("currency")
+        amount = float(request.get("amount", 0))
+        
+        if not currency or amount <= 0:
+            raise HTTPException(status_code=400, detail="Invalid currency or amount")
+        
+        await db.admin_liquidity_wallets.update_one(
+            {"currency": currency},
+            {
+                "$inc": {
+                    "balance": amount,
+                    "available": amount
+                },
+                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+            },
+            upsert=True
+        )
+        
+        return {
+            "success": True,
+            "message": f"Added {amount} {currency} to liquidity"
+        }
+    except Exception as e:
+        logger.error(f"Error adding liquidity: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/transactions/recent")
+async def get_recent_transactions(limit: int = 50):
+    """Get recent transactions"""
+    try:
+        transactions = await db.transactions.find(
+            {},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(limit).to_list(limit)
+        
+        return {
+            "success": True,
+            "transactions": transactions
+        }
+    except Exception as e:
+        logger.error(f"Error getting recent transactions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/system-health")
+async def get_system_health():
+    """Get system health status"""
+    try:
+        # Get recent errors
+        errors = await db.error_logs.find(
+            {},
+            {"_id": 0}
+        ).sort("timestamp", -1).limit(10).to_list(10)
+        
+        # Failed deposits
+        failed_deposits = await db.transactions.count_documents({
+            "type": "deposit",
+            "status": "failed"
+        })
+        
+        # Failed withdrawals
+        failed_withdrawals = await db.transactions.count_documents({
+            "type": "withdrawal",
+            "status": "failed"
+        })
+        
+        return {
+            "success": True,
+            "health": {
+                "errors": errors,
+                "failedDeposits": failed_deposits,
+                "failedWithdrawals": failed_withdrawals
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting system health: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/savings/products")
+async def get_savings_products():
+    """Get all savings products"""
+    try:
+        products = await db.savings_products.find({}, {"_id": 0}).to_list(100)
+        
+        return {
+            "success": True,
+            "products": products
+        }
+    except Exception as e:
+        logger.error(f"Error getting savings products: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
