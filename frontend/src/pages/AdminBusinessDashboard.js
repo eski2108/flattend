@@ -8,39 +8,48 @@ import {
   Download, FileText, Lock, Key, Bell, BarChart3, PieChart,
   TrendingDown, Plus, Minus, Edit, Check, X, ArrowUp, ArrowDown
 } from 'lucide-react';
-import ReactApexChart from 'react-apexcharts';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 const FEE_CATEGORIES = {
-  'TRADING & WALLET FEES': [
-    { key: 'instant_buy_fee_percent', label: 'Instant Buy Fee', type: 'percent' },
-    { key: 'instant_sell_fee_percent', label: 'Instant Sell Fee', type: 'percent' },
-    { key: 'crypto_swap_fee_percent', label: 'Crypto Swap Fee', type: 'percent' },
-    { key: 'p2p_express_fee_percent', label: 'P2P Express Fee', type: 'percent' },
-    { key: 'p2p_trade_fee_percent', label: 'P2P Trade Fee', type: 'percent' },
-    { key: 'crypto_withdrawal_fee_percent', label: 'Crypto Withdrawal Fee', type: 'percent' },
-    { key: 'crypto_deposit_fee_percent', label: 'Crypto Deposit Fee', type: 'percent', note: 'Must stay FREE (0%)' }
+  'P2P FEES': [
+    { key: 'p2p_maker_fee_percent', label: '1. P2P Maker Fee', type: 'percent' },
+    { key: 'p2p_taker_fee_percent', label: '2. P2P Taker Fee', type: 'percent' },
+    { key: 'p2p_express_fee_percent', label: '3. P2P Express Fee', type: 'percent' }
   ],
-  'PAYMENT FEES': [
-    { key: 'paypal_to_paypal_fee_percent', label: 'PayPal → PayPal Fee', type: 'percent', note: 'Covers PayPal cost + profit' }
+  'INSTANT BUY/SELL & SWAP': [
+    { key: 'instant_buy_fee_percent', label: '4. Instant Buy Fee', type: 'percent' },
+    { key: 'instant_sell_fee_percent', label: '5. Instant Sell Fee', type: 'percent' },
+    { key: 'swap_fee_percent', label: '6. Swap Fee', type: 'percent' }
   ],
-  'SAVINGS / STAKING / INTERNAL OPS': [
-    { key: 'early_withdrawal_penalty_percent', label: 'Early Withdrawal Penalty (Savings Vault)', type: 'percent' },
-    { key: 'staking_admin_fee_percent', label: 'Staking Admin Fee', type: 'percent', note: '% of staking rewards' },
-    { key: 'admin_liquidity_spread_percent', label: 'Admin Liquidity Spread', type: 'percent' },
-    { key: 'cross_wallet_conversion_fee_percent', label: 'Cross-Wallet Conversion Fee', type: 'percent' },
-    { key: 'internal_transfer_fee_percent', label: 'Internal Transfer Fee', type: 'percent', note: 'Must stay FREE (0%)' }
+  'WITHDRAWAL & DEPOSIT': [
+    { key: 'withdrawal_fee_percent', label: '7. Withdrawal Fee', type: 'percent' },
+    { key: 'network_withdrawal_fee_percent', label: '8. Network Withdrawal Fee', type: 'percent', note: 'Added to gas' },
+    { key: 'fiat_withdrawal_fee_percent', label: '9. Fiat Withdrawal Fee', type: 'percent' },
+    { key: 'deposit_fee_percent', label: '10. Deposit Fee', type: 'percent', note: 'FREE (must stay 0%)' }
   ],
-  'SERVICE / PLATFORM MONETIZATION': [
-    { key: 'priority_support_fee_gbp', label: 'Priority Support Fast-Track Fee', type: 'flat' },
-    { key: 'p2p_advert_promotion_fee_gbp', label: 'P2P Advert / Promotion Slots', type: 'flat', note: 'Per 24 hours' }
+  'SAVINGS/STAKING': [
+    { key: 'savings_stake_fee_percent', label: '11. Savings Stake Fee', type: 'percent' },
+    { key: 'early_unstake_penalty_percent', label: '12. Early Unstake Penalty', type: 'percent' }
   ],
-  'REFERRALS': [
-    { key: 'referral_commission_percent', label: 'Referral Commission', type: 'percent', isReferral: true, note: 'PAYOUT to referrer, NOT a fee' }
+  'TRADING': [
+    { key: 'trading_fee_percent', label: '13. Trading Fee', type: 'percent' }
   ],
-  'DISPUTE HANDLING': [
-    { key: 'p2p_dispute_fee_gbp', label: 'P2P Dispute Fee', type: 'flat', note: 'Taken from seller' }
+  'DISPUTE': [
+    { key: 'dispute_fee_fixed_gbp', label: '14. Dispute Fee (Fixed)', type: 'flat', note: '£2 or 1% (whichever higher)' },
+    { key: 'dispute_fee_percent', label: '14. Dispute Fee (Percent)', type: 'percent' }
+  ],
+  'INTERNAL TRANSFERS': [
+    { key: 'vault_transfer_fee_percent', label: '15. Vault Transfer Fee', type: 'percent' },
+    { key: 'cross_wallet_transfer_fee_percent', label: '16. Cross-Wallet Transfer Fee', type: 'percent' }
+  ],
+  'LIQUIDITY PROFITS': [
+    { key: 'admin_liquidity_spread_percent', label: '17. Admin Liquidity Spread', type: 'percent', note: 'Variable, auto-calculated' },
+    { key: 'express_liquidity_profit_percent', label: '18. Express Liquidity Profit', type: 'percent', note: 'Variable, auto-calculated' }
+  ],
+  'REFERRAL COMMISSIONS': [
+    { key: 'referral_standard_commission_percent', label: 'Standard Referral (20%)', type: 'percent', isReferral: true, note: 'PAYOUT to referrer, NOT a fee' },
+    { key: 'referral_golden_commission_percent', label: 'Golden Referral (50%)', type: 'percent', isReferral: true, note: 'PAYOUT to referrer, NOT a fee' }
   ]
 };
 
@@ -49,23 +58,21 @@ export default function AdminBusinessDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('fees');
   
+  const [fees, setFees] = useState({});
+  const [editingFee, setEditingFee] = useState(null);
+  const [tempFeeValue, setTempFeeValue] = useState('');
+  
   const [revenueData, setRevenueData] = useState({
     today: 0, week: 0, month: 0, allTime: 0, breakdown: {}
   });
   
   const [customerData, setCustomerData] = useState({
-    newToday: 0, newWeek: 0, newMonth: 0, totalUsers: 0, activeUsers24h: 0,
-    topTraders: [], topP2PSellers: []
+    newToday: 0, newWeek: 0, newMonth: 0, totalUsers: 0, activeUsers24h: 0
   });
   
   const [referralData, setReferralData] = useState({
-    totalReferrals: 0, activeReferrals: 0, totalCommissions: 0,
-    pendingCommissions: 0, standardReferrals: 0, goldenReferrals: 0
+    totalReferrals: 0, activeReferrals: 0, totalCommissions: 0, pendingCommissions: 0
   });
-  
-  const [fees, setFees] = useState({});
-  const [editingFee, setEditingFee] = useState(null);
-  const [tempFeeValue, setTempFeeValue] = useState('');
   
   const [period, setPeriod] = useState('all');
   
@@ -152,7 +159,7 @@ export default function AdminBusinessDashboard() {
         value: parseFloat(newValue)
       });
       if (response.data.success) {
-        toast.success('Fee updated - changes applied across entire platform');
+        toast.success('Fee updated - changes applied everywhere');
         setEditingFee(null);
         setTempFeeValue('');
         await loadFees();
@@ -192,7 +199,6 @@ export default function AdminBusinessDashboard() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
       <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
         
-        {/* Header */}
         <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h1 style={{
@@ -203,9 +209,9 @@ export default function AdminBusinessDashboard() {
               WebkitTextFillColor: 'transparent',
               marginBottom: '0.5rem'
             }}>
-              CoinHubX Business Dashboard
+              Business Dashboard - 18 Revenue Streams
             </h1>
-            <p style={{ color: '#A3AEC2', fontSize: '15px' }}>17 Revenue Streams - NO KYC - Complete Fee Control</p>
+            <p style={{ color: '#A3AEC2', fontSize: '15px' }}>Complete fee control - all changes apply instantly</p>
           </div>
           <button
             onClick={loadAllData}
@@ -227,7 +233,6 @@ export default function AdminBusinessDashboard() {
           </button>
         </div>
         
-        {/* Tabs */}
         <div style={{
           display: 'flex',
           gap: '0.5rem',
@@ -237,10 +242,10 @@ export default function AdminBusinessDashboard() {
           scrollbarWidth: 'thin'
         }}>
           {[
-            { id: 'fees', label: 'Fee Management (17 Streams)', icon: Settings },
+            { id: 'fees', label: 'Fee Management (18)', icon: Settings },
             { id: 'revenue', label: 'Revenue Analytics', icon: DollarSign },
-            { id: 'customers', label: 'Customer Overview', icon: Users },
-            { id: 'referrals', label: 'Referral Tracking', icon: TrendingUp }
+            { id: 'customers', label: 'Customers', icon: Users },
+            { id: 'referrals', label: 'Referrals', icon: TrendingUp }
           ].map(tab => {
             const Icon = tab.icon;
             return (
@@ -268,13 +273,11 @@ export default function AdminBusinessDashboard() {
           })}
         </div>
         
-        {/* Fee Management Tab */}
         {activeTab === 'fees' && (
           <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Fee Management - 17 Revenue Streams</h2>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>18 Revenue Streams - Fee Management</h2>
             <p style={{ color: '#A3AEC2', marginBottom: '2rem' }}>
-              Edit any fee below - changes apply instantly across P2P, Instant Buy/Sell, Swap, Withdrawals, Savings, Staking, and Liquidity.
-              <br />All fees (except referrals) go directly to owner/admin wallet.
+              Edit fees below - changes apply instantly to P2P, Swap, Instant Buy/Sell, Withdrawals, Savings, Trading, and all transactions.
             </p>
             
             {Object.entries(FEE_CATEGORIES).map(([categoryName, categoryFees]) => (
@@ -415,7 +418,6 @@ export default function AdminBusinessDashboard() {
               </div>
             ))}
             
-            {/* Important Info Panel */}
             <div style={{
               marginTop: '2rem',
               padding: '1.5rem',
@@ -424,30 +426,18 @@ export default function AdminBusinessDashboard() {
               borderRadius: '12px'
             }}>
               <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#00F0FF', marginBottom: '0.75rem' }}>
-                ✅ How Fee Updates Work
+                ✅ All Fees Route to Admin Wallet
               </h3>
               <ul style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.8', paddingLeft: '1.5rem' }}>
-                <li>All fees (except Referral Commission) go directly to owner/admin wallet</li>
-                <li>Referral Commission (20%) is a PAYOUT from your earnings to the referrer</li>
-                <li>When you edit a fee here, it automatically updates across:
-                  <ul style={{ marginTop: '0.5rem', marginLeft: '1rem' }}>
-                    <li>P2P marketplace</li>
-                    <li>Instant Buy/Sell pages</li>
-                    <li>Swap page</li>
-                    <li>Wallet withdrawals</li>
-                    <li>Savings vault</li>
-                    <li>Staking dashboard</li>
-                    <li>Admin liquidity operations</li>
-                  </ul>
-                </li>
-                <li>Changes take effect immediately for new transactions</li>
-                <li>No KYC fees exist - platform is completely KYC-free</li>
+                <li>All 18 fees go directly to your admin wallet</li>
+                <li>EXCEPT: Referral commissions (20%/50%) paid to referrers from your profit</li>
+                <li>Edit any fee here - changes apply instantly across entire platform</li>
+                <li>No code deployment needed</li>
               </ul>
             </div>
           </div>
         )}
         
-        {/* Revenue Tab */}
         {activeTab === 'revenue' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -473,7 +463,7 @@ export default function AdminBusinessDashboard() {
               </div>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
               {[
                 { label: 'Today', value: revenueData.today, color: '#00F0FF' },
                 { label: '7 Days', value: revenueData.week, color: '#A855F7' },
@@ -491,17 +481,12 @@ export default function AdminBusinessDashboard() {
                 </div>
               ))}
             </div>
-            
-            <div style={{ color: '#A3AEC2', textAlign: 'center', padding: '2rem' }}>
-              Revenue breakdown by stream coming soon...
-            </div>
           </div>
         )}
         
-        {/* Customers Tab */}
         {activeTab === 'customers' && (
           <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Customer Overview</h2>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Customer Analytics</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
               {[
                 { label: 'New Today', value: customerData.newToday, color: '#00F0FF' },
@@ -523,7 +508,6 @@ export default function AdminBusinessDashboard() {
           </div>
         )}
         
-        {/* Referrals Tab */}
         {activeTab === 'referrals' && (
           <div>
             <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Referral Tracking</h2>
@@ -554,12 +538,12 @@ export default function AdminBusinessDashboard() {
               border: '2px solid rgba(168,85,247,0.3)',
               borderRadius: '12px'
             }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#A855F7', marginBottom: '0.5rem' }}>How Referral Commissions Work</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#A855F7', marginBottom: '0.5rem' }}>Referral System</h3>
               <p style={{ fontSize: '14px', color: '#A3AEC2', lineHeight: '1.6' }}>
-                • Referral commission is 20% of fees generated by invitees<br />
-                • This is a PAYOUT from your profit, NOT a fee charged to customers<br />
-                • Example: User pays £10 fee → Referrer gets £2 (20%) → You keep £8<br />
-                • Commissions are tracked here for transparency
+                • Standard: 20% of fees generated by invitees<br />
+                • Golden: 50% of fees generated by invitees<br />
+                • Commissions paid FROM your profit TO referrers<br />
+                • All referrals tracked here for transparency
               </p>
             </div>
           </div>
