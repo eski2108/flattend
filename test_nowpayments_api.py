@@ -66,7 +66,7 @@ payload = {
     "pay_currency": "btc",
     "order_id": "test_order_12345",
     "order_description": "Test deposit",
-    "ipn_callback_url": "https://fee-central.preview.emergentagent.com/api/nowpayments/ipn"
+    "ipn_callback_url": "https://cryptodash-17.preview.emergentagent.com/api/nowpayments/ipn"
 }
 
 print(f"Payload: {json.dumps(payload, indent=2)}")
