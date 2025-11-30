@@ -374,35 +374,50 @@ export default function SpotTrading() {
               </div>
             </div>
 
-        {/* Main Trading Layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '20px' }}>
-          
-          {/* Left Column: Chart + Order Panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
-            {/* Pair Selector */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {tradingPairs.map(pair => (
-                <button
-                  key={pair.symbol}
-                  onClick={() => setSelectedPair(pair.symbol)}
-                  style={{
-                    padding: '10px 16px',
-                    background: selectedPair === pair.symbol ? 'linear-gradient(135deg, #0CEBFF, #00F0FF)' : 'rgba(12, 235, 255, 0.1)',
-                    border: `1px solid ${selectedPair === pair.symbol ? '#0CEBFF' : 'rgba(12, 235, 255, 0.2)'}`,
-                    borderRadius: '12px',
-                    color: selectedPair === pair.symbol ? '#000' : '#FFFFFF',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s',
-                    boxShadow: selectedPair === pair.symbol ? '0 0 20px rgba(12, 235, 255, 0.4)' : 'none'
-                  }}
-                >
-                  {pair.name}
-                </button>
-              ))}
-            </div>
+            {/* Main Trading Layout */}
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: isMobile ? '20px' : '32px' }}>
+              
+              {/* Left Column: Chart + Order Panel */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
+                
+                {/* Premium Pair Selector */}
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  {tradingPairs.map(pair => (
+                    <button
+                      key={pair.symbol}
+                      onClick={() => setSelectedPair(pair.symbol)}
+                      style={{
+                        padding: isMobile ? '10px 14px' : '12px 18px',
+                        background: selectedPair === pair.symbol 
+                          ? 'linear-gradient(135deg, #00F0FF, #0080FF)' 
+                          : 'rgba(0, 240, 255, 0.08)',
+                        border: `1px solid ${selectedPair === pair.symbol ? '#00F0FF' : 'rgba(0, 240, 255, 0.2)'}`,
+                        borderRadius: '12px',
+                        color: selectedPair === pair.symbol ? '#000000' : '#FFFFFF',
+                        fontSize: isMobile ? '13px' : '14px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                        boxShadow: selectedPair === pair.symbol ? '0 0 25px rgba(0, 240, 255, 0.5)' : 'none',
+                        textShadow: selectedPair === pair.symbol ? 'none' : '0 0 8px rgba(0, 240, 255, 0.3)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (selectedPair !== pair.symbol) {
+                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+                          e.currentTarget.style.background = 'rgba(0, 240, 255, 0.15)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (selectedPair !== pair.symbol) {
+                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.2)';
+                          e.currentTarget.style.background = 'rgba(0, 240, 255, 0.08)';
+                        }
+                      }}
+                    >
+                      {pair.name}
+                    </button>
+                  ))}
+                </div>
 
             {/* TradingView Advanced Chart */}
             <div style={{ background: 'rgba(12, 235, 255, 0.05)', border: '2px solid rgba(12, 235, 255, 0.3)', borderRadius: '16px', padding: '4px', height: '600px', boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)' }}>
