@@ -304,14 +304,33 @@ async def p2p_release_crypto_with_wallet(
                     "escrow_locked": False,
                     "platform_fee_amount": platform_fee,
                     "platform_fee_currency": currency,
-                    "platform_fee_percent": 2.0,
+                    "platform_fee_percent": fee_percent,
+                    "admin_fee": admin_fee,
+                    "referrer_commission": referrer_commission,
+                    "referrer_id": referrer_id,
                     "amount_to_buyer": amount_to_buyer,
                     "completed_at": datetime.now(timezone.utc).isoformat()
                 }
             }
         )
         
-        logger.info(f"✅ P2P trade completed: {trade_id}")
+        # Log to fee_transactions for business dashboard
+        await db.fee_transactions.insert_one({
+            "user_id": seller_id,
+            "transaction_type": "p2p_trade",
+            "fee_type": "p2p_maker_fee_percent",
+            "amount": crypto_amount,
+            "fee_amount": platform_fee,
+            "fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "currency": currency,
+            "reference_id": trade_id,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        logger.info(f"✅ P2P trade completed: {trade_id}, Fee: {platform_fee} {currency} (Admin: {admin_fee}, Referrer: {referrer_commission})")
         
         return {
             "success": True,
