@@ -159,6 +159,11 @@ const AssetTablePremium = ({ assets, onDeposit, onWithdraw, onSwap }) => {
                     </div>
                   </td>
 
+                  {/* Sparkline Trend */}
+                  <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                    <TradingViewSparkline symbol={asset.symbol} />
+                  </td>
+
                   {/* P/L */}
                   <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                     <div style={{ 
