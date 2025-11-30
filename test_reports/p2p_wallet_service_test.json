@@ -1,0 +1,793 @@
+{
+  "timestamp": "2025-11-30T16:08:34.274303",
+  "test_focus": "P2P Wallet Service Integration Issue",
+  "seller_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+  "summary": {
+    "tests_run": 13,
+    "tests_passed": 4,
+    "success_rate": 30.76923076923077
+  },
+  "results": [
+    {
+      "test": "Wallet Service Balance Check",
+      "success": false,
+      "details": "Failed to get balance",
+      "response": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "test": "Crypto Balances Collection Check",
+      "success": true,
+      "details": "BTC balance in crypto_balances: 1.0",
+      "response": {
+        "btc_balance": 1.0,
+        "all_balances": [
+          {
+            "currency": "BTC",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "balance": 1.0,
+            "locked_balance": 0
+          },
+          {
+            "balance_id": "57c7c83a-a1ae-426c-8e74-51653bf29455",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ETH",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.818942+00:00"
+          },
+          {
+            "balance_id": "3fd6a587-07b4-481f-ba2d-e4181a87be37",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "USDT",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.819489+00:00"
+          },
+          {
+            "balance_id": "3df9da38-8b9e-497f-b936-fd6232106633",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "USDC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.819836+00:00"
+          },
+          {
+            "balance_id": "9634ec85-f725-4d48-87e0-2d7fe9af906f",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "BNB",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820087+00:00"
+          },
+          {
+            "balance_id": "a44ea881-8378-44d8-82b5-83a40b9ba1d8",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "XRP",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820384+00:00"
+          },
+          {
+            "balance_id": "510d39a7-b335-4ae6-b2e1-5721bcb83b19",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "SOL",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820608+00:00"
+          },
+          {
+            "balance_id": "91893368-3cd6-4890-9a46-a9a64dca6725",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "LTC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820869+00:00"
+          },
+          {
+            "balance_id": "af2156e2-9f0e-45c2-ac34-546ebfaec095",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "DOGE",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821076+00:00"
+          },
+          {
+            "balance_id": "33ed7231-3261-47be-8852-96cc5f8db5a3",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ADA",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821308+00:00"
+          },
+          {
+            "balance_id": "e008204f-b0db-4932-91cf-1eb3b32acd49",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "MATIC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821527+00:00"
+          },
+          {
+            "balance_id": "3a96fea4-2449-4e4f-9ef9-d78a580c1678",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "TRX",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821735+00:00"
+          },
+          {
+            "balance_id": "9a6c9c04-efdb-45e8-8b48-9cedee57d7a7",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "DOT",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821941+00:00"
+          },
+          {
+            "balance_id": "5b6fecb2-0567-4aa9-9b97-5df14da6e7f6",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "AVAX",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.822136+00:00"
+          },
+          {
+            "balance_id": "795471b5-6754-4260-8454-fd6287235115",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "XLM",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.822355+00:00"
+          },
+          {
+            "balance_id": "2816ad4f-19ee-420a-9b14-6b076553939e",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "BCH",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.822560+00:00"
+          },
+          {
+            "balance_id": "63b2be85-f7fe-4e90-a008-543e8057fb9a",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "SHIB",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.822756+00:00"
+          },
+          {
+            "balance_id": "b3b2d1d1-6bb5-4ac7-a59d-d44b06ea5fea",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "TON",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.822952+00:00"
+          },
+          {
+            "balance_id": "6ea2f52e-7c13-4046-bea5-f97ad0add182",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "DAI",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.823144+00:00"
+          },
+          {
+            "balance_id": "a44c23dc-0c11-449d-ae93-1a6ba12c2073",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "LINK",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.823352+00:00"
+          },
+          {
+            "balance_id": "3833b66a-13fe-483b-b6bb-37cdc9f35ea3",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ATOM",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.823548+00:00"
+          },
+          {
+            "balance_id": "8eac4a8b-27e5-4afe-bdc8-534bdf74aa40",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "XMR",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.823739+00:00"
+          },
+          {
+            "balance_id": "8a4e39b0-bcb9-4d4d-9901-8abd2168d34f",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "FIL",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.823942+00:00"
+          },
+          {
+            "balance_id": "c583b91d-83bc-4d66-97ec-67e4b343c6df",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "UNI",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.824155+00:00"
+          },
+          {
+            "balance_id": "5d850cb5-e2fc-49ad-b73c-d153368e708f",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ETC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.824375+00:00"
+          },
+          {
+            "balance_id": "696d43db-63cc-4e8d-96b1-133dbd066779",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ALGO",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.824582+00:00"
+          },
+          {
+            "balance_id": "2b249e0a-1811-4cc6-945b-e4a4d94adce2",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "VET",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.824786+00:00"
+          },
+          {
+            "balance_id": "e0c3c96a-9033-4aab-92fb-96e403895322",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "WBTC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.824991+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "test": "Fund Seller via Wallet Service",
+      "success": false,
+      "details": "Failed to fund seller",
+      "response": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "test": "Wallet Service Balance Check",
+      "success": false,
+      "details": "Failed to get balance",
+      "response": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "test": "Balance After Funding",
+      "success": false,
+      "details": "Balance not updated: Available=0, Total=0",
+      "response": null
+    },
+    {
+      "test": "Create P2P Offer",
+      "success": false,
+      "details": "Failed to create offer",
+      "response": {
+        "detail": "Unsupported payment method: bank_transfer"
+      }
+    },
+    {
+      "test": "Create P2P Trade",
+      "success": false,
+      "details": "No sell order ID available",
+      "response": null
+    },
+    {
+      "test": "Debug Wallet Collections",
+      "success": true,
+      "details": "Collected debug information from different endpoints",
+      "response": {
+        "wallet_service_balance": "Failed",
+        "crypto_balances_collection": {
+          "success": true,
+          "balances": [
+            {
+              "currency": "BTC",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "balance": 1.0,
+              "locked_balance": 0
+            },
+            {
+              "balance_id": "57c7c83a-a1ae-426c-8e74-51653bf29455",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "ETH",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.818942+00:00"
+            },
+            {
+              "balance_id": "3fd6a587-07b4-481f-ba2d-e4181a87be37",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "USDT",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.819489+00:00"
+            },
+            {
+              "balance_id": "3df9da38-8b9e-497f-b936-fd6232106633",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "USDC",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.819836+00:00"
+            },
+            {
+              "balance_id": "9634ec85-f725-4d48-87e0-2d7fe9af906f",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "BNB",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.820087+00:00"
+            },
+            {
+              "balance_id": "a44ea881-8378-44d8-82b5-83a40b9ba1d8",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "XRP",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.820384+00:00"
+            },
+            {
+              "balance_id": "510d39a7-b335-4ae6-b2e1-5721bcb83b19",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "SOL",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.820608+00:00"
+            },
+            {
+              "balance_id": "91893368-3cd6-4890-9a46-a9a64dca6725",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "LTC",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.820869+00:00"
+            },
+            {
+              "balance_id": "af2156e2-9f0e-45c2-ac34-546ebfaec095",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "DOGE",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.821076+00:00"
+            },
+            {
+              "balance_id": "33ed7231-3261-47be-8852-96cc5f8db5a3",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "ADA",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:33.821308+00:00"
+            },
+            {
+              "balance_id": "a12ce784-277c-4a8f-a0ad-9c948ea2a1a7",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "MATIC",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.023149+00:00"
+            },
+            {
+              "balance_id": "6b30959a-99c1-4771-99a6-6c8460f0c9da",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "TRX",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.023657+00:00"
+            },
+            {
+              "balance_id": "86c71967-4f1e-4be7-a7db-86f11616a03f",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "DOT",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.023944+00:00"
+            },
+            {
+              "balance_id": "436a3995-c145-454e-b045-4a6ff2b0fe33",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "AVAX",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.024197+00:00"
+            },
+            {
+              "balance_id": "10e7c3a0-e664-417a-a224-e10862f4997a",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "XLM",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.024454+00:00"
+            },
+            {
+              "balance_id": "d494ef47-f2c0-47ac-9723-7d85785e33fb",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "BCH",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.024671+00:00"
+            },
+            {
+              "balance_id": "70d36f78-e4d0-456d-8dc3-e063b2dcafc9",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "SHIB",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.024886+00:00"
+            },
+            {
+              "balance_id": "455e85e2-3dfd-4a4f-9992-d3ea947845ea",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "TON",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.025091+00:00"
+            },
+            {
+              "balance_id": "7701f1c4-8ec2-4ce4-bfb2-dd13ddfa124b",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "DAI",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.025315+00:00"
+            },
+            {
+              "balance_id": "c1b65c9c-25c2-4bf7-b71e-f1a7d16a6c86",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "LINK",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.025520+00:00"
+            },
+            {
+              "balance_id": "3f3afc3f-4032-4d70-83d9-13ae26e6dc4b",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "ATOM",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.025723+00:00"
+            },
+            {
+              "balance_id": "8dc41a57-61eb-452c-b7e4-e0cb0e20b5b7",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "XMR",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.025925+00:00"
+            },
+            {
+              "balance_id": "fd6066a0-aa8c-4627-ad6a-12533e3384ba",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "FIL",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.026121+00:00"
+            },
+            {
+              "balance_id": "aff8a19a-270b-4d5b-8da5-1410053e6dcf",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "UNI",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.026463+00:00"
+            },
+            {
+              "balance_id": "613b91ad-cbb8-4c67-94e4-d04e6c6dd05a",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "ETC",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.026664+00:00"
+            },
+            {
+              "balance_id": "a39dedca-970d-4e11-8771-a172ee1301cb",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "ALGO",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.026892+00:00"
+            },
+            {
+              "balance_id": "b5fdfbea-b56c-487d-b01e-a9fa678e5711",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "VET",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.027100+00:00"
+            },
+            {
+              "balance_id": "8bacbb77-00f4-4875-9bf4-87ffa4a73974",
+              "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+              "currency": "WBTC",
+              "balance": 0.0,
+              "locked_balance": 0.0,
+              "last_updated": "2025-11-30T16:08:34.027320+00:00"
+            }
+          ]
+        },
+        "user_profile": "Failed"
+      }
+    },
+    {
+      "test": "Wallet Transactions",
+      "success": false,
+      "details": "Failed to get transactions",
+      "response": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "test": "Manual Balance Sync",
+      "success": false,
+      "details": "Balance sync failed",
+      "response": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "test": "Wallet Service Balance Check",
+      "success": false,
+      "details": "Failed to get balance",
+      "response": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "test": "Crypto Balances Collection Check",
+      "success": true,
+      "details": "BTC balance in crypto_balances: 1.0",
+      "response": {
+        "btc_balance": 1.0,
+        "all_balances": [
+          {
+            "currency": "BTC",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "balance": 1.0,
+            "locked_balance": 0
+          },
+          {
+            "balance_id": "57c7c83a-a1ae-426c-8e74-51653bf29455",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ETH",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.818942+00:00"
+          },
+          {
+            "balance_id": "3fd6a587-07b4-481f-ba2d-e4181a87be37",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "USDT",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.819489+00:00"
+          },
+          {
+            "balance_id": "3df9da38-8b9e-497f-b936-fd6232106633",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "USDC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.819836+00:00"
+          },
+          {
+            "balance_id": "9634ec85-f725-4d48-87e0-2d7fe9af906f",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "BNB",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820087+00:00"
+          },
+          {
+            "balance_id": "a44ea881-8378-44d8-82b5-83a40b9ba1d8",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "XRP",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820384+00:00"
+          },
+          {
+            "balance_id": "510d39a7-b335-4ae6-b2e1-5721bcb83b19",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "SOL",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820608+00:00"
+          },
+          {
+            "balance_id": "91893368-3cd6-4890-9a46-a9a64dca6725",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "LTC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.820869+00:00"
+          },
+          {
+            "balance_id": "af2156e2-9f0e-45c2-ac34-546ebfaec095",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "DOGE",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821076+00:00"
+          },
+          {
+            "balance_id": "33ed7231-3261-47be-8852-96cc5f8db5a3",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ADA",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:33.821308+00:00"
+          },
+          {
+            "balance_id": "8570caa9-ae8b-4e6e-8257-2a259cee700c",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "MATIC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.265631+00:00"
+          },
+          {
+            "balance_id": "b92f4fb0-0dbd-49b3-a68c-43658c514386",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "TRX",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.266146+00:00"
+          },
+          {
+            "balance_id": "45059da2-23fe-4e25-9e70-7ccaab6ac2f6",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "DOT",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.266453+00:00"
+          },
+          {
+            "balance_id": "37769ec6-6ae6-4586-83a8-6499587c642b",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "AVAX",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.266692+00:00"
+          },
+          {
+            "balance_id": "22bbd171-8cd1-4c95-abb9-4d295b550379",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "XLM",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.266924+00:00"
+          },
+          {
+            "balance_id": "aae3029f-8c2e-4435-af48-3bb74090e82a",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "BCH",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.267142+00:00"
+          },
+          {
+            "balance_id": "ef444f4f-99b2-4fdd-ad83-7a5168a7806f",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "SHIB",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.267369+00:00"
+          },
+          {
+            "balance_id": "e5b3743a-193f-47b0-a650-065b4c80dfda",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "TON",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.267577+00:00"
+          },
+          {
+            "balance_id": "691671fb-75fa-4473-b836-f33718052dc6",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "DAI",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.267781+00:00"
+          },
+          {
+            "balance_id": "d6c7b949-d4d9-4db3-b638-b3ff2af25d3e",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "LINK",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.267980+00:00"
+          },
+          {
+            "balance_id": "bbf49a07-35f4-49c1-a78e-8907d7a8dc8a",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ATOM",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.268175+00:00"
+          },
+          {
+            "balance_id": "2d5abbe4-c94e-4073-b895-a549b3b4356d",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "XMR",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.268394+00:00"
+          },
+          {
+            "balance_id": "b6306ebf-0efd-4183-bad8-c42c82a8915a",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "FIL",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.268595+00:00"
+          },
+          {
+            "balance_id": "244f8de0-2d8d-4fba-a77a-ffea2ee32951",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "UNI",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.268793+00:00"
+          },
+          {
+            "balance_id": "57b5fe37-7009-42cc-b78d-fc1ce400a7af",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ETC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.268990+00:00"
+          },
+          {
+            "balance_id": "5ca2c592-b08a-49e4-a31a-af9715f5b6f3",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "ALGO",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.269182+00:00"
+          },
+          {
+            "balance_id": "2bb3e479-49ae-4ee2-8295-0ff0ddc51b27",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "VET",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.269403+00:00"
+          },
+          {
+            "balance_id": "911c95bf-6fe6-4147-af6b-c1d9f4ac16c0",
+            "user_id": "ed798114-869e-45c3-b77c-a95bbec6867e",
+            "currency": "WBTC",
+            "balance": 0.0,
+            "locked_balance": 0.0,
+            "last_updated": "2025-11-30T16:08:34.269595+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "test": "Final Balance Check",
+      "success": true,
+      "details": "Wallet Service: Available=0, Total=0, Locked=0 | Crypto Balances: 1.0",
+      "response": {
+        "wallet_service": {
+          "available": 0,
+          "total": 0,
+          "locked": 0
+        },
+        "crypto_balances": 1.0
+      }
+    }
+  ]
+}
