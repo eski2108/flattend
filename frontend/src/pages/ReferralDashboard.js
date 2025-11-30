@@ -354,6 +354,44 @@ export default function ReferralDashboard() {
           )}
         </div>
 
+        {/* Earnings Breakdown by Fee Type */}
+        <div style={{
+          background: 'rgba(168,85,247,0.05)',
+          border: '2px solid rgba(168,85,247,0.2)',
+          borderRadius: '16px',
+          padding: '2rem',
+          marginTop: '2rem'
+        }}>
+          <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#A855F7', marginBottom: '1.5rem' }}>
+            <PieChart size={24} style={{ display: 'inline', marginRight: '8px' }} />
+            Earnings Breakdown by Fee Type
+          </h2>
+          
+          {referralData.earnings_by_fee_type && referralData.earnings_by_fee_type.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#A3AEC2' }}>
+              <p>No earnings yet from any fee types.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+              {referralData.earnings_by_fee_type && referralData.earnings_by_fee_type.map((item, index) => (
+                <div key={index} style={{
+                  background: 'rgba(168,85,247,0.1)',
+                  border: '1px solid rgba(168,85,247,0.3)',
+                  borderRadius: '12px',
+                  padding: '1rem'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#A3AEC2', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {item.fee_type.replace(/_/g, ' ')}
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '900', color: '#A855F7' }}>
+                    £{item.total.toFixed(2)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Commission Earnings History */}
         <div style={{
           background: 'rgba(255,255,255,0.03)',
