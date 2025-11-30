@@ -56,21 +56,34 @@ function Dashboard() {
 
   const loadDashboardData = async (userId) => {
     try {
+      // Load portfolio summary (P/L stats)
+      const summaryRes = await axios.get(`${API}/api/portfolio/summary/${userId}`);
+      if (summaryRes.data.success) {
+        setPortfolioData({
+          todayPL: summaryRes.data.todayPL || 0,
+          weekPL: summaryRes.data.weekPL || 0,
+          monthPL: summaryRes.data.monthPL || 0,
+          totalPL: summaryRes.data.totalPL || 0,
+          plPercent: summaryRes.data.plPercent || 0,
+          currentValue: summaryRes.data.current_value || 0
+        });
+        setTotalValue(summaryRes.data.current_value || 0);
+      }
+
       // Load balances
       const balancesRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
       if (balancesRes.data.success) {
         const userBalances = balancesRes.data.balances || [];
         setBalances(userBalances);
-        
-        // Calculate total value
-        const total = userBalances.reduce((sum, bal) => {
-          return sum + (bal.total_balance * (bal.price_gbp || 0));
-        }, 0);
-        setTotalValue(total);
-        
-        // Calculate spot balance (all balances are spot for now)
-        setSpotBalance(total);
-        setSavingsBalance(0); // TODO: Get from savings API
+      }
+
+      // Load allocations (spot vs savings)
+      const allocRes = await axios.get(`${API}/api/portfolio/allocations/${userId}`);
+      if (allocRes.data.success) {
+        const spotAlloc = allocRes.data.allocations.filter(a => a.type === 'spot').reduce((sum, a) => sum + a.value, 0);
+        const savingsAlloc = allocRes.data.allocations.filter(a => a.type === 'savings').reduce((sum, a) => sum + a.value, 0);
+        setSpotBalance(spotAlloc);
+        setSavingsBalance(savingsAlloc);
       }
 
       // Load transactions
