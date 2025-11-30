@@ -142,15 +142,30 @@ export default function P2PTradeDetailDemo() {
           </button>
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-white">Trade #{trade.trade_id?.slice(0, 8)}</h1>
-            {timeRemaining > 0 && (
-              <div className="flex items-center gap-2 bg-orange-900/30 px-6 py-3 rounded-xl border border-orange-500/30">
-                <Clock className="w-6 h-6 text-orange-400" />
-                <div>
-                  <div className="text-orange-400 font-bold text-2xl">{formatTime(timeRemaining)}</div>
-                  <div className="text-orange-300 text-xs">Time remaining</div>
+            <div className="flex items-center gap-4">
+              {timeRemaining > 0 && (
+                <div className="flex items-center gap-2 bg-orange-900/30 px-6 py-3 rounded-xl border border-orange-500/30">
+                  <Clock className="w-6 h-6 text-orange-400" />
+                  <div>
+                    <div className="text-orange-400 font-bold text-2xl">{formatTime(timeRemaining)}</div>
+                    <div className="text-orange-300 text-xs">Time remaining</div>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+              {/* Notification Bell */}
+              {user?.user_id && (
+                <P2PNotifications 
+                  userId={user.user_id} 
+                  tradeId={tradeId}
+                  onNotificationClick={(notification) => {
+                    // Handle notification click (e.g., scroll to relevant section)
+                    if (notification.notification_type === 'message_received') {
+                      document.getElementById('chat-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
 
