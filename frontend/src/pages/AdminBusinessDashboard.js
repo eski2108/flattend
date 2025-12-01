@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import {
-  DollarSign, TrendingUp, Users, Activity, Settings, Zap,
-  AlertCircle, Wallet, ArrowUpDown, RefreshCw, Shield, Database,
-  Download, FileText, Lock, Key, Bell, BarChart3, PieChart,
-  TrendingDown, Plus, Minus, Edit, Check, X, ArrowUp, ArrowDown
+  IoCash as DollarSign, IoTrendingUp as TrendingUp, IoPeople as Users, IoPulse as Activity, IoSettings as Settings, IoFlash as Zap,
+  IoAlertCircle as AlertCircle, IoWallet as Wallet, IoSwapVertical as ArrowUpDown, IoRefresh as RefreshCw, IoShield as Shield, IoServer as Database,
+  IoDownload as Download, IoDocument as FileText, IoLockClosed as Lock, IoKey as Key, IoNotifications as Bell, IoBarChart as BarChart3, IoPieChart as PieChart,
+  IoTrendingDown as TrendingDown, IoAdd as Plus, IoRemove as Minus, IoCreate as Edit, IoCheckmark as Check, IoClose as X, IoArrowUp as ArrowUp, IoArrowDown as ArrowDown
 } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
