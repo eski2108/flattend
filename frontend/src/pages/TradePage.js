@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { IoShield, IoClock, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoWallet, IoCopy } from 'react-icons/io5';;
+import { IoShield, IoTime, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoWallet, IoCopy } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import TradeChat from '@/components/TradeChat';

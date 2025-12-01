@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoCloudUpload, IoClock, IoDocument, IoClose, IoSend } from 'react-icons/io5';;
+import { IoCloudUpload, IoTime, IoDocument, IoClose, IoSend } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -205,7 +205,7 @@ export default function OrderDetails() {
     switch (status) {
       case 'completed': return <CheckCircle2 size={20} />;
       case 'disputed': return <AlertTriangle size={20} />;
-      default: return <IoClock size={20} />;
+      default: return <IoTime size={20} />;
     }
   };
 

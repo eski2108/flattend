@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import BoostOfferModal from '@/components/BoostOfferModal';
-import { IoTrendingUp, IoTrendingDown, IoAdd, IoDocument, IoSearch, IoFilter, IoClock, IoShield, IoStar, IoFlash } from 'react-icons/io5';;
+import { IoTrendingUp, IoTrendingDown, IoAdd, IoDocument, IoSearch, IoFilter, IoTime, IoShield, IoStar, IoFlash } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -1817,7 +1817,7 @@ function MyOrdersSection() {
                     borderRadius: '8px',
                     minWidth: '80px'
                   }}>
-                    <IoClock size={16} color="#F59E0B" style={{ marginBottom: '0.25rem' }} />
+                    <IoTime size={16} color="#F59E0B" style={{ marginBottom: '0.25rem' }} />
                     <div style={{ fontSize: '1rem', fontWeight: '700', color: '#F59E0B' }}>
                       {formatTimeRemaining(order.time_remaining)}
                     </div>

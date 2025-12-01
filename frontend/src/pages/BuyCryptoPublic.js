@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { IoSearch, IoCash, IoAlertCircle, IoFlash, IoArrowForward, IoShield, IoClock } from 'react-icons/io5';;
+import { IoSearch, IoCash, IoAlertCircle, IoFlash, IoArrowForward, IoShield, IoTime } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -86,7 +86,7 @@ export default function BuyCryptoPublic() {
               <span>Escrow Protected</span>
             </div>
             <div className="feature-quick">
-              <IoClock size={24} />
+              <IoTime size={24} />
               <span>Fast & Easy</span>
             </div>
             <div className="feature-quick">

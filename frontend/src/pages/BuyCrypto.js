@@ -264,7 +264,7 @@ export default function BuyCrypto() {
               )}
 
               <div className="info-box">
-                <IoClock size={20} />
+                <IoTime size={20} />
                 <p>You'll have 30 minutes to complete the bank transfer</p>
               </div>
 
@@ -291,7 +291,7 @@ export default function BuyCrypto() {
           {buyOrderDetails && (
             <div className="dialog-content">
               <div className="payment-timer">
-                <IoClock size={24} />
+                <IoTime size={24} />
                 <div>
                   <p className="timer-label">Payment Deadline</p>
                   <p className="timer-value">{new Date(buyOrderDetails.payment_deadline).toLocaleString()}</p>

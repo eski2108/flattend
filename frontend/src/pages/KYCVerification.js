@@ -211,7 +211,7 @@ export default function KYCVerification() {
             padding: '2rem',
             textAlign: 'center'
           }}>
-            <IoClock size={64} color="#FBB F24" style={{ margin: '0 auto 1rem' }} />
+            <IoTime size={64} color="#FBB F24" style={{ margin: '0 auto 1rem' }} />
             <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#fff', marginBottom: '1rem' }}>
               KYC Under Review
             </h1>

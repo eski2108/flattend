@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { IoChatbubbles, IoSend, IoCheckmarkCircle, IoClock, IoPersonOutline } from 'react-icons/io5';;
+import { IoChatbubbles, IoSend, IoCheckmarkCircle, IoTime, IoPersonOutline } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -225,7 +225,7 @@ export default function AdminSupport() {
                     </span>
                   </div>
                   <div style={{ fontSize: '12px', color: '#888' }}>
-                    <IoClock size={12} style={{ display: 'inline', marginRight: '4px' }} />
+                    <IoTime size={12} style={{ display: 'inline', marginRight: '4px' }} />
                     {formatDate(chat.created_at)}
                   </div>
                   {chat.last_message && (

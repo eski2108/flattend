@@ -289,7 +289,7 @@ export default function P2PExpress() {
                     </>
                   ) : (
                     <>
-                      <IoClock size={20} color="#F5C542" />
+                      <IoTime size={20} color="#F5C542" />
                       <div>
                         <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Express Seller (2-5 min)</div>
                         <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Matched with fastest qualified seller</div>
@@ -500,7 +500,7 @@ export default function P2PExpress() {
                 boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)'
               }}>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <IoClock size={22} color="#0CEBFF" strokeWidth={2.5} />
+                  <IoTime size={22} color="#0CEBFF" strokeWidth={2.5} />
                   Delivery Time
                 </h3>
                 <div style={{ fontSize: '40px', fontWeight: '700', color: hasAdminLiquidity ? '#22C55E' : '#0CEBFF', marginBottom: '8px' }}>

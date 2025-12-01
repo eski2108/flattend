@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoWallet, IoTrendingUp, IoTrendingDown, IoRefresh, IoCopy, IoChevronDown, IoChevronUp, IoLockClosed, IoClock, IoCheckmarkCircle, IoCloseCircle, IoAlertCircle, IoFilter, IoSearch, IoCloudDownload, IoOpenOutline } from 'react-icons/io5';
+import { IoWallet, IoTrendingUp, IoTrendingDown, IoRefresh, IoCopy, IoChevronDown, IoChevronUp, IoLockClosed, IoTime, IoCheckmarkCircle, IoCloseCircle, IoAlertCircle, IoFilter, IoSearch, IoCloudDownload, IoOpenOutline } from 'react-icons/io5';
 import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { Line, Sparklines, SparklinesLine } from 'react-sparklines';
 
@@ -445,7 +445,7 @@ export default function WalletPagePremium() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-                      <IoClock className="w-4 h-4 text-blue-400" />
+                      <IoTime className="w-4 h-4 text-blue-400" />
                     </div>
                     <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Pending</div>
                   </div>
@@ -740,7 +740,7 @@ export default function WalletPagePremium() {
               {filteredTransactions.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-500/20 to-gray-600/20 flex items-center justify-center mx-auto mb-4">
-                    <IoClock className="w-8 h-8 text-gray-400" />
+                    <IoTime className="w-8 h-8 text-gray-400" />
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2">No transactions yet</h3>
                   <p className="text-gray-400 text-sm">Your transaction history will appear here</p>
