@@ -304,7 +304,7 @@ function SwapCrypto() {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
                       <span style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>From</span>
-                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Balance: 0.0000</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Balance: {(walletBalances[fromCrypto] || 0).toFixed(8)}</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '14px' : '16px', alignItems: isMobile ? 'stretch' : 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0, 240, 255, 0.1)', padding: isMobile ? '12px' : '14px', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.3)', minWidth: isMobile ? '100%' : '180px' }}>
@@ -397,7 +397,7 @@ function SwapCrypto() {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
                       <span style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>To</span>
-                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Balance: 0.0000</span>
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Balance: {(walletBalances[fromCrypto] || 0).toFixed(8)}</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '14px' : '16px', alignItems: isMobile ? 'stretch' : 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(155, 77, 255, 0.1)', padding: isMobile ? '12px' : '14px', borderRadius: '12px', border: '1px solid rgba(155, 77, 255, 0.3)', minWidth: isMobile ? '100%' : '180px' }}>
