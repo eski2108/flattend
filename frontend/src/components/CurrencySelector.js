@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { Check, Globe, IoCheckmark, Search } from 'react-icons/io5';
+import { Check, Globe, IoCheckmark as Check, Search } from 'react-icons/io5';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 

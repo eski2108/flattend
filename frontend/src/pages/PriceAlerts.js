@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
-import { IoAdd, IoNotifications } from 'react-icons/io5';;
+import { IoAdd as Plus, IoNotifications } from 'react-icons/io5';;
 
 export default function PriceAlerts() {
   const [alerts, setAlerts] = useState([]);

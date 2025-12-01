@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, IoCheckmark, IoCheckmarkCircle, Mail } from 'react-icons/io5';
+import { ArrowLeft, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, Mail } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';

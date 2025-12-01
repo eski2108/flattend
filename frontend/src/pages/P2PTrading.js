@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import BoostOfferModal from '@/components/BoostOfferModal';
-import { IoAdd, IoDocument, IoFilter, IoFlash, IoSave, IoSearch, IoShield, IoStar, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';;
+import { IoAdd as Plus, IoDocument as FileText, IoFilter as Filter, IoFlash as Zap, IoSave as Save, IoSearch as Search, IoShield as Shield, IoStar as Star, IoTime as Clock, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

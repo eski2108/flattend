@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoClose, IoCloudUpload, IoDocument, IoSend, IoTime, IoWarning } from 'react-icons/io5';;
+import { IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoClose as X, IoCloudUpload as Upload, IoDocument as FileText, IoSend as Send, IoTime as Clock, IoWarning as AlertTriangle } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 

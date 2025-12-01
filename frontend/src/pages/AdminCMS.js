@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { IoSettings, IoCash, IoPeople, IoDocument, IoWallet, IoShield } from 'react-icons/io5';;
+import { IoSettings as Settings, IoCash as DollarSign, IoPeople as Users, IoDocument as FileText, IoWallet as Wallet, IoShield as Shield } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoDocument, IoChevronDown } from 'react-icons/io5';;
+import { IoDocument as FileText, IoChevronDown } from 'react-icons/io5';;
 import CHXButton from '@/components/CHXButton';
 
 // Import all widgets

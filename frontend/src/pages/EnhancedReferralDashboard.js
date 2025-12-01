@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { IoCash, IoCheckmark, IoCopy, IoPeople, IoTrendingUp } from 'react-icons/io5';;
+import { IoCash as DollarSign, IoCheckmark as Check, IoCopy as Copy, IoPeople as Users, IoTrendingUp as TrendingUp } from 'react-icons/io5';;
 import axios from 'axios';
 import Layout from '@/components/Layout';
 
