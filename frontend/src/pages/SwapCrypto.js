@@ -362,24 +362,37 @@ function SwapCrypto() {
                           ))}
                         </select>
                       </div>
-                      <input
-                        type="number"
-                        value={fromAmount}
-                        onChange={(e) => setFromAmount(e.target.value)}
-                        placeholder="0.00"
-                        style={{
-                          flex: 1,
-                          padding: isMobile ? '12px' : '14px',
-                          background: 'transparent',
-                          border: 'none',
-                          color: '#FFFFFF',
-                          fontSize: isMobile ? '22px' : '26px',
-                          fontWeight: '700',
-                          outline: 'none',
-                          textAlign: isMobile ? 'left' : 'right',
-                          width: isMobile ? '100%' : 'auto'
-                        }}
-                      />
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <input
+                          type="number"
+                          value={fromAmount}
+                          onChange={(e) => {
+                            setFromAmount(e.target.value);
+                            // Auto-calculate crypto amount if in fiat mode
+                            if (inputType === 'fiat' && prices[fromCrypto]) {
+                              const cryptoAmount = parseFloat(e.target.value || 0) / (prices[fromCrypto]?.price_gbp || 1);
+                              // This will be the actual crypto amount to swap
+                            }
+                          }}
+                          placeholder={inputType === 'fiat' ? '50' : '0.0001'}
+                          style={{
+                            padding: isMobile ? '12px' : '14px',
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#FFFFFF',
+                            fontSize: isMobile ? '22px' : '26px',
+                            fontWeight: '700',
+                            outline: 'none',
+                            textAlign: isMobile ? 'left' : 'right',
+                            width: '100%'
+                          }}
+                        />
+                        {inputType === 'fiat' && fromAmount && prices[fromCrypto] && (
+                          <div style={{ textAlign: 'right', fontSize: '13px', color: '#00F0FF' }}>
+                            ≈ {(parseFloat(fromAmount) / (prices[fromCrypto]?.price_gbp || 1)).toFixed(8)} {fromCrypto}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     {prices && prices[fromCrypto] && (
                       <div style={{ marginTop: '12px', textAlign: isMobile ? 'left' : 'right', fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3' }}>
