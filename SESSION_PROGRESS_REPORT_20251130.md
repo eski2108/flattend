@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://exchange-repair.preview.emergentagent.com/api/admin/fees/test
+$ curl https://dual-currency-crypto.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://exchange-repair.preview.emergentagent.com/api/admin/fees/all
+$ curl https://dual-currency-crypto.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

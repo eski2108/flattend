@@ -9,7 +9,7 @@ import json
 import time
 from datetime import datetime
 
-BASE_URL = "https://exchange-repair.preview.emergentagent.com/api"
+BASE_URL = "https://dual-currency-crypto.preview.emergentagent.com/api"
 
 class FocusedSecurityTester:
     def __init__(self):

@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://exchange-repair.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://dual-currency-crypto.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {
