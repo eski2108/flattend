@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, IoFlash as Zap, IoShield as Shield, Shield, Zap } from 'react-icons/io5';
+import { Eye, EyeOff, IoFlash as Zap, IoShield as Shield } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';

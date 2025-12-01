@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, IoShield as Shield, Shield } from 'react-icons/io5';
+import { ArrowLeft, IoShield as Shield } from 'react-icons/io5';
 
 export default function TermsOfService() {
   const navigate = useNavigate();
