@@ -433,13 +433,40 @@ function SwapCrypto() {
                         </div>
                       )}
                       {(walletBalances[fromCrypto] || 0) === 0 && (
-                        <div style={{ 
-                          fontSize: '12px', 
-                          color: '#FF3B30', 
-                          marginTop: '8px',
-                          fontWeight: '600'
-                        }}>
-                          ⚠️ No {fromCrypto} to swap. Buy {fromCrypto} first via Express Buy
+                        <div style={{ marginTop: '12px' }}>
+                          <div style={{ 
+                            fontSize: '12px', 
+                            color: '#FF3B30', 
+                            marginBottom: '8px',
+                            fontWeight: '600'
+                          }}>
+                            ⚠️ No {fromCrypto} to swap
+                          </div>
+                          <button
+                            onClick={() => navigate('/p2p-express')}
+                            style={{
+                              background: 'linear-gradient(135deg, #00F0FF, #9B4DFF)',
+                              border: 'none',
+                              borderRadius: '10px',
+                              padding: '8px 16px',
+                              color: '#FFFFFF',
+                              fontSize: '13px',
+                              fontWeight: '700',
+                              cursor: 'pointer',
+                              boxShadow: '0 4px 15px rgba(0, 240, 255, 0.3)',
+                              transition: 'all 0.3s'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-2px)';
+                              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 240, 255, 0.5)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 240, 255, 0.3)';
+                            }}
+                          >
+                            Buy {fromCrypto} Now →
+                          </button>
                         </div>
                       )}
                     </div>
