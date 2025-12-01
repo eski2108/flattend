@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://dual-currency-crypto.preview.emergentagent.com
+**Test it now at:** https://cryptospeed.preview.emergentagent.com

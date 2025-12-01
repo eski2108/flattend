@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://dual-currency-crypto.preview.emergentagent.com/p2p-express
+https://cryptospeed.preview.emergentagent.com/p2p-express
 
 ---
 
