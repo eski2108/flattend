@@ -135,7 +135,7 @@ export default function P2PExpress() {
 
       const response = await axios.post(`${API}/api/p2p/express/check-liquidity`, {
         crypto: selectedCoin,
-        crypto_amount: cryptoAmount
+        crypto_amount: netCryptoAmount
       });
 
       if (response.data.success) {
