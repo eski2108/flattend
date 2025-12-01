@@ -322,7 +322,7 @@ function SwapCrypto() {
                     pointerEvents: 'none'
                   }} />
 
-                  {/* From Section with Logo */}
+                  {/* From Section with Dual Currency Input */}
                   <div style={{
                     background: 'rgba(0, 0, 0, 0.4)',
                     border: '1px solid rgba(0, 240, 255, 0.3)',
@@ -333,28 +333,7 @@ function SwapCrypto() {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
                       <span style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>From</span>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <button
-                          onClick={() => setInputType(inputType === 'crypto' ? 'fiat' : 'crypto')}
-                          style={{
-                            background: 'rgba(0, 240, 255, 0.15)',
-                            border: '1px solid rgba(0, 240, 255, 0.4)',
-                            borderRadius: '6px',
-                            padding: '4px 10px',
-                            color: '#00F0FF',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s'
-                          }}
-                        >
-                          {inputType === 'crypto' ? 'Enter in £/$/€' : 'Enter in Crypto'}
-                        </button>
-                        <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Balance: {(walletBalances[fromCrypto] || 0).toFixed(8)} {fromCrypto}</span>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '14px' : '16px', alignItems: isMobile ? 'stretch' : 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0, 240, 255, 0.1)', padding: isMobile ? '12px' : '14px', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.3)', minWidth: isMobile ? '100%' : '180px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0, 240, 255, 0.1)', padding: isMobile ? '12px' : '14px', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.3)' }}>
                         <span style={{ fontSize: '28px' }}>{getFromCrypto().logo}</span>
                         <select
                           value={fromCrypto}
@@ -366,8 +345,7 @@ function SwapCrypto() {
                             fontSize: isMobile ? '17px' : '19px',
                             fontWeight: '700',
                             cursor: 'pointer',
-                            outline: 'none',
-                            flex: 1
+                            outline: 'none'
                           }}
                         >
                           {cryptos.map(crypto => (
@@ -375,43 +353,26 @@ function SwapCrypto() {
                           ))}
                         </select>
                       </div>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <input
-                          type="number"
-                          value={fromAmount}
-                          onChange={(e) => {
-                            setFromAmount(e.target.value);
-                            // Auto-calculate crypto amount if in fiat mode
-                            if (inputType === 'fiat' && prices[fromCrypto]) {
-                              const cryptoAmount = parseFloat(e.target.value || 0) / (prices[fromCrypto]?.price_gbp || 1);
-                              // This will be the actual crypto amount to swap
-                            }
-                          }}
-                          placeholder={inputType === 'fiat' ? '50' : '0.0001'}
-                          style={{
-                            padding: isMobile ? '12px' : '14px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#FFFFFF',
-                            fontSize: isMobile ? '22px' : '26px',
-                            fontWeight: '700',
-                            outline: 'none',
-                            textAlign: isMobile ? 'left' : 'right',
-                            width: '100%'
-                          }}
-                        />
-                        {inputType === 'fiat' && fromAmount && prices[fromCrypto] && (
-                          <div style={{ textAlign: 'right', fontSize: '13px', color: '#00F0FF' }}>
-                            ≈ {(parseFloat(fromAmount) / (prices[fromCrypto]?.price_gbp || 1)).toFixed(8)} {fromCrypto}
-                          </div>
-                        )}
-                      </div>
                     </div>
-                    {inputType === 'crypto' && prices && prices[fromCrypto] && (
-                      <div style={{ marginTop: '12px', textAlign: isMobile ? 'left' : 'right', fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3' }}>
-                        ≈ £{(parseFloat(fromAmount || 0) * (prices[fromCrypto]?.price_gbp || 0)).toFixed(2)}
-                      </div>
-                    )}
+                    <DualCurrencyInput
+                      cryptoSymbol={fromCrypto}
+                      fiatCurrency={selectedFiat}
+                      onFiatChange={(amount) => {
+                        // Convert fiat to crypto for backend
+                        const cryptoAmt = amount && prices[fromCrypto] ? amount / prices[fromCrypto].price_gbp : 0;
+                        setFromAmount(cryptoAmt.toString());
+                      }}
+                      onCryptoChange={(amount) => {
+                        setFromAmount(amount.toString());
+                      }}
+                      initialFiatAmount=""
+                      initialCryptoAmount={fromAmount}
+                      fee={1.5}
+                      availableBalance={walletBalances[fromCrypto] || 0}
+                      balanceInCrypto={true}
+                      label=""
+                      showCurrencySelector={true}
+                    />
                   </div>
 
                   {/* Center Reverse Button */}
