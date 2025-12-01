@@ -22406,8 +22406,8 @@ async def get_portfolio_summary(user_id: str):
             {"_id": 0}
         ).to_list(1000)
         
-        # Get current balances
-        wallet_balances = await db.internal_balances.find(
+        # Get current balances from wallets collection
+        wallet_balances = await db.wallets.find(
             {"user_id": user_id},
             {"_id": 0}
         ).to_list(100)
