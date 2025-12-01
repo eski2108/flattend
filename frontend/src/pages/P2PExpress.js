@@ -259,51 +259,82 @@ export default function P2PExpress() {
               </div>
             </div>
 
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', 
-            gap: isMobile ? '20px' : '40px', 
-            alignItems: 'start', 
-            justifyItems: 'stretch',
-            margin: '0 auto',
-            maxWidth: '100%'
-          }}>
-            
-            <div>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? '24px' : '32px' }}>
               
+              {/* Main Purchase Section */}
+              <div>
+              
+              {/* Live Price Card - Matching Swap card style */}
               {livePrice && (
                 <div style={{
-                  background: 'rgba(12, 235, 255, 0.05)',
-                  border: '2px solid rgba(12, 235, 255, 0.3)',
-                  borderRadius: isMobile ? '16px' : '20px',
-                  padding: isMobile ? '16px' : '24px',
+                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                  border: '2px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '24px',
+                  padding: isMobile ? '24px' : '32px',
                   marginBottom: isMobile ? '20px' : '32px',
-                  display: 'flex',
-                  flexDirection: isMobile ? 'column' : 'row',
-                  justifyContent: 'space-between',
-                  alignItems: isMobile ? 'flex-start' : 'center',
-                  gap: isMobile ? '16px' : '0'
+                  boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+                  position: 'relative'
                 }}>
-                  <div>
-                    <div style={{ fontSize: isMobile ? '12px' : '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Live Price</div>
-                    <div style={{ fontSize: isMobile ? '24px' : '32px', fontWeight: '700', color: '#0CEBFF' }}>
-                      £{livePrice.price_gbp.toLocaleString()}
+                  {/* Floating Glow */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-40px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '200px',
+                    height: '80px',
+                    background: 'radial-gradient(circle, rgba(0, 240, 255, 0.4), transparent)',
+                    filter: 'blur(40px)',
+                    pointerEvents: 'none'
+                  }} />
+
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: isMobile ? 'column' : 'row',
+                    justifyContent: 'space-between', 
+                    alignItems: isMobile ? 'flex-start' : 'center',
+                    gap: isMobile ? '20px' : '0'
+                  }}>
+                    <div>
+                      <div style={{ 
+                        fontSize: isMobile ? '11px' : '12px', 
+                        color: '#8F9BB3', 
+                        marginBottom: '8px', 
+                        fontWeight: '600', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '1px' 
+                      }}>LIVE PRICE</div>
+                      <div style={{ 
+                        fontSize: isMobile ? '28px' : '36px', 
+                        fontWeight: '700', 
+                        color: '#00F0FF',
+                        textShadow: '0 0 20px rgba(0, 240, 255, 0.5)'
+                      }}>
+                        £{livePrice.price_gbp.toLocaleString()}
+                      </div>
+                      <div style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', marginTop: '6px' }}>per {selectedCoin}</div>
                     </div>
-                    <div style={{ fontSize: isMobile ? '12px' : '14px', color: '#8F9BB3', marginTop: '4px' }}>per {selectedCoin}</div>
-                  </div>
-                  <div style={{ textAlign: isMobile ? 'left' : 'right', width: isMobile ? '100%' : 'auto' }}>
-                    <div style={{ fontSize: isMobile ? '12px' : '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Change</div>
-                    <div style={{
-                      fontSize: isMobile ? '20px' : '24px',
-                      fontWeight: '700',
-                      color: livePrice.change_24h >= 0 ? '#22C55E' : '#EF4444',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      justifyContent: isMobile ? 'flex-start' : 'flex-end'
-                    }}>
-                      {livePrice.change_24h >= 0 ? <IoTrendingUp size={isMobile ? 20 : 24} /> : <IoTrendingDown size={isMobile ? 20 : 24} />}
-                      {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
+                    <div style={{ textAlign: isMobile ? 'left' : 'right', width: isMobile ? '100%' : 'auto' }}>
+                      <div style={{ 
+                        fontSize: isMobile ? '11px' : '12px', 
+                        color: '#8F9BB3', 
+                        marginBottom: '8px', 
+                        fontWeight: '600', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '1px' 
+                      }}>24H CHANGE</div>
+                      <div style={{
+                        fontSize: isMobile ? '22px' : '26px',
+                        fontWeight: '700',
+                        color: livePrice.change_24h >= 0 ? '#22C55E' : '#EF4444',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        justifyContent: isMobile ? 'flex-start' : 'flex-end'
+                      }}>
+                        {livePrice.change_24h >= 0 ? <IoTrendingUp size={isMobile ? 22 : 26} /> : <IoTrendingDown size={isMobile ? 22 : 26} />}
+                        {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
+                      </div>
                     </div>
                   </div>
                 </div>
