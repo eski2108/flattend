@@ -267,32 +267,34 @@ export default function P2PExpress() {
                 <div style={{
                   background: 'rgba(12, 235, 255, 0.05)',
                   border: '2px solid rgba(12, 235, 255, 0.3)',
-                  borderRadius: '20px',
-                  padding: '24px',
-                  marginBottom: '32px',
+                  borderRadius: isMobile ? '16px' : '20px',
+                  padding: isMobile ? '16px' : '24px',
+                  marginBottom: isMobile ? '20px' : '32px',
                   display: 'flex',
+                  flexDirection: isMobile ? 'column' : 'row',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: isMobile ? 'flex-start' : 'center',
+                  gap: isMobile ? '16px' : '0'
                 }}>
                   <div>
-                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Live Price</div>
-                    <div style={{ fontSize: '32px', fontWeight: '700', color: '#0CEBFF' }}>
+                    <div style={{ fontSize: isMobile ? '12px' : '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Live Price</div>
+                    <div style={{ fontSize: isMobile ? '24px' : '32px', fontWeight: '700', color: '#0CEBFF' }}>
                       £{livePrice.price_gbp.toLocaleString()}
                     </div>
-                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginTop: '4px' }}>per {selectedCoin}</div>
+                    <div style={{ fontSize: isMobile ? '12px' : '14px', color: '#8F9BB3', marginTop: '4px' }}>per {selectedCoin}</div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Change</div>
+                  <div style={{ textAlign: isMobile ? 'left' : 'right', width: isMobile ? '100%' : 'auto' }}>
+                    <div style={{ fontSize: isMobile ? '12px' : '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Change</div>
                     <div style={{
-                      fontSize: '24px',
+                      fontSize: isMobile ? '20px' : '24px',
                       fontWeight: '700',
                       color: livePrice.change_24h >= 0 ? '#22C55E' : '#EF4444',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      justifyContent: 'flex-end'
+                      justifyContent: isMobile ? 'flex-start' : 'flex-end'
                     }}>
-                      {livePrice.change_24h >= 0 ? <IoTrendingUp size={24} /> : <IoTrendingDown size={24} />}
+                      {livePrice.change_24h >= 0 ? <IoTrendingUp size={isMobile ? 20 : 24} /> : <IoTrendingDown size={isMobile ? 20 : 24} />}
                       {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
                     </div>
                   </div>
