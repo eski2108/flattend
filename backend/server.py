@@ -22431,8 +22431,13 @@ async def get_portfolio_summary(user_id: str):
         for balance in wallet_balances:
             coin = balance.get("currency")
             amount = Decimal(str(balance.get("balance", 0)))
-            price = Decimal(str(prices.get(coin, 0)))
-            current_value += amount * price
+            
+            # GBP is already in GBP, so price = 1
+            if coin == "GBP":
+                current_value += amount
+            else:
+                price = Decimal(str(prices.get(coin, 0)))
+                current_value += amount * price
         
         for saving in savings_balances:
             coin = saving.get("currency")
