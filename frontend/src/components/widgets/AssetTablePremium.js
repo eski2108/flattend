@@ -1,6 +1,7 @@
 import React from 'react';
 import CHXButton from '../CHXButton';
-import { ArrowDownLeft, ArrowUpRight, Repeat } from 'react-icons/io5';
+import { IoArrowDownCircle as ArrowDownLeft, IoArrowUpCircle as ArrowUpRight } from 'react-icons/io5';
+import { BiRepeat } from 'react-icons/bi';
 import TradingViewSparkline from './TradingViewSparkline';
 
 // Premium emoji mapping as specified
