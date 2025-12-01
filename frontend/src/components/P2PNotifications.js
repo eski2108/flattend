@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, X, Check, AlertCircle, MessageCircle, Clock, CheckCircle } from 'lucide-react';
+import { Bell, X, Check, AlertCircle, MessageCircle, Clock, CheckCircle } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -78,21 +78,21 @@ const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'trade_opened':
-        return <CheckCircle size={18} style={{ color: '#22C55E' }} />;
+        return <IoCheckmarkCircle size={18} style={{ color: '#22C55E' }} />;
       case 'escrow_locked':
-        return <Check size={18} style={{ color: '#22C55E' }} />;
+        return <IoCheckmark size={18} style={{ color: '#22C55E' }} />;
       case 'message_received':
-        return <MessageCircle size={18} style={{ color: '#3B82F6' }} />;
+        return <IoChatbubbles size={18} style={{ color: '#3B82F6' }} />;
       case 'payment_marked':
-        return <Clock size={18} style={{ color: '#F59E0B' }} />;
+        return <IoClock size={18} style={{ color: '#F59E0B' }} />;
       case 'crypto_released':
-        return <CheckCircle size={18} style={{ color: '#22C55E' }} />;
+        return <IoCheckmarkCircle size={18} style={{ color: '#22C55E' }} />;
       case 'dispute_opened':
-        return <AlertCircle size={18} style={{ color: '#EF4444' }} />;
+        return <IoAlertCircle size={18} style={{ color: '#EF4444' }} />;
       case 'admin_message':
-        return <MessageCircle size={18} style={{ color: '#8B5CF6' }} />;
+        return <IoChatbubbles size={18} style={{ color: '#8B5CF6' }} />;
       default:
-        return <Bell size={18} style={{ color: '#6B7280' }} />;
+        return <IoNotifications size={18} style={{ color: '#6B7280' }} />;
     }
   };
 
@@ -131,7 +131,7 @@ const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
           justifyContent: 'center',
         }}
       >
-        <Bell size={20} style={{ color: '#fff' }} />
+        <IoNotifications size={20} style={{ color: '#fff' }} />
         {unreadCount > 0 && (
           <div
             style={{
@@ -216,7 +216,7 @@ const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
                   padding: '4px',
                 }}
               >
-                <X size={20} />
+                <IoClose size={20} />
               </button>
             </div>
           </div>
@@ -237,7 +237,7 @@ const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
                   color: 'rgba(255, 255, 255, 0.5)',
                 }}
               >
-                <Bell size={40} style={{ opacity: 0.3, marginBottom: '16px' }} />
+                <IoNotifications size={40} style={{ opacity: 0.3, marginBottom: '16px' }} />
                 <p>No notifications yet</p>
               </div>
             ) : (

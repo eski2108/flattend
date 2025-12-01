@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CHXButton from '../CHXButton';
-import { ChevronDown, ArrowDownLeft, ArrowUpRight, Repeat } from 'lucide-react';
+import { ChevronDown, ArrowDownLeft, ArrowUpRight, Repeat } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 // Coin emoji mapping
@@ -187,7 +187,7 @@ const AssetTable = ({ assets, onDeposit, onWithdraw, onSwap }) => {
                               <CHXButton onClick={() => onWithdraw(asset)} coinColor={asset.color} variant="secondary" size="medium" fullWidth icon={<ArrowUpRight size={18} />}>
                                 Withdraw {asset.symbol}
                               </CHXButton>
-                              <CHXButton onClick={() => onSwap(asset)} coinColor={asset.color} variant="secondary" size="medium" fullWidth icon={<Repeat size={18} />}>
+                              <CHXButton onClick={() => onSwap(asset)} coinColor={asset.color} variant="secondary" size="medium" fullWidth icon={<BiRepeat size={18} />}>
                                 Swap {asset.symbol}
                               </CHXButton>
                             </div>
@@ -267,7 +267,7 @@ const AssetTable = ({ assets, onDeposit, onWithdraw, onSwap }) => {
                     <CHXButton onClick={() => onWithdraw(asset)} coinColor={asset.color} variant="secondary" size="small" fullWidth icon={<ArrowUpRight size={14} />}>
                       Withdraw
                     </CHXButton>
-                    <CHXButton onClick={() => onSwap(asset)} coinColor={asset.color} variant="secondary" size="small" fullWidth icon={<Repeat size={14} />}>
+                    <CHXButton onClick={() => onSwap(asset)} coinColor={asset.color} variant="secondary" size="small" fullWidth icon={<BiRepeat size={14} />}>
                       Swap
                     </CHXButton>
                   </div>

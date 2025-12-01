@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bell, BellOff, TrendingUp, TrendingDown, Trash2, Plus } from 'lucide-react';
+import { Bell, BellOff, TrendingUp, TrendingDown, Trash2, Plus } from 'react-icons/io5';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -127,7 +127,7 @@ export default function PriceAlerts() {
             gap: '0.5rem'
           }}
         >
-          <Plus size={18} />
+          <IoAdd size={18} />
           New Alert
         </button>
       </div>
@@ -141,7 +141,7 @@ export default function PriceAlerts() {
           borderRadius: '12px',
           border: '1px solid rgba(255, 255, 255, 0.1)'
         }}>
-          <Bell size={48} color="#444" style={{ marginBottom: '1rem' }} />
+          <IoNotifications size={48} color="#444" style={{ marginBottom: '1rem' }} />
           <p style={{ color: '#888', fontSize: '16px', margin: 0 }}>
             No price alerts set up yet
           </p>
@@ -175,9 +175,9 @@ export default function PriceAlerts() {
                   justifyContent: 'center'
                 }}>
                   {alert.direction === 'up' ? (
-                    <TrendingUp size={24} color="#22C55E" />
+                    <IoTrendingUp size={24} color="#22C55E" />
                   ) : (
-                    <TrendingDown size={24} color="#EF4444" />
+                    <IoTrendingDown size={24} color="#EF4444" />
                   )}
                 </div>
 
@@ -216,7 +216,7 @@ export default function PriceAlerts() {
                   }}
                   title={alert.enabled ? 'Disable alert' : 'Enable alert'}
                 >
-                  {alert.enabled ? <Bell size={20} /> : <BellOff size={20} />}
+                  {alert.enabled ? <IoNotifications size={20} /> : <BellOff size={20} />}
                 </button>
 
                 <button
@@ -309,7 +309,7 @@ export default function PriceAlerts() {
                     gap: '0.5rem'
                   }}
                 >
-                  <TrendingUp size={18} />
+                  <IoTrendingUp size={18} />
                   Price Up
                 </button>
                 <button
@@ -329,7 +329,7 @@ export default function PriceAlerts() {
                     gap: '0.5rem'
                   }}
                 >
-                  <TrendingDown size={18} />
+                  <IoTrendingDown size={18} />
                   Price Down
                 </button>
               </div>

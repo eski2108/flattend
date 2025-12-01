@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import axios from 'axios';
 import Layout from '../components/Layout';
-import { DollarSign, TrendingUp, Wallet, Send, Settings } from 'lucide-react';
+import { DollarSign, TrendingUp, Wallet, Send, Settings } from 'react-icons/io5';
 import './AdminFees.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -174,7 +174,7 @@ export default function AdminFees() {
       <div className="admin-fees-container">
         <div className="admin-fees-header">
           <h1 className="page-title">
-            <Wallet size={32} />
+            <IoWallet size={32} />
             Admin Fee Management
           </h1>
           <p className="page-subtitle">Manage platform fees and admin wallet</p>
@@ -184,7 +184,7 @@ export default function AdminFees() {
         <div className="admin-wallet-section">
           <div className="section-header">
             <h2>
-              <DollarSign size={24} />
+              <IoCash size={24} />
               Admin Wallet Balance
             </h2>
             <div style={{ display: 'flex', gap: '1rem' }}>
@@ -192,14 +192,14 @@ export default function AdminFees() {
                 className="wallet-settings-btn"
                 onClick={() => setShowWalletModal(true)}
               >
-                <Settings size={18} />
+                <IoSettings size={18} />
                 Manage Wallet Addresses
               </button>
               <button 
                 className="payout-btn"
                 onClick={() => setPayoutModal(true)}
               >
-                <Send size={18} />
+                <IoSend size={18} />
                 Withdraw to External Wallet
               </button>
             </div>
@@ -260,7 +260,7 @@ export default function AdminFees() {
         <div className="fee-settings-section">
           <div className="section-header">
             <h2>
-              <Settings size={24} />
+              <IoSettings size={24} />
               Platform Fee Settings
             </h2>
           </div>
@@ -322,7 +322,7 @@ export default function AdminFees() {
         {/* Recent Fee Transactions */}
         <div className="recent-fees-section">
           <h2>
-            <TrendingUp size={24} />
+            <IoTrendingUp size={24} />
             Recent Fee Collections
           </h2>
 
@@ -395,7 +395,7 @@ export default function AdminFees() {
                     Cancel
                   </button>
                   <button type="submit" className="submit-btn">
-                    <Send size={18} />
+                    <IoSend size={18} />
                     Send Payout
                   </button>
                 </div>

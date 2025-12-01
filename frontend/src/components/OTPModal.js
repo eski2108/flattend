@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Shield, RefreshCw } from 'lucide-react';
+import { X, Shield, RefreshCw } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -160,7 +160,7 @@ export default function OTPModal({
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Shield size={28} color="#00F0FF" strokeWidth={2.5} />
+            <IoShield size={28} color="#00F0FF" strokeWidth={2.5} />
             <h2 style={{ color: '#fff', fontSize: '1.75rem', fontWeight: '700', margin: 0 }}>{title}</h2>
           </div>
           <button
@@ -186,7 +186,7 @@ export default function OTPModal({
               e.currentTarget.style.color = '#9FA6B2';
             }}
           >
-            <X size={24} />
+            <IoClose size={24} />
           </button>
         </div>
 
@@ -269,7 +269,7 @@ export default function OTPModal({
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <RefreshCw size={18} style={{ animation: sendingOTP ? 'spin 1s linear infinite' : 'none' }} />
+              <IoRefresh size={18} style={{ animation: sendingOTP ? 'spin 1s linear infinite' : 'none' }} />
               {sendingOTP ? 'Sending...' : 'Resend OTP'}
             </button>
           )}

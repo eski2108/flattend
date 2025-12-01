@@ -7,7 +7,7 @@ import {
   AlertCircle, Wallet, ArrowUpDown, RefreshCw, Shield, Database,
   Download, FileText, Lock, Key, Bell, BarChart3, PieChart,
   TrendingDown, Plus, Minus, Edit, Check, X, ArrowUp, ArrowDown
-} from 'lucide-react';
+} from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -188,7 +188,7 @@ export default function AdminBusinessDashboard() {
         color: '#00F0FF'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <RefreshCw size={48} style={{ animation: 'spin 1s linear infinite' }} />
+          <IoRefresh size={48} style={{ animation: 'spin 1s linear infinite' }} />
           <div style={{ marginTop: '1rem', fontSize: '18px' }}>Loading Business Dashboard...</div>
         </div>
       </div>
@@ -228,7 +228,7 @@ export default function AdminBusinessDashboard() {
               gap: '8px'
             }}
           >
-            <RefreshCw size={18} />
+            <IoRefresh size={18} />
             Refresh All
           </button>
         </div>
@@ -366,7 +366,7 @@ export default function AdminBusinessDashboard() {
                                     cursor: 'pointer'
                                   }}
                                 >
-                                  <Check size={18} />
+                                  <IoCheckmark size={18} />
                                 </button>
                                 <button
                                   onClick={() => {
@@ -383,7 +383,7 @@ export default function AdminBusinessDashboard() {
                                     cursor: 'pointer'
                                   }}
                                 >
-                                  <X size={18} />
+                                  <IoClose size={18} />
                                 </button>
                               </div>
                             ) : (
@@ -405,7 +405,7 @@ export default function AdminBusinessDashboard() {
                                   gap: '8px'
                                 }}
                               >
-                                <Edit size={16} />
+                                <IoCreate size={16} />
                                 Edit
                               </button>
                             )}

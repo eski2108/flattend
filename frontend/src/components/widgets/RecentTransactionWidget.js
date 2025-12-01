@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownLeft, ArrowUpRight, Repeat, TrendingUp } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Repeat, TrendingUp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 const RecentTransactionWidget = ({ lastTransaction }) => {
@@ -9,8 +9,8 @@ const RecentTransactionWidget = ({ lastTransaction }) => {
     switch(type) {
       case 'deposit': return <ArrowDownLeft size={20} color="#22C55E" />;
       case 'withdraw': return <ArrowUpRight size={20} color="#EF4444" />;
-      case 'swap': return <Repeat size={20} color="#00C6FF" />;
-      case 'savings': return <TrendingUp size={20} color="#FBBF24" />;
+      case 'swap': return <BiRepeat size={20} color="#00C6FF" />;
+      case 'savings': return <IoTrendingUp size={20} color="#FBBF24" />;
       default: return null;
     }
   };

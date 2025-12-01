@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { Zap, TrendingUp, TrendingDown, Clock, Shield, DollarSign, CheckCircle } from 'lucide-react';
+import { Zap, TrendingUp, TrendingDown, Clock, Shield, DollarSign, CheckCircle } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -222,7 +222,7 @@ export default function P2PExpress() {
 
           <div style={{ marginBottom: '48px', textAlign: 'center' }}>
             <h1 style={{ fontSize: '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-              <Zap size={48} color="#0CEBFF" strokeWidth={2.5} />
+              <IoFlash size={48} color="#0CEBFF" strokeWidth={2.5} />
               P2P Express
             </h1>
             <p style={{ fontSize: '18px', color: '#8F9BB3', margin: 0 }}>Instant crypto purchase • 2-5 minute delivery</p>
@@ -261,7 +261,7 @@ export default function P2PExpress() {
                       gap: '8px',
                       justifyContent: 'flex-end'
                     }}>
-                      {livePrice.change_24h >= 0 ? <TrendingUp size={24} /> : <TrendingDown size={24} />}
+                      {livePrice.change_24h >= 0 ? <IoTrendingUp size={24} /> : <IoTrendingDown size={24} />}
                       {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
                     </div>
                   </div>
@@ -281,7 +281,7 @@ export default function P2PExpress() {
                 }}>
                   {hasAdminLiquidity ? (
                     <>
-                      <Zap size={20} color="#22C55E" />
+                      <IoFlash size={20} color="#22C55E" />
                       <div>
                         <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>Instant Delivery Available</div>
                         <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Crypto will be credited immediately</div>
@@ -289,7 +289,7 @@ export default function P2PExpress() {
                     </>
                   ) : (
                     <>
-                      <Clock size={20} color="#F5C542" />
+                      <IoClock size={20} color="#F5C542" />
                       <div>
                         <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Express Seller (2-5 min)</div>
                         <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Matched with fastest qualified seller</div>
@@ -479,7 +479,7 @@ export default function P2PExpress() {
                   >
                     {loading ? 'Processing...' : (
                       <>
-                        <Zap size={22} />
+                        <IoFlash size={22} />
                         Buy Now
                       </>
                     )}
@@ -500,7 +500,7 @@ export default function P2PExpress() {
                 boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)'
               }}>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Clock size={22} color="#0CEBFF" strokeWidth={2.5} />
+                  <IoClock size={22} color="#0CEBFF" strokeWidth={2.5} />
                   Delivery Time
                 </h3>
                 <div style={{ fontSize: '40px', fontWeight: '700', color: hasAdminLiquidity ? '#22C55E' : '#0CEBFF', marginBottom: '8px' }}>
@@ -519,33 +519,33 @@ export default function P2PExpress() {
                 boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)'
               }}>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <CheckCircle size={22} color="#0CEBFF" strokeWidth={2.5} />
+                  <IoCheckmarkCircle size={22} color="#0CEBFF" strokeWidth={2.5} />
                   Express Features
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                    <Zap size={22} color="#0CEBFF" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <IoFlash size={22} color="#0CEBFF" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
                       <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>Instant Processing</div>
                       <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Your order is processed immediately</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                    <Shield size={22} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <IoShield size={22} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
                       <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>Secure Escrow</div>
                       <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Your funds are protected during the transaction</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                    <DollarSign size={22} color="#F5C542" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <IoCash size={22} color="#F5C542" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
                       <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>Fixed 2.5% Fee</div>
                       <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Transparent pricing, no hidden charges</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                    <CheckCircle size={22} color="#0CEBFF" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <IoCheckmarkCircle size={22} color="#0CEBFF" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
                       <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>24/7 Support</div>
                       <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Get help anytime you need it</div>

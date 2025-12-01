@@ -1,6 +1,6 @@
 import React from 'react';
 import CHXButton from '../CHXButton';
-import { ArrowDownLeft, ArrowUpRight, Repeat } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Repeat } from 'react-icons/io5';
 import TradingViewSparkline from './TradingViewSparkline';
 
 // Premium emoji mapping as specified
@@ -304,7 +304,7 @@ const AssetTablePremium = ({ assets, onDeposit, onWithdraw, onSwap }) => {
                           }, 80);
                         }}
                       >
-                        <Repeat size={14} strokeWidth={2.5} />
+                        <BiRepeat size={14} strokeWidth={2.5} />
                         Swap
                       </button>
                     </div>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { TrendingUp, TrendingDown, Zap, Info, BarChart3, Activity, DollarSign, TrendingUpDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Zap, Info, BarChart3, Activity, DollarSign, TrendingUpDown } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -274,7 +274,7 @@ export default function SpotTrading() {
               <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '16px', gap: isMobile ? '16px' : '0' }}>
                 <div>
                   <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <Activity size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
+                    <IoPulse size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
                     Spot Trading
                   </h1>
                   <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>Advanced trading with TradingView charts and real-time data</p>
@@ -345,7 +345,7 @@ export default function SpotTrading() {
                   alignItems: 'center',
                   gap: '6px'
                 }}>
-                  {marketStats.change24h >= 0 ? <TrendingUp size={22} /> : <TrendingDown size={22} />}
+                  {marketStats.change24h >= 0 ? <IoTrendingUp size={22} /> : <IoTrendingDown size={22} />}
                   {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
                 </div>
               </div>
@@ -644,7 +644,7 @@ export default function SpotTrading() {
                         size="large"
                         fullWidth
                         disabled={isLoading || !amount}
-                        icon={<Zap size={20} />}
+                        icon={<IoFlash size={20} />}
                       >
                         {isLoading ? 'Processing Order...' : `${orderType.toUpperCase()} ${tradingPairs.find(p => p.symbol === selectedPair)?.base || 'Crypto'}`}
                       </CHXButton>
@@ -701,7 +701,7 @@ export default function SpotTrading() {
                     gap: '10px',
                     textShadow: '0 0 15px rgba(0, 240, 255, 0.5)'
                   }}>
-                    <BarChart3 size={22} color="#00F0FF" strokeWidth={2.5} />
+                    <IoBarChart size={22} color="#00F0FF" strokeWidth={2.5} />
                     Market Info
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Shield, Zap, Eye, EyeOff } from 'lucide-react';
+import { Shield, Zap, Eye, EyeOff } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -70,7 +70,7 @@ export default function AdminLogin() {
         <Card className="admin-login-card">
           <div className="admin-login-header">
             <div className="admin-logo">
-              <Shield size={48} className="admin-shield-icon" />
+              <IoShield size={48} className="admin-shield-icon" />
             </div>
             <h1 className="admin-login-title">Admin Access</h1>
             <p className="admin-login-subtitle">Business Owner Dashboard</p>
@@ -107,7 +107,7 @@ export default function AdminLogin() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="password-toggle"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
                 </button>
               </div>
             </div>
@@ -129,7 +129,7 @@ export default function AdminLogin() {
                   onClick={() => setShowCode(!showCode)}
                   className="password-toggle"
                 >
-                  {showCode ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showCode ? <IoEyeOff size={20} /> : <IoEye size={20} />}
                 </button>
               </div>
               <p className="input-hint">Admin code: CRYPTOLEND_ADMIN_2025</p>
@@ -166,7 +166,7 @@ export default function AdminLogin() {
 
         <div className="admin-login-info">
           <div className="info-card">
-            <Zap size={24} />
+            <IoFlash size={24} />
             <h3>Business Owner Portal</h3>
             <p>View all customers, manage disputes, and monitor platform activity</p>
           </div>

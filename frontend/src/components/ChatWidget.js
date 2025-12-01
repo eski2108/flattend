@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Minimize2, Zap, HelpCircle } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Zap, HelpCircle } from 'react-icons/io5';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -128,7 +128,7 @@ export default function ChatWidget() {
           e.currentTarget.style.boxShadow = '0 4px 24px rgba(0, 240, 255, 0.6), 0 0 48px rgba(155, 77, 255, 0.4)';
         }}
       >
-        <MessageCircle size={30} color="#FFF" strokeWidth={2.5} />
+        <IoChatbubbles size={30} color="#FFF" strokeWidth={2.5} />
         {unreadCount > 0 && (
           <div style={{
             position: 'absolute',
@@ -198,7 +198,7 @@ export default function ChatWidget() {
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Zap size={22} color="#00F0FF" strokeWidth={2.5} />
+            <IoFlash size={22} color="#00F0FF" strokeWidth={2.5} />
           </div>
           <div>
             <div style={{ color: '#FFF', fontSize: '17px', fontWeight: '700' }}>Coin Hub X AI</div>
@@ -240,7 +240,7 @@ export default function ChatWidget() {
             onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
             onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
           >
-            <X size={18} color="#FFF" />
+            <IoClose size={18} color="#FFF" />
           </button>
         </div>
       </div>
@@ -369,7 +369,7 @@ export default function ChatWidget() {
                 e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              <Send size={20} color={inputMessage.trim() && !isLoading ? '#FFF' : '#666'} />
+              <IoSend size={20} color={inputMessage.trim() && !isLoading ? '#FFF' : '#666'} />
             </button>
           </div>
         </>

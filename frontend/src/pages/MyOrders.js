@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Clock, CheckCircle2, XCircle, AlertTriangle, TrendingUp, Shield } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, AlertTriangle, TrendingUp, Shield } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -198,7 +198,7 @@ export default function MyOrders() {
             borderRadius: '16px',
             border: '2px dashed rgba(255, 255, 255, 0.1)'
           }}>
-            <TrendingUp size={64} color="rgba(255,255,255,0.3)" style={{ marginBottom: '1.5rem' }} />
+            <IoTrendingUp size={64} color="rgba(255,255,255,0.3)" style={{ marginBottom: '1.5rem' }} />
             <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FFFFFF', marginBottom: '0.5rem' }}>
               No Orders Found
             </h3>
@@ -268,7 +268,7 @@ export default function MyOrders() {
                         </div>
                         {trade.escrow_locked && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#22C55E', fontSize: '0.875rem', fontWeight: '600' }}>
-                            <Shield size={16} />
+                            <IoShield size={16} />
                             Escrow
                           </div>
                         )}

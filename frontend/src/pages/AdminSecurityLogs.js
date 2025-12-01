@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Shield, Filter, Download, Search, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Shield, Filter, Download, Search, AlertTriangle, CheckCircle, XCircle } from 'react-icons/io5';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;
@@ -74,9 +74,9 @@ export default function AdminSecurityLogs() {
 
   const getStatusIcon = (success) => {
     return success ? (
-      <CheckCircle className="w-5 h-5 text-green-400" />
+      <IoCheckmarkCircle className="w-5 h-5 text-green-400" />
     ) : (
-      <XCircle className="w-5 h-5 text-red-400" />
+      <IoCloseCircle className="w-5 h-5 text-red-400" />
     );
   };
 
@@ -86,7 +86,7 @@ export default function AdminSecurityLogs() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-8 h-8 text-cyan-400" />
+            <IoShield className="w-8 h-8 text-cyan-400" />
             <h1 className="text-3xl font-bold text-white">Security Logs</h1>
           </div>
           <p className="text-gray-400">Monitor all login attempts and security events</p>
@@ -115,7 +115,7 @@ export default function AdminSecurityLogs() {
         {/* Filters */}
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-6">
           <div className="flex items-center gap-2 mb-4">
-            <Filter className="w-5 h-5 text-cyan-400" />
+            <IoFilter className="w-5 h-5 text-cyan-400" />
             <h2 className="text-lg font-semibold text-white">Filters</h2>
           </div>
           
@@ -169,7 +169,7 @@ export default function AdminSecurityLogs() {
             <div>
               <label className="block text-sm text-gray-400 mb-2">Search</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <IoSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={filters.search}
@@ -186,7 +186,7 @@ export default function AdminSecurityLogs() {
               onClick={exportLogs}
               className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-white transition-colors"
             >
-              <Download className="w-4 h-4" />
+              <IoCloudDownload className="w-4 h-4" />
               Export CSV
             </button>
           </div>

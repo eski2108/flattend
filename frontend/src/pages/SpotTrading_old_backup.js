@@ -12,7 +12,7 @@ import {
   Clock,
   DollarSign,
   Zap
-} from 'lucide-react';
+} from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -430,7 +430,7 @@ export default function SpotTrading() {
               }}>
                 <span>{selectedPairData?.icon}</span>
                 <span>{selectedPair}</span>
-                <ChevronDown size={18} />
+                <IoChevronDown size={18} />
               </button>
             </div>
 
@@ -452,7 +452,7 @@ export default function SpotTrading() {
                   alignItems: 'center',
                   gap: '0.25rem'
                 }}>
-                  {marketStats.change24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                  {marketStats.change24h >= 0 ? <IoTrendingUp size={16} /> : <IoTrendingDown size={16} />}
                   {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
                 </div>
               </div>
@@ -486,7 +486,7 @@ export default function SpotTrading() {
             background: 'rgba(34, 197, 94, 0.1)',
             borderRadius: '8px'
           }}>
-            <Activity size={16} color="#22C55E" />
+            <IoPulse size={16} color="#22C55E" />
             <span style={{ fontSize: '0.75rem', color: '#22C55E', fontWeight: '600' }}>
               LIVE MARKET
             </span>
@@ -1109,7 +1109,7 @@ export default function SpotTrading() {
                     gap: '0.5rem'
                   }}
                 >
-                  <Zap size={20} />
+                  <IoFlash size={20} />
                   Confirm {orderType === 'buy' ? 'BUY' : 'SELL'}
                 </button>
               </div>

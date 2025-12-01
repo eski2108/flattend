@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap } from 'lucide-react';
+import { Zap } from 'react-icons/io5';
 
 function FastBuyButton({ style }) {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ function FastBuyButton({ style }) {
         e.currentTarget.style.boxShadow = '0 8px 24px rgba(34, 197, 94, 0.4)';
       }}
     >
-      <Zap size={24} fill="#fff" />
+      <IoFlash size={24} fill="#fff" />
       <span>FAST BUY</span>
     </button>
   );

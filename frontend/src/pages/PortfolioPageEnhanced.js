@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { TrendingUp, TrendingDown, DollarSign, PieChart, RefreshCw, ArrowUpRight, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, PieChart, RefreshCw, ArrowUpRight, Zap } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 
@@ -131,7 +131,7 @@ export default function PortfolioPageEnhanced() {
               transition: 'all 0.3s ease'
             }}
           >
-            <RefreshCw size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+            <IoRefresh size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
             {refreshing ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
@@ -167,7 +167,7 @@ export default function PortfolioPageEnhanced() {
                 justifyContent: 'center',
                 boxShadow: '0 0 20px rgba(0,240,255,0.4)'
               }}>
-                <DollarSign size={22} style={{ color: '#000' }} />
+                <IoCash size={22} style={{ color: '#000' }} />
               </div>
               <div style={{ fontSize: '14px', color: '#A3AEC2', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '600' }}>
                 Total Value
@@ -210,7 +210,7 @@ export default function PortfolioPageEnhanced() {
                 justifyContent: 'center',
                 boxShadow: `0 0 20px ${isProfit ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'}`
               }}>
-                {isProfit ? <TrendingUp size={22} style={{ color: '#FFF' }} /> : <TrendingDown size={22} style={{ color: '#FFF' }} />}
+                {isProfit ? <IoTrendingUp size={22} style={{ color: '#FFF' }} /> : <IoTrendingDown size={22} style={{ color: '#FFF' }} />}
               </div>
               <div style={{ fontSize: '14px', color: '#A3AEC2', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '600' }}>
                 Total P/L
@@ -277,7 +277,7 @@ export default function PortfolioPageEnhanced() {
           marginBottom: '2rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
-            <Zap size={24} color="#00F0FF" />
+            <IoFlash size={24} color="#00F0FF" />
             <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', margin: 0 }}>Live Market Data</h2>
           </div>
           

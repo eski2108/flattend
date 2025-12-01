@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Copy, Check, Users, DollarSign, Gift, TrendingUp, Share2, ExternalLink } from 'lucide-react';
+import { Copy, Check, Users, DollarSign, Gift, TrendingUp, Share2, ExternalLink } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import API_BASE_URL from '@/config/api';
@@ -129,7 +129,7 @@ export default function ReferralLinkGenerator() {
               padding: '1.5rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <Users size={20} style={{ color: '#00E0FF' }} />
+                <IoPeople size={20} style={{ color: '#00E0FF' }} />
                 <div style={{ fontSize: '0.875rem', color: '#A8A8A8', textTransform: 'uppercase' }}>
                   Total Referrals
                 </div>
@@ -150,7 +150,7 @@ export default function ReferralLinkGenerator() {
               padding: '1.5rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <DollarSign size={20} style={{ color: '#A855F7' }} />
+                <IoCash size={20} style={{ color: '#A855F7' }} />
                 <div style={{ fontSize: '0.875rem', color: '#A8A8A8', textTransform: 'uppercase' }}>
                   Total Earned
                 </div>
@@ -171,7 +171,7 @@ export default function ReferralLinkGenerator() {
               padding: '1.5rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <TrendingUp size={20} style={{ color: '#22C55E' }} />
+                <IoTrendingUp size={20} style={{ color: '#22C55E' }} />
                 <div style={{ fontSize: '0.875rem', color: '#A8A8A8', textTransform: 'uppercase' }}>
                   Active Referrals
                 </div>
@@ -234,7 +234,7 @@ export default function ReferralLinkGenerator() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  {copiedCode ? <Check size={24} /> : <Copy size={24} />}
+                  {copiedCode ? <IoCheckmark size={24} /> : <IoCopy size={24} />}
                 </button>
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function ReferralLinkGenerator() {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  {copiedLink ? <Check size={24} /> : <Copy size={24} />}
+                  {copiedLink ? <IoCheckmark size={24} /> : <IoCopy size={24} />}
                 </button>
               </div>
             </div>
@@ -309,7 +309,7 @@ export default function ReferralLinkGenerator() {
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
-                  <ExternalLink size={18} /> Twitter
+                  <IoOpenOutline size={18} /> Twitter
                 </button>
                 <button
                   onClick={shareOnWhatsApp}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'react-icons/io5';
 import Marquee from 'react-fast-marquee';
 import axios from 'axios';
 
@@ -183,7 +183,7 @@ export default function PriceTickerEnhanced() {
                 fontWeight: '700',
                 color: isPositive ? '#22C55E' : '#EF4444'
               }}>
-                {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                {isPositive ? <IoTrendingUp size={12} /> : <IoTrendingDown size={12} />}
                 {Math.abs(coin.change).toFixed(2)}%
               </span>
             </div>

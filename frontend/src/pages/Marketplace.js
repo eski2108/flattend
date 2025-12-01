@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Search, Filter, TrendingUp, TrendingDown, Shield, Star } from 'lucide-react';
+import { Search, Filter, TrendingUp, TrendingDown, Shield, Star } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -259,12 +259,12 @@ export default function Marketplace() {
                   {maskSellerName(offer.seller_name)}
                 </span>
                 {offer.is_verified && (
-                  <Shield size={16} color="#22C55E" />
+                  <IoShield size={16} color="#22C55E" />
                 )}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Star size={14} color="#F59E0B" fill="#F59E0B" />
+                  <IoStar size={14} color="#F59E0B" fill="#F59E0B" />
                   <span style={{ color: '#F59E0B', fontSize: '13px', fontWeight: '600' }}>
                     {sellerRating}%
                   </span>
@@ -486,7 +486,7 @@ export default function Marketplace() {
               boxShadow: activeTab === 'buy' ? '0 0 20px rgba(34, 197, 94, 0.4)' : 'none'
             }}
           >
-            <TrendingUp size={20} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+            <IoTrendingUp size={20} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
             BUY CRYPTO
           </button>
           <button
@@ -507,7 +507,7 @@ export default function Marketplace() {
               boxShadow: activeTab === 'sell' ? '0 0 20px rgba(239, 68, 68, 0.4)' : 'none'
             }}
           >
-            <TrendingDown size={20} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+            <IoTrendingDown size={20} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
             SELL CRYPTO
           </button>
         </div>
@@ -661,7 +661,7 @@ export default function Marketplace() {
 
           {/* Search */}
           <div style={{ position: 'relative' }}>
-            <Search size={20} color="#888" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+            <IoSearch size={20} color="#888" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
               placeholder="Search by seller name..."
@@ -692,7 +692,7 @@ export default function Marketplace() {
             Showing {filteredOffers.length} {filteredOffers.length === 1 ? 'offer' : 'offers'}
           </span>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <Shield size={16} color="#22C55E" />
+            <IoShield size={16} color="#22C55E" />
             <span style={{ color: '#22C55E', fontSize: '13px', fontWeight: '600' }}>
               Protected by Escrow
             </span>

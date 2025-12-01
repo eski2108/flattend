@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -180,7 +180,7 @@ export default function CreateOffer() {
               alignItems: 'center'
             }}
           >
-            <ArrowLeft size={24} />
+            <IoArrowBack size={24} />
           </button>
           <div>
             <h1 style={{
@@ -496,7 +496,7 @@ export default function CreateOffer() {
                     gap: '0.5rem'
                   }}
                 >
-                  <Plus size={20} />
+                  <IoAdd size={20} />
                   Add
                 </button>
               </div>
@@ -533,7 +533,7 @@ export default function CreateOffer() {
                         alignItems: 'center'
                       }}
                     >
-                      <X size={16} />
+                      <IoClose size={16} />
                     </button>
                   </div>
                 ))}

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Upload, CheckCircle2, XCircle, Clock, AlertCircle, FileText, Camera, MapPin } from 'lucide-react';
+import { Upload, CheckCircle2, XCircle, Clock, AlertCircle, FileText, Camera, MapPin } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -211,7 +211,7 @@ export default function KYCVerification() {
             padding: '2rem',
             textAlign: 'center'
           }}>
-            <Clock size={64} color="#FBB F24" style={{ margin: '0 auto 1rem' }} />
+            <IoClock size={64} color="#FBB F24" style={{ margin: '0 auto 1rem' }} />
             <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#fff', marginBottom: '1rem' }}>
               KYC Under Review
             </h1>
@@ -252,7 +252,7 @@ export default function KYCVerification() {
             padding: '2rem',
             textAlign: 'center'
           }}>
-            <XCircle size={64} color="#EF4444" style={{ margin: '0 auto 1rem' }} />
+            <IoCloseCircle size={64} color="#EF4444" style={{ margin: '0 auto 1rem' }} />
             <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#fff', marginBottom: '1rem' }}>
               KYC Verification Failed
             </h1>
@@ -595,7 +595,7 @@ export default function KYCVerification() {
                     alignItems: 'center',
                     gap: '0.5rem'
                   }}>
-                    <FileText size={20} />
+                    <IoDocument size={20} />
                     ID Document (Front) *
                   </label>
                   <div style={{
@@ -622,7 +622,7 @@ export default function KYCVerification() {
                       </>
                     ) : (
                       <>
-                        <Upload size={32} color="#00F0FF" style={{ margin: '0 auto 0.5rem' }} />
+                        <IoCloudUpload size={32} color="#00F0FF" style={{ margin: '0 auto 0.5rem' }} />
                         <div style={{ color: '#00F0FF', fontWeight: '600', marginBottom: '0.25rem' }}>
                           Click to upload
                         </div>
@@ -646,7 +646,7 @@ export default function KYCVerification() {
                       alignItems: 'center',
                       gap: '0.5rem'
                     }}>
-                      <FileText size={20} />
+                      <IoDocument size={20} />
                       ID Document (Back) *
                     </label>
                     <div style={{
@@ -673,7 +673,7 @@ export default function KYCVerification() {
                         </>
                       ) : (
                         <>
-                          <Upload size={32} color="#00F0FF" style={{ margin: '0 auto 0.5rem' }} />
+                          <IoCloudUpload size={32} color="#00F0FF" style={{ margin: '0 auto 0.5rem' }} />
                           <div style={{ color: '#00F0FF', fontWeight: '600', marginBottom: '0.25rem' }}>
                             Click to upload
                           </div>
@@ -724,7 +724,7 @@ export default function KYCVerification() {
                       </>
                     ) : (
                       <>
-                        <Upload size={32} color="#00F0FF" style={{ margin: '0 auto 0.5rem' }} />
+                        <IoCloudUpload size={32} color="#00F0FF" style={{ margin: '0 auto 0.5rem' }} />
                         <div style={{ color: '#00F0FF', fontWeight: '600', marginBottom: '0.25rem' }}>
                           Click to upload
                         </div>
@@ -747,7 +747,7 @@ export default function KYCVerification() {
                     alignItems: 'center',
                     gap: '0.5rem'
                   }}>
-                    <MapPin size={20} />
+                    <IoLocation size={20} />
                     Proof of Address (Optional)
                   </label>
                   <div style={{
@@ -774,7 +774,7 @@ export default function KYCVerification() {
                       </>
                     ) : (
                       <>
-                        <Upload size={32} color="rgba(0, 240, 255, 0.5)" style={{ margin: '0 auto 0.5rem' }} />
+                        <IoCloudUpload size={32} color="rgba(0, 240, 255, 0.5)" style={{ margin: '0 auto 0.5rem' }} />
                         <div style={{ color: 'rgba(0, 240, 255, 0.7)', fontWeight: '600', marginBottom: '0.25rem' }}>
                           Click to upload
                         </div>
@@ -851,21 +851,21 @@ export default function KYCVerification() {
                   </h3>
                   <div style={{ display: 'grid', gap: '0.5rem', fontSize: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {documentFront ? <CheckCircle2 size={18} color="#10B981" /> : <XCircle size={18} color="#EF4444" />}
+                      {documentFront ? <CheckCircle2 size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
                       <span style={{ color: '#fff' }}>ID Document (Front)</span>
                     </div>
                     {formData.id_type === 'drivers_license' && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {documentBack ? <CheckCircle2 size={18} color="#10B981" /> : <XCircle size={18} color="#EF4444" />}
+                        {documentBack ? <CheckCircle2 size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
                         <span style={{ color: '#fff' }}>ID Document (Back)</span>
                       </div>
                     )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {selfie ? <CheckCircle2 size={18} color="#10B981" /> : <XCircle size={18} color="#EF4444" />}
+                      {selfie ? <CheckCircle2 size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
                       <span style={{ color: '#fff' }}>Selfie with ID</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {proofOfAddress ? <CheckCircle2 size={18} color="#10B981" /> : <AlertCircle size={18} color="#FBB F24" />}
+                      {proofOfAddress ? <CheckCircle2 size={18} color="#10B981" /> : <IoAlertCircle size={18} color="#FBB F24" />}
                       <span style={{ color: '#fff' }}>Proof of Address (Optional)</span>
                     </div>
                   </div>
@@ -881,7 +881,7 @@ export default function KYCVerification() {
                 display: 'flex',
                 gap: '0.75rem'
               }}>
-                <AlertCircle size={20} color="#FBB F24" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
+                <IoAlertCircle size={20} color="#FBB F24" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
                 <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.9)' }}>
                   <strong>Important:</strong> Ensure all documents are clear and legible. 
                   Verification typically takes 24-48 hours. You'll be notified once complete.

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'react-icons/io5';
 import axios from 'axios';
 
 const TICKER_COINS = ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'ripple', 'tether'];
@@ -91,7 +91,7 @@ export default function PriceTicker() {
               fontWeight: '600',
               color: coin.change >= 0 ? '#22C55E' : '#EF4444'
             }}>
-              {coin.change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+              {coin.change >= 0 ? <IoTrendingUp size={14} /> : <IoTrendingDown size={14} />}
               {Math.abs(coin.change).toFixed(2)}%
             </span>
           </div>

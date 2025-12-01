@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TrendingUp, Calendar } from 'lucide-react';
+import { TrendingUp, Calendar } from 'react-icons/io5';
 
 const PortfolioGraphTradingView = ({ totalValue, userId }) => {
   const chartContainerRef = useRef(null);
@@ -159,7 +159,7 @@ const PortfolioGraphTradingView = ({ totalValue, userId }) => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <TrendingUp size={24} color="#00E5FF" strokeWidth={2.5} />
+          <IoTrendingUp size={24} color="#00E5FF" strokeWidth={2.5} />
           <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>Portfolio Performance</h3>
         </div>
         
@@ -192,7 +192,7 @@ const PortfolioGraphTradingView = ({ totalValue, userId }) => {
       {loading ? (
         <div style={{ height: '320px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00E5FF' }}>
           <div style={{ textAlign: 'center' }}>
-            <Calendar className="w-8 h-8 text-cyan-400 animate-pulse mx-auto mb-2" />
+            <IoCalendar className="w-8 h-8 text-cyan-400 animate-pulse mx-auto mb-2" />
             <p>Loading chart data...</p>
           </div>
         </div>

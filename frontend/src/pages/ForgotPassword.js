@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
@@ -68,7 +68,7 @@ export default function ForgotPassword() {
             border: '2px solid rgba(0, 229, 255, 0.4)',
             boxShadow: '0 0 30px rgba(0, 229, 255, 0.3)'
           }}>
-            <CheckCircle size={40} color="#00E5FF" strokeWidth={2.5} />
+            <IoCheckmarkCircle size={40} color="#00E5FF" strokeWidth={2.5} />
           </div>
           
           <h1 style={{
@@ -184,7 +184,7 @@ export default function ForgotPassword() {
             e.currentTarget.style.transform = 'translateX(0)';
           }}
         >
-          <ArrowLeft size={18} />
+          <IoArrowBack size={18} />
           Back to Login
         </Link>
 
@@ -222,7 +222,7 @@ export default function ForgotPassword() {
               fontWeight: '600',
               marginBottom: '10px'
             }}>
-              <Mail size={18} color="#00E5FF" strokeWidth={2.5} />
+              <IoMail size={18} color="#00E5FF" strokeWidth={2.5} />
               Email Address
             </label>
             <input
