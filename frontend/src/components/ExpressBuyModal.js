@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { X, Zap, TrendingUp, Shield, CheckCircle, AlertCircle } from 'react-icons/io5';
+import { IoClose as X, IoFlash as Zap, IoTrendingUp as TrendingUp, IoShield as Shield, IoCheckmarkCircle as CheckCircle, IoAlertCircle as AlertCircle } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
