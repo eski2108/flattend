@@ -223,7 +223,7 @@ export default function P2PExpress() {
     <Layout>
       <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #05121F 0%, #0A1929 100%)', padding: '40px 20px' }}>
         
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
 
           <div style={{ marginBottom: '48px', textAlign: 'center' }}>
             <h1 style={{ fontSize: '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
