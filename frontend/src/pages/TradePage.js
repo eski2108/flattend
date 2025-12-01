@@ -254,21 +254,21 @@ export default function TradePage() {
   };
 
   const getStatusInfo = () => {
-    if (!trade) return { text: 'Loading...', color: '#888', icon: IoTime as Clock };
+    if (!trade) return { text: 'Loading...', color: '#888', icon: Clock };
     
     switch (trade.status) {
       case 'pending_payment':
-        return { text: 'Waiting for Payment', color: '#F59E0B', icon: IoTime as Clock };
+        return { text: 'Waiting for Payment', color: '#F59E0B', icon: Clock };
       case 'buyer_marked_paid':
-        return { text: 'Buyer Marked as Paid - Waiting for Seller', color: '#3B82F6', icon: IoCheckmarkCircle as CheckCircle };
+        return { text: 'Buyer Marked as Paid - Waiting for Seller', color: '#3B82F6', icon: CheckCircle };
       case 'released':
-        return { text: 'Completed - Crypto Released', color: '#22C55E', icon: IoCheckmarkCircle as CheckCircle };
+        return { text: 'Completed - Crypto Released', color: '#22C55E', icon: CheckCircle };
       case 'cancelled':
         return { text: 'Cancelled', color: '#EF4444', icon: XCircle };
       case 'disputed':
-        return { text: 'In Dispute - Admin Review', color: '#EF4444', icon: IoWarning as AlertTriangle };
+        return { text: 'In Dispute - Admin Review', color: '#EF4444', icon: AlertTriangle };
       default:
-        return { text: trade.status, color: '#888', icon: IoTime as Clock };
+        return { text: trade.status, color: '#888', icon: Clock };
     }
   };
 
