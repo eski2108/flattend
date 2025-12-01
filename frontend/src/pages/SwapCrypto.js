@@ -332,19 +332,45 @@ function SwapCrypto() {
                     pointerEvents: 'none'
                   }} />
 
-                  {/* From Section with Dual Currency Input */}
+                  {/* From Section with Dual Currency Input - CENTERED */}
                   <div style={{
                     background: 'rgba(0, 0, 0, 0.4)',
                     border: '1px solid rgba(0, 240, 255, 0.3)',
                     borderRadius: '18px',
                     padding: isMobile ? '20px' : '24px',
-                    marginBottom: '20px',
-                    boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)'
+                    marginBottom: '24px',
+                    boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                    maxWidth: isMobile ? '100%' : '600px',
+                    margin: '0 auto 24px auto'
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-                      <span style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>From</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0, 240, 255, 0.1)', padding: isMobile ? '12px' : '14px', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.3)' }}>
-                        <span style={{ fontSize: '28px' }}>{getFromCrypto().logo}</span>
+                    {/* Header with From label and BTC selector - CENTERED */}
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '16px',
+                      flexWrap: isMobile ? 'wrap' : 'nowrap',
+                      gap: '12px'
+                    }}>
+                      <span style={{ 
+                        fontSize: isMobile ? '13px' : '14px', 
+                        color: '#8F9BB3', 
+                        fontWeight: '600', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.5px' 
+                      }}>From</span>
+                      
+                      {/* BTC Selector - Same style as before */}
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px', 
+                        background: 'rgba(0, 240, 255, 0.1)', 
+                        padding: isMobile ? '10px 14px' : '12px 16px', 
+                        borderRadius: '12px', 
+                        border: '1px solid rgba(0, 240, 255, 0.3)' 
+                      }}>
+                        <span style={{ fontSize: '24px' }}>{getFromCrypto().logo}</span>
                         <select
                           value={fromCrypto}
                           onChange={(e) => setFromCrypto(e.target.value)}
@@ -352,7 +378,7 @@ function SwapCrypto() {
                             background: 'transparent',
                             border: 'none',
                             color: '#FFFFFF',
-                            fontSize: isMobile ? '17px' : '19px',
+                            fontSize: isMobile ? '16px' : '18px',
                             fontWeight: '700',
                             cursor: 'pointer',
                             outline: 'none'
@@ -364,11 +390,12 @@ function SwapCrypto() {
                         </select>
                       </div>
                     </div>
+                    
+                    {/* Dual Currency Input - Will be centered by component */}
                     <DualCurrencyInput
                       cryptoSymbol={fromCrypto}
                       fiatCurrency={selectedFiat}
                       onFiatChange={(amount) => {
-                        // Convert fiat to crypto for backend
                         const cryptoAmt = amount && prices[fromCrypto] ? amount / prices[fromCrypto].price_gbp : 0;
                         setFromAmount(cryptoAmt.toString());
                       }}
