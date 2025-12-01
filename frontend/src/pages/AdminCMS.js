@@ -141,7 +141,7 @@ export default function AdminCMS() {
           {[
             { id: 'platform', label: 'Platform Settings', icon: Settings },
             { id: 'fees', label: 'Fees & Commission', icon: Percent },
-            { id: 'disputes', label: 'Disputes', icon: IoWarning as AlertTriangle },
+            { id: 'disputes', label: 'Disputes', icon: AlertTriangle },
             { id: 'kyc', label: 'KYC Review', icon: Shield },
             { id: 'transactions', label: 'Transactions', icon: DollarSign },
             { id: 'wallets', label: 'Wallets', icon: Wallet }

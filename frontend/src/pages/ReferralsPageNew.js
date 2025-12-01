@@ -90,7 +90,7 @@ export default function ReferralsPageNew() {
     { name: 'Withdrawal Fees', icon: ArrowRightLeft, description: '20% of withdrawal fees' },
     { name: 'Deposit Fees', icon: ArrowRightLeft, description: '20% of deposit fees' },
     { name: 'Escrow Fees', icon: Shield, description: '20% of escrow fees' },
-    { name: 'Dispute Fees', icon: IoAlertCircle as AlertCircle, description: '20% of dispute fees' },
+    { name: 'Dispute Fees', icon: AlertCircle, description: '20% of dispute fees' },
     { name: 'Network Markup', icon: Network, description: '20% of network fees' },
     { name: 'Liquidity Spread', icon: Briefcase, description: '20% of spread' },
     { name: 'Future Features', icon: DollarSign, description: '20% of all new revenue' }
