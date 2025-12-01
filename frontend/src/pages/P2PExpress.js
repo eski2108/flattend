@@ -204,6 +204,7 @@ export default function P2PExpress() {
         } else {
           toast.success('Express order created! Matched with seller.');
           navigate(`/p2p/trade/${response.data.trade_id}`);
+        }
       } else {
         toast.error(response.data.message || 'Failed to create order');
       }
