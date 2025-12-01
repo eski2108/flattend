@@ -233,7 +233,7 @@ export default function P2PExpress() {
             <p style={{ fontSize: '18px', color: '#8F9BB3', margin: 0 }}>Instant crypto purchase • 2-5 minute delivery</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '40px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '48px', alignItems: 'start', justifyItems: 'stretch' }}>
             
             <div>
               
