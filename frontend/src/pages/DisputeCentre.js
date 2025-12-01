@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { IoWarning as IoWarning as AlertTriangle, IoCheckmarkCircle as IoCheckmarkCircle as CheckCircle, IoDocument as File, IoDocument as FileText, IoImage as ImageIcon, IoChatbubbles as IoChatbubbles as MessageCircle, IoSend as Send, IoCloudUpload as Upload } from 'react-icons/io5';
+import { IoWarning as AlertTriangle, IoCheckmarkCircle as CheckCircle, IoDocument as File, IoDocument as FileText, IoImage as ImageIcon, IoChatbubbles as MessageCircle, IoSend as Send, IoCloudUpload as Upload } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoTime as IoTime as Clock, IoCheckmarkCircle as IoCheckmarkCircle as CheckCircle2, IoCloseCircle as XCircle, IoWarning as IoWarning as AlertTriangle, IoTrendingUp as TrendingUp, IoShield as Shield } from 'react-icons/io5';
+import { IoTime as Clock, IoCheckmarkCircle as CheckCircle2, IoCloseCircle as XCircle, IoWarning as AlertTriangle, IoTrendingUp as TrendingUp, IoShield as Shield } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
