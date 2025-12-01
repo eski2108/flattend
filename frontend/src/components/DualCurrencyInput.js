@@ -217,13 +217,14 @@ const DualCurrencyInput = ({
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          minWidth: '36px',
-          height: '36px',
+          minWidth: '32px',
+          height: '32px',
           borderRadius: '50%',
-          border: '1px solid rgba(0, 240, 255, 0.2)',
-          background: 'rgba(0, 240, 255, 0.05)'
+          border: '1px solid rgba(0, 240, 255, 0.25)',
+          background: 'rgba(0, 240, 255, 0.08)',
+          flexShrink: 0
         }}>
-          <span style={{ fontSize: '18px', color: '#00F0FF' }}>⇄</span>
+          <span style={{ fontSize: '14px', color: '#00F0FF' }}>⇄</span>
         </div>
 
         {/* Crypto Input - Keep Existing Style */}
