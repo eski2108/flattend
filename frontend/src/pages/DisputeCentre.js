@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { MessageCircle, Upload, CheckCircle, AlertTriangle, FileText, Image as ImageIcon, File, Send } from 'react-icons/io5';
+import { AlertTriangle, CheckCircle, File, FileText, Image as ImageIcon, IoDocument, IoWarning, MessageCircle, Send, Upload } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -145,7 +145,7 @@ function DisputeCentre() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <span style={{ color: '#888', fontSize: '14px' }}>Dispute ID: {dispute.dispute_id}</span>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', background: dispute.status === 'open' ? 'rgba(252, 211, 77, 0.15)' : 'rgba(34, 197, 94, 0.15)', border: `1px solid ${dispute.status === 'open' ? 'rgba(252, 211, 77, 0.4)' : 'rgba(34, 197, 94, 0.4)'}`, borderRadius: '6px' }}>
-                {dispute.status === 'open' ? <AlertTriangle size={16} color="#FCD34D" /> : <IoCheckmarkCircle size={16} color="#22C55E" />}
+                {dispute.status === 'open' ? <IoWarning size={16} color="#FCD34D" /> : <IoCheckmarkCircle size={16} color="#22C55E" />}
                 <span style={{ color: dispute.status === 'open' ? '#FCD34D' : '#22C55E', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase' }}>{dispute.status}</span>
               </div>
             </div>
@@ -183,7 +183,7 @@ function DisputeCentre() {
               {/* Dispute Opened */}
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(252, 211, 77, 0.15)', border: '2px solid #FCD34D', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <AlertTriangle size={18} color="#FCD34D" />
+                  <IoWarning size={18} color="#FCD34D" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.25rem' }}>Dispute Opened</div>
@@ -271,7 +271,7 @@ function DisputeCentre() {
                     return (
                       <div key={idx} style={{ padding: '1rem', background: 'rgba(0, 0, 0, 0.3)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: isImage ? 'rgba(0, 240, 255, 0.1)' : 'rgba(239, 68, 68, 0.1)', border: `1px solid ${isImage ? 'rgba(0, 240, 255, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          {isImage ? <ImageIcon size={20} color="#00F0FF" /> : <File size={20} color="#EF4444" />}
+                          {isImage ? <ImageIcon size={20} color="#00F0FF" /> : <IoDocument size={20} color="#EF4444" />}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ color: '#fff', fontSize: '13px', fontWeight: '600', marginBottom: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.file_name}</div>

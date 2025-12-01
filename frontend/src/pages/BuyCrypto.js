@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Search, DollarSign, AlertCircle, Clock, CheckCircle2, Copy } from 'react-icons/io5';
+import { AlertCircle, CheckCircle2, Clock, Copy, DollarSign, IoCheckmarkCircle, Search } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -393,7 +393,7 @@ export default function BuyCrypto() {
                   Cancel
                 </Button>
                 <Button onClick={handleMarkAsPaid} data-testid="mark-paid-btn" className="mark-paid-btn">
-                  <CheckCircle2 size={20} className="mr-2" />
+                  <IoCheckmarkCircle size={20} className="mr-2" />
                   Mark as Paid
                 </Button>
               </div>

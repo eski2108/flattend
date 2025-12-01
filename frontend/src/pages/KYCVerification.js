@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Upload, CheckCircle2, XCircle, Clock, AlertCircle, FileText, Camera, MapPin } from 'react-icons/io5';
+import { AlertCircle, Camera, CheckCircle2, Clock, FileText, IoCheckmarkCircle, MapPin, Upload, XCircle } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -144,7 +144,7 @@ export default function KYCVerification() {
             padding: '2rem',
             textAlign: 'center'
           }}>
-            <CheckCircle2 size={64} color="#10B981" style={{ margin: '0 auto 1rem' }} />
+            <IoCheckmarkCircle size={64} color="#10B981" style={{ margin: '0 auto 1rem' }} />
             <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#fff', marginBottom: '1rem' }}>
               KYC Verified!
             </h1>
@@ -617,7 +617,7 @@ export default function KYCVerification() {
                     />
                     {documentFront ? (
                       <>
-                        <CheckCircle2 size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
+                        <IoCheckmarkCircle size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
                         <div style={{ color: '#10B981', fontWeight: '600' }}>Document uploaded</div>
                       </>
                     ) : (
@@ -668,7 +668,7 @@ export default function KYCVerification() {
                       />
                       {documentBack ? (
                         <>
-                          <CheckCircle2 size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
+                          <IoCheckmarkCircle size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
                           <div style={{ color: '#10B981', fontWeight: '600' }}>Document uploaded</div>
                         </>
                       ) : (
@@ -719,7 +719,7 @@ export default function KYCVerification() {
                     />
                     {selfie ? (
                       <>
-                        <CheckCircle2 size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
+                        <IoCheckmarkCircle size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
                         <div style={{ color: '#10B981', fontWeight: '600' }}>Selfie uploaded</div>
                       </>
                     ) : (
@@ -769,7 +769,7 @@ export default function KYCVerification() {
                     />
                     {proofOfAddress ? (
                       <>
-                        <CheckCircle2 size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
+                        <IoCheckmarkCircle size={32} color="#10B981" style={{ margin: '0 auto 0.5rem' }} />
                         <div style={{ color: '#10B981', fontWeight: '600' }}>Document uploaded</div>
                       </>
                     ) : (
@@ -851,21 +851,21 @@ export default function KYCVerification() {
                   </h3>
                   <div style={{ display: 'grid', gap: '0.5rem', fontSize: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {documentFront ? <CheckCircle2 size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
+                      {documentFront ? <IoCheckmarkCircle size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
                       <span style={{ color: '#fff' }}>ID Document (Front)</span>
                     </div>
                     {formData.id_type === 'drivers_license' && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {documentBack ? <CheckCircle2 size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
+                        {documentBack ? <IoCheckmarkCircle size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
                         <span style={{ color: '#fff' }}>ID Document (Back)</span>
                       </div>
                     )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {selfie ? <CheckCircle2 size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
+                      {selfie ? <IoCheckmarkCircle size={18} color="#10B981" /> : <IoCloseCircle size={18} color="#EF4444" />}
                       <span style={{ color: '#fff' }}>Selfie with ID</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {proofOfAddress ? <CheckCircle2 size={18} color="#10B981" /> : <IoAlertCircle size={18} color="#FBB F24" />}
+                      {proofOfAddress ? <IoCheckmarkCircle size={18} color="#10B981" /> : <IoAlertCircle size={18} color="#FBB F24" />}
                       <span style={{ color: '#fff' }}>Proof of Address (Optional)</span>
                     </div>
                   </div>

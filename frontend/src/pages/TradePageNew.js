@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoShield, IoTime, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoInformationCircle, IoCopy, IoCheckmark } from 'react-icons/io5';;
+import { IoArrowBack, IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoCloseCircle, IoCopy, IoInformationCircle, IoSend, IoShield, IoTime, IoWarning } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -192,7 +192,7 @@ export default function TradePageNew() {
         return {
           text: 'Under Dispute',
           color: '#EF4444',
-          icon: <AlertTriangle size={20} />,
+          icon: <IoWarning size={20} />,
           step: 0
         };
       case 'cancelled':
@@ -473,7 +473,7 @@ export default function TradePageNew() {
                     marginBottom: '1.5rem'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#F59E0B', fontWeight: '700', marginBottom: '0.5rem' }}>
-                      <AlertTriangle size={18} />
+                      <IoWarning size={18} />
                       Important Steps
                     </div>
                     <ol style={{ color: '#fff', fontSize: '14px', lineHeight: '1.8', paddingLeft: '1.5rem', margin: 0 }}>
@@ -594,7 +594,7 @@ export default function TradePageNew() {
                     padding: '1rem'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#EF4444', fontWeight: '700', marginBottom: '0.5rem' }}>
-                      <AlertTriangle size={18} />
+                      <IoWarning size={18} />
                       Important Warning
                     </div>
                     <p style={{ color: '#fff', fontSize: '14px', margin: 0 }}>
@@ -943,7 +943,7 @@ export default function TradePageNew() {
                       e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    <AlertTriangle size={16} style={{ display: 'inline', marginRight: '8px' }} />
+                    <IoWarning size={16} style={{ display: 'inline', marginRight: '8px' }} />
                     Raise Dispute
                   </button>
                 )}

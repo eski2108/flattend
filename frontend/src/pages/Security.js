@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Lock, Eye, Bell, CheckCircle, AlertTriangle, Users, FileText } from 'react-icons/io5';
+import { AlertTriangle, Bell, CheckCircle, Eye, FileText, IoWarning, Lock, Shield, Users } from 'react-icons/io5';
 
 export default function Security() {
   const features = [
@@ -275,8 +275,7 @@ export default function Security() {
                   alignItems: 'flex-start'
                 }}
               >
-                <AlertTriangle
-                  size={28}
+                <IoWarning                   size={28}
                   color={warning.severity === 'high' ? '#EF4444' : '#FB923C'}
                   style={{ flexShrink: 0 }}
                 />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bell, BellOff, TrendingUp, TrendingDown, Trash2, Plus } from 'react-icons/io5';
+import { Bell, BellOff, IoTrash, Plus, Trash2, TrendingDown, TrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -230,7 +230,7 @@ export default function PriceAlerts() {
                   }}
                   title="Delete alert"
                 >
-                  <Trash2 size={20} />
+                  <IoTrash size={20} />
                 </button>
               </div>
             </div>

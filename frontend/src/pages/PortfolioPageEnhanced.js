@@ -1,3 +1,4 @@
+import { BiArrowToTop } from 'react-icons/bi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -412,7 +413,7 @@ export default function PortfolioPageEnhanced() {
                             }}
                           >
                             Swap
-                            <ArrowUpRight size={14} />
+                            <BiArrowToTop size={14} />
                           </button>
                         </td>
                       </tr>

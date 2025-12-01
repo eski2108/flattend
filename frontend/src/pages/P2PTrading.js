@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import BoostOfferModal from '@/components/BoostOfferModal';
-import { IoTrendingUp, IoTrendingDown, IoAdd, IoDocument, IoSearch, IoFilter, IoTime, IoShield, IoStar, IoFlash } from 'react-icons/io5';;
+import { IoAdd, IoDocument, IoFilter, IoFlash, IoSave, IoSearch, IoShield, IoStar, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -1959,7 +1959,7 @@ function MyOffersSection() {
       {editingOffer && (
         <EditOfferModal 
           offer={editingOffer}
-          onSave={handleSaveEdit}
+          onIoSave={handleSaveEdit}
           onCancel={handleCancelEdit}
         />
       )}
