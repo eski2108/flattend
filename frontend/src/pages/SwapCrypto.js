@@ -376,7 +376,7 @@ function SwapCrypto() {
                     <div style={{ 
                       display: 'flex',
                       justifyContent: 'center',
-                      marginBottom: '16px'
+                      marginBottom: '8px'
                     }}>
                       <div style={{ 
                         display: 'flex', 
@@ -406,6 +406,40 @@ function SwapCrypto() {
                           ))}
                         </select>
                       </div>
+                    </div>
+                    
+                    {/* Balance Display - PROMINENT */}
+                    <div style={{ 
+                      textAlign: 'center', 
+                      marginBottom: '16px',
+                      padding: '10px',
+                      background: (walletBalances[fromCrypto] || 0) === 0 ? 'rgba(255, 59, 48, 0.1)' : 'rgba(0, 240, 255, 0.05)',
+                      borderRadius: '10px',
+                      border: `1px solid ${(walletBalances[fromCrypto] || 0) === 0 ? 'rgba(255, 59, 48, 0.3)' : 'rgba(0, 240, 255, 0.2)'}`
+                    }}>
+                      <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>Available Balance</div>
+                      <div style={{ 
+                        fontSize: isMobile ? '18px' : '20px', 
+                        fontWeight: '700',
+                        color: (walletBalances[fromCrypto] || 0) === 0 ? '#FF3B30' : '#00F0FF'
+                      }}>
+                        {(walletBalances[fromCrypto] || 0).toFixed(8)} {fromCrypto}
+                      </div>
+                      {prices && prices[fromCrypto] && (
+                        <div style={{ fontSize: '13px', color: '#8F9BB3', marginTop: '4px' }}>
+                          ≈ £{((walletBalances[fromCrypto] || 0) * prices[fromCrypto].price_gbp).toFixed(2)}
+                        </div>
+                      )}
+                      {(walletBalances[fromCrypto] || 0) === 0 && (
+                        <div style={{ 
+                          fontSize: '12px', 
+                          color: '#FF3B30', 
+                          marginTop: '8px',
+                          fontWeight: '600'
+                        }}>
+                          ⚠️ No {fromCrypto} to swap. Buy {fromCrypto} first via Express Buy
+                        </div>
+                      )}
                     </div>
                     
                     {/* Dual Currency Input - Will be centered by component */}
