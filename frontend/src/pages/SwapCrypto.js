@@ -343,24 +343,24 @@ function SwapCrypto() {
                     maxWidth: isMobile ? '100%' : '600px',
                     margin: '0 auto 24px auto'
                   }}>
-                    {/* Header with From label and BTC selector - CENTERED */}
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginBottom: '16px',
-                      flexWrap: isMobile ? 'wrap' : 'nowrap',
-                      gap: '12px'
-                    }}>
+                    {/* FROM Label */}
+                    <div style={{ marginBottom: '12px' }}>
                       <span style={{ 
                         fontSize: isMobile ? '13px' : '14px', 
                         color: '#8F9BB3', 
                         fontWeight: '600', 
                         textTransform: 'uppercase', 
-                        letterSpacing: '0.5px' 
+                        letterSpacing: '0.5px',
+                        display: 'block'
                       }}>From</span>
-                      
-                      {/* BTC Selector - Same style as before */}
+                    </div>
+                    
+                    {/* BTC Selector - CENTERED */}
+                    <div style={{ 
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginBottom: '16px'
+                    }}>
                       <div style={{ 
                         display: 'flex', 
                         alignItems: 'center', 
