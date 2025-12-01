@@ -1,28 +1,28 @@
 import React from 'react';
-import { Shield, Lock, Eye, Bell, CheckCircle, AlertTriangle, Users, FileText } from 'lucide-react';
+import { Shield, Lock, Eye, Bell, CheckCircle, AlertTriangle, Users, FileText } from 'react-icons/io5';
 
 export default function Security() {
   const features = [
     {
-      icon: <Shield size={32} />,
+      icon: <IoShield size={32} />,
       title: 'Escrow Protection',
       description: 'Every P2P trade is secured with our escrow system. Funds are held safely until both parties confirm completion.',
       color: '#00F0FF'
     },
     {
-      icon: <Lock size={32} />,
+      icon: <IoLockClosed size={32} />,
       title: 'Two-Factor Authentication (2FA)',
       description: 'Add an extra layer of security to your account with 2FA. Protect against unauthorized access.',
       color: '#A855F7'
     },
     {
-      icon: <Bell size={32} />,
+      icon: <IoNotifications size={32} />,
       title: 'Login Alerts',
       description: 'Receive instant email notifications whenever someone logs into your account from a new device.',
       color: '#22C55E'
     },
     {
-      icon: <Eye size={32} />,
+      icon: <IoEye size={32} />,
       title: 'End-to-End Encryption',
       description: 'All sensitive data is encrypted using industry-standard AES-256 encryption.',
       color: '#FBBF24'
@@ -74,7 +74,7 @@ export default function Security() {
         padding: '3rem 2rem',
         textAlign: 'center'
       }}>
-        <Shield size={64} color="#00F0FF" style={{ margin: '0 auto 1rem' }} />
+        <IoShield size={64} color="#00F0FF" style={{ margin: '0 auto 1rem' }} />
         <h1 style={{
           fontSize: '48px',
           fontWeight: '900',
@@ -240,7 +240,7 @@ export default function Security() {
             <div style={{ display: 'grid', gap: '1rem' }}>
               {p2pSafetySteps.map((tip, index) => (
                 <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <CheckCircle size={24} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <IoCheckmarkCircle size={24} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <p style={{ color: '#E2E8F0', fontSize: '16px', margin: 0 }}>
                     {tip}
                   </p>
@@ -355,7 +355,7 @@ export default function Security() {
             padding: '2rem',
             textAlign: 'center'
           }}>
-            <Users size={48} color="#00F0FF" style={{ margin: '0 auto 1rem' }} />
+            <IoPeople size={48} color="#00F0FF" style={{ margin: '0 auto 1rem' }} />
             <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#00F0FF', marginBottom: '1rem' }}>
               Need Help?
             </h3>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { X, Zap, TrendingUp, Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Zap, TrendingUp, Shield, CheckCircle, AlertCircle } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -142,7 +142,7 @@ function ExpressBuyModal({ isOpen, onClose }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Zap size={28} color="#22C55E" />
+            <IoFlash size={28} color="#22C55E" />
             <h2 style={{ color: '#22C55E', fontSize: '1.5rem', fontWeight: '700', textTransform: 'uppercase' }}>
               Express Buy
             </h2>
@@ -157,7 +157,7 @@ function ExpressBuyModal({ isOpen, onClose }) {
               padding: '0.5rem'
             }}
           >
-            <X size={24} />
+            <IoClose size={24} />
           </button>
         </div>
 
@@ -240,7 +240,7 @@ function ExpressBuyModal({ isOpen, onClose }) {
                 gap: '0.5rem'
               }}
             >
-              <TrendingUp size={20} />
+              <IoTrendingUp size={20} />
               {matching ? 'Finding Best Seller...' : 'Find Best Match'}
             </button>
           </>
@@ -255,7 +255,7 @@ function ExpressBuyModal({ isOpen, onClose }) {
               marginBottom: '1.5rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <CheckCircle size={20} color="#22C55E" />
+                <IoCheckmarkCircle size={20} color="#22C55E" />
                 <span style={{ color: '#22C55E', fontWeight: '700', fontSize: '1rem' }}>
                   Best Match Found!
                 </span>
@@ -322,13 +322,13 @@ function ExpressBuyModal({ isOpen, onClose }) {
               )}
               {walletValid === true && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#22C55E', marginTop: '0.5rem' }}>
-                  <CheckCircle size={14} />
+                  <IoCheckmarkCircle size={14} />
                   Valid wallet address
                 </div>
               )}
               {walletValid === false && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#EF4444', marginTop: '0.5rem' }}>
-                  <AlertCircle size={14} />
+                  <IoAlertCircle size={14} />
                   Invalid wallet address
                 </div>
               )}
@@ -344,7 +344,7 @@ function ExpressBuyModal({ isOpen, onClose }) {
               gap: '0.75rem',
               marginBottom: '1.5rem'
             }}>
-              <Shield size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
+              <IoShield size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
               <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>
                 <div style={{ fontWeight: '700', color: '#22C55E', marginBottom: '0.25rem' }}>
                   Instant & Secure

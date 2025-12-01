@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { X, Zap, TrendingUp, Star, Check } from 'lucide-react';
+import { X, Zap, TrendingUp, Star, Check } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -124,7 +124,7 @@ function BoostOfferModal({ isOpen, onClose, offer, onBoostSuccess }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Star size={28} color="#F59E0B" />
+            <IoStar size={28} color="#F59E0B" />
             <h2 style={{ color: '#F59E0B', fontSize: '1.5rem', fontWeight: '700', textTransform: 'uppercase' }}>
               Boost Your Offer
             </h2>
@@ -139,7 +139,7 @@ function BoostOfferModal({ isOpen, onClose, offer, onBoostSuccess }) {
               padding: '0.5rem'
             }}
           >
-            <X size={24} />
+            <IoClose size={24} />
           </button>
         </div>
 
@@ -237,7 +237,7 @@ function BoostOfferModal({ isOpen, onClose, offer, onBoostSuccess }) {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Check size={16} color="#fff" />
+                  <IoCheckmark size={16} color="#fff" />
                 </div>
               )}
             </button>
@@ -253,7 +253,7 @@ function BoostOfferModal({ isOpen, onClose, offer, onBoostSuccess }) {
           marginBottom: '1.5rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-            <TrendingUp size={18} color="#F59E0B" />
+            <IoTrendingUp size={18} color="#F59E0B" />
             <span style={{ fontSize: '0.875rem', fontWeight: '700', color: '#F59E0B' }}>
               Boost Benefits
             </span>
@@ -337,7 +337,7 @@ function BoostOfferModal({ isOpen, onClose, offer, onBoostSuccess }) {
               gap: '0.5rem'
             }}
           >
-            <Zap size={20} />
+            <IoFlash size={20} />
             {boosting ? 'Processing...' : `Boost for £${selectedPricing?.price}`}
           </button>
         </div>

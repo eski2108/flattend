@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { TrendingUp, TrendingDown, DollarSign, PieChart } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, PieChart } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import API_BASE_URL from '@/config/api';
@@ -98,7 +98,7 @@ export default function PortfolioPage() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <DollarSign size={20} style={{ color: '#00E0FF' }} />
+              <IoCash size={20} style={{ color: '#00E0FF' }} />
               <div style={{ fontSize: '0.875rem', color: '#A8A8A8', textTransform: 'uppercase' }}>
                 Total Value
               </div>
@@ -131,7 +131,7 @@ export default function PortfolioPage() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              {isProfit ? <TrendingUp size={20} style={{ color: '#22C55E' }} /> : <TrendingDown size={20} style={{ color: '#EF4444' }} />}
+              {isProfit ? <IoTrendingUp size={20} style={{ color: '#22C55E' }} /> : <IoTrendingDown size={20} style={{ color: '#EF4444' }} />}
               <div style={{ fontSize: '0.875rem', color: '#A8A8A8', textTransform: 'uppercase' }}>
                 Total P/L
               </div>

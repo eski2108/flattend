@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Search, DollarSign, AlertCircle, Clock, CheckCircle2, Copy } from 'lucide-react';
+import { Search, DollarSign, AlertCircle, Clock, CheckCircle2, Copy } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -134,7 +134,7 @@ export default function BuyCrypto() {
         {/* Search Bar */}
         <div className="search-container">
           <div className="search-input-wrapper">
-            <Search className="search-icon" size={20} />
+            <IoSearch className="search-icon" size={20} />
             <Input
               placeholder="Search by amount or seller address..."
               value={searchTerm}
@@ -158,7 +158,7 @@ export default function BuyCrypto() {
                 <Card key={order.order_id} className="sell-order-card" data-testid="sell-order-card">
                   <div className="order-header">
                     <div className="order-badge">Available</div>
-                    <DollarSign size={20} className="order-icon" />
+                    <IoCash size={20} className="order-icon" />
                   </div>
                   <div className="order-amount">
                     <span className="amount-value">{order.crypto_amount || 0}</span>
@@ -206,7 +206,7 @@ export default function BuyCrypto() {
           </div>
         ) : (
           <Card className="empty-state" data-testid="empty-orders">
-            <AlertCircle size={48} className="empty-icon" />
+            <IoAlertCircle size={48} className="empty-icon" />
             <h3>No Sell Orders Available</h3>
             <p>Check back later or create your own sell order</p>
             <Button onClick={() => navigate('/sell-crypto')} data-testid="create-sell-order-btn">Create Sell Order</Button>
@@ -264,7 +264,7 @@ export default function BuyCrypto() {
               )}
 
               <div className="info-box">
-                <Clock size={20} />
+                <IoClock size={20} />
                 <p>You'll have 30 minutes to complete the bank transfer</p>
               </div>
 
@@ -291,7 +291,7 @@ export default function BuyCrypto() {
           {buyOrderDetails && (
             <div className="dialog-content">
               <div className="payment-timer">
-                <Clock size={24} />
+                <IoClock size={24} />
                 <div>
                   <p className="timer-label">Payment Deadline</p>
                   <p className="timer-value">{new Date(buyOrderDetails.payment_deadline).toLocaleString()}</p>
@@ -310,7 +310,7 @@ export default function BuyCrypto() {
                       onClick={() => copyToClipboard(buyOrderDetails.seller_bank_details.bank_name)}
                       data-testid="copy-bank-name"
                     >
-                      <Copy size={16} />
+                      <IoCopy size={16} />
                     </Button>
                   </div>
                 </div>
@@ -324,7 +324,7 @@ export default function BuyCrypto() {
                       onClick={() => copyToClipboard(buyOrderDetails.seller_bank_details.account_holder)}
                       data-testid="copy-account-holder"
                     >
-                      <Copy size={16} />
+                      <IoCopy size={16} />
                     </Button>
                   </div>
                 </div>
@@ -338,7 +338,7 @@ export default function BuyCrypto() {
                       onClick={() => copyToClipboard(buyOrderDetails.seller_bank_details.account_number)}
                       data-testid="copy-account-number"
                     >
-                      <Copy size={16} />
+                      <IoCopy size={16} />
                     </Button>
                   </div>
                 </div>
@@ -353,7 +353,7 @@ export default function BuyCrypto() {
                         onClick={() => copyToClipboard(buyOrderDetails.seller_bank_details.routing_number)}
                         data-testid="copy-routing-number"
                       >
-                        <Copy size={16} />
+                        <IoCopy size={16} />
                       </Button>
                     </div>
                   </div>
@@ -377,7 +377,7 @@ export default function BuyCrypto() {
               </div>
 
               <div className="info-box warn">
-                <AlertCircle size={20} />
+                <IoAlertCircle size={20} />
                 <p>After making the transfer, confirm payment below. Seller will release crypto once verified.</p>
               </div>
 

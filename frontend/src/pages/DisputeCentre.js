@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { MessageCircle, Upload, CheckCircle, AlertTriangle, FileText, Image as ImageIcon, File, Send } from 'lucide-react';
+import { MessageCircle, Upload, CheckCircle, AlertTriangle, FileText, Image as ImageIcon, File, Send } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -145,7 +145,7 @@ function DisputeCentre() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <span style={{ color: '#888', fontSize: '14px' }}>Dispute ID: {dispute.dispute_id}</span>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', background: dispute.status === 'open' ? 'rgba(252, 211, 77, 0.15)' : 'rgba(34, 197, 94, 0.15)', border: `1px solid ${dispute.status === 'open' ? 'rgba(252, 211, 77, 0.4)' : 'rgba(34, 197, 94, 0.4)'}`, borderRadius: '6px' }}>
-                {dispute.status === 'open' ? <AlertTriangle size={16} color="#FCD34D" /> : <CheckCircle size={16} color="#22C55E" />}
+                {dispute.status === 'open' ? <AlertTriangle size={16} color="#FCD34D" /> : <IoCheckmarkCircle size={16} color="#22C55E" />}
                 <span style={{ color: dispute.status === 'open' ? '#FCD34D' : '#22C55E', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase' }}>{dispute.status}</span>
               </div>
             </div>
@@ -159,7 +159,7 @@ function DisputeCentre() {
               {/* Order Created */}
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.15)', border: '2px solid #22C55E', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <CheckCircle size={18} color="#22C55E" />
+                  <IoCheckmarkCircle size={18} color="#22C55E" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.25rem' }}>Order Created</div>
@@ -171,7 +171,7 @@ function DisputeCentre() {
               {dispute.trade?.payment_marked_at && (
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.15)', border: '2px solid #22C55E', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <CheckCircle size={18} color="#22C55E" />
+                    <IoCheckmarkCircle size={18} color="#22C55E" />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.25rem' }}>Payment Marked</div>
@@ -196,7 +196,7 @@ function DisputeCentre() {
               {dispute.status === 'resolved' && (
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.15)', border: '2px solid #22C55E', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <CheckCircle size={18} color="#22C55E" />
+                    <IoCheckmarkCircle size={18} color="#22C55E" />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.25rem' }}>Admin Decision</div>
@@ -214,7 +214,7 @@ function DisputeCentre() {
             {/* Chat Section */}
             <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', height: isMobile ? 'auto' : '500px', overflow: 'hidden' }}>
               <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MessageCircle size={18} /> Dispute Chat
+                <IoChatbubbles size={18} /> Dispute Chat
               </h3>
               
               {/* Messages */}
@@ -240,7 +240,7 @@ function DisputeCentre() {
                 <div style={{ display: 'flex', gap: '0.75rem', width: '100%', boxSizing: 'border-box' }}>
                   <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && sendMessage()} placeholder="Type your message..." style={{ flex: 1, padding: '0.875rem', background: 'rgba(0, 0, 0, 0.5)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#fff', fontSize: '14px', boxSizing: 'border-box' }} />
                   <button onClick={sendMessage} disabled={!message.trim()} style={{ padding: '0.875rem 1.25rem', background: message.trim() ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(100, 100, 100, 0.3)', border: 'none', borderRadius: '8px', color: message.trim() ? '#000' : '#666', fontWeight: '700', cursor: message.trim() ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '14px', whiteSpace: 'nowrap', boxSizing: 'border-box' }}>
-                    <Send size={16} /> Send
+                    <IoSend size={16} /> Send
                   </button>
                 </div>
               )}
@@ -249,14 +249,14 @@ function DisputeCentre() {
             {/* Evidence Section */}
             <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', height: isMobile ? 'auto' : '500px' }}>
               <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <FileText size={18} /> Evidence & Attachments
+                <IoDocument size={18} /> Evidence & Attachments
               </h3>
 
               {/* Upload Button */}
               {dispute.status === 'open' && (
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.25rem', background: uploadingFile ? 'rgba(100, 100, 100, 0.3)' : 'linear-gradient(135deg, #22C55E, #16A34A)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: '700', cursor: uploadingFile ? 'not-allowed' : 'pointer', opacity: uploadingFile ? 0.5 : 1, fontSize: '14px' }}>
-                    <Upload size={16} /> {uploadingFile ? 'Uploading...' : 'Upload Evidence'}
+                    <IoCloudUpload size={16} /> {uploadingFile ? 'Uploading...' : 'Upload Evidence'}
                     <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} disabled={uploadingFile} style={{ display: 'none' }} />
                   </label>
                   <div style={{ color: '#666', fontSize: '11px', marginTop: '0.5rem' }}>Images (PNG, JPG) and PDF • Max 5MB</div>

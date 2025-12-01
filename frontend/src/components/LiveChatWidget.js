@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Minimize2 } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2 } from 'react-icons/io5';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -131,7 +131,7 @@ export default function LiveChatWidget() {
           e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 240, 255, 0.6), 0 0 40px rgba(168, 85, 247, 0.4)';
         }}
       >
-        <MessageCircle size={28} color="#000" />
+        <IoChatbubbles size={28} color="#000" />
         <style>{`
           @keyframes pulse {
             0%, 100% { box-shadow: 0 4px 20px rgba(0, 240, 255, 0.6), 0 0 40px rgba(168, 85, 247, 0.4); }
@@ -170,7 +170,7 @@ export default function LiveChatWidget() {
         alignItems: 'center'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <MessageCircle size={24} color="#000" />
+          <IoChatbubbles size={24} color="#000" />
           <div>
             <div style={{ color: '#000', fontSize: '16px', fontWeight: '700' }}>Coin Hub X Support</div>
             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '12px' }}>We're here to help 24/7</div>
@@ -205,7 +205,7 @@ export default function LiveChatWidget() {
               justifyContent: 'center'
             }}
           >
-            <X size={18} color="#000" />
+            <IoClose size={18} color="#000" />
           </button>
         </div>
       </div>
@@ -288,7 +288,7 @@ export default function LiveChatWidget() {
                 justifyContent: 'center'
               }}
             >
-              <Send size={18} color={inputMessage.trim() ? '#000' : '#666'} />
+              <IoSend size={18} color={inputMessage.trim() ? '#000' : '#666'} />
             </button>
           </div>
         </>

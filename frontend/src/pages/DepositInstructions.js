@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Copy, Check, AlertCircle, ArrowLeft, Loader } from 'lucide-react';
+import { Copy, Check, AlertCircle, ArrowLeft, Loader } from 'react-icons/io5';
 import axios from 'axios';
 import Layout from '@/components/Layout';
 import { toast } from 'sonner';
@@ -120,7 +120,7 @@ export default function DepositInstructions() {
           padding: '20px'
         }}>
           <div style={{ textAlign: 'center' }}>
-            <Loader size={48} color="#00F0FF" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+            <AiOutlineLoading3Quarters size={48} color="#00F0FF" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
             <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600' }}>Generating deposit address...</div>
             <div style={{ fontSize: '14px', color: '#A3AEC2', marginTop: '8px' }}>Please wait</div>
           </div>
@@ -150,7 +150,7 @@ export default function DepositInstructions() {
               fontSize: '14px'
             }}
           >
-            <ArrowLeft size={18} />
+            <IoArrowBack size={18} />
             Back to Wallet
           </button>
 
@@ -244,7 +244,7 @@ export default function DepositInstructions() {
                       transition: 'all 0.15s ease'
                     }}
                   >
-                    {copied ? <Check size={18} color="#6EE7B7" /> : <Copy size={18} color="#00F0FF" />}
+                    {copied ? <IoCheckmark size={18} color="#6EE7B7" /> : <IoCopy size={18} color="#00F0FF" />}
                   </button>
                 </div>
               </div>
@@ -297,7 +297,7 @@ export default function DepositInstructions() {
             gap: '12px',
             marginBottom: '24px'
           }}>
-            <AlertCircle size={20} color="#FBBF24" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <IoAlertCircle size={20} color="#FBBF24" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '14px', fontWeight: '600', color: '#FBBF24', marginBottom: '4px' }}>Important</div>
               <div style={{ fontSize: '13px', color: '#FDE68A', lineHeight: '1.5' }}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Twitter, Github, Mail } from 'lucide-react';
+import { Zap, Twitter, Github, Mail } from 'react-icons/io5';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Footer() {
           {/* Company */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-              <Zap size={28} color="#00F0FF" />
+              <IoFlash size={28} color="#00F0FF" />
               <h3 style={{ color: '#fff', fontSize: '24px', fontWeight: '900', margin: 0 }}>Coin Hub X</h3>
             </div>
             <p style={{ color: '#888', fontSize: '14px', lineHeight: '1.6', marginBottom: '1.5rem' }}>
@@ -53,7 +53,7 @@ export default function Footer() {
                 justifyContent: 'center',
                 transition: 'all 0.3s ease'
               }}>
-                <Mail size={18} color="#00F0FF" />
+                <IoMail size={18} color="#00F0FF" />
               </a>
             </div>
           </div>

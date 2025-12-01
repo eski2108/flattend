@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, ArrowLeft } from 'lucide-react';
+import { Shield, ArrowLeft } from 'react-icons/io5';
 
 export default function TermsOfService() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function TermsOfService() {
             gap: '8px'
           }}
         >
-          <ArrowLeft size={18} />
+          <IoArrowBack size={18} />
           Back to Home
         </button>
 
@@ -38,7 +38,7 @@ export default function TermsOfService() {
           marginBottom: '2rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '2rem' }}>
-            <Shield size={40} color="#00F0FF" />
+            <IoShield size={40} color="#00F0FF" />
             <h1 style={{ color: '#fff', fontSize: '36px', fontWeight: '900', margin: 0 }}>Terms of Service</h1>
           </div>
 

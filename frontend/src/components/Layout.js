@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
-import { Zap, LayoutDashboard, ShoppingBag, TrendingUp, TrendingDown, FileText, DollarSign, CreditCard, LogOut, Menu, X, Gift, MessageCircle, BarChart3, PiggyBank, PieChart, Target } from 'lucide-react';
+import { Zap, LayoutDashboard, ShoppingBag, TrendingUp, TrendingDown, FileText, DollarSign, CreditCard, LogOut, Menu, X, Gift, MessageCircle, BarChart3, PiggyBank, PieChart, Target } from 'react-icons/io5';
 import Logo from '@/components/Logo';
 import PriceTickerEnhanced from '@/components/PriceTickerEnhanced';
 import ExpressBuyModal from '@/components/ExpressBuyModal';
@@ -76,7 +76,7 @@ export default function Layout({ children }) {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               data-testid="mobile-menu-btn"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMobileMenuOpen ? <IoClose size={24} /> : <IoMenu size={24} />}
             </button>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function Layout({ children }) {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <MessageCircle size={18} />
+              <IoChatbubbles size={18} />
               <span>Support / Chat</span>
             </button>
             <button
@@ -193,7 +193,7 @@ export default function Layout({ children }) {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <LogOut size={18} />
+              <IoLogOut size={18} />
               <span>Logout</span>
             </button>
           </div>

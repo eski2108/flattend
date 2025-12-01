@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, X, Check, AlertCircle, TrendingUp, Shield, MessageSquare } from 'lucide-react';
+import { Bell, X, Check, AlertCircle, TrendingUp, Shield, MessageSquare } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -123,19 +123,19 @@ export default function NotificationBell() {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'login_alert':
-        return <Shield size={18} style={{ color: '#00F0FF' }} />;
+        return <IoShield size={18} style={{ color: '#00F0FF' }} />;
       case 'p2p_trade_update':
       case 'deposit_confirmed':
       case 'withdrawal_completed':
       case 'swap_completed':
       case 'staking_reward':
-        return <TrendingUp size={18} style={{ color: '#22C55E' }} />;
+        return <IoTrendingUp size={18} style={{ color: '#22C55E' }} />;
       case 'dispute_update':
-        return <AlertCircle size={18} style={{ color: '#EF4444' }} />;
+        return <IoAlertCircle size={18} style={{ color: '#EF4444' }} />;
       case 'admin_announcement':
         return <MessageSquare size={18} style={{ color: '#A855F7' }} />;
       default:
-        return <Bell size={18} style={{ color: '#64748B' }} />;
+        return <IoNotifications size={18} style={{ color: '#64748B' }} />;
     }
   };
 
@@ -180,7 +180,7 @@ export default function NotificationBell() {
           e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
         }}
       >
-        <Bell size={20} style={{ color: '#00F0FF' }} />
+        <IoNotifications size={20} style={{ color: '#00F0FF' }} />
         
         {/* Unread Badge */}
         {unreadCount > 0 && (
@@ -279,7 +279,7 @@ export default function NotificationBell() {
                 textAlign: 'center',
                 color: '#64748B'
               }}>
-                <Bell size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+                <IoNotifications size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
                 <p style={{ margin: 0, fontSize: '0.875rem' }}>No notifications yet</p>
               </div>
             ) : (

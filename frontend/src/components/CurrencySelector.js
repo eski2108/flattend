@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { Globe, Check, Search } from 'lucide-react';
+import { Globe, Check, Search } from 'react-icons/io5';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 
@@ -58,7 +58,7 @@ export default function CurrencySelector() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Globe size={24} color="#00F0FF" />
+          <IoGlobe size={24} color="#00F0FF" />
           <div style={{ textAlign: 'left' }}>
             <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '0.25rem' }}>
               Display Currency
@@ -116,7 +116,7 @@ export default function CurrencySelector() {
                 borderRadius: '8px',
                 border: '1px solid rgba(0, 240, 255, 0.3)'
               }}>
-                <Search size={20} color="#00F0FF" />
+                <IoSearch size={20} color="#00F0FF" />
                 <input
                   type="text"
                   placeholder="Search currency..."
@@ -200,7 +200,7 @@ export default function CurrencySelector() {
                         {curr.symbol}
                       </span>
                       {curr.code === currency && (
-                        <Check size={20} color="#00F0FF" />
+                        <IoCheckmark size={20} color="#00F0FF" />
                       )}
                     </div>
                   </button>

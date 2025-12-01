@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, AlertCircle, Info, CheckCircle, Megaphone } from 'lucide-react';
+import { X, AlertCircle, Info, CheckCircle, Megaphone } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -49,14 +49,14 @@ export default function PromoBanner() {
   const getIcon = (type) => {
     switch (type) {
       case 'warning':
-        return <AlertCircle size={20} />;
+        return <IoAlertCircle size={20} />;
       case 'success':
-        return <CheckCircle size={20} />;
+        return <IoCheckmarkCircle size={20} />;
       case 'promo':
         return <Megaphone size={20} />;
       case 'info':
       default:
-        return <Info size={20} />;
+        return <IoInformationCircle size={20} />;
     }
   };
 
@@ -207,7 +207,7 @@ export default function PromoBanner() {
           e.currentTarget.style.color = '#94A3B8';
         }}
       >
-        <X size={16} />
+        <IoClose size={16} />
       </button>
 
       <style>

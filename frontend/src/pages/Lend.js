@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TrendingUp, Wallet, AlertCircle, Info } from 'lucide-react';
+import { TrendingUp, Wallet, AlertCircle, Info } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -141,7 +141,7 @@ export default function Lend() {
         <Card className="balance-card" data-testid="balance-card">
           <div className="balance-content">
             <div className="balance-info">
-              <Wallet size={32} className="balance-icon" />
+              <IoWallet size={32} className="balance-icon" />
               <div>
                 <p className="balance-label">Available Balance</p>
                 <p className="balance-value">{(user?.available_balance || 0).toFixed(4)} ETH</p>
@@ -176,7 +176,7 @@ export default function Lend() {
               </div>
               <div className="card-body">
                 <div className="info-box">
-                  <Info size={20} />
+                  <IoInformationCircle size={20} />
                   <p>Deposit fee: {stats?.config?.deposit_fee_percent || 0.5}%</p>
                 </div>
                 <div className="input-group">
@@ -228,7 +228,7 @@ export default function Lend() {
               </div>
               <div className="card-body">
                 <div className="info-box">
-                  <Info size={20} />
+                  <IoInformationCircle size={20} />
                   <p>Withdrawal fee: {stats?.config?.withdraw_fee_percent || 0.5}%</p>
                 </div>
                 <div className="input-group">
@@ -281,7 +281,7 @@ export default function Lend() {
               </div>
               <div className="card-body">
                 <div className="info-box earn">
-                  <TrendingUp size={20} />
+                  <IoTrendingUp size={20} />
                   <p>Earn {stats?.config?.lender_interest_rate || 5}% annual interest on your lending</p>
                 </div>
                 <div className="input-group">

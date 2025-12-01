@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { ArrowLeft, Shield, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Shield, Clock, CheckCircle, AlertCircle } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -158,7 +158,7 @@ function OrderConfirmation() {
             marginBottom: '2rem'
           }}
         >
-          <ArrowLeft size={18} />
+          <IoArrowBack size={18} />
           Back to P2P Trading
         </button>
 
@@ -284,13 +284,13 @@ function OrderConfirmation() {
                 )}
                 {walletValid === true && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#22C55E', marginTop: '0.5rem' }}>
-                    <CheckCircle size={14} />
+                    <IoCheckmarkCircle size={14} />
                     Valid wallet address
                   </div>
                 )}
                 {walletValid === false && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#EF4444', marginTop: '0.5rem' }}>
-                    <AlertCircle size={14} />
+                    <IoAlertCircle size={14} />
                     Invalid wallet address
                   </div>
                 )}
@@ -411,7 +411,7 @@ function OrderConfirmation() {
               </div>
               {offer.verified && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#22C55E' }}>
-                  <Shield size={16} />
+                  <IoShield size={16} />
                   Verified Trader
                 </div>
               )}
@@ -456,7 +456,7 @@ function OrderConfirmation() {
               display: 'flex',
               gap: '0.75rem'
             }}>
-              <Shield size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
+              <IoShield size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
               <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>
                 <div style={{ fontWeight: '700', color: '#22C55E', marginBottom: '0.25rem' }}>
                   Secure Escrow Protection

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Send, Image, X } from 'lucide-react';
+import { Send, Image, X } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -278,7 +278,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
             justifyContent: 'center'
           }}
         >
-          <X size={20} color="#EF4444" />
+          <IoClose size={20} color="#EF4444" />
         </button>
       </div>
 
@@ -395,7 +395,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
                 justifyContent: 'center'
               }}
             >
-              <X size={16} color="#fff" />
+              <IoClose size={16} color="#fff" />
             </button>
           </div>
         </div>
@@ -448,7 +448,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
               justifyContent: 'center'
             }}
           >
-            <Image size={18} color="#00F0FF" />
+            <IoImage size={18} color="#00F0FF" />
           </button>
         </div>
 
@@ -486,7 +486,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
               opacity: (sending || (!newMessage.trim() && !selectedImage)) ? 0.5 : 1
             }}
           >
-            <Send size={18} color="#fff" />
+            <IoSend size={18} color="#fff" />
             <span style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
               Send
             </span>

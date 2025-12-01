@@ -4,7 +4,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Wallet, ArrowDownLeft, ArrowUpRight, RefreshCw, Repeat } from 'lucide-react';
+import { Wallet, ArrowDownLeft, ArrowUpRight, RefreshCw, Repeat } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -109,7 +109,7 @@ export default function WalletPage() {
               coinColor="#00C6FF"
               variant="secondary"
               size="small"
-              icon={<RefreshCw size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />}
+              icon={<IoRefresh size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />}
             >
               {refreshing ? '' : ''}
             </CHXButton>
@@ -183,7 +183,7 @@ function AllCoinsDepositGrid({ coinMetadata, navigate, getCoinColor }) {
         textAlign: 'center',
         opacity: 0.94
       }}>
-        <Wallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
+        <IoWallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
         <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600', marginBottom: '8px' }}>Loading coins...</div>
       </div>
     );
@@ -370,7 +370,7 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
           <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<ArrowUpRight size={16} />}>
             Withdraw
           </CHXButton>
-          <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<Repeat size={16} />}>
+          <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiRepeat size={16} />}>
             Swap
           </CHXButton>
         </div>
@@ -420,7 +420,7 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
                 <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="medium" icon={<ArrowUpRight size={18} />}>
                   Withdraw
                 </CHXButton>
-                <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="medium" icon={<Repeat size={18} />}>
+                <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="medium" icon={<BiRepeat size={18} />}>
                   Swap
                 </CHXButton>
               </div>

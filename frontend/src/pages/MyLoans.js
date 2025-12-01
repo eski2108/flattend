@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, AlertCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, AlertCircle } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -91,10 +91,10 @@ export default function MyLoans() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      active: { label: 'Active', className: 'status-active', icon: <TrendingUp size={16} /> },
-      repaid: { label: 'Repaid', className: 'status-repaid', icon: <CheckCircle size={16} /> },
+      active: { label: 'Active', className: 'status-active', icon: <IoTrendingUp size={16} /> },
+      repaid: { label: 'Repaid', className: 'status-repaid', icon: <IoCheckmarkCircle size={16} /> },
       liquidated: { label: 'Liquidated', className: 'status-liquidated', icon: <AlertTriangle size={16} /> },
-      defaulted: { label: 'Defaulted', className: 'status-defaulted', icon: <AlertCircle size={16} /> },
+      defaulted: { label: 'Defaulted', className: 'status-defaulted', icon: <IoAlertCircle size={16} /> },
     };
     const badge = badges[status] || badges.active;
     return (
@@ -151,7 +151,7 @@ export default function MyLoans() {
                     <Card key={loan.loan_id} className="loan-card borrow" data-testid="borrow-loan-card">
                       <div className="loan-header">
                         <div className="loan-type">
-                          <TrendingDown className="type-icon" />
+                          <IoTrendingDown className="type-icon" />
                           <span>Borrowing</span>
                         </div>
                         {getStatusBadge(loan.status)}
@@ -212,7 +212,7 @@ export default function MyLoans() {
               </div>
             ) : (
               <Card className="empty-state" data-testid="empty-borrows">
-                <AlertCircle size={48} className="empty-icon" />
+                <IoAlertCircle size={48} className="empty-icon" />
                 <h3>No Borrowing Activity</h3>
                 <p>You haven't borrowed any loans yet</p>
                 <Button onClick={() => navigate('/p2p-marketplace')} data-testid="browse-marketplace-btn">Browse Marketplace</Button>
@@ -229,7 +229,7 @@ export default function MyLoans() {
                     <Card key={loan.loan_id} className="loan-card lend" data-testid="lend-loan-card">
                       <div className="loan-header">
                         <div className="loan-type">
-                          <TrendingUp className="type-icon" />
+                          <IoTrendingUp className="type-icon" />
                           <span>Lending</span>
                         </div>
                         {getStatusBadge(loan.status)}
@@ -289,7 +289,7 @@ export default function MyLoans() {
               </div>
             ) : (
               <Card className="empty-state" data-testid="empty-lends">
-                <AlertCircle size={48} className="empty-icon" />
+                <IoAlertCircle size={48} className="empty-icon" />
                 <h3>No Lending Activity</h3>
                 <p>You haven't created any lending offers yet</p>
                 <Button onClick={() => navigate('/lend')} data-testid="start-lending-btn">Start Lending</Button>

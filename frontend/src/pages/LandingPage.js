@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Shield, TrendingUp, Zap, Lock, Users, DollarSign, CreditCard } from 'lucide-react';
+import { ArrowRight, Shield, TrendingUp, Zap, Lock, Users, DollarSign, CreditCard } from 'react-icons/io5';
 import Logo from '@/components/Logo';
 import axios from 'axios';
 import Footer from '@/components/Footer';
@@ -210,7 +210,7 @@ export default function LandingPage() {
               className="primary-cta-btn"
               data-testid="get-started-btn"
             >
-              Create My Account Free <ArrowRight className="ml-2" size={20} />
+              Create My Account Free <IoArrowForward className="ml-2" size={20} />
             </Button>
             
             {/* Download Mobile App Button */}
@@ -317,7 +317,7 @@ export default function LandingPage() {
                 e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.5), 0 8px 20px rgba(0, 0, 0, 0.5)';
               }}
             >
-              <TrendingUp size={28} />
+              <IoTrendingUp size={28} />
               <span>Buy Crypto</span>
             </button>
             <button
@@ -361,7 +361,7 @@ export default function LandingPage() {
                 e.currentTarget.style.boxShadow = '0 0 30px rgba(224, 160, 255, 0.8), 0 0 60px rgba(192, 96, 255, 0.5), 0 8px 20px rgba(0, 0, 0, 0.5)';
               }}
             >
-              <TrendingUp size={28} style={{ transform: 'rotate(180deg)' }} />
+              <IoTrendingUp size={28} style={{ transform: 'rotate(180deg)' }} />
               <span>Sell Crypto</span>
             </button>
             <button
@@ -402,7 +402,7 @@ export default function LandingPage() {
                 e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 184, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.5)';
               }}
             >
-              <CreditCard size={28} />
+              <IoCard size={28} />
               <span>Buy with Card</span>
             </button>
           </div>
@@ -518,7 +518,7 @@ export default function LandingPage() {
               }}
             >
               <div className="feature-icon">
-                <Shield size={32} />
+                <IoShield size={32} />
               </div>
               <h3>Military-Grade Escrow</h3>
               <p>Your cryptocurrency is secured in our smart escrow system. Funds are only released when both parties confirm successful trade completion.</p>
@@ -540,7 +540,7 @@ export default function LandingPage() {
               }}
             >
               <div className="feature-icon">
-                <Zap size={32} />
+                <IoFlash size={32} />
               </div>
               <h3>Real-Time Settlement</h3>
               <p>Complete trades in under 15 minutes. Direct peer-to-peer transactions with instant escrow release upon confirmation.</p>
@@ -562,7 +562,7 @@ export default function LandingPage() {
               }}
             >
               <div className="feature-icon">
-                <Lock size={32} />
+                <IoLockClosed size={32} />
               </div>
               <h3>24/7 Dispute Protection</h3>
               <p>Professional mediation team available around the clock. Every dispute is reviewed and resolved within 24 hours with full transparency.</p>
@@ -584,7 +584,7 @@ export default function LandingPage() {
               }}
             >
               <div className="feature-icon">
-                <DollarSign size={32} />
+                <IoCash size={32} />
               </div>
               <h3>Global Payment Support</h3>
               <p>Accept bank transfers via SEPA, SWIFT, PIX, UPI, M-Pesa, and 10+ additional payment methods worldwide.</p>
@@ -606,7 +606,7 @@ export default function LandingPage() {
               }}
             >
               <div className="feature-icon">
-                <TrendingUp size={32} />
+                <IoTrendingUp size={32} />
               </div>
               <h3>Transparent Fee Structure</h3>
               <p>1% trading fee. 1% withdrawal fee. No hidden charges. No escrow fees. What you see is what you pay.</p>
@@ -628,7 +628,7 @@ export default function LandingPage() {
               }}
             >
               <div className="feature-icon">
-                <Users size={32} />
+                <IoPeople size={32} />
               </div>
               <h3>Trusted Traders</h3>
               <p>Trade with confidence using our community reputation system. User ratings and trade history ensure safe transactions.</p>

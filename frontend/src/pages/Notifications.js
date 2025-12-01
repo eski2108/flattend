@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Shield, TrendingUp, AlertCircle, MessageSquare, Check, Filter } from 'lucide-react';
+import { Bell, Shield, TrendingUp, AlertCircle, MessageSquare, Check, Filter } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -121,19 +121,19 @@ export default function Notifications() {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'login_alert':
-        return <Shield size={24} style={{ color: '#00F0FF' }} />;
+        return <IoShield size={24} style={{ color: '#00F0FF' }} />;
       case 'p2p_trade_update':
       case 'deposit_confirmed':
       case 'withdrawal_completed':
       case 'swap_completed':
       case 'staking_reward':
-        return <TrendingUp size={24} style={{ color: '#22C55E' }} />;
+        return <IoTrendingUp size={24} style={{ color: '#22C55E' }} />;
       case 'dispute_update':
-        return <AlertCircle size={24} style={{ color: '#EF4444' }} />;
+        return <IoAlertCircle size={24} style={{ color: '#EF4444' }} />;
       case 'admin_announcement':
         return <MessageSquare size={24} style={{ color: '#A855F7' }} />;
       default:
-        return <Bell size={24} style={{ color: '#64748B' }} />;
+        return <IoNotifications size={24} style={{ color: '#64748B' }} />;
     }
   };
 
@@ -225,7 +225,7 @@ export default function Notifications() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <Check size={16} />
+              <IoCheckmark size={16} />
               Mark all as read
             </button>
           )}
@@ -295,7 +295,7 @@ export default function Notifications() {
             textAlign: 'center',
             color: '#94A3B8'
           }}>
-            <Bell size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+            <IoNotifications size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
             <p style={{ margin: 0 }}>Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
@@ -307,7 +307,7 @@ export default function Notifications() {
             textAlign: 'center',
             color: '#94A3B8'
           }}>
-            <Bell size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+            <IoNotifications size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
             <p style={{ margin: 0, fontSize: '1rem' }}>No notifications found</p>
             {filter !== 'all' && (
               <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem' }}>
