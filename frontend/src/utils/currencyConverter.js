@@ -79,13 +79,9 @@ export const convertFiatToCrypto = async (fiatAmount, coinSymbol, fiatCurrency =
     return { cryptoAmount: 0, pricePerUnit: 0, totalWithFee: 0, feeAmount: 0, error: 'Price unavailable' };
   }
 
-  // Convert to GBP if different currency
-  let priceInTargetCurrency = priceInGBP;
-  if (fiatCurrency === 'USD') {
-    priceInTargetCurrency = priceInGBP * 1.27; // Approximate conversion
-  } else if (fiatCurrency === 'NGN') {
-    priceInTargetCurrency = priceInGBP * 1960; // Approximate conversion
-  }
+  // Convert to target currency using exchange rates
+  const exchangeRate = EXCHANGE_RATES[fiatCurrency] || 1.0;
+  const priceInTargetCurrency = priceInGBP * exchangeRate;
 
   // Calculate fee
   const feeAmount = (amount * fee) / 100;
