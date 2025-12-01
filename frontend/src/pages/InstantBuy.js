@@ -356,15 +356,29 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         </div>
 
         {/* Expand Arrow */}
-        <ChevronDown 
-          size={22} 
-          color={expanded ? coin.color : '#00C6FF'}
-          style={{
-            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.18s ease-in-out, color 0.2s',
-            flexShrink: 0
-          }}
-        />
+        <div style={{
+          width: '22px',
+          height: '22px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.18s ease-in-out',
+          flexShrink: 0
+        }}>
+          <svg 
+            width="22" 
+            height="22" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke={expanded ? coin.color : '#00C6FF'}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
       </div>
 
       {/* 24H Sparkline Chart (Collapsed View Only) */}
