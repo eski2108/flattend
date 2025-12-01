@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoCash as DollarSign, IoChatbubbles as MessageCircle, IoGlobe as Globe, IoLockClosed as Lock, IoTrendingUp as TrendingUp } from 'react-icons/io5';
+import { IoCash as DollarSign, IoChatbubbles, IoGlobe, IoLockClosed as Lock, IoTrendingUp } from 'react-icons/io5';
 import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import CoinSparkline from '@/components/widgets/CoinSparkline';
-import { IoFlash as Zap, IoSearch as Search } from 'react-icons/io5';
+import { IoFlash, IoSearch } from 'react-icons/io5';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BiArrowFromTop, BiArrowToTop, BiRepeat } from 'react-icons/bi';
 

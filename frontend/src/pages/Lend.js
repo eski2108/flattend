@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Info, IoAlertCircle as AlertCircle, IoTrendingUp as TrendingUp, Wallet } from 'react-icons/io5';
+import { Info, IoAlertCircle as AlertCircle, IoInformationCircle, IoTrendingUp, IoWallet, Wallet } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

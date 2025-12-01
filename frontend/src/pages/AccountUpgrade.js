@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoTrendingUp as TrendingUp, IoFlash as Zap, IoStar as Star } from 'react-icons/io5';;
+import { IoFlash as Zap, IoStar, IoTrendingUp as TrendingUp } from 'react-icons/io5';
 
 export default function AccountUpgrade() {
   const navigate = useNavigate();

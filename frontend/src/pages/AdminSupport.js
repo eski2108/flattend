@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoPersonOutline as User, IoSend as Send, IoTime as Clock } from 'react-icons/io5';;
+import { IoChatbubbles, IoCheckmark as Check, IoCheckmarkCircle, IoPersonOutline, IoSend, IoTime } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

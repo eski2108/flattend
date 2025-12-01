@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { IoAlertCircle as AlertCircle, IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoPersonOutline as User, IoSend as Send, IoTime as Clock } from 'react-icons/io5';;
+import { IoAlertCircle, IoChatbubbles, IoCheckmark as Check, IoCheckmarkCircle, IoPersonOutline, IoSend, IoTime as Clock } from 'react-icons/io5';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

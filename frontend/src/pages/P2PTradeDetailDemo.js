@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoAlertCircle as AlertCircle, IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoCloudUpload as Upload, IoShield as Shield, IoTime as Clock } from 'react-icons/io5';;
+import { IoAlertCircle, IoChatbubbles, IoCheckmark as Check, IoCheckmarkCircle, IoCloudUpload, IoShield, IoTime } from 'react-icons/io5';
 import OTPModal from '@/components/OTPModal';
 import P2PNotifications from '@/components/P2PNotifications';
 const API = process.env.REACT_APP_BACKEND_URL;

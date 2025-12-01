@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CreditCard, DollarSign, IoArrowForward, IoFlash as Zap, IoShield as Shield, IoTrendingUp as TrendingUp, Lock, Users } from 'react-icons/io5';
+import { ArrowRight, CreditCard, DollarSign, IoArrowForward, IoCard, IoCash, IoFlash, IoLockClosed, IoPeople, IoShield, IoTrendingUp, Lock, Users } from 'react-icons/io5';
 import Logo from '@/components/Logo';
 import axios from 'axios';
 import Footer from '@/components/Footer';

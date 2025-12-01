@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { IoFlash as Zap, IoMail as Mail, IoLockClosed as Lock, IoPersonOutline as User } from 'react-icons/io5';;
+import { IoFlash as Zap, IoLockClosed, IoMail, IoPersonOutline } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
