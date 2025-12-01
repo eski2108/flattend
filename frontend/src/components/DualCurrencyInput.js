@@ -178,7 +178,9 @@ const DualCurrencyInput = ({
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'right 8px center',
                   minWidth: '90px',
-                  height: '38px'
+                  maxWidth: '100px',
+                  height: '38px',
+                  flexShrink: 0
                 }}
               >
                 <optgroup label="Popular">
