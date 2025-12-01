@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Eye, FileText, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoNotifications, IoShield as Shield, IoWarning as AlertTriangle, Lock, Shield, Users } from 'react-icons/io5';
+import { Bell, Eye, FileText, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoNotifications, IoShield as Shield, IoWarning as AlertTriangle, Lock, Users } from 'react-icons/io5';
 
 export default function Security() {
   const features = [

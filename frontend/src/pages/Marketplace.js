@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Filter, IoShield as Shield, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp, Search, Shield, Star, TrendingDown, TrendingUp } from 'react-icons/io5';
+import { Filter, IoShield as Shield, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp, Search, Star } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
