@@ -410,7 +410,10 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                <div style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+                <div style={{ marginBottom: isMobile ? '20px' : '32px', position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600' }}>
+                    💷 Pay with GBP → Receive {selectedCoin}
+                  </div>
                   <DualCurrencyInput
                     cryptoSymbol={selectedCoin}
                     fiatCurrency="GBP"
@@ -426,7 +429,7 @@ export default function P2PExpress() {
                     availableBalance={userBalance}
                     balanceInCrypto={false}
                     label="Purchase Amount"
-                    showCurrencySelector={true}
+                    showCurrencySelector={false}
                   />
                 </div>
 
