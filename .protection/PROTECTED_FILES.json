@@ -1,0 +1,27 @@
+{
+  "protected_files": [
+    "/app/frontend/src/components/Layout.js",
+    "/app/frontend/src/components/ErrorBoundary.js",
+    "/app/frontend/src/App.js",
+    "/app/backend/server.py",
+    "/app/backend/wallet_service.py",
+    "/app/frontend/package.json",
+    "/app/backend/requirements.txt",
+    "/app/frontend/.env",
+    "/app/backend/.env"
+  ],
+  "protected_directories": [
+    "/app/frontend/src/components",
+    "/app/backend"
+  ],
+  "critical_features": [
+    "wallet",
+    "p2p",
+    "express",
+    "trading",
+    "authentication"
+  ],
+  "freeze_status": "ACTIVE",
+  "last_stable_backup": "2025-12-01T14:44:55Z",
+  "version": "1.0.0-STABLE"
+}
