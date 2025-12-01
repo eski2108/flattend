@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoClose, IoFlash, IoShield, IoTrendingUp } from 'react-icons/io5';
+import { IoAlertCircle as AlertCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoClose as X, IoFlash as Zap, IoShield as Shield, IoTrendingUp as TrendingUp } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

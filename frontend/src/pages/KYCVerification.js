@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { IoAlertCircle, IoCamera, IoCheckmark, IoCheckmarkCircle, IoClose, IoCloseCircle, IoCloudUpload, IoDocument, IoLocation, IoTime } from 'react-icons/io5';
+import { IoAlertCircle as AlertCircle, IoCamera as Camera, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoClose as X, IoCloseCircle as XCircle, IoCloudUpload as Upload, IoDocument as FileText, IoLocation as MapPin, IoTime as Clock } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Copy, DollarSign, IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoTime, Search } from 'react-icons/io5';
+import { Copy, DollarSign, IoAlertCircle as AlertCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoTime as Clock, Search } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

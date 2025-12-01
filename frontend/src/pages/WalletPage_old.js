@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { IoWallet, IoAdd, IoSend } from 'react-icons/io5';
+import { IoWallet as Wallet, IoAdd as Plus, IoSend as Send } from 'react-icons/io5';
 import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import axios from 'axios';
 import { toast } from 'sonner';

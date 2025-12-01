@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { ArrowLeft, IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoShield, IoTime, Shield } from 'react-icons/io5';
+import { ArrowLeft, IoAlertCircle as AlertCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoShield as Shield, IoTime as Clock, Shield } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

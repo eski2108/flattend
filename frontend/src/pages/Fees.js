@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoCash, IoArrowForward, IoInformationCircle } from 'react-icons/io5';;
+import { IoCash as DollarSign, IoArrowForward, IoInformationCircle as Info } from 'react-icons/io5';;
 
 export default function Fees() {
   const navigate = useNavigate();

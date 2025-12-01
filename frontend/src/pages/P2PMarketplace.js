@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { IoCheckmarkCircle, IoChevronDown, IoClose, IoFilter, IoFlash, IoLocation, IoPersonOutline, IoSearch, IoShield, IoStar, IoTime, IoTrendingUp, IoTrophy } from 'react-icons/io5';;
+import { IoCheckmarkCircle as CheckCircle, IoChevronDown, IoClose as X, IoFilter as Filter, IoFlash as Zap, IoLocation as MapPin, IoPersonOutline as User, IoSearch as Search, IoShield as Shield, IoStar as Star, IoTime as Clock, IoTrendingUp as TrendingUp, IoTrophy as Award } from 'react-icons/io5';;
 import P2PNotifications from '@/components/P2PNotifications';
 import '../styles/globalSwapTheme.css';
 

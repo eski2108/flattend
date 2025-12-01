@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoFlash, IoTrendingUp } from 'react-icons/io5';;
+import { IoFlash as Zap, IoTrendingUp as TrendingUp } from 'react-icons/io5';;
 
 export default function P2PBoost() {
   const navigate = useNavigate();

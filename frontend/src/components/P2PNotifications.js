@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IoAlertCircle, IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoClose, IoNotifications, IoTime } from 'react-icons/io5';
+import { IoAlertCircle as AlertCircle, IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoClose as X, IoNotifications, IoTime as Clock } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

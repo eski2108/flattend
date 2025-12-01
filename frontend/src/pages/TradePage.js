@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { IoArrowBack, IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoCloseCircle, IoCopy, IoSend, IoShield, IoTime, IoWallet } from 'react-icons/io5';;
+import { IoArrowBack, IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoCloseCircle as XCircle, IoCopy as Copy, IoSend as Send, IoShield as Shield, IoTime as Clock, IoWallet as Wallet } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import TradeChat from '@/components/TradeChat';

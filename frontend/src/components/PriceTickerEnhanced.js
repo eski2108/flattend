@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IoTrendingDown, IoTrendingUp, TrendingDown, TrendingUp } from 'react-icons/io5';
+import { IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp, TrendingDown, TrendingUp } from 'react-icons/io5';
 import Marquee from 'react-fast-marquee';
 import axios from 'axios';
 

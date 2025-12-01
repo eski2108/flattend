@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { IoAlertCircle, IoArrowForward, IoCash, IoFlash, IoSearch, IoShield, IoTime } from 'react-icons/io5';;
+import { IoAlertCircle as AlertCircle, IoArrowForward, IoCash as DollarSign, IoFlash as Zap, IoSearch as Search, IoShield as Shield, IoTime as Clock } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';

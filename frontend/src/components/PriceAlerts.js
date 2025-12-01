@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { IoAdd, IoNotifications, IoNotificationsOff, IoTrash, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
+import { IoAdd as Plus, IoNotifications, IoNotificationsOff, IoTrash as Trash, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
