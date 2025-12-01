@@ -15607,8 +15607,16 @@ async def withdraw_platform_earnings(request: dict):
 
 @api_router.get("/prices/live")
 async def get_live_prices_endpoint():
-    """Get all live crypto prices with 24h change"""
+    """Get all live crypto prices with 24h change (CACHED for performance)"""
     try:
+        # Check cache first
+        cache_key = "prices:live:all"
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            logger.info("✅ Returning cached live prices")
+            return cached_data
+        
         # Fetch raw price data which now includes 24h change
         all_prices = await fetch_live_prices()
         
@@ -15624,12 +15632,18 @@ async def get_live_prices_endpoint():
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
         
-        return {
+        response_data = {
             "success": True,
             "prices": result,
             "source": "CoinGecko API",
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
+        
+        # Cache the response
+        cache.set(cache_key, response_data, PRICE_CACHE_TTL)
+        logger.info("💾 Cached live prices for 30 seconds")
+        
+        return response_data
     except Exception as e:
         logger.error(f"Failed to get live prices: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch live prices")
