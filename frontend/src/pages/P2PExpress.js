@@ -335,11 +335,12 @@ export default function P2PExpress() {
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.3)',
-                borderRadius: '24px',
-                padding: '40px',
+                borderRadius: isMobile ? '20px' : '24px',
+                padding: isMobile ? '24px' : '40px',
                 boxShadow: '0 0 60px rgba(12, 235, 255, 0.2)',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                width: '100%'
               }}>
                 
                 <div style={{
