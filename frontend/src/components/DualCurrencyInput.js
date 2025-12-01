@@ -95,9 +95,9 @@ const DualCurrencyInput = ({
   const currencySymbol = getCurrencySymbol(selectedCurrency);
 
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div style={{ marginBottom: '16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-        <span style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '13px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           {label}
         </span>
         {availableBalance > 0 && (
@@ -107,19 +107,24 @@ const DualCurrencyInput = ({
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        {/* Fiat Input */}
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        {/* Fiat Input - Match BTC Selector Style */}
         <div style={{ flex: '1 1 45%', minWidth: '200px' }}>
           <div style={{
-            background: 'rgba(0, 0, 0, 0.4)',
-            border: '2px solid rgba(0, 240, 255, 0.3)',
+            background: '#0B1B2A',
+            border: '1px solid rgba(0, 240, 255, 0.3)',
             borderRadius: '12px',
-            padding: '12px',
+            padding: '10px 14px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '10px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+            transition: 'all 0.3s'
           }}>
-            <span style={{ color: '#00F0FF', fontSize: '18px', fontWeight: '700' }}>{currencySymbol}</span>
+            {/* £ Symbol - Thinner */}
+            <span style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '500' }}>{currencySymbol}</span>
+            
+            {/* Input */}
             <input
               type="number"
               value={fiatAmount}
@@ -131,87 +136,100 @@ const DualCurrencyInput = ({
                 background: 'transparent',
                 border: 'none',
                 color: '#FFFFFF',
-                fontSize: '20px',
-                fontWeight: '700',
+                fontSize: '18px',
+                fontWeight: '600',
                 outline: 'none',
                 width: '100%'
               }}
             />
+            
+            {/* Currency Selector - Compact Style */}
             {showCurrencySelector && (
               <select
                 value={selectedCurrency}
                 onChange={(e) => handleCurrencyChange(e.target.value)}
                 disabled={disabled}
                 style={{
-                  background: 'rgba(0, 240, 255, 0.15)',
-                  border: '1px solid rgba(0, 240, 255, 0.4)',
-                  borderRadius: '6px',
-                  padding: '4px 8px',
+                  background: 'rgba(0, 240, 255, 0.08)',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '8px',
+                  padding: '6px 10px',
                   color: '#00F0FF',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer',
                   outline: 'none',
-                  maxHeight: '200px',
-                  overflowY: 'auto'
+                  appearance: 'none',
+                  paddingRight: '24px',
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300F0FF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 6px center',
+                  minWidth: '85px'
                 }}
               >
                 <optgroup label="Popular">
-                  <option value="GBP">🇬🇧 GBP - British Pound</option>
-                  <option value="USD">🇺🇸 USD - US Dollar</option>
-                  <option value="EUR">🇪🇺 EUR - Euro</option>
-                  <option value="NGN">🇳🇬 NGN - Nigerian Naira</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="NGN">NGN (₦)</option>
                 </optgroup>
                 <optgroup label="Africa">
-                  <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
-                  <option value="KES">🇰🇪 KES - Kenyan Shilling</option>
-                  <option value="GHS">🇬🇭 GHS - Ghanaian Cedi</option>
+                  <option value="ZAR">ZAR (R)</option>
+                  <option value="KES">KES (KSh)</option>
+                  <option value="GHS">GHS (₵)</option>
                 </optgroup>
                 <optgroup label="Asia">
-                  <option value="INR">🇮🇳 INR - Indian Rupee</option>
-                  <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
-                  <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
-                  <option value="AED">🇦🇪 AED - UAE Dirham</option>
-                  <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="JPY">JPY (¥)</option>
+                  <option value="CNY">CNY (¥)</option>
+                  <option value="AED">AED (د.إ)</option>
+                  <option value="SAR">SAR (﷼)</option>
                 </optgroup>
                 <optgroup label="Americas">
-                  <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
-                  <option value="BRL">🇧🇷 BRL - Brazilian Real</option>
-                  <option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+                  <option value="CAD">CAD (C$)</option>
+                  <option value="BRL">BRL (R$)</option>
+                  <option value="MXN">MXN ($)</option>
                 </optgroup>
                 <optgroup label="Europe">
-                  <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
-                  <option value="SEK">🇸🇪 SEK - Swedish Krona</option>
-                  <option value="NOK">🇳🇴 NOK - Norwegian Krone</option>
-                  <option value="DKK">🇩🇰 DKK - Danish Krone</option>
-                  <option value="PLN">🇵🇱 PLN - Polish Zloty</option>
+                  <option value="CHF">CHF (Fr)</option>
+                  <option value="SEK">SEK (kr)</option>
+                  <option value="NOK">NOK (kr)</option>
+                  <option value="DKK">DKK (kr)</option>
+                  <option value="PLN">PLN (zł)</option>
                 </optgroup>
                 <optgroup label="Oceania">
-                  <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+                  <option value="AUD">AUD (A$)</option>
                 </optgroup>
               </select>
             )}
           </div>
-          <div style={{ marginTop: '4px', fontSize: '11px', color: '#8F9BB3', textAlign: 'center' }}>
-            Fiat Amount
-          </div>
         </div>
 
-        {/* Equals Symbol */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '40px' }}>
-          <span style={{ fontSize: '24px', color: '#00F0FF' }}>⇄</span>
+        {/* Swap Icon - Smaller with Circular Border */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          minWidth: '36px',
+          height: '36px',
+          borderRadius: '50%',
+          border: '1px solid rgba(0, 240, 255, 0.2)',
+          background: 'rgba(0, 240, 255, 0.05)'
+        }}>
+          <span style={{ fontSize: '18px', color: '#00F0FF' }}>⇄</span>
         </div>
 
-        {/* Crypto Input */}
+        {/* Crypto Input - Keep Existing Style */}
         <div style={{ flex: '1 1 45%', minWidth: '200px' }}>
           <div style={{
-            background: 'rgba(0, 0, 0, 0.4)',
-            border: '2px solid rgba(155, 77, 255, 0.3)',
+            background: '#0B1B2A',
+            border: '1px solid rgba(155, 77, 255, 0.3)',
             borderRadius: '12px',
-            padding: '12px',
+            padding: '10px 14px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '10px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
           }}>
             <input
               type="number"
@@ -225,16 +243,13 @@ const DualCurrencyInput = ({
                 background: 'transparent',
                 border: 'none',
                 color: '#FFFFFF',
-                fontSize: '20px',
-                fontWeight: '700',
+                fontSize: '18px',
+                fontWeight: '600',
                 outline: 'none',
                 width: '100%'
               }}
             />
             <span style={{ color: '#9B4DFF', fontSize: '14px', fontWeight: '700' }}>{cryptoSymbol}</span>
-          </div>
-          <div style={{ marginTop: '4px', fontSize: '11px', color: '#8F9BB3', textAlign: 'center' }}>
-            Crypto Amount
           </div>
         </div>
       </div>
