@@ -27,6 +27,9 @@ import random
 from performance_logger import log_performance, log_error, log_info, log_warning, logger
 from background_tasks import task_queue, send_email_background, update_prices_background
 
+# Redis Caching Service for Performance
+from cache_service import cache, PRICE_CACHE_TTL, price_cache_key
+
 # Custom JSON encoder to handle MongoDB ObjectId
 def convert_objectid(obj):
     """Convert MongoDB ObjectId to string for JSON serialization"""
