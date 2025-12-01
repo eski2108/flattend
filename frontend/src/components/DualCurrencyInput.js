@@ -254,30 +254,30 @@ const DualCurrencyInput = ({
         </div>
       </div>
 
-      {/* Price Info & Fees */}
+      {/* Price Info & Fees - Compact Design */}
       {priceInfo && !priceInfo.error && (
         <div style={{
-          marginTop: '12px',
-          padding: '8px 12px',
-          background: 'rgba(0, 240, 255, 0.05)',
-          border: '1px solid rgba(0, 240, 255, 0.2)',
-          borderRadius: '8px',
+          marginTop: '10px',
+          padding: '10px 14px',
+          background: 'rgba(0, 240, 255, 0.04)',
+          border: '1px solid rgba(0, 240, 255, 0.15)',
+          borderRadius: '10px',
           fontSize: '12px',
           color: '#8F9BB3'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <span>Rate:</span>
-            <span style={{ color: '#00F0FF' }}>1 {cryptoSymbol} = {currencySymbol}{priceInfo.pricePerUnit?.toFixed(2)}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '12px' }}>Rate:</span>
+            <span style={{ color: '#00F0FF', fontSize: '12px', fontWeight: '600' }}>1 {cryptoSymbol} = {currencySymbol}{priceInfo.pricePerUnit?.toFixed(2)}</span>
           </div>
           {fee > 0 && (
             <>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span>Fee ({fee}%):</span>
-                <span style={{ color: '#FFA500' }}>{currencySymbol}{priceInfo.feeAmount?.toFixed(2)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '12px' }}>Fee ({fee}%):</span>
+                <span style={{ color: '#FFA500', fontSize: '12px', fontWeight: '600' }}>{currencySymbol}{priceInfo.feeAmount?.toFixed(2)}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(0, 240, 255, 0.2)', paddingTop: '4px' }}>
-                <span style={{ fontWeight: '700' }}>Net Amount:</span>
-                <span style={{ color: '#00F0FF', fontWeight: '700' }}>{currencySymbol}{priceInfo.netAmount?.toFixed(2)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(0, 240, 255, 0.15)', paddingTop: '6px', marginTop: '6px' }}>
+                <span style={{ fontWeight: '600', fontSize: '13px' }}>Net Amount:</span>
+                <span style={{ color: '#00F0FF', fontWeight: '700', fontSize: '13px' }}>{currencySymbol}{priceInfo.netAmount?.toFixed(2)}</span>
               </div>
             </>
           )}
