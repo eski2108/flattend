@@ -165,27 +165,20 @@ function SwapCrypto() {
       return;
     }
 
-    // Calculate actual crypto amount if in fiat mode
-    let actualCryptoAmount = parseFloat(fromAmount);
-    if (inputType === 'fiat') {
-      if (!prices[fromCrypto]?.price_gbp) {
-        toast.error('Price data not available');
-        return;
-      }
-      actualCryptoAmount = parseFloat(fromAmount) / prices[fromCrypto].price_gbp;
-      toast.info(`Swapping £${fromAmount} worth of ${fromCrypto} (≈${actualCryptoAmount.toFixed(8)} ${fromCrypto})`);
-    }
+    // fromAmount is already in crypto (converted by DualCurrencyInput)
+    const actualCryptoAmount = parseFloat(fromAmount);
 
     // Check if user has enough balance
     const availableBalance = walletBalances[fromCrypto] || 0;
-    if (actualCryptoAmount > availableBalance) {
-      const maxFiat = (availableBalance * (prices[fromCrypto]?.price_gbp || 0)).toFixed(2);
-      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto} (≈£${maxFiat})`);
+    
+    if (availableBalance === 0) {
+      toast.error(`You have no ${fromCrypto} to swap. Please select a currency you own.`);
       return;
     }
 
-    if (availableBalance === 0) {
-      toast.error(`You have no ${fromCrypto} to swap. Please select a currency you own.`);
+    if (actualCryptoAmount > availableBalance) {
+      const maxFiat = (availableBalance * (prices[fromCrypto]?.price_gbp || 0)).toFixed(2);
+      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto} (≈£${maxFiat})`);
       return;
     }
 
