@@ -5,7 +5,9 @@ import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import CoinSparkline from '@/components/widgets/CoinSparkline';
-import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat } from 'lucide-react';
+import { IoFlash, IoSearch } from 'react-icons/io5';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { BiArrowFromTop, BiArrowToTop, BiRepeat } from 'react-icons/bi';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
