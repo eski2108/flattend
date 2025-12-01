@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { TrendingUp, TrendingDown, IoWarning as AlertTriangle, IoCheckmarkCircle as CheckCircle, IoAlertCircle as AlertCircle } from 'react-icons/io5';
+import { IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoTrendingDown, IoTrendingUp, IoWarning, TrendingDown, TrendingUp } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

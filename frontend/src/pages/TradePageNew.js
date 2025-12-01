@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoArrowBack, IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoCloseCircle, IoCopy, IoInformationCircle, IoSend, IoShield, IoTime, IoWarning } from 'react-icons/io5';;
+import { IoArrowBack, IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoClose, IoCloseCircle, IoCopy, IoInformationCircle, IoSend, IoShield, IoTime, IoWarning } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 

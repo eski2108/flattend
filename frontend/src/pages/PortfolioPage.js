@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { TrendingUp, TrendingDown, DollarSign, PieChart } from 'react-icons/io5';
+import { DollarSign, IoTrendingDown, IoTrendingUp, PieChart, TrendingDown, TrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import API_BASE_URL from '@/config/api';

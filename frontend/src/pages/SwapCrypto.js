@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { IoTrendingUp, IoInformationCircle, IoRefresh, IoSettings, IoFlash, IoTime, IoChevronDown, IoAlertCircle, IoCheckmarkCircle, IoShield, IoCash } from 'react-icons/io5';;
+import { IoAlertCircle, IoCash, IoCheckmark, IoCheckmarkCircle, IoChevronDown, IoFlash, IoInformationCircle, IoRefresh, IoSettings, IoShield, IoTime, IoTrendingUp } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

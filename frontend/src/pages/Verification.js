@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoShield, IoCheckmarkCircle } from 'react-icons/io5';;
+import { IoCheckmark, IoCheckmarkCircle, IoShield } from 'react-icons/io5';;
 
 export default function Verification() {
   const navigate = useNavigate();

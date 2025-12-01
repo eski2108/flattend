@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoFlash as Zap, IoLogoTwitter as Twitter, IoLogoGithub as Github, IoMail as Mail } from 'react-icons/io5';
+import { IoFlash, IoLogoGithub, IoLogoTwitter, IoMail } from 'react-icons/io5';
 
 export default function Footer() {
   const navigate = useNavigate();

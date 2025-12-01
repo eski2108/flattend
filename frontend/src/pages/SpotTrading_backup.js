@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import * as LightweightCharts from 'lightweight-charts';
-import { IoTrendingUp, IoTrendingDown, IoChevronDown, IoPulse, IoTime, IoCash, IoFlash, IoMenu, IoClose } from 'react-icons/io5';;
+import { IoCash, IoChevronDown, IoClose, IoFlash, IoMenu, IoPulse, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

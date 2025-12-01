@@ -2,7 +2,7 @@ import { BiArrowToTop } from 'react-icons/bi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoTrendingUp as TrendingUp, IoTrendingDown as TrendingDown, IoCash as DollarSign, IoPieChart as PieChart, IoRefresh as RefreshCw, IoArrowForward as ArrowUpRight, IoFlash as Zap } from 'react-icons/io5';
+import { IoArrowForward, IoCash, IoFlash, IoPieChart, IoRefresh, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 

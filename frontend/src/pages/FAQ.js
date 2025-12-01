@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoHelpCircle, IoChevronDown, IoChevronUp, IoSearch, IoChatbubbles, IoBook, IoCash, IoShield, IoPeople, IoFlash, IoTrendingUp } from 'react-icons/io5';;
+import { IoBook, IoCash, IoChatbubbles, IoChevronDown, IoChevronUp, IoFlash, IoHelpCircle, IoPeople, IoSearch, IoShield, IoTrendingUp } from 'react-icons/io5';;
 
 const faqs = [
   {

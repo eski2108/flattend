@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { TrendingUp, TrendingDown, Zap, Info, BarChart3, Activity, DollarSign, TrendingUpDown } from 'react-icons/io5';
+import { Activity, BarChart3, DollarSign, Info, IoFlash, IoTrendingDown, IoTrendingUp, TrendingDown, TrendingUp, TrendingUpDown, Zap } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

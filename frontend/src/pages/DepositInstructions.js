@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Copy, Check, IoAlertCircle as AlertCircle, ArrowLeft, Loader } from 'react-icons/io5';
+import { ArrowLeft, Check, Copy, IoAlertCircle, IoCheckmark, Loader } from 'react-icons/io5';
 import axios from 'axios';
 import Layout from '@/components/Layout';
 import { toast } from 'sonner';

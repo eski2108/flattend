@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { IoTrendingUp, IoTrendingDown, IoPulse, IoBarChart, IoFlash } from 'react-icons/io5';;
+import { IoBarChart, IoFlash, IoPulse, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
