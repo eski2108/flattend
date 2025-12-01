@@ -126,14 +126,12 @@ export default function P2PExpress() {
   };
 
   const checkAdminLiquidity = async () => {
-    if (!livePrice || !amount || parseFloat(amount) <= 0) return;
+    if (!livePrice || !cryptoAmount || parseFloat(cryptoAmount) <= 0) return;
 
     try {
       const baseRate = livePrice.price_gbp;
-      const fiatAmount = parseFloat(amount);
-      const expressFeeBP = fiatAmount * (EXPRESS_FEE_PERCENT / 100);
-      const netAmount = fiatAmount - expressFeeBP;
-      const cryptoAmount = netAmount / baseRate;
+      const expressFeeBP = cryptoAmount * (EXPRESS_FEE_PERCENT / 100);
+      const netCryptoAmount = cryptoAmount - expressFeeBP;
 
       const response = await axios.post(`${API}/api/p2p/express/check-liquidity`, {
         crypto: selectedCoin,
