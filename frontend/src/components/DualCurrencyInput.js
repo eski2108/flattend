@@ -151,12 +151,44 @@ const DualCurrencyInput = ({
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  outline: 'none'
+                  outline: 'none',
+                  maxHeight: '200px',
+                  overflowY: 'auto'
                 }}
               >
-                <option value="GBP">GBP</option>
-                <option value="USD">USD</option>
-                <option value="NGN">NGN</option>
+                <optgroup label="Popular">
+                  <option value="GBP">🇬🇧 GBP - British Pound</option>
+                  <option value="USD">🇺🇸 USD - US Dollar</option>
+                  <option value="EUR">🇪🇺 EUR - Euro</option>
+                  <option value="NGN">🇳🇬 NGN - Nigerian Naira</option>
+                </optgroup>
+                <optgroup label="Africa">
+                  <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
+                  <option value="KES">🇰🇪 KES - Kenyan Shilling</option>
+                  <option value="GHS">🇬🇭 GHS - Ghanaian Cedi</option>
+                </optgroup>
+                <optgroup label="Asia">
+                  <option value="INR">🇮🇳 INR - Indian Rupee</option>
+                  <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+                  <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+                  <option value="AED">🇦🇪 AED - UAE Dirham</option>
+                  <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+                </optgroup>
+                <optgroup label="Americas">
+                  <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+                  <option value="BRL">🇧🇷 BRL - Brazilian Real</option>
+                  <option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+                </optgroup>
+                <optgroup label="Europe">
+                  <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+                  <option value="SEK">🇸🇪 SEK - Swedish Krona</option>
+                  <option value="NOK">🇳🇴 NOK - Norwegian Krone</option>
+                  <option value="DKK">🇩🇰 DKK - Danish Krone</option>
+                  <option value="PLN">🇵🇱 PLN - Polish Zloty</option>
+                </optgroup>
+                <optgroup label="Oceania">
+                  <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+                </optgroup>
               </select>
             )}
           </div>
