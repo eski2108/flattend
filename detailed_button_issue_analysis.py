@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://dual-currency-crypto.preview.emergentagent.com/api"
+BASE_URL = "https://cryptospeed.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

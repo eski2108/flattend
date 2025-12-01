@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://dual-currency-crypto.preview.emergentagent.com
+**URL:** https://cryptospeed.preview.emergentagent.com
 
 **Services Status:**
 ```bash
