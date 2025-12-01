@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Plus, Edit2, Trash2, Copy, Check } from 'lucide-react';
+import { IoAdd, IoCreate, IoCopy, IoCheckmark } from 'react-icons/io5';;
 import axios from 'axios';
 import Layout from '@/components/Layout';
 
@@ -231,7 +231,7 @@ export default function WalletSettings() {
                               padding: '0.25rem'
                             }}
                           >
-                            {copiedCurrency === crypto.code ? <Check size={18} /> : <Copy size={18} />}
+                            {copiedCurrency === crypto.code ? <IoCheckmark size={18} /> : <IoCopy size={18} />}
                           </button>
                         </div>
                       </div>
@@ -267,7 +267,7 @@ export default function WalletSettings() {
                             cursor: 'pointer'
                           }}
                         >
-                          <Edit2 size={18} />
+                          <IoCreate size={18} />
                         </button>
                         <button
                           onClick={() => handleRemoveAddress(crypto.code)}
@@ -299,7 +299,7 @@ export default function WalletSettings() {
                           gap: '0.5rem'
                         }}
                       >
-                        <Plus size={18} />
+                        <IoAdd size={18} />
                         Add
                       </button>
                     ) : null}

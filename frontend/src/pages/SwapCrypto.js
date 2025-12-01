@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { ArrowDownUp, TrendingUp, Info, RefreshCw, Settings, Zap, Clock, ChevronDown, AlertCircle, CheckCircle, Shield, DollarSign } from 'lucide-react';
+import { IoTrendingUp, IoInformationCircle, IoRefresh, IoSettings, IoFlash, IoClock, IoChevronDown, IoAlertCircle, IoCheckmarkCircle, IoShield, IoCash } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -204,7 +204,7 @@ function SwapCrypto() {
               <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '16px', gap: isMobile ? '16px' : '0' }}>
                 <div>
                   <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <Zap size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} />
+                    <IoFlash size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} />
                     Crypto Swap
                   </h1>
                   <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>Instant exchange with best rates and zero hidden fees</p>
@@ -221,7 +221,7 @@ function SwapCrypto() {
                     flex: isMobile ? 1 : 'auto',
                     boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)'
                   }}>
-                    <Clock size={18} color="#00F0FF" />
+                    <IoClock size={18} color="#00F0FF" />
                     <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#00F0FF', fontWeight: '600' }}>
                       {lastUpdate ? lastUpdate.toLocaleTimeString() : 'Live'}
                     </span>
@@ -238,7 +238,7 @@ function SwapCrypto() {
                       boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)'
                     }}
                   >
-                    <Settings size={20} color="#00F0FF" />
+                    <IoSettings size={20} color="#00F0FF" />
                   </button>
                 </div>
               </div>
@@ -479,7 +479,7 @@ function SwapCrypto() {
                       size="large"
                       fullWidth
                       disabled={swapping || !fromAmount || !toAmount}
-                      icon={<Zap size={22} />}
+                      icon={<IoFlash size={22} />}
                     >
                       {swapping ? 'Swapping...' : 'Swap Now'}
                     </CHXButton>
@@ -545,7 +545,7 @@ function SwapCrypto() {
                   boxShadow: 'inset 0 2px 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 240, 255, 0.15)'
                 }}>
                   <h3 style={{ fontSize: isMobile ? '17px' : '19px', fontWeight: '600', color: '#FFFFFF', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <TrendingUp size={22} color="#00F0FF" strokeWidth={2.5} />
+                    <IoTrendingUp size={22} color="#00F0FF" strokeWidth={2.5} />
                     Market Prices
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -610,24 +610,24 @@ function SwapCrypto() {
                   boxShadow: '0 0 40px rgba(155, 77, 255, 0.2), inset 0 2px 20px rgba(0, 0, 0, 0.4)'
                 }}>
                   <h3 style={{ fontSize: isMobile ? '17px' : '19px', fontWeight: '600', color: '#FFFFFF', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Info size={22} color="#9B4DFF" strokeWidth={2.5} />
+                    <IoInformationCircle size={22} color="#9B4DFF" strokeWidth={2.5} />
                     Swap Info
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: isMobile ? '13px' : '14px', color: '#D1D5DB' }}>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <CheckCircle size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <IoCheckmarkCircle size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
                       <span>Instant swaps with best market rates</span>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <Shield size={20} color="#00F0FF" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <IoShield size={20} color="#00F0FF" style={{ flexShrink: 0, marginTop: '2px' }} />
                       <span>Secure escrow protection on all swaps</span>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <DollarSign size={20} color="#8FFF4E" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <IoCash size={20} color="#8FFF4E" style={{ flexShrink: 0, marginTop: '2px' }} />
                       <span>{platformFee}% platform fee - no hidden charges</span>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <Zap size={20} color="#F5C542" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <IoFlash size={20} color="#F5C542" style={{ flexShrink: 0, marginTop: '2px' }} />
                       <span>Real-time price updates every 10 seconds</span>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { AlertCircle, ArrowLeft, Loader } from 'lucide-react';
+import { IoAlertCircle, IoArrowBack } from 'react-icons/io5';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
@@ -158,7 +159,7 @@ export default function WithdrawalRequest() {
               fontSize: '14px'
             }}
           >
-            <ArrowLeft size={18} />
+            <IoArrowBack size={18} />
             Back to Wallet
           </button>
 
@@ -247,7 +248,7 @@ export default function WithdrawalRequest() {
             >
               {submitting ? (
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  <Loader size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                  <AiOutlineLoading3Quarters size={18} style={{ animation: 'spin 1s linear infinite' }} />
                   Processing...
                 </span>
               ) : (
@@ -265,7 +266,7 @@ export default function WithdrawalRequest() {
             display: 'flex',
             gap: '12px'
           }}>
-            <AlertCircle size={20} color="#FBBF24" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <IoAlertCircle size={20} color="#FBBF24" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '14px', fontWeight: '600', color: '#FBBF24', marginBottom: '4px' }}>Important</div>
               <div style={{ fontSize: '13px', color: '#FDE68A', lineHeight: '1.5' }}>

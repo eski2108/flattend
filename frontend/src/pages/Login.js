@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, Shield } from 'lucide-react';
+import { IoEye, IoEyeOff, IoMail, IoLockClosed, IoShield } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
@@ -280,7 +280,7 @@ export default function Login() {
               marginBottom: '10px',
               letterSpacing: '0.2px'
             }}>
-              <Mail size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-2px)' }} />
+              <IoMail size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-2px)' }} />
               Email Address
             </label>
             <input
@@ -330,7 +330,7 @@ export default function Login() {
               marginBottom: '10px',
               letterSpacing: '0.2px'
             }}>
-              <Lock size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-4px)' }} />
+              <IoLockClosed size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-4px)' }} />
               Password
             </label>
             <div style={{ position: 'relative' }}>
@@ -399,7 +399,7 @@ export default function Login() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                {showPassword ? <EyeOff size={18} strokeWidth={2.5} /> : <Eye size={18} strokeWidth={2.5} />}
+                {showPassword ? <IoEyeOff size={18} strokeWidth={2.5} /> : <IoEye size={18} strokeWidth={2.5} />}
               </button>
             </div>
           </div>
@@ -451,7 +451,7 @@ export default function Login() {
                   marginBottom: '12px',
                   letterSpacing: '0.2px'
                 }}>
-                  <Shield size={18} strokeWidth={2.8} style={{ filter: 'brightness(1.15)' }} />
+                  <IoShield size={18} strokeWidth={2.8} style={{ filter: 'brightness(1.15)' }} />
                   Two-Factor Authentication
                 </label>
                 <p style={{ 

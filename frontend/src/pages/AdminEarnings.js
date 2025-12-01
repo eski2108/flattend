@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, TrendingUp, Wallet, ArrowDownToLine, Copy, Check, Info } from 'lucide-react';
+import { IoCash, IoTrendingUp, IoWallet, IoCopy, IoCheckmark, IoInformationCircle } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -310,7 +310,7 @@ export default function AdminEarnings() {
             padding: '2rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-              <TrendingUp size={24} color="#00F0FF" style={{ marginRight: '0.75rem' }} />
+              <IoTrendingUp size={24} color="#00F0FF" style={{ marginRight: '0.75rem' }} />
               <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>Trading Fees</h3>
             </div>
             <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>
@@ -329,7 +329,7 @@ export default function AdminEarnings() {
             padding: '2rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-              <DollarSign size={24} color="#A855F7" style={{ marginRight: '0.75rem' }} />
+              <IoCash size={24} color="#A855F7" style={{ marginRight: '0.75rem' }} />
               <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>Express Buy Fees</h3>
             </div>
             <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>
@@ -348,7 +348,7 @@ export default function AdminEarnings() {
             padding: '2rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-              <Wallet size={24} color="#22C55E" style={{ marginRight: '0.75rem' }} />
+              <IoWallet size={24} color="#22C55E" style={{ marginRight: '0.75rem' }} />
               <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>Markup Profit</h3>
             </div>
             <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>
@@ -512,7 +512,7 @@ export default function AdminEarnings() {
                         padding: '4px'
                       }}
                     >
-                      {copied === walletAddresses.BTC ? <Check size={16} /> : <Copy size={16} />}
+                      {copied === walletAddresses.BTC ? <IoCheckmark size={16} /> : <IoCopy size={16} />}
                     </button>
                   </div>
                 ) : (
@@ -622,7 +622,7 @@ export default function AdminEarnings() {
                         padding: '4px'
                       }}
                     >
-                      {copied === walletAddresses.ETH ? <Check size={16} /> : <Copy size={16} />}
+                      {copied === walletAddresses.ETH ? <IoCheckmark size={16} /> : <IoCopy size={16} />}
                     </button>
                   </div>
                 ) : (
@@ -731,7 +731,7 @@ export default function AdminEarnings() {
                         padding: '4px'
                       }}
                     >
-                      {copied === walletAddresses.USDT ? <Check size={16} /> : <Copy size={16} />}
+                      {copied === walletAddresses.USDT ? <IoCheckmark size={16} /> : <IoCopy size={16} />}
                     </button>
                   </div>
                 ) : (
@@ -798,7 +798,7 @@ export default function AdminEarnings() {
             alignItems: 'center',
             gap: '0.5rem'
           }}>
-            <Info size={20} />
+            <IoInformationCircle size={20} />
             Revenue Breakdown
           </h2>
 
@@ -830,7 +830,7 @@ export default function AdminEarnings() {
               padding: '1.5rem',
               textAlign: 'center'
             }}>
-              <TrendingUp size={32} color="#22C55E" style={{ margin: '0 auto 0.75rem' }} />
+              <IoTrendingUp size={32} color="#22C55E" style={{ margin: '0 auto 0.75rem' }} />
               <div style={{ fontSize: '13px', color: '#888', marginBottom: '0.5rem' }}>
                 Withdrawal Fees
               </div>
@@ -845,7 +845,7 @@ export default function AdminEarnings() {
               padding: '1.5rem',
               textAlign: 'center'
             }}>
-              <DollarSign size={32} color="#3B82F6" style={{ margin: '0 auto 0.75rem' }} />
+              <IoCash size={32} color="#3B82F6" style={{ margin: '0 auto 0.75rem' }} />
               <div style={{ fontSize: '13px', color: '#888', marginBottom: '0.5rem' }}>
                 P2P Trade Fees
               </div>
@@ -860,7 +860,7 @@ export default function AdminEarnings() {
               padding: '1.5rem',
               textAlign: 'center'
             }}>
-              <Wallet size={32} color="#A855F7" style={{ margin: '0 auto 0.75rem' }} />
+              <IoWallet size={32} color="#A855F7" style={{ margin: '0 auto 0.75rem' }} />
               <div style={{ fontSize: '13px', color: '#888', marginBottom: '0.5rem' }}>
                 Total Fees Paid
               </div>

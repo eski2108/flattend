@@ -3,15 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Settings, 
-  DollarSign, 
-  Users, 
-  Eye,
-  TrendingUp,
-  Sliders,
-  Save
-} from 'lucide-react';
+import { IoSettings, IoCash, IoPeople, IoEye, IoTrendingUp, IoSave } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -326,7 +318,7 @@ export default function AdminCMSNew() {
                   marginTop: '1rem'
                 }}
               >
-                <Save size={18} />
+                <IoSave size={18} />
                 {saving ? 'Saving...' : 'Save Fee Settings'}
               </Button>
             </div>
@@ -474,7 +466,7 @@ export default function AdminCMSNew() {
                   marginTop: '1rem'
                 }}
               >
-                <Save size={18} />
+                <IoSave size={18} />
                 {saving ? 'Saving...' : 'Save Seller Limits'}
               </Button>
             </div>
@@ -563,7 +555,7 @@ export default function AdminCMSNew() {
                   marginTop: '1rem'
                 }}
               >
-                <Save size={18} />
+                <IoSave size={18} />
                 {saving ? 'Saving...' : 'Save Visibility Settings'}
               </Button>
             </div>
@@ -747,7 +739,7 @@ export default function AdminCMSNew() {
                   marginTop: '1rem'
                 }}
               >
-                <Save size={18} />
+                <IoSave size={18} />
                 {saving ? 'Saving...' : 'Save Display Settings'}
               </Button>
             </div>

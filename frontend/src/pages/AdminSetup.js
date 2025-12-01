@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Shield, CheckCircle } from 'lucide-react';
+import { IoShield, IoCheckmarkCircle } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -65,7 +65,7 @@ export default function AdminSetup() {
           {step === 1 ? (
             <>
               <div className="setup-header">
-                <Shield size={64} className="setup-icon" />
+                <IoShield size={64} className="setup-icon" />
                 <h1 className="setup-title">Create Admin Account</h1>
                 <p className="setup-subtitle">Set up your business owner account</p>
               </div>
@@ -143,7 +143,7 @@ export default function AdminSetup() {
           ) : (
             <>
               <div className="success-header">
-                <CheckCircle size={64} className="success-icon" />
+                <IoCheckmarkCircle size={64} className="success-icon" />
                 <h1 className="success-title">Account Created!</h1>
                 <p className="success-subtitle">You can now access the admin dashboard</p>
               </div>

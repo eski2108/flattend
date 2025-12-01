@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Shield, CheckCircle } from 'lucide-react';
+import { IoShield, IoCheckmarkCircle } from 'react-icons/io5';;
 
 export default function Verification() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export default function Verification() {
     <Layout>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <Shield size={64} color="#C084FC" style={{ margin: '0 auto 1rem' }} />
+          <IoShield size={64} color="#C084FC" style={{ margin: '0 auto 1rem' }} />
           <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#fff', marginBottom: '1rem' }}>Get Verified</h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)' }}>Build trust with buyers and unlock higher trading limits</p>
         </div>
@@ -25,19 +25,19 @@ export default function Verification() {
           <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#C084FC', marginBottom: '1rem' }}>Verification Benefits</h2>
           <div style={{ display: 'grid', gap: '1rem' }}>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <CheckCircle size={24} color="#6EE7B7" />
+              <IoCheckmarkCircle size={24} color="#6EE7B7" />
               <span style={{ color: '#fff' }}>Verified Badge on your profile</span>
             </div>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <CheckCircle size={24} color="#6EE7B7" />
+              <IoCheckmarkCircle size={24} color="#6EE7B7" />
               <span style={{ color: '#fff' }}>Higher trading limits (up to £50,000/day)</span>
             </div>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <CheckCircle size={24} color="#6EE7B7" />
+              <IoCheckmarkCircle size={24} color="#6EE7B7" />
               <span style={{ color: '#fff' }}>Priority support access</span>
             </div>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <CheckCircle size={24} color="#6EE7B7" />
+              <IoCheckmarkCircle size={24} color="#6EE7B7" />
               <span style={{ color: '#fff' }}>Increased buyer confidence</span>
             </div>
           </div>

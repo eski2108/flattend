@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, ArrowDownLeft, Filter, Download } from 'lucide-react';
+import { IoFilter, IoCloudDownload } from 'react-icons/io5';
+import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -114,7 +115,7 @@ export default function Transactions() {
             <p className="page-subtitle">View all your deposits and withdrawals</p>
           </div>
           <Button className="download-btn" onClick={() => toast.info('Export feature coming soon!')}>
-            <Download size={18} />
+            <IoCloudDownload size={18} />
             Export
           </Button>
         </div>
@@ -123,7 +124,7 @@ export default function Transactions() {
         <Card className="filters-card">
           <div className="filters-content">
             <div className="filter-group">
-              <Filter size={18} />
+              <IoFilter size={18} />
               <label>Type:</label>
               <select 
                 value={filterType} 
@@ -171,11 +172,11 @@ export default function Transactions() {
                   <div className="transaction-icon-wrapper">
                     {tx.transaction_type === 'deposit' ? (
                       <div className="transaction-icon-bg deposit">
-                        <ArrowDownLeft size={24} />
+                        <BiArrowFromTop size={24} />
                       </div>
                     ) : (
                       <div className="transaction-icon-bg withdrawal">
-                        <ArrowUpRight size={24} />
+                        <BiArrowToTop size={24} />
                       </div>
                     )}
                   </div>
@@ -208,7 +209,7 @@ export default function Transactions() {
         ) : (
           <Card className="empty-state">
             <div className="empty-icon-wrapper">
-              <ArrowDownLeft size={48} className="empty-icon" />
+              <BiArrowFromTop size={48} className="empty-icon" />
             </div>
             <h3>No Transactions Found</h3>
             <p>

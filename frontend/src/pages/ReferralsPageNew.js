@@ -1,21 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { 
-  Copy, 
-  TrendingUp, 
-  Users, 
-  DollarSign,
-  Zap,
-  ArrowRightLeft,
-  ShoppingCart,
-  CreditCard,
-  Shield,
-  AlertCircle,
-  Network,
-  Briefcase,
-  Check
-} from 'lucide-react';
+import { IoCopy, IoTrendingUp, IoPeople, IoCash, IoFlash, IoCard, IoShield, IoAlertCircle, IoBriefcase, IoCheckmark } from 'react-icons/io5';;
 import API_BASE_URL from '@/config/api';
 import { toast } from 'react-hot-toast';
 
@@ -239,7 +225,7 @@ export default function ReferralsPageNew() {
                 transition: 'all 0.3s ease'
               }}
             >
-              {copiedBonus ? <Check size={16} /> : <Copy size={16} />}
+              {copiedBonus ? <IoCheckmark size={16} /> : <IoCopy size={16} />}
               {copiedBonus ? 'Copied!' : 'Copy Link'}
             </button>
           </div>
@@ -306,7 +292,7 @@ export default function ReferralsPageNew() {
                 transition: 'all 0.3s ease'
               }}
             >
-              {copiedLifetime ? <Check size={16} /> : <Copy size={16} />}
+              {copiedLifetime ? <IoCheckmark size={16} /> : <IoCopy size={16} />}
               {copiedLifetime ? 'Copied!' : 'Copy Link'}
             </button>
           </div>

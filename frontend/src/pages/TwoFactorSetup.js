@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { Shield, Key, Download, Copy, CheckCircle, AlertCircle, Smartphone, Mail } from 'lucide-react';
+import { IoShield, IoKey, IoCloudDownload, IoCopy, IoCheckmarkCircle, IoAlertCircle, IoPhonePortrait, IoMail } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -155,7 +155,7 @@ export default function TwoFactorSetup() {
           {/* Header */}
           <div style={{ marginBottom: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-              <Shield size={40} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
+              <IoShield size={40} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
               <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>
                 Two-Factor Authentication
               </h1>
@@ -177,9 +177,9 @@ export default function TwoFactorSetup() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {is2FAEnabled ? (
-                  <CheckCircle size={32} color="#00E545" />
+                  <IoCheckmarkCircle size={32} color="#00E545" />
                 ) : (
-                  <AlertCircle size={32} color="#FFA500" />
+                  <IoAlertCircle size={32} color="#FFA500" />
                 )}
                 <div>
                   <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#FFFFFF', margin: 0, marginBottom: '4px' }}>
@@ -205,7 +205,7 @@ export default function TwoFactorSetup() {
               backdropFilter: 'blur(10px)'
             }}>
               <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                <Smartphone size={64} color="#00F0FF" style={{ margin: '0 auto 16px', filter: 'drop-shadow(0 0 12px rgba(0, 240, 255, 0.6))' }} />
+                <IoPhonePortrait size={64} color="#00F0FF" style={{ margin: '0 auto 16px', filter: 'drop-shadow(0 0 12px rgba(0, 240, 255, 0.6))' }} />
                 <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#FFFFFF', marginBottom: '12px' }}>
                   Secure Your Account
                 </h2>
@@ -331,7 +331,7 @@ export default function TwoFactorSetup() {
               marginTop: '24px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                <Key size={24} color="#FFA500" />
+                <IoKey size={24} color="#FFA500" />
                 <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#FFFFFF', margin: 0 }}>
                   Backup Codes
                 </h3>
@@ -365,13 +365,13 @@ export default function TwoFactorSetup() {
                   onClick={copyBackupCodes}
                   style={{ flex: 1, padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                  <Copy size={18} /> Copy
+                  <IoCopy size={18} /> Copy
                 </CHXButton>
                 <CHXButton
                   onClick={downloadBackupCodes}
                   style={{ flex: 1, padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                  <Download size={18} /> Download
+                  <IoCloudDownload size={18} /> Download
                 </CHXButton>
               </div>
             </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Users, Copy, DollarSign, TrendingUp, Share2, Award, Gift, CheckCircle } from 'lucide-react';
+import { IoPeople, IoCopy, IoCash, IoTrendingUp, IoTrophy, IoCheckmarkCircle } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -101,7 +101,7 @@ export default function ReferralDashboard() {
           borderRadius: '25px',
           marginBottom: '2rem'
         }}>
-          <Award size={20} color="#000" />
+          <IoTrophy size={20} color="#000" />
           <span style={{ color: '#000', fontWeight: '700', fontSize: '14px' }}>
             {referralData.referral_tier === 'golden' ? 'GOLDEN TIER (50% Commission)' : 'STANDARD TIER (20% Commission)'}
           </span>
@@ -116,7 +116,7 @@ export default function ReferralDashboard() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <Users size={24} color="#00F0FF" />
+              <IoPeople size={24} color="#00F0FF" />
               <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Total Referrals</span>
             </div>
             <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>{referralData.total_referrals}</div>
@@ -129,7 +129,7 @@ export default function ReferralDashboard() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <TrendingUp size={24} color="#A855F7" />
+              <IoTrendingUp size={24} color="#A855F7" />
               <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Active Referrals</span>
             </div>
             <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>{referralData.active_referrals}</div>
@@ -142,7 +142,7 @@ export default function ReferralDashboard() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <DollarSign size={24} color="#22C55E" />
+              <IoCash size={24} color="#22C55E" />
               <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Total Earnings</span>
             </div>
             <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{referralData.total_earnings.toFixed(2)}</div>
@@ -206,7 +206,7 @@ export default function ReferralDashboard() {
                     gap: '8px'
                   }}
                 >
-                  <Copy size={18} />
+                  <IoCopy size={18} />
                   Copy
                 </button>
               </div>
@@ -246,7 +246,7 @@ export default function ReferralDashboard() {
                     gap: '8px'
                   }}
                 >
-                  <Copy size={18} />
+                  <IoCopy size={18} />
                 </button>
               </div>
             </div>
@@ -322,7 +322,7 @@ export default function ReferralDashboard() {
 
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                <Award size={32} style={{ color: '#A855F7' }} />
+                <IoTrophy size={32} style={{ color: '#A855F7' }} />
                 <h2 style={{
                   fontSize: '28px',
                   fontWeight: '900',
@@ -439,7 +439,7 @@ export default function ReferralDashboard() {
                     e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
                   }}
                 >
-                  <Award size={24} />
+                  <IoTrophy size={24} />
                   Upgrade to VIP Now
                 </button>
               </div>
@@ -472,7 +472,7 @@ export default function ReferralDashboard() {
           
           {referralData.referred_users.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#A3AEC2' }}>
-              <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+              <IoPeople size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
               <p>No referrals yet. Share your link to start earning!</p>
             </div>
           ) : (
@@ -504,7 +504,7 @@ export default function ReferralDashboard() {
                           alignItems: 'center',
                           gap: '4px'
                         }}>
-                          {referral.is_active && <CheckCircle size={12} />}
+                          {referral.is_active && <IoCheckmarkCircle size={12} />}
                           {referral.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
@@ -568,7 +568,7 @@ export default function ReferralDashboard() {
           
           {referralData.commission_history && referralData.commission_history.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#A3AEC2' }}>
-              <DollarSign size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+              <IoCash size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
               <p>No commissions yet. Share your link to start earning!</p>
             </div>
           ) : (

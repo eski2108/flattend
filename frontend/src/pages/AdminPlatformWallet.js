@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Wallet, Copy, Plus, AlertTriangle, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
+import { IoWallet, IoCopy, IoAdd, IoTrendingUp, IoTrendingDown, IoRefresh } from 'react-icons/io5';;
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -196,7 +196,7 @@ export default function AdminPlatformWallet() {
               gap: '0.5rem'
             }}
           >
-            <Plus size={20} />
+            <IoAdd size={20} />
             Manual Top-Up
           </button>
         </div>
@@ -290,7 +290,7 @@ export default function AdminPlatformWallet() {
                         alignItems: 'center'
                       }}
                     >
-                      <Copy size={14} color="#00F0FF" />
+                      <IoCopy size={14} color="#00F0FF" />
                     </button>
                   </div>
                 </div>

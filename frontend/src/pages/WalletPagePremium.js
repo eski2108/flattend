@@ -3,26 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { 
-  Wallet, 
-  TrendingUp, 
-  TrendingDown, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  RefreshCw, 
-  Copy, 
-  ChevronDown, 
-  ChevronUp,
-  Lock,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Filter,
-  Search,
-  Download,
-  ExternalLink
-} from 'lucide-react';
+import { IoWallet, IoTrendingUp, IoTrendingDown, IoRefresh, IoCopy, IoChevronDown, IoChevronUp, IoLockClosed, IoClock, IoCheckmarkCircle, IoCloseCircle, IoAlertCircle, IoFilter, IoSearch, IoCloudDownload, IoOpenOutline } from 'react-icons/io5';
+import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { Line, Sparklines, SparklinesLine } from 'react-sparklines';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -353,7 +335,7 @@ export default function WalletPagePremium() {
       <Layout>
         <div className="flex items-center justify-center min-h-screen" style={{ background: 'linear-gradient(to bottom, #05060B, #050814)' }}>
           <div className="text-center">
-            <RefreshCw className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
+            <IoRefresh className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
             <div className="text-white text-xl">Loading your wallet...</div>
           </div>
         </div>
@@ -377,7 +359,7 @@ export default function WalletPagePremium() {
               disabled={refreshing}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-white"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <IoRefresh className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               <span className="text-sm font-medium">Refresh</span>
             </button>
           </div>
@@ -410,7 +392,7 @@ export default function WalletPagePremium() {
                     color: change24h >= 0 ? '#22C55E' : '#EF4444'
                   }}
                 >
-                  {change24h >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                  {change24h >= 0 ? <IoTrendingUp className="w-4 h-4" /> : <IoTrendingDown className="w-4 h-4" />}
                   {Math.abs(change24h).toFixed(2)}%
                   <span className="text-xs opacity-60">24h</span>
                 </div>
@@ -427,7 +409,7 @@ export default function WalletPagePremium() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
-                      <Wallet className="w-4 h-4 text-green-400" />
+                      <IoWallet className="w-4 h-4 text-green-400" />
                     </div>
                     <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Available</div>
                   </div>
@@ -445,7 +427,7 @@ export default function WalletPagePremium() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 flex items-center justify-center">
-                      <Lock className="w-4 h-4 text-yellow-400" />
+                      <IoLockClosed className="w-4 h-4 text-yellow-400" />
                     </div>
                     <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Locked</div>
                   </div>
@@ -463,7 +445,7 @@ export default function WalletPagePremium() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-                      <Clock className="w-4 h-4 text-blue-400" />
+                      <IoClock className="w-4 h-4 text-blue-400" />
                     </div>
                     <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Pending</div>
                   </div>
@@ -479,7 +461,7 @@ export default function WalletPagePremium() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-purple-400" />
+                      <IoTrendingUp className="w-4 h-4 text-purple-400" />
                     </div>
                     <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Assets</div>
                   </div>
@@ -509,7 +491,7 @@ export default function WalletPagePremium() {
               {balances.filter(bal => bal.total_balance > 0).length === 0 ? (
                 <div className="text-center py-16">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center mx-auto mb-4">
-                    <Wallet className="w-8 h-8 text-cyan-400" />
+                    <IoWallet className="w-8 h-8 text-cyan-400" />
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2">No assets yet</h3>
                   <p className="text-gray-400 text-sm mb-6">Deposit crypto to get started</p>
@@ -600,8 +582,8 @@ export default function WalletPagePremium() {
                           {/* Expand Icon */}
                           <div className="ml-auto flex-shrink-0">
                             {expandedAsset === index ? 
-                              <ChevronUp className="w-5 h-5 text-gray-400" /> : 
-                              <ChevronDown className="w-5 h-5 text-gray-400" />
+                              <IoChevronUp className="w-5 h-5 text-gray-400" /> : 
+                              <IoChevronDown className="w-5 h-5 text-gray-400" />
                             }
                           </div>
                         </div>
@@ -675,7 +657,7 @@ export default function WalletPagePremium() {
                                 className="flex-1 py-3 px-4 rounded-xl font-medium text-white transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg"
                                 style={{ background: 'linear-gradient(135deg, #2563EB 0%, #38BDF8 100%)' }}
                               >
-                                <ArrowDownLeft className="w-4 h-4" />
+                                <BiArrowFromTop className="w-4 h-4" />
                                 Deposit
                               </button>
                               <button 
@@ -690,7 +672,7 @@ export default function WalletPagePremium() {
                                   background: 'rgba(37, 99, 235, 0.05)'
                                 }}
                               >
-                                <ArrowUpRight className="w-4 h-4" />
+                                <BiArrowToTop className="w-4 h-4" />
                                 Withdraw
                               </button>
                               <button 
@@ -705,7 +687,7 @@ export default function WalletPagePremium() {
                                   background: 'rgba(255, 255, 255, 0.02)'
                                 }}
                               >
-                                <RefreshCw className="w-4 h-4" />
+                                <IoRefresh className="w-4 h-4" />
                                 Swap
                               </button>
                             </div>
@@ -758,7 +740,7 @@ export default function WalletPagePremium() {
               {filteredTransactions.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-500/20 to-gray-600/20 flex items-center justify-center mx-auto mb-4">
-                    <Clock className="w-8 h-8 text-gray-400" />
+                    <IoClock className="w-8 h-8 text-gray-400" />
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2">No transactions yet</h3>
                   <p className="text-gray-400 text-sm">Your transaction history will appear here</p>
@@ -792,8 +774,8 @@ export default function WalletPagePremium() {
                           }}
                         >
                           {isDeposit ? 
-                            <ArrowDownLeft className="w-5 h-5 text-green-400" /> : 
-                            <ArrowUpRight className="w-5 h-5 text-red-400" />
+                            <BiArrowFromTop className="w-5 h-5 text-green-400" /> : 
+                            <BiArrowToTop className="w-5 h-5 text-red-400" />
                           }
                         </div>
                         <div className="flex-1 min-w-0">
@@ -861,7 +843,7 @@ export default function WalletPagePremium() {
                 onClick={() => setShowDepositModal(false)}
                 className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all"
               >
-                <XCircle className="w-5 h-5 text-gray-400" />
+                <IoCloseCircle className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             
@@ -905,7 +887,7 @@ export default function WalletPagePremium() {
                       onClick={() => copyToClipboard(depositAddress)} 
                       className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all flex-shrink-0"
                     >
-                      <Copy className="w-5 h-5 text-cyan-400" />
+                      <IoCopy className="w-5 h-5 text-cyan-400" />
                     </button>
                   </div>
                 </div>
@@ -919,7 +901,7 @@ export default function WalletPagePremium() {
                   }}
                 >
                   <div className="flex gap-3">
-                    <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <IoAlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                     <div className="text-yellow-400 text-sm">
                       <div className="font-semibold mb-1">Important</div>
                       Send only {selectedAsset.currency} to this address on {selectedAsset.currency} network. Sending other coins or using wrong network may result in permanent loss of funds.
@@ -929,7 +911,7 @@ export default function WalletPagePremium() {
               </>
             ) : (
               <div className="text-center py-8">
-                <RefreshCw className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
+                <IoRefresh className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
                 <div className="text-gray-400">Generating deposit address...</div>
               </div>
             )}
@@ -968,7 +950,7 @@ export default function WalletPagePremium() {
                 onClick={() => setShowWithdrawModal(false)}
                 className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all"
               >
-                <XCircle className="w-5 h-5 text-gray-400" />
+                <IoCloseCircle className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             
@@ -1079,7 +1061,7 @@ export default function WalletPagePremium() {
               }}
             >
               <div className="flex items-center gap-2 mb-4">
-                <Lock className="w-5 h-5 text-blue-400" />
+                <IoLockClosed className="w-5 h-5 text-blue-400" />
                 <div className="text-sm font-semibold text-blue-400">SMS Verification Required</div>
               </div>
               
@@ -1092,7 +1074,7 @@ export default function WalletPagePremium() {
                 >
                   {sendingOTP ? (
                     <div className="flex items-center justify-center gap-2">
-                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <IoRefresh className="w-4 h-4 animate-spin" />
                       Sending OTP...
                     </div>
                   ) : (
@@ -1125,7 +1107,7 @@ export default function WalletPagePremium() {
                   </div>
                   {otpVerified ? (
                     <div className="flex items-center justify-center gap-2 text-green-400 font-medium py-2">
-                      <CheckCircle className="w-5 h-5" />
+                      <IoCheckmarkCircle className="w-5 h-5" />
                       OTP Verified Successfully
                     </div>
                   ) : (

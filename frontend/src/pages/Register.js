@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Zap, Mail, Lock, User, Gift } from 'lucide-react';
+import { IoFlash, IoMail, IoLockClosed, IoPersonOutline } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -292,7 +292,7 @@ export default function Register() {
               <form onSubmit={handleSubmit} className="auth-form">
                 <div className="form-group">
                   <label htmlFor="full_name">
-                    <User size={18} />
+                    <IoPersonOutline size={18} />
                     Full Name
                   </label>
                   <input
@@ -309,7 +309,7 @@ export default function Register() {
 
                 <div className="form-group">
                   <label htmlFor="email">
-                    <Mail size={18} />
+                    <IoMail size={18} />
                     Email Address
                   </label>
                   <input
@@ -361,7 +361,7 @@ export default function Register() {
 
                 <div className="form-group">
                   <label htmlFor="password">
-                    <Lock size={18} />
+                    <IoLockClosed size={18} />
                     Password
                   </label>
                   <div style={{ position: 'relative' }}>
@@ -399,7 +399,7 @@ export default function Register() {
 
                 <div className="form-group">
                   <label htmlFor="confirmPassword">
-                    <Lock size={18} />
+                    <IoLockClosed size={18} />
                     Confirm Password
                   </label>
                   <div style={{ position: 'relative' }}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Copy, Check, Users, Gift, TrendingUp, DollarSign } from 'lucide-react';
+import { IoCopy, IoCheckmark, IoPeople, IoTrendingUp, IoCash } from 'react-icons/io5';;
 import axios from 'axios';
 import Layout from '@/components/Layout';
 
@@ -103,7 +103,7 @@ export default function EnhancedReferralDashboard() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-              <Users size={28} color="#00F0FF" />
+              <IoPeople size={28} color="#00F0FF" />
               <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>Total Referrals</span>
             </div>
             <div style={{ fontSize: '36px', fontWeight: '900', color: '#fff' }}>
@@ -118,7 +118,7 @@ export default function EnhancedReferralDashboard() {
             padding: '1.5rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-              <TrendingUp size={28} color="#22C55E" />
+              <IoTrendingUp size={28} color="#22C55E" />
               <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>Lifetime Commission</span>
             </div>
             <div style={{ fontSize: '36px', fontWeight: '900', color: '#22C55E' }}>
@@ -171,7 +171,7 @@ export default function EnhancedReferralDashboard() {
                       border: 'none'
                     }}
                   >
-                    {copiedCode === 'private' ? <Check size={18} /> : <Copy size={18} />}
+                    {copiedCode === 'private' ? <IoCheckmark size={18} /> : <IoCopy size={18} />}
                     {copiedCode === 'private' ? ' Copied!' : ' Copy Link'}
                   </Button>
                 </div>
@@ -231,7 +231,7 @@ export default function EnhancedReferralDashboard() {
           marginBottom: '2rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-            <DollarSign size={32} color="#00F0FF" />
+            <IoCash size={32} color="#00F0FF" />
             <div>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '0.25rem' }}>
                 Public Referral Link
@@ -266,7 +266,7 @@ export default function EnhancedReferralDashboard() {
                       border: 'none'
                     }}
                   >
-                    {copiedCode === 'public' ? <Check size={18} /> : <Copy size={18} />}
+                    {copiedCode === 'public' ? <IoCheckmark size={18} /> : <IoCopy size={18} />}
                     {copiedCode === 'public' ? ' Copied!' : ' Copy Link'}
                   </Button>
                 </div>

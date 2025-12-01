@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CheckCircle2, Shield, Star, CreditCard, ArrowRightLeft } from 'lucide-react';
+import { IoShield, IoStar, IoCard } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -266,7 +266,7 @@ export default function OrderPreview() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8125rem', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <Star size={14} fill="#FFD700" stroke="#FFD700" />
+                  <IoStar size={14} fill="#FFD700" stroke="#FFD700" />
                   <span style={{ color: '#fff', fontWeight: '600' }}>4.8</span>
                 </div>
                 <span style={{ color: '#888' }}>156 trades</span>
@@ -438,7 +438,7 @@ export default function OrderPreview() {
                   gap: '0.5rem'
                 }}
               >
-                <CreditCard size={16} />
+                <IoCard size={16} />
                 {method.replace(/_/g, ' ').toUpperCase()}
               </div>
             ))}
@@ -574,7 +574,7 @@ export default function OrderPreview() {
             </>
           ) : (
             <>
-              <Shield size={24} />
+              <IoShield size={24} />
               Confirm & Lock in Escrow
             </>
           )}

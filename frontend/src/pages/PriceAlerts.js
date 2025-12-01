@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
-import { Bell, Plus } from 'lucide-react';
+import { IoNotifications, IoAdd } from 'react-icons/io5';;
 
 export default function PriceAlerts() {
   const [alerts, setAlerts] = useState([]);
@@ -9,7 +9,7 @@ export default function PriceAlerts() {
     <Layout>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <Bell size={64} color="#7DD3FC" style={{ margin: '0 auto 1rem' }} />
+          <IoNotifications size={64} color="#7DD3FC" style={{ margin: '0 auto 1rem' }} />
           <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#fff', marginBottom: '1rem' }}>Price Alerts</h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)' }}>Get notified when prices hit your target</p>
         </div>

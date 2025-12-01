@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, Send } from 'lucide-react';
+import { IoWallet, IoAdd, IoSend } from 'react-icons/io5';
+import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -90,7 +91,7 @@ export default function WalletPage() {
         <Card className="balance-card-fintech">
           <div className="balance-header">
             <div className="balance-icon-wrapper">
-              <Wallet size={24} />
+              <IoWallet size={24} />
             </div>
             <span className="balance-label">Available Balance</span>
           </div>
@@ -114,11 +115,11 @@ export default function WalletPage() {
         <Tabs defaultValue="deposit" className="wallet-tabs-fintech">
           <TabsList className="tabs-list-fintech">
             <TabsTrigger value="deposit" className="tab-trigger-fintech">
-              <ArrowDownLeft size={18} />
+              <BiArrowFromTop size={18} />
               Deposit
             </TabsTrigger>
             <TabsTrigger value="withdraw" className="tab-trigger-fintech">
-              <ArrowUpRight size={18} />
+              <BiArrowToTop size={18} />
               Withdraw
             </TabsTrigger>
           </TabsList>

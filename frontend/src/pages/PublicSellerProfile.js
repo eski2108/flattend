@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Shield, Star, CheckCircle, TrendingUp, Lock, Calendar } from 'lucide-react';
+import { IoShield, IoStar, IoCheckmarkCircle, IoTrendingUp, IoLockClosed, IoCalendar } from 'react-icons/io5';;
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -197,7 +197,7 @@ export default function PublicSellerProfile() {
                     alignItems: 'center',
                     gap: '0.5rem'
                   }}>
-                    <Shield size={16} color="#22C55E" />
+                    <IoShield size={16} color="#22C55E" />
                     <span style={{ color: '#22C55E', fontSize: '13px', fontWeight: '700' }}>
                       VERIFIED SELLER
                     </span>
@@ -208,21 +208,21 @@ export default function PublicSellerProfile() {
               {/* Stats */}
               <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Star size={18} color="#FBBF24" fill="#FBBF24" />
+                  <IoStar size={18} color="#FBBF24" fill="#FBBF24" />
                   <span style={{ color: '#E2E8F0', fontSize: '16px', fontWeight: '600' }}>
                     {seller.rating.toFixed(1)} Rating
                   </span>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <CheckCircle size={18} color="#00F0FF" />
+                  <IoCheckmarkCircle size={18} color="#00F0FF" />
                   <span style={{ color: '#E2E8F0', fontSize: '16px', fontWeight: '600' }}>
                     {seller.total_trades} Completed Trades
                   </span>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <TrendingUp size={18} color="#A855F7" />
+                  <IoTrendingUp size={18} color="#A855F7" />
                   <span style={{ color: '#E2E8F0', fontSize: '16px', fontWeight: '600' }}>
                     {seller.active_offers_count} Active Offers
                   </span>
@@ -230,7 +230,7 @@ export default function PublicSellerProfile() {
 
                 {seller.member_since && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Calendar size={18} color="#888" />
+                    <IoCalendar size={18} color="#888" />
                     <span style={{ color: '#888', fontSize: '14px' }}>
                       Member since {new Date(seller.member_since).getFullYear()}
                     </span>
@@ -251,7 +251,7 @@ export default function PublicSellerProfile() {
             alignItems: 'center',
             gap: '0.75rem'
           }}>
-            <Lock size={20} color="#00F0FF" />
+            <IoLockClosed size={20} color="#00F0FF" />
             <p style={{ margin: 0, color: '#E2E8F0', fontSize: '14px' }}>
               <strong style={{ color: '#00F0FF' }}>100% Escrow Protected</strong> - All transactions are secured through CoinHub X escrow system. Your funds are safe until trade completion.
             </p>
@@ -389,7 +389,7 @@ export default function PublicSellerProfile() {
                     onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    <Lock size={20} />
+                    <IoLockClosed size={20} />
                     Buy Now (Escrow Protected)
                   </button>
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft } from 'lucide-react';
+import { IoArrowBack } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -143,7 +143,7 @@ export default function CreateAd() {
               alignItems: 'center'
             }}
           >
-            <ArrowLeft size={20} style={{ color: '#00F0FF' }} />
+            <IoArrowBack size={20} style={{ color: '#00F0FF' }} />
           </button>
           <div>
             <h1 style={{ fontSize: '2rem', fontWeight: '900', color: '#00F0FF', marginBottom: '0.25rem' }}>

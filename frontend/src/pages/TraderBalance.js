@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
-import { Wallet, TrendingUp, Lock, DollarSign, RefreshCw, ArrowUpRight } from 'lucide-react';
+import { IoWallet, IoTrendingUp, IoLockClosed, IoCash, IoRefresh } from 'react-icons/io5';
+import { BiArrowToTop } from 'react-icons/bi';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -99,7 +100,7 @@ export default function TraderBalance() {
                 fontSize: '1rem'
               }}
             >
-              <RefreshCw size={18} />
+              <IoRefresh size={18} />
               Refresh
             </button>
           </div>
@@ -147,7 +148,7 @@ export default function TraderBalance() {
                 fontWeight: '700'
               }}
             >
-              <ArrowUpRight size={20} />
+              <BiArrowToTop size={20} />
               Deposit Crypto
             </button>
           </div>
@@ -166,7 +167,7 @@ export default function TraderBalance() {
             border: '1px solid var(--border)',
             borderRadius: '16px'
           }}>
-            <Wallet size={64} style={{ color: 'var(--text-secondary)', margin: '0 auto 1rem' }} />
+            <IoWallet size={64} style={{ color: 'var(--text-secondary)', margin: '0 auto 1rem' }} />
             <h3 style={{ fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
               No Balances Yet
             </h3>
@@ -237,7 +238,7 @@ export default function TraderBalance() {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Wallet size={16} style={{ color: 'var(--electric-cyan)' }} />
+                        <IoWallet size={16} style={{ color: 'var(--electric-cyan)' }} />
                         <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Total Balance</span>
                       </div>
                       <span style={{ 
@@ -259,7 +260,7 @@ export default function TraderBalance() {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Lock size={16} style={{ color: 'var(--warning)' }} />
+                        <IoLockClosed size={16} style={{ color: 'var(--warning)' }} />
                         <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Locked (In Trades)</span>
                       </div>
                       <span style={{ 
@@ -281,7 +282,7 @@ export default function TraderBalance() {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <TrendingUp size={16} style={{ color: 'var(--success)' }} />
+                        <IoTrendingUp size={16} style={{ color: 'var(--success)' }} />
                         <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Available to Trade</span>
                       </div>
                       <span style={{ 

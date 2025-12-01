@@ -3,20 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { 
-  Search,
-  Filter,
-  TrendingUp,
-  TrendingDown,
-  Clock,
-  Shield,
-  ArrowUpRight,
-  ArrowDownLeft,
-  RefreshCw,
-  Star,
-  CheckCircle,
-  Users
-} from 'lucide-react';
+import { IoSearch, IoFilter, IoTrendingUp, IoTrendingDown, IoClock, IoShield, IoRefresh, IoStar, IoCheckmarkCircle, IoPeople } from 'react-icons/io5';
+import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -105,7 +93,7 @@ export default function P2PMarketplacePremium() {
       <Layout>
         <div className="flex items-center justify-center min-h-screen" style={{ background: 'linear-gradient(to bottom, #05060B, #050814)' }}>
           <div className="text-center">
-            <RefreshCw className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
+            <IoRefresh className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
             <div className="text-white text-xl">Loading marketplace...</div>
           </div>
         </div>
@@ -145,7 +133,7 @@ export default function P2PMarketplacePremium() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-green-400" />
+                    <IoTrendingUp className="w-5 h-5 text-green-400" />
                   </div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">24h Volume</div>
                 </div>
@@ -161,7 +149,7 @@ export default function P2PMarketplacePremium() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-blue-400" />
+                    <IoShield className="w-5 h-5 text-blue-400" />
                   </div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Active Trades</div>
                 </div>
@@ -177,7 +165,7 @@ export default function P2PMarketplacePremium() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-purple-400" />
+                    <IoPeople className="w-5 h-5 text-purple-400" />
                   </div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Total Users</div>
                 </div>
@@ -193,7 +181,7 @@ export default function P2PMarketplacePremium() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-cyan-400" />
+                    <IoClock className="w-5 h-5 text-cyan-400" />
                   </div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Avg Time</div>
                 </div>
@@ -236,7 +224,7 @@ export default function P2PMarketplacePremium() {
               
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <IoSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -279,7 +267,7 @@ export default function P2PMarketplacePremium() {
             {sortedOrders.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-500/20 to-gray-600/20 flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-gray-400" />
+                  <IoShield className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">No offers available</h3>
                 <p className="text-gray-400 text-sm mb-6">Be the first to create an offer</p>
@@ -325,7 +313,7 @@ export default function P2PMarketplacePremium() {
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <div className="text-white font-semibold">{order.seller_username || 'Anonymous'}</div>
-                              <CheckCircle className="w-4 h-4 text-green-400" />
+                              <IoCheckmarkCircle className="w-4 h-4 text-green-400" />
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-400">
                               <span>{order.crypto_currency}</span>

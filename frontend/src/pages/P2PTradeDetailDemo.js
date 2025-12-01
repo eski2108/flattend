@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Clock, MessageCircle, Upload, Shield, AlertCircle, CheckCircle } from 'lucide-react';
+import { IoClock, IoChatbubbles, IoCloudUpload, IoShield, IoAlertCircle, IoCheckmarkCircle } from 'react-icons/io5';;
 import OTPModal from '@/components/OTPModal';
 import P2PNotifications from '@/components/P2PNotifications';
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -145,7 +145,7 @@ export default function P2PTradeDetailDemo() {
             <div className="flex items-center gap-4">
               {timeRemaining > 0 && (
                 <div className="flex items-center gap-2 bg-orange-900/30 px-6 py-3 rounded-xl border border-orange-500/30">
-                  <Clock className="w-6 h-6 text-orange-400" />
+                  <IoClock className="w-6 h-6 text-orange-400" />
                   <div>
                     <div className="text-orange-400 font-bold text-2xl">{formatTime(timeRemaining)}</div>
                     <div className="text-orange-300 text-xs">Time remaining</div>
@@ -175,13 +175,13 @@ export default function P2PTradeDetailDemo() {
             {/* Status Card */}
             <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <Shield className="w-6 h-6 text-cyan-400" />
+                <IoShield className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-xl font-semibold text-white">Trade Status</h2>
               </div>
               <div className="flex items-center gap-3">
                 {trade.status === 'waiting_payment' && (
                   <>
-                    <AlertCircle className="w-8 h-8 text-yellow-400" />
+                    <IoAlertCircle className="w-8 h-8 text-yellow-400" />
                     <div>
                       <div className="text-yellow-400 font-bold text-lg">Waiting for Payment</div>
                       <div className="text-gray-400 text-sm">Buyer must complete payment</div>
@@ -190,7 +190,7 @@ export default function P2PTradeDetailDemo() {
                 )}
                 {trade.status === 'paid' && (
                   <>
-                    <CheckCircle className="w-8 h-8 text-green-400" />
+                    <IoCheckmarkCircle className="w-8 h-8 text-green-400" />
                     <div>
                       <div className="text-green-400 font-bold text-lg">Payment Received</div>
                       <div className="text-gray-400 text-sm">Waiting for seller to release crypto</div>
@@ -199,7 +199,7 @@ export default function P2PTradeDetailDemo() {
                 )}
                 {trade.status === 'completed' && (
                   <>
-                    <CheckCircle className="w-8 h-8 text-green-400" />
+                    <IoCheckmarkCircle className="w-8 h-8 text-green-400" />
                     <div>
                       <div className="text-green-400 font-bold text-lg">Completed</div>
                       <div className="text-gray-400 text-sm">Trade completed successfully</div>
@@ -212,7 +212,7 @@ export default function P2PTradeDetailDemo() {
             {/* Escrow Status */}
             <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <Shield className="w-6 h-6 text-cyan-400" />
+                <IoShield className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-xl font-semibold text-white">Escrow Protection</h2>
               </div>
               <div className={`border rounded-lg p-4 ${
@@ -300,7 +300,7 @@ export default function P2PTradeDetailDemo() {
               <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
                 <h2 className="text-xl font-semibold text-white mb-4">📎 Upload Payment Proof</h2>
                 <div className="border-2 border-dashed border-slate-600 rounded-lg p-8 text-center hover:border-cyan-500 transition-colors cursor-pointer">
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <IoCloudUpload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                   <input type="file" className="hidden" id="proof-upload" onChange={(e) => setProofFile(e.target.files[0])} />
                   <label htmlFor="proof-upload" className="cursor-pointer">
                     <div className="text-white mb-2">Click to upload or drag and drop</div>
@@ -386,7 +386,7 @@ export default function P2PTradeDetailDemo() {
           <div className="lg:col-span-1">
             <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 h-[600px] flex flex-col">
               <div className="flex items-center gap-2 mb-4">
-                <MessageCircle className="w-5 h-5 text-cyan-400" />
+                <IoChatbubbles className="w-5 h-5 text-cyan-400" />
                 <h2 className="text-lg font-semibold text-white">Chat</h2>
               </div>
               

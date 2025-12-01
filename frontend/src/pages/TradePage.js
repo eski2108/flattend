@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Shield, Clock, MessageCircle, Send, AlertTriangle, CheckCircle, XCircle, ArrowLeft, Wallet, Copy } from 'lucide-react';
+import { IoShield, IoClock, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoWallet, IoCopy } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import TradeChat from '@/components/TradeChat';
@@ -290,13 +290,13 @@ export default function TradePage() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <button onClick={() => navigate('/my-orders')} style={{ background: 'none', border: 'none', color: '#00F0FF', fontSize: '14px', cursor: 'pointer', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ArrowLeft size={20} /> Back to My Orders
+          <IoArrowBack size={20} /> Back to My Orders
         </button>
 
         {/* Escrow Banner */}
         {trade.escrow_locked && (
           <div style={{ background: 'linear-gradient(135deg, #22C55E, #16A34A)', borderRadius: '12px', padding: '1rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 0 30px rgba(34, 197, 94, 0.4)' }}>
-            <Shield size={28} color="#FFF" />
+            <IoShield size={28} color="#FFF" />
             <div>
               <div style={{ color: '#FFF', fontSize: '18px', fontWeight: '900' }}>
                 {getCryptoEmoji(trade.crypto_currency)} {trade.crypto_amount} {trade.crypto_currency} Locked in Escrow
@@ -342,7 +342,7 @@ export default function TradePage() {
                   <React.Fragment key={idx}>
                     <div style={{ textAlign: 'center', flex: 1 }}>
                       <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: step.active ? '#22C55E' : 'rgba(0, 0, 0, 0.4)', border: step.active ? '2px solid #22C55E' : '2px solid #444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
-                        {step.active && <CheckCircle size={24} color="#FFF" />}
+                        {step.active && <IoCheckmarkCircle size={24} color="#FFF" />}
                       </div>
                       <div style={{ color: step.active ? '#FFF' : '#666', fontSize: '12px', fontWeight: '600' }}>{step.label}</div>
                     </div>
@@ -387,7 +387,7 @@ export default function TradePage() {
                     alignItems: 'center',
                     gap: '8px'
                   }}>
-                    <Wallet size={18} />
+                    <IoWallet size={18} />
                     Buyer's Wallet Address
                   </div>
                   <div style={{
@@ -434,7 +434,7 @@ export default function TradePage() {
                       gap: '6px'
                     }}
                   >
-                    <Copy size={14} />
+                    <IoCopy size={14} />
                     Copy Address
                   </button>
                   {isSeller && (
@@ -481,7 +481,7 @@ export default function TradePage() {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <MessageCircle size={24} color="#fff" />
+                    <IoChatbubbles size={24} color="#fff" />
                   </div>
                   <div>
                     <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '700', marginBottom: '0.25rem' }}>
@@ -579,7 +579,7 @@ export default function TradePage() {
                       alignItems: 'center',
                       gap: '10px'
                     }}>
-                      <Wallet size={24} color="#A855F7" />
+                      <IoWallet size={24} color="#A855F7" />
                       SEND {getCryptoEmoji(trade.crypto_currency)} {trade.crypto_amount} {trade.crypto_currency} TO THIS ADDRESS:
                     </div>
                     <div style={{
@@ -638,7 +638,7 @@ export default function TradePage() {
                       onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                       onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                     >
-                      <Copy size={18} />
+                      <IoCopy size={18} />
                       COPY WALLET ADDRESS
                     </button>
                     <div style={{
@@ -690,7 +690,7 @@ export default function TradePage() {
                   gap: '8px'
                 }}
               >
-                <MessageCircle size={18} />
+                <IoChatbubbles size={18} />
                 Contact Support
               </a>
             </div>
@@ -700,7 +700,7 @@ export default function TradePage() {
           <div>
             <Card style={{ background: 'rgba(26, 31, 58, 0.8)', border: '1px solid rgba(0, 240, 255, 0.2)', borderRadius: '16px', padding: '1.5rem', height: '600px', display: 'flex', flexDirection: 'column' }}>
               <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MessageCircle size={24} color="#00F0FF" />
+                <IoChatbubbles size={24} color="#00F0FF" />
                 Trade Chat
               </h3>
               <p style={{ color: '#888', fontSize: '12px', marginBottom: '1rem' }}>All messages are recorded for dispute protection</p>
@@ -838,7 +838,7 @@ export default function TradePage() {
                   style={{ flex: 1, padding: '12px', background: 'rgba(0, 0, 0, 0.4)', border: '1px solid rgba(0, 240, 255, 0.3)', borderRadius: '8px', color: '#fff', fontSize: '14px' }}
                 />
                 <button type="submit" disabled={sendingMessage || !newMessage.trim()} style={{ padding: '12px 20px', background: 'linear-gradient(135deg, #00F0FF, #A855F7)', border: 'none', borderRadius: '8px', cursor: 'pointer', opacity: sendingMessage || !newMessage.trim() ? 0.5 : 1 }}>
-                  <Send size={20} color="#000" />
+                  <IoSend size={20} color="#000" />
                 </button>
               </form>
             </Card>

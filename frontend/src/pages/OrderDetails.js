@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { AlertTriangle, Upload, MessageSquare, CheckCircle2, Clock, FileText, X, Send } from 'lucide-react';
+import { IoCloudUpload, IoClock, IoDocument, IoClose, IoSend } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -205,7 +205,7 @@ export default function OrderDetails() {
     switch (status) {
       case 'completed': return <CheckCircle2 size={20} />;
       case 'disputed': return <AlertTriangle size={20} />;
-      default: return <Clock size={20} />;
+      default: return <IoClock size={20} />;
     }
   };
 
@@ -361,7 +361,7 @@ export default function OrderDetails() {
                   gap: '0.5rem'
                 }}
               >
-                <Upload size={18} />
+                <IoCloudUpload size={18} />
                 Upload Evidence
               </button>
             </div>
@@ -375,7 +375,7 @@ export default function OrderDetails() {
               alignItems: 'center',
               gap: '1rem'
             }}>
-              <FileText size={28} color="#F59E0B" />
+              <IoDocument size={28} color="#F59E0B" />
               <div>
                 <div style={{ fontSize: '1rem', fontWeight: '700', color: '#FFFFFF', marginBottom: '0.25rem' }}>Provide Evidence</div>
                 <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>Upload bank transfer screenshots, receipts, or any proof to support your case. Admin will review all evidence.</div>
@@ -451,7 +451,7 @@ export default function OrderDetails() {
                     gap: '0.5rem'
                   }}
                 >
-                  <Send size={18} />
+                  <IoSend size={18} />
                   Send
                 </button>
               </div>
@@ -487,7 +487,7 @@ export default function OrderDetails() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FFFFFF' }}>Open Dispute</h3>
                 <button onClick={() => setShowDisputeDialog(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer' }}>
-                  <X size={24} />
+                  <IoClose size={24} />
                 </button>
               </div>
               
@@ -586,7 +586,7 @@ export default function OrderDetails() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FFFFFF' }}>Upload Evidence</h3>
                 <button onClick={() => setShowEvidenceDialog(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer' }}>
-                  <X size={24} />
+                  <IoClose size={24} />
                 </button>
               </div>
               
@@ -636,7 +636,7 @@ export default function OrderDetails() {
               </div>
 
               <div style={{ padding: '1rem', background: 'rgba(245, 158, 11, 0.1)', border: '2px solid rgba(245, 158, 11, 0.3)', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem' }}>
-                <Upload size={20} color="#F59E0B" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <IoCloudUpload size={20} color="#F59E0B" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)' }}>In production: Upload actual files here. For this demo, description is sufficient.</p>
               </div>
 

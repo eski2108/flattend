@@ -1,21 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { 
-  Copy, 
-  TrendingUp, 
-  Users, 
-  DollarSign,
-  Zap,
-  ArrowRightLeft,
-  ShoppingCart,
-  CreditCard,
-  Shield,
-  AlertCircle,
-  Network,
-  Briefcase,
-  Check
-} from 'lucide-react';
+import { IoCopy, IoTrendingUp, IoPeople, IoCash, IoFlash, IoCard, IoShield, IoAlertCircle, IoBriefcase, IoCheckmark } from 'react-icons/io5';;
 import API_BASE_URL from '@/config/api';
 import { toast } from 'react-hot-toast';
 
@@ -358,7 +344,7 @@ export default function ReferralsPage() {
               e.target.style.borderColor = 'rgba(255, 255, 255, 0.5)';
             }}
           >
-            {copied ? <Check size={20} /> : <Copy size={20} />}
+            {copied ? <IoCheckmark size={20} /> : <IoCopy size={20} />}
             {copied ? 'Copied!' : 'Copy Referral Link'}
           </button>
         </div>
@@ -398,7 +384,7 @@ export default function ReferralsPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <DollarSign size={32} style={{ color: '#00F6FF', marginBottom: '1rem' }} />
+              <IoCash size={32} style={{ color: '#00F6FF', marginBottom: '1rem' }} />
               <h3 style={{
                 fontSize: '3rem',
                 fontWeight: '900',
@@ -440,7 +426,7 @@ export default function ReferralsPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <Users size={32} style={{ color: '#6B00FF', marginBottom: '1rem' }} />
+              <IoPeople size={32} style={{ color: '#6B00FF', marginBottom: '1rem' }} />
               <h3 style={{
                 fontSize: '3rem',
                 fontWeight: '900',
@@ -482,7 +468,7 @@ export default function ReferralsPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <TrendingUp size={32} style={{ color: '#00F6FF', marginBottom: '1rem' }} />
+              <IoTrendingUp size={32} style={{ color: '#00F6FF', marginBottom: '1rem' }} />
               <h3 style={{
                 fontSize: '3rem',
                 fontWeight: '900',
@@ -713,7 +699,7 @@ export default function ReferralsPage() {
               e.target.style.boxShadow = '0 12px 48px rgba(0, 224, 255, 0.4)';
             }}
           >
-            <Zap size={24} />
+            <IoFlash size={24} />
             Start Earning Now
           </button>
         </section>

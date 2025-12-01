@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Shield, Clock, MessageCircle, Send, AlertTriangle, CheckCircle, XCircle, ArrowLeft, Info, Copy, Check } from 'lucide-react';
+import { IoShield, IoClock, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoInformationCircle, IoCopy, IoCheckmark } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -171,21 +171,21 @@ export default function TradePageNew() {
         return {
           text: 'Waiting for Payment',
           color: '#F59E0B',
-          icon: <Clock size={20} />,
+          icon: <IoClock size={20} />,
           step: 1
         };
       case 'payment_sent':
         return {
           text: 'Payment Sent - Awaiting Confirmation',
           color: '#3B82F6',
-          icon: <Clock size={20} />,
+          icon: <IoClock size={20} />,
           step: 2
         };
       case 'completed':
         return {
           text: 'Trade Completed',
           color: '#22C55E',
-          icon: <CheckCircle size={20} />,
+          icon: <IoCheckmarkCircle size={20} />,
           step: 3
         };
       case 'disputed':
@@ -199,14 +199,14 @@ export default function TradePageNew() {
         return {
           text: 'Trade Cancelled',
           color: '#888',
-          icon: <XCircle size={20} />,
+          icon: <IoCloseCircle size={20} />,
           step: 0
         };
       default:
         return {
           text: 'Unknown Status',
           color: '#888',
-          icon: <Info size={20} />,
+          icon: <IoInformationCircle size={20} />,
           step: 0
         };
     }
@@ -259,7 +259,7 @@ export default function TradePageNew() {
               marginBottom: '1rem'
             }}
           >
-            <ArrowLeft size={16} />
+            <IoArrowBack size={16} />
             Back to Orders
           </button>
           
@@ -458,7 +458,7 @@ export default function TradePageNew() {
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                <Info size={20} />
+                <IoInformationCircle size={20} />
                 {isBuyer ? 'Payment Instructions' : 'Seller Instructions'}
               </h2>
 
@@ -522,7 +522,7 @@ export default function TradePageNew() {
                               padding: '4px'
                             }}
                           >
-                            {copied[key] ? <Check size={18} /> : <Copy size={18} />}
+                            {copied[key] ? <IoCheckmark size={18} /> : <IoCopy size={18} />}
                           </button>
                         </div>
                       </div>
@@ -540,7 +540,7 @@ export default function TradePageNew() {
                   padding: '1.5rem',
                   textAlign: 'center'
                 }}>
-                  <Clock size={48} color="#3B82F6" style={{ margin: '0 auto 1rem' }} />
+                  <IoClock size={48} color="#3B82F6" style={{ margin: '0 auto 1rem' }} />
                   <h3 style={{ color: '#3B82F6', fontSize: '18px', fontWeight: '700', marginBottom: '0.5rem' }}>
                     Payment Confirmed
                   </h3>
@@ -559,7 +559,7 @@ export default function TradePageNew() {
                   padding: '1rem'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#F59E0B', fontWeight: '700', marginBottom: '0.5rem' }}>
-                    <Clock size={18} />
+                    <IoClock size={18} />
                     Waiting for buyer to make payment
                   </div>
                   <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>
@@ -579,7 +579,7 @@ export default function TradePageNew() {
                     marginBottom: '1rem'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#22C55E', fontWeight: '700', marginBottom: '0.5rem' }}>
-                      <CheckCircle size={18} />
+                      <IoCheckmarkCircle size={18} />
                       Buyer has marked payment as sent
                     </div>
                     <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>
@@ -613,7 +613,7 @@ export default function TradePageNew() {
                   padding: '2rem',
                   textAlign: 'center'
                 }}>
-                  <CheckCircle size={64} color="#22C55E" style={{ margin: '0 auto 1rem' }} />
+                  <IoCheckmarkCircle size={64} color="#22C55E" style={{ margin: '0 auto 1rem' }} />
                   <h3 style={{ color: '#22C55E', fontSize: '22px', fontWeight: '900', marginBottom: '0.5rem' }}>
                     Trade Completed Successfully! 🎉
                   </h3>
@@ -632,7 +632,7 @@ export default function TradePageNew() {
                   padding: '1.5rem',
                   textAlign: 'center'
                 }}>
-                  <Shield size={48} color="#EF4444" style={{ margin: '0 auto 1rem' }} />
+                  <IoShield size={48} color="#EF4444" style={{ margin: '0 auto 1rem' }} />
                   <h3 style={{ color: '#EF4444', fontSize: '18px', fontWeight: '700', marginBottom: '0.5rem' }}>
                     Trade Under Dispute
                   </h3>
@@ -662,7 +662,7 @@ export default function TradePageNew() {
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                <MessageCircle size={20} />
+                <IoChatbubbles size={20} />
                 Trade Chat
               </h2>
 
@@ -750,7 +750,7 @@ export default function TradePageNew() {
                     gap: '0.5rem'
                   }}
                 >
-                  <Send size={16} />
+                  <IoSend size={16} />
                   Send
                 </button>
               </div>

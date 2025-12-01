@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { HelpCircle, ChevronDown, ChevronUp, Search, MessageCircle, Book, DollarSign, Shield, Users, Zap, TrendingUp } from 'lucide-react';
+import { IoHelpCircle, IoChevronDown, IoChevronUp, IoSearch, IoChatbubbles, IoBook, IoCash, IoShield, IoPeople, IoFlash, IoTrendingUp } from 'react-icons/io5';;
 
 const faqs = [
   {
@@ -188,7 +188,7 @@ function FAQ() {
           {/* Header */}
           <div style={{ marginBottom: isMobile ? '24px' : '32px', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-              <HelpCircle size={isMobile ? 40 : 48} color="#00E8FF" strokeWidth={2.5} />
+              <IoHelpCircle size={isMobile ? 40 : 48} color="#00E8FF" strokeWidth={2.5} />
               <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>
                 Frequently Asked Questions
               </h1>
@@ -206,7 +206,7 @@ function FAQ() {
             marginBottom: isMobile ? '20px' : '28px'
           }}>
             <div style={{ position: 'relative' }}>
-              <Search size={20} color="#00E8FF" style={{
+              <IoSearch size={20} color="#00E8FF" style={{
                 position: 'absolute',
                 left: '16px',
                 top: '50%',
@@ -343,9 +343,9 @@ function FAQ() {
                           {item.q}
                         </span>
                         {isOpen ? (
-                          <ChevronUp size={isMobile ? 20 : 24} color={category.color} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                          <IoChevronUp size={isMobile ? 20 : 24} color={category.color} strokeWidth={2.5} style={{ flexShrink: 0 }} />
                         ) : (
-                          <ChevronDown size={isMobile ? 20 : 24} color="#8F9BB3" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                          <IoChevronDown size={isMobile ? 20 : 24} color="#8F9BB3" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                         )}
                       </button>
 
@@ -377,7 +377,7 @@ function FAQ() {
             padding: isMobile ? '28px 20px' : '36px',
             textAlign: 'center'
           }}>
-            <MessageCircle size={isMobile ? 40 : 48} color="#00E8FF" strokeWidth={2} style={{ margin: '0 auto 16px' }} />
+            <IoChatbubbles size={isMobile ? 40 : 48} color="#00E8FF" strokeWidth={2} style={{ margin: '0 auto 16px' }} />
             <h3 style={{ fontSize: isMobile ? '22px' : '26px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px' }}>
               Still have questions?
             </h3>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { Search, Filter, Star, Shield, Zap, Clock, TrendingUp, ChevronDown } from 'lucide-react';
+import { IoSearch, IoFilter, IoStar, IoShield, IoFlash, IoClock, IoTrendingUp, IoChevronDown } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -206,7 +206,7 @@ function P2PMarketplace() {
                 fontSize: '13px'
               }}
             >
-              <Filter size={14} style={{ display: 'inline', marginRight: '0.5rem' }} />
+              <IoFilter size={14} style={{ display: 'inline', marginRight: '0.5rem' }} />
               {showFilters ? 'Hide Filters' : 'More Filters'}
             </button>
           </div>
@@ -345,11 +345,11 @@ function P2PMarketplace() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '15px', fontWeight: '700', color: '#fff' }}>{offer.seller_info?.username || 'Anonymous'}</span>
-                      {offer.seller_info?.is_verified && <Shield size={14} color="#00F0FF" />}
-                      {offer.fast_payment && <Zap size={14} color="#FCD34D" />}
+                      {offer.seller_info?.is_verified && <IoShield size={14} color="#00F0FF" />}
+                      {offer.fast_payment && <IoFlash size={14} color="#FCD34D" />}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.25rem' }}>
-                      <Star size={12} color="#FCD34D" fill="#FCD34D" />
+                      <IoStar size={12} color="#FCD34D" fill="#FCD34D" />
                       <span style={{ color: '#FCD34D', fontSize: '13px', fontWeight: '600' }}>{offer.seller_info?.rating?.toFixed(1) || '5.0'}</span>
                     </div>
                     <div style={{ color: '#888', fontSize: '11px' }}>{offer.seller_info?.total_trades || 0} trades | {offer.seller_info?.completion_rate?.toFixed(1) || '100'}%</div>

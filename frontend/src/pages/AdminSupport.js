@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Send, CheckCircle, Clock, User } from 'lucide-react';
+import { IoChatbubbles, IoSend, IoCheckmarkCircle, IoClock, IoPersonOutline } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -207,7 +207,7 @@ export default function AdminSupport() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <User size={16} color="#00F0FF" />
+                      <IoPersonOutline size={16} color="#00F0FF" />
                       <span style={{ color: '#fff', fontWeight: '600' }}>
                         {chat.user_name || `User ${chat.user_id.substring(0, 8)}`}
                       </span>
@@ -225,7 +225,7 @@ export default function AdminSupport() {
                     </span>
                   </div>
                   <div style={{ fontSize: '12px', color: '#888' }}>
-                    <Clock size={12} style={{ display: 'inline', marginRight: '4px' }} />
+                    <IoClock size={12} style={{ display: 'inline', marginRight: '4px' }} />
                     {formatDate(chat.created_at)}
                   </div>
                   {chat.last_message && (
@@ -264,7 +264,7 @@ export default function AdminSupport() {
                 color: '#888',
                 fontSize: '18px'
               }}>
-                <MessageCircle size={48} style={{ marginRight: '1rem' }} />
+                <IoChatbubbles size={48} style={{ marginRight: '1rem' }} />
                 Select a chat to view messages
               </div>
             ) : (
@@ -359,7 +359,7 @@ export default function AdminSupport() {
                         gap: '0.5rem'
                       }}
                     >
-                      <Send size={20} />
+                      <IoSend size={20} />
                       Send
                     </button>
                   </div>
@@ -379,7 +379,7 @@ export default function AdminSupport() {
                       gap: '0.5rem'
                     }}
                   >
-                    <CheckCircle size={16} />
+                    <IoCheckmarkCircle size={16} />
                     Mark as Resolved
                   </button>
                 </div>

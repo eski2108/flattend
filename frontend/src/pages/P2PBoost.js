@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Zap, TrendingUp } from 'lucide-react';
+import { IoFlash, IoTrendingUp } from 'react-icons/io5';;
 
 export default function P2PBoost() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export default function P2PBoost() {
     <Layout>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <Zap size={64} color="#FDBA74" style={{ margin: '0 auto 1rem' }} />
+          <IoFlash size={64} color="#FDBA74" style={{ margin: '0 auto 1rem' }} />
           <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#fff', marginBottom: '1rem' }}>Boost Your Listings</h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)' }}>Get more visibility and complete trades faster</p>
         </div>
