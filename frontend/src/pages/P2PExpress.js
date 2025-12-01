@@ -148,22 +148,24 @@ export default function P2PExpress() {
   };
 
   const calculateQuote = () => {
-    if (!livePrice) return;
+    if (!livePrice || !cryptoAmount) return;
     
     const baseRate = livePrice.price_gbp;
-    const fiatAmount = parseFloat(amount);
-    const expressFeeBP = fiatAmount * (EXPRESS_FEE_PERCENT / 100);
-    const netAmount = fiatAmount - expressFeeBP;
-    const cryptoAmount = netAmount / baseRate;
+    const crypto = parseFloat(cryptoAmount);
+    const cryptoFee = crypto * (EXPRESS_FEE_PERCENT / 100);
+    const netCrypto = crypto - cryptoFee;
+    const fiatValue = crypto * baseRate;
+    const fiatFee = fiatValue * (EXPRESS_FEE_PERCENT / 100);
+    const netFiat = fiatValue - fiatFee;
 
     setQuote({
       coin: selectedCoin,
-      fiatAmount: fiatAmount,
+      fiatAmount: fiatValue,
       baseRate: baseRate,
-      expressFee: expressFeeBP,
+      expressFee: fiatFee,
       expressFeePct: EXPRESS_FEE_PERCENT,
-      netAmount: netAmount,
-      cryptoAmount: cryptoAmount,
+      netAmount: netFiat,
+      cryptoAmount: netCrypto,
       estimatedDelivery: hasAdminLiquidity ? 'Instant' : '2-5 minutes'
     });
   };
