@@ -140,16 +140,34 @@ export const convertCryptoToFiat = async (cryptoAmount, coinSymbol, fiatCurrency
 
 /**
  * Get currency symbol
- * @param {string} currency - GBP, USD, NGN
+ * @param {string} currency - Currency code
  * @returns {string} - Currency symbol
  */
 export const getCurrencySymbol = (currency) => {
   const symbols = {
     'GBP': '£',
     'USD': '$',
-    'NGN': '₦'
+    'EUR': '€',
+    'NGN': '₦',
+    'INR': '₹',
+    'AUD': 'A$',
+    'CAD': 'C$',
+    'ZAR': 'R',
+    'KES': 'KSh',
+    'GHS': '₵',
+    'JPY': '¥',
+    'CNY': '¥',
+    'BRL': 'R$',
+    'MXN': '$',
+    'CHF': 'Fr',
+    'SEK': 'kr',
+    'NOK': 'kr',
+    'DKK': 'kr',
+    'PLN': 'zł',
+    'AED': 'د.إ',
+    'SAR': '﷼'
   };
-  return symbols[currency] || '£';
+  return symbols[currency] || currency;
 };
 
 /**
