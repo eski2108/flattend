@@ -1,3 +1,4 @@
+import { BiArrowFromTop, BiArrowToTop } from 'react-icons/bi';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -364,10 +365,10 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
       {/* Quick Action Buttons */}
       {!expanded && (
         <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-          <CHXButton onClick={handleDeposit} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<ArrowDownLeft size={16} />}>
+          <CHXButton onClick={handleDeposit} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiArrowFromTop size={16} />}>
             Deposit
           </CHXButton>
-          <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<ArrowUpRight size={16} />}>
+          <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiArrowToTop size={16} />}>
             Withdraw
           </CHXButton>
           <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiRepeat size={16} />}>
@@ -414,10 +415,10 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
             <div>
               <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Actions</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <CHXButton onClick={handleDeposit} coinColor={coinColor} variant="primary" size="medium" icon={<ArrowDownLeft size={18} />}>
+                <CHXButton onClick={handleDeposit} coinColor={coinColor} variant="primary" size="medium" icon={<BiArrowFromTop size={18} />}>
                   Deposit
                 </CHXButton>
-                <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="medium" icon={<ArrowUpRight size={18} />}>
+                <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="medium" icon={<BiArrowToTop size={18} />}>
                   Withdraw
                 </CHXButton>
                 <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="medium" icon={<BiRepeat size={18} />}>
@@ -497,7 +498,7 @@ function TransactionHistory({ user }) {
             <div key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: tx.transaction_type === 'deposit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {tx.transaction_type === 'deposit' ? <ArrowDownLeft size={20} color="#22C55E" /> : <ArrowUpRight size={20} color="#EF4444" />}
+                  {tx.transaction_type === 'deposit' ? <BiArrowFromTop size={20} color="#22C55E" /> : <BiArrowToTop size={20} color="#EF4444" />}
                 </div>
                 <div>
                   <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>

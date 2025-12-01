@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, X, Check, AlertCircle, TrendingUp, Shield, MessageSquare } from 'react-icons/io5';
+import { AlertCircle, Bell, Check, IoChatbubbles, MessageSquare, Shield, TrendingUp, X } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -133,7 +133,7 @@ export default function NotificationBell() {
       case 'dispute_update':
         return <IoAlertCircle size={18} style={{ color: '#EF4444' }} />;
       case 'admin_announcement':
-        return <MessageSquare size={18} style={{ color: '#A855F7' }} />;
+        return <IoChatbubbles size={18} style={{ color: '#A855F7' }} />;
       default:
         return <IoNotifications size={18} style={{ color: '#64748B' }} />;
     }

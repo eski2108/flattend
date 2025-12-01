@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoCloudUpload, IoTime, IoDocument, IoClose, IoSend } from 'react-icons/io5';;
+import { IoChatbubbles, IoCheckmarkCircle, IoClose, IoCloudUpload, IoDocument, IoSend, IoTime, IoWarning } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -167,7 +167,7 @@ export default function OrderDetails() {
           border: '2px solid rgba(239, 68, 68, 0.3)',
           borderRadius: '16px'
         }}>
-          <AlertTriangle size={64} color="#EF4444" style={{ marginBottom: '1.5rem' }} />
+          <IoWarning size={64} color="#EF4444" style={{ marginBottom: '1.5rem' }} />
           <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FFFFFF', marginBottom: '1rem' }}>Order Not Found</h3>
           <button
             onClick={() => navigate('/my-orders')}
@@ -203,8 +203,8 @@ export default function OrderDetails() {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'completed': return <CheckCircle2 size={20} />;
-      case 'disputed': return <AlertTriangle size={20} />;
+      case 'completed': return <IoCheckmarkCircle size={20} />;
+      case 'disputed': return <IoWarning size={20} />;
       default: return <IoTime size={20} />;
     }
   };
@@ -300,7 +300,7 @@ export default function OrderDetails() {
               alignItems: 'center',
               gap: '1rem'
             }}>
-              <AlertTriangle size={24} color="#F59E0B" />
+              <IoWarning size={24} color="#F59E0B" />
               <div>
                 <div style={{ fontSize: '1rem', fontWeight: '700', color: '#F59E0B', marginBottom: '0.25rem' }}>Crypto Locked in Escrow</div>
                 <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>This order is under dispute. Crypto is securely held in escrow until admin resolution.</div>
@@ -327,7 +327,7 @@ export default function OrderDetails() {
                   gap: '0.5rem'
                 }}
               >
-                <AlertTriangle size={20} />
+                <IoWarning size={20} />
                 Open Dispute
               </button>
             </div>
@@ -389,7 +389,7 @@ export default function OrderDetails() {
               padding: '1.5rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                <MessageSquare size={20} color="#00F0FF" />
+                <IoChatbubbles size={20} color="#00F0FF" />
                 <h4 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#FFFFFF' }}>Dispute Chat</h4>
               </div>
               
@@ -492,7 +492,7 @@ export default function OrderDetails() {
               </div>
               
               <div style={{ padding: '1rem', background: 'rgba(245, 158, 11, 0.1)', border: '2px solid rgba(245, 158, 11, 0.3)', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem' }}>
-                <AlertTriangle size={20} color="#F59E0B" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <IoWarning size={20} color="#F59E0B" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)' }}>Only open a dispute if there is a genuine issue. False disputes may affect your account.</p>
               </div>
 

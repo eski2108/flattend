@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Minimize2, Zap, HelpCircle } from 'react-icons/io5';
+import { HelpCircle, IoContract, MessageCircle, Minimize2, Send, X, Zap } from 'react-icons/io5';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -222,7 +222,7 @@ export default function ChatWidget() {
             onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
             onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
           >
-            <Minimize2 size={18} color="#FFF" />
+            <IoContract size={18} color="#FFF" />
           </button>
           <button
             onClick={() => setIsOpen(false)}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Shield, Filter, Download, Search, AlertTriangle, CheckCircle, XCircle } from 'react-icons/io5';
+import { AlertTriangle, CheckCircle, Download, Filter, IoWarning, Search, Shield, XCircle } from 'react-icons/io5';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;
@@ -227,7 +227,7 @@ export default function AdminSecurityLogs() {
                         <div className="flex items-center gap-2">
                           {getStatusIcon(log.success)}
                           {log.is_new_device && (
-                            <AlertTriangle className="w-4 h-4 text-yellow-400" title="New Device" />
+                            <IoWarning className="w-4 h-4 text-yellow-400" title="New Device" />
                           )}
                         </div>
                       </td>
