@@ -3883,16 +3883,56 @@ async def create_p2p_express_order(order_data: Dict):
         status = "completed"
         payment_method = "platform_direct"
         
-        # Credit user wallet instantly
+        # 1. DEBIT GBP from user wallet
         try:
-            from wallet_service import credit_wallet
-            await credit_wallet(
+            await wallet_service.debit(
+                user_id=order_data["user_id"],
+                currency="GBP",
+                amount=order_data["fiat_amount"],
+                description=f"P2P Express purchase: {order_data['crypto_amount']} {order_data['crypto']}",
+                reference=trade_id
+            )
+            logger.info(f"✅ Debited £{order_data['fiat_amount']} from user {order_data['user_id']}")
+        except Exception as e:
+            logger.error(f"❌ Failed to debit GBP: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to debit payment: {str(e)}")
+        
+        # 2. CREDIT crypto to user wallet
+        try:
+            await wallet_service.credit(
                 user_id=order_data["user_id"],
                 currency=order_data["crypto"],
-                amount=order_data["crypto_amount"]
+                amount=order_data["crypto_amount"],
+                description=f"P2P Express purchase: {order_data['crypto']}",
+                reference=trade_id
             )
+            logger.info(f"✅ Credited {order_data['crypto_amount']} {order_data['crypto']} to user {order_data['user_id']}")
         except Exception as e:
-            logger.error(f"Failed to credit wallet: {e}")
+            logger.error(f"❌ Failed to credit crypto: {e}")
+            # Refund the GBP if crypto credit fails
+            await wallet_service.credit(
+                user_id=order_data["user_id"],
+                currency="GBP",
+                amount=order_data["fiat_amount"],
+                description=f"Refund for failed purchase {trade_id}",
+                reference=trade_id
+            )
+            raise HTTPException(status_code=500, detail=f"Failed to credit crypto: {str(e)}")
+        
+        # 3. RECORD EXPRESS FEE to platform fee wallet
+        try:
+            await db.platform_fees.insert_one({
+                "fee_id": f"FEE_{trade_id}",
+                "trade_id": trade_id,
+                "fee_type": "p2p_express",
+                "amount": order_data["express_fee"],
+                "currency": "GBP",
+                "user_id": order_data["user_id"],
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            logger.info(f"✅ Recorded express fee: £{order_data['express_fee']}")
+        except Exception as e:
+            logger.error(f"⚠️ Failed to record fee: {e}")
         
         # Log admin liquidity trade
         await db.admin_liquidity_trades.insert_one({
