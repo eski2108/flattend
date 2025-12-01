@@ -9,6 +9,7 @@ import axios from "axios";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { applySamsungColorFix } from "@/utils/colorFix";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Core pages - load immediately
 import LandingPage from "@/pages/LandingPage";
