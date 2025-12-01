@@ -15650,21 +15650,35 @@ async def get_live_prices_endpoint():
 
 @api_router.get("/prices/live/{symbol}")
 async def get_single_live_price(symbol: str):
-    """Get live price for specific crypto"""
+    """Get live price for specific crypto (CACHED for performance)"""
     try:
+        # Check cache first
+        cache_key = price_cache_key(symbol)
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            logger.info(f"✅ Returning cached price for {symbol}")
+            return cached_data
+        
         price_usd = await get_live_price(symbol.upper(), "usd")
         price_gbp = await get_live_price(symbol.upper(), "gbp")
         
         if price_usd == 0 and price_gbp == 0:
             raise HTTPException(status_code=404, detail=f"Price not available for {symbol}")
         
-        return {
+        response_data = {
             "success": True,
             "symbol": symbol.upper(),
             "price_usd": price_usd,
             "price_gbp": price_gbp,
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
+        
+        # Cache the response
+        cache.set(cache_key, response_data, PRICE_CACHE_TTL)
+        logger.info(f"💾 Cached price for {symbol} for 30 seconds")
+        
+        return response_data
     except HTTPException:
         raise
     except Exception as e:
