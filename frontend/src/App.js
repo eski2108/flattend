@@ -218,6 +218,7 @@ function App() {
       </div>
     </WalletProvider>
     </CurrencyProvider>
+    </ErrorBoundary>
   );
 }
 
