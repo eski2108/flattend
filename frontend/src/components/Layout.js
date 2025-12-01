@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
-import { Zap, LayoutDashboard, ShoppingBag, TrendingUp, TrendingDown, FileText, DollarSign, CreditCard, LogOut, Menu, X, Gift, MessageCircle, BarChart3, PiggyBank, PieChart, Target } from 'react-icons/io5';
+import { IoFlash as Zap, IoGrid as LayoutDashboard, IoBag as ShoppingBag, IoTrendingUp as TrendingUp, IoTrendingDown, IoDocument as FileText, IoCash as DollarSign, IoCard as CreditCard, IoLogOut as LogOut, IoMenu as Menu, IoClose as X, IoGift as Gift, IoChatbubbles as MessageCircle, IoBarChart as BarChart3, IoWallet as PiggyBank, IoPieChart, IoTarget } from 'react-icons/io5';
 import Logo from '@/components/Logo';
 import PriceTickerEnhanced from '@/components/PriceTickerEnhanced';
 import ExpressBuyModal from '@/components/ExpressBuyModal';
