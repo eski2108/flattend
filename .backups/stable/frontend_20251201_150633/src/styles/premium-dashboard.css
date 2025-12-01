@@ -1,0 +1,180 @@
+/* Premium Dashboard Styles - Binance-level Design */
+
+/* GLOBAL CARD STYLES */
+.premium-card {
+  border-radius: 20px;
+  border: 2px solid rgba(0, 255, 255, 0.22);
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.15), inset 0 0 10px rgba(0, 0, 0, 0.35);
+  padding: 22px;
+  margin-bottom: 18px;
+  background: linear-gradient(145deg, rgba(0, 30, 60, 0.8), rgba(0, 15, 35, 0.8));
+  transition: all 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 24px rgba(0, 255, 255, 0.25), inset 0 0 12px rgba(0, 0, 0, 0.4);
+}
+
+/* BUTTON STYLES */
+.premium-button {
+  width: 78%;
+  height: 45px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #00F0FF, #7B2FFF);
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.25);
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.premium-button:hover {
+  filter: brightness(1.12);
+  transform: scale(1.02);
+}
+
+.premium-button:active {
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+  transform: scale(0.98);
+}
+
+/* TITLE STYLES */
+.premium-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.premium-title.purple { color: #C084FC; }
+.premium-title.blue { color: #7DD3FC; }
+.premium-title.green { color: #6EE7B7; }
+.premium-title.orange { color: #FDBA74; }
+.premium-title.yellow { color: #FACC15; }
+
+.premium-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.premium-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: #22F2FF;
+}
+
+/* SPECIFIC CARD VARIANTS */
+.card-verified {
+  background: linear-gradient(145deg, #2A0F45, #1C0B32);
+  border-color: rgba(168, 85, 247, 0.22);
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.15);
+}
+
+.card-upgrade {
+  background: linear-gradient(145deg, #2A3B0F, #11220B);
+  border-color: rgba(163, 230, 53, 0.22);
+  box-shadow: 0 0 18px rgba(163, 230, 53, 0.15);
+}
+
+.card-boost {
+  background: linear-gradient(145deg, #3B1A0F, #210C06);
+  border-color: rgba(249, 115, 22, 0.22);
+  box-shadow: 0 0 18px rgba(249, 115, 22, 0.15);
+}
+
+.card-alerts {
+  background: linear-gradient(145deg, #052A3B, #02171F);
+  border-color: rgba(34, 211, 238, 0.22);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.15);
+}
+
+.card-instant-buy {
+  background: linear-gradient(145deg, #00A86B, #006642);
+  border-color: rgba(74, 222, 128, 0.22);
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.15);
+}
+
+.card-p2p-express {
+  background: linear-gradient(145deg, #0A4DD9, #062C7A);
+  border-color: rgba(96, 165, 250, 0.22);
+  box-shadow: 0 0 18px rgba(96, 165, 250, 0.15);
+}
+
+.card-instant-sell {
+  background: linear-gradient(145deg, #9A0E0E, #5A0707);
+  border-color: rgba(248, 113, 113, 0.22);
+  box-shadow: 0 0 18px rgba(248, 113, 113, 0.15);
+}
+
+.card-p2p-marketplace {
+  background: linear-gradient(145deg, #4A1AFF, #2B0E8A);
+  border-color: rgba(129, 140, 248, 0.22);
+  box-shadow: 0 0 18px rgba(129, 140, 248, 0.15);
+}
+
+.card-otc {
+  background: linear-gradient(145deg, #D97706, #92400E);
+  border-color: rgba(251, 191, 36, 0.22);
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.15);
+}
+
+/* ICON STYLES */
+.premium-icon {
+  font-size: 22px;
+  opacity: 0.88;
+  filter: drop-shadow(0 0 14px rgba(0, 0, 0, 0.45));
+}
+
+/* TRADING STATS CARDS */
+.stats-card {
+  height: 110px;
+  border-radius: 20px;
+  border: 2px solid rgba(34, 242, 255, 0.22);
+  box-shadow: 0 0 18px rgba(34, 242, 255, 0.15);
+  padding: 18px 22px;
+}
+
+.stats-card-title {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stats-card-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: #22F2FF;
+}
+
+.stats-card-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* NO ACTIVITY BOX */
+.no-activity-box {
+  border-radius: 20px;
+  border: 2px solid rgba(0, 255, 255, 0.22);
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.25);
+  padding: 32px;
+  text-align: center;
+}
+
+.chat-icon-button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #00F0FF, #7B2FFF);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-icon-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
