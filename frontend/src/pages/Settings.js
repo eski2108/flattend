@@ -150,7 +150,7 @@ export default function Settings() {
       title: 'Account',
       items: [
         { icon: User, label: 'Profile', description: 'Manage your account details', action: () => toast.info('Profile settings coming soon') },
-        { icon: Mail, label: 'Email', description: currentUser.email, action: null },
+        { icon: IoMail, label: 'Email', description: currentUser.email, action: null },
         { icon: Lock, label: 'Security', description: 'Change password and security settings', action: () => toast.info('Security settings coming soon') }
       ]
     },
