@@ -42,11 +42,13 @@ function SwapCrypto() {
   const [showSettings, setShowSettings] = useState(false);
   const [recentSwaps, setRecentSwaps] = useState([]);
   const [tickerData, setTickerData] = useState([]);
+  const [walletBalances, setWalletBalances] = useState({});
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
     fetchAvailableCryptos();
     fetchRecentSwaps();
+    fetchWalletBalances();
   }, []);
 
   useEffect(() => {
