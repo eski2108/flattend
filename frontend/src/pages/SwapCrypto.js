@@ -43,6 +43,8 @@ function SwapCrypto() {
   const [recentSwaps, setRecentSwaps] = useState([]);
   const [tickerData, setTickerData] = useState([]);
   const [walletBalances, setWalletBalances] = useState({});
+  const [inputType, setInputType] = useState('crypto'); // 'crypto' or 'fiat'
+  const [selectedFiat, setSelectedFiat] = useState('GBP');
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
