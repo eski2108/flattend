@@ -207,7 +207,16 @@ function SwapCrypto() {
       });
 
       if (response.data.success) {
-        toast.success(`Swap completed! Received ${response.data.to_amount} ${toCrypto}`);
+        // Show local success message in the swap box
+        setSwapSuccess({
+          message: `Swap completed! Received ${response.data.to_amount.toFixed(8)} ${toCrypto}`,
+          fromAmount: actualCryptoAmount,
+          toAmount: response.data.to_amount
+        });
+        
+        // Clear after 5 seconds
+        setTimeout(() => setSwapSuccess(null), 5000);
+        
         setFromAmount('');
         setToAmount('');
         fetchRecentSwaps();
