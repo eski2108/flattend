@@ -261,10 +261,17 @@ const DualCurrencyInput = ({
                 fontSize: '18px',
                 fontWeight: '600',
                 outline: 'none',
-                width: '100%'
+                minWidth: '100px',
+                width: 'auto'
               }}
             />
-            <span style={{ color: '#9B4DFF', fontSize: '14px', fontWeight: '700' }}>{cryptoSymbol}</span>
+            <span style={{ 
+              color: '#9B4DFF', 
+              fontSize: '14px', 
+              fontWeight: '700',
+              flexShrink: 0,
+              minWidth: '40px'
+            }}>{cryptoSymbol}</span>
           </div>
         </div>
       </div>
