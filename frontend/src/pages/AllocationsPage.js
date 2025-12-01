@@ -55,7 +55,6 @@ export default function AllocationsPage() {
   const [currency, setCurrency] = useState('GBP');
   const [activeTab, setActiveTab] = useState('coins');
   const [showPercentages, setShowPercentages] = useState(true);
-  const [demoMode, setDemoMode] = useState(false);
 
   useEffect(() => {
     fetchAllocations();
