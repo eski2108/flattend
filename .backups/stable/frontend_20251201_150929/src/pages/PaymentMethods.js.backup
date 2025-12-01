@@ -1,0 +1,429 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import Layout from '@/components/Layout';
+import API_BASE_URL from '@/config/api';
+import { Plus, Edit2, Trash2, Check, X } from 'lucide-react';
+
+const API = API_BASE_URL;
+
+function PaymentMethods() {
+  const [methods, setMethods] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingMethod, setEditingMethod] = useState(null);
+  const [methodTypes, setMethodTypes] = useState({});
+  const [formData, setFormData] = useState({
+    method_type: 'UK Bank Transfer',
+    nickname: '',
+    currency: 'GBP',
+    is_active: true,
+    details: {}
+  });
+
+  useEffect(() => {
+    loadPaymentMethods();
+    loadMethodTypes();
+  }, []);
+
+  const loadPaymentMethods = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const response = await axios.get(`${API}/payment-methods/${user.user_id}`);
+      setMethods(response.data.payment_methods || []);
+    } catch (error) {
+      toast.error('Failed to load payment methods');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMethodTypes = async () => {
+    try {
+      const response = await axios.get(`${API}/payment-methods/types`);
+      setMethodTypes(response.data.types);
+    } catch (error) {
+      console.error('Failed to load method types');
+    }
+  };
+
+  const handleAddMethod = () => {
+    setEditingMethod(null);
+    setFormData({
+      method_type: 'UK Bank Transfer',
+      nickname: '',
+      currency: 'GBP',
+      is_active: true,
+      details: {}
+    });
+    setShowAddModal(true);
+  };
+
+  const handleEditMethod = (method) => {
+    setEditingMethod(method);
+    setFormData({
+      method_type: method.method_type,
+      nickname: method.nickname,
+      currency: method.currency,
+      is_active: method.is_active,
+      details: method.details
+    });
+    setShowAddModal(true);
+  };
+
+  const handleSaveMethod = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      if (editingMethod) {
+        await axios.put(`${API}/payment-methods/${editingMethod.payment_method_id}`, formData);
+        toast.success('Payment method updated');
+      } else {
+        await axios.post(`${API}/payment-methods`, {
+          ...formData,
+          user_id: user.user_id
+        });
+        toast.success('Payment method added');
+      }
+      
+      setShowAddModal(false);
+      loadPaymentMethods();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save payment method');
+    }
+  };
+
+  const handleDeleteMethod = async (methodId) => {
+    if (!confirm('Delete this payment method?')) return;
+    
+    try {
+      await axios.delete(`${API}/payment-methods/${methodId}`);
+      toast.success('Payment method deleted');
+      loadPaymentMethods();
+    } catch (error) {
+      toast.error('Failed to delete payment method');
+    }
+  };
+
+  const handleToggleActive = async (method) => {
+    try {
+      await axios.put(`${API}/payment-methods/${method.payment_method_id}`, {
+        is_active: !method.is_active
+      });
+      toast.success(method.is_active ? 'Method deactivated' : 'Method activated');
+      loadPaymentMethods();
+    } catch (error) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  const renderFormFields = () => {
+    const config = methodTypes[formData.method_type];
+    if (!config) return null;
+
+    const allFields = [...config.required_fields, ...config.optional_fields];
+
+    return allFields.map(field => (
+      <div key={field} style={{ marginBottom: '1rem' }}>
+        <label style={{ display: 'block', color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.5rem' }}>
+          {field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          {config.required_fields.includes(field) && <span style={{ color: '#EF4444' }}> *</span>}
+        </label>
+        <input
+          type="text"
+          value={formData.details[field] || ''}
+          onChange={(e) => setFormData({
+            ...formData,
+            details: { ...formData.details, [field]: e.target.value }
+          })}
+          placeholder={`Enter ${field.replace('_', ' ')}`}
+          style={{
+            width: '100%',
+            padding: '12px',
+            background: 'rgba(0, 0, 0, 0.4)',
+            border: '2px solid rgba(0, 240, 255, 0.3)',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: '14px',
+            outline: 'none'
+          }}
+        />
+      </div>
+    ));
+  };
+
+  return (
+    <Layout>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div>
+              <h1 style={{ fontSize: '2rem', fontWeight: '800', background: 'linear-gradient(135deg, #00F0FF, #A855F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '0.5rem' }}>
+                Payment Methods
+              </h1>
+              <p style={{ color: '#888', fontSize: '14px' }}>Manage your payment methods for P2P trading</p>
+            </div>
+            <button
+              onClick={handleAddMethod}
+              style={{
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                border: 'none',
+                borderRadius: '12px',
+                color: '#000',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <Plus size={20} />
+              Add Payment Method
+            </button>
+          </div>
+
+          {loading ? (
+            <p style={{ color: '#888', textAlign: 'center', padding: '4rem' }}>Loading...</p>
+          ) : methods.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '4rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', border: '1px solid rgba(0, 240, 255, 0.2)' }}>
+              <p style={{ color: '#888', fontSize: '18px', marginBottom: '1rem' }}>No payment methods yet</p>
+              <p style={{ color: '#666', fontSize: '14px' }}>Add your first payment method to start selling</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {methods.map(method => (
+                <div key={method.payment_method_id} style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  border: `2px solid ${method.is_active ? 'rgba(0, 240, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                      <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '700', margin: 0 }}>
+                        {method.nickname}
+                      </h3>
+                      <span style={{
+                        padding: '4px 12px',
+                        background: method.is_active ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                        border: `1px solid ${method.is_active ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+                        borderRadius: '6px',
+                        color: method.is_active ? '#22C55E' : '#EF4444',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}>
+                        {method.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    <p style={{ color: '#888', fontSize: '14px', margin: '0.25rem 0' }}>
+                      {method.method_type} • {method.currency}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handleToggleActive(method)}
+                      style={{
+                        padding: '8px 16px',
+                        background: 'rgba(168, 85, 247, 0.2)',
+                        border: '1px solid rgba(168, 85, 247, 0.4)',
+                        borderRadius: '8px',
+                        color: '#A855F7',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {method.is_active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button
+                      onClick={() => handleEditMethod(method)}
+                      style={{
+                        padding: '8px',
+                        background: 'rgba(0, 240, 255, 0.2)',
+                        border: '1px solid rgba(0, 240, 255, 0.4)',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Edit2 size={18} color="#00F0FF" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteMethod(method.payment_method_id)}
+                      style={{
+                        padding: '8px',
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        border: '1px solid rgba(239, 68, 68, 0.4)',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Trash2 size={18} color="#EF4444" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Add/Edit Modal */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #1a1f3a 0%, #0a0e27 100%)',
+            borderRadius: '24px',
+            padding: '2rem',
+            maxWidth: '600px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            border: '2px solid rgba(0, 240, 255, 0.3)'
+          }}>
+            <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: '800', marginBottom: '1.5rem' }}>
+              {editingMethod ? 'Edit Payment Method' : 'Add Payment Method'}
+            </h2>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.5rem' }}>
+                Payment Method Type
+              </label>
+              <select
+                value={formData.method_type}
+                onChange={(e) => setFormData({ ...formData, method_type: e.target.value, details: {} })}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '2px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontSize: '14px',
+                  outline: 'none'
+                }}
+              >
+                {Object.keys(methodTypes).map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.5rem' }}>
+                Nickname <span style={{ color: '#EF4444' }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.nickname}
+                onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                placeholder="e.g., Barclays GBP account"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '2px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontSize: '14px',
+                  outline: 'none'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', color: '#fff', fontSize: '14px', fontWeight: '600', marginBottom: '0.5rem' }}>
+                Currency
+              </label>
+              <select
+                value={formData.currency}
+                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '2px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontSize: '14px',
+                  outline: 'none'
+                }}
+              >
+                {methodTypes[formData.method_type]?.currencies.map(cur => (
+                  <option key={cur} value={cur}>{cur}</option>
+                ))}
+              </select>
+            </div>
+
+            {renderFormFields()}
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={formData.is_active}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <span style={{ color: '#fff', fontSize: '14px', fontWeight: '600' }}>Active (available for trading)</span>
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button
+                onClick={handleSaveMethod}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: '#000',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                {editingMethod ? 'Update' : 'Add'} Payment Method
+              </button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  borderRadius: '12px',
+                  color: '#EF4444',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </Layout>
+  );
+}
+
+export default PaymentMethods;

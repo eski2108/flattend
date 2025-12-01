@@ -1,0 +1,266 @@
+/* GLOBAL BUTTON INTERACTION SYSTEM - APPLY TO EVERY BUTTON */
+
+.premium-btn {
+  border-radius: 16px;
+  transform: scale(1.00);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Primary Buttons */
+.premium-btn-primary {
+  background: linear-gradient(145deg, #00F0FF, #7B2FFF);
+  border: none;
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+}
+
+.premium-btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
+  filter: brightness(1.05);
+}
+
+.premium-btn-primary:active {
+  transform: scale(0.96);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45), 0 0 18px rgba(0, 240, 255, 0.9);
+  filter: brightness(0.85);
+  transition: all 0.05s;
+}
+
+/* Secondary Buttons */
+.premium-btn-secondary {
+  background: rgba(10, 15, 26, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #00F0FF;
+  font-weight: 600;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+.premium-btn-secondary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+  border-color: rgba(0, 240, 255, 0.5);
+  filter: brightness(1.05);
+}
+
+.premium-btn-secondary:active {
+  transform: scale(0.96);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45);
+  filter: brightness(0.85);
+  transition: all 0.05s;
+}
+
+/* Danger Buttons */
+.premium-btn-danger {
+  background: linear-gradient(145deg, #FF3366, #EF4444);
+  border: none;
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(255, 51, 102, 0.35);
+}
+
+.premium-btn-danger:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 18px rgba(255, 51, 102, 0.6);
+  filter: brightness(1.05);
+}
+
+.premium-btn-danger:active {
+  transform: scale(0.96);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 51, 102, 0.9);
+  filter: brightness(0.85);
+  transition: all 0.05s;
+}
+
+/* Success Buttons (Green) */
+.premium-btn-success {
+  background: linear-gradient(145deg, #22D3EE, #38BDF8);
+  border: none;
+  color: #020617;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
+}
+
+.premium-btn-success:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.6);
+  filter: brightness(1.05);
+}
+
+.premium-btn-success:active {
+  transform: scale(0.96);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45), 0 0 18px rgba(34, 211, 238, 0.9);
+  filter: brightness(0.85);
+  transition: all 0.05s;
+}
+
+/* Disabled State */
+.premium-btn:disabled {
+  background: #1E293B !important;
+  color: #4B5563 !important;
+  cursor: not-allowed !important;
+  transform: scale(1.00) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  border: 1px solid rgba(75, 85, 99, 0.3) !important;
+}
+
+/* GLOBAL CARD SYSTEM */
+.premium-card {
+  border-radius: 22px;
+  background: linear-gradient(135deg, #0B1220 0%, #101828 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transform: scale(1.00);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.premium-card:hover {
+  transform: scale(1.015);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
+  border-color: rgba(34, 211, 238, 0.35);
+  filter: brightness(1.04);
+}
+
+.premium-card:active {
+  transform: scale(0.97);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.45);
+  transition: all 0.05s;
+}
+
+.premium-card-disabled {
+  background: #1E293B;
+  color: #475569;
+  cursor: not-allowed;
+  transform: scale(1.00) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* GLOBAL TAB SYSTEM */
+.premium-tab {
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.premium-tab-active {
+  background: linear-gradient(145deg, #00F0FF, #7B2FFF);
+  color: #FFFFFF;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+  transform: scale(1.00);
+}
+
+.premium-tab-inactive {
+  background: rgba(10, 15, 26, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #A3AEC2;
+  transform: scale(1.00);
+}
+
+.premium-tab-inactive:hover {
+  background: rgba(10, 15, 26, 1);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: #00F0FF;
+}
+
+.premium-tab:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45);
+  filter: brightness(0.85);
+  transition: all 0.05s;
+}
+
+/* GLOBAL INPUT FIELDS */
+.premium-input {
+  background: #0D1526;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  color: #FFFFFF;
+  padding: 12px 16px;
+  font-size: 16px;
+  transition: all 0.15s ease;
+  width: 100%;
+  outline: none;
+}
+
+.premium-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.premium-input:focus {
+  border-color: #00F0FF;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
+  transform: scale(1.01);
+  background: #0F1A2E;
+}
+
+.premium-input-error {
+  border-color: #FF3366;
+  box-shadow: 0 0 12px rgba(255, 51, 102, 0.45);
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.premium-input:disabled {
+  background: #1E293B;
+  color: #475569;
+  cursor: not-allowed;
+  border-color: rgba(75, 85, 99, 0.3);
+}
+
+/* GLOBAL ANIMATIONS */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 240, 255, 0.35); }
+  50% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* MOBILE OPTIMIZATIONS */
+@media (max-width: 768px) {
+  .premium-btn:hover {
+    transform: scale(1.00);
+  }
+  
+  .premium-card:hover {
+    transform: scale(1.00);
+  }
+}
+
+/* UTILITY CLASSES */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.smooth-transition {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
