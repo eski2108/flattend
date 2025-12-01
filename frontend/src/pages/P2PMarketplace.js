@@ -235,17 +235,6 @@ function P2PMarketplace() {
     try {
       console.log('🔥 handleBuyOffer called!', offer);
       
-      const userData = localStorage.getItem('cryptobank_user');
-      const user = userData ? JSON.parse(userData) : null;
-      
-      if (!user?.user_id) {
-        toast.error('Please log in to buy');
-        setTimeout(() => navigate('/login'), 100);
-        return;
-      }
-
-      console.log('🚀 Navigating to order-preview with offer:', offer);
-      
       // Store offer details for purchase flow
       localStorage.setItem('pending_offer', JSON.stringify(offer));
       
