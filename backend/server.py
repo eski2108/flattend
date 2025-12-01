@@ -3868,6 +3868,9 @@ async def create_p2p_express_order(order_data: Dict):
         if field not in order_data:
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
     
+    # Get wallet service
+    wallet_service = get_wallet_service()
+    
     # Get user info for referral
     user = await db.users.find_one({"user_id": order_data["user_id"]}, {"_id": 0})
     if not user:
