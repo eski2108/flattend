@@ -25,7 +25,7 @@ export default function Layout({ children }) {
     { path: '/instant-buy', label: 'Instant Buy', icon: IoFlash },
     { path: '/p2p-express', label: 'P2P Express', icon: IoTrendingUp },
     { path: '/p2p-marketplace', label: 'P2P Marketplace', icon: IoBag },
-    { path: '/trading', label: 'Trading', icon: IoTrendingUp },
+    { path: '/trading', label: 'Trading', icon: IoBarChart },
     { path: '/swap-crypto', label: 'Swap Crypto', icon: IoFlash },
     { path: '/referrals', label: 'Referrals', icon: IoGift },
     { path: '/my-orders', label: 'Transaction History', icon: IoDocument },
