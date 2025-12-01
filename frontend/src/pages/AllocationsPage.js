@@ -174,29 +174,10 @@ export default function AllocationsPage() {
                 fontWeight: '900', 
                 color: '#FFF'
               }}>
-                Allocations {demoMode && <span style={{ fontSize: '0.875rem', color: '#FFA500', fontWeight: '600' }}>(TEST MODE)</span>}
+                Portfolio Allocations
               </h1>
               
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                {/* Demo Mode Toggle */}
-                <button
-                  onClick={() => setDemoMode(!demoMode)}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    background: demoMode ? 'linear-gradient(135deg, #FFA500, #FF8C00)' : '#1A1D26',
-                    border: `1px solid ${demoMode ? '#FFA500' : 'rgba(0, 224, 255, 0.3)'}`,
-                    borderRadius: '8px',
-                    color: '#FFF',
-                    fontSize: '0.75rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}
-                >
-                  {demoMode ? '✓ Demo' : 'Test'}
-                </button>
-                
                 {/* Currency Selector */}
                 <select
                   value={currency}
