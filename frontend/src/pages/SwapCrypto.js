@@ -160,25 +160,49 @@ function SwapCrypto() {
   };
 
   const handleSwap = async () => {
-    if (!fromAmount || parseFloat(fromAmount) <= 0) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-
-    // fromAmount is already in crypto (converted by DualCurrencyInput)
-    const actualCryptoAmount = parseFloat(fromAmount);
-
-    // Check if user has enough balance
-    const availableBalance = walletBalances[fromCrypto] || 0;
+    // COMPREHENSIVE VALIDATION - Prevent all customer issues
     
-    if (availableBalance === 0) {
-      toast.error(`You have no ${fromCrypto} to swap. Please select a currency you own.`);
+    // 1. Validate amount exists and is valid
+    if (!fromAmount || isNaN(parseFloat(fromAmount)) || parseFloat(fromAmount) <= 0) {
+      toast.error('Please enter a valid amount');
+      console.error('Invalid amount:', fromAmount);
       return;
     }
 
+    // 2. fromAmount is already in crypto (converted by DualCurrencyInput)
+    const actualCryptoAmount = parseFloat(fromAmount);
+    console.log('Swap attempt:', {
+      fromCrypto,
+      toCrypto,
+      actualCryptoAmount,
+      fromAmount
+    });
+
+    // 3. Check if user has enough balance
+    const availableBalance = walletBalances[fromCrypto] || 0;
+    console.log('Balance check:', {
+      availableBalance,
+      required: actualCryptoAmount,
+      hasSufficient: actualCryptoAmount <= availableBalance
+    });
+    
+    // 4. Check zero balance
+    if (availableBalance === 0) {
+      toast.error(`You have no ${fromCrypto} to swap. Please select a currency you own or deposit ${fromCrypto} first.`);
+      return;
+    }
+
+    // 5. Check insufficient balance with helpful message
     if (actualCryptoAmount > availableBalance) {
       const maxFiat = (availableBalance * (prices[fromCrypto]?.price_gbp || 0)).toFixed(2);
-      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto} (≈£${maxFiat})`);
+      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto} (≈£${maxFiat}). Please enter a smaller amount.`);
+      return;
+    }
+
+    // 6. Validate prices are available
+    if (!prices || !prices[fromCrypto] || !prices[toCrypto]) {
+      toast.error('Price data not available. Please wait and try again.');
+      console.error('Price data missing:', { prices, fromCrypto, toCrypto });
       return;
     }
 
