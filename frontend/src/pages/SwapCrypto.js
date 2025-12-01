@@ -412,35 +412,34 @@ function SwapCrypto() {
                     />
                   </div>
 
-                  {/* Center Reverse Button */}
-                  <div style={{ display: 'flex', justifyContent: 'center', margin: '-12px 0' }}>
+                  {/* Center Reverse Button - SMALLER & CLEANER */}
+                  <div style={{ display: 'flex', justifyContent: 'center', margin: '-8px 0 -8px 0', position: 'relative', zIndex: 10 }}>
                     <button
                       onClick={flipCurrencies}
                       style={{
-                        width: '56px',
-                        height: '56px',
+                        width: isMobile ? '42px' : '46px',
+                        height: isMobile ? '42px' : '46px',
                         borderRadius: '50%',
                         background: 'linear-gradient(135deg, #00F0FF, #9B4DFF)',
-                        border: '4px solid #071327',
+                        border: '3px solid #071327',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         transition: 'all 0.3s',
-                        boxShadow: '0 0 30px rgba(0, 240, 255, 0.6), 0 0 60px rgba(155, 77, 255, 0.4)',
-                        zIndex: 10,
+                        boxShadow: '0 0 20px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)',
                         position: 'relative'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'rotate(180deg) scale(1.15)';
-                        e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.8), 0 0 80px rgba(155, 77, 255, 0.6)';
+                        e.currentTarget.style.transform = 'rotate(180deg) scale(1.1)';
+                        e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.7), 0 0 60px rgba(155, 77, 255, 0.5)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'rotate(0deg) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.6), 0 0 60px rgba(155, 77, 255, 0.4)';
+                        e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)';
                       }}
                     >
-                      <ArrowDownUp size={26} color="white" strokeWidth={3} />
+                      <ArrowDownUp size={isMobile ? 20 : 22} color="white" strokeWidth={3} />
                     </button>
                   </div>
 
