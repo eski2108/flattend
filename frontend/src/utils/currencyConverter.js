@@ -47,11 +47,14 @@ export const fetchLivePrice = async (coinSymbol) => {
   }
 
   try {
-    const response = await axios.get(`${API}/api/pricing/live/${coinSymbol}`);
-    if (response.data.success && response.data.price_gbp) {
-      priceCache[coinSymbol] = response.data.price_gbp;
-      lastFetchTime[coinSymbol] = now;
-      return response.data.price_gbp;
+    const response = await axios.get(`${API}/api/prices/live`);
+    if (response.data.success && response.data.crypto_prices) {
+      const coinData = response.data.crypto_prices[coinSymbol];
+      if (coinData && coinData.price_gbp) {
+        priceCache[coinSymbol] = coinData.price_gbp;
+        lastFetchTime[coinSymbol] = now;
+        return coinData.price_gbp;
+      }
     }
   } catch (error) {
     console.error(`Error fetching price for ${coinSymbol}:`, error);
