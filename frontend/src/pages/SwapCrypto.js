@@ -448,21 +448,26 @@ function SwapCrypto() {
                               background: 'linear-gradient(135deg, #00F0FF, #9B4DFF)',
                               border: 'none',
                               borderRadius: '10px',
-                              padding: '8px 16px',
+                              padding: isMobile ? '10px 20px' : '8px 16px',
                               color: '#FFFFFF',
-                              fontSize: '13px',
+                              fontSize: isMobile ? '14px' : '13px',
                               fontWeight: '700',
                               cursor: 'pointer',
                               boxShadow: '0 4px 15px rgba(0, 240, 255, 0.3)',
-                              transition: 'all 0.3s'
+                              transition: 'all 0.3s',
+                              width: isMobile ? '100%' : 'auto'
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.transform = 'translateY(-2px)';
-                              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 240, 255, 0.5)';
+                              if (!isMobile) {
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 240, 255, 0.5)';
+                              }
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 240, 255, 0.3)';
+                              if (!isMobile) {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 240, 255, 0.3)';
+                              }
                             }}
                           >
                             Buy {fromCrypto} Now →
