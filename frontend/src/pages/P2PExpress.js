@@ -43,14 +43,14 @@ export default function P2PExpress() {
   }, [selectedCoin]);
 
   useEffect(() => {
-    if (selectedCoin && amount && parseFloat(amount) > 0 && livePrice) {
+    if (selectedCoin && cryptoAmount && parseFloat(cryptoAmount) > 0 && livePrice) {
       checkAdminLiquidity();
       calculateQuote();
     } else {
       setQuote(null);
       setHasAdminLiquidity(false);
     }
-  }, [selectedCoin, amount, livePrice]);
+  }, [selectedCoin, cryptoAmount, livePrice]);
 
   const fetchAvailableCoins = async () => {
     try {
