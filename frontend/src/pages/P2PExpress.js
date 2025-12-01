@@ -19,12 +19,14 @@ export default function P2PExpress() {
   const navigate = useNavigate();
   const [selectedCoin, setSelectedCoin] = useState('BTC');
   const [selectedCountry, setSelectedCountry] = useState('United Kingdom');
-  const [amount, setAmount] = useState('');
+  const [fiatAmount, setFiatAmount] = useState('');
+  const [cryptoAmount, setCryptoAmount] = useState('');
   const [coins, setCoins] = useState([]);
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(false);
   const [livePrice, setLivePrice] = useState(null);
   const [hasAdminLiquidity, setHasAdminLiquidity] = useState(false);
+  const [userBalance, setUserBalance] = useState(0);
 
   const EXPRESS_FEE_PERCENT = 2.5;
 
