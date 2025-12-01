@@ -112,4 +112,7 @@ const PriceTicker = () => {
       </style>
     </div>
   );
-}
+};
+
+// Memoize to prevent unnecessary re-renders
+export default React.memo(PriceTicker);
