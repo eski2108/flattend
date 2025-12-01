@@ -13,6 +13,16 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 function InstantBuy() {
   const navigate = useNavigate();
+  
+  // Redirect to P2P Express (Instant Buy backend not configured)
+  useEffect(() => {
+    toast.info('Redirecting to P2P Express for instant purchases...');
+    navigate('/p2p-express');
+  }, [navigate]);
+
+  return null;
+  
+  /*
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
