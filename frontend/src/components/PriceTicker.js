@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const TICKER_COINS = ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'ripple', 'tether'];
 
-export default function PriceTicker() {
+const PriceTicker = () => {
   const [prices, setPrices] = useState([]);
 
   useEffect(() => {
