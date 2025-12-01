@@ -383,25 +383,24 @@ export default function P2PExpress() {
                 </div>
 
                 <div style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Amount (GBP)</label>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Enter amount in GBP"
-                    style={{
-                      width: '100%',
-                      padding: '20px',
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      border: '2px solid rgba(12, 235, 255, 0.3)',
-                      borderRadius: '12px',
-                      color: '#FFFFFF',
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      outline: 'none',
-                      transition: 'all 0.3s',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                  <DualCurrencyInput
+                    cryptoSymbol={selectedCoin}
+                    fiatCurrency="GBP"
+                    onFiatChange={(amount) => setFiatAmount(amount)}
+                    onCryptoChange={(amount) => {
+                      setCryptoAmount(amount);
+                      // Trigger quote calculation
+                      if (amount > 0) {
+                        calculateQuote(amount);
+                      }
                     }}
+                    initialFiatAmount={fiatAmount}
+                    initialCryptoAmount={cryptoAmount}
+                    fee={EXPRESS_FEE_PERCENT}
+                    availableBalance={userBalance}
+                    balanceInCrypto={false}
+                    label="Purchase Amount"
+                    showCurrencySelector={true}
                   />
                 </div>
 
