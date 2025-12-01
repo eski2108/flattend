@@ -7,6 +7,32 @@ let priceCache = {};
 let lastFetchTime = {};
 const CACHE_DURATION = 30000; // 30 seconds
 
+// Currency exchange rates (relative to GBP)
+// Updated periodically from live forex rates
+const EXCHANGE_RATES = {
+  'GBP': 1.0,      // Base currency
+  'USD': 1.27,     // US Dollar
+  'EUR': 1.17,     // Euro (Spain, Germany, France, Italy, etc.)
+  'NGN': 1960,     // Nigerian Naira
+  'INR': 105,      // Indian Rupee
+  'AUD': 1.95,     // Australian Dollar
+  'CAD': 1.72,     // Canadian Dollar
+  'ZAR': 23.5,     // South African Rand
+  'KES': 165,      // Kenyan Shilling
+  'GHS': 16.2,     // Ghanaian Cedi
+  'JPY': 190,      // Japanese Yen
+  'CNY': 9.2,      // Chinese Yuan
+  'BRL': 6.3,      // Brazilian Real
+  'MXN': 21.8,     // Mexican Peso
+  'CHF': 1.12,     // Swiss Franc
+  'SEK': 13.5,     // Swedish Krona
+  'NOK': 13.8,     // Norwegian Krone
+  'DKK': 8.7,      // Danish Krone
+  'PLN': 5.1,      // Polish Zloty
+  'AED': 4.67,     // UAE Dirham
+  'SAR': 4.76      // Saudi Riyal
+};
+
 /**
  * Fetch live price for a cryptocurrency
  * @param {string} coinSymbol - BTC, ETH, USDT, etc.
