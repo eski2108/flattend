@@ -163,10 +163,22 @@ function SwapCrypto() {
       return;
     }
 
+    // Calculate actual crypto amount if in fiat mode
+    let actualCryptoAmount = parseFloat(fromAmount);
+    if (inputType === 'fiat') {
+      if (!prices[fromCrypto]?.price_gbp) {
+        toast.error('Price data not available');
+        return;
+      }
+      actualCryptoAmount = parseFloat(fromAmount) / prices[fromCrypto].price_gbp;
+      toast.info(`Swapping £${fromAmount} worth of ${fromCrypto} (≈${actualCryptoAmount.toFixed(8)} ${fromCrypto})`);
+    }
+
     // Check if user has enough balance
     const availableBalance = walletBalances[fromCrypto] || 0;
-    if (parseFloat(fromAmount) > availableBalance) {
-      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto}`);
+    if (actualCryptoAmount > availableBalance) {
+      const maxFiat = (availableBalance * (prices[fromCrypto]?.price_gbp || 0)).toFixed(2);
+      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto} (≈£${maxFiat})`);
       return;
     }
 
@@ -188,7 +200,7 @@ function SwapCrypto() {
         user_id: user.user_id,
         from_currency: fromCrypto,
         to_currency: toCrypto,
-        from_amount: parseFloat(fromAmount),
+        from_amount: actualCryptoAmount,
         slippage_percent: slippage
       });
 
