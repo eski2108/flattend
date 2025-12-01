@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoTrendingDown, IoAlertCircle } from 'react-icons/io5';;
+import { IoAlertCircle, IoTrendingDown } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL;
 

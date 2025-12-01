@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import axios from 'axios';
 import Layout from '../components/Layout';
-import { DollarSign, TrendingUp, Wallet, Send, Settings } from 'react-icons/io5';
+import { DollarSign, IoTrendingUp, Send, Settings, TrendingUp, Wallet } from 'react-icons/io5';
 import './AdminFees.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

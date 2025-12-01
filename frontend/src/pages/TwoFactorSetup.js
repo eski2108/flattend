@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { IoShield, IoKey, IoCloudDownload, IoCopy, IoCheckmarkCircle, IoAlertCircle, IoPhonePortrait, IoMail } from 'react-icons/io5';;
+import { IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoCloudDownload, IoCopy, IoKey, IoMail, IoPhonePortrait, IoShield } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 

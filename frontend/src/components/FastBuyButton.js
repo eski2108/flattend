@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap } from 'react-icons/io5';
+import { IoFlash, Zap } from 'react-icons/io5';
 
 function FastBuyButton({ style }) {
   const navigate = useNavigate();

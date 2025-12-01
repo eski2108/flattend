@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { IoCash, IoAdd, IoAlertCircle, IoTime } from 'react-icons/io5';;
+import { IoAdd, IoAlertCircle, IoCash, IoTime } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TrendingUp, Calendar } from 'react-icons/io5';
+import { Calendar, IoTrendingUp, TrendingUp } from 'react-icons/io5';
 
 const PortfolioGraphTradingView = ({ totalValue, userId }) => {
   const chartContainerRef = useRef(null);

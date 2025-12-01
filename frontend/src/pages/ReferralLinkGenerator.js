@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoCopy as Copy, IoCheckmark as Check, IoPeople as Users, IoCash as DollarSign, IoGift as Gift, IoTrendingUp as TrendingUp, IoShareSocial as Share2, IoOpenOutline as ExternalLink } from 'react-icons/io5';
+import { IoCash, IoCheckmark, IoCopy, IoGift, IoOpenOutline, IoPeople, IoShareSocial, IoTrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import API_BASE_URL from '@/config/api';

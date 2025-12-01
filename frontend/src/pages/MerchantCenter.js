@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { IoCheckmarkCircle, IoCloseCircle, IoTrendingUp, IoAdd, IoEye } from 'react-icons/io5';;
+import { IoAdd, IoCheckmark, IoCheckmarkCircle, IoClose, IoCloseCircle, IoEye, IoTrendingUp } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 

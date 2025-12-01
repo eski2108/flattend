@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoShield, IoStar, IoCheckmarkCircle, IoTrendingUp, IoLockClosed, IoCalendar } from 'react-icons/io5';;
+import { IoCalendar, IoCheckmark, IoCheckmarkCircle, IoLockClosed, IoShield, IoStar, IoTrendingUp } from 'react-icons/io5';;
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { IoPersonOutline, IoMail, IoShield, IoLogOut, IoNotifications, IoLockClosed, IoCard, IoGlobe, IoPhonePortrait, IoTrendingUp } from 'react-icons/io5';;
+import { IoCard, IoGlobe, IoLockClosed, IoLogOut, IoMail, IoNotifications, IoPersonOutline, IoPhonePortrait, IoShield, IoTrendingUp } from 'react-icons/io5';;
 import { toast } from 'sonner';
 import CurrencySelector from '@/components/CurrencySelector';
 import PriceAlerts from '@/components/PriceAlerts';

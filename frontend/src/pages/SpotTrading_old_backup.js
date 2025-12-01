@@ -4,15 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import * as LightweightCharts from 'lightweight-charts';
-import { 
-  TrendingUp, 
-  TrendingDown,
-  ChevronDown,
-  Activity,
-  IoTime as Clock,
-  DollarSign,
-  Zap
-} from 'react-icons/io5';
+import { Activity, ChevronDown, DollarSign, IoFlash, IoTime, IoTrendingDown, IoTrendingUp, TrendingDown, TrendingUp, Zap } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
