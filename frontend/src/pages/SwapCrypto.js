@@ -46,6 +46,7 @@ function SwapCrypto() {
   const [walletBalances, setWalletBalances] = useState({});
   const [inputType, setInputType] = useState('crypto'); // 'crypto' or 'fiat'
   const [selectedFiat, setSelectedFiat] = useState('GBP');
+  const [swapSuccess, setSwapSuccess] = useState(null); // Local success message
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
