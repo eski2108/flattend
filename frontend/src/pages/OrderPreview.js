@@ -18,7 +18,6 @@ export default function OrderPreview() {
   const offer = location.state?.offer || null;
   const [cryptoAmount, setCryptoAmount] = useState('');
   const [fiatAmount, setFiatAmount] = useState('');
-  const [inputMode, setInputMode] = useState('fiat'); // 'fiat' or 'crypto'
   const [processing, setProcessing] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   
