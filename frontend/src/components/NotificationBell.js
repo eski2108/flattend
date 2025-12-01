@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AlertCircle, Bell, Check, IoChatbubbles, MessageSquare, Shield, TrendingUp, X } from 'react-icons/io5';
+import { IoAlertCircle as AlertCircle, IoNotifications as Bell, IoCheckmark as Check, IoChatbubbles, IoChatbubbles as MessageSquare, IoShield as Shield, IoTrendingUp as TrendingUp, IoClose as X } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
