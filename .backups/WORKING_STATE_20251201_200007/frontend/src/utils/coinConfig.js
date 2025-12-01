@@ -1,0 +1,66 @@
+// Shared coin configuration with colorful emojis for all pages
+export const COIN_EMOJIS = {
+  'BTC': '🟠',
+  'ETH': '💎',
+  'USDT': '💚',
+  'USDC': '🔵',
+  'BNB': '🟡',
+  'SOL': '🟣',
+  'XRP': '⚪',
+  'ADA': '🔷',
+  'DOGE': '🟤',
+  'MATIC': '🟪',
+  'DOT': '🔴',
+  'LTC': '⚪',
+  'LINK': '🔵',
+  'AVAX': '🔺',
+  'TRX': '🔻',
+  'BCH': '🟢',
+  'XLM': '⭐',
+  'XMR': '🟠',
+  'ATOM': '🌌',
+  'UNI': '🌸',
+  'FIL': '📁',
+  'APT': '🅰️',
+  'DAI': '💛',
+  'SHIB': '🐕'
+};
+
+export const COIN_COLORS = {
+  'BTC': '#F7931A',
+  'ETH': '#627EEA',
+  'USDT': '#26A17B',
+  'USDC': '#2775CA',
+  'BNB': '#F3BA2F',
+  'SOL': '#14F195',
+  'XRP': '#00AAE4',
+  'ADA': '#0033AD',
+  'DOGE': '#C2A633',
+  'MATIC': '#8247E5',
+  'DOT': '#E6007A',
+  'LTC': '#345D9D',
+  'LINK': '#2A5ADA',
+  'AVAX': '#E84142',
+  'TRX': '#FF0013',
+  'BCH': '#8DC351',
+  'XLM': '#14B6E7',
+  'XMR': '#FF6600',
+  'ATOM': '#2E3148',
+  'UNI': '#FF007A',
+  'FIL': '#0090FF',
+  'APT': '#00D4AA',
+  'DAI': '#F5AC37',
+  'SHIB': '#FFA409'
+};
+
+// Swap theme colors
+export const SWAP_THEME = {
+  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+  cardBorder: '2px solid rgba(0, 240, 255, 0.4)',
+  cardBorderRadius: '24px',
+  cardShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+  accentColor: '#00F0FF',
+  textPrimary: '#FFFFFF',
+  textSecondary: '#8F9BB3',
+  divider: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.6) 50%, transparent 100%)'
+};

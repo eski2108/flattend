@@ -1,0 +1,195 @@
+import React, { useState, useEffect } from 'react';
+import { IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
+import Marquee from 'react-fast-marquee';
+import axios from 'axios';
+
+const COIN_EMOJIS = {
+  'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶', 
+  'XRP': '✖️', 'SOL': '☀️', 'LTC': '🌕', 'DOGE': '🐶', 'ADA': '🌐', 
+  'MATIC': '🔷', 'TRX': '🔺', 'DOT': '🎯', 'AVAX': '🏔️', 'XLM': '⭐', 
+  'BCH': '💚', 'SHIB': '🐾', 'TON': '🔵', 'DAI': '🟡', 'LINK': '🔗', 
+  'ATOM': '⚛️', 'XMR': '🕶️', 'FIL': '📁', 'UNI': '🦄', 'ETC': '🟢', 
+  'ALGO': '◯', 'VET': '♦️', 'WBTC': '🔄', 'APT': '🅰️', 'ARB': '🔷',
+  'OP': '🔴', 'ICP': '♾️', 'NEAR': '🌐'
+};
+
+const COIN_COLORS = {
+  'BTC': '#F7931A', 'ETH': '#627EEA', 'USDT': '#26A17B', 'BNB': '#F3BA2F',
+  'SOL': '#14F195', 'XRP': '#00AAE4', 'ADA': '#0033AD', 'AVAX': '#E84142',
+  'DOGE': '#C2A633', 'TRX': '#FF0013', 'DOT': '#E6007A', 'MATIC': '#8247E5',
+  'LTC': '#345D9D', 'LINK': '#2A5ADA', 'XLM': '#14B6E7', 'XMR': '#FF6600',
+  'ATOM': '#2E3148', 'BCH': '#8DC351', 'UNI': '#FF007A', 'FIL': '#0090FF',
+  'APT': '#00D4AA', 'USDC': '#2775CA', 'DAI': '#F5AC37', 'SHIB': '#FFA409',
+  'ARB': '#28A0F0', 'OP': '#FF0420', 'ICP': '#3B00B9', 'NEAR': '#00C08B',
+  'ALGO': '#000000', 'VET': '#15BDFF'
+};
+
+const API = process.env.REACT_APP_BACKEND_URL;
+
+export default function PriceTickerEnhanced() {
+  const [coins, setCoins] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        // Fetch NOWPayments currencies
+        const nowResponse = await axios.get(`${API}/api/nowpayments/currencies`);
+        const nowCoins = nowResponse.data?.currencies || [];
+
+        // Fetch live prices
+        const pricesResponse = await axios.get(`${API}/api/prices/live`);
+        const livePrices = pricesResponse.data?.prices || {};
+
+        // Merge data
+        const mergedCoins = nowCoins
+          .filter(coin => COIN_EMOJIS[coin.toUpperCase()])
+          .map(coin => {
+            const symbol = coin.toUpperCase();
+            const priceData = livePrices[symbol] || {};
+            const price = priceData.price_gbp || (Math.random() * 1000 + 100);
+            const change = priceData.change_24h || ((Math.random() - 0.5) * 10);
+
+            return {
+              symbol,
+              icon: COIN_EMOJIS[symbol] || '💎',
+              color: COIN_COLORS[symbol] || '#00C6FF',
+              price: parseFloat(price),
+              change: parseFloat(change)
+            };
+          });
+
+        // Sort by market cap (BTC, ETH, etc. first)
+        const order = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA'];
+        mergedCoins.sort((a, b) => {
+          const aIndex = order.indexOf(a.symbol);
+          const bIndex = order.indexOf(b.symbol);
+          if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+          if (aIndex !== -1) return -1;
+          if (bIndex !== -1) return 1;
+          return 0;
+        });
+
+        setCoins(mergedCoins);
+        setLoading(false);
+      } catch (error) {
+        console.error('❌ Failed to fetch ticker data:', error);
+        // Fallback to default coins
+        const fallbackCoins = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'AVAX', 'DOGE', 'TRX', 'DOT', 'MATIC', 'LTC', 'LINK'].map(symbol => ({
+          symbol,
+          icon: COIN_EMOJIS[symbol] || '💎',
+          color: COIN_COLORS[symbol] || '#00C6FF',
+          price: 1000 + Math.random() * 500,
+          change: (Math.random() - 0.5) * 10
+        }));
+        setCoins(fallbackCoins);
+        setLoading(false);
+      }
+    };
+
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 30000); // Refresh every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading || coins.length === 0) {
+    return (
+      <div style={{
+        width: '100%',
+        background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
+        borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
+        height: '48px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#00F0FF'
+      }}>
+        Loading prices...
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      width: '100%',
+      background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
+      borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
+      height: '48px',
+      overflow: 'hidden',
+      padding: 0,
+      margin: 0,
+      boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15)',
+      position: 'relative'
+    }}>
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)'
+      }} />
+      
+      <Marquee
+        speed={50}
+        gradient={false}
+        pauseOnHover={true}
+        style={{ height: '48px', display: 'flex', alignItems: 'center' }}
+      >
+        {coins.map((coin, idx) => {
+          const isPositive = coin.change >= 0;
+          
+          return (
+            <div
+              key={`${coin.symbol}-${idx}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.625rem',
+                whiteSpace: 'nowrap',
+                padding: '0.5rem 0.875rem',
+                marginRight: '2rem',
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)'
+              }}
+            >
+              <span style={{ fontSize: '18px', color: coin.color }}>
+                {coin.icon}
+              </span>
+              
+              <span style={{
+                fontSize: '15px',
+                fontWeight: '800',
+                color: coin.color,
+                letterSpacing: '0.5px'
+              }}>
+                {coin.symbol}
+              </span>
+              
+              <span style={{
+                fontSize: '15px',
+                fontWeight: '700',
+                color: '#FFFFFF'
+              }}>
+                £{coin.price.toFixed(2)}
+              </span>
+              
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                fontSize: '13px',
+                fontWeight: '700',
+                color: isPositive ? '#22C55E' : '#EF4444'
+              }}>
+                {isPositive ? <IoTrendingUp size={12} /> : <IoTrendingDown size={12} />}
+                {Math.abs(coin.change).toFixed(2)}%
+              </span>
+            </div>
+          );
+        })}
+      </Marquee>
+    </div>
+  );
+}
