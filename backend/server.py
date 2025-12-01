@@ -9506,6 +9506,20 @@ async def place_trading_order(request: dict):
         }
         await db.fee_transactions.insert_one(fee_record)
         
+        # Credit fee to admin wallet
+        await db.internal_balances.update_one(
+            {"user_id": "PLATFORM_FEES", "currency": "GBP"},
+            {
+                "$inc": {
+                    "balance": fee_amount,
+                    "total_fees": fee_amount,
+                    "trading_fees": fee_amount
+                },
+                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
+            },
+            upsert=True
+        )
+        
         return {
             "success": True,
             "message": f"{order_type.upper()} order executed successfully",
