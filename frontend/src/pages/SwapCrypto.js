@@ -161,6 +161,18 @@ function SwapCrypto() {
       return;
     }
 
+    // Check if user has enough balance
+    const availableBalance = walletBalances[fromCrypto] || 0;
+    if (parseFloat(fromAmount) > availableBalance) {
+      toast.error(`Insufficient ${fromCrypto} balance. You have ${availableBalance.toFixed(8)} ${fromCrypto}`);
+      return;
+    }
+
+    if (availableBalance === 0) {
+      toast.error(`You have no ${fromCrypto} to swap. Please select a currency you own.`);
+      return;
+    }
+
     try {
       setSwapping(true);
       const userData = localStorage.getItem('cryptobank_user');
@@ -179,16 +191,18 @@ function SwapCrypto() {
       });
 
       if (response.data.success) {
-        toast.success('Swap completed successfully!');
+        toast.success(`Swap completed! Received ${response.data.to_amount} ${toCrypto}`);
         setFromAmount('');
         setToAmount('');
         fetchRecentSwaps();
+        fetchWalletBalances(); // Refresh balances
       } else {
         toast.error(response.data.message || 'Swap failed');
       }
     } catch (error) {
       console.error('Swap error:', error);
-      toast.error(error.response?.data?.message || 'Swap failed');
+      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Swap failed';
+      toast.error(errorMsg);
     } finally {
       setSwapping(false);
     }
