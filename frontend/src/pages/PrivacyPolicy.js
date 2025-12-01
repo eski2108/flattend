@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
             <p>Your data may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place for international data transfers.</p>
 
             <h2 style={{ color: '#A855F7', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>9. Children's Privacy</h2>
-            <p>Coin Hub X is not intended for users under 18. We do not knowingly collect information from children.</p>
+            <p>Coin Hub IoClose as X is not intended for users under 18. We do not knowingly collect information from children.</p>
 
             <h2 style={{ color: '#A855F7', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>10. Changes to This Policy</h2>
             <p>We may update this privacy policy. Significant changes will be communicated via email or platform notification.</p>

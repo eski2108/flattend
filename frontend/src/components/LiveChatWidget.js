@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IoChatbubbles as MessageCircle, IoClose as X, IoSend as Send, IoContract as Minimize2 } from 'react-icons/io5';
+import { IoChatbubbles as IoChatbubbles as MessageCircle, IoClose as IoClose as X, IoSend as Send, IoContract as Minimize2 } from 'react-icons/io5';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -83,7 +83,7 @@ export default function LiveChatWidget() {
         const autoReply = {
           id: Date.now().toString(),
           sender: 'support',
-          message: 'Thanks for contacting Coin Hub X support. Our team will respond shortly. For urgent issues, please email support@coinhubx.com',
+          message: 'Thanks for contacting Coin Hub IoClose as X support. Our team will respond shortly. For urgent issues, please email support@coinhubx.com',
           timestamp: new Date()
         };
         setMessages(prev => [...prev, autoReply]);
@@ -172,7 +172,7 @@ export default function LiveChatWidget() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <IoChatbubbles size={24} color="#000" />
           <div>
-            <div style={{ color: '#000', fontSize: '16px', fontWeight: '700' }}>Coin Hub X Support</div>
+            <div style={{ color: '#000', fontSize: '16px', fontWeight: '700' }}>Coin Hub IoClose as X Support</div>
             <div style={{ color: 'rgba(0, 0, 0, 0.7)', fontSize: '12px' }}>We're here to help 24/7</div>
           </div>
         </div>

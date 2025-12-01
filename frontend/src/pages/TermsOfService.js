@@ -46,10 +46,10 @@ export default function TermsOfService() {
 
           <div style={{ color: '#ccc', fontSize: '16px', lineHeight: '1.8' }}>
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>1. Acceptance of Terms</h2>
-            <p>By accessing and using Coin Hub X, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+            <p>By accessing and using Coin Hub IoClose as X, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
 
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>2. P2P Trading Services</h2>
-            <p>Coin Hub X provides a peer-to-peer marketplace for cryptocurrency trading. We facilitate connections between buyers and sellers but are not a party to any transaction. All trades are conducted directly between users.</p>
+            <p>Coin Hub IoClose as X provides a peer-to-peer marketplace for cryptocurrency trading. We facilitate connections between buyers and sellers but are not a party to any transaction. All trades are conducted directly between users.</p>
 
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>3. User Responsibilities</h2>
             <ul style={{ marginLeft: '1.5rem' }}>
@@ -64,7 +64,7 @@ export default function TermsOfService() {
             <p>Our escrow service holds cryptocurrency during trades to ensure safe transactions. Funds are released only when both parties confirm trade completion or when a dispute is resolved by our admin team.</p>
 
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>5. Fees and Commissions</h2>
-            <p>Coin Hub X charges platform fees on completed trades. Current fee structure:</p>
+            <p>Coin Hub IoClose as X charges platform fees on completed trades. Current fee structure:</p>
             <ul style={{ marginLeft: '1.5rem' }}>
               <li>Trading fees vary by transaction type</li>
               <li>Referral commissions: 20% for 12 months</li>
@@ -81,11 +81,11 @@ export default function TermsOfService() {
               <li>Trading stolen or illegally obtained cryptocurrency</li>
               <li>Manipulating prices or engaging in market manipulation</li>
               <li>Creating multiple accounts to abuse promotions</li>
-              <li>Impersonating other users or Coin Hub X staff</li>
+              <li>Impersonating other users or Coin Hub IoClose as X staff</li>
             </ul>
 
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>8. Limitation of Liability</h2>
-            <p>Coin Hub X is not liable for losses resulting from:</p>
+            <p>Coin Hub IoClose as X is not liable for losses resulting from:</p>
             <ul style={{ marginLeft: '1.5rem' }}>
               <li>Market volatility or price fluctuations</li>
               <li>User errors or negligence</li>
@@ -98,7 +98,7 @@ export default function TermsOfService() {
             <p>We reserve the right to suspend or terminate accounts that violate these terms or engage in suspicious activities. Users may also close their accounts at any time.</p>
 
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>10. Changes to Terms</h2>
-            <p>Coin Hub X may update these terms at any time. Continued use of our services after changes constitutes acceptance of the new terms.</p>
+            <p>Coin Hub IoClose as X may update these terms at any time. Continued use of our services after changes constitutes acceptance of the new terms.</p>
 
             <h2 style={{ color: '#00F0FF', fontSize: '24px', marginTop: '2rem', marginBottom: '1rem' }}>11. Contact Us</h2>
             <p>For questions about these terms, contact us at:<br />

@@ -11,7 +11,7 @@ const Logo = ({ size = 55, showText = false, style = {} }) => {
       {/* CHX Logo */}
       <img
         src="/logo1-transparent.png"
-        alt="Coin Hub X Logo"
+        alt="Coin Hub IoClose as X Logo"
         style={{
           height: size,
           width: 'auto',

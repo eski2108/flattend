@@ -890,9 +890,9 @@ export default function LandingPage() {
       {/* Download App Section */}
       <section className="download-app-section" id="download-app">
         <div className="download-content">
-          <h2 className="section-title" data-testid="download-title">Download Coin Hub X App</h2>
+          <h2 className="section-title" data-testid="download-title">Download Coin Hub IoClose as X App</h2>
           <p className="download-subtitle">
-            Use Coin Hub X on any device.
+            Use Coin Hub IoClose as X on any device.
           </p>
           <div className="download-buttons-container" style={{ 
             display: 'flex', 

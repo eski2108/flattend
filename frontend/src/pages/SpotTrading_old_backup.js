@@ -9,7 +9,7 @@ import {
   TrendingDown,
   ChevronDown,
   Activity,
-  Clock,
+  IoTime as Clock,
   DollarSign,
   Zap
 } from 'react-icons/io5';

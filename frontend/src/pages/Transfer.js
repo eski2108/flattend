@@ -158,7 +158,7 @@ function Transfer() {
           💸 Internal Transfer
         </h1>
         <p style={{ fontSize: '18px', color: '#888', margin: 0 }}>
-          Send crypto to other Coin Hub X users instantly
+          Send crypto to other Coin Hub IoClose as X users instantly
         </p>
       </div>
 
