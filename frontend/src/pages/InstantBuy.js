@@ -189,7 +189,7 @@ function InstantBuy() {
               boxShadow: '0 0 25px rgba(34, 197, 94, 0.6), 0 4px 16px rgba(34, 197, 94, 0.4)',
               border: '1px solid rgba(255, 255, 255, 0.2)'
             }}>
-              <Zap size={22} color="#fff" />
+              <IoFlash size={22} color="#fff" />
               <span style={{ color: '#fff', fontWeight: '700', fontSize: '15px', letterSpacing: '0.5px' }}>INSTANT BUY</span>
             </div>
             <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Buy Crypto Instantly</h1>
@@ -219,7 +219,7 @@ function InstantBuy() {
           {/* Search */}
           <div style={{ marginBottom: '28px', maxWidth: '520px', margin: '0 auto 28px' }}>
             <div style={{ position: 'relative' }}>
-              <Search size={20} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: searchFocused ? '#00C6FF' : '#8F9BB3', transition: 'color 0.2s' }} />
+              <IoSearch size={20} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: searchFocused ? '#00C6FF' : '#8F9BB3', transition: 'color 0.2s' }} />
               <input
                 type="text"
                 placeholder="Search coins..."
@@ -246,7 +246,7 @@ function InstantBuy() {
 
           {loading ? (
             <div style={{ textAlign: 'center', padding: '60px', color: '#A3AEC2' }}>
-              <Loader size={32} style={{ animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+              <AiOutlineLoading3Quarters size={32} style={{ animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
               <div>Loading coins...</div>
             </div>
           ) : (
@@ -461,7 +461,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                   variant="primary"
                   size="small"
                   fullWidth
-                  icon={<ArrowDownLeft size={16} />}
+                  icon={<BiArrowFromTop size={16} />}
                 >
                   Deposit
                 </CHXButton>
@@ -471,7 +471,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                   variant="secondary"
                   size="small"
                   fullWidth
-                  icon={<ArrowUpRight size={16} />}
+                  icon={<BiArrowToTop size={16} />}
                 >
                   Withdraw
                 </CHXButton>
@@ -481,7 +481,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                   variant="secondary"
                   size="small"
                   fullWidth
-                  icon={<Repeat size={16} />}
+                  icon={<BiRepeat size={16} />}
                 >
                   Swap
                 </CHXButton>
