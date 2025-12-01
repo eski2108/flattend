@@ -512,6 +512,32 @@ function SwapCrypto() {
                     </div>
                   )}
 
+                  {/* Success Message - Right Where They Made the Swap */}
+                  {swapSuccess && (
+                    <div style={{
+                      marginTop: '20px',
+                      padding: '16px 20px',
+                      background: 'linear-gradient(135deg, rgba(0, 240, 0, 0.1), rgba(0, 180, 0, 0.15))',
+                      border: '2px solid rgba(0, 240, 0, 0.4)',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      boxShadow: '0 4px 20px rgba(0, 240, 0, 0.2)',
+                      animation: 'slideIn 0.3s ease-out'
+                    }}>
+                      <IoCheckmarkCircle size={32} color="#00F000" />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '16px', fontWeight: '700', color: '#00F000', marginBottom: '4px' }}>
+                          Swap Successful!
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#FFFFFF' }}>
+                          {swapSuccess.message}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Swap Button with Floating Glow */}
                   <div style={{ marginTop: '28px', position: 'relative' }}>
                     <div style={{
