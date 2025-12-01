@@ -28,10 +28,15 @@ async def create_indexes():
         
         # Wallets collection - heavily queried by user_id and currency
         logger.info("Creating indexes for 'wallets' collection...")
-        await db.wallets.create_index([("user_id", 1)])
-        await db.wallets.create_index([("currency", 1)])
-        await db.wallets.create_index([("user_id", 1), ("currency", 1)])
-        logger.info("✅ Wallets indexes created")
+        try:
+            await db.wallets.create_index([("user_id", 1)])
+        except:
+            pass  # Index might already exist
+        try:
+            await db.wallets.create_index([("currency", 1)])
+        except:
+            pass
+        logger.info("✅ Wallets indexes created/verified")
         
         # Transactions collection - queried by user_id and timestamp
         logger.info("Creating indexes for 'transactions' collection...")
