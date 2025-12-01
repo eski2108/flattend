@@ -22417,13 +22417,21 @@ async def get_portfolio_summary(user_id: str):
             {"_id": 0}
         ).to_list(100)
         
-        # Get live prices
-        live_prices_doc = await db.live_prices.find_one({})
+        # Get live prices - fetch fresh prices for accurate portfolio value
         prices = {}
-        if live_prices_doc:
-            for coin_symbol, price_data in live_prices_doc.items():
-                if coin_symbol != "_id" and isinstance(price_data, dict):
-                    prices[coin_symbol] = price_data.get('gbp', 0)
+        try:
+            # Use the live price fetching function
+            all_prices = await fetch_live_prices()
+            for symbol, data in all_prices.items():
+                prices[symbol] = data.get("gbp", 0)
+        except Exception as e:
+            logger.error(f"Failed to fetch live prices: {e}")
+            # Fallback to database prices
+            live_prices_doc = await db.live_prices.find_one({})
+            if live_prices_doc:
+                for coin_symbol, price_data in live_prices_doc.items():
+                    if coin_symbol != "_id" and isinstance(price_data, dict):
+                        prices[coin_symbol] = price_data.get('gbp', 0)
         
         # Calculate current portfolio value
         current_value = Decimal('0')
