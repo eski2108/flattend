@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoShield, IoClock, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoInformationCircle, IoCopy, IoCheckmark } from 'react-icons/io5';;
+import { IoShield, IoTime, IoChatbubbles, IoSend, IoCheckmarkCircle, IoCloseCircle, IoArrowBack, IoInformationCircle, IoCopy, IoCheckmark } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -171,14 +171,14 @@ export default function TradePageNew() {
         return {
           text: 'Waiting for Payment',
           color: '#F59E0B',
-          icon: <IoClock size={20} />,
+          icon: <IoTime size={20} />,
           step: 1
         };
       case 'payment_sent':
         return {
           text: 'Payment Sent - Awaiting Confirmation',
           color: '#3B82F6',
-          icon: <IoClock size={20} />,
+          icon: <IoTime size={20} />,
           step: 2
         };
       case 'completed':
@@ -540,7 +540,7 @@ export default function TradePageNew() {
                   padding: '1.5rem',
                   textAlign: 'center'
                 }}>
-                  <IoClock size={48} color="#3B82F6" style={{ margin: '0 auto 1rem' }} />
+                  <IoTime size={48} color="#3B82F6" style={{ margin: '0 auto 1rem' }} />
                   <h3 style={{ color: '#3B82F6', fontSize: '18px', fontWeight: '700', marginBottom: '0.5rem' }}>
                     Payment Confirmed
                   </h3>
@@ -559,7 +559,7 @@ export default function TradePageNew() {
                   padding: '1rem'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#F59E0B', fontWeight: '700', marginBottom: '0.5rem' }}>
-                    <IoClock size={18} />
+                    <IoTime size={18} />
                     Waiting for buyer to make payment
                   </div>
                   <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>

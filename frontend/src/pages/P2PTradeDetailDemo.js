@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoClock, IoChatbubbles, IoCloudUpload, IoShield, IoAlertCircle, IoCheckmarkCircle } from 'react-icons/io5';;
+import { IoTime, IoChatbubbles, IoCloudUpload, IoShield, IoAlertCircle, IoCheckmarkCircle } from 'react-icons/io5';;
 import OTPModal from '@/components/OTPModal';
 import P2PNotifications from '@/components/P2PNotifications';
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -145,7 +145,7 @@ export default function P2PTradeDetailDemo() {
             <div className="flex items-center gap-4">
               {timeRemaining > 0 && (
                 <div className="flex items-center gap-2 bg-orange-900/30 px-6 py-3 rounded-xl border border-orange-500/30">
-                  <IoClock className="w-6 h-6 text-orange-400" />
+                  <IoTime className="w-6 h-6 text-orange-400" />
                   <div>
                     <div className="text-orange-400 font-bold text-2xl">{formatTime(timeRemaining)}</div>
                     <div className="text-orange-300 text-xs">Time remaining</div>

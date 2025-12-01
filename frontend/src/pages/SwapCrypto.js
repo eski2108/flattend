@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import { IoTrendingUp, IoInformationCircle, IoRefresh, IoSettings, IoFlash, IoClock, IoChevronDown, IoAlertCircle, IoCheckmarkCircle, IoShield, IoCash } from 'react-icons/io5';;
+import { IoTrendingUp, IoInformationCircle, IoRefresh, IoSettings, IoFlash, IoTime, IoChevronDown, IoAlertCircle, IoCheckmarkCircle, IoShield, IoCash } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -221,7 +221,7 @@ function SwapCrypto() {
                     flex: isMobile ? 1 : 'auto',
                     boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)'
                   }}>
-                    <IoClock size={18} color="#00F0FF" />
+                    <IoTime size={18} color="#00F0FF" />
                     <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#00F0FF', fontWeight: '600' }}>
                       {lastUpdate ? lastUpdate.toLocaleTimeString() : 'Live'}
                     </span>

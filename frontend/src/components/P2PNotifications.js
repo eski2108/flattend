@@ -84,7 +84,7 @@ const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
       case 'message_received':
         return <IoChatbubbles size={18} style={{ color: '#3B82F6' }} />;
       case 'payment_marked':
-        return <IoClock size={18} style={{ color: '#F59E0B' }} />;
+        return <IoTime size={18} style={{ color: '#F59E0B' }} />;
       case 'crypto_released':
         return <IoCheckmarkCircle size={18} style={{ color: '#22C55E' }} />;
       case 'dispute_opened':

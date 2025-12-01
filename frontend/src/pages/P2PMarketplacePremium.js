@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoSearch, IoFilter, IoTrendingUp, IoTrendingDown, IoClock, IoShield, IoRefresh, IoStar, IoCheckmarkCircle, IoPeople } from 'react-icons/io5';
+import { IoSearch, IoFilter, IoTrendingUp, IoTrendingDown, IoTime, IoShield, IoRefresh, IoStar, IoCheckmarkCircle, IoPeople } from 'react-icons/io5';
 import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 
@@ -181,7 +181,7 @@ export default function P2PMarketplacePremium() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center">
-                    <IoClock className="w-5 h-5 text-cyan-400" />
+                    <IoTime className="w-5 h-5 text-cyan-400" />
                   </div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Avg Time</div>
                 </div>
