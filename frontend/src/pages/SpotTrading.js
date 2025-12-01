@@ -541,36 +541,24 @@ export default function SpotTrading() {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                    {/* Amount Input */}
+                    {/* Amount Input with Dual Currency */}
                     <div>
-                      <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Amount ({tradingPairs.find(p => p.symbol === selectedPair)?.base})
-                      </label>
-                      <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="0.00"
-                        style={{
-                          width: '100%',
-                          padding: isMobile ? '14px' : '16px',
-                          background: 'rgba(0, 0, 0, 0.4)',
-                          border: '1px solid rgba(0, 240, 255, 0.3)',
-                          borderRadius: '12px',
-                          color: '#FFFFFF',
-                          fontSize: isMobile ? '16px' : '18px',
-                          fontWeight: '600',
-                          outline: 'none',
-                          transition: 'all 0.3s'
+                      <DualCurrencyInput
+                        cryptoSymbol={tradingPairs.find(p => p.symbol === selectedPair)?.base || 'BTC'}
+                        fiatCurrency="USD"
+                        onFiatChange={(fiatAmt) => {
+                          // Not used - we're primarily tracking crypto amount for trading
                         }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
-                          e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
+                        onCryptoChange={(cryptoAmt) => {
+                          setAmount(cryptoAmt.toString());
                         }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
+                        initialFiatAmount=""
+                        initialCryptoAmount={amount}
+                        fee={tradingFee}
+                        availableBalance={userBalance.crypto}
+                        balanceInCrypto={true}
+                        label={`Amount (${tradingPairs.find(p => p.symbol === selectedPair)?.base})`}
+                        showCurrencySelector={true}
                       />
                     </div>
 
