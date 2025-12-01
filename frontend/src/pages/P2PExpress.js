@@ -233,12 +233,12 @@ export default function P2PExpress() {
         
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
 
-          <div style={{ marginBottom: '48px', textAlign: 'center' }}>
-            <h1 style={{ fontSize: '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-              <IoFlash size={48} color="#0CEBFF" strokeWidth={2.5} />
+          <div style={{ marginBottom: isMobile ? '32px' : '48px', textAlign: 'center' }}>
+            <h1 style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '12px' : '16px' }}>
+              <IoFlash size={isMobile ? 32 : 48} color="#0CEBFF" strokeWidth={2.5} />
               P2P Express
             </h1>
-            <p style={{ fontSize: '18px', color: '#8F9BB3', margin: 0 }}>Instant crypto purchase • 2-5 minute delivery</p>
+            <p style={{ fontSize: isMobile ? '14px' : '18px', color: '#8F9BB3', margin: 0 }}>Instant crypto purchase • 2-5 minute delivery</p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 420px', gap: isMobile ? '24px' : '48px', alignItems: 'start', justifyItems: 'stretch' }}>
