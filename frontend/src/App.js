@@ -105,11 +105,12 @@ function App() {
   }, []);
 
   return (
-    <CurrencyProvider>
-      <WalletProvider>
-        <div className="App">
-          <Toaster position="top-right" richColors />
-          <BrowserRouter>
+    <ErrorBoundary>
+      <CurrencyProvider>
+        <WalletProvider>
+          <div className="App">
+            <Toaster position="top-right" richColors />
+            <BrowserRouter>
           <Suspense fallback={
             <div style={{ 
               minHeight: '100vh', 
