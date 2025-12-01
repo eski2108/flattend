@@ -3892,8 +3892,13 @@ async def create_p2p_express_order(order_data: Dict):
                 user_id=order_data["user_id"],
                 currency="GBP",
                 amount=order_data["fiat_amount"],
-                description=f"P2P Express purchase: {order_data['crypto_amount']} {order_data['crypto']}",
-                reference=trade_id
+                transaction_type="purchase",
+                reference_id=trade_id,
+                metadata={
+                    "crypto": order_data["crypto"],
+                    "crypto_amount": order_data["crypto_amount"],
+                    "purchase_type": "p2p_express"
+                }
             )
             logger.info(f"✅ Debited £{order_data['fiat_amount']} from user {order_data['user_id']}")
         except Exception as e:
@@ -3906,8 +3911,13 @@ async def create_p2p_express_order(order_data: Dict):
                 user_id=order_data["user_id"],
                 currency=order_data["crypto"],
                 amount=order_data["crypto_amount"],
-                description=f"P2P Express purchase: {order_data['crypto']}",
-                reference=trade_id
+                transaction_type="purchase",
+                reference_id=trade_id,
+                metadata={
+                    "fiat_amount": order_data["fiat_amount"],
+                    "purchase_type": "p2p_express",
+                    "delivery": "instant"
+                }
             )
             logger.info(f"✅ Credited {order_data['crypto_amount']} {order_data['crypto']} to user {order_data['user_id']}")
         except Exception as e:
@@ -3917,8 +3927,9 @@ async def create_p2p_express_order(order_data: Dict):
                 user_id=order_data["user_id"],
                 currency="GBP",
                 amount=order_data["fiat_amount"],
-                description=f"Refund for failed purchase {trade_id}",
-                reference=trade_id
+                transaction_type="refund",
+                reference_id=trade_id,
+                metadata={"reason": "crypto_credit_failed"}
             )
             raise HTTPException(status_code=500, detail=f"Failed to credit crypto: {str(e)}")
         
