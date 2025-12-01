@@ -26,6 +26,14 @@ export default function OrderPreview() {
   const [walletNetwork, setWalletNetwork] = useState('');
   const [walletValidation, setWalletValidation] = useState(null);
   const [validatingWallet, setValidatingWallet] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Handle window resize for mobile responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     console.log('🔍 OrderPreview loaded. Offer:', offer);
