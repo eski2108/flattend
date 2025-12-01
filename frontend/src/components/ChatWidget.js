@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IoHelpCircle as HelpCircle, IoContract as Minimize2, IoChatbubbles as MessageCircle, IoSend as Send, IoClose as X, IoFlash as Zap } from 'react-icons/io5';
+import { IoHelpCircle as HelpCircle, IoContract as Minimize2, IoChatbubbles, IoSend as Send, IoClose as X, IoFlash as Zap } from 'react-icons/io5';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
