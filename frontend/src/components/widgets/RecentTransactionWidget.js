@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowDownLeft, ArrowUpRight, IoTrendingUp, Repeat } from 'react-icons/io5';
+import { IoArrowDownCircle as ArrowDownLeft, IoArrowUpCircle as ArrowUpRight, IoTrendingUp } from 'react-icons/io5';
+import { BiRepeat } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 
 const RecentTransactionWidget = ({ lastTransaction }) => {
