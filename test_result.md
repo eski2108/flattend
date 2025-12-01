@@ -977,6 +977,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "P2P Express Transaction Flow Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/InstantBuy.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "user"
+        comment: "User requested comprehensive P2P Express transaction flow testing with screenshots. Test flow: 1) Login with gads21083@gmail.com/123456789, 2) Navigate to /instant-buy, 3) Verify page loads with crypto options and £10,000.00 balance, 4) Click £50 amount button for BTC, 5) Verify purchase confirmation/execution, 6) Check wallet at /wallet for balance changes. URL: https://crypto-finalize.preview.emergentagent.com"
+
 agent_communication:
   - agent: "main"
     message: "TRADING SYSTEM IMPLEMENTATION COMPLETE - READY FOR BACKEND TESTING: Implemented comprehensive trading system with full liquidity protection and concurrency safety. BACKEND CHANGES: 1) ATOMIC TRANSACTIONS: Rewrote execute_trading_transaction to use MongoDB sessions and transactions for full atomicity 2) HIDDEN MARKUP/MARKDOWN: Added buy_markup_percent (+0.5%) and sell_markdown_percent (-0.5%) applied in backend only, configurable globally and per-pair 3) CONCURRENCY PROTECTION: Double-check in update query with $gte condition prevents concurrent overdraft, returns error if modified_count is 0 4) NEW ENDPOINTS: GET /api/trading/pairs (returns pairs with liquidity status), GET /api/admin/trading-liquidity (view all liquidity), POST /api/admin/trading-liquidity/add (credit), POST /api/admin/trading-liquidity/remove (debit), POST /api/admin/trading-liquidity/toggle (manual pause) 5) PLATFORM SETTINGS: Extended to include trading fees, markup, markdown with per-pair overrides. FRONTEND CHANGES: 1) ADMIN DASHBOARD: New Trading tab with liquidity table, add/remove modal, fee & spread settings 2) SPOTTRADING PAGE: Fixed Quick Buy modal (shows confirmation before execution), integrated with /api/trading/execute, liquidity checking with auto-disable, TradingView Lightweight Charts v5 with candlestick + volume. TESTING NEEDED: 1) Test all 5 trading endpoints 2) Test concurrent trades to verify atomicity 3) Verify markup/markdown is hidden from users 4) Test liquidity auto-disable when balance reaches zero 5) Test admin can add/remove liquidity via endpoints. Backend and frontend both restarted and ready."
