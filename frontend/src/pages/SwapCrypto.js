@@ -63,6 +63,26 @@ function SwapCrypto() {
     }
   }, [fromAmount, fromCrypto, toCrypto, prices]);
 
+  const fetchWalletBalances = async () => {
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = userData ? JSON.parse(userData) : null;
+      
+      if (user?.user_id) {
+        const response = await axios.get(`${API}/api/wallets/balances/${user.user_id}`);
+        if (response.data.success) {
+          const balances = {};
+          response.data.balances.forEach(bal => {
+            balances[bal.currency] = bal.available_balance || 0;
+          });
+          setWalletBalances(balances);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balances:', error);
+    }
+  };
+
   const fetchAvailableCryptos = async () => {
     try {
       const response = await axios.get(`${API}/api/swap/available-coins`);
