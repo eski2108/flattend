@@ -19,17 +19,17 @@ export default function Layout({ children }) {
 
   const navItems = [
     { path: '/dashboard', label: 'Portfolio', icon: IoPieChart },
-    { path: '/wallet', label: 'Wallet', icon: DollarSign },
-    { path: '/savings', label: 'Savings Vault', icon: PiggyBank, highlight: true },
-    { path: '/allocations', label: 'Allocations', icon: Target, highlight: true },
-    { path: '/instant-buy', label: 'Instant Buy', icon: Zap },
-    { path: '/p2p-express', label: 'P2P Express', icon: TrendingUp },
-    { path: '/p2p-marketplace', label: 'P2P Marketplace', icon: ShoppingBag },
-    { path: '/trading', label: 'Trading', icon: TrendingUp },
-    { path: '/swap-crypto', label: 'Swap Crypto', icon: Zap },
-    { path: '/referrals', label: 'Referrals', icon: Gift },
-    { path: '/my-orders', label: 'Transaction History', icon: FileText },
-    { path: '/settings', label: 'Settings', icon: CreditCard }
+    { path: '/wallet', label: 'Wallet', icon: IoCash },
+    { path: '/savings', label: 'Savings Vault', icon: IoWallet, highlight: true },
+    { path: '/allocations', label: 'Allocations', icon: IoNavigate, highlight: true },
+    { path: '/instant-buy', label: 'Instant Buy', icon: IoFlash },
+    { path: '/p2p-express', label: 'P2P Express', icon: IoTrendingUp },
+    { path: '/p2p-marketplace', label: 'P2P Marketplace', icon: IoBag },
+    { path: '/trading', label: 'Trading', icon: IoTrendingUp },
+    { path: '/swap-crypto', label: 'Swap Crypto', icon: IoFlash },
+    { path: '/referrals', label: 'Referrals', icon: IoGift },
+    { path: '/my-orders', label: 'Transaction History', icon: IoDocument },
+    { path: '/settings', label: 'Settings', icon: IoCard }
   ];
 
   const handleSupportClick = () => {
