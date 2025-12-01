@@ -22,6 +22,7 @@ const COIN_LOGOS = {
 };
 
 function SwapCrypto() {
+  const navigate = useNavigate();
   const [cryptos, setCryptos] = useState([
     { code: 'BTC', name: 'Bitcoin', color: '#F7931A', logo: '🟠' },
     { code: 'ETH', name: 'Ethereum', color: '#627EEA', logo: '💎' },
