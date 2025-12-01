@@ -72,7 +72,7 @@ class TwoFactorAuthService:
     async def verify_and_enable_2fa(self, user_id: str, code: str) -> dict:
         """Verify setup code and enable 2FA"""
         try:
-            tfa_data = await self.db.two_factor_auth.find_one({"user_id": user_id})
+            tfa_data = await self.db.two_factor_auth.find_one({"user_id": user_id}, {"_id": 0})
             if not tfa_data:
                 return {"success": False, "message": "2FA not set up"}
             
