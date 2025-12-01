@@ -58,18 +58,18 @@ export default function ReferralLinkGenerator() {
   };
 
   const shareOnTwitter = () => {
-    const text = `Join Coin Hub X and start trading crypto securely! Use my referral code: ${referralData.referral_code}`;
+    const text = `Join Coin Hub IoClose as X and start trading crypto securely! Use my referral code: ${referralData.referral_code}`;
     const url = referralData.referral_link;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
   };
 
   const shareOnWhatsApp = () => {
-    const text = `Join Coin Hub X using my referral link: ${referralData.referral_link}`;
+    const text = `Join Coin Hub IoClose as X using my referral link: ${referralData.referral_link}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const shareOnTelegram = () => {
-    const text = `Join Coin Hub X using my referral link: ${referralData.referral_link}`;
+    const text = `Join Coin Hub IoClose as X using my referral link: ${referralData.referral_link}`;
     window.open(`https://t.me/share/url?url=${encodeURIComponent(referralData.referral_link)}&text=${encodeURIComponent(text)}`, '_blank');
   };
 

@@ -633,7 +633,7 @@ export default function Settings() {
 
         {/* App Version */}
         <div style={{ textAlign: 'center', marginTop: '2rem', color: '#666', fontSize: '13px' }}>
-          Coin Hub X v2.0.0
+          Coin Hub IoClose as X v2.0.0
         </div>
       </div>
     </div>

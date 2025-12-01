@@ -253,7 +253,7 @@ export default function PublicSellerProfile() {
           }}>
             <IoLockClosed size={20} color="#00F0FF" />
             <p style={{ margin: 0, color: '#E2E8F0', fontSize: '14px' }}>
-              <strong style={{ color: '#00F0FF' }}>100% Escrow Protected</strong> - All transactions are secured through CoinHub X escrow system. Your funds are safe until trade completion.
+              <strong style={{ color: '#00F0FF' }}>100% Escrow Protected</strong> - All transactions are secured through CoinHub IoClose as X escrow system. Your funds are safe until trade completion.
             </p>
           </div>
         </div>
@@ -414,7 +414,7 @@ export default function PublicSellerProfile() {
           textAlign: 'center'
         }}>
           <p style={{ margin: '0 0 1rem', color: '#888', fontSize: '14px' }}>
-            Want to trade crypto safely? Join CoinHub X - The most secure P2P marketplace.
+            Want to trade crypto safely? Join CoinHub IoClose as X - The most secure P2P marketplace.
           </p>
           <button
             onClick={() => navigate('/register')}

@@ -287,7 +287,7 @@ export default function Register() {
           <Card className="auth-card">
             <div className="auth-card-content">
               <h1 className="auth-title">Create Your Account</h1>
-              <p className="auth-subtitle">Join Coin Hub X and start trading crypto P2P</p>
+              <p className="auth-subtitle">Join Coin Hub IoClose as X and start trading crypto P2P</p>
 
               <form onSubmit={handleSubmit} className="auth-form">
                 <div className="form-group">

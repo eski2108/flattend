@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { AlertTriangle, CheckCircle, Download, Filter, IoWarning, Search, Shield, XCircle } from 'react-icons/io5';
+import { IoWarning as AlertTriangle, IoCheckmarkCircle as CheckCircle, Download, Filter, IoWarning, Search, Shield, XCircle } from 'react-icons/io5';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;

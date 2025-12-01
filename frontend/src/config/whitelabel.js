@@ -192,7 +192,7 @@ export const WHITELABEL_CONFIG = {
   // LEGAL & COMPLIANCE
   // ========================================
   legal: {
-    companyName: process.env.REACT_APP_COMPANY_NAME || 'Coin Hub X Ltd',
+    companyName: process.env.REACT_APP_COMPANY_NAME || 'Coin Hub IoClose as X Ltd',
     registrationNumber: process.env.REACT_APP_REG_NUMBER || '12345678',
     registeredAddress: process.env.REACT_APP_ADDRESS || 'London, United Kingdom',
     termsUrl: '/terms',
@@ -205,7 +205,7 @@ export const WHITELABEL_CONFIG = {
   // SEO & METADATA
   // ========================================
   seo: {
-    title: process.env.REACT_APP_SEO_TITLE || 'Coin Hub X - P2P Crypto Trading Platform',
+    title: process.env.REACT_APP_SEO_TITLE || 'Coin Hub IoClose as X - P2P Crypto Trading Platform',
     description: process.env.REACT_APP_SEO_DESC || 'Trade crypto peer-to-peer with escrow protection, instant settlements, and 24/7 support.',
     keywords: process.env.REACT_APP_SEO_KEYWORDS || 'crypto, p2p, trading, bitcoin, ethereum',
     ogImage: process.env.REACT_APP_OG_IMAGE || '/og-image.png'

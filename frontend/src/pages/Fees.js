@@ -74,7 +74,7 @@ export default function Fees() {
               FREE
             </div>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-              No fees for depositing crypto into your Coin Hub X wallet. Keep 100% of your deposits.
+              No fees for depositing crypto into your Coin Hub IoClose as X wallet. Keep 100% of your deposits.
             </p>
           </div>
 

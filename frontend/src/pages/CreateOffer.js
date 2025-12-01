@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { ArrowLeft, Plus, X } from 'react-icons/io5';
+import { ArrowLeft, Plus, IoClose as X } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

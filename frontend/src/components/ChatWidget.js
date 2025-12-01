@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IoHelpCircle as HelpCircle, IoContract as Minimize2, IoChatbubbles as MessageCircle, IoSend as Send, IoClose as X, IoFlash as Zap } from 'react-icons/io5';
+import { IoHelpCircle as HelpCircle, IoContract as Minimize2, IoChatbubbles as IoChatbubbles as MessageCircle, IoSend as Send, IoClose as IoClose as X, IoFlash as Zap } from 'react-icons/io5';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +8,7 @@ export default function ChatWidget() {
     {
       id: 'welcome',
       sender: 'bot',
-      message: 'Hi! 👋 I\'m your Coin Hub X AI assistant. How can I help you today?\n\nPopular topics:\n• How to deposit crypto\n• P2P trading guide\n• Swap fees\n• Account verification',
+      message: 'Hi! 👋 I\'m your Coin Hub IoClose as X AI assistant. How can I help you today?\n\nPopular topics:\n• How to deposit crypto\n• P2P trading guide\n• Swap fees\n• Account verification',
       timestamp: new Date()
     }
   ]);
@@ -201,7 +201,7 @@ export default function ChatWidget() {
             <IoFlash size={22} color="#00F0FF" strokeWidth={2.5} />
           </div>
           <div>
-            <div style={{ color: '#FFF', fontSize: '17px', fontWeight: '700' }}>Coin Hub X AI</div>
+            <div style={{ color: '#FFF', fontSize: '17px', fontWeight: '700' }}>Coin Hub IoClose as X AI</div>
             <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', fontWeight: '500' }}>🟢 Always Online</div>
           </div>
         </div>

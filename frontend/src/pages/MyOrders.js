@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { IoTime as Clock, IoCheckmarkCircle as CheckCircle2, IoCloseCircle as XCircle, IoWarning as AlertTriangle, IoTrendingUp as TrendingUp, IoShield as Shield } from 'react-icons/io5';
+import { IoTime as IoTime as Clock, IoCheckmarkCircle as IoCheckmarkCircle as CheckCircle2, IoCloseCircle as XCircle, IoWarning as IoWarning as AlertTriangle, IoTrendingUp as TrendingUp, IoShield as Shield } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -92,19 +92,19 @@ export default function MyOrders() {
   const getStatusInfo = (status) => {
     switch (status) {
       case 'pending_payment':
-        return { label: 'Pending Payment', color: '#F59E0B', icon: Clock };
+        return { label: 'Pending Payment', color: '#F59E0B', icon: IoTime as Clock };
       case 'buyer_marked_paid':
-        return { label: 'Payment Sent', color: '#3B82F6', icon: Clock };
+        return { label: 'Payment Sent', color: '#3B82F6', icon: IoTime as Clock };
       case 'released':
-        return { label: 'Completed', color: '#22C55E', icon: CheckCircle2 };
+        return { label: 'Completed', color: '#22C55E', icon: IoCheckmarkCircle as CheckCircle2 };
       case 'cancelled':
         return { label: 'Cancelled', color: '#EF4444', icon: XCircle };
       case 'expired':
         return { label: 'Expired', color: '#6B7280', icon: XCircle };
       case 'disputed':
-        return { label: 'Disputed', color: '#F59E0B', icon: AlertTriangle };
+        return { label: 'Disputed', color: '#F59E0B', icon: IoWarning as AlertTriangle };
       default:
-        return { label: status, color: '#FFFFFF', icon: Clock };
+        return { label: status, color: '#FFFFFF', icon: IoTime as Clock };
     }
   };
 
