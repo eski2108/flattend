@@ -58,7 +58,7 @@ export default function AllocationsPage() {
 
   useEffect(() => {
     fetchAllocations();
-  }, [currency, demoMode]);
+  }, [currency]);
 
   const fetchAllocations = async () => {
     try {
