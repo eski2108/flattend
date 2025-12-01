@@ -125,11 +125,7 @@ function App() {
             </div>
           }>
           <Routes>
-            <Route path="/" element={<div style={{color: 'white', padding: '50px', background: '#0B0E13'}}>
-              <h1>CoinHubX Test Page</h1>
-              <p>This is a test to see if the app is working</p>
-              <a href="/login" style={{color: '#00F0FF'}}>Go to Login</a>
-            </div>} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/seller/:sellerId" element={<PublicSellerProfile />} />
             <Route path="/security" element={<Security />} />
             <Route path="/2fa-setup" element={<TwoFactorSetup />} />
