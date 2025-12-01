@@ -4,19 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import BoostOfferModal from '@/components/BoostOfferModal';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Plus, 
-  List, 
-  FileText,
-  Search,
-  Filter,
-  Clock,
-  Shield,
-  Star,
-  Zap
-} from 'lucide-react';
+import { IoTrendingUp, IoTrendingDown, IoAdd, IoDocument, IoSearch, IoFilter, IoClock, IoShield, IoStar, IoFlash } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -73,7 +61,7 @@ function SellerLinkCopyButton() {
       gap: '1rem'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <Shield size={24} color="#00F0FF" />
+        <IoShield size={24} color="#00F0FF" />
         <div>
           <h4 style={{ margin: 0, color: '#00F0FF', fontSize: '16px', fontWeight: '700' }}>
             Your Unique Seller Link
@@ -272,7 +260,7 @@ function P2PTrading() {
                   e.currentTarget.style.boxShadow = '0 4px 20px rgba(245, 158, 11, 0.4)';
                 }}
               >
-                <Zap size={20} />
+                <IoFlash size={20} />
                 Boost My Offer
               </button>
             )}
@@ -514,7 +502,7 @@ function BuySection({ crypto, price }) {
         {/* Search */}
         <div style={{ flex: '1', minWidth: '250px', maxWidth: '400px' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }} />
+            <IoSearch size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }} />
             <input
               type="text"
               placeholder="Search seller..."
@@ -570,7 +558,7 @@ function BuySection({ crypto, price }) {
             fontWeight: '600'
           }}
         >
-          <Filter size={18} />
+          <IoFilter size={18} />
           Filters
         </button>
         
@@ -788,7 +776,7 @@ function BuySection({ crypto, price }) {
                   <span style={{ fontSize: '1.125rem', fontWeight: '700', color: '#fff' }}>
                     {sellerName}
                   </span>
-                  <Shield size={16} color="#22C55E" />
+                  <IoShield size={16} color="#22C55E" />
                   {offer.is_fast_payment && (
                     <span style={{
                       padding: '4px 10px',
@@ -806,7 +794,7 @@ function BuySection({ crypto, price }) {
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>
-                  <Star size={14} fill="#FBBF24" color="#FBBF24" />
+                  <IoStar size={14} fill="#FBBF24" color="#FBBF24" />
                   <span>{offer.seller_rating || '4.8'}</span>
                   <span>•</span>
                   <span>{offer.completed_trades || Math.floor(Math.random() * 50) + 10} trades</span>
@@ -980,10 +968,10 @@ function SellSection({ crypto, price }) {
                 <span style={{ fontSize: '1.125rem', fontWeight: '700', color: '#fff' }}>
                   {offer.buyer_name}
                 </span>
-                {offer.verified && <Shield size={16} color="#22C55E" />}
+                {offer.verified && <IoShield size={16} color="#22C55E" />}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
-                <Star size={14} fill="#F59E0B" color="#F59E0B" />
+                <IoStar size={14} fill="#F59E0B" color="#F59E0B" />
                 <span style={{ color: '#F59E0B', fontWeight: '600' }}>{offer.buyer_rating}</span>
                 <span style={{ color: 'rgba(255,255,255,0.6)' }}>
                   {offer.completed_trades} trades
@@ -1527,7 +1515,7 @@ function CreateOfferSection({ crypto, price }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Zap size={20} color={isFastPayment ? '#22C55E' : 'rgba(255,255,255,0.6)'} />
+              <IoFlash size={20} color={isFastPayment ? '#22C55E' : 'rgba(255,255,255,0.6)'} />
               <label style={{ 
                 color: isFastPayment ? '#22C55E' : 'rgba(255,255,255,0.8)', 
                 fontSize: '0.95rem', 
@@ -1829,7 +1817,7 @@ function MyOrdersSection() {
                     borderRadius: '8px',
                     minWidth: '80px'
                   }}>
-                    <Clock size={16} color="#F59E0B" style={{ marginBottom: '0.25rem' }} />
+                    <IoClock size={16} color="#F59E0B" style={{ marginBottom: '0.25rem' }} />
                     <div style={{ fontSize: '1rem', fontWeight: '700', color: '#F59E0B' }}>
                       {formatTimeRemaining(order.time_remaining)}
                     </div>
@@ -2036,7 +2024,7 @@ function MyOffersSection() {
                       boxShadow: '0 0 20px rgba(245, 158, 11, 0.6)',
                       animation: 'glow 2s infinite'
                     }}>
-                      <Star size={12} fill="#fff" />
+                      <IoStar size={12} fill="#fff" />
                       FEATURED
                     </span>
                   )}
@@ -2120,7 +2108,7 @@ function MyOffersSection() {
                     gap: '0.25rem'
                   }}
                 >
-                  <Zap size={14} />
+                  <IoFlash size={14} />
                   {offer.boosted ? 'Boosted' : 'Boost'}
                 </button>
                 <button

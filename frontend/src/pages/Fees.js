@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { DollarSign, ArrowRight, Info } from 'lucide-react';
+import { IoCash, IoArrowForward, IoInformationCircle } from 'react-icons/io5';;
 
 export default function Fees() {
   const navigate = useNavigate();
@@ -104,7 +104,7 @@ export default function Fees() {
               justifyContent: 'center',
               marginBottom: '1.5rem'
             }}>
-              <DollarSign size={32} color="#000000" />
+              <IoCash size={32} color="#000000" />
             </div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#00F0FF', marginBottom: '0.5rem' }}>
               Trading Fee
@@ -169,7 +169,7 @@ export default function Fees() {
           marginBottom: '3rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-            <Info size={24} color="#00F0FF" />
+            <IoInformationCircle size={24} color="#00F0FF" />
             <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FFFFFF' }}>
               Why Our Fees Are Lower
             </h3>
@@ -230,7 +230,7 @@ export default function Fees() {
             }}
           >
             Start Trading Now
-            <ArrowRight size={24} />
+            <IoArrowForward size={24} />
           </button>
         </div>
       </div>

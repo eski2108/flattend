@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { AlertTriangle, CheckCircle, Clock, Eye, MessageCircle, FileText } from 'lucide-react';
+import { IoCheckmarkCircle, IoClock, IoEye, IoChatbubbles, IoDocument } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -176,7 +176,7 @@ function AdminDisputes() {
                           fontWeight: '700',
                           color: '#22C55E'
                         }}>
-                          <CheckCircle size={12} />
+                          <IoCheckmarkCircle size={12} />
                           RESOLVED
                         </div>
                       )}
@@ -206,7 +206,7 @@ function AdminDisputes() {
                         gap: '0.5rem'
                       }}
                     >
-                      <Eye size={14} />
+                      <IoEye size={14} />
                       View Details
                     </button>
                   </div>

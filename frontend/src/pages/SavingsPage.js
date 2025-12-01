@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowUpRight, ArrowDownLeft, TrendingUp, MessageCircle, Rocket, PiggyBank, ChartLine, Calculator, Lock, DollarSign, Globe } from 'lucide-react';
+import { IoTrendingUp, IoChatbubbles, IoLockClosed, IoCash, IoGlobe } from 'react-icons/io5';
+import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
@@ -123,7 +124,7 @@ const CHXFloatingChatBubble = ({ onClick }) => (
       e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 229, 255, 0.5)';
     }}
   >
-    <MessageCircle size={28} color="white" strokeWidth={2.5} />
+    <IoChatbubbles size={28} color="white" strokeWidth={2.5} />
   </div>
 );
 
@@ -271,7 +272,7 @@ export default function SavingsPage() {
                       </option>
                     ))}
                   </select>
-                  <Globe size={16} style={{ 
+                  <IoGlobe size={16} style={{ 
                     position: 'absolute', 
                     right: '12px', 
                     top: '50%', 
@@ -305,7 +306,7 @@ export default function SavingsPage() {
                   variant="primary"
                   size="large"
                   fullWidth
-                  icon={<ArrowUpRight size={20} />}
+                  icon={<BiArrowToTop size={20} />}
                 >
                   Transfer to Savings
                 </CHXButton>
@@ -319,7 +320,7 @@ export default function SavingsPage() {
                   variant="secondary"
                   size="large"
                   fullWidth
-                  icon={<ArrowDownLeft size={20} />}
+                  icon={<BiArrowFromTop size={20} />}
                 >
                   Move Back to Wallet
                 </CHXButton>
@@ -403,7 +404,7 @@ export default function SavingsPage() {
                   border: '1px dashed rgba(0, 229, 255, 0.2)'
                 }}>
                   <div style={{ textAlign: 'center', color: '#6B7280' }}>
-                    <TrendingUp size={48} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+                    <IoTrendingUp size={48} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
                     <p style={{ fontSize: '14px', fontWeight: '600' }}>Chart Coming Soon</p>
                     <p style={{ fontSize: '12px' }}>Track your daily earnings over time</p>
                   </div>
@@ -435,7 +436,7 @@ export default function SavingsPage() {
                           {currencySymbol}{convertCurrency(balance.value_usd)}
                         </div>
                         <div style={{ fontSize: '12px', color: '#22C55E', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
-                          <TrendingUp size={14} />
+                          <IoTrendingUp size={14} />
                           +{estimatedAPY} APY
                         </div>
                       </div>

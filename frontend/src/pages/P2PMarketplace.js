@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { Search, Filter, Star, Shield, Zap, Clock, TrendingUp, ChevronDown, X, User, MapPin, Award, CheckCircle } from 'lucide-react';
+import { IoSearch, IoFilter, IoStar, IoShield, IoFlash, IoClock, IoTrendingUp, IoChevronDown, IoClose, IoPersonOutline, IoLocation, IoTrophy, IoCheckmarkCircle } from 'react-icons/io5';;
 import P2PNotifications from '@/components/P2PNotifications';
 import '../styles/globalSwapTheme.css';
 
@@ -420,7 +420,7 @@ function P2PMarketplace() {
               flexShrink: 0
             }}
           >
-            <Shield size={10} />
+            <IoShield size={10} />
             Trusted
           </button>
 
@@ -442,7 +442,7 @@ function P2PMarketplace() {
               flexShrink: 0
             }}
           >
-            <Zap size={10} />
+            <IoFlash size={10} />
             Fast Pay
           </button>
 
@@ -464,7 +464,7 @@ function P2PMarketplace() {
               flexShrink: 0
             }}
           >
-            <Star size={10} fill={filters.favoritesOnly ? '#A855F7' : 'none'} />
+            <IoStar size={10} fill={filters.favoritesOnly ? '#A855F7' : 'none'} />
             Favorites
           </button>
 
@@ -489,7 +489,7 @@ function P2PMarketplace() {
               flexShrink: 0
             }}
           >
-            <Filter size={10} />
+            <IoFilter size={10} />
             More Filters
           </button>
 
@@ -709,7 +709,7 @@ function P2PMarketplace() {
                       padding: '0.25rem'
                     }}
                   >
-                    <Star 
+                    <IoStar 
                       size={18} 
                       color={favorites.includes(offer.seller_id) ? '#A855F7' : '#666'} 
                       fill={favorites.includes(offer.seller_id) ? '#A855F7' : 'none'}
@@ -727,7 +727,7 @@ function P2PMarketplace() {
                       </span>
                       {offer.seller_info?.is_verified && 
                         <div title="Verified Seller" style={{ display: 'flex', alignItems: 'center' }}>
-                          <Shield size={14} color="#00F0FF" />
+                          <IoShield size={14} color="#00F0FF" />
                         </div>
                       }
                     </div>
@@ -827,7 +827,7 @@ function P2PMarketplace() {
                             gap: '2px'
                           }}
                         >
-                          <Shield size={9} />
+                          <IoShield size={9} />
                           TRUSTED
                         </div>
                       }
@@ -848,13 +848,13 @@ function P2PMarketplace() {
                             boxShadow: '0 0 10px rgba(252, 211, 77, 0.3)'
                           }}
                         >
-                          <Zap size={9} />
+                          <IoFlash size={9} />
                           FAST PAY
                         </div>
                       }
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.25rem' }}>
-                      <Star size={12} color="#FCD34D" fill="#FCD34D" />
+                      <IoStar size={12} color="#FCD34D" fill="#FCD34D" />
                       <span style={{ color: '#FCD34D', fontSize: '13px', fontWeight: '600' }}>
                         {offer.seller_info?.rating?.toFixed(1) || '5.0'}
                       </span>
@@ -971,7 +971,7 @@ function P2PMarketplace() {
                   color: '#888'
                 }}
               >
-                <X size={24} />
+                <IoClose size={24} />
               </button>
 
               {/* Profile Header */}
@@ -995,7 +995,7 @@ function P2PMarketplace() {
                   {selectedSeller.username}
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <MapPin size={14} color="#888" />
+                  <IoLocation size={14} color="#888" />
                   <span style={{ color: '#888', fontSize: '14px' }}>{selectedSeller.region || 'Global'}</span>
                 </div>
                 {/* Badges */}
@@ -1013,7 +1013,7 @@ function P2PMarketplace() {
                       alignItems: 'center',
                       gap: '4px'
                     }}>
-                      <Shield size={12} />
+                      <IoShield size={12} />
                       VERIFIED
                     </div>
                   )}
@@ -1030,7 +1030,7 @@ function P2PMarketplace() {
                       alignItems: 'center',
                       gap: '4px'
                     }}>
-                      <Award size={12} />
+                      <IoTrophy size={12} />
                       TRUSTED
                     </div>
                   )}
@@ -1048,7 +1048,7 @@ function P2PMarketplace() {
                       gap: '4px',
                       boxShadow: '0 0 10px rgba(252, 211, 77, 0.3)'
                     }}>
-                      <Zap size={12} />
+                      <IoFlash size={12} />
                       FAST PAYMENT
                     </div>
                   )}
@@ -1070,7 +1070,7 @@ function P2PMarketplace() {
                 }}>
                   <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>RATING</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <Star size={16} color="#FCD34D" fill="#FCD34D" />
+                    <IoStar size={16} color="#FCD34D" fill="#FCD34D" />
                     <span style={{ fontSize: '20px', fontWeight: '900', color: '#FCD34D' }}>
                       {selectedSeller.rating?.toFixed(1) || '5.0'}
                     </span>

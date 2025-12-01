@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Search, DollarSign, AlertCircle, Zap, ArrowRight, Shield, Clock, CheckCircle2 } from 'lucide-react';
+import { IoSearch, IoCash, IoAlertCircle, IoFlash, IoArrowForward, IoShield, IoClock } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -82,11 +82,11 @@ export default function BuyCryptoPublic() {
           
           <div className="features-quick">
             <div className="feature-quick">
-              <Shield size={24} />
+              <IoShield size={24} />
               <span>Escrow Protected</span>
             </div>
             <div className="feature-quick">
-              <Clock size={24} />
+              <IoClock size={24} />
               <span>Fast & Easy</span>
             </div>
             <div className="feature-quick">
@@ -108,7 +108,7 @@ export default function BuyCryptoPublic() {
             
             {/* Search */}
             <div className="search-container-public">
-              <Search className="search-icon" size={20} />
+              <IoSearch className="search-icon" size={20} />
               <Input
                 placeholder="Search by amount or price..."
                 value={searchTerm}
@@ -134,7 +134,7 @@ export default function BuyCryptoPublic() {
                         <CheckCircle2 size={16} />
                         <span>Verified Seller</span>
                       </div>
-                      <DollarSign size={20} className="offer-icon-public" />
+                      <IoCash size={20} className="offer-icon-public" />
                     </div>
                     
                     <div className="offer-amount-public">
@@ -174,7 +174,7 @@ export default function BuyCryptoPublic() {
                       }}
                       data-testid="buy-now-btn"
                     >
-                      Buy Now <ArrowRight size={20} />
+                      Buy Now <IoArrowForward size={20} />
                     </Button>
                   </Card>
                 );
@@ -182,7 +182,7 @@ export default function BuyCryptoPublic() {
             </div>
           ) : (
             <Card className="empty-state-public">
-              <AlertCircle size={48} className="empty-icon" />
+              <IoAlertCircle size={48} className="empty-icon" />
               <h3>No Offers Available</h3>
               <p>Check back later for new crypto offers</p>
             </Card>
@@ -230,7 +230,7 @@ export default function BuyCryptoPublic() {
           </DialogHeader>
           <div className="dialog-content">
             <div className="wallet-info-box">
-              <Shield size={32} />
+              <IoShield size={32} />
               <div>
                 <p className="info-title-dialog">Secure Escrow Protection</p>
                 <p className="info-text-dialog">

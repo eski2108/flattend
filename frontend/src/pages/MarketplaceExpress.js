@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import Layout from '@/components/Layout';
-import { 
-  Zap, List, Search, Filter, TrendingUp, TrendingDown, 
-  Shield, Star, Clock, CheckCircle, User, DollarSign 
-} from 'lucide-react';
+import { IoFlash, IoSearch, IoFilter, IoTrendingUp, IoTrendingDown, IoShield, IoStar, IoClock, IoCheckmarkCircle, IoPersonOutline, IoCash } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import { TraderBadgeList } from '@/components/TraderBadge';
@@ -212,7 +209,7 @@ export default function MarketplaceExpress() {
               transition: 'all 0.3s ease'
             }}
           >
-            <Zap size={20} />
+            <IoFlash size={20} />
             Express Mode
           </button>
 
@@ -266,7 +263,7 @@ export default function MarketplaceExpress() {
               transition: 'all 0.3s ease'
             }}
           >
-            <TrendingUp size={18} style={{ display: 'inline', marginRight: '0.5rem' }} />
+            <IoTrendingUp size={18} style={{ display: 'inline', marginRight: '0.5rem' }} />
             Buy {selectedCrypto}
           </button>
 
@@ -289,7 +286,7 @@ export default function MarketplaceExpress() {
               transition: 'all 0.3s ease'
             }}
           >
-            <TrendingDown size={18} style={{ display: 'inline', marginRight: '0.5rem' }} />
+            <IoTrendingDown size={18} style={{ display: 'inline', marginRight: '0.5rem' }} />
             Sell {selectedCrypto}
           </button>
         </div>
@@ -375,7 +372,7 @@ export default function MarketplaceExpress() {
             borderRadius: '16px'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <Zap size={48} style={{ color: 'var(--electric-cyan)', marginBottom: '1rem' }} />
+              <IoFlash size={48} style={{ color: 'var(--electric-cyan)', marginBottom: '1rem' }} />
               <h2 style={{ 
                 fontSize: '1.8rem', 
                 fontWeight: '700', 
@@ -668,7 +665,7 @@ export default function MarketplaceExpress() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                          <User size={20} style={{ color: 'var(--electric-cyan)' }} />
+                          <IoPersonOutline size={20} style={{ color: 'var(--electric-cyan)' }} />
                           <span style={{ fontWeight: '700', color: 'var(--text-primary)' }}>
                             {item.trader_name}
                           </span>

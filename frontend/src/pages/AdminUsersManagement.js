@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Users, Search, Award, Star, User, Mail, Calendar, DollarSign, TrendingUp } from 'lucide-react';
+import { IoPeople, IoSearch, IoTrophy, IoStar, IoPersonOutline, IoMail, IoCalendar, IoCash, IoTrendingUp } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -62,19 +62,19 @@ const AdminUsersManagement = () => {
         return {
           label: 'Golden (50%)',
           gradient: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          icon: <Star size={16} style={{ color: '#000' }} />
+          icon: <IoStar size={16} style={{ color: '#000' }} />
         };
       case 'vip':
         return {
           label: 'VIP (20%)',
           gradient: 'linear-gradient(135deg, #A855F7, #7B2CFF)',
-          icon: <Award size={16} style={{ color: '#fff' }} />
+          icon: <IoTrophy size={16} style={{ color: '#fff' }} />
         };
       default:
         return {
           label: 'Standard (20%)',
           gradient: 'linear-gradient(135deg, #6B7280, #4B5563)',
-          icon: <User size={16} style={{ color: '#fff' }} />
+          icon: <IoPersonOutline size={16} style={{ color: '#fff' }} />
         };
     }
   };
@@ -131,7 +131,7 @@ const AdminUsersManagement = () => {
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-            <Users size={32} style={{ color: '#00F0FF' }} />
+            <IoPeople size={32} style={{ color: '#00F0FF' }} />
             <h1 style={{
               fontSize: '36px',
               fontWeight: '900',
@@ -155,10 +155,10 @@ const AdminUsersManagement = () => {
           marginBottom: '2rem'
         }}>
           {[
-            { label: 'Total Users', value: users.length, icon: <Users size={24} />, color: '#00F0FF' },
-            { label: 'Standard Tier', value: users.filter(u => !u.referral_tier || u.referral_tier === 'standard').length, icon: <User size={24} />, color: '#6B7280' },
-            { label: 'VIP Tier', value: users.filter(u => u.referral_tier === 'vip').length, icon: <Award size={24} />, color: '#A855F7' },
-            { label: 'Golden Tier', value: users.filter(u => u.referral_tier === 'golden').length, icon: <Star size={24} />, color: '#FFD700' }
+            { label: 'Total Users', value: users.length, icon: <IoPeople size={24} />, color: '#00F0FF' },
+            { label: 'Standard Tier', value: users.filter(u => !u.referral_tier || u.referral_tier === 'standard').length, icon: <IoPersonOutline size={24} />, color: '#6B7280' },
+            { label: 'VIP Tier', value: users.filter(u => u.referral_tier === 'vip').length, icon: <IoTrophy size={24} />, color: '#A855F7' },
+            { label: 'Golden Tier', value: users.filter(u => u.referral_tier === 'golden').length, icon: <IoStar size={24} />, color: '#FFD700' }
           ].map((stat, idx) => (
             <div key={idx} style={{
               background: 'rgba(0, 0, 0, 0.3)',
@@ -195,7 +195,7 @@ const AdminUsersManagement = () => {
             {/* Search */}
             <div style={{ flex: '1', minWidth: '300px' }}>
               <div style={{ position: 'relative' }}>
-                <Search size={20} style={{
+                <IoSearch size={20} style={{
                   position: 'absolute',
                   left: '12px',
                   top: '50%',

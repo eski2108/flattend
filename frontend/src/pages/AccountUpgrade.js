@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { TrendingUp, Zap, Star } from 'lucide-react';
+import { IoTrendingUp, IoFlash, IoStar } from 'react-icons/io5';;
 
 export default function AccountUpgrade() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function AccountUpgrade() {
     <Layout>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <Star size={64} color="#FACC15" style={{ margin: '0 auto 1rem' }} />
+          <IoStar size={64} color="#FACC15" style={{ margin: '0 auto 1rem' }} />
           <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#fff', marginBottom: '1rem' }}>Upgrade Your Account</h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)' }}>Unlock priority features and lower trading fees</p>
         </div>

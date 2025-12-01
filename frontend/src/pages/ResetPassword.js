@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { IoLockClosed, IoEye, IoEyeOff, IoCheckmarkCircle } from 'react-icons/io5';;
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
@@ -65,7 +65,7 @@ export default function ResetPassword() {
         <div style={styles.formCard}>
           <div style={styles.successContainer}>
             <div style={styles.successIcon}>
-              <CheckCircle size={60} style={{color: '#10B981'}} />
+              <IoCheckmarkCircle size={60} style={{color: '#10B981'}} />
             </div>
             <h1 style={styles.successTitle}>Password Reset Complete!</h1>
             <p style={styles.successText}>
@@ -83,7 +83,7 @@ export default function ResetPassword() {
       <div style={styles.formCard}>
         <div style={styles.header}>
           <div style={styles.iconWrapper}>
-            <Lock size={40} style={{color: '#00D9FF'}} />
+            <IoLockClosed size={40} style={{color: '#00D9FF'}} />
           </div>
           <h1 style={styles.title}>Reset Password</h1>
           <p style={styles.subtitle}>Enter your new password below</p>
@@ -93,7 +93,7 @@ export default function ResetPassword() {
           <div style={styles.formGroup}>
             <label style={styles.label}>New Password</label>
             <div style={styles.inputWrapper}>
-              <Lock size={20} style={styles.inputIcon} />
+              <IoLockClosed size={20} style={styles.inputIcon} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={newPassword}
@@ -108,7 +108,7 @@ export default function ResetPassword() {
                 onClick={() => setShowPassword(!showPassword)}
                 style={styles.eyeButton}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
               </button>
             </div>
             <span style={styles.hint}>Minimum 6 characters</span>
@@ -117,7 +117,7 @@ export default function ResetPassword() {
           <div style={styles.formGroup}>
             <label style={styles.label}>Confirm Password</label>
             <div style={styles.inputWrapper}>
-              <Lock size={20} style={styles.inputIcon} />
+              <IoLockClosed size={20} style={styles.inputIcon} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}

@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Activity,
-  BarChart3,
-  Zap
-} from 'lucide-react';
+import { IoTrendingUp, IoTrendingDown, IoPulse, IoBarChart, IoFlash } from 'react-icons/io5';;
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-finalize.preview.emergentagent.com';
 
@@ -144,7 +138,7 @@ export default function P2PTradingExchange() {
                 alignItems: 'center',
                 gap: '0.25rem'
               }}>
-                {pair.change >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                {pair.change >= 0 ? <IoTrendingUp size={12} /> : <IoTrendingDown size={12} />}
                 {pair.change >= 0 ? '+' : ''}{pair.change.toFixed(2)}%
               </div>
             </button>
@@ -176,7 +170,7 @@ export default function P2PTradingExchange() {
                   alignItems: 'center',
                   gap: '0.25rem'
                 }}>
-                  {priceChange >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                  {priceChange >= 0 ? <IoTrendingUp size={14} /> : <IoTrendingDown size={14} />}
                   {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
                 </div>
               </div>
@@ -188,7 +182,7 @@ export default function P2PTradingExchange() {
                 background: 'rgba(34, 197, 94, 0.1)',
                 borderRadius: '8px'
               }}>
-                <Activity size={16} color="#22C55E" />
+                <IoPulse size={16} color="#22C55E" />
                 <span style={{ fontSize: '0.75rem', color: '#22C55E', fontWeight: '600' }}>
                   LIVE • Updates every 3s
                 </span>
@@ -206,7 +200,7 @@ export default function P2PTradingExchange() {
               flexDirection: 'column',
               gap: '1rem'
             }}>
-              <BarChart3 size={48} color="rgba(0, 240, 255, 0.5)" />
+              <IoBarChart size={48} color="rgba(0, 240, 255, 0.5)" />
               <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem' }}>
                 Live Price Chart
               </div>
@@ -357,7 +351,7 @@ export default function P2PTradingExchange() {
                 gap: '0.5rem'
               }}
             >
-              <Zap size={20} />
+              <IoFlash size={20} />
               {processing ? 'Processing...' : `${orderType === 'buy' ? 'BUY' : 'SELL'} ${selectedPairData?.base}`}
             </button>
           </div>

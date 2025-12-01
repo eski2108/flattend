@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { DollarSign, Plus, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { IoCash, IoAdd, IoAlertCircle, IoClock } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -204,7 +204,7 @@ export default function SellCrypto() {
             alignItems: 'center',
             gap: '1rem'
           }}>
-            <AlertCircle size={32} color="#FBB F24" style={{ flexShrink: 0 }} />
+            <IoAlertCircle size={32} color="#FBB F24" style={{ flexShrink: 0 }} />
             <div style={{ flex: 1 }}>
               <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FBB F24', marginBottom: '0.5rem' }}>
                 Complete KYC Verification
@@ -233,7 +233,7 @@ export default function SellCrypto() {
             <p className="page-subtitle">Create sell orders and receive bank transfers</p>
           </div>
           <Button onClick={() => setShowCreateOrder(true)} data-testid="create-order-btn">
-            <Plus size={20} className="mr-2" />
+            <IoAdd size={20} className="mr-2" />
             Create Sell Order
           </Button>
         </div>
@@ -243,7 +243,7 @@ export default function SellCrypto() {
           <div className="section-header">
             <h3>Bank Accounts</h3>
             <Button variant="outline" size="sm" onClick={() => setShowAddBank(true)} data-testid="add-bank-btn">
-              <Plus size={16} className="mr-2" />
+              <IoAdd size={16} className="mr-2" />
               Add Bank
             </Button>
           </div>
@@ -252,7 +252,7 @@ export default function SellCrypto() {
               {bankAccounts.map((bank) => (
                 <div key={bank.account_id} className="bank-item" data-testid="bank-item">
                   <div className="bank-icon">
-                    <DollarSign size={24} />
+                    <IoCash size={24} />
                   </div>
                   <div className="bank-info">
                     <p className="bank-name">{bank.bank_name}</p>
@@ -318,7 +318,7 @@ export default function SellCrypto() {
               </div>
             ) : (
               <Card className="empty-state" data-testid="empty-sell-orders">
-                <AlertCircle size={48} className="empty-icon" />
+                <IoAlertCircle size={48} className="empty-icon" />
                 <h3>No Sell Orders</h3>
                 <p>Create a sell order to start selling your crypto</p>
               </Card>
@@ -372,7 +372,7 @@ export default function SellCrypto() {
               </div>
             ) : (
               <Card className="empty-state" data-testid="empty-buy-requests">
-                <AlertCircle size={48} className="empty-icon" />
+                <IoAlertCircle size={48} className="empty-icon" />
                 <h3>No Buy Requests</h3>
                 <p>When buyers purchase from your sell orders, they'll appear here</p>
               </Card>
@@ -601,7 +601,7 @@ export default function SellCrypto() {
               </div>
 
               <div className="info-box warn">
-                <AlertCircle size={20} />
+                <IoAlertCircle size={20} />
                 <p>Only release crypto after verifying the bank transfer in your bank account!</p>
               </div>
 

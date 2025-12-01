@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { FileText, ChevronDown } from 'lucide-react';
+import { IoDocument, IoChevronDown } from 'react-icons/io5';;
 import CHXButton from '@/components/CHXButton';
 
 // Import all widgets
@@ -205,7 +205,7 @@ function Dashboard() {
                 coinColor="#00C6FF"
                 variant="secondary"
                 size="small"
-                icon={<FileText size={16} />}
+                icon={<IoDocument size={16} />}
               >
                 Export PDF
               </CHXButton>
@@ -302,7 +302,7 @@ function Dashboard() {
                   <option value="change">Sort by 24h Change</option>
                   <option value="pl">Sort by Profit/Loss</option>
                 </select>
-                <ChevronDown size={16} color="#00C6FF" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                <IoChevronDown size={16} color="#00C6FF" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
               </div>
             </div>
           </div>

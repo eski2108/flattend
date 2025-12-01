@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { MessageCircle, User, Bot, Send, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { IoChatbubbles, IoPersonOutline, IoSend, IoCheckmarkCircle, IoClock, IoAlertCircle } from 'react-icons/io5';;
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -368,7 +368,7 @@ export default function AdminSupportChat() {
                     {session.status === 'ai' ? (
                       <Bot size={16} color="#00F0FF" />
                     ) : (
-                      <User size={16} color="#A855F7" />
+                      <IoPersonOutline size={16} color="#A855F7" />
                     )}
                     <span style={{ color: '#E2E8F0', fontSize: '14px', fontWeight: '600' }}>
                       {session.user_email || `User ${session.session_id.slice(0, 8)}`}
@@ -445,7 +445,7 @@ export default function AdminSupportChat() {
                     gap: '0.5rem'
                   }}
                 >
-                  <CheckCircle size={16} />
+                  <IoCheckmarkCircle size={16} />
                   Mark Resolved
                 </button>
               </div>
@@ -482,10 +482,10 @@ export default function AdminSupportChat() {
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      {msg.sender === 'user' ? <User size={18} color="#fff" /> :
+                      {msg.sender === 'user' ? <IoPersonOutline size={18} color="#fff" /> :
                        msg.sender === 'ai' ? <Bot size={18} color="#00F0FF" /> :
-                       msg.sender === 'agent' ? <CheckCircle size={18} color="#22C55E" /> :
-                       <AlertCircle size={18} color="#FB923C" />}
+                       msg.sender === 'agent' ? <IoCheckmarkCircle size={18} color="#22C55E" /> :
+                       <IoAlertCircle size={18} color="#FB923C" />}
                     </div>
 
                     <div style={{
@@ -549,7 +549,7 @@ export default function AdminSupportChat() {
                     gap: '0.5rem'
                   }}
                 >
-                  <Send size={16} />
+                  <IoSend size={16} />
                   Send
                 </button>
               </div>
@@ -563,7 +563,7 @@ export default function AdminSupportChat() {
               justifyContent: 'center',
               color: '#888'
             }}>
-              <MessageCircle size={48} color="#444" />
+              <IoChatbubbles size={48} color="#444" />
               <p style={{ margin: '1rem 0 0', fontSize: '14px' }}>
                 Select a chat to view messages
               </p>

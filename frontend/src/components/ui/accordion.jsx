@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDown } from "lucide-react"
+import { IoChevronDown } from 'react-icons/io5';
 
 import { cn } from "@/lib/utils"
 
@@ -21,8 +21,7 @@ const AccordionTrigger = React.forwardRef(({ className, children, ...props }, re
       )}
       {...props}>
       {children}
-      <ChevronDown
-        className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+      <IoChevronDown         className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ))

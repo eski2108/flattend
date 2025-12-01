@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, ShieldCheck, TrendingUp, Plus, Eye } from 'lucide-react';
+import { IoCheckmarkCircle, IoCloseCircle, IoTrendingUp, IoAdd, IoEye } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -146,7 +146,7 @@ export default function MerchantCenter() {
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
                 <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '1.5rem', borderRadius: '12px' }}>
-                  <TrendingUp size={32} style={{ color: '#00F0FF', marginBottom: '0.5rem' }} />
+                  <IoTrendingUp size={32} style={{ color: '#00F0FF', marginBottom: '0.5rem' }} />
                   <h3 style={{ color: '#fff', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>Set Your Prices</h3>
                   <p style={{ color: '#888', fontSize: '0.875rem' }}>Control your margins and pricing strategy</p>
                 </div>
@@ -180,7 +180,7 @@ export default function MerchantCenter() {
                   border: '2px solid #22C55E',
                   borderRadius: '12px'
                 }}>
-                  <CheckCircle size={32} style={{ color: '#22C55E', flexShrink: 0 }} />
+                  <IoCheckmarkCircle size={32} style={{ color: '#22C55E', flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                     <h3 style={{ color: '#fff', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.25rem' }}>
                       Account Verified
@@ -201,9 +201,9 @@ export default function MerchantCenter() {
                   borderRadius: '12px'
                 }}>
                   {sellerStatus?.requirements?.has_payment_method ? (
-                    <CheckCircle size={32} style={{ color: '#22C55E', flexShrink: 0 }} />
+                    <IoCheckmarkCircle size={32} style={{ color: '#22C55E', flexShrink: 0 }} />
                   ) : (
-                    <XCircle size={32} style={{ color: '#EF4444', flexShrink: 0 }} />
+                    <IoCloseCircle size={32} style={{ color: '#EF4444', flexShrink: 0 }} />
                   )}
                   <div style={{ flex: 1 }}>
                     <h3 style={{ color: '#fff', fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.25rem' }}>
@@ -335,7 +335,7 @@ export default function MerchantCenter() {
                 e.currentTarget.style.boxShadow = '0 4px 24px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3)';
               }}
             >
-              <Plus size={28} />
+              <IoAdd size={28} />
               Create New Ad
             </button>
 
@@ -435,7 +435,7 @@ export default function MerchantCenter() {
                             gap: '0.5rem'
                           }}
                         >
-                          <Eye size={16} />
+                          <IoEye size={16} />
                           View
                         </button>
                       </div>

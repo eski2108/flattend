@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { User, Mail, Shield, LogOut, Bell, Lock, CreditCard, Globe, Smartphone, TrendingUp } from 'lucide-react';
+import { IoPersonOutline, IoMail, IoShield, IoLogOut, IoNotifications, IoLockClosed, IoCard, IoGlobe, IoPhonePortrait, IoTrendingUp } from 'react-icons/io5';;
 import { toast } from 'sonner';
 import CurrencySelector from '@/components/CurrencySelector';
 import PriceAlerts from '@/components/PriceAlerts';
@@ -435,7 +435,7 @@ export default function Settings() {
         {/* Price Alerts */}
         <div style={{ marginBottom: '2rem' }}>
           <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
-            <TrendingUp size={20} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
+            <IoTrendingUp size={20} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
             Price Alerts
           </h3>
           <PriceAlerts />
@@ -475,7 +475,7 @@ export default function Settings() {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <Mail size={20} color="#00F0FF" />
+                    <IoMail size={20} color="#00F0FF" />
                   </div>
                   <div style={{ color: '#fff', fontSize: '16px', fontWeight: '700' }}>
                     Login Email Alerts
@@ -627,7 +627,7 @@ export default function Settings() {
             e.currentTarget.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.4)';
           }}
         >
-          <LogOut size={20} />
+          <IoLogOut size={20} />
           Log Out
         </button>
 

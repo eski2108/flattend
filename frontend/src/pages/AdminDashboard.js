@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Shield, Users, DollarSign, TrendingUp, AlertTriangle, Search, LogOut, Download } from 'lucide-react';
+import { IoShield, IoPeople, IoCash, IoTrendingUp, IoSearch, IoLogOut, IoCloudDownload } from 'react-icons/io5';;
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -647,7 +647,7 @@ export default function AdminDashboard() {
       <header className="admin-header">
         <div className="admin-header-content">
           <div className="admin-brand">
-            <Shield size={32} className="admin-icon" />
+            <IoShield size={32} className="admin-icon" />
             <div>
               <h1 className="admin-brand-title">Admin Dashboard</h1>
               <p className="admin-brand-subtitle">Business Owner Portal</p>
@@ -674,7 +674,7 @@ export default function AdminDashboard() {
             </Button>
             <span className="admin-user-name">{admin?.full_name || admin?.email}</span>
             <Button variant="outline" onClick={handleLogout} className="logout-btn-admin">
-              <LogOut size={20} />
+              <IoLogOut size={20} />
               <span>Logout</span>
             </Button>
           </div>
@@ -687,7 +687,7 @@ export default function AdminDashboard() {
           <Card className="admin-stat-card">
             <div className="stat-card-content">
               <div className="stat-icon-admin users-icon">
-                <Users size={28} />
+                <IoPeople size={28} />
               </div>
               <div className="stat-details-admin">
                 <p className="stat-label-admin">Total Customers</p>
@@ -702,7 +702,7 @@ export default function AdminDashboard() {
           <Card className="admin-stat-card">
             <div className="stat-card-content">
               <div className="stat-icon-admin volume-icon">
-                <DollarSign size={28} />
+                <IoCash size={28} />
               </div>
               <div className="stat-details-admin">
                 <p className="stat-label-admin">Total Volume</p>
@@ -715,7 +715,7 @@ export default function AdminDashboard() {
           <Card className="admin-stat-card">
             <div className="stat-card-content">
               <div className="stat-icon-admin revenue-icon">
-                <TrendingUp size={28} />
+                <IoTrendingUp size={28} />
               </div>
               <div className="stat-details-admin">
                 <p className="stat-label-admin">Platform Revenue</p>
@@ -2564,7 +2564,7 @@ export default function AdminDashboard() {
             </div>
             <div className="table-actions">
               <div className="search-input-wrapper-admin">
-                <Search className="search-icon-admin" size={20} />
+                <IoSearch className="search-icon-admin" size={20} />
                 <Input
                   placeholder="Search customers..."
                   value={searchTerm}
@@ -2574,7 +2574,7 @@ export default function AdminDashboard() {
                 />
               </div>
               <Button onClick={exportCustomers} className="export-btn">
-                <Download size={20} />
+                <IoCloudDownload size={20} />
                 <span>Export CSV</span>
               </Button>
             </div>

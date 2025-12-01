@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, ArrowLeft } from 'lucide-react';
+import { IoLockClosed, IoArrowBack } from 'react-icons/io5';;
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
             gap: '8px'
           }}
         >
-          <ArrowLeft size={18} />
+          <IoArrowBack size={18} />
           Back to Home
         </button>
 
@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
           padding: '3rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '2rem' }}>
-            <Lock size={40} color="#A855F7" />
+            <IoLockClosed size={40} color="#A855F7" />
             <h1 style={{ color: '#fff', fontSize: '36px', fontWeight: '900', margin: 0 }}>Privacy Policy</h1>
           </div>
 

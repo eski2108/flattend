@@ -3,7 +3,8 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import API_BASE_URL from '@/config/api';
-import { Plus, Edit2, Trash2, Check, X, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { IoAdd, IoCreate, IoCheckmark, IoClose, IoAlertCircle, IoCheckmarkCircle } from 'react-icons/io5';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';;
 
 const API = API_BASE_URL;
 
@@ -219,7 +220,7 @@ function PaymentMethods() {
             alignItems: 'center',
             gap: '0.25rem'
           }}>
-            <AlertCircle size={12} />
+            <IoAlertCircle size={12} />
             {validationErrors[field]}
           </div>
         )}
@@ -262,7 +263,7 @@ function PaymentMethods() {
                 onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                 onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
               >
-                <Plus size={20} />
+                <IoAdd size={20} />
                 Add Payment Method
               </button>
             </div>
@@ -279,9 +280,9 @@ function PaymentMethods() {
                 borderRadius: '12px'
               }}>
                 {activeMethodsCount > 0 ? (
-                  <CheckCircle size={20} color="#22C55E" />
+                  <IoCheckmarkCircle size={20} color="#22C55E" />
                 ) : (
-                  <AlertCircle size={20} color="#EF4444" />
+                  <IoAlertCircle size={20} color="#EF4444" />
                 )}
                 <span style={{ color: activeMethodsCount > 0 ? '#22C55E' : '#EF4444', fontSize: '14px', fontWeight: '600' }}>
                   {activeMethodsCount > 0 
@@ -295,12 +296,12 @@ function PaymentMethods() {
           {/* Payment Methods List */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '4rem', color: '#888' }}>
-              <Loader size={32} style={{ animation: 'spin 1s linear infinite', marginBottom: '1rem' }} />
+              <AiOutlineLoading3Quarters size={32} style={{ animation: 'spin 1s linear infinite', marginBottom: '1rem' }} />
               <p>Loading payment methods...</p>
             </div>
           ) : methods.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '4rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', border: '2px dashed rgba(0, 240, 255, 0.3)' }}>
-              <AlertCircle size={48} color="#888" style={{ marginBottom: '1rem' }} />
+              <IoAlertCircle size={48} color="#888" style={{ marginBottom: '1rem' }} />
               <p style={{ color: '#fff', fontSize: '20px', fontWeight: '700', marginBottom: '0.5rem' }}>No payment methods yet</p>
               <p style={{ color: '#888', fontSize: '14px', marginBottom: '2rem' }}>Add your first payment method to start accepting payments as a seller</p>
               <button
@@ -319,7 +320,7 @@ function PaymentMethods() {
                   gap: '8px'
                 }}
               >
-                <Plus size={20} />
+                <IoAdd size={20} />
                 Add Your First Method
               </button>
             </div>
@@ -354,7 +355,7 @@ function PaymentMethods() {
                         alignItems: 'center',
                         gap: '0.25rem'
                       }}>
-                        {method.is_active ? <Check size={12} /> : <X size={12} />}
+                        {method.is_active ? <IoCheckmark size={12} /> : <IoClose size={12} />}
                         {method.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </div>
@@ -397,7 +398,7 @@ function PaymentMethods() {
                         justifyContent: 'center'
                       }}
                     >
-                      <Edit2 size={18} color="#00F0FF" />
+                      <IoCreate size={18} color="#00F0FF" />
                     </button>
                     <button
                       onClick={() => handleDeleteMethod(method.payment_method_id)}
@@ -468,7 +469,7 @@ function PaymentMethods() {
                   padding: '0.5rem'
                 }}
               >
-                <X size={24} />
+                <IoClose size={24} />
               </button>
             </div>
 
@@ -503,7 +504,7 @@ function PaymentMethods() {
               />
               {validationErrors.nickname && (
                 <div style={{ color: '#EF4444', fontSize: '12px', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <AlertCircle size={12} />
+                  <IoAlertCircle size={12} />
                   {validationErrors.nickname}
                 </div>
               )}
@@ -606,12 +607,12 @@ function PaymentMethods() {
               >
                 {saving ? (
                   <>
-                    <Loader size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                    <AiOutlineLoading3Quarters size={16} style={{ animation: 'spin 1s linear infinite' }} />
                     Saving...
                   </>
                 ) : (
                   <>
-                    <Check size={16} />
+                    <IoCheckmark size={16} />
                     {editingMethod ? 'Update Method' : 'Add Method'}
                   </>
                 )}
@@ -630,7 +631,7 @@ function PaymentMethods() {
                 fontSize: '13px'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '600' }}>
-                  <AlertCircle size={16} />
+                  <IoAlertCircle size={16} />
                   Please fix the following errors:
                 </div>
                 <ul style={{ margin: '0.5rem 0 0 1.5rem', padding: 0 }}>
