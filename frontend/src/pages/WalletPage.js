@@ -1,11 +1,11 @@
-import { BiArrowFromTop, BiArrowToTop } from 'react-icons/bi';
+import { BiArrowFromTop, BiArrowToTop, BiRepeat } from 'react-icons/bi';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { ArrowDownLeft, ArrowUpRight, IoRefresh, IoWallet, RefreshCw, Repeat, Wallet } from 'react-icons/io5';
+import { IoArrowDownCircle as ArrowDownLeft, IoArrowUpCircle as ArrowUpRight, IoRefresh, IoWallet } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
