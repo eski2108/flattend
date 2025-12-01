@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { IoArrowBack } from 'react-icons/io5';;
+import { IoArrowBack } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

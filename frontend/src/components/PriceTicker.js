@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp } from 'react-icons/io5';
+import { IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 import axios from 'axios';
 
 const TICKER_COINS = ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'ripple', 'tether'];

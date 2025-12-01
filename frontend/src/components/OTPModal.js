@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IoClose as X, IoShield as Shield, RefreshCw } from 'react-icons/io5';
+import { IoClose, IoRefresh, IoShield, RefreshCw } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
-import { IoCash as DollarSign, IoLockClosed as Lock, IoRefresh as RefreshCw, IoTrendingUp as TrendingUp, IoWallet as Wallet } from 'react-icons/io5';
+import { IoCash as DollarSign, IoLockClosed, IoRefresh, IoTrendingUp, IoWallet } from 'react-icons/io5';
 import { BiArrowToTop } from 'react-icons/bi';;
 import axios from 'axios';
 import { toast } from 'sonner';

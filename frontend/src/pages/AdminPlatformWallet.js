@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoWallet as Wallet, IoCopy as Copy, IoAdd as Plus, IoTrendingUp as TrendingUp, IoTrendingDown as TrendingDown, IoRefresh as RefreshCw } from 'react-icons/io5';;
+import { IoAdd, IoCopy, IoRefresh as RefreshCw, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp, IoWallet as Wallet } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 

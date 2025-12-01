@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoCash as DollarSign, IoCheckmark as Check, IoCopy as Copy, IoInformationCircle as Info, IoTrendingUp as TrendingUp, IoWallet as Wallet } from 'react-icons/io5';;
+import { IoCash, IoCheckmark, IoCopy, IoInformationCircle, IoTrendingUp, IoWallet } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 

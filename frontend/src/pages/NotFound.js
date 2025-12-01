@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, ArrowLeft } from 'react-icons/io5';
+import { ArrowLeft, Home, IoArrowBack, IoHome } from 'react-icons/io5';
 
 export default function NotFound() {
   const navigate = useNavigate();

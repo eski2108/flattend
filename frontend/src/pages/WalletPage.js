@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Wallet, ArrowDownLeft, ArrowUpRight, RefreshCw, Repeat } from 'react-icons/io5';
+import { ArrowDownLeft, ArrowUpRight, IoRefresh, IoWallet, RefreshCw, Repeat, Wallet } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 

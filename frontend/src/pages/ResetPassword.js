@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoCheckmark as Check, IoCheckmarkCircle as CheckCircle, IoEye as Eye, IoEyeOff as EyeOff, IoLockClosed as Lock } from 'react-icons/io5';;
+import { IoCheckmark as Check, IoCheckmarkCircle, IoEye, IoEyeOff, IoLockClosed } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;

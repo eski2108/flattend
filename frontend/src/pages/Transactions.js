@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { IoFilter as Filter, IoCloudDownload as Download } from 'react-icons/io5';
+import { IoCloudDownload, IoFilter } from 'react-icons/io5';
 import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import axios from 'axios';
 import { toast } from 'sonner';

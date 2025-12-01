@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import Layout from '@/components/Layout';
-import { IoCash as DollarSign, IoCheckmarkCircle as CheckCircle, IoFilter as Filter, IoFlash as Zap, IoPersonOutline as User, IoSearch as Search, IoShield as Shield, IoStar as Star, IoTime as Clock, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp } from 'react-icons/io5';;
+import { IoCash as DollarSign, IoCheckmarkCircle as CheckCircle, IoFilter as Filter, IoFlash, IoPersonOutline, IoSearch as Search, IoShield as Shield, IoStar as Star, IoTime as Clock, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { TraderBadgeList } from '@/components/TraderBadge';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoLockClosed as Lock, IoArrowBack } from 'react-icons/io5';;
+import { IoArrowBack, IoLockClosed } from 'react-icons/io5';
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();

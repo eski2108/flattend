@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoPeople as Users, IoSearch as Search, IoTrophy as Award, IoStar as Star, IoPersonOutline as User, IoMail as Mail, IoCalendar as Calendar, IoCash as DollarSign, IoTrendingUp as TrendingUp } from 'react-icons/io5';;
+import { IoCalendar as Calendar, IoCash as DollarSign, IoMail as Mail, IoPeople, IoPersonOutline, IoSearch, IoStar, IoTrendingUp as TrendingUp, IoTrophy } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
