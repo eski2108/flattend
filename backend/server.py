@@ -3845,9 +3845,11 @@ async def check_express_liquidity(data: Dict):
         if not crypto or not crypto_amount:
             return {"success": False, "has_liquidity": False}
         
+        # Check admin_liquidity collection (uses 'currency' field)
         admin_liquidity = await db.admin_liquidity.find_one({
-            "crypto_currency": crypto,
-            "available_amount": {"$gte": crypto_amount}
+            "currency": crypto,
+            "amount_available": {"$gte": crypto_amount},
+            "status": "active"
         })
         
         return {
