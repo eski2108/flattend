@@ -273,7 +273,7 @@ export default function P2PExpress() {
                 </div>
               )}
 
-              {amount && parseFloat(amount) > 0 && quote && (
+              {fiatAmount && parseFloat(fiatAmount) > 0 && quote && (
                 <div style={{
                   background: hasAdminLiquidity ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 197, 66, 0.1)',
                   border: `2px solid ${hasAdminLiquidity ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 197, 66, 0.3)'}`,
