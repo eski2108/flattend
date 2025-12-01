@@ -1,0 +1,102 @@
+{
+  "timestamp": "2025-12-01T19:33:32.350702",
+  "summary": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "warnings": 1
+  },
+  "results": [
+    {
+      "status": "PASS",
+      "test": "Homepage Load",
+      "message": "Homepage loaded successfully",
+      "details": "",
+      "timestamp": "2025-12-01T19:32:52.900917"
+    },
+    {
+      "status": "PASS",
+      "test": "Login Form",
+      "message": "Login form inputs found and filled",
+      "details": "",
+      "timestamp": "2025-12-01T19:32:54.851690"
+    },
+    {
+      "status": "PASS",
+      "test": "Login Success",
+      "message": "Successfully logged in",
+      "details": "",
+      "timestamp": "2025-12-01T19:32:57.878380"
+    },
+    {
+      "status": "PASS",
+      "test": "Dashboard Load",
+      "message": "Dashboard loaded with title: \ud83d\udc8e Portfolio Dashboard",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:00.962598"
+    },
+    {
+      "status": "PASS",
+      "test": "Wallet Page",
+      "message": "Wallet page loads with balance info",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:04.581380"
+    },
+    {
+      "status": "PASS",
+      "test": "P2P Express",
+      "message": "Dual currency input found (2 inputs)",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:08.285799"
+    },
+    {
+      "status": "PASS",
+      "test": "P2P Selectors",
+      "message": "Currency selectors present",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:08.298172"
+    },
+    {
+      "status": "PASS",
+      "test": "Swap Page",
+      "message": "Swap page loaded with FROM/TO sections",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:13.027807"
+    },
+    {
+      "status": "PASS",
+      "test": "Swap Button",
+      "message": "Swap button found",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:13.040268"
+    },
+    {
+      "status": "PASS",
+      "test": "Trading Page",
+      "message": "Trading page loaded",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:24.845764"
+    },
+    {
+      "status": "WARN",
+      "test": "Console Errors",
+      "message": "35 errors found",
+      "details": "['Failed to load resource: net::ERR_FAILED', 'Failed to load resource: net::ERR_FAILED', 'Failed to load resource: the server responded with a status of 500 ()']",
+      "timestamp": "2025-12-01T19:33:24.845824"
+    },
+    {
+      "status": "PASS",
+      "test": "Navigation Links",
+      "message": "Found 0 navigation links",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:28.112304"
+    },
+    {
+      "status": "PASS",
+      "test": "Mobile View",
+      "message": "Mobile viewport applied correctly",
+      "details": "",
+      "timestamp": "2025-12-01T19:33:32.285696"
+    }
+  ]
+}
