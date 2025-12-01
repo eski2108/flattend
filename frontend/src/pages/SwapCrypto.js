@@ -492,8 +492,7 @@ function SwapCrypto() {
                             fontSize: isMobile ? '16px' : '18px',
                             fontWeight: '700',
                             cursor: 'pointer',
-                            outline: 'none',
-                            flex: 1
+                            outline: 'none'
                           }}
                         >
                           {cryptos.map(crypto => (
