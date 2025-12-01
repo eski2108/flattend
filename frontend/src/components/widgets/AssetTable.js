@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CHXButton from '../CHXButton';
-import { ChevronDown, ArrowDownLeft, ArrowUpRight, Repeat } from 'react-icons/io5';
+import { IoChevronDown as ChevronDown, IoArrowDownCircle as ArrowDownLeft, IoArrowUpCircle as ArrowUpRight } from 'react-icons/io5';
+import { BiRepeat } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 
 // Coin emoji mapping
