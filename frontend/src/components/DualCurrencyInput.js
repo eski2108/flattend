@@ -228,15 +228,15 @@ const DualCurrencyInput = ({
         </div>
 
         {/* Crypto Input - Keep Existing Style */}
-        <div style={{ flex: '1 1 45%', minWidth: '200px' }}>
+        <div style={{ flex: '1', minWidth: '200px', maxWidth: '380px' }}>
           <div style={{
             background: '#0B1B2A',
             border: '1px solid rgba(155, 77, 255, 0.3)',
             borderRadius: '12px',
-            padding: '10px 14px',
+            padding: '12px 16px',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
           }}>
             <input
