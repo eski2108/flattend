@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://crypto-finalize.preview.emergentagent.com/api"
+BASE_URL = "https://exchange-repair.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

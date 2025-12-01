@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-finalize.preview.emergentagent.com
+**URL:** https://exchange-repair.preview.emergentagent.com
 
 **Services Status:**
 ```bash
