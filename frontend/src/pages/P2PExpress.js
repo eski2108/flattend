@@ -386,13 +386,11 @@ export default function P2PExpress() {
                   <DualCurrencyInput
                     cryptoSymbol={selectedCoin}
                     fiatCurrency="GBP"
-                    onFiatChange={(amount) => setFiatAmount(amount)}
+                    onFiatChange={(amount) => {
+                      setFiatAmount(amount);
+                    }}
                     onCryptoChange={(amount) => {
                       setCryptoAmount(amount);
-                      // Trigger quote calculation
-                      if (amount > 0) {
-                        calculateQuote(amount);
-                      }
                     }}
                     initialFiatAmount={fiatAmount}
                     initialCryptoAmount={cryptoAmount}
