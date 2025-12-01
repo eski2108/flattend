@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, AlertCircle, Info, CheckCircle, Megaphone } from 'react-icons/io5';
+import { IoClose as X, IoAlertCircle as AlertCircle, IoInformationCircle as Info, IoCheckmarkCircle as CheckCircle, IoMegaphone as Megaphone } from 'react-icons/io5';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
