@@ -27,8 +27,16 @@ export default function P2PExpress() {
   const [livePrice, setLivePrice] = useState(null);
   const [hasAdminLiquidity, setHasAdminLiquidity] = useState(false);
   const [userBalance, setUserBalance] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const EXPRESS_FEE_PERCENT = 2.5;
+
+  // Handle window resize for mobile responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetchAvailableCoins();
