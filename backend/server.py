@@ -3935,8 +3935,9 @@ async def create_p2p_express_order(order_data: Dict):
             )
             raise HTTPException(status_code=500, detail=f"Failed to credit crypto: {str(e)}")
         
-        # 3. RECORD EXPRESS FEE to platform fee wallet
+        # 3. RECORD AND CREDIT EXPRESS FEE to platform fee wallet
         try:
+            # Record fee transaction
             await db.platform_fees.insert_one({
                 "fee_id": f"FEE_{trade_id}",
                 "trade_id": trade_id,
@@ -3944,9 +3945,28 @@ async def create_p2p_express_order(order_data: Dict):
                 "amount": order_data["express_fee"],
                 "currency": "GBP",
                 "user_id": order_data["user_id"],
+                "crypto": order_data["crypto"],
+                "crypto_amount": order_data["crypto_amount"],
                 "created_at": datetime.now(timezone.utc).isoformat()
             })
-            logger.info(f"✅ Recorded express fee: £{order_data['express_fee']}")
+            
+            # Credit fee to admin fee wallet (internal balance)
+            await db.internal_balances.update_one(
+                {"user_id": "PLATFORM_FEES", "currency": "GBP"},
+                {
+                    "$inc": {
+                        "balance": order_data["express_fee"],
+                        "total_fees": order_data["express_fee"],
+                        "p2p_express_fees": order_data["express_fee"]
+                    },
+                    "$set": {
+                        "last_updated": datetime.now(timezone.utc).isoformat()
+                    }
+                },
+                upsert=True
+            )
+            
+            logger.info(f"✅ Recorded and credited express fee: £{order_data['express_fee']} to admin wallet")
         except Exception as e:
             logger.error(f"⚠️ Failed to record fee: {e}")
         
