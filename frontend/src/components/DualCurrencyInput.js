@@ -107,7 +107,14 @@ const DualCurrencyInput = ({
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <div style={{ 
+        display: 'flex', 
+        gap: '12px', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto',
+        maxWidth: '100%'
+      }}>
         {/* Fiat Input - Match BTC Selector Style */}
         <div style={{ flex: '1 1 45%', minWidth: '200px' }}>
           <div style={{
