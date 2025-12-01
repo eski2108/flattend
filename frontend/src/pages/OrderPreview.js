@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { IoCard, IoShield, IoStar } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
+import DualCurrencyInput from '@/components/DualCurrencyInput';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
