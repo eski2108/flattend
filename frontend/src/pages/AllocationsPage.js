@@ -56,11 +56,7 @@ export default function AllocationsPage() {
   const [activeTab, setActiveTab] = useState('coins');
   const [showPercentages, setShowPercentages] = useState(true);
 
-  useEffect(() => {
-    fetchAllocations();
-  }, [currency]);
-
-  const fetchAllocations = async () => {
+  const fetchAllocations = useCallback(async () => {
     try {
       const userData = localStorage.getItem('cryptobank_user');
       
@@ -103,7 +99,11 @@ export default function AllocationsPage() {
       setTotalValue(0);
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    fetchAllocations();
+  }, [currency, fetchAllocations]);
 
   const formatCurrency = (value) => {
     const symbol = currency === 'GBP' ? '£' : currency === 'EUR' ? '€' : '$';
