@@ -12,7 +12,7 @@ import base64
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://exchange-repair.preview.emergentagent.com/api"
+BACKEND_URL = "https://dual-currency-crypto.preview.emergentagent.com/api"
 
 # Test User Credentials
 TEST_USER = {

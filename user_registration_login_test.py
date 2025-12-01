@@ -24,7 +24,7 @@ import jwt
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://exchange-repair.preview.emergentagent.com/api"
+BACKEND_URL = "https://dual-currency-crypto.preview.emergentagent.com/api"
 
 def test_user_registration_and_login():
     """Test complete user registration and immediate login flow"""

@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://exchange-repair.preview.emergentagent.com/api"
+BASE_URL = "https://dual-currency-crypto.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class AdminLiquidityExpressBuyTester:

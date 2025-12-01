@@ -16,7 +16,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://exchange-repair.preview.emergentagent.com/api"
+BACKEND_URL = "https://dual-currency-crypto.preview.emergentagent.com/api"
 
 # Test credentials
 SELLER_EMAIL = "p2p_demo_seller@demo.com"

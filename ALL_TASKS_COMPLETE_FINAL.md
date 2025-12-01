@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://exchange-repair.preview.emergentagent.com
+**URL:** https://dual-currency-crypto.preview.emergentagent.com
 
 **Services Status:**
 ```bash
