@@ -489,7 +489,7 @@ function SwapCrypto() {
                             background: 'transparent',
                             border: 'none',
                             color: '#FFFFFF',
-                            fontSize: isMobile ? '17px' : '19px',
+                            fontSize: isMobile ? '16px' : '18px',
                             fontWeight: '700',
                             cursor: 'pointer',
                             outline: 'none',
