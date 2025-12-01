@@ -1,0 +1,30 @@
+{
+  "staging_environment": {
+    "enabled": true,
+    "url": "http://localhost:3001",
+    "port": 3001,
+    "database": "coinhubx_staging",
+    "test_mode": true,
+    "auto_rollback": true
+  },
+  "test_requirements": {
+    "must_pass": [
+      "login_test",
+      "wallet_balance_test",
+      "purchase_flow_test",
+      "icon_render_test",
+      "navigation_test"
+    ],
+    "should_pass": [
+      "performance_test",
+      "mobile_responsive_test"
+    ]
+  },
+  "deployment_rules": {
+    "require_backup": true,
+    "require_validation": true,
+    "require_approval": false,
+    "auto_rollback_on_error": true,
+    "max_error_count": 0
+  }
+}
