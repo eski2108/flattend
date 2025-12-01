@@ -321,7 +321,7 @@ export default function OrderPreview() {
           </div>
         </div>
 
-        {/* Amount Input with Toggle - UK Primary */}
+        {/* Amount Input with Dual Currency */}
         <div style={{
           background: 'rgba(26, 31, 58, 0.9)',
           border: '2px solid rgba(0, 240, 255, 0.3)',
@@ -329,86 +329,21 @@ export default function OrderPreview() {
           padding: '1.25rem',
           marginBottom: '1.5rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <div style={{ color: '#888', fontSize: '0.8125rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Enter Amount
-            </div>
-            <button
-              onClick={() => setInputMode(inputMode === 'fiat' ? 'crypto' : 'fiat')}
-              style={{
-                background: 'rgba(0, 240, 255, 0.1)',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
-                borderRadius: '8px',
-                padding: '0.375rem 0.75rem',
-                color: '#00F0FF',
-                fontSize: '0.75rem',
-                fontWeight: '700',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.375rem'
-              }}
-            >
-              <ArrowRightLeft size={14} />
-              Switch to {inputMode === 'fiat' ? cryptoCurrency : currency}
-            </button>
+          <div style={{ color: '#888', fontSize: '0.8125rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+            Enter Amount
           </div>
 
-          {inputMode === 'fiat' ? (
-            <>
-              <div style={{ marginBottom: '0.75rem' }}>
-                <label style={{ color: '#888', fontSize: '0.8125rem', display: 'block', marginBottom: '0.5rem' }}>
-                  Amount ({currency})
-                </label>
-                <Input
-                  type="number"
-                  value={fiatAmount}
-                  onChange={(e) => handleFiatInputChange(e.target.value)}
-                  placeholder="0.00"
-                  style={{
-                    fontSize: '1.25rem',
-                    fontWeight: '700',
-                    color: '#fff',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '2px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '10px',
-                    padding: '1rem',
-                    width: '100%'
-                  }}
-                />
-              </div>
-              <div style={{ color: '#888', fontSize: '0.875rem' }}>
-                ≈ <span style={{ color: '#A855F7', fontWeight: '600' }}>{cryptoAmount || '0.00000000'} {cryptoCurrency}</span>
-              </div>
-            </>
-          ) : (
-            <>
-              <div style={{ marginBottom: '0.75rem' }}>
-                <label style={{ color: '#888', fontSize: '0.8125rem', display: 'block', marginBottom: '0.5rem' }}>
-                  Amount ({cryptoCurrency})
-                </label>
-                <Input
-                  type="number"
-                  value={cryptoAmount}
-                  onChange={(e) => handleCryptoInputChange(e.target.value)}
-                  placeholder="0.00000000"
-                  style={{
-                    fontSize: '1.25rem',
-                    fontWeight: '700',
-                    color: '#fff',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '2px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '10px',
-                    padding: '1rem',
-                    width: '100%'
-                  }}
-                />
-              </div>
-              <div style={{ color: '#888', fontSize: '0.875rem' }}>
-                ≈ <span style={{ color: '#A855F7', fontWeight: '600' }}>{symbol}{fiatAmount || '0.00'}</span>
-              </div>
-            </>
-          )}
+          <DualCurrencyInput
+            cryptoSymbol={cryptoCurrency}
+            fiatCurrency={currency}
+            onFiatChange={(amount) => setFiatAmount(amount.toString())}
+            onCryptoChange={(amount) => setCryptoAmount(amount.toString())}
+            initialFiatAmount={fiatAmount}
+            initialCryptoAmount={cryptoAmount}
+            fee={0}
+            showCurrencySelector={false}
+            label=""
+          />
         </div>
 
         {/* Payment Methods - Always Visible */}
