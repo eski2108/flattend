@@ -500,6 +500,26 @@ function SwapCrypto() {
                           ))}
                         </select>
                       </div>
+                    </div>
+                    
+                    {/* To Amount Display - CENTERED */}
+                    <div style={{ 
+                      background: '#0B1B2A',
+                      border: '1px solid rgba(155, 77, 255, 0.3)',
+                      borderRadius: '12px',
+                      padding: isMobile ? '16px' : '18px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                      maxWidth: '100%',
+                      margin: '0 auto'
+                    }}>
+                      <span style={{ 
+                        fontSize: isMobile ? '12px' : '13px',
+                        color: '#8F9BB3',
+                        fontWeight: '600'
+                      }}>You Receive:</span>
                       <input
                         type="text"
                         value={toAmount}
@@ -507,20 +527,24 @@ function SwapCrypto() {
                         placeholder="0.00"
                         style={{
                           flex: 1,
-                          padding: isMobile ? '12px' : '14px',
                           background: 'transparent',
                           border: 'none',
                           color: '#9B4DFF',
-                          fontSize: isMobile ? '22px' : '26px',
+                          fontSize: isMobile ? '20px' : '24px',
                           fontWeight: '700',
                           outline: 'none',
-                          textAlign: isMobile ? 'left' : 'right',
-                          width: isMobile ? '100%' : 'auto'
+                          textAlign: 'right'
                         }}
                       />
+                      <span style={{ 
+                        color: '#9B4DFF',
+                        fontSize: isMobile ? '14px' : '16px',
+                        fontWeight: '600'
+                      }}>{toCrypto}</span>
                     </div>
+                    
                     {prices && toAmount && prices[toCrypto] && (
-                      <div style={{ marginTop: '12px', textAlign: isMobile ? 'left' : 'right', fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3' }}>
+                      <div style={{ marginTop: '8px', textAlign: 'center', fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>
                         ≈ £{(parseFloat(toAmount || 0) * (prices[toCrypto]?.price_gbp || 0)).toFixed(2)}
                       </div>
                     )}
