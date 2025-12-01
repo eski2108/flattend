@@ -199,10 +199,11 @@ export default function P2PExpress() {
       if (response.data.success) {
         if (hasAdminLiquidity) {
           toast.success('Express order completed! Crypto credited instantly.');
+          // Redirect to wallet to see new balance
+          navigate('/wallet');
         } else {
           toast.success('Express order created! Matched with seller.');
-        }
-        navigate(`/p2p/trade-detail/${response.data.trade_id}`);
+          navigate(`/p2p/trade/${response.data.trade_id}`);
       } else {
         toast.error(response.data.message || 'Failed to create order');
       }
