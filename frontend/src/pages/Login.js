@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { IoEye as Eye, IoEyeOff as EyeOff, IoLockClosed, IoMail, IoShield } from 'react-icons/io5';
+import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoShield } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
