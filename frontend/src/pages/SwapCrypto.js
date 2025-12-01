@@ -481,7 +481,7 @@ function SwapCrypto() {
                         borderRadius: '12px', 
                         border: '1px solid rgba(155, 77, 255, 0.3)' 
                       }}>
-                        <span style={{ fontSize: '28px' }}>{getToCrypto().logo}</span>
+                        <span style={{ fontSize: '24px' }}>{getToCrypto().logo}</span>
                         <select
                           value={toCrypto}
                           onChange={(e) => setToCrypto(e.target.value)}
