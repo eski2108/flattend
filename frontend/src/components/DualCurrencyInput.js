@@ -129,7 +129,13 @@ const DualCurrencyInput = ({
             transition: 'all 0.3s'
           }}>
             {/* £ Symbol - Thinner */}
-            <span style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '500' }}>{currencySymbol}</span>
+            <span style={{ 
+              color: '#00F0FF', 
+              fontSize: '16px', 
+              fontWeight: '500',
+              flexShrink: 0,
+              minWidth: '16px'
+            }}>{currencySymbol}</span>
             
             {/* Input */}
             <input
@@ -146,7 +152,8 @@ const DualCurrencyInput = ({
                 fontSize: '18px',
                 fontWeight: '600',
                 outline: 'none',
-                width: '100%'
+                minWidth: '80px',
+                width: 'auto'
               }}
             />
             
