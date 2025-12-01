@@ -443,21 +443,44 @@ function SwapCrypto() {
                     </button>
                   </div>
 
-                  {/* To Section with Logo */}
+                  {/* To Section with Logo - CENTERED */}
                   <div style={{
                     background: 'rgba(0, 0, 0, 0.4)',
                     border: '1px solid rgba(155, 77, 255, 0.3)',
                     borderRadius: '18px',
                     padding: isMobile ? '20px' : '24px',
-                    marginTop: '20px',
-                    boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)'
+                    marginTop: '24px',
+                    boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                    maxWidth: isMobile ? '100%' : '600px',
+                    margin: '24px auto 0 auto'
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
-                      <span style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>To</span>
-                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: '#8F9BB3' }}>Balance: {(walletBalances[toCrypto] || 0).toFixed(8)}</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '14px' : '16px', alignItems: isMobile ? 'stretch' : 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(155, 77, 255, 0.1)', padding: isMobile ? '12px' : '14px', borderRadius: '12px', border: '1px solid rgba(155, 77, 255, 0.3)', minWidth: isMobile ? '100%' : '180px' }}>
+                    {/* Header with To label and ETH selector - CENTERED */}
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '16px',
+                      flexWrap: isMobile ? 'wrap' : 'nowrap',
+                      gap: '12px'
+                    }}>
+                      <span style={{ 
+                        fontSize: isMobile ? '13px' : '14px', 
+                        color: '#8F9BB3', 
+                        fontWeight: '600', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.5px' 
+                      }}>To</span>
+                      
+                      {/* ETH Selector - Same style as BTC */}
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px', 
+                        background: 'rgba(155, 77, 255, 0.1)', 
+                        padding: isMobile ? '10px 14px' : '12px 16px', 
+                        borderRadius: '12px', 
+                        border: '1px solid rgba(155, 77, 255, 0.3)' 
+                      }}>
                         <span style={{ fontSize: '28px' }}>{getToCrypto().logo}</span>
                         <select
                           value={toCrypto}
