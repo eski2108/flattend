@@ -209,3 +209,5 @@ frontend/node_modules/.cache/default-development/0.pack_
 *.env.*
 .backups/stable/frontend_20251201_150633/node_modules/.cache/default-development/5.pack
 .backups/stable/frontend_20251201_150633/node_modules/.cache/default-development/4.pack
+.backups/stable/frontend_20251201_150929/node_modules/.cache/default-development/5.pack
+.backups/stable/frontend_20251201_150929/node_modules/.cache/default-development/4.pack
