@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://crypto-finalize.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-repair.preview.emergentagent.com/api"
 
 class SwapTestRunner:
     def __init__(self):
