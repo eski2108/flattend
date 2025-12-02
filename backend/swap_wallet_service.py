@@ -369,39 +369,16 @@ async def execute_instant_sell_with_wallet(db, wallet_service, user_id: str, cry
             metadata={"crypto_currency": crypto_currency, "crypto_amount": crypto_amount}
         )
         
-        # Credit admin wallet with admin portion of fee
+        # Credit admin wallet with full fee
+        # (Note: referral_engine already handles commission split and crediting)
         await wallet_service.credit(
             user_id="admin_wallet",
             currency=fiat_currency,
-            amount=admin_fee,
+            amount=fee_amount,
             transaction_type="instant_sell_fee",
             reference_id=sell_id,
             metadata={"user_id": user_id, "total_fee": fee_amount}
         )
-        
-        # Credit referrer if applicable
-        if referrer_id and referrer_commission > 0:
-            await wallet_service.credit(
-                user_id=referrer_id,
-                currency=fiat_currency,
-                amount=referrer_commission,
-                transaction_type="referral_commission",
-                reference_id=sell_id,
-                metadata={"referred_user_id": user_id, "transaction_type": "instant_sell"}
-            )
-            
-            # Log referral commission
-            await db.referral_commissions.insert_one({
-                "referrer_id": referrer_id,
-                "referred_user_id": user_id,
-                "transaction_type": "instant_sell",
-                "fee_amount": fee_amount,
-                "commission_amount": referrer_commission,
-                "commission_percent": commission_percent,
-                "currency": fiat_currency,
-                "sell_id": sell_id,
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
         
         # Save instant sell transaction
         await db.instant_sell_transactions.insert_one({
