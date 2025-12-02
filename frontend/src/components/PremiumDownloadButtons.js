@@ -164,9 +164,9 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
           onMouseEnter={() => setHoveredButton('appstore')}
           onMouseLeave={() => setHoveredButton(null)}
           onClick={handleAppStoreClick}
-          aria-label="Download CoinHubX for iPhone from App Store"
+          aria-label="Install CoinHubX PWA for iPhone"
         >
-          {/* Subtle glow overlay */}
+          {/* Premium glow overlay */}
           <div style={{
             position: 'absolute',
             top: 0,
@@ -174,30 +174,33 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
             right: 0,
             bottom: 0,
             background: hoveredButton === 'appstore' 
-              ? 'radial-gradient(circle at center, rgba(0, 240, 255, 0.1) 0%, transparent 70%)'
-              : 'transparent',
+              ? 'radial-gradient(circle at center, rgba(0, 240, 255, 0.15) 0%, rgba(123, 44, 255, 0.1) 50%, transparent 80%)'
+              : 'radial-gradient(circle at center, rgba(0, 240, 255, 0.05) 0%, transparent 60%)',
             pointerEvents: 'none',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.4s ease',
+            borderRadius: '20px'
           }} />
           
           <div style={{
             ...iconContainerStyle,
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
+            boxShadow: hoveredButton === 'appstore' 
+              ? '0 0 20px rgba(0, 240, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1)'
+              : '0 0 10px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.05)'
           }}>
             <IoLogoApple style={{ 
               color: '#ffffff',
-              filter: hoveredButton === 'appstore' ? 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' : 'none'
+              filter: hoveredButton === 'appstore' 
+                ? 'drop-shadow(0 0 12px rgba(0, 240, 255, 1)) drop-shadow(0 0 24px rgba(255, 255, 255, 0.5))' 
+                : 'drop-shadow(0 0 6px rgba(0, 240, 255, 0.6))'
             }} />
           </div>
           
           <div style={textContainerStyle}>
-            <div style={labelStyle}>Download on the</div>
-            <div style={storeNameStyle}>App Store</div>
+            <div style={labelStyle}>Install PWA on</div>
+            <div style={storeNameStyle}>iPhone</div>
           </div>
           
-          <IoArrowForward style={arrowStyle} />
+          <IoPhonePortrait style={arrowStyle} />
         </button>
 
         {/* Google Play Button */}
