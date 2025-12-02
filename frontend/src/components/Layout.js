@@ -9,6 +9,7 @@ import ExpressBuyModal from '@/components/ExpressBuyModal';
 import NotificationBell from '@/components/NotificationBell';
 import PromoBanner from '@/components/PromoBanner';
 import ChatWidget from '@/components/ChatWidget';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Layout({ children }) {
   const { user, disconnectWallet } = useWallet();
