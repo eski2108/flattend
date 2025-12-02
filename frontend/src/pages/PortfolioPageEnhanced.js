@@ -28,6 +28,16 @@ export default function PortfolioPageEnhanced() {
     const u = JSON.parse(userData);
     setUser(u);
     fetchPortfolio(u.user_id);
+
+    // Auto-refresh portfolio every 10 seconds
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 Auto-refreshing portfolio...');
+      fetchPortfolio(u.user_id);
+    }, 10000); // 10 seconds
+
+    return () => {
+      clearInterval(refreshInterval);
+    };
   }, [navigate]);
 
   const fetchPortfolio = async (userId) => {
