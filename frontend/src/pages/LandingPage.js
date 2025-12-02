@@ -884,188 +884,44 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Download App Section */}
-      <section className="download-app-section" id="download-app">
-        <div className="download-content">
-          <h2 className="section-title" data-testid="download-title">Download Coin Hub IoClose as X App</h2>
-          <p className="download-subtitle">
-            Use Coin Hub IoClose as X on any device.
-          </p>
-          <div className="download-buttons-container" style={{ 
-            display: 'flex', 
-            gap: '2rem', 
-            justifyContent: 'center', 
-            flexWrap: 'wrap', 
-            marginTop: '3rem',
-            maxWidth: '800px',
-            margin: '0 auto'
-          }}>
-            {/* Android Download Button - Premium Design */}
-            <button
-              onClick={() => window.open('/api/download-app', '_blank')}
-              style={{
-                position: 'relative',
-                background: 'linear-gradient(135deg, #00F0FF 0%, #00B8E6 100%)',
-                color: '#000',
-                padding: '0',
-                fontSize: '1rem',
-                fontWeight: '700',
-                border: 'none',
-                borderRadius: '16px',
-                boxShadow: '0 8px 32px rgba(0, 240, 255, 0.4), 0 0 0 1px rgba(0, 240, 255, 0.1)',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0, 4, 0, 0.2, 1)',
-                minWidth: '320px',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                e.currentTarget.style.boxShadow = '0 16px 48px rgba(0, 240, 255, 0.6), 0 0 0 2px rgba(0, 240, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 240, 255, 0.4), 0 0 0 1px rgba(0, 240, 255, 0.1)';
-              }}
-            >
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '1.5rem 2rem',
-                background: 'rgba(0, 0, 0, 0.05)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    background: 'rgba(0, 0, 0, 0.1)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '28px'
-                  }}>
-                    📱
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ 
-                      fontSize: '0.75rem', 
-                      opacity: 0.7, 
-                      fontWeight: '600',
-                      letterSpacing: '0.5px',
-                      textTransform: 'uppercase',
-                      marginBottom: '2px'
-                    }}>
-                      Download for
-                    </div>
-                    <div style={{ 
-                      fontSize: '1.5rem', 
-                      fontWeight: '900',
-                      letterSpacing: '-0.5px',
-                      lineHeight: '1'
-                    }}>
-                      Android
-                    </div>
-                  </div>
-                </div>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
-
-            {/* iOS Download Button - Premium Design */}
-            <button
-              onClick={() => {
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                if (isIOS) {
-                  alert('To install on iPhone:\n\n1. Tap the Share button\n2. Scroll and tap "Add to Home Screen"\n3. Tap "Add" to install Coin Hub X\n\nThe app will appear on your home screen!');
-                } else {
-                  window.open('https://p2p-repair.preview.emergentagent.com', '_blank');
-                }
-              }}
-              style={{
-                position: 'relative',
-                background: 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%)',
-                color: '#fff',
-                padding: '0',
-                fontSize: '1rem',
-                fontWeight: '700',
-                border: 'none',
-                borderRadius: '16px',
-                boxShadow: '0 8px 32px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.1)',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                minWidth: '320px',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                e.currentTarget.style.boxShadow = '0 16px 48px rgba(168, 85, 247, 0.6), 0 0 0 2px rgba(168, 85, 247, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.1)';
-              }}
-            >
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '1.5rem 2rem',
-                background: 'rgba(0, 0, 0, 0.15)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '28px'
-                  }}>
-                    🍎
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ 
-                      fontSize: '0.75rem', 
-                      opacity: 0.8, 
-                      fontWeight: '600',
-                      letterSpacing: '0.5px',
-                      textTransform: 'uppercase',
-                      marginBottom: '2px'
-                    }}>
-                      Download for
-                    </div>
-                    <div style={{ 
-                      fontSize: '1.5rem', 
-                      fontWeight: '900',
-                      letterSpacing: '-0.5px',
-                      lineHeight: '1'
-                    }}>
-                      iPhone
-                    </div>
-                  </div>
-                </div>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
-          </div>
-          <p className="download-note" style={{
-            color: '#a0a0a0',
-            fontSize: '14px',
-            marginTop: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem'
-          }}>
-            Full P2P trading experience with escrow protection on your mobile device
-          </p>
+      {/* Download App Section - Premium Design */}
+      <section className="download-app-section" id="download-app" style={{
+        padding: 'clamp(4rem, 8vh, 6rem) clamp(1rem, 4vw, 2rem)',
+        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.03) 0%, rgba(168, 85, 247, 0.03) 100%)',
+        borderTop: '1px solid rgba(0, 240, 255, 0.2)',
+        position: 'relative'
+      }}>
+        {/* Ambient background glow */}
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          left: '10%',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          pointerEvents: 'none'
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '20%',
+          right: '10%',
+          width: '250px',
+          height: '250px',
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          pointerEvents: 'none'
+        }} />
+        
+        <div style={{ 
+          maxWidth: '900px', 
+          margin: '0 auto', 
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <PremiumDownloadButtons />
         </div>
       </section>
 
