@@ -832,7 +832,7 @@ export default function SpotTrading() {
                     {/* Amount Input - SIMPLIFIED */}
                     <div>
                       <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Amount (BTC)
+                        Amount
                       </label>
                       <input
                         type="number"
