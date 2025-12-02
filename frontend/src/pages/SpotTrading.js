@@ -15,6 +15,7 @@ export default function SpotTrading() {
   const [orderType, setOrderType] = useState('buy');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState('');
+  const [inputMode, setInputMode] = useState('fiat'); // 'fiat' or 'crypto'
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
     change24h: 0,
