@@ -11,6 +11,7 @@ import NotificationBell from '@/components/NotificationBell';
 import PromoBanner from '@/components/PromoBanner';
 import ChatWidget from '@/components/ChatWidget';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import PremiumDownloadButtons from '@/components/PremiumDownloadButtons';
 
 export default function Layout({ children }) {
   const { user, disconnectWallet } = useWallet();
