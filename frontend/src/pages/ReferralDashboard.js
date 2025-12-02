@@ -72,22 +72,89 @@ export default function ReferralDashboard() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(180deg, #020618 0%, #071327 100%)', 
+      padding: '2rem',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Background Effects */}
+      <div style={{
+        position: 'absolute',
+        top: '10%',
+        left: '10%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(0, 240, 255, 0.15), transparent)',
+        filter: 'blur(80px)',
+        pointerEvents: 'none'
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '20%',
+        right: '15%',
+        width: '400px',
+        height: '400px',
+        background: 'radial-gradient(circle, rgba(168, 85, 247, 0.12), transparent)',
+        filter: 'blur(100px)',
+        pointerEvents: 'none'
+      }} />
+      
+      <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        {/* Premium Header */}
+        <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '1rem',
+            padding: '12px 24px',
+            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)',
+            border: '2px solid rgba(0, 240, 255, 0.3)',
+            borderRadius: '50px',
+            boxShadow: '0 0 40px rgba(0, 240, 255, 0.3)'
+          }}>
+            <IoTrophy size={28} style={{ color: '#00F0FF', filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
+            <span style={{
+              fontSize: '14px',
+              fontWeight: '700',
+              background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}>
+              Elite Referral Program
+            </span>
+          </div>
+          
           <h1 style={{
-            fontSize: '36px',
+            fontSize: '48px',
             fontWeight: '900',
-            background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 50%, #00F0FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '0.5rem'
+            marginBottom: '1rem',
+            textShadow: '0 0 30px rgba(0, 240, 255, 0.5)',
+            letterSpacing: '-1px'
           }}>
-            Referral Program
+            Referral Dashboard
           </h1>
-          <p style={{ color: '#A3AEC2', fontSize: '16px' }}>
-            Earn {referralData.referral_tier === 'golden' ? '50%' : '20%'} commission on every transaction your referrals make
+          <p style={{ 
+            color: '#A3AEC2', 
+            fontSize: '18px',
+            maxWidth: '600px',
+            margin: '0 auto',
+            lineHeight: '1.6'
+          }}>
+            Earn <span style={{ 
+              color: referralData.referral_tier === 'golden' ? '#FFD700' : '#00F0FF',
+              fontWeight: '700',
+              textShadow: `0 0 10px ${referralData.referral_tier === 'golden' ? '#FFD700' : '#00F0FF'}80`
+            }}>
+              {referralData.referral_tier === 'golden' ? '50%' : '20%'} commission
+            </span> on every transaction your referrals make
           </p>
         </div>
 
