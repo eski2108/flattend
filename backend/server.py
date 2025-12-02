@@ -10255,8 +10255,6 @@ async def execute_trading_transaction(request: dict):
             },
             upsert=True
         )
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
         
         # Log transaction (for both buy and sell)
         transaction_id = str(uuid.uuid4())
@@ -10273,8 +10271,8 @@ async def execute_trading_transaction(request: dict):
             "fee": fee_amount,
             "fee_percent": trading_fee_percent,
             "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
-            "referrer_id": referrer_id,
+            "referrer_commission": commission_result.get("commission_amount", 0) if commission_result["success"] else 0,
+            "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
             "final_amount": final_amount,
             "source": "spot_trading",
             "timestamp": datetime.now(timezone.utc).isoformat()
@@ -10289,8 +10287,8 @@ async def execute_trading_transaction(request: dict):
             "fee_amount": fee_amount,
             "fee_percent": trading_fee_percent,
             "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
-            "referrer_id": referrer_id,
+            "referrer_commission": commission_result.get("commission_amount", 0) if commission_result["success"] else 0,
+            "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
             "currency": quote_currency,
             "pair": pair,
             "trade_type": trade_type,
