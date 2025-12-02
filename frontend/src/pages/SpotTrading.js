@@ -24,6 +24,8 @@ export default function SpotTrading() {
   const [tradingFee, setTradingFee] = useState(0.1);
   const [userBalance, setUserBalance] = useState({ crypto: 0, fiat: 0 });
   const [isLoading, setIsLoading] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [lastOrderDetails, setLastOrderDetails] = useState(null);
 
   const tradingPairs = [
     { symbol: 'BTCUSD', name: 'BTC/USD', base: 'BTC', quote: 'USD' },
