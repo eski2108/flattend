@@ -1032,28 +1032,6 @@ export default function Dashboard() {
                       borderRadius: '10px',
                       border: '1px solid rgba(239, 68, 68, 0.2)'
                     }}>
-                      <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>KYC Verification</span>
-                      <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <div style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          background: '#EF4444',
-                          boxShadow: '0 0 10px rgba(239, 68, 68, 0.8)'
-                        }} />
-                        Unverified
-                      </span>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '12px',
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(239, 68, 68, 0.2)'
-                    }}>
                       <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>2FA Security</span>
                       <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700' }}>Disabled</span>
                     </div>
