@@ -41,7 +41,26 @@ async def create_test_user():
             "referral_code": "HZZCUVHF"
         }
         await db.users.insert_one(user_doc)
-        print(f"✅ Created user: {email}")
+        print(f"✅ Created user in users collection: {email}")
+    
+    # Also create in user_accounts collection for referral system
+    existing_user_account = await db.user_accounts.find_one({"user_id": user_id})
+    if not existing_user_account:
+        # Hash password
+        password_hash = bcrypt.hashpw("password123".encode('utf-8'), bcrypt.gensalt())
+        
+        user_account_doc = {
+            "user_id": user_id,
+            "name": "Test User",
+            "email": email,
+            "password": password_hash.decode('utf-8'),
+            "is_admin": False,
+            "referral_tier": "standard",
+            "referral_code": "HZZCUVHF",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.user_accounts.insert_one(user_account_doc)
+        print(f"✅ Created user in user_accounts collection: {email}")
     
     # Create wallet balances as mentioned in the request:
     # £3,907 GBP, 0.003 BTC, 0.2 ETH, 1 SOL, 10 XRP
