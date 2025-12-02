@@ -212,8 +212,8 @@ logger.info("✅ P2P Notification Service initialized")
 # JWT Secret Key
 SECRET_KEY = "emergent_secret_key_2024"
 
-# Create the main app without a prefix
-app = FastAPI()
+# Create the main app without a prefix with custom response class
+app = FastAPI(default_response_class=SafeJSONResponse)
 # Rate Limiting Storage
 registration_attempts = defaultdict(list)
 RATE_LIMIT_REGISTRATIONS = 3  # Max registrations per IP
