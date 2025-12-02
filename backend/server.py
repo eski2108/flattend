@@ -15813,6 +15813,73 @@ async def assign_golden_tier(request: dict):
         logger.error(f"Error assigning golden: {e}")
         return {"success": False, "message": str(e)}
 
+@api_router.get("/user/referral-dashboard/{user_id}")
+async def get_referral_dashboard(user_id: str):
+    """Get complete referral dashboard data"""
+    try:
+        # Get user account
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            return {"success": False, "message": "User not found"}
+        
+        # Get total commissions earned
+        commissions = await db.referral_commissions.find({"referrer_id": user_id}).to_list(1000)
+        total_earnings = sum(c.get("commission_amount", 0) for c in commissions)
+        
+        # Get referred users count
+        referred_users = await db.user_accounts.find({"referred_by": user_id}).to_list(1000)
+        
+        # Earnings by fee type
+        fee_breakdown = {}
+        for comm in commissions:
+            fee_type = comm.get("fee_type", "UNKNOWN")
+            fee_breakdown[fee_type] = fee_breakdown.get(fee_type, 0) + comm.get("commission_amount", 0)
+        
+        earnings_by_fee_type = [{"fee_type": k, "amount": v} for k, v in fee_breakdown.items()]
+        
+        # Recent commission history
+        recent_commissions = sorted(commissions, key=lambda x: x.get("created_at", ""), reverse=True)[:20]
+        
+        return {
+            "success": True,
+            "data": {
+                "referral_code": user.get("referral_code", user_id[:8].upper()),
+                "referral_link": f"https://coinhubpro.preview.emergentagent.com/register?ref={user.get('referral_code', user_id[:8].upper())}",
+                "total_referrals": len(referred_users),
+                "active_referrals": len([u for u in referred_users if u.get("is_active", True)]),
+                "total_earnings": total_earnings,
+                "pending_earnings": 0,  # All paid instantly
+                "referral_tier": user.get("referral_tier", "standard"),
+                "can_upgrade_to_vip": user.get("referral_tier", "standard") == "standard",
+                "referred_users": [
+                    {
+                        "email": u.get("email", ""),
+                        "join_date": u.get("created_at", ""),
+                        "total_fees_generated": 0,  # Calculate if needed
+                        "commission_earned": sum(c.get("commission_amount", 0) for c in commissions if c.get("referred_user_id") == u.get("user_id"))
+                    }
+                    for u in referred_users[:10]
+                ],
+                "commission_history": [
+                    {
+                        "date": c.get("created_at", ""),
+                        "fee_type": c.get("fee_type", ""),
+                        "fee_amount": c.get("fee_amount", 0),
+                        "commission_rate": c.get("commission_rate", 0),
+                        "commission_amount": c.get("commission_amount", 0),
+                        "currency": c.get("currency", "GBP")
+                    }
+                    for c in recent_commissions
+                ],
+                "earnings_by_fee_type": earnings_by_fee_type
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting referral dashboard: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "message": str(e)}
+
 # ============================================================================
 # TRADING MODULE ENDPOINTS
 # ============================================================================
