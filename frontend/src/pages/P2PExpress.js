@@ -259,10 +259,8 @@ export default function P2PExpress() {
               </div>
             </div>
 
+            {/* Main Purchase Section */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '24px' : '32px' }}>
-              
-              {/* Main Purchase Section */}
-              <div>
               
               {/* Live Price Card - Matching Swap card style */}
               {livePrice && (
