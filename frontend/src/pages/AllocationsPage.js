@@ -94,8 +94,19 @@ export default function AllocationsPage() {
     try {
       const userData = localStorage.getItem('cryptobank_user');
       
+      // Demo data for showcase - remove this in production
       if (!userData) {
-        navigate('/login');
+        // Show demo data for design showcase
+        const demoAllocations = [
+          { symbol: 'BTC', coin: 'Bitcoin', amount: 0.5432, value: 24567.89, percent: 45.2 },
+          { symbol: 'ETH', coin: 'Ethereum', amount: 12.8765, value: 18234.56, percent: 33.5 },
+          { symbol: 'USDT', coin: 'Tether', amount: 5000, value: 5000.00, percent: 9.2 },
+          { symbol: 'SOL', coin: 'Solana', amount: 89.234, value: 4123.45, percent: 7.6 },
+          { symbol: 'BNB', coin: 'BNB', amount: 15.67, value: 2456.78, percent: 4.5 }
+        ];
+        setAllocations(demoAllocations);
+        setTotalValue(54382.68);
+        setLoading(false);
         return;
       }
       
