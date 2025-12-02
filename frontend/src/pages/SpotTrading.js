@@ -410,7 +410,7 @@ export default function SpotTrading() {
             </div>
 
             {/* Main Trading Layout */}
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: isMobile ? '20px' : '32px' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '16px' : '32px' }}>
               
               {/* Left Column: Chart + Order Panel */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
