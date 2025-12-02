@@ -918,41 +918,91 @@ export default function SpotTrading() {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                    {/* Amount Input - SIMPLIFIED */}
+                    {/* Amount Input - WITH CURRENCY TOGGLE */}
                     <div>
-                      <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Amount
-                      </label>
-                      <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => {
-                          console.log('Amount changed:', e.target.value);
-                          setAmount(e.target.value);
-                        }}
-                        placeholder="0.00"
-                        step="0.00000001"
-                        style={{
-                          width: '100%',
-                          padding: isMobile ? '14px' : '16px',
-                          background: 'rgba(0, 0, 0, 0.4)',
-                          border: '1px solid rgba(0, 240, 255, 0.3)',
-                          borderRadius: '12px',
-                          color: '#FFFFFF',
-                          fontSize: isMobile ? '16px' : '18px',
-                          fontWeight: '600',
-                          outline: 'none',
-                          transition: 'all 0.3s'
-                        }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
-                          e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
-                        }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                      />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <label style={{ fontSize: '13px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Amount
+                        </label>
+                        <button
+                          onClick={toggleInputMode}
+                          style={{
+                            background: 'rgba(0, 240, 255, 0.1)',
+                            border: '1px solid rgba(0, 240, 255, 0.3)',
+                            borderRadius: '6px',
+                            padding: '4px 12px',
+                            color: '#00F0FF',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          ↔ {inputMode === 'fiat' ? 'GBP' : tradingPairs.find(p => p.symbol === selectedPair)?.base}
+                        </button>
+                      </div>
+                      <div style={{ position: 'relative' }}>
+                        {inputMode === 'fiat' && (
+                          <span style={{
+                            position: 'absolute',
+                            left: '16px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: '#00F0FF',
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            pointerEvents: 'none',
+                            zIndex: 1
+                          }}>
+                            £
+                          </span>
+                        )}
+                        <input
+                          type="number"
+                          value={amount}
+                          onChange={(e) => {
+                            setAmount(e.target.value);
+                          }}
+                          placeholder={inputMode === 'fiat' ? '20' : '0.001'}
+                          step={inputMode === 'fiat' ? '1' : '0.00000001'}
+                          style={{
+                            width: '100%',
+                            padding: isMobile ? '14px' : '16px',
+                            paddingLeft: inputMode === 'fiat' ? '36px' : (isMobile ? '14px' : '16px'),
+                            background: 'rgba(0, 0, 0, 0.4)',
+                            border: '1px solid rgba(0, 240, 255, 0.3)',
+                            borderRadius: '12px',
+                            color: '#FFFFFF',
+                            fontSize: isMobile ? '16px' : '18px',
+                            fontWeight: '600',
+                            outline: 'none',
+                            transition: 'all 0.3s'
+                          }}
+                          onFocus={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                            e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
+                          }}
+                          onBlur={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        />
+                      </div>
+                      {amount && marketStats.lastPrice > 0 && (
+                        <div style={{ 
+                          marginTop: '8px', 
+                          fontSize: '12px', 
+                          color: '#8F9BB3',
+                          textAlign: 'right'
+                        }}>
+                          {inputMode === 'fiat' 
+                            ? `≈ ${calculateAmount().crypto.toFixed(6)} ${tradingPairs.find(p => p.symbol === selectedPair)?.base}`
+                            : `≈ £${calculateAmount().fiat.toFixed(2)}`
+                          }
+                        </div>
+                      )}
                     </div>
 
                     {/* Price Input */}
