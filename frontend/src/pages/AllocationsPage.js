@@ -443,105 +443,216 @@ export default function AllocationsPage() {
                 </div>
               )}
 
-              {/* Allocation Cards Grid */}
+              {/* Premium Chart and Allocation Grid */}
               {allocations.length > 0 ? (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: '1rem',
-                  marginBottom: '2rem'
-                }}>
-                  {allocations.map((allocation, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        background: `linear-gradient(135deg, ${CHART_COLORS[allocation.symbol] || '#6B6F76'}08 0%, ${CHART_COLORS[allocation.symbol] || '#6B6F76'}15 100%)`,
-                        borderRadius: '20px',
-                        padding: '1.5rem',
-                        border: `2px solid ${CHART_COLORS[allocation.symbol] || '#6B6F76'}`,
-                        boxShadow: `0 8px 24px ${CHART_COLORS[allocation.symbol] || '#6B6F76'}20, 0 4px 12px rgba(0,0,0,0.3)`,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        transition: 'all 0.3s ease',
-                        cursor: 'pointer'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-4px)';
-                        e.currentTarget.style.boxShadow = `0 12px 32px ${CHART_COLORS[allocation.symbol] || '#6B6F76'}40, 0 8px 16px rgba(0,0,0,0.4)`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = `0 8px 24px ${CHART_COLORS[allocation.symbol] || '#6B6F76'}20, 0 4px 12px rgba(0,0,0,0.3)`;
-                      }}
-                    >
-                      {/* Percentage badge */}
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+                  
+                  {/* Stunning Pie Chart */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '20px',
+                    padding: '24px',
+                    boxShadow: '0 0 40px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(20px)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: '0',
+                      left: '0',
+                      right: '0',
+                      bottom: '0',
+                      background: 'radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.1), transparent 50%)',
+                      pointerEvents: 'none'
+                    }} />
+                    
+                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '20px', textAlign: 'center' }}>
+                      Portfolio Distribution
+                    </h3>
+                    
+                    <div style={{ height: '300px', position: 'relative' }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={allocations}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={false}
+                            outerRadius={100}
+                            innerRadius={60}
+                            fill="#8884d8"
+                            dataKey="percent"
+                            stroke="none"
+                          >
+                            {allocations.map((entry, index) => (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={CHART_COLORS[entry.symbol] || '#8B95A8'}
+                                style={{
+                                  filter: `drop-shadow(0 0 8px ${CHART_COLORS[entry.symbol] || '#8B95A8'}80)`,
+                                  transition: 'all 0.3s ease'
+                                }}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{
+                              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%)',
+                              border: '1px solid rgba(0, 240, 255, 0.3)',
+                              borderRadius: '12px',
+                              color: '#FFFFFF',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              boxShadow: '0 0 20px rgba(0, 0, 0, 0.8)'
+                            }}
+                            formatter={(value, name, props) => [
+                              `${value.toFixed(2)}%`,
+                              COIN_NAMES[props.payload.symbol] || props.payload.symbol
+                            ]}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      
+                      {/* Center Label */}
                       <div style={{
                         position: 'absolute',
-                        top: '1rem',
-                        right: '1rem',
-                        background: CHART_COLORS[allocation.symbol] || '#6B6F76',
-                        color: '#000',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '20px',
-                        fontSize: '1rem',
-                        fontWeight: '900'
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        textAlign: 'center',
+                        pointerEvents: 'none'
                       }}>
-                        {allocation.percent.toFixed(1)}%
-                      </div>
-
-                      {/* Coin icon */}
-                      <div style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '50%',
-                        background: `${CHART_COLORS[allocation.symbol] || '#6B6F76'}20`,
-                        border: `2px solid ${CHART_COLORS[allocation.symbol] || '#6B6F76'}`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '1.5rem',
-                        fontWeight: '700',
-                        color: CHART_COLORS[allocation.symbol] || '#6B6F76',
-                        marginBottom: '1rem'
-                      }}>
-                        {COIN_ICONS[allocation.symbol] || allocation.symbol.charAt(0)}
-                      </div>
-
-                      {/* Coin name */}
-                      <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#FFF', marginBottom: '0.5rem' }}>
-                        {COIN_NAMES[allocation.symbol] || allocation.coin}
-                      </div>
-
-                      {/* Amount */}
-                      {allocation.amount !== null && (
-                        <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '1rem' }}>
-                          {formatAmount(allocation.amount, allocation.symbol)} {allocation.symbol}
+                        <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', marginBottom: '4px' }}>
+                          Total Value
                         </div>
-                      )}
-
-                      {/* Value */}
-                      <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#FFF', marginBottom: '0.5rem' }}>
-                        {formatCurrency(allocation.value)}
-                      </div>
-
-                      {/* Progress bar */}
-                      <div style={{
-                        width: '100%',
-                        height: '6px',
-                        background: 'rgba(255,255,255,0.1)',
-                        borderRadius: '3px',
-                        overflow: 'hidden',
-                        marginTop: '1rem'
-                      }}>
-                        <div style={{
-                          width: `${allocation.percent}%`,
-                          height: '100%',
-                          background: CHART_COLORS[allocation.symbol] || '#6B6F76',
-                          borderRadius: '3px'
-                        }}></div>
+                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }}>
+                          {balanceVisible ? formatCurrency(totalValue) : '••••••'}
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Premium Allocation Cards */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr',
+                    gap: '12px',
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    paddingRight: '8px'
+                  }}>
+                    {allocations.map((allocation, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: CARD_GRADIENTS[allocation.symbol] || CARD_GRADIENTS['OTHERS'],
+                          border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40`,
+                          borderRadius: '16px',
+                          padding: '16px',
+                          boxShadow: `0 0 20px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}20, inset 0 2px 10px rgba(0, 0, 0, 0.2)`,
+                          position: 'relative',
+                          overflow: 'hidden',
+                          transition: 'all 0.3s ease',
+                          cursor: 'pointer',
+                          backdropFilter: 'blur(10px)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateX(4px)';
+                          e.currentTarget.style.borderColor = `${CHART_COLORS[allocation.symbol] || '#8B95A8'}80`;
+                          e.currentTarget.style.boxShadow = `0 0 30px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40, inset 0 2px 10px rgba(0, 0, 0, 0.3)`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateX(0)';
+                          e.currentTarget.style.borderColor = `${CHART_COLORS[allocation.symbol] || '#8B95A8'}40`;
+                          e.currentTarget.style.boxShadow = `0 0 20px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}20, inset 0 2px 10px rgba(0, 0, 0, 0.2)`;
+                        }}
+                      >
+                        {/* Ambient glow */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          right: '-10px',
+                          width: '40px',
+                          height: '40px',
+                          background: `radial-gradient(circle, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40, transparent)`,
+                          filter: 'blur(15px)',
+                          pointerEvents: 'none'
+                        }} />
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            {/* Coin icon */}
+                            <div style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '50%',
+                              background: `${CHART_COLORS[allocation.symbol] || '#8B95A8'}20`,
+                              border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '16px',
+                              fontWeight: '700',
+                              color: CHART_COLORS[allocation.symbol] || '#8B95A8',
+                              boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
+                            }}>
+                              {COIN_ICONS[allocation.symbol] || allocation.symbol.charAt(0)}
+                            </div>
+
+                            <div>
+                              <div style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
+                                {COIN_NAMES[allocation.symbol] || allocation.coin}
+                              </div>
+                              {allocation.amount !== null && (
+                                <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                                  {formatAmount(allocation.amount, allocation.symbol)} {allocation.symbol}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Percentage badge */}
+                          <div style={{
+                            background: `${CHART_COLORS[allocation.symbol] || '#8B95A8'}20`,
+                            border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`,
+                            color: CHART_COLORS[allocation.symbol] || '#8B95A8',
+                            padding: '6px 12px',
+                            borderRadius: '20px',
+                            fontSize: '14px',
+                            fontWeight: '700',
+                            boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
+                          }}>
+                            {allocation.percent.toFixed(1)}%
+                          </div>
+                        </div>
+
+                        {/* Value */}
+                        <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px' }}>
+                          {balanceVisible ? formatCurrency(allocation.value) : '••••••'}
+                        </div>
+
+                        {/* Progress bar */}
+                        <div style={{
+                          width: '100%',
+                          height: '4px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '2px',
+                          overflow: 'hidden'
+                        }}>
+                          <div style={{
+                            width: `${allocation.percent}%`,
+                            height: '100%',
+                            background: `linear-gradient(90deg, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}80)`,
+                            borderRadius: '2px',
+                            boxShadow: `0 0 8px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`
+                          }}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div style={{ 
