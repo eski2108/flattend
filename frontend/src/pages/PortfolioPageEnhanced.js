@@ -42,35 +42,36 @@ export default function PortfolioPageEnhanced() {
 
   const fetchPortfolio = async (userId) => {
     try {
-      // Add cache-busting timestamp
-      const response = await axios.get(`${API}/api/wallets/portfolio/${userId}?_t=${Date.now()}`);
+      // Use SAME endpoint as WalletPage for consistency
+      const response = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
       if (response.data.success) {
-        const transformedAllocations = response.data.allocations.map(alloc => ({
-          currency: alloc.currency,
-          wallet_amount: alloc.balance || 0,
+        const transformedAllocations = response.data.balances.map(bal => ({
+          currency: bal.currency,
+          wallet_amount: bal.total_balance || 0,
           savings_amount: 0,
-          total_amount: alloc.balance || 0,
-          avg_buy_price: alloc.price || 0,
-          current_price: alloc.price || 0,
-          current_value_usd: alloc.value || 0,
+          total_amount: bal.total_balance || 0,
+          avg_buy_price: bal.gbp_value / bal.total_balance || 0,
+          current_price: bal.gbp_value / bal.total_balance || 0,
+          current_value_usd: bal.gbp_value || 0,
           unrealized_pl_usd: 0,
           unrealized_pl_percent: 0,
           allocation_percent: 0
         }));
         
-        // Calculate allocation percentages
-        const total = response.data.total_value_usd || 0;
+        // Calculate total
+        const totalGBP = response.data.balances.reduce((sum, bal) => sum + (bal.gbp_value || 0), 0);
+        
+        // Calculate percentages
         transformedAllocations.forEach(alloc => {
-          alloc.allocation_percent = total > 0 ? (alloc.current_value_usd / total) * 100 : 0;
+          alloc.allocation_percent = totalGBP > 0 ? (alloc.current_value_usd / totalGBP * 100) : 0;
         });
         
         setPortfolio(transformedAllocations);
-        // Convert USD to GBP (divide by ~1.27)
-        const totalGBP = (response.data.total_value_usd || 0) / 1.27;
         setTotalValue(totalGBP);
         setTotalInvested(totalGBP);
         setTotalPL(0);
         setTotalPLPercent(0);
+        console.log('💵 PortfolioPage Total: £' + totalGBP.toFixed(2));
       }
       setLoading(false);
       setRefreshing(false);
