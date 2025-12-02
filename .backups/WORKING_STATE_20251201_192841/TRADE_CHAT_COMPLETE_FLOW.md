@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://cryptospeed.preview.emergentagent.com
+**Test it now at:** https://crypto-exchange-fix.preview.emergentagent.com
