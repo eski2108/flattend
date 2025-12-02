@@ -223,22 +223,20 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
             upsert=True
         )
         
-        # If referrer exists, credit their commission
-        if referrer_id and referrer_commission > 0:
-            await wallet_service.credit(user_id=referrer_id, currency=from_currency, amount=referrer_commission, transaction_type="referral_commission", reference_id=swap_id, metadata={"referred_user_id": user_id, "transaction_type": "swap"})
-            
-            # Log referral commission
-            await db.referral_commissions.insert_one({
-                "referrer_id": referrer_id,
-                "referred_user_id": user_id,
-                "transaction_type": "swap",
-                "fee_amount": swap_fee_crypto,
-                "commission_amount": referrer_commission,
-                "commission_percent": commission_percent,
-                "currency": from_currency,
-                "swap_id": swap_id,
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
+        # Process referral commission using centralized engine
+        try:
+            from referral_engine import get_referral_engine
+            referral_engine = get_referral_engine()
+            await referral_engine.process_referral_commission(
+                user_id=user_id,
+                fee_amount=swap_fee_crypto,
+                fee_type="SWAP",
+                currency=from_currency,
+                related_transaction_id=swap_id,
+                metadata={"from_currency": from_currency, "to_currency": to_currency, "from_amount": from_amount}
+            )
+        except Exception as ref_err:
+            logger.warning(f"Referral commission failed for swap: {ref_err}")
         
         # Save swap with complete fee information for audit trail
         await db.swap_history.insert_one({
