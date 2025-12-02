@@ -129,24 +129,28 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
           <h2 style={{
             fontSize: compact ? 'clamp(1.5rem, 4vw, 2rem)' : 'clamp(2rem, 5vw, 2.5rem)',
             fontWeight: '900',
-            background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             marginBottom: '0.75rem',
             fontFamily: "'Space Grotesk', sans-serif",
             letterSpacing: '-0.02em',
-            filter: 'drop-shadow(0 0 30px rgba(0, 240, 255, 0.3))'
+            filter: 'drop-shadow(0 0 40px rgba(0, 240, 255, 0.4)) drop-shadow(0 0 80px rgba(123, 44, 255, 0.3))',
+            textAlign: 'center'
           }}>
-            Download CoinHubX Mobile App
+            Get CoinHubX Mobile
           </h2>
           <p style={{
             fontSize: compact ? '1rem' : '1.125rem',
-            color: 'rgba(255, 255, 255, 0.8)',
+            color: 'rgba(255, 255, 255, 0.85)',
             fontWeight: '500',
-            lineHeight: '1.5'
+            lineHeight: '1.6',
+            textAlign: 'center',
+            maxWidth: '600px',
+            margin: '0 auto'
           }}>
-            Trade crypto P2P with full escrow protection on your mobile device
+            Experience premium P2P crypto trading with military-grade escrow protection on your mobile device
           </p>
         </div>
       )}
