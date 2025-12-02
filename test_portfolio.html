@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #020618;
+            color: white;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .asset {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Portfolio Test - User: test-user-123</h1>
+    
+    <div class="card">
+        <h2>Portfolio Summary</h2>
+        <div id="portfolio-summary">Loading...</div>
+    </div>
+    
+    <div class="card">
+        <h2>Assets</h2>
+        <div id="assets">Loading...</div>
+    </div>
+    
+    <div class="card">
+        <h2>Referral Data</h2>
+        <div id="referral-data">Loading...</div>
+    </div>
+    
+    <script>
+        const API_BASE = 'https://crypto-exchange-fix.preview.emergentagent.com/api';
+        const USER_ID = 'test-user-123';
+        
+        // Test Portfolio Summary
+        fetch(`${API_BASE}/portfolio/summary/${USER_ID}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('portfolio-summary').innerHTML = `
+                    <p><strong>Current Value:</strong> £${data.current_value?.toFixed(2) || '0.00'}</p>
+                    <p><strong>Total Invested:</strong> £${data.total_invested?.toFixed(2) || '0.00'}</p>
+                    <p><strong>Total P/L:</strong> £${data.totalPL?.toFixed(2) || '0.00'} (${data.plPercent?.toFixed(2) || '0.00'}%)</p>
+                    <p><strong>Success:</strong> ${data.success}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('portfolio-summary').innerHTML = `Error: ${error.message}`;
+            });
+        
+        // Test Assets
+        fetch(`${API_BASE}/wallets/balances/${USER_ID}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.balances) {
+                    let html = '';
+                    data.balances.forEach(asset => {
+                        html += `
+                            <div class="asset">
+                                <div>
+                                    <strong>${asset.currency}</strong><br>
+                                    ${asset.total_balance} ${asset.currency}
+                                </div>
+                                <div>
+                                    £${asset.gbp_value?.toFixed(2) || '0.00'}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('assets').innerHTML = html;
+                } else {
+                    document.getElementById('assets').innerHTML = 'No assets found';
+                }
+            })
+            .catch(error => {
+                document.getElementById('assets').innerHTML = `Error: ${error.message}`;
+            });
+        
+        // Test Referral Data
+        fetch(`${API_BASE}/user/referral-dashboard/${USER_ID}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const ref = data.data;
+                    document.getElementById('referral-data').innerHTML = `
+                        <p><strong>Referral Code:</strong> ${ref.referral_code}</p>
+                        <p><strong>Total Referrals:</strong> ${ref.total_referrals}</p>
+                        <p><strong>Total Earnings:</strong> £${ref.total_earnings?.toFixed(2) || '0.00'}</p>
+                        <p><strong>Tier:</strong> ${ref.referral_tier}</p>
+                    `;
+                } else {
+                    document.getElementById('referral-data').innerHTML = 'No referral data found';
+                }
+            })
+            .catch(error => {
+                document.getElementById('referral-data').innerHTML = `Error: ${error.message}`;
+            });
+    </script>
+</body>
+</html>
