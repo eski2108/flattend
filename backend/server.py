@@ -22490,14 +22490,14 @@ async def get_portfolio_summary(user_id: str):
                     if cutoff_time.tzinfo is None:
                         cutoff_time = cutoff_time.replace(tzinfo=timezone.utc)
                     if tx_time > cutoff_time:
-                    tx_type = tx.get('type')
-                    currency = tx.get('currency', 'GBP')
-                    amount = Decimal(str(tx.get('amount', 0)))
-                    
-                    if tx_type == 'deposit':
-                        temp_balances[currency] = temp_balances.get(currency, Decimal('0')) - amount
-                    elif tx_type == 'withdraw':
-                        temp_balances[currency] = temp_balances.get(currency, Decimal('0')) + amount
+                        tx_type = tx.get('type')
+                        currency = tx.get('currency', 'GBP')
+                        amount = Decimal(str(tx.get('amount', 0)))
+                        
+                        if tx_type == 'deposit':
+                            temp_balances[currency] = temp_balances.get(currency, Decimal('0')) - amount
+                        elif tx_type == 'withdraw':
+                            temp_balances[currency] = temp_balances.get(currency, Decimal('0')) + amount
             
             # Calculate value
             for coin, balance in temp_balances.items():
