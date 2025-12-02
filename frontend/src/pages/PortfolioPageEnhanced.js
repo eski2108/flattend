@@ -190,7 +190,7 @@ export default function PortfolioPageEnhanced() {
               £{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div style={{ fontSize: '14px', color: '#6EE7B7' }}>
-              ≈ ${(totalValue * 1.27).toFixed(2)} USD
+              ≈ ${(totalValue * 1.27).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
             </div>
           </div>
 
