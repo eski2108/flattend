@@ -1028,20 +1028,20 @@ export default function Dashboard() {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       padding: '12px',
-                      background: 'rgba(34, 197, 94, 0.1)',
+                      background: 'rgba(239, 68, 68, 0.1)',
                       borderRadius: '10px',
-                      border: '1px solid rgba(34, 197, 94, 0.2)'
+                      border: '1px solid rgba(239, 68, 68, 0.2)'
                     }}>
-                      <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>Verification</span>
-                      <span style={{ fontSize: '12px', color: '#22C55E', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>KYC Verification</span>
+                      <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <div style={{
                           width: '8px',
                           height: '8px',
                           borderRadius: '50%',
-                          background: '#22C55E',
-                          boxShadow: '0 0 10px rgba(34, 197, 94, 0.8)'
+                          background: '#EF4444',
+                          boxShadow: '0 0 10px rgba(239, 68, 68, 0.8)'
                         }} />
-                        Verified
+                        Unverified
                       </span>
                     </div>
                     
@@ -1050,25 +1050,12 @@ export default function Dashboard() {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       padding: '12px',
-                      background: 'rgba(34, 197, 94, 0.1)',
+                      background: 'rgba(239, 68, 68, 0.1)',
                       borderRadius: '10px',
-                      border: '1px solid rgba(34, 197, 94, 0.2)'
+                      border: '1px solid rgba(239, 68, 68, 0.2)'
                     }}>
                       <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>2FA Security</span>
-                      <span style={{ fontSize: '12px', color: '#22C55E', fontWeight: '700' }}>Enabled</span>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '12px',
-                      background: 'rgba(34, 197, 94, 0.1)',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(34, 197, 94, 0.2)'
-                    }}>
-                      <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>Account Level</span>
-                      <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: '700' }}>Premium</span>
+                      <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700' }}>Disabled</span>
                     </div>
                     
                     <button
