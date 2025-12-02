@@ -616,14 +616,15 @@ export default function SpotTrading() {
                 {/* Mobile Trade Button */}
                 <button
                   onClick={(e) => {
-                    console.log('🔥 MOBILE BUY CLICKED! Amount:', amount);
+                    console.log('🔥 MOBILE BUY CLICKED! Amount:', amount, 'Type:', orderType);
+                    e.preventDefault();
                     handlePlaceOrder();
                   }}
-                  disabled={isLoading || !amount}
+                  disabled={isLoading || !amount || parseFloat(amount) <= 0}
                   style={{
                     width: '100%',
                     padding: '14px',
-                    background: isLoading || !amount ? 'rgba(255, 255, 255, 0.1)' : 
+                    background: (isLoading || !amount || parseFloat(amount) <= 0) ? 'rgba(255, 255, 255, 0.1)' : 
                       orderType === 'buy' 
                         ? 'linear-gradient(135deg, #22C55E, #16A34A)'
                         : 'linear-gradient(135deg, #EF4444, #DC2626)',
@@ -632,8 +633,8 @@ export default function SpotTrading() {
                     color: '#FFFFFF',
                     fontSize: '16px',
                     fontWeight: '700',
-                    cursor: isLoading || !amount ? 'not-allowed' : 'pointer',
-                    opacity: isLoading || !amount ? 0.5 : 1,
+                    cursor: (isLoading || !amount || parseFloat(amount) <= 0) ? 'not-allowed' : 'pointer',
+                    opacity: (isLoading || !amount || parseFloat(amount) <= 0) ? 0.5 : 1,
                     transition: 'all 0.3s',
                     display: 'flex',
                     alignItems: 'center',
