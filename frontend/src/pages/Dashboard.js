@@ -493,7 +493,7 @@ export default function Dashboard() {
                           <circle cx="100" cy="100" r="30" fill="rgba(2, 6, 24, 0.9)" />
                           
                           {slices.map((slice, index) => {
-                            if (slice.percent < 0.5) return null;
+                            // Show all slices, even small ones
                             
                             return (
                               <path
