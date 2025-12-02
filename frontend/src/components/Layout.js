@@ -144,6 +144,102 @@ export default function Layout({ children }) {
             padding: '1rem',
             borderTop: '1px solid rgba(0, 240, 255, 0.2)'
           }}>
+            {/* Mobile App Download - Compact Sidebar Version */}
+            <div style={{ 
+              marginBottom: '1rem',
+              padding: '1rem 0.5rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <div style={{ 
+                fontSize: '0.75rem', 
+                color: '#00F0FF', 
+                fontWeight: '700', 
+                marginBottom: '0.75rem',
+                textAlign: 'center',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                📱 Mobile App
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <button
+                  onClick={() => window.open('/api/download-app', '_blank')}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem',
+                    background: 'linear-gradient(135deg, #00F0FF, #00D4E6)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    color: '#000',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 240, 255, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="m22 2-5 10-5-4-5 10"/>
+                  </svg>
+                  Android
+                </button>
+                <button
+                  onClick={() => {
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    if (isIOS) {
+                      alert('To install on iPhone:\n\n1. Tap Share button\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
+                    } else {
+                      window.open('https://p2p-repair.preview.emergentagent.com', '_blank');
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem',
+                    background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(168, 85, 247, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
+                  iPhone
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={handleSupportClick}
               style={{
