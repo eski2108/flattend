@@ -544,13 +544,13 @@ export default function SpotTrading() {
                 {/* Amount Input - SINGLE CLEAR FIELD */}
                 <div style={{ marginBottom: '12px' }}>
                   <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '600' }}>
-                    Amount (BTC)
+                    Amount ({tradingPairs.find(p => p.symbol === selectedPair)?.base || 'BTC'})
                   </label>
                   <input
                     type="number"
                     value={amount}
                     onChange={(e) => {
-                      console.log('💰 Amount changed:', e.target.value);
+                      console.log('💰 Amount changed:', e.target.value, 'Pair:', selectedPair);
                       setAmount(e.target.value);
                     }}
                     placeholder="0.001"
