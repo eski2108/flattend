@@ -259,7 +259,7 @@ export default function P2PExpress() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? '24px' : '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '24px' : '32px' }}>
               
               {/* Main Purchase Section */}
               <div>
