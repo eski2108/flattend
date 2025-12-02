@@ -82,8 +82,9 @@ export default function WalletPage() {
         const bals = response.data.balances || [];
         setBalances(bals);
         
+        // Use pre-calculated gbp_value from API instead of calculating manually
         const total = bals.reduce((sum, bal) => {
-          return sum + (bal.total_balance * (bal.price_gbp || 0));
+          return sum + (bal.gbp_value || 0);
         }, 0);
         setTotalGBP(total);
       }
