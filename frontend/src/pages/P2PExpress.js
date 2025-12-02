@@ -337,6 +337,34 @@ export default function P2PExpress() {
                 </div>
               )}
 
+              {purchaseSuccess && (
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.1) 100%)',
+                  border: '2px solid rgba(34, 197, 94, 0.5)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  marginBottom: '24px',
+                  textAlign: 'center',
+                  boxShadow: '0 0 40px rgba(34, 197, 94, 0.3)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <IoCheckmarkCircle size={32} color="#22C55E" />
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#22C55E' }}>
+                      Order Successful!
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '16px', color: '#FFFFFF', marginBottom: '8px' }}>
+                    {hasAdminLiquidity 
+                      ? 'Your crypto has been credited instantly to your wallet!'
+                      : 'Your order has been matched with an express seller!'
+                    }
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#D1D5DB' }}>
+                    Redirecting you now...
+                  </div>
+                </div>
+              )}
+
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.3)',
