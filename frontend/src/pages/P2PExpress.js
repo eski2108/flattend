@@ -484,9 +484,29 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                <div style={{ marginBottom: isMobile ? '20px' : '32px', position: 'relative', zIndex: 1 }}>
-                  <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600' }}>
-                    💷 Pay with GBP → Receive {selectedCoin}
+                {/* Amount Input - Inner Card Style Matching Swap */}
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '18px',
+                  padding: isMobile ? '20px' : '24px',
+                  marginBottom: '24px',
+                  position: 'relative',
+                  zIndex: 1
+                }}>
+                  <div style={{ 
+                    fontSize: isMobile ? '11px' : '12px', 
+                    color: '#8F9BB3', 
+                    marginBottom: '16px', 
+                    fontWeight: '600',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <span>💷</span>
+                    <span>PAY WITH GBP → RECEIVE {selectedCoin}</span>
                   </div>
                   <DualCurrencyInput
                     cryptoSymbol={selectedCoin}
@@ -502,7 +522,7 @@ export default function P2PExpress() {
                     fee={EXPRESS_FEE_PERCENT}
                     availableBalance={userBalance}
                     balanceInCrypto={false}
-                    label="Purchase Amount"
+                    label=""
                     showCurrencySelector={false}
                   />
                 </div>
