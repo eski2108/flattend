@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IoLogoApple, IoLogoGooglePlaystore, IoArrowForward, IoPhonePortrait, IoDownload } from 'react-icons/io5';
+import { IoLogoApple, IoLogoGooglePlaystore, IoArrowForward, IoPhonePortrait, IoDownload, IoCloudDownload } from 'react-icons/io5';
 
 const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
   const [hoveredButton, setHoveredButton] = useState(null);
@@ -9,14 +9,19 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
     if (isIOS) {
       alert('To install CoinHubX on iPhone:\n\n1. Tap the Share button (⬆️)\n2. Scroll and tap "Add to Home Screen"\n3. Tap "Add" to install\n\nThe app will appear on your home screen!');
     } else {
-      // For non-iOS devices, open the web app
-      window.open('https://p2p-repair.preview.emergentagent.com', '_blank');
+      // For non-iOS devices, show PWA instructions
+      alert('To install CoinHubX:\n\n1. Open this site in Safari\n2. Tap the Share button (⬆️)\n3. Scroll and tap "Add to Home Screen"\n4. Tap "Add" to install\n\nThe app will appear on your home screen!');
     }
   };
 
   const handleGooglePlayClick = () => {
-    // Open the APK download endpoint
-    window.open('/api/download-app', '_blank');
+    // Trigger APK download
+    const link = document.createElement('a');
+    link.href = '/api/download-app';
+    link.download = 'CoinHubX.apk';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const buttonBaseStyle = {
