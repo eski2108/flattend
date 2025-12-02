@@ -201,6 +201,7 @@ else:
 
 # Initialize Central Wallet Service
 from wallet_service import initialize_wallet_service, get_wallet_service
+from referral_engine import initialize_referral_engine, get_referral_engine
 initialize_wallet_service(db)
 logger.info("✅ Central Wallet Service initialized")
 
