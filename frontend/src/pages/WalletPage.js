@@ -469,6 +469,8 @@ function TransactionHistory({ user }) {
       const response = await axios.get(`${API}/api/transactions/${user.user_id}`);
       if (response.data.success) {
         let txs = response.data.transactions || [];
+        // Filter out invalid transactions and apply filter
+        txs = txs.filter(tx => tx.transaction_type); // Remove transactions without type
         if (activeFilter !== 'All') {
           txs = txs.filter(tx => tx.transaction_type.toLowerCase() === activeFilter.toLowerCase());
         }
