@@ -203,6 +203,7 @@ else:
 from wallet_service import initialize_wallet_service, get_wallet_service
 from referral_engine import initialize_referral_engine, get_referral_engine
 initialize_wallet_service(db)
+initialize_referral_engine(db)
 logger.info("✅ Central Wallet Service initialized")
 
 # Initialize P2P Notification Service
