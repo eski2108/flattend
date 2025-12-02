@@ -458,6 +458,21 @@ async def transfer_from_savings_with_wallet(db, wallet_service, user_id: str, cu
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 })
             
+            # Process referral using centralized engine
+            try:
+                from referral_engine import get_referral_engine
+                referral_engine = get_referral_engine()
+                await referral_engine.process_referral_commission(
+                    user_id=user_id,
+                    fee_amount=penalty_fee,
+                    fee_type="SAVINGS_EARLY_UNSTAKE",
+                    currency=currency,
+                    related_transaction_id=transfer_id,
+                    metadata={"withdrawn_amount": final_amount, "is_early": is_early_withdrawal}
+                )
+            except Exception as ref_err:
+                logger.warning(f"Referral failed: {ref_err}")
+            
             # Log to fee_transactions
             await db.fee_transactions.insert_one({
                 "user_id": user_id,
@@ -466,9 +481,6 @@ async def transfer_from_savings_with_wallet(db, wallet_service, user_id: str, cu
                 "amount": amount,
                 "fee_amount": penalty_fee,
                 "fee_percent": penalty_percent,
-                "admin_fee": admin_fee,
-                "referrer_commission": referrer_commission,
-                "referrer_id": referrer_id,
                 "currency": currency,
                 "reference_id": transfer_id,
                 "timestamp": datetime.now(timezone.utc).isoformat()
