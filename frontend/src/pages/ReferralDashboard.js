@@ -158,21 +158,63 @@ export default function ReferralDashboard() {
           </p>
         </div>
 
-        {/* Tier Badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '10px 20px',
-          background: referralData.referral_tier === 'golden' ? 'linear-gradient(135deg, #FFD700, #FFA500)' : 'linear-gradient(135deg, #00F0FF, #7B2CFF)',
-          borderRadius: '25px',
-          marginBottom: '2rem'
-        }}>
-          <IoTrophy size={20} color="#000" />
-          <span style={{ color: '#000', fontWeight: '700', fontSize: '14px' }}>
-            {referralData.referral_tier === 'golden' ? 'GOLDEN TIER (50% Commission)' : 'STANDARD TIER (20% Commission)'}
-          </span>
+        {/* Premium Tier Badge */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '16px 32px',
+            background: referralData.referral_tier === 'golden' 
+              ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)' 
+              : 'linear-gradient(135deg, #00F0FF 0%, #A855F7 50%, #7B2CFF 100%)',
+            borderRadius: '50px',
+            boxShadow: referralData.referral_tier === 'golden'
+              ? '0 0 50px rgba(255, 215, 0, 0.6), inset 0 2px 20px rgba(255, 255, 255, 0.3)'
+              : '0 0 50px rgba(0, 240, 255, 0.6), inset 0 2px 20px rgba(255, 255, 255, 0.2)',
+            border: '2px solid rgba(255, 255, 255, 0.3)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Animated glow effect */}
+            <div style={{
+              position: 'absolute',
+              top: '-50%',
+              left: '-50%',
+              width: '200%',
+              height: '200%',
+              background: referralData.referral_tier === 'golden'
+                ? 'conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.3), transparent)'
+                : 'conic-gradient(from 0deg, transparent, rgba(0, 240, 255, 0.3), transparent)',
+              animation: 'spin 3s linear infinite',
+              pointerEvents: 'none'
+            }} />
+            
+            <IoTrophy size={24} color="#000" style={{ 
+              filter: 'drop-shadow(0 0 8px rgba(0, 0, 0, 0.5))',
+              zIndex: 1,
+              position: 'relative'
+            }} />
+            <span style={{ 
+              color: '#000', 
+              fontWeight: '900', 
+              fontSize: '16px',
+              textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+              zIndex: 1,
+              position: 'relative',
+              letterSpacing: '0.5px'
+            }}>
+              {referralData.referral_tier === 'golden' ? 'GOLDEN TIER • 50% Commission' : 'STANDARD TIER • 20% Commission'}
+            </span>
+          </div>
         </div>
+
+        <style>{`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
 
         {/* Stats Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
