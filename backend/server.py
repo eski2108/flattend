@@ -3198,6 +3198,32 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
             })
         
         logger.info(f"✅ P2P Taker Fee collected: {taker_fee} {fiat_currency} from buyer {request.buyer_id}")
+        
+        # Process referral commission for taker fee
+        try:
+            referral_engine = get_referral_engine()
+            await referral_engine.process_referral_commission(
+                user_id=request.buyer_id,
+                fee_amount=taker_fee,
+                fee_type="P2P_TAKER",
+                currency=fiat_currency,
+                related_transaction_id=request.trade_id,
+                metadata={"trade_id": request.trade_id, "fiat_amount": fiat_amount}
+            )
+            
+            # Process referral for express fee if present
+            if express_fee > 0:
+                await referral_engine.process_referral_commission(
+                    user_id=request.buyer_id,
+                    fee_amount=express_fee,
+                    fee_type="P2P_EXPRESS",
+                    currency=fiat_currency,
+                    related_transaction_id=request.trade_id,
+                    metadata={"trade_id": request.trade_id, "express_mode": True}
+                )
+        except Exception as referral_error:
+            logger.warning(f"⚠️ Referral commission failed: {str(referral_error)}")
+            
     except Exception as fee_error:
         logger.warning(f"⚠️ Failed to collect taker fee: {str(fee_error)}")
     
