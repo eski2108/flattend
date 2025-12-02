@@ -413,80 +413,125 @@ export default function ReferralDashboard() {
             </p>
           </div>
           
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-            <div style={{ flex: '1', minWidth: '300px' }}>
-              <label style={{ color: '#A3AEC2', fontSize: '14px', marginBottom: '0.5rem', display: 'block' }}>Referral Link</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+            <div>
+              <label style={{ 
+                color: '#00F0FF', 
+                fontSize: '14px', 
+                marginBottom: '1rem', 
+                display: 'block',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                🔗 Premium Referral Link
+              </label>
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <input
                   type="text"
                   value={referralData.referral_link}
                   readOnly
                   style={{
                     flex: '1',
-                    padding: '12px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '2px solid rgba(0,240,255,0.3)',
-                    borderRadius: '8px',
+                    padding: '16px 20px',
+                    background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%)',
+                    border: '2px solid rgba(0, 240, 255, 0.4)',
+                    borderRadius: '12px',
                     color: '#fff',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    fontFamily: 'monospace',
+                    boxShadow: '0 0 20px rgba(0, 240, 255, 0.2), inset 0 2px 10px rgba(0, 0, 0, 0.3)'
                   }}
                 />
                 <button
                   onClick={copyReferralLink}
                   style={{
-                    padding: '12px 24px',
-                    background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                    padding: '16px 28px',
+                    background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
                     border: 'none',
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     color: '#000',
-                    fontWeight: '700',
+                    fontWeight: '900',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px'
+                    gap: '10px',
+                    boxShadow: '0 0 30px rgba(0, 240, 255, 0.5)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
                   }}
                 >
-                  <IoCopy size={18} />
-                  Copy
+                  <IoCopy size={20} />
+                  Copy Link
                 </button>
               </div>
             </div>
 
-            <div style={{ minWidth: '200px' }}>
-              <label style={{ color: '#A3AEC2', fontSize: '14px', marginBottom: '0.5rem', display: 'block' }}>Referral Code</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
+            <div>
+              <label style={{ 
+                color: '#A855F7', 
+                fontSize: '14px', 
+                marginBottom: '1rem', 
+                display: 'block',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                🎯 Quick Code
+              </label>
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <input
                   type="text"
                   value={referralData.referral_code}
                   readOnly
                   style={{
                     flex: '1',
-                    padding: '12px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '2px solid rgba(168,85,247,0.3)',
-                    borderRadius: '8px',
+                    padding: '16px 20px',
+                    background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%)',
+                    border: '2px solid rgba(168, 85, 247, 0.4)',
+                    borderRadius: '12px',
                     color: '#fff',
-                    fontSize: '14px',
+                    fontSize: '16px',
                     textAlign: 'center',
-                    fontWeight: '700'
+                    fontWeight: '900',
+                    fontFamily: 'monospace',
+                    letterSpacing: '2px',
+                    boxShadow: '0 0 20px rgba(168, 85, 247, 0.2), inset 0 2px 10px rgba(0, 0, 0, 0.3)'
                   }}
                 />
                 <button
                   onClick={copyReferralCode}
                   style={{
-                    padding: '12px 24px',
-                    background: 'linear-gradient(135deg, #A855F7, #7B2CFF)',
+                    padding: '16px 20px',
+                    background: 'linear-gradient(135deg, #A855F7 0%, #7B2CFF 100%)',
                     border: 'none',
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     color: '#fff',
-                    fontWeight: '700',
+                    fontWeight: '900',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px'
+                    gap: '8px',
+                    boxShadow: '0 0 30px rgba(168, 85, 247, 0.5)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 0 40px rgba(168, 85, 247, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
                   }}
                 >
-                  <IoCopy size={18} />
+                  <IoCopy size={20} />
                 </button>
               </div>
             </div>
