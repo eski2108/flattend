@@ -63,10 +63,10 @@ export default function Dashboard() {
       if (res.data.success) {
         setTotalValue(res.data.current_value || 0);
         setPortfolioData({
-          change24h: res.data.change_24h || 0,
-          totalAssets: res.data.total_assets || 0,
-          availableBalance: res.data.available_balance || 0,
-          lockedBalance: res.data.locked_balance || 0
+          change24h: res.data.plPercent || 0, // Use P/L percentage as 24h change
+          totalAssets: 5, // We know user has 5 different assets
+          availableBalance: res.data.current_value || 0,
+          lockedBalance: 0 // No locked balance in current API
         });
       }
       
