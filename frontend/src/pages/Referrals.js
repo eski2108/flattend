@@ -19,10 +19,13 @@ export default function Referrals() {
 
   useEffect(() => {
     // Get user from localStorage or auth
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.user_id) {
-      setUserId(user.user_id);
-      loadReferralData(user.user_id);
+    const userData = localStorage.getItem('cryptobank_user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      if (user.user_id) {
+        setUserId(user.user_id);
+        loadReferralData(user.user_id);
+      }
     }
   }, []);
 
