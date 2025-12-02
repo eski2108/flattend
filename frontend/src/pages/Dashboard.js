@@ -452,7 +452,7 @@ export default function Dashboard() {
                         </div>
                         <div style={{ textAlign: 'right' }}>
                           <div style={{ fontSize: '14px', fontWeight: '600', color: '#00F0FF' }}>
-                            {balanceVisible ? formatCurrency(asset.fiat_value || 0) : '••••••'}
+                            {balanceVisible ? formatCurrency(asset.gbp_value || 0) : '••••••'}
                           </div>
                           <div style={{ fontSize: '12px', color: '#22C55E' }}>
                             +2.4%
