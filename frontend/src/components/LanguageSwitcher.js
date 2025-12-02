@@ -65,8 +65,7 @@ export default function LanguageSwitcher({ style }) {
           e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
         }}
       >
-        <IoLanguage size={18} color="#00F0FF" />
-        <span>{currentLanguage.flag}</span>
+        <span style={{ fontSize: '18px' }}>{currentLanguage.flag}</span>
         <span>{currentLanguage.name}</span>
       </button>
 
