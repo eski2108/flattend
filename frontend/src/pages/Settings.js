@@ -5,6 +5,7 @@ import { IoCard as CreditCard, IoGlobe as Globe, IoLockClosed as Lock, IoLogOut,
 import { toast } from 'sonner';
 import CurrencySelector from '@/components/CurrencySelector';
 import PriceAlerts from '@/components/PriceAlerts';
+import PremiumDownloadButtons from '@/components/PremiumDownloadButtons';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
