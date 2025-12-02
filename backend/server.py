@@ -18268,16 +18268,20 @@ async def get_unified_balances(user_id: str):
         
         try:
             # Use the live pricing service
-            from live_pricing import get_live_prices
-            live_prices = await get_live_prices()
-            logger.info(f"📊 Got live prices: {list(live_prices.keys())}")
+            from live_pricing import get_all_live_prices
+            live_prices_dict = await get_all_live_prices('usd')
+            logger.info(f"📊 Got {len(live_prices_dict)} live prices")
             
             for currency in [b['currency'] for b in balances]:
-                if currency in live_prices:
-                    prices[currency] = live_prices[currency].get('usd', 0)
-                    logger.info(f"💰 {currency}: ${prices[currency]}")
+                if currency in live_prices_dict:
+                    prices[currency] = live_prices_dict[currency]
+                    logger.info(f"💰 {currency}: ${prices[currency]:.2f}")
+                elif currency == 'USDT' or currency == 'USDC':
+                    prices[currency] = 1.0
         except Exception as price_error:
-            logger.warning(f"Failed to fetch live prices: {str(price_error)}")
+            logger.error(f"❌ Failed to fetch live prices: {str(price_error)}")
+            import traceback
+            logger.error(traceback.format_exc())
             # Default USDT/USDC to $1 if live prices fail
             prices['USDT'] = 1.0
             prices['USDC'] = 1.0
