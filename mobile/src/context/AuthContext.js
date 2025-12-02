@@ -22,12 +22,20 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
+      console.log('🔄 Loading user from storage...');
       const userData = await AsyncStorage.getItem('cryptobank_user');
-      if (userData) {
+      const token = await AsyncStorage.getItem('auth_token');
+      
+      if (userData && token) {
         setUser(JSON.parse(userData));
+        console.log('✅ User loaded from storage');
+      } else if (!token) {
+        console.log('⚠️ No auth token found, clearing user data');
+        await AsyncStorage.removeItem('cryptobank_user');
+        setUser(null);
       }
     } catch (error) {
-      console.error('Error loading user:', error);
+      console.error('❌ Error loading user:', error);
     } finally {
       setLoading(false);
     }
