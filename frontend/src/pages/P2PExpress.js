@@ -5,9 +5,8 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
-import { notifyWalletBalanceUpdated } from '@/utils/walletEvents';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-exchange-fix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptospeed.preview.emergentagent.com';
 
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',
@@ -209,9 +208,6 @@ export default function P2PExpress() {
       const response = await axios.post(`${API}/api/p2p/express/create`, orderData);
 
       if (response.data.success) {
-        // Notify wallet to refresh balances
-        notifyWalletBalanceUpdated();
-        
         if (hasAdminLiquidity) {
           toast.success('Express order completed! Crypto credited instantly.');
           // Redirect to wallet to see new balance
@@ -233,110 +229,53 @@ export default function P2PExpress() {
 
   return (
     <Layout>
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
-        paddingBottom: '60px'
-      }}>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #05121F 0%, #0A1929 100%)', padding: '40px 20px' }}>
         
-        <div style={{ padding: isMobile ? '16px' : '24px' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
 
-            {/* Header - Matching Swap exactly */}
-            <div style={{ marginBottom: isMobile ? '28px' : '40px' }}>
-              <div>
-                <h1 style={{ 
-                  fontSize: isMobile ? '32px' : '42px', 
-                  fontWeight: '700', 
-                  color: '#FFFFFF', 
-                  marginBottom: '8px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '16px'
-                }}>
-                  <IoFlash size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} />
-                  P2P Express
-                </h1>
-                <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>
-                  Buy crypto with GBP instantly • 2–5 minute delivery
-                </p>
-              </div>
-            </div>
+          <div style={{ marginBottom: '48px', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+              <IoFlash size={48} color="#0CEBFF" strokeWidth={2.5} />
+              P2P Express
+            </h1>
+            <p style={{ fontSize: '18px', color: '#8F9BB3', margin: 0 }}>Instant crypto purchase • 2-5 minute delivery</p>
+          </div>
 
-            {/* Main Purchase Section */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '24px' : '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '48px', alignItems: 'start', justifyItems: 'stretch' }}>
+            
+            <div>
               
-              {/* Live Price Card - Matching Swap card style */}
               {livePrice && (
                 <div style={{
-                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
-                  border: '2px solid rgba(0, 240, 255, 0.4)',
-                  borderRadius: '24px',
-                  padding: isMobile ? '24px' : '32px',
-                  marginBottom: isMobile ? '20px' : '32px',
-                  boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
-                  position: 'relative'
+                  background: 'rgba(12, 235, 255, 0.05)',
+                  border: '2px solid rgba(12, 235, 255, 0.3)',
+                  borderRadius: '20px',
+                  padding: '24px',
+                  marginBottom: '32px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
                 }}>
-                  {/* Floating Glow */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '-40px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '200px',
-                    height: '80px',
-                    background: 'radial-gradient(circle, rgba(0, 240, 255, 0.4), transparent)',
-                    filter: 'blur(40px)',
-                    pointerEvents: 'none'
-                  }} />
-
-                  <div style={{ 
-                    display: 'flex', 
-                    flexDirection: isMobile ? 'column' : 'row',
-                    justifyContent: 'space-between', 
-                    alignItems: isMobile ? 'flex-start' : 'center',
-                    gap: isMobile ? '20px' : '0'
-                  }}>
-                    <div>
-                      <div style={{ 
-                        fontSize: isMobile ? '11px' : '12px', 
-                        color: '#8F9BB3', 
-                        marginBottom: '8px', 
-                        fontWeight: '600', 
-                        textTransform: 'uppercase', 
-                        letterSpacing: '1px' 
-                      }}>LIVE PRICE</div>
-                      <div style={{ 
-                        fontSize: isMobile ? '28px' : '36px', 
-                        fontWeight: '700', 
-                        color: '#00F0FF',
-                        textShadow: '0 0 20px rgba(0, 240, 255, 0.5)'
-                      }}>
-                        £{livePrice.price_gbp.toLocaleString()}
-                      </div>
-                      <div style={{ fontSize: isMobile ? '13px' : '14px', color: '#8F9BB3', marginTop: '6px' }}>per {selectedCoin}</div>
+                  <div>
+                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Live Price</div>
+                    <div style={{ fontSize: '32px', fontWeight: '700', color: '#0CEBFF' }}>
+                      £{livePrice.price_gbp.toLocaleString()}
                     </div>
-                    <div style={{ textAlign: isMobile ? 'left' : 'right', width: isMobile ? '100%' : 'auto' }}>
-                      <div style={{ 
-                        fontSize: isMobile ? '11px' : '12px', 
-                        color: '#8F9BB3', 
-                        marginBottom: '8px', 
-                        fontWeight: '600', 
-                        textTransform: 'uppercase', 
-                        letterSpacing: '1px' 
-                      }}>24H CHANGE</div>
-                      <div style={{
-                        fontSize: isMobile ? '22px' : '26px',
-                        fontWeight: '700',
-                        color: livePrice.change_24h >= 0 ? '#22C55E' : '#EF4444',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        justifyContent: isMobile ? 'flex-start' : 'flex-end'
-                      }}>
-                        {livePrice.change_24h >= 0 ? <IoTrendingUp size={isMobile ? 22 : 26} /> : <IoTrendingDown size={isMobile ? 22 : 26} />}
-                        {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
-                      </div>
+                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginTop: '4px' }}>per {selectedCoin}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Change</div>
+                    <div style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: livePrice.change_24h >= 0 ? '#22C55E' : '#EF4444',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      justifyContent: 'flex-end'
+                    }}>
+                      {livePrice.change_24h >= 0 ? <IoTrendingUp size={24} /> : <IoTrendingDown size={24} />}
+                      {livePrice.change_24h >= 0 ? '+' : ''}{livePrice.change_24h.toFixed(2)}%
                     </div>
                   </div>
                 </div>
@@ -373,15 +312,14 @@ export default function P2PExpress() {
                 </div>
               )}
 
-              {/* Main Purchase Card - Matching Swap */}
               <div style={{
-                background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
-                border: '2px solid rgba(0, 240, 255, 0.4)',
+                background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%)',
+                border: '2px solid rgba(12, 235, 255, 0.3)',
                 borderRadius: '24px',
-                padding: isMobile ? '24px' : '32px',
-                marginBottom: isMobile ? '20px' : '32px',
-                boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
-                position: 'relative'
+                padding: '40px',
+                boxShadow: '0 0 60px rgba(12, 235, 255, 0.2)',
+                position: 'relative',
+                overflow: 'hidden'
               }}>
                 
                 <div style={{
@@ -396,41 +334,24 @@ export default function P2PExpress() {
                   pointerEvents: 'none'
                 }} />
 
-                {/* Crypto Selector - Inner Card Style */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(0, 240, 255, 0.3)',
-                  borderRadius: '18px',
-                  padding: isMobile ? '20px' : '24px',
-                  marginBottom: '24px',
-                  position: 'relative',
-                  zIndex: 1
-                }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: isMobile ? '11px' : '12px', 
-                    color: '#8F9BB3', 
-                    marginBottom: '12px', 
-                    fontWeight: '600', 
-                    textTransform: 'uppercase', 
-                    letterSpacing: '1px' 
-                  }}>SELECT CRYPTOCURRENCY</label>
+                <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Select Cryptocurrency</label>
                   <select
                     value={selectedCoin}
                     onChange={(e) => setSelectedCoin(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: isMobile ? '14px 16px' : '16px 18px',
-                      background: 'rgba(0, 0, 0, 0.6)',
-                      border: '2px solid rgba(0, 240, 255, 0.3)',
-                      borderRadius: '14px',
+                      padding: '18px 20px',
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      border: '2px solid rgba(12, 235, 255, 0.3)',
+                      borderRadius: '12px',
                       color: '#FFFFFF',
-                      fontSize: isMobile ? '15px' : '16px',
+                      fontSize: '16px',
                       fontWeight: '600',
                       outline: 'none',
                       cursor: 'pointer',
                       transition: 'all 0.3s',
-                      boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)'
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
                     }}
                   >
                     {coins.map(coin => (
@@ -441,41 +362,24 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                {/* Country Selector - Inner Card Style */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(0, 240, 255, 0.3)',
-                  borderRadius: '18px',
-                  padding: isMobile ? '20px' : '24px',
-                  marginBottom: '24px',
-                  position: 'relative',
-                  zIndex: 1
-                }}>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: isMobile ? '11px' : '12px', 
-                    color: '#8F9BB3', 
-                    marginBottom: '12px', 
-                    fontWeight: '600', 
-                    textTransform: 'uppercase', 
-                    letterSpacing: '1px' 
-                  }}>SELECT COUNTRY</label>
+                <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Select Country</label>
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: isMobile ? '14px 16px' : '16px 18px',
-                      background: 'rgba(0, 0, 0, 0.6)',
-                      border: '2px solid rgba(0, 240, 255, 0.3)',
-                      borderRadius: '14px',
+                      padding: '18px 20px',
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      border: '2px solid rgba(12, 235, 255, 0.3)',
+                      borderRadius: '12px',
                       color: '#FFFFFF',
-                      fontSize: isMobile ? '15px' : '16px',
+                      fontSize: '16px',
                       fontWeight: '600',
                       outline: 'none',
                       cursor: 'pointer',
                       transition: 'all 0.3s',
-                      boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)'
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
                     }}
                   >
                     {COUNTRIES.map(country => (
@@ -486,30 +390,7 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                {/* Amount Input - Inner Card Style Matching Swap */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(0, 240, 255, 0.3)',
-                  borderRadius: '18px',
-                  padding: isMobile ? '20px' : '24px',
-                  marginBottom: '24px',
-                  position: 'relative',
-                  zIndex: 1
-                }}>
-                  <div style={{ 
-                    fontSize: isMobile ? '11px' : '12px', 
-                    color: '#8F9BB3', 
-                    marginBottom: '16px', 
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <span>💷</span>
-                    <span>PAY WITH GBP → RECEIVE {selectedCoin}</span>
-                  </div>
+                <div style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
                   <DualCurrencyInput
                     cryptoSymbol={selectedCoin}
                     fiatCurrency="GBP"
@@ -524,8 +405,8 @@ export default function P2PExpress() {
                     fee={EXPRESS_FEE_PERCENT}
                     availableBalance={userBalance}
                     balanceInCrypto={false}
-                    label=""
-                    showCurrencySelector={false}
+                    label="Purchase Amount"
+                    showCurrencySelector={true}
                   />
                 </div>
 
@@ -617,6 +498,10 @@ export default function P2PExpress() {
 
               </div>
 
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.4)',
