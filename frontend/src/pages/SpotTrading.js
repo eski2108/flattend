@@ -645,6 +645,31 @@ export default function SpotTrading() {
                   <div id="tradingview-chart" style={{ width: '100%', height: '100%', borderRadius: '16px' }}></div>
                 </div>
 
+                {/* Success Message */}
+                {orderSuccess && lastOrderDetails && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.1) 100%)',
+                    border: '2px solid rgba(34, 197, 94, 0.5)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    boxShadow: '0 0 40px rgba(34, 197, 94, 0.3)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                      <IoCheckmarkCircle size={28} color="#22C55E" />
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#22C55E' }}>
+                        Order Successful!
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '15px', color: '#FFFFFF' }}>
+                      {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto} at ${lastOrderDetails.price.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '8px' }}>
+                      Your order has been executed successfully. Check your wallet for updated balance.
+                    </div>
+                  </div>
+                )}
+
                 {/* Premium Order Panel - Hidden on mobile */}
                 {!isMobile && (
                   <div style={{
