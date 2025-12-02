@@ -539,45 +539,99 @@ export default function ReferralDashboard() {
 
           <div style={{
             display: 'flex',
-            gap: '12px',
-            flexWrap: 'wrap'
+            gap: '16px',
+            flexWrap: 'wrap',
+            justifyContent: 'center'
           }}>
             <button
-              onClick={() => window.open(`https://twitter.com/intent/tweet?text=Join CoinHubX and start trading crypto! Use my referral link: ${encodeURIComponent(referralData.referral_link)}`, '_blank')}
+              onClick={() => window.open(`https://twitter.com/intent/tweet?text=🚀 Join CoinHubX - The Future of Crypto Trading! 💎 Use my exclusive referral link: ${encodeURIComponent(referralData.referral_link)}`, '_blank')}
               style={{
-                padding: '10px 20px',
-                background: '#1DA1F2',
-                border: 'none',
-                borderRadius: '8px',
+                padding: '14px 28px',
+                background: 'linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%)',
+                border: '2px solid rgba(29, 161, 242, 0.3)',
+                borderRadius: '12px',
                 color: '#fff',
-                fontWeight: '600',
+                fontWeight: '700',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '12px',
+                boxShadow: '0 0 25px rgba(29, 161, 242, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 0 35px rgba(29, 161, 242, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(29, 161, 242, 0.4)';
               }}
             >
-              <Share2 size={16} />
+              <Share2 size={18} />
               Share on Twitter
             </button>
 
             <button
-              onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent('Join CoinHubX! ' + referralData.referral_link)}`, '_blank')}
+              onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent('🔥 Join CoinHubX - Premium Crypto Exchange! 💰 Start trading with my referral link: ' + referralData.referral_link)}`, '_blank')}
               style={{
-                padding: '10px 20px',
-                background: '#25D366',
-                border: 'none',
-                borderRadius: '8px',
+                padding: '14px 28px',
+                background: 'linear-gradient(135deg, #25D366 0%, #1ebe57 100%)',
+                border: '2px solid rgba(37, 211, 102, 0.3)',
+                borderRadius: '12px',
                 color: '#fff',
-                fontWeight: '600',
+                fontWeight: '700',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '12px',
+                boxShadow: '0 0 25px rgba(37, 211, 102, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 0 35px rgba(37, 211, 102, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(37, 211, 102, 0.4)';
               }}
             >
-              <Share2 size={16} />
+              <Share2 size={18} />
               Share on WhatsApp
+            </button>
+
+            <button
+              onClick={() => {
+                const text = `🚀 CoinHubX - Elite Crypto Trading Platform\n💎 Join the future of digital finance\n🎯 Use my exclusive referral: ${referralData.referral_code}\n🔗 ${referralData.referral_link}`;
+                navigator.clipboard.writeText(text);
+                toast.success('Premium message copied to clipboard!');
+              }}
+              style={{
+                padding: '14px 28px',
+                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%)',
+                border: '2px solid rgba(0, 240, 255, 0.4)',
+                borderRadius: '12px',
+                color: '#00F0FF',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: '0 0 25px rgba(0, 240, 255, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                e.currentTarget.style.boxShadow = '0 0 35px rgba(0, 240, 255, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 240, 255, 0.3)';
+              }}
+            >
+              <IoCopy size={18} />
+              Copy Message
             </button>
           </div>
         </div>
