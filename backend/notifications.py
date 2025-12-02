@@ -95,7 +95,7 @@ async def get_user_notifications(
         if unread_only:
             query['is_read'] = False
         
-        notifications = await db.notifications.find(query).sort('created_at', -1).skip(offset).limit(limit).to_list(length=limit)
+        notifications = await db.notifications.find(query, {'_id': 0}).sort('created_at', -1).skip(offset).limit(limit).to_list(length=limit)
         
         return notifications
     except Exception as e:
