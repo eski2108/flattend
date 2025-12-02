@@ -76,6 +76,7 @@ export default function Layout({ children }) {
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <LanguageSwitcher />
             <NotificationBell />
             <button
               className="mobile-menu-btn"
