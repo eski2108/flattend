@@ -318,6 +318,21 @@ async def transfer_to_savings_with_wallet(db, wallet_service, user_id: str, curr
                 "last_updated": datetime.now(timezone.utc).isoformat()
             })
         
+        # Process referral using centralized engine
+        try:
+            from referral_engine import get_referral_engine
+            referral_engine = get_referral_engine()
+            await referral_engine.process_referral_commission(
+                user_id=user_id,
+                fee_amount=stake_fee,
+                fee_type="SAVINGS_DEPOSIT",
+                currency=currency,
+                related_transaction_id=transfer_id,
+                metadata={"net_staked": net_amount}
+            )
+        except Exception as ref_err:
+            logger.warning(f"Referral failed: {ref_err}")
+        
         # Log to fee_transactions
         await db.fee_transactions.insert_one({
             "user_id": user_id,
@@ -326,15 +341,12 @@ async def transfer_to_savings_with_wallet(db, wallet_service, user_id: str, curr
             "amount": amount,
             "fee_amount": stake_fee,
             "fee_percent": fee_percent,
-            "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
-            "referrer_id": referrer_id,
             "currency": currency,
             "reference_id": transfer_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
-        logger.info(f"✅ Savings: {user_id} staked {amount} {currency} to savings, Fee: {stake_fee} (Admin: {admin_fee}, Referrer: {referrer_commission})")
+        logger.info(f"✅ Savings: {user_id} staked {amount} {currency} to savings, Fee: {stake_fee}")
         return {"success": True, "amount": amount, "net_amount": net_amount, "fee": stake_fee, "currency": currency}
     except Exception as e:
         logger.error(f"❌ Savings transfer error: {str(e)}")
