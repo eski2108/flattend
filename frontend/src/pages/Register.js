@@ -167,19 +167,12 @@ export default function Register() {
           duration: 8000
         });
         
-        // Apply referral code if provided
+        // ✅ REFERRAL CODE IS NOW PROCESSED DURING REGISTRATION
+        // No need for separate /referral/apply call
         if (formData.referral_code) {
-          try {
-            await axios.post(`${API}/referral/apply`, {
-              referred_user_id: userId,
-              referral_code: formData.referral_code
-            });
-            toast.info('📧 Referral code will be applied after email verification', {
-              duration: 6000
-            });
-          } catch (error) {
-            console.error('Referral application failed:', error);
-          }
+          toast.success('🎉 Referral code applied successfully!', {
+            duration: 5000
+          });
         }
         
         // Get user's referral data
