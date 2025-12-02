@@ -214,25 +214,40 @@ export default function LandingPage() {
               Create My Account Free <IoArrowForward className="ml-2" size={20} />
             </Button>
             
-            {/* Download Mobile App Button */}
+            {/* Download Mobile App Button - Premium */}
             <Button
               size="lg"
-              onClick={() => window.open('/api/download-app', '_blank')}
+              onClick={() => document.getElementById('download-app')?.scrollIntoView({ behavior: 'smooth' })}
               style={{
-                background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
+                background: 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 50%, #7C3AED 100%)',
                 color: '#fff',
-                padding: '0.875rem 2rem',
+                padding: '1rem 2.5rem',
                 fontSize: '1rem',
                 fontWeight: '700',
                 border: 'none',
-                borderRadius: '12px',
-                boxShadow: '0 4px 20px rgba(168, 85, 247, 0.4)',
+                borderRadius: '16px',
+                boxShadow: '0 8px 32px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                cursor: 'pointer'
+                gap: '0.75rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 16px 48px rgba(168, 85, 247, 0.6), 0 0 0 2px rgba(168, 85, 247, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.2)';
               }}
             >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                <line x1="12" y1="18" x2="12.01" y2="18"/>
+              </svg>
               Download Mobile App
             </Button>
           </div>
