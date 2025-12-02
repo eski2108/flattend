@@ -6,6 +6,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoAlertCircle as AlertCircle, IoArrowDown as ArrowDownUp, IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoChevronDown, IoFlash, IoInformationCircle, IoRefresh as RefreshCw, IoSettings, IoShield, IoTime, IoTrendingUp } from 'react-icons/io5';
+import { notifyWalletBalanceUpdated } from '@/utils/walletEvents';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-exchange-fix.preview.emergentagent.com';
 
