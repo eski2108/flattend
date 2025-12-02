@@ -6751,6 +6751,53 @@ async def register_user(request: RegisterRequest, req: Request):
     except Exception as e:
         logger.error(f"Failed to create referral code: {str(e)}")
     
+    # ============================================================
+    # CREATE REFERRAL RELATIONSHIP (IF REFERRAL CODE WAS USED)
+    # ============================================================
+    if referrer_user_id and referral_code_used:
+        try:
+            # Create referral relationship
+            relationship_doc = {
+                "relationship_id": str(uuid.uuid4()),
+                "referrer_user_id": referrer_user_id,
+                "referred_user_id": user_account.user_id,
+                "referral_code_used": referral_code_used,
+                "signup_date": datetime.now(timezone.utc).isoformat(),
+                
+                # Anti-abuse tracking
+                "ip_address": client_ip,
+                "user_agent": user_agent,
+                "suspicious": False,  # Can add abuse detection logic later
+                "abuse_reasons": [],
+                "bonus_blocked": False,
+                
+                # Bonus tracking
+                "bonus_awarded": False,
+                "bonus_amount": 0,
+                "qualifying_top_up": 0,
+                
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            
+            await db.referral_relationships.insert_one(relationship_doc)
+            
+            # Update referrer stats
+            await db.referral_stats.update_one(
+                {"user_id": referrer_user_id},
+                {
+                    "$inc": {
+                        "total_signups": 1,
+                        "active_referrals": 1
+                    },
+                    "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
+                },
+                upsert=True
+            )
+            
+            logger.info(f"✅ Referral relationship created: {referrer_user_id} → {user_account.user_id}")
+        except Exception as ref_rel_error:
+            logger.error(f"❌ Failed to create referral relationship: {str(ref_rel_error)}")
+    
     # Send verification email
     try:
         await email_service.send_verification_email(
