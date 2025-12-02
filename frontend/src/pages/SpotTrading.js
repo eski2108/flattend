@@ -234,9 +234,12 @@ export default function SpotTrading() {
         fee_percent: tradingFee
       };
 
+      console.log('📡 Sending order to API:', orderData);
       const response = await axios.post(`${API}/api/trading/place-order`, orderData);
+      console.log('📡 API Response:', response.data);
       
       if (response.data.success) {
+        console.log('✅ ORDER SUCCESS!');
         // Show success state
         setLastOrderDetails({
           type: orderType,
