@@ -77,27 +77,16 @@ export default function WalletPage() {
 
   const loadBalances = async (userId) => {
     try {
-      // Use PORTFOLIO endpoint which has working price data
-      const response = await axios.get(`${API}/api/wallets/portfolio/${userId}?_t=${Date.now()}`);
+      // Use BALANCES endpoint with cache-busting
+      const response = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
       if (response.data.success) {
-        // Convert portfolio allocations to balance format
-        const bals = (response.data.allocations || []).map(alloc => ({
-          currency: alloc.currency,
-          available_balance: alloc.balance,
-          locked_balance: 0,
-          total_balance: alloc.balance,
-          price_gbp: alloc.price || 0,
-          gbp_value: alloc.value || 0
-        }));
-        
-        console.log('📊 Loaded balances:', bals.length, 'currencies');
-        console.log('💰 Balances:', bals.map(b => `${b.currency}: £${b.gbp_value}`));
+        const bals = response.data.balances || [];
         setBalances(bals);
         
-        // Use total from API (already in GBP after conversion)
-        const total = response.data.total_value_usd / 1.27;
-        console.log('💵 Total GBP:', total);
+        // Calculate total from gbp_value
+        const total = bals.reduce((sum, bal) => sum + (bal.gbp_value || 0), 0);
         setTotalGBP(total);
+        console.log('💵 WalletPage Total: £' + total.toFixed(2));
       }
     } catch (error) {
       console.error('Failed to load balances:', error);
