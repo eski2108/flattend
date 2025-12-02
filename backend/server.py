@@ -15699,6 +15699,46 @@ async def get_single_live_price(symbol: str):
 
 
 # ============================================================================
+# TRADING MODULE ENDPOINTS
+# ============================================================================
+
+@api_router.get("/market-price")
+async def get_market_price(pair: str):
+    """Get live market price for a trading pair (e.g. BTCUSD)
+    Returns consistent price for chart + execution"""
+    try:
+        # Extract base currency from pair (e.g., BTCUSD -> BTC)
+        base = pair[:3] if len(pair) >= 6 else pair[:3]
+        
+        # Get live price from our unified price endpoint
+        all_prices = await fetch_live_prices()
+        
+        if base not in all_prices:
+            return {
+                "success": False,
+                "message": f"Price not available for {base}"
+            }
+        
+        price_data = all_prices[base]
+        price_usd = price_data.get("usd", 0)
+        
+        return {
+            "success": True,
+            "pair": pair,
+            "base": base,
+            "quote": "USD",
+            "price": price_usd,
+            "change_24h": price_data.get("usd_24h_change", 0),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error getting market price for {pair}: {e}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+# ============================================================================
 # MARKET-BASED PRICING & CRYPTO PRICE FEED
 # ============================================================================
 
