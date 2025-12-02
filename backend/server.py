@@ -21883,6 +21883,20 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
             "status": "completed"
         })
         
+        # Process referral using centralized engine
+        try:
+            referral_engine = get_referral_engine()
+            await referral_engine.process_referral_commission(
+                user_id=request.from_user_id,
+                fee_amount=fee_amount,
+                fee_type="CROSS_WALLET",
+                currency=request.currency,
+                related_transaction_id=transfer_id,
+                metadata={"to_user": request.to_user_id, "net_amount": net_amount}
+            )
+        except Exception as ref_err:
+            logger.warning(f"Referral failed: {ref_err}")
+        
         # Log to fee_transactions
         await db.fee_transactions.insert_one({
             "user_id": request.from_user_id,
@@ -21891,9 +21905,6 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
             "amount": request.amount,
             "fee_amount": fee_amount,
             "fee_percent": fee_percent,
-            "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
-            "referrer_id": referrer_id,
             "currency": request.currency,
             "reference_id": transfer_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
