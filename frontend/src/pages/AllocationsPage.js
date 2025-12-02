@@ -656,40 +656,99 @@ export default function AllocationsPage() {
                 </div>
               ) : (
                 <div style={{ 
-                  background: 'linear-gradient(135deg, #1a1f35 0%, #252b42 100%)', 
+                  background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)', 
+                  border: '1px solid rgba(0, 240, 255, 0.2)',
                   borderRadius: '20px', 
-                  padding: '3rem 2rem',
+                  padding: isMobile ? '2rem 1.5rem' : '3rem 2rem',
                   marginBottom: '2rem',
-                  border: '1px solid rgba(45, 130, 255, 0.3)',
                   textAlign: 'center',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                  boxShadow: '0 0 40px rgba(0, 240, 255, 0.1), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                  backdropFilter: 'blur(20px)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}>
-                  <div style={{ color: '#FFF', fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem' }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    background: 'radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%)',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  <IoWallet size={64} color="#00F0FF" style={{ marginBottom: '24px', filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.5))' }} />
+                  
+                  <div style={{ color: '#FFFFFF', fontSize: isMobile ? '24px' : '28px', fontWeight: '700', marginBottom: '16px' }}>
                     No Portfolio Data
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.95rem', marginBottom: '1.5rem', lineHeight: '1.6' }}>
-                    Add crypto to your wallet or savings to see your allocations
+                  <div style={{ color: '#8F9BB3', fontSize: isMobile ? '14px' : '16px', marginBottom: '32px', lineHeight: '1.6', maxWidth: '400px', margin: '0 auto 32px' }}>
+                    Start building your crypto portfolio by adding assets to your wallet or exploring our savings products
                   </div>
-                  <button
-                    onClick={() => navigate('/wallet')}
-                    style={{
-                      background: 'linear-gradient(135deg, #2D82FF, #1a5fd9)',
-                      color: '#FFF',
-                      border: 'none',
-                      padding: '0.875rem 2rem',
-                      borderRadius: '12px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      fontSize: '1rem',
-                      boxShadow: '0 4px 12px rgba(45, 130, 255, 0.4)'
-                    }}
-                  >
-                    Go to Wallet →
-                  </button>
+                  
+                  <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={() => navigate('/wallet')}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)',
+                        border: '1px solid rgba(0, 240, 255, 0.4)',
+                        color: '#00F0FF',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        transition: 'all 0.3s',
+                        boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%)';
+                        e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)';
+                        e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                      }}
+                    >
+                      <IoWallet size={16} />
+                      Go to Wallet
+                    </button>
+                    
+                    <button
+                      onClick={() => navigate('/savings')}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)',
+                        border: '1px solid rgba(155, 77, 255, 0.4)',
+                        color: '#9B4DFF',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        transition: 'all 0.3s',
+                        boxShadow: '0 0 20px rgba(155, 77, 255, 0.2)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.3) 0%, rgba(155, 77, 255, 0.15) 100%)';
+                        e.currentTarget.style.borderColor = 'rgba(155, 77, 255, 0.6)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)';
+                        e.currentTarget.style.borderColor = 'rgba(155, 77, 255, 0.4)';
+                      }}
+                    >
+                      <IoShield size={16} />
+                      Explore Savings
+                    </button>
+                  </div>
                 </div>
               )}
-
-              {/* Removed duplicate empty state */}
             </>
           ) : (
             // Products tab
