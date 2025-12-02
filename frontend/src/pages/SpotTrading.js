@@ -264,8 +264,15 @@ export default function SpotTrading() {
         toast.error(response.data.message || 'Order failed');
       }
     } catch (error) {
-      console.error('Order error:', error);
-      toast.error(error.response?.data?.message || 'Failed to place order');
+      console.error('❌ Order error:', error);
+      console.error('❌ Error details:', error.response?.data);
+      
+      // Show error as alert popup too
+      const errorMsg = error.response?.data?.message || error.message || 'Failed to place order';
+      toast.error(errorMsg);
+      
+      // Also show as alert for visibility
+      alert('ORDER FAILED: ' + errorMsg);
     } finally {
       setIsLoading(false);
     }
