@@ -3,7 +3,8 @@
 # CoinHubX Automated Test Suite
 # Tests all critical flows before merging to main
 
-set -e
+# Don't exit on error - we want to run all tests
+set +e
 
 echo "===================================="
 echo "🔍 COINHUBX AUTOMATED TEST SUITE"
