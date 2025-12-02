@@ -872,6 +872,7 @@ class RegisterRequest(BaseModel):
     wallet_address: Optional[str] = None
     google_id: Optional[str] = None
     email_verified: Optional[bool] = False
+    referral_code: Optional[str] = None  # Referral code from URL
 
 class LoginRequest(BaseModel):
     email: str
