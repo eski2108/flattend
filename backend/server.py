@@ -242,6 +242,12 @@ def check_rate_limit(ip_address: str, action: str = "registration"):
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Health Check Endpoint (for automated testing)
+@api_router.get("/health")
+async def health_check():
+    """Simple health check endpoint"""
+    return {"status": "healthy", "service": "coinhubx-backend", "timestamp": datetime.now(timezone.utc).isoformat()}
+
 # Admin Authentication Helper
 async def verify_admin(authorization: str = Header(None)):
     """Verify admin access - simple check for MVP"""
