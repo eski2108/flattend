@@ -151,6 +151,11 @@ export default function Register() {
         payload.email_verified = true;
       }
       
+      // ✅ ADD REFERRAL CODE TO PAYLOAD (CRITICAL FIX!)
+      if (formData.referral_code) {
+        payload.referral_code = formData.referral_code;
+      }
+      
       const response = await axios.post(`${API}/auth/register`, payload);
       
       if (response.data.success) {
