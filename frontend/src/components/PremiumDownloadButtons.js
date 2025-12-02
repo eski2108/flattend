@@ -68,14 +68,18 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
   };
 
   const iconContainerStyle = {
-    width: compact ? '48px' : '56px',
-    height: compact ? '48px' : '56px',
-    borderRadius: '16px',
+    width: compact ? '52px' : '60px',
+    height: compact ? '52px' : '60px',
+    borderRadius: '18px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: compact ? '28px' : '32px',
-    transition: 'all 0.3s ease'
+    fontSize: compact ? '30px' : '36px',
+    transition: 'all 0.3s ease',
+    background: 'rgba(255, 255, 255, 0.15)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 0.2)'
   };
 
   const textContainerStyle = {
