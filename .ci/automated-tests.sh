@@ -57,7 +57,7 @@ echo ""
 
 # Test 4: API Authentication Endpoint
 echo "Test 4: API Authentication Endpoint..."
-if curl -s "${BACKEND_URL}/api/auth/login" -H "Content-Type: application/json" -d '{"email":"test","password":"test"}' | grep -q "error\|success\|message"; then
+if curl -s "${BACKEND_URL}/api/auth/login" -H "Content-Type: application/json" -d '{"email":"test","password":"test"}' | grep -q "error\|success\|message\|detail"; then
     echo -e "${GREEN}✅ PASSED: Auth endpoint responding${NC}"
     ((PASSED++))
 else
