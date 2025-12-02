@@ -64,8 +64,10 @@ export default function PortfolioPageEnhanced() {
         });
         
         setPortfolio(transformedAllocations);
-        setTotalValue(response.data.total_value_usd || 0);
-        setTotalInvested(response.data.total_value_usd || 0);
+        // Convert USD to GBP (divide by ~1.27)
+        const totalGBP = (response.data.total_value_usd || 0) / 1.27;
+        setTotalValue(totalGBP);
+        setTotalInvested(totalGBP);
         setTotalPL(0);
         setTotalPLPercent(0);
       }
