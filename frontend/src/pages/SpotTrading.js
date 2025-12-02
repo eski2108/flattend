@@ -237,9 +237,18 @@ export default function SpotTrading() {
       console.log('📡 Sending order to API:', orderData);
       const response = await axios.post(`${API}/api/trading/place-order`, orderData);
       console.log('📡 API Response:', response.data);
+      console.log('📡 Success value:', response.data.success);
+      console.log('📡 Response type:', typeof response.data.success);
       
       if (response.data.success) {
         console.log('✅ ORDER SUCCESS!');
+        
+        // FORCE ALERT FOR DEBUGGING
+        alert(`✅ ORDER PLACED! ${orderType.toUpperCase()} ${amount} BTC at $${price || marketStats.lastPrice}`);
+        
+        // Show success toast
+        toast.success(`Order placed successfully! ${orderType.toUpperCase()} ${amount} BTC`);
+        
         // Show success state
         setLastOrderDetails({
           type: orderType,
@@ -261,6 +270,7 @@ export default function SpotTrading() {
         
         return; // Don't execute finally block
       } else {
+        console.log('❌ Order failed:', response.data.message);
         toast.error(response.data.message || 'Order failed');
       }
     } catch (error) {
