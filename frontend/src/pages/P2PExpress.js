@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
