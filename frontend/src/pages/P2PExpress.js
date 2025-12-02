@@ -261,7 +261,7 @@ export default function P2PExpress() {
 
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '20px' : '32px' }}>
             
-            <div>
+            <div style={{ flex: isMobile ? '1' : '1', minWidth: 0 }}>
               
               {livePrice && (
                 <div style={{
