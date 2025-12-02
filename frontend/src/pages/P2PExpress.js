@@ -209,6 +209,9 @@ export default function P2PExpress() {
       const response = await axios.post(`${API}/api/p2p/express/create`, orderData);
 
       if (response.data.success) {
+        // Notify wallet to refresh balances
+        notifyWalletBalanceUpdated();
+        
         if (hasAdminLiquidity) {
           toast.success('Express order completed! Crypto credited instantly.');
           // Redirect to wallet to see new balance
