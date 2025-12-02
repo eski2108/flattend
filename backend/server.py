@@ -22483,7 +22483,13 @@ async def get_portfolio_summary(user_id: str):
             # Reverse transactions after cutoff time
             for tx in reversed(sorted(transactions, key=lambda x: x.get('timestamp', now))):
                 tx_time = tx.get('timestamp')
-                if tx_time and tx_time > cutoff_time:
+                # Handle timezone-aware and naive datetime comparison
+                if tx_time:
+                    if tx_time.tzinfo is None:
+                        tx_time = tx_time.replace(tzinfo=timezone.utc)
+                    if cutoff_time.tzinfo is None:
+                        cutoff_time = cutoff_time.replace(tzinfo=timezone.utc)
+                    if tx_time > cutoff_time:
                     tx_type = tx.get('type')
                     currency = tx.get('currency', 'GBP')
                     amount = Decimal(str(tx.get('amount', 0)))
