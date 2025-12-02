@@ -224,16 +224,11 @@ export default function OrderPreview() {
   return (
     <Layout>
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1.5rem 1rem' }}>
-        
-        {/* ULTRA TEST: This should DEFINITELY show */}
-        <div style={{ background: 'lime', padding: '20px', marginBottom: '20px', fontSize: '30px', fontWeight: '900' }}>
-          ✅ TOP OF COMPONENT - IF YOU SEE THIS, REACT IS WORKING
-        </div>
 
         {/* Header */}
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#00F0FF', marginBottom: '0.5rem' }}>
-            Order Preview 🔴 TESTING IF CHANGES APPLY
+            Order Preview
           </h1>
           <p style={{ color: '#888', fontSize: '0.875rem' }}>
             Review details before confirming your purchase
