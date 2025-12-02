@@ -15736,6 +15736,44 @@ async def get_single_live_price(symbol: str):
 
 
 # ============================================================================
+# REFERRAL SYSTEM ENDPOINTS
+# ============================================================================
+
+@api_router.post("/referrals/purchase-vip")
+async def purchase_vip_tier(request: dict):
+    """Purchase VIP tier for \u00a3150"""
+    try:
+        user_id = request.get("user_id")
+        if not user_id:
+            return {"success": False, "message": "User ID required"}
+        
+        referral_engine = get_referral_engine()
+        result = await referral_engine.upgrade_to_vip(user_id, 150.0)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error purchasing VIP: {e}")
+        return {"success": False, "message": str(e)}
+
+@api_router.post("/admin/referrals/assign-golden")
+async def assign_golden_tier(request: dict):
+    """Admin assigns golden tier to user"""
+    try:
+        user_id = request.get("user_id")
+        admin_id = request.get("admin_id")
+        
+        if not user_id or not admin_id:
+            return {"success": False, "message": "Missing required fields"}
+        
+        referral_engine = get_referral_engine()
+        result = await referral_engine.assign_golden_tier(user_id, admin_id)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error assigning golden: {e}")
+        return {"success": False, "message": str(e)}
+
+# ============================================================================
 # TRADING MODULE ENDPOINTS
 # ============================================================================
 
