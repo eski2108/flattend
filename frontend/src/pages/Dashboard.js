@@ -359,8 +359,234 @@ export default function Dashboard() {
             {/* Main Content Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: isMobile ? '16px' : '32px' }}>
               
-              {/* Left Column: Top Assets & Recent Activity */}
+              {/* Left Column: Portfolio Allocation, Top Assets & Recent Activity */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
+                
+                {/* Portfolio Allocation Pie Chart */}
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                  border: '2px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '20px',
+                  padding: isMobile ? '20px' : '28px',
+                  boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+                  position: 'relative'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '200px',
+                    height: '60px',
+                    background: 'radial-gradient(circle, rgba(0, 240, 255, 0.4), transparent)',
+                    filter: 'blur(40px)',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h3 style={{ 
+                      fontSize: isMobile ? '18px' : '20px', 
+                      fontWeight: '700', 
+                      color: '#FFFFFF', 
+                      margin: 0,
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '10px',
+                      textShadow: '0 0 15px rgba(0, 240, 255, 0.5)'
+                    }}>
+                      <IoAnalytics size={20} color="#00F0FF" />
+                      Portfolio Allocation
+                    </h3>
+                  </div>
+                  
+                  {/* Pie Chart Component */}
+                  {(() => {
+                    // Transform topAssets data for pie chart
+                    const chartAssets = topAssets.map((asset, index) => ({
+                      symbol: asset.currency,
+                      value: asset.gbp_value || 0,
+                      color: [
+                        '#00F0FF', // Cyan
+                        '#A855F7', // Purple  
+                        '#22C55E', // Green
+                        '#F59E0B', // Orange
+                        '#EF4444', // Red
+                        '#8B5CF6', // Violet
+                        '#06B6D4', // Sky
+                        '#F97316'  // Orange-red
+                      ][index % 8]
+                    }));
+
+                    const total = chartAssets.reduce((sum, asset) => sum + asset.value, 0);
+                    
+                    if (chartAssets.length === 0 || total === 0) {
+                      return (
+                        <div style={{ textAlign: 'center', padding: '40px', color: '#8F9BB3' }}>
+                          <IoAnalytics size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+                          <div>No portfolio data available</div>
+                          <button
+                            onClick={() => navigate('/instant-buy')}
+                            style={{
+                              marginTop: '16px',
+                              padding: '12px 24px',
+                              background: 'linear-gradient(135deg, #00F0FF, #0080FF)',
+                              border: 'none',
+                              borderRadius: '8px',
+                              color: '#000000',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Start Investing
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    // Calculate slices for pie chart
+                    const slices = chartAssets.reduce((acc, asset) => {
+                      const percent = (asset.value / total) * 100;
+                      const angle = (percent / 100) * 360;
+                      const previousAngle = acc.length > 0 ? acc[acc.length - 1].endAngle : 0;
+                      const startAngle = previousAngle;
+                      const endAngle = previousAngle + angle;
+                      
+                      acc.push({
+                        ...asset,
+                        percent,
+                        startAngle,
+                        endAngle
+                      });
+                      
+                      return acc;
+                    }, []);
+
+                    const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
+                      const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+                      return {
+                        x: centerX + (radius * Math.cos(angleInRadians)),
+                        y: centerY + (radius * Math.sin(angleInRadians))
+                      };
+                    };
+
+                    const describeArc = (x, y, radius, startAngle, endAngle) => {
+                      const start = polarToCartesian(x, y, radius, endAngle);
+                      const end = polarToCartesian(x, y, radius, startAngle);
+                      const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+                      return [
+                        "M", start.x, start.y,
+                        "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
+                        "L", x, y,
+                        "Z"
+                      ].join(" ");
+                    };
+
+                    return (
+                      <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        {/* Pie Chart SVG */}
+                        <svg width="200" height="200" viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
+                          {/* Outer glow ring */}
+                          <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0, 240, 255, 0.2)" strokeWidth="2" />
+                          
+                          {/* Center circle for donut effect */}
+                          <circle cx="100" cy="100" r="30" fill="rgba(2, 6, 24, 0.9)" />
+                          
+                          {slices.map((slice, index) => {
+                            if (slice.percent < 0.5) return null;
+                            
+                            return (
+                              <path
+                                key={index}
+                                d={describeArc(100, 100, 85, slice.startAngle, slice.endAngle)}
+                                fill={slice.color}
+                                opacity="0.9"
+                                style={{
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
+                                  filter: `drop-shadow(0 0 12px ${slice.color}88)`
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.opacity = '1';
+                                  e.target.style.filter = `drop-shadow(0 0 20px ${slice.color}BB)`;
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.opacity = '0.9';
+                                  e.target.style.filter = `drop-shadow(0 0 12px ${slice.color}88)`;
+                                }}
+                              />
+                            );
+                          })}
+                          
+                          {/* Center text */}
+                          <text
+                            x="100"
+                            y="95"
+                            textAnchor="middle"
+                            fill="#00F0FF"
+                            fontSize="20"
+                            fontWeight="700"
+                            fontFamily="Inter, sans-serif"
+                            style={{ textShadow: '0 0 10px rgba(0, 240, 255, 0.8)' }}
+                          >
+                            {slices.length}
+                          </text>
+                          <text
+                            x="100"
+                            y="110"
+                            textAnchor="middle"
+                            fill="#8F9BB3"
+                            fontSize="11"
+                            fontWeight="500"
+                            fontFamily="Inter, sans-serif"
+                            letterSpacing="1"
+                          >
+                            ASSETS
+                          </text>
+                        </svg>
+
+                        {/* Legend */}
+                        <div style={{ flex: 1, minWidth: '200px' }}>
+                          {slices.map((slice, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '10px 12px',
+                                marginBottom: '8px',
+                                borderRadius: '10px',
+                                background: 'rgba(0, 240, 255, 0.05)',
+                                border: '1px solid rgba(0, 240, 255, 0.15)',
+                                transition: 'all 0.2s'
+                              }}
+                            >
+                              <div style={{
+                                width: '14px',
+                                height: '14px',
+                                borderRadius: '50%',
+                                background: slice.color,
+                                boxShadow: `0 0 10px ${slice.color}66`
+                              }} />
+                              <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600', flex: 1 }}>
+                                {slice.symbol}
+                              </span>
+                              <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontSize: '13px', color: '#00F0FF', fontWeight: '700' }}>
+                                  {slice.percent.toFixed(1)}%
+                                </div>
+                                <div style={{ fontSize: '11px', color: '#8F9BB3' }}>
+                                  {balanceVisible ? formatCurrency(slice.value) : '••••••'}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
                 
                 {/* Top Assets */}
                 <div style={{
