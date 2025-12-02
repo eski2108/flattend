@@ -6,6 +6,7 @@ import { ArrowRight, CreditCard, DollarSign, IoArrowForward, IoCard, IoCash, IoF
 import Logo from '@/components/Logo';
 import axios from 'axios';
 import Footer from '@/components/Footer';
+import PremiumDownloadButtons from '@/components/PremiumDownloadButtons';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
