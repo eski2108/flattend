@@ -71,7 +71,7 @@ export default function Dashboard() {
       }
       
       // Load top assets
-      const assetsRes = await axios.get(`${API}/api/wallet/balances/${userId}`);
+      const assetsRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
       if (assetsRes.data.success) {
         setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
       }
