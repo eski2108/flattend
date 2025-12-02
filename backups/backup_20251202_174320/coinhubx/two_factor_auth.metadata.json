@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"4c92fb189d6e41eaa29ea7287f737c75","collectionName":"two_factor_auth","type":"collection"}
