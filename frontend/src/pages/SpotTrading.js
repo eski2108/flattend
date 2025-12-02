@@ -543,7 +543,10 @@ export default function SpotTrading() {
                 
                 {/* Mobile Trade Button */}
                 <button
-                  onClick={handlePlaceOrder}
+                  onClick={(e) => {
+                    console.log('🔥 MOBILE BUY CLICKED! Amount:', amount);
+                    handlePlaceOrder();
+                  }}
                   disabled={isLoading || !amount}
                   style={{
                     width: '100%',
