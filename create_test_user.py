@@ -18,7 +18,7 @@ mongo_url = os.environ.get('MONGO_URL')
 async def create_test_user():
     """Create test user with crypto holdings"""
     client = AsyncIOMotorClient(mongo_url)
-    db = client.cryptobank
+    db = client.coinhubx
     
     # Test user data
     user_id = "test-user-123"
