@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
-import { Activity, BarChart3, DollarSign, Info, IoBarChart, IoFlash, IoPulse, IoTrendingDown, IoTrendingUp, TrendingUpDown } from 'react-icons/io5';
+import { Activity, BarChart3, DollarSign, Info, IoBarChart, IoCheckmarkCircle, IoFlash, IoPulse, IoTrendingDown, IoTrendingUp, TrendingUpDown } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-exchange-fix.preview.emergentagent.com';
 
