@@ -593,7 +593,7 @@ export default function P2PExpress() {
                   backdropFilter: 'blur(10px)'
                 }}>
                   <div style={{ marginBottom: '12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '4px' }}>You'll Receive</div>
+                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '4px' }}>You&apos;ll Receive</div>
                     <div style={{ fontSize: '24px', fontWeight: '700', color: '#0CEBFF' }}>
                       {quote.cryptoAmount.toFixed(8)} {quote.coin}
                     </div>
