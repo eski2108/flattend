@@ -454,6 +454,32 @@ export default function SpotTrading() {
                 backdropFilter: 'blur(10px)',
                 marginBottom: '16px'
               }}>
+                
+                {/* Success Message for Mobile */}
+                {orderSuccess && lastOrderDetails && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)',
+                    border: '2px solid rgba(34, 197, 94, 0.6)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    marginBottom: '16px',
+                    boxShadow: '0 0 30px rgba(34, 197, 94, 0.4)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                      <IoCheckmarkCircle size={24} color="#22C55E" />
+                      <div style={{ fontSize: '18px', fontWeight: '700', color: '#22C55E' }}>
+                        SUCCESS!
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#FFFFFF', marginBottom: '4px' }}>
+                      {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#D1D5DB' }}>
+                      at ${lastOrderDetails.price.toLocaleString()}
+                    </div>
+                  </div>
+                )}
+                
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <div style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>
                     {tradingPairs.find(p => p.symbol === selectedPair)?.name || selectedPair}
