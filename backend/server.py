@@ -3407,18 +3407,18 @@ async def release_crypto_from_escrow_OLD(request: ReleaseCryptoRequest):
     fee_dict['trade_id'] = request.trade_id
     await db.crypto_transactions.insert_one(fee_dict)
     
-    # Process referral commission (20% of platform fee)
+    # Process referral commission using centralized engine
     try:
-        buyer_user = await db.user_accounts.find_one({"user_id": trade["buyer_id"]})
-        if buyer_user:
-            await process_referral_commission(
-                referred_user_id=trade["buyer_id"],
-                transaction_id=request.trade_id,
-                transaction_type="p2p_trade",
-                currency=trade["crypto_currency"],
-                platform_fee=platform_fee
-            )
-            logger.info(f"Referral commission processed for trade {request.trade_id}")
+        referral_engine = get_referral_engine()
+        await referral_engine.process_referral_commission(
+            user_id=trade["seller_id"],  # Seller pays maker fee
+            fee_amount=platform_fee,
+            fee_type="P2P_MAKER",
+            currency=trade["crypto_currency"],
+            related_transaction_id=request.trade_id,
+            metadata={"buyer_id": trade["buyer_id"], "crypto_amount": crypto_amount}
+        )
+        logger.info(f"Referral commission processed for P2P Maker fee {request.trade_id}")
     except Exception as e:
         logger.error(f"Failed to process referral commission: {str(e)}")
     
