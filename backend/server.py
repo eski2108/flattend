@@ -8382,24 +8382,28 @@ async def resolve_dispute_final(request: dict):
     losing_party = trade["seller_id"] if resolution == "release_to_buyer" else trade["buyer_id"]
     winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
     
-    # Check for referrer of losing party
-    loser = await db.user_accounts.find_one({"user_id": losing_party}, {"_id": 0})
-    referrer_id = loser.get("referrer_id") if loser else None
-    referrer_commission = 0.0
-    admin_fee = dispute_fee
-    commission_percent = 0.0
+    # ============================================================
+    # REFERRAL COMMISSION PROCESSING (P2P DISPUTE FEE)
+    # ============================================================
+    from referral_engine import ReferralEngine
+    referral_engine = ReferralEngine(db)
     
-    if referrer_id:
-        referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
-        referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
-        
-        if referrer_tier == "golden":
-            commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
-        else:
-            commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
-        
-        referrer_commission = dispute_fee * (commission_percent / 100.0)
-        admin_fee = dispute_fee - referrer_commission
+    commission_result = await referral_engine.process_referral_commission(
+        user_id=losing_party,
+        fee_amount=dispute_fee,
+        fee_type="P2P_DISPUTE",
+        currency="GBP",
+        related_transaction_id=dispute_id,
+        metadata={
+            "trade_id": trade.get("trade_id"),
+            "resolution": resolution,
+            "trade_value_gbp": trade_value_gbp
+        }
+    )
+    
+    if commission_result["success"]:
+        logger.info(f"✅ P2P Dispute referral commission: £{commission_result['commission_amount']:.2f} "
+                   f"to {commission_result['referrer_id']}")
     
     # Deduct dispute fee from losing party's balance
     wallet_service = get_wallet_service()
