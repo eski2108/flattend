@@ -462,57 +462,36 @@ export default function SpotTrading() {
                 marginBottom: '16px'
               }}>
                 
-                {/* Success Message - FULLSCREEN OVERLAY */}
+                {/* Success Message - NORMAL SIZE, HIGH-END */}
                 {orderSuccess && lastOrderDetails && (
                   <div style={{
                     position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                    top: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                     zIndex: 99999,
-                    background: 'rgba(0, 0, 0, 0.95)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    animation: 'fadeIn 0.3s ease-out'
+                    animation: 'slideDown 0.3s ease-out'
                   }}
                   onClick={() => setOrderSuccess(false)}
                   >
                     <div style={{
-                      background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
-                      border: '4px solid #FFFFFF',
-                      borderRadius: '30px',
-                      padding: '48px 32px',
-                      boxShadow: '0 0 100px rgba(34, 197, 94, 1), 0 20px 60px rgba(0, 0, 0, 0.9)',
-                      textAlign: 'center',
-                      maxWidth: '90%',
-                      animation: 'scaleIn 0.5s ease-out'
+                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.95) 0%, rgba(22, 163, 74, 0.95) 100%)',
+                      border: '2px solid #22C55E',
+                      borderRadius: '16px',
+                      padding: '20px 28px',
+                      boxShadow: '0 0 40px rgba(34, 197, 94, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5)',
+                      backdropFilter: 'blur(10px)',
+                      minWidth: '320px',
+                      maxWidth: '90%'
                     }}>
-                      <div style={{ marginBottom: '24px' }}>
-                        <IoCheckmarkCircle size={80} color="#FFFFFF" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                        <IoCheckmarkCircle size={28} color="#FFFFFF" />
+                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF' }}>
+                          Order Placed Successfully
+                        </div>
                       </div>
-                      <div style={{ fontSize: '48px', fontWeight: '900', color: '#FFFFFF', marginBottom: '16px', textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
-                        ORDER PLACED!
-                      </div>
-                      <div style={{ fontSize: '24px', color: '#FFFFFF', marginBottom: '12px', fontWeight: '700' }}>
-                        {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto}
-                      </div>
-                      <div style={{ fontSize: '20px', color: '#FFFFFF', opacity: 0.95, marginBottom: '24px' }}>
-                        Price: ${lastOrderDetails.price.toLocaleString()}
-                      </div>
-                      <div style={{ 
-                        fontSize: '16px', 
-                        color: '#FFFFFF', 
-                        padding: '16px 24px',
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        borderRadius: '12px',
-                        marginBottom: '16px'
-                      }}>
-                        ✅ Order executed successfully
-                      </div>
-                      <div style={{ fontSize: '14px', color: '#FFFFFF', opacity: 0.9 }}>
-                        Tap anywhere to close
+                      <div style={{ fontSize: '15px', color: '#FFFFFF', opacity: 0.95, paddingLeft: '40px' }}>
+                        {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto} at ${lastOrderDetails.price.toLocaleString()}
                       </div>
                     </div>
                   </div>
