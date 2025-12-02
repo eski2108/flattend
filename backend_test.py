@@ -51,32 +51,6 @@ TEST_CREDENTIALS = {
     "referred": {"email": "referred@test.com", "password": "testpass123"},
     "admin": {"email": "admin", "password": "password123"}
 }
-    "password": "Test123456",
-    "full_name": "Test Trader",
-    "phone_number": "+447808184311"
-}
-
-P2P_BUYER = {
-    "email": "p2p_buyer@test.com",
-    "password": "Buyer123456", 
-    "full_name": "P2P Buyer",
-    "phone_number": "+447808184312"
-}
-
-P2P_SELLER = {
-    "email": "p2p_seller@test.com",
-    "password": "Seller123456",
-    "full_name": "P2P Seller", 
-    "phone_number": "+447808184313"
-}
-
-ADMIN_USER = {
-    "email": "admin@coinhubx.com",
-    "password": "admin123",
-    "full_name": "CoinHubX Admin"
-}
-
-ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
 
 class TradingPlatformTester:
     def __init__(self):
