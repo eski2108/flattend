@@ -362,7 +362,7 @@ export default function P2PExpress() {
                     }
                   </div>
                   <div style={{ fontSize: '14px', color: '#D1D5DB' }}>
-                    Redirecting you now...
+                    You can make another purchase or check your wallet to see your new balance.
                   </div>
                 </div>
               )}
