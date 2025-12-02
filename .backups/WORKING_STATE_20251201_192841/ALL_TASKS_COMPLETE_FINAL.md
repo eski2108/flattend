@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-exchange-fix.preview.emergentagent.com
+**URL:** https://coinhubpro.preview.emergentagent.com
 
 **Services Status:**
 ```bash
