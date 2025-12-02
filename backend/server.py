@@ -15738,6 +15738,103 @@ async def get_market_price(pair: str):
             "message": str(e)
         }
 
+@api_router.post("/trade/execute")
+async def execute_trade_new(request: dict):
+    """Execute spot trade - NEW SIMPLIFIED ENDPOINT
+    Accepts: {"pair": "BTCUSD", "side": "BUY"|"SELL", "amount": "0.001", "mode": "crypto"|"fiat", "user_id": "xxx"}
+    Returns: {"executed_price": "", "total_cost": "", "new_balance": {"BTC": "", "USD": ""}}
+    """
+    try:
+        user_id = request.get("user_id")
+        pair = request.get("pair")  # e.g., "BTCUSD"
+        side = request.get("side", "").upper()  # "BUY" or "SELL"
+        amount_str = request.get("amount", "0")
+        mode = request.get("mode", "crypto")  # "crypto" or "fiat"
+        
+        if not all([user_id, pair, side in ["BUY", "SELL"], amount_str]):
+            return {
+                "success": False,
+                "message": "Missing required fields"
+            }
+        
+        amount = float(amount_str)
+        
+        # Parse pair to get base and quote (e.g., BTCUSD -> BTC, USD)
+        base = pair[:3]
+        quote = pair[3:]
+        
+        # Convert quote to GBP (we use GBP internally)
+        actual_quote = "GBP"
+        
+        # Get live market price
+        all_prices = await fetch_live_prices()
+        if base not in all_prices:
+            return {
+                "success": False,
+                "message": f"Price not available for {base}"
+            }
+        
+        # Get price in USD then convert to GBP (simplified 1.27 conversion)
+        price_usd = all_prices[base].get("usd", 0)
+        price_gbp = price_usd * 1.27  # USD to GBP conversion
+        
+        # Calculate crypto amount based on mode
+        if mode == "fiat":
+            # Amount is in fiat, calculate crypto
+            crypto_amount = amount / price_gbp
+            fiat_amount = amount
+        else:
+            # Amount is in crypto
+            crypto_amount = amount
+            fiat_amount = amount * price_gbp
+        
+        # Apply platform fee (0.1% default)
+        fee_percent = 0.1
+        fee_amount = fiat_amount * (fee_percent / 100)
+        total_cost = fiat_amount + fee_amount
+        
+        # Execute the trade using existing place-order logic
+        order_data = {
+            "user_id": user_id,
+            "pair": pair,
+            "type": side.lower(),
+            "amount": crypto_amount,
+            "price": price_gbp,
+            "fee_percent": fee_percent
+        }
+        
+        # Use existing endpoint
+        from fastapi import Request as FastAPIRequest
+        result = await place_trading_order(order_data)
+        
+        if not result.get("success"):
+            return result
+        
+        # Get updated balances
+        gbp_wallet = await db.wallets.find_one({"user_id": user_id, "currency": "GBP"})
+        crypto_wallet = await db.wallets.find_one({"user_id": user_id, "currency": base})
+        
+        return {
+            "success": True,
+            "message": f"{side} order executed successfully",
+            "executed_price": price_gbp,
+            "total_cost": total_cost,
+            "fee": fee_amount,
+            "new_balance": {
+                base: crypto_wallet.get("total_balance", 0) if crypto_wallet else 0,
+                "GBP": gbp_wallet.get("total_balance", 0) if gbp_wallet else 0
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error executing trade: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "message": f"Error executing trade: {str(e)}"
+        }
+
 # ============================================================================
 # MARKET-BASED PRICING & CRYPTO PRICE FEED
 # ============================================================================
