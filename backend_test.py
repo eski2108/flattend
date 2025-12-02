@@ -1,37 +1,36 @@
 #!/usr/bin/env python3
 """
-COMPLETE TRADING PLATFORM COMPREHENSIVE TESTING
-Testing all features requested in the review:
+CoinHubX Comprehensive Backend API Testing
+Testing ALL features mentioned in the review request:
 
-**TRADING ENGINE FEATURES:**
-1. Trading page - TradingView widget with all indicators
-2. Trading page - Open/close positions with 0.1% fees
-3. Trading page - P/L calculation and wallet updates
-4. Trading page - Order book with live bid/ask levels
-5. Trading page - Position tracking and trade history
-6. Business Dashboard - All fee types and trading fees
-7. Referral Dashboard - Trading fee commissions (20%/50%)
+**CORE FEATURES TO TEST:**
+1. User Registration and Login flow
+2. Portfolio Dashboard - verify balances display correctly (should show £13,549 for test user gads21083@gmail.com)
+3. P2P Express - test buying BTC with GBP (£100 test purchase)
+4. P2P Express - verify GBP → Crypto flow is clear and centered on mobile
+5. P2P Express - verify Live Price card displays correctly
+6. P2P Marketplace - test creating an offer
+7. P2P Marketplace - test buying from an offer
+8. P2P Marketplace - verify DualCurrencyInput works on order preview
+9. Swap Crypto - test swapping BTC → ETH
+10. Swap Crypto - verify balance warning shows when balance is 0
+11. Swap Crypto - verify 'Buy BTC Now' button appears when balance is 0
+12. Spot Trading - test placing buy order
+13. Spot Trading - test placing sell order
+14. Wallet page - verify all balances display correctly
+15. Wallet page - verify portfolio value matches dashboard
+16. Referral System - verify commission is credited (20% of fees)
+17. Admin Dashboard - verify fees are collected in PLATFORM_FEES wallet
+18. Payment flow - verify money deducted from user wallet
+19. Payment flow - verify crypto credited to user
+20. Payment flow - verify fees go to admin wallet
+21. Payment flow - verify referrer gets 20% commission
 
-**P2P EXPRESS FEATURES:**
-8. P2P Express - Instant delivery with admin liquidity
-9. P2P Express - Express seller matching
-10. P2P Express - 10-minute countdown timer
-11. P2P Express - 2.5% fee application
-12. P2P Express - Notifications system
-13. P2P Express - Coin selector with icons
-
-**P2P MARKETPLACE FEATURES:**
-14. Normal P2P - Create sell offers
-15. Normal P2P - Start trades as buyer
-16. Normal P2P - Escrow locking system
-17. Normal P2P - Mark paid functionality
-18. Normal P2P - Release crypto by seller
-19. Normal P2P - Notifications at each step
-20. Normal P2P - Taker/maker fees
-
-**PRICING & INTEGRATION:**
-21. Real prices from CoinGecko (no placeholders)
-22. All systems integrated and working
+**Test Credentials:**
+- Test User: gads21083@gmail.com / 123456789
+- Referrer Test: referrer@test.com / testpass123
+- Referred Test: referred@test.com / testpass123
+- Admin: admin / password123
 
 **Backend URL:** https://cryptospeed.preview.emergentagent.com/api
 """
@@ -45,9 +44,13 @@ import time
 # Configuration
 BASE_URL = "https://cryptospeed.preview.emergentagent.com/api"
 
-# Test Users for comprehensive testing
-TEST_TRADER = {
-    "email": "trader@test.com",
+# Test credentials from review request
+TEST_CREDENTIALS = {
+    "main_user": {"email": "gads21083@gmail.com", "password": "123456789"},
+    "referrer": {"email": "referrer@test.com", "password": "testpass123"},
+    "referred": {"email": "referred@test.com", "password": "testpass123"},
+    "admin": {"email": "admin", "password": "password123"}
+}
     "password": "Test123456",
     "full_name": "Test Trader",
     "phone_number": "+447808184311"
