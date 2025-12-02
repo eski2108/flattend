@@ -20,7 +20,7 @@ import {
   IoSwapHorizontal
 } from 'react-icons/io5';
 
-const API = API_BASE_URL;
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // Coin names mapping
 const COIN_NAMES = {
@@ -35,30 +35,43 @@ const COIN_NAMES = {
   'OTHERS': 'Others'
 };
 
-// Coin icons/emojis
+// Premium coin icons with better symbols
 const COIN_ICONS = {
   'BTC': '₿',
   'ETH': 'Ξ',
   'USDT': '₮',
-  'BNB': 'BNB',
+  'BNB': '◆',
   'SOL': '◎',
-  'XRP': 'X',
+  'XRP': '✕',
   'LTC': 'Ł',
   'SHIB': '🐕',
-  'OTHERS': '•••'
+  'OTHERS': '◈'
 };
 
-// Bright, vibrant chart colors
+// Premium neon gradient colors matching the theme
 const CHART_COLORS = {
-  'BTC': '#3B92FF',
-  'ETH': '#7E8FFF',
-  'USDT': '#2ECC71',
-  'BNB': '#F3BA2F',
-  'SOL': '#00FFA3',
-  'XRP': '#FF8C5A',
-  'LTC': '#4A7BC8',
-  'SHIB': '#5DD39E',
-  'OTHERS': '#8B95A8'
+  'BTC': '#00E5FF', // Neon cyan
+  'ETH': '#7B2CFF', // Neon purple
+  'USDT': '#00F0FF', // Bright cyan
+  'BNB': '#FFD700', // Gold
+  'SOL': '#9B4DFF', // Purple
+  'XRP': '#00FFA3', // Neon green
+  'LTC': '#22C55E', // Green
+  'SHIB': '#F59E0B', // Amber
+  'OTHERS': '#8F9BB3' // Muted
+};
+
+// Premium gradient combinations for cards
+const CARD_GRADIENTS = {
+  'BTC': 'linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 229, 255, 0.05) 100%)',
+  'ETH': 'linear-gradient(135deg, rgba(123, 44, 255, 0.15) 0%, rgba(123, 44, 255, 0.05) 100%)',
+  'USDT': 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)',
+  'BNB': 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%)',
+  'SOL': 'linear-gradient(135deg, rgba(155, 77, 255, 0.15) 0%, rgba(155, 77, 255, 0.05) 100%)',
+  'XRP': 'linear-gradient(135deg, rgba(0, 255, 163, 0.15) 0%, rgba(0, 255, 163, 0.05) 100%)',
+  'LTC': 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%)',
+  'SHIB': 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)',
+  'OTHERS': 'linear-gradient(135deg, rgba(143, 155, 179, 0.15) 0%, rgba(143, 155, 179, 0.05) 100%)'
 };
 
 export default function AllocationsPage() {
