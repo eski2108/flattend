@@ -462,37 +462,58 @@ export default function SpotTrading() {
                 marginBottom: '16px'
               }}>
                 
-                {/* Success Message for Mobile - PROMINENT */}
+                {/* Success Message - FULLSCREEN OVERLAY */}
                 {orderSuccess && lastOrderDetails && (
                   <div style={{
                     position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 9999,
-                    width: '90%',
-                    maxWidth: '400px',
-                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.98) 0%, rgba(22, 163, 74, 0.95) 100%)',
-                    border: '3px solid #22C55E',
-                    borderRadius: '20px',
-                    padding: '32px 24px',
-                    boxShadow: '0 0 60px rgba(34, 197, 94, 0.8), 0 20px 50px rgba(0, 0, 0, 0.8)',
-                    animation: 'successPulse 0.5s ease-out'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
-                      <IoCheckmarkCircle size={48} color="#FFFFFF" />
-                      <div style={{ fontSize: '32px', fontWeight: '900', color: '#FFFFFF', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                        SUCCESS!
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 99999,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    animation: 'fadeIn 0.3s ease-out'
+                  }}
+                  onClick={() => setOrderSuccess(false)}
+                  >
+                    <div style={{
+                      background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+                      border: '4px solid #FFFFFF',
+                      borderRadius: '30px',
+                      padding: '48px 32px',
+                      boxShadow: '0 0 100px rgba(34, 197, 94, 1), 0 20px 60px rgba(0, 0, 0, 0.9)',
+                      textAlign: 'center',
+                      maxWidth: '90%',
+                      animation: 'scaleIn 0.5s ease-out'
+                    }}>
+                      <div style={{ marginBottom: '24px' }}>
+                        <IoCheckmarkCircle size={80} color="#FFFFFF" />
                       </div>
-                    </div>
-                    <div style={{ fontSize: '18px', color: '#FFFFFF', marginBottom: '8px', textAlign: 'center', fontWeight: '700' }}>
-                      {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto}
-                    </div>
-                    <div style={{ fontSize: '16px', color: '#FFFFFF', textAlign: 'center', opacity: 0.9 }}>
-                      at ${lastOrderDetails.price.toLocaleString()}
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#FFFFFF', textAlign: 'center', marginTop: '16px', opacity: 0.8 }}>
-                      Check your wallet for updated balance
+                      <div style={{ fontSize: '48px', fontWeight: '900', color: '#FFFFFF', marginBottom: '16px', textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+                        ORDER PLACED!
+                      </div>
+                      <div style={{ fontSize: '24px', color: '#FFFFFF', marginBottom: '12px', fontWeight: '700' }}>
+                        {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto}
+                      </div>
+                      <div style={{ fontSize: '20px', color: '#FFFFFF', opacity: 0.95, marginBottom: '24px' }}>
+                        Price: ${lastOrderDetails.price.toLocaleString()}
+                      </div>
+                      <div style={{ 
+                        fontSize: '16px', 
+                        color: '#FFFFFF', 
+                        padding: '16px 24px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        marginBottom: '16px'
+                      }}>
+                        ✅ Order executed successfully
+                      </div>
+                      <div style={{ fontSize: '14px', color: '#FFFFFF', opacity: 0.9 }}>
+                        Tap anywhere to close
+                      </div>
                     </div>
                   </div>
                 )}
