@@ -280,7 +280,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/p2p-marketplace');
+                navigate('/p2p-express');
               }}
               data-testid="landing-buy-btn"
               style={{
