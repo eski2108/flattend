@@ -800,7 +800,12 @@ export default function SpotTrading() {
               </div>
 
               {/* Right Column: Order Book & Market Data */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: isMobile ? '16px' : '24px',
+                flex: isMobile ? '1' : '0 0 400px'
+              }}>
                 
                 {/* Premium TradingView Symbol Overview */}
                 <div style={{
