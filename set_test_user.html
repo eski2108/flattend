@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set Test User</title>
+</head>
+<body>
+    <h1>Set Test User for Portfolio Testing</h1>
+    <button onclick="setTestUser()">Set Test User in LocalStorage</button>
+    <p id="status"></p>
+    
+    <script>
+        function setTestUser() {
+            const testUser = {
+                user_id: "test-user-123",
+                email: "test@example.com",
+                first_name: "Test",
+                last_name: "User",
+                referral_code: "HZZCUVHF"
+            };
+            
+            localStorage.setItem('cryptobank_user', JSON.stringify(testUser));
+            document.getElementById('status').innerHTML = 'Test user set! You can now visit the dashboard.';
+            
+            // Redirect to dashboard after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
