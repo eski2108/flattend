@@ -10212,29 +10212,35 @@ async def execute_trading_transaction(request: dict):
                 upsert=True
             )
         
-        # Calculate referral commission split
-        from centralized_fee_system import get_fee_manager
-        fee_manager = get_fee_manager(db)
+        # ============================================================
+        # REFERRAL COMMISSION PROCESSING (CENTRALIZED ENGINE)
+        # ============================================================
+        from referral_engine import ReferralEngine
+        referral_engine = ReferralEngine(db)
         
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
-        referrer_id = user.get("referrer_id") if user else None
-        referrer_commission = 0.0
-        admin_fee = fee_amount
-        commission_percent = 0.0
+        # Process referral commission through centralized engine
+        commission_result = await referral_engine.process_referral_commission(
+            user_id=user_id,
+            fee_amount=fee_amount,
+            fee_type="TRADING",
+            currency=quote_currency,
+            related_transaction_id=None,
+            metadata={
+                "pair": pair,
+                "trade_type": trade_type,
+                "amount": amount,
+                "price": adjusted_price
+            }
+        )
         
-        if referrer_id:
-            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
-            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
-            
-            if referrer_tier == "golden":
-                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
-            else:
-                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
-            
-            referrer_commission = fee_amount * (commission_percent / 100.0)
-            admin_fee = fee_amount - referrer_commission
+        if commission_result["success"]:
+            logger.info(f"✅ Trading referral commission: £{commission_result['commission_amount']:.2f} "
+                       f"to {commission_result['referrer_id']} (Tier: {commission_result['referrer_tier']})")
         
-        # Credit admin wallet with admin portion of trading fee
+        # Credit admin wallet with platform fee
+        # (Note: referral_engine already handles commission split)
+        admin_fee = fee_amount if not commission_result["success"] else fee_amount
+        
         await db.internal_balances.update_one(
             {"user_id": "admin_wallet", "currency": quote_currency},
             {
@@ -10249,35 +10255,6 @@ async def execute_trading_transaction(request: dict):
             },
             upsert=True
         )
-        
-        # Credit referrer if applicable
-        if referrer_id and referrer_commission > 0:
-            await db.internal_balances.update_one(
-                {"user_id": referrer_id, "currency": quote_currency},
-                {
-                    "$inc": {
-                        "available": referrer_commission,
-                        "balance": referrer_commission
-                    },
-                    "$setOnInsert": {
-                        "reserved": 0,
-                        "created_at": datetime.now(timezone.utc).isoformat()
-                    }
-                },
-                upsert=True
-            )
-            
-            # Log referral commission
-            await db.referral_commissions.insert_one({
-                "referrer_id": referrer_id,
-                "referred_user_id": user_id,
-                "transaction_type": "trading",
-                "fee_amount": fee_amount,
-                "commission_amount": referrer_commission,
-                "commission_percent": commission_percent,
-                "currency": quote_currency,
-                "pair": pair,
-                "trade_type": trade_type,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             })
         
