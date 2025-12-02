@@ -39,7 +39,15 @@ def convert_objectid(obj):
         return {k: convert_objectid(v) for k, v in obj.items()}
     elif isinstance(obj, list):
         return [convert_objectid(item) for item in obj]
+    elif isinstance(obj, Decimal):
+        return float(obj)
     return obj
+
+# Custom JSON Response that handles ObjectId
+class SafeJSONResponse(JSONResponse):
+    """JSONResponse that automatically converts ObjectId to string"""
+    def render(self, content) -> bytes:
+        return super().render(convert_objectid(content))
 from email_service import email_service
 from p2p_enhanced import (
     GLOBAL_PAYMENT_METHODS,
