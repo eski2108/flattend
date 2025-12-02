@@ -253,97 +253,108 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
         </button>
       </div>
 
-      {/* Feature highlights */}
+      {/* Premium Feature highlights */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: compact ? '1rem' : '2rem',
+        gap: compact ? '1.5rem' : '2.5rem',
         flexWrap: 'wrap',
-        marginTop: compact ? '1rem' : '1.5rem',
+        marginTop: compact ? '1.5rem' : '2rem',
         padding: '0 1rem'
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
-          fontSize: compact ? '0.85rem' : '0.9rem',
-          color: 'rgba(255, 255, 255, 0.8)',
-          fontWeight: '500'
+          gap: '0.75rem',
+          fontSize: compact ? '0.9rem' : '1rem',
+          color: 'rgba(255, 255, 255, 0.9)',
+          fontWeight: '600',
+          fontFamily: "'Inter', sans-serif"
         }}>
           <div style={{
-            width: '20px',
-            height: '20px',
+            width: '28px',
+            height: '28px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px'
+            fontSize: '14px',
+            boxShadow: '0 0 20px rgba(0, 240, 255, 0.4), 0 0 40px rgba(123, 44, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
           }}>
             🛡️
           </div>
-          <span>Escrow Protected</span>
+          <span>Military-Grade Escrow</span>
         </div>
         
         <div style={{
-          width: '4px',
-          height: '4px',
+          width: '6px',
+          height: '6px',
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.4)'
+          background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+          boxShadow: '0 0 10px rgba(0, 240, 255, 0.6)'
         }} />
         
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
-          fontSize: compact ? '0.85rem' : '0.9rem',
-          color: 'rgba(255, 255, 255, 0.8)',
-          fontWeight: '500'
+          gap: '0.75rem',
+          fontSize: compact ? '0.9rem' : '1rem',
+          color: 'rgba(255, 255, 255, 0.9)',
+          fontWeight: '600',
+          fontFamily: "'Inter', sans-serif"
         }}>
           <div style={{
-            width: '20px',
-            height: '20px',
+            width: '28px',
+            height: '28px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px'
+            fontSize: '14px',
+            boxShadow: '0 0 20px rgba(0, 240, 255, 0.4), 0 0 40px rgba(123, 44, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
           }}>
             ⚡
           </div>
-          <span>Instant Trading</span>
+          <span>Lightning Fast</span>
         </div>
         
         <div style={{
-          width: '4px',
-          height: '4px',
+          width: '6px',
+          height: '6px',
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.4)'
+          background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+          boxShadow: '0 0 10px rgba(0, 240, 255, 0.6)'
         }} />
         
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
-          fontSize: compact ? '0.85rem' : '0.9rem',
-          color: 'rgba(255, 255, 255, 0.8)',
-          fontWeight: '500'
+          gap: '0.75rem',
+          fontSize: compact ? '0.9rem' : '1rem',
+          color: 'rgba(255, 255, 255, 0.9)',
+          fontWeight: '600',
+          fontFamily: "'Inter', sans-serif"
         }}>
           <div style={{
-            width: '20px',
-            height: '20px',
+            width: '28px',
+            height: '28px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px'
+            fontSize: '14px',
+            boxShadow: '0 0 20px rgba(0, 240, 255, 0.4), 0 0 40px rgba(123, 44, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
           }}>
             📱
           </div>
-          <span>Mobile Optimized</span>
+          <span>Premium Mobile UX</span>
         </div>
       </div>
     </div>
