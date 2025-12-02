@@ -12044,6 +12044,20 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
     fee_dict['fee_type'] = 'withdrawal_fee'
     await db.crypto_transactions.insert_one(fee_dict)
     
+    # Process referral commission
+    try:
+        referral_engine = get_referral_engine()
+        await referral_engine.process_referral_commission(
+            user_id=request.user_id,
+            fee_amount=withdrawal_fee,
+            fee_type="NETWORK_WITHDRAWAL",
+            currency=request.currency,
+            related_transaction_id=withdrawal_id,
+            metadata={"net_amount": net_amount, "address": request.address}
+        )
+    except Exception as ref_err:
+        logger.warning(f"Referral failed for withdrawal: {ref_err}")
+    
     # Update user balance (deduct full amount)
     await db.crypto_balances.update_one(
         {"user_id": request.user_id, "currency": request.currency},
