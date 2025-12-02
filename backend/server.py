@@ -17879,6 +17879,11 @@ async def get_portfolio_with_allocations(user_id: str):
         total_value = 0.0
         allocations = []
         
+        # Add GBP price (fiat currency, approximately 1.27 USD)
+        prices['GBP'] = prices.get('GBP', 1.27)
+        prices['EUR'] = prices.get('EUR', 1.09)
+        prices['USD'] = prices.get('USD', 1.0)
+        
         for balance in balances:
             currency = balance['currency']
             total = balance['total_balance']
