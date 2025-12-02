@@ -228,9 +228,26 @@ export default function SpotTrading() {
       const response = await axios.post(`${API}/api/trading/place-order`, orderData);
       
       if (response.data.success) {
-        toast.success(`${orderType.toUpperCase()} order placed successfully!`);
+        // Show success state
+        setLastOrderDetails({
+          type: orderType,
+          amount: parseFloat(amount),
+          crypto: pairInfo.base,
+          price: price ? parseFloat(price) : marketStats.lastPrice
+        });
+        setOrderSuccess(true);
+        setIsLoading(false);
+        
+        // Clear form fields
         setAmount('');
         setPrice('');
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          setOrderSuccess(false);
+        }, 5000);
+        
+        return; // Don't execute finally block
       } else {
         toast.error(response.data.message || 'Order failed');
       }
