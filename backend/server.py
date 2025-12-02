@@ -284,6 +284,7 @@ PLATFORM_CONFIG = {
     
     # TRADING
     "trading_fee_percent": 0.1,
+    "spot_trading_fee_percent": 3.0,  # Spot trading fee
     
     # DISPUTE
     "dispute_fee_fixed_gbp": 2.0,
