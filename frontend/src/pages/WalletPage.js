@@ -519,31 +519,39 @@ function TransactionHistory({ user }) {
         ) : transactions.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#A3AEC2' }}>No transactions yet</div>
         ) : (
-          transactions.slice(0, 10).map((tx, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: tx.transaction_type === 'deposit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {tx.transaction_type === 'deposit' ? <BiArrowFromTop size={20} color="#22C55E" /> : <BiArrowToTop size={20} color="#EF4444" />}
-                </div>
-                <div>
-                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
-                    {tx.transaction_type.charAt(0).toUpperCase() + tx.transaction_type.slice(1)} {tx.currency}
+          transactions.slice(0, 10).map((tx, index) => {
+            // Safe access with defaults
+            const txType = tx.transaction_type || 'unknown';
+            const txStatus = tx.status || 'unknown';
+            const txCurrency = tx.currency || '';
+            const txAmount = tx.amount || 0;
+            
+            return (
+              <div key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: txType === 'deposit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {txType === 'deposit' ? <BiArrowFromTop size={20} color="#22C55E" /> : <BiArrowToTop size={20} color="#EF4444" />}
                   </div>
-                  <div style={{ fontSize: '13px', color: '#A3AEC2' }}>
-                    {new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString()}
+                  <div>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
+                      {txType.charAt(0).toUpperCase() + txType.slice(1)} {txCurrency}
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#A3AEC2' }}>
+                      {new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: txType === 'deposit' ? '#22C55E' : '#EF4444' }}>
+                    {txType === 'deposit' ? '+' : '-'}{txAmount} {txCurrency}
+                  </div>
+                  <div style={{ fontSize: '12px', color: txStatus === 'completed' ? '#22C55E' : txStatus === 'pending' ? '#FBBF24' : '#EF4444', marginTop: '2px' }}>
+                    {txStatus.charAt(0).toUpperCase() + txStatus.slice(1)}
                   </div>
                 </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '15px', fontWeight: '600', color: tx.transaction_type === 'deposit' ? '#22C55E' : '#EF4444' }}>
-                  {tx.transaction_type === 'deposit' ? '+' : '-'}{tx.amount} {tx.currency}
-                </div>
-                <div style={{ fontSize: '12px', color: tx.status === 'completed' ? '#22C55E' : tx.status === 'pending' ? '#FBBF24' : '#EF4444', marginTop: '2px' }}>
-                  {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
-                </div>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
