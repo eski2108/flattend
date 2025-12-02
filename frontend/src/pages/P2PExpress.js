@@ -584,6 +584,8 @@ export default function P2PExpress() {
 
             </div>
 
+            </div>
+
           </div>
 
         </div>
