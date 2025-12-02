@@ -8432,17 +8432,6 @@ async def resolve_dispute_final(request: dict):
         )
     except Exception as admin_error:
         logger.warning(f"⚠️ Failed to credit admin dispute fee: {str(admin_error)}")
-                "transaction_type": "dispute",
-                "fee_amount": dispute_fee,
-                "commission_amount": referrer_commission,
-                "commission_percent": commission_percent,
-                "currency": "GBP",
-                "dispute_id": dispute_id,
-                "trade_id": trade["trade_id"],
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
-        except Exception as comm_error:
-            logger.warning(f"⚠️ Failed to pay referrer commission: {str(comm_error)}")
     
     # Log to fee_transactions
     await db.fee_transactions.insert_one({
@@ -8452,9 +8441,9 @@ async def resolve_dispute_final(request: dict):
         "amount": trade_value_gbp,
         "fee_amount": dispute_fee,
         "fee_percent": dispute_fee_percent,
-        "admin_fee": admin_fee,
-        "referrer_commission": referrer_commission,
-        "referrer_id": referrer_id,
+        "admin_fee": dispute_fee,
+        "referrer_commission": commission_result.get("commission_amount", 0) if commission_result["success"] else 0,
+        "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
         "currency": "GBP",
         "reference_id": dispute_id,
         "trade_id": trade["trade_id"],
