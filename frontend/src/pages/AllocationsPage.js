@@ -187,8 +187,17 @@ export default function AllocationsPage() {
   if (loading) {
     return (
       <Layout>
-        <div style={{ minHeight: '100vh', background: '#0B0E13', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ color: '#FFF' }}>Loading allocations...</div>
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{ textAlign: 'center', color: '#00F0FF' }}>
+            <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
+            <div style={{ fontSize: '18px', fontWeight: '600' }}>Loading Portfolio Allocations...</div>
+          </div>
         </div>
       </Layout>
     );
