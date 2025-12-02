@@ -182,6 +182,7 @@ function App() {
             <Route path="/admin/cms" element={<AdminCMS />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/manager-settings" element={<ManagerSettings />} />
             <Route path="/p2p/merchant" element={<MerchantCenter />} />
             <Route path="/p2p/create-ad" element={<CreateAd />} />
             <Route path="/p2p/trade/:tradeId" element={<P2PTradeDetailDemo />} />
