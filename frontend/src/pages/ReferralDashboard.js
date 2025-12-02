@@ -165,13 +165,9 @@ export default function ReferralDashboard() {
             alignItems: 'center',
             gap: '12px',
             padding: '16px 32px',
-            background: referralData.referral_tier === 'golden' 
-              ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)' 
-              : 'linear-gradient(135deg, #00F0FF 0%, #A855F7 50%, #7B2CFF 100%)',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 50%, #7B2CFF 100%)',
             borderRadius: '50px',
-            boxShadow: referralData.referral_tier === 'golden'
-              ? '0 0 50px rgba(255, 215, 0, 0.6), inset 0 2px 20px rgba(255, 255, 255, 0.3)'
-              : '0 0 50px rgba(0, 240, 255, 0.6), inset 0 2px 20px rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 0 50px rgba(0, 240, 255, 0.6), inset 0 2px 20px rgba(255, 255, 255, 0.2)',
             border: '2px solid rgba(255, 255, 255, 0.3)',
             position: 'relative',
             overflow: 'hidden'
@@ -183,9 +179,7 @@ export default function ReferralDashboard() {
               left: '-50%',
               width: '200%',
               height: '200%',
-              background: referralData.referral_tier === 'golden'
-                ? 'conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.3), transparent)'
-                : 'conic-gradient(from 0deg, transparent, rgba(0, 240, 255, 0.3), transparent)',
+              background: 'conic-gradient(from 0deg, transparent, rgba(0, 240, 255, 0.3), transparent)',
               animation: 'spin 3s linear infinite',
               pointerEvents: 'none'
             }} />
@@ -204,7 +198,7 @@ export default function ReferralDashboard() {
               position: 'relative',
               letterSpacing: '0.5px'
             }}>
-              {referralData.referral_tier === 'golden' ? 'GOLDEN TIER • 50% Commission' : 'STANDARD TIER • 20% Commission'}
+              STANDARD TIER • 20% Commission
             </span>
           </div>
         </div>
