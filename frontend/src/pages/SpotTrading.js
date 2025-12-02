@@ -409,11 +409,158 @@ export default function SpotTrading() {
               </div>
             </div>
 
+            {/* Mobile Sticky Trading Panel */}
+            {isMobile && (
+              <div style={{
+                position: 'sticky',
+                top: '70px',
+                zIndex: 100,
+                background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                border: '2px solid rgba(0, 240, 255, 0.4)',
+                borderRadius: '16px',
+                padding: '16px',
+                boxShadow: '0 0 40px rgba(0, 240, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(10px)',
+                marginBottom: '16px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <div style={{ fontSize: '14px', color: '#8F9BB3', fontWeight: '600' }}>
+                    {tradingPairs.find(p => p.symbol === selectedPair)?.name || selectedPair}
+                  </div>
+                  <div style={{ fontSize: '18px', color: '#00F0FF', fontWeight: '700' }}>
+                    ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+                
+                {/* Mobile Buy/Sell Buttons */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  <button
+                    onClick={() => setOrderType('buy')}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      background: orderType === 'buy' 
+                        ? 'linear-gradient(135deg, #22C55E, #16A34A)' 
+                        : 'rgba(34, 197, 94, 0.1)',
+                      border: `1px solid ${orderType === 'buy' ? '#22C55E' : 'rgba(34, 197, 94, 0.3)'}`,
+                      borderRadius: '8px',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    BUY
+                  </button>
+                  <button
+                    onClick={() => setOrderType('sell')}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      background: orderType === 'sell' 
+                        ? 'linear-gradient(135deg, #EF4444, #DC2626)' 
+                        : 'rgba(239, 68, 68, 0.1)',
+                      border: `1px solid ${orderType === 'sell' ? '#EF4444' : 'rgba(239, 68, 68, 0.3)'}`,
+                      borderRadius: '8px',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    SELL
+                  </button>
+                </div>
+                
+                {/* Quick Amount Input */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Amount"
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '8px',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      outline: 'none'
+                    }}
+                  />
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder={`$${marketStats.lastPrice.toFixed(2)}`}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '8px',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+                
+                {/* Mobile Trade Button */}
+                <button
+                  onClick={handlePlaceOrder}
+                  disabled={isLoading || !amount}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: isLoading || !amount ? 'rgba(255, 255, 255, 0.1)' : 
+                      orderType === 'buy' 
+                        ? 'linear-gradient(135deg, #22C55E, #16A34A)'
+                        : 'linear-gradient(135deg, #EF4444, #DC2626)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: isLoading || !amount ? 'not-allowed' : 'pointer',
+                    opacity: isLoading || !amount ? 0.5 : 1,
+                    transition: 'all 0.3s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {isLoading ? 'Processing...' : (
+                    <>
+                      <IoFlash size={16} />
+                      {orderType.toUpperCase()} {tradingPairs.find(p => p.symbol === selectedPair)?.base || 'Crypto'}
+                    </>
+                  )}
+                </button>
+                
+                {amount && (
+                  <div style={{ 
+                    marginTop: '8px', 
+                    textAlign: 'center', 
+                    fontSize: '12px', 
+                    color: '#8F9BB3' 
+                  }}>
+                    Total: ${calculateTotal().toFixed(2)}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Main Trading Layout */}
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '16px' : '32px' }}>
               
               {/* Left Column: Chart + Order Panel */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px', flex: 1 }}>
                 
                 {/* Premium Pair Selector */}
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
