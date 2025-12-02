@@ -78,7 +78,22 @@ async def execute_express_buy_with_wallet(db, wallet_service, user_id: str, cryp
             metadata={"user_id": user_id, "total_fee": fee_amount}
         )
         
-        # If referrer exists, credit their commission
+        # Process referral using centralized engine
+        try:
+            from referral_engine import get_referral_engine
+            referral_engine = get_referral_engine()
+            await referral_engine.process_referral_commission(
+                user_id=user_id,
+                fee_amount=fee_amount,
+                fee_type="INSTANT_BUY",
+                currency=fiat_currency,
+                related_transaction_id=order_id,
+                metadata={"crypto_amount": crypto_amount, "crypto_currency": crypto_currency}
+            )
+        except Exception as ref_err:
+            logger.warning(f"Referral failed: {ref_err}")
+        
+        # OLD CODE BELOW - REMOVE LATER
         if referrer_id and referrer_commission > 0:
             await wallet_service.credit(
                 user_id=referrer_id,
