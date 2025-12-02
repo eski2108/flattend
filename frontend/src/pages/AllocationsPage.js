@@ -751,92 +751,394 @@ export default function AllocationsPage() {
               )}
             </>
           ) : (
-            // Products tab
-            <div style={{ display: 'grid', gap: '1.5rem' }}>
+            // Premium Products & Services Section
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
+              
+              {/* Savings Vault */}
               <div style={{
-                background: 'linear-gradient(135deg, #2D82FF 0%, #1a5fd9 100%)',
+                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
+                border: '1px solid rgba(0, 240, 255, 0.3)',
                 borderRadius: '20px',
-                padding: '2rem',
-                border: '1px solid rgba(45, 130, 255, 0.5)',
-                boxShadow: '0 8px 24px rgba(45, 130, 255, 0.3)'
-              }}>
-                <div style={{ fontSize: '1.5rem', fontWeight: '900', color: '#FFF', marginBottom: '0.5rem' }}>
-                  💰 Savings Vault
+                padding: '28px',
+                boxShadow: '0 0 40px rgba(0, 240, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                backdropFilter: 'blur(20px)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 0 60px rgba(0, 240, 255, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '100px',
+                  height: '100px',
+                  background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
+                  filter: 'blur(30px)',
+                  pointerEvents: 'none'
+                }} />
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                  <IoShield size={32} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                    Savings Vault
+                  </div>
                 </div>
-                <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '1rem' }}>
-                  Secure your crypto with zero fees for internal transfers
+                
+                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                  Secure your crypto assets with institutional-grade security. Earn competitive yields while maintaining full control of your funds.
                 </p>
+                
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                  <div style={{ 
+                    background: 'rgba(0, 240, 255, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#00F0FF',
+                    fontWeight: '600'
+                  }}>
+                    Zero Fees
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(0, 240, 255, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#00F0FF',
+                    fontWeight: '600'
+                  }}>
+                    Instant Access
+                  </div>
+                </div>
+                
                 <button 
                   onClick={() => navigate('/savings')}
                   style={{
-                    background: '#FFF',
-                    color: '#2D82FF',
-                    border: 'none',
-                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)',
+                    border: '1px solid rgba(0, 240, 255, 0.4)',
+                    color: '#00F0FF',
+                    padding: '12px 24px',
                     borderRadius: '12px',
-                    fontWeight: '700',
-                    cursor: 'pointer'
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.3s',
+                    width: '100%',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)';
                   }}
                 >
-                  Go to Savings →
+                  Explore Savings
+                  <IoArrowForward size={16} />
                 </button>
               </div>
 
+              {/* Trading */}
               <div style={{
-                background: 'linear-gradient(135deg, #5DD39E 0%, #2ECC71 100%)',
+                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
                 borderRadius: '20px',
-                padding: '2rem',
-                border: '1px solid rgba(93, 211, 158, 0.5)',
-                boxShadow: '0 8px 24px rgba(93, 211, 158, 0.3)'
-              }}>
-                <div style={{ fontSize: '1.5rem', fontWeight: '900', color: '#FFF', marginBottom: '0.5rem' }}>
-                  📈 Trading
+                padding: '28px',
+                boxShadow: '0 0 40px rgba(34, 197, 94, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                backdropFilter: 'blur(20px)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 0 60px rgba(34, 197, 94, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '100px',
+                  height: '100px',
+                  background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)',
+                  filter: 'blur(30px)',
+                  pointerEvents: 'none'
+                }} />
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                  <IoTrendingUp size={32} color="#22C55E" style={{ filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.8))' }} />
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                    Advanced Trading
+                  </div>
                 </div>
-                <p style={{ color: 'rgba(255, 255, 255, 0.9)', marginBottom: '1rem' }}>
-                  Trade crypto with competitive fees and instant settlement
+                
+                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                  Professional trading tools with real-time charts, advanced order types, and institutional-grade execution.
                 </p>
+                
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                  <div style={{ 
+                    background: 'rgba(34, 197, 94, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#22C55E',
+                    fontWeight: '600'
+                  }}>
+                    Low Fees
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(34, 197, 94, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#22C55E',
+                    fontWeight: '600'
+                  }}>
+                    Pro Tools
+                  </div>
+                </div>
+                
                 <button 
                   onClick={() => navigate('/trading')}
                   style={{
-                    background: '#FFF',
-                    color: '#2ECC71',
-                    border: 'none',
-                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                    color: '#22C55E',
+                    padding: '12px 24px',
                     borderRadius: '12px',
-                    fontWeight: '700',
-                    cursor: 'pointer'
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.3s',
+                    width: '100%',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.15) 100%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)';
                   }}
                 >
-                  Start Trading →
+                  Start Trading
+                  <IoArrowForward size={16} />
                 </button>
               </div>
 
+              {/* Swap & Exchange */}
               <div style={{
-                background: 'linear-gradient(135deg, #FF8C5A 0%, #FF6B35 100%)',
+                background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
+                border: '1px solid rgba(155, 77, 255, 0.3)',
                 borderRadius: '20px',
-                padding: '2rem',
-                border: '1px solid rgba(255, 140, 90, 0.5)',
-                boxShadow: '0 8px 24px rgba(255, 140, 90, 0.3)'
-              }}>
-                <div style={{ fontSize: '1.5rem', fontWeight: '900', color: '#FFF', marginBottom: '0.5rem' }}>
-                  🎁 Referrals
+                padding: '28px',
+                boxShadow: '0 0 40px rgba(155, 77, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                backdropFilter: 'blur(20px)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 0 60px rgba(155, 77, 255, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(155, 77, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '100px',
+                  height: '100px',
+                  background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
+                  filter: 'blur(30px)',
+                  pointerEvents: 'none'
+                }} />
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                  <IoSwapHorizontal size={32} color="#9B4DFF" style={{ filter: 'drop-shadow(0 0 10px rgba(155, 77, 255, 0.8))' }} />
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                    Instant Swap
+                  </div>
                 </div>
-                <p style={{ color: 'rgba(255, 255, 255, 0.9)', marginBottom: '1rem' }}>
-                  Earn 20% lifetime commission on every referral
+                
+                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                  Seamlessly exchange between cryptocurrencies with the best rates and minimal slippage across multiple DEXs.
                 </p>
+                
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                  <div style={{ 
+                    background: 'rgba(155, 77, 255, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#9B4DFF',
+                    fontWeight: '600'
+                  }}>
+                    Best Rates
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(155, 77, 255, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#9B4DFF',
+                    fontWeight: '600'
+                  }}>
+                    Instant
+                  </div>
+                </div>
+                
                 <button 
-                  onClick={() => navigate('/referrals')}
+                  onClick={() => navigate('/swap')}
                   style={{
-                    background: '#FFF',
-                    color: '#FF6B35',
-                    border: 'none',
-                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)',
+                    border: '1px solid rgba(155, 77, 255, 0.4)',
+                    color: '#9B4DFF',
+                    padding: '12px 24px',
                     borderRadius: '12px',
-                    fontWeight: '700',
-                    cursor: 'pointer'
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.3s',
+                    width: '100%',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.3) 0%, rgba(155, 77, 255, 0.15) 100%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)';
                   }}
                 >
-                  View Referrals →
+                  Start Swapping
+                  <IoArrowForward size={16} />
+                </button>
+              </div>
+
+              {/* Instant Buy */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.03) 100%)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '20px',
+                padding: '28px',
+                boxShadow: '0 0 40px rgba(245, 158, 11, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                backdropFilter: 'blur(20px)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 0 60px rgba(245, 158, 11, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(245, 158, 11, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+              }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '-20px',
+                  width: '100px',
+                  height: '100px',
+                  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.3), transparent)',
+                  filter: 'blur(30px)',
+                  pointerEvents: 'none'
+                }} />
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                  <IoFlash size={32} color="#F59E0B" style={{ filter: 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.8))' }} />
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                    Instant Buy
+                  </div>
+                </div>
+                
+                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                  Purchase crypto instantly with your debit card, bank transfer, or other payment methods. Simple and secure.
+                </p>
+                
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                  <div style={{ 
+                    background: 'rgba(245, 158, 11, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#F59E0B',
+                    fontWeight: '600'
+                  }}>
+                    Instant
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(245, 158, 11, 0.1)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '12px', 
+                    color: '#F59E0B',
+                    fontWeight: '600'
+                  }}>
+                    Secure
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => navigate('/instant-buy')}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)',
+                    border: '1px solid rgba(245, 158, 11, 0.4)',
+                    color: '#F59E0B',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.3s',
+                    width: '100%',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)';
+                  }}
+                >
+                  Buy Crypto Now
+                  <IoArrowForward size={16} />
                 </button>
               </div>
             </div>
