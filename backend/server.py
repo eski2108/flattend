@@ -5294,6 +5294,7 @@ async def credit_wallet(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@api_router.get("/transactions/{user_id}")
 @api_router.get("/wallet/transactions/{user_id}")
 async def get_wallet_transactions(user_id: str, currency: str = None):
     """
