@@ -216,58 +216,154 @@ export default function ReferralDashboard() {
           }
         `}</style>
 
-        {/* Stats Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        {/* Premium Stats Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
           <div style={{
-            background: 'rgba(0, 240, 255, 0.1)',
-            border: '2px solid rgba(0, 240, 255, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem'
+            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)',
+            border: '2px solid rgba(0, 240, 255, 0.4)',
+            borderRadius: '20px',
+            padding: '2rem',
+            boxShadow: '0 0 40px rgba(0, 240, 255, 0.3), inset 0 0 30px rgba(0, 240, 255, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <IoPeople size={24} color="#00F0FF" />
-              <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Total Referrals</span>
+            <div style={{
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(0, 240, 255, 0.4), transparent)',
+              filter: 'blur(30px)',
+              pointerEvents: 'none'
+            }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' }}>
+              <IoPeople size={28} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
+              <span style={{ color: '#A3AEC2', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Referrals</span>
             </div>
-            <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>{referralData.total_referrals}</div>
+            <div style={{ 
+              fontSize: '42px', 
+              fontWeight: '900', 
+              color: '#00F0FF',
+              textShadow: '0 0 20px rgba(0, 240, 255, 0.8)',
+              marginBottom: '0.5rem'
+            }}>
+              {referralData.total_referrals}
+            </div>
+            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+              Lifetime referrals registered
+            </div>
           </div>
 
           <div style={{
-            background: 'rgba(168, 85, 247, 0.1)',
-            border: '2px solid rgba(168, 85, 247, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem'
+            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%)',
+            border: '2px solid rgba(168, 85, 247, 0.4)',
+            borderRadius: '20px',
+            padding: '2rem',
+            boxShadow: '0 0 40px rgba(168, 85, 247, 0.3), inset 0 0 30px rgba(168, 85, 247, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <IoTrendingUp size={24} color="#A855F7" />
-              <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Active Referrals</span>
+            <div style={{
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent)',
+              filter: 'blur(30px)',
+              pointerEvents: 'none'
+            }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' }}>
+              <IoTrendingUp size={28} color="#A855F7" style={{ filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.8))' }} />
+              <span style={{ color: '#A3AEC2', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Active Referrals</span>
             </div>
-            <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>{referralData.active_referrals}</div>
+            <div style={{ 
+              fontSize: '42px', 
+              fontWeight: '900', 
+              color: '#A855F7',
+              textShadow: '0 0 20px rgba(168, 85, 247, 0.8)',
+              marginBottom: '0.5rem'
+            }}>
+              {referralData.active_referrals}
+            </div>
+            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+              Currently trading users
+            </div>
           </div>
 
           <div style={{
-            background: 'rgba(34, 197, 94, 0.1)',
-            border: '2px solid rgba(34, 197, 94, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem'
+            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%)',
+            border: '2px solid rgba(34, 197, 94, 0.4)',
+            borderRadius: '20px',
+            padding: '2rem',
+            boxShadow: '0 0 40px rgba(34, 197, 94, 0.3), inset 0 0 30px rgba(34, 197, 94, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <IoCash size={24} color="#22C55E" />
-              <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Total Earnings</span>
+            <div style={{
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(34, 197, 94, 0.4), transparent)',
+              filter: 'blur(30px)',
+              pointerEvents: 'none'
+            }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' }}>
+              <IoCash size={28} color="#22C55E" style={{ filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.8))' }} />
+              <span style={{ color: '#A3AEC2', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Earnings</span>
             </div>
-            <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{referralData.total_earnings.toFixed(2)}</div>
+            <div style={{ 
+              fontSize: '42px', 
+              fontWeight: '900', 
+              color: '#22C55E',
+              textShadow: '0 0 20px rgba(34, 197, 94, 0.8)',
+              marginBottom: '0.5rem'
+            }}>
+              £{referralData.total_earnings.toFixed(2)}
+            </div>
+            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+              Lifetime commission earned
+            </div>
           </div>
 
           <div style={{
-            background: 'rgba(245, 158, 11, 0.1)',
-            border: '2px solid rgba(245, 158, 11, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem'
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)',
+            border: '2px solid rgba(245, 158, 11, 0.4)',
+            borderRadius: '20px',
+            padding: '2rem',
+            boxShadow: '0 0 40px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-              <Gift size={24} color="#F59E0B" />
-              <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Pending Earnings</span>
+            <div style={{
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(245, 158, 11, 0.4), transparent)',
+              filter: 'blur(30px)',
+              pointerEvents: 'none'
+            }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' }}>
+              <Gift size={28} color="#F59E0B" style={{ filter: 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.8))' }} />
+              <span style={{ color: '#A3AEC2', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pending Earnings</span>
             </div>
-            <div style={{ fontSize: '32px', fontWeight: '900', color: '#F59E0B' }}>£{referralData.pending_earnings.toFixed(2)}</div>
+            <div style={{ 
+              fontSize: '42px', 
+              fontWeight: '900', 
+              color: '#F59E0B',
+              textShadow: '0 0 20px rgba(245, 158, 11, 0.8)',
+              marginBottom: '0.5rem'
+            }}>
+              £{referralData.pending_earnings.toFixed(2)}
+            </div>
+            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+              Processing commission
+            </div>
           </div>
         </div>
 
