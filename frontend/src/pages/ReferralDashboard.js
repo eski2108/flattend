@@ -1069,7 +1069,7 @@ export default function ReferralDashboard() {
               { 
                 icon: '💰', 
                 title: 'You Earn Premium Rewards', 
-                desc: `Get ${referralData.referral_tier === 'golden' ? '50%' : '20%'} commission on every transaction they make`,
+                desc: 'Get 20% commission on every transaction they make',
                 color: '#22C55E'
               },
               { 
