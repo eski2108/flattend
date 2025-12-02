@@ -108,9 +108,10 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
   };
 
   const arrowStyle = {
-    fontSize: '24px',
-    transition: 'transform 0.3s ease',
-    transform: hoveredButton ? 'translateX(4px)' : 'translateX(0)'
+    fontSize: '28px',
+    transition: 'all 0.3s ease',
+    transform: hoveredButton ? 'translateX(6px) scale(1.1)' : 'translateX(0) scale(1)',
+    filter: hoveredButton ? 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))' : 'none'
   };
 
   return (
