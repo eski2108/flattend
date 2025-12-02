@@ -795,6 +795,7 @@ export default function SpotTrading() {
                     </div>
                   </div>
                 </div>
+                )}
 
               </div>
 
