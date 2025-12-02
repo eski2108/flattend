@@ -6668,6 +6668,32 @@ async def register_user(request: RegisterRequest, req: Request):
     account_dict['user_agent'] = user_agent
     account_dict['signup_timestamp'] = datetime.now(timezone.utc).isoformat()
     
+    # ============================================================
+    # REFERRAL CODE PROCESSING (DURING REGISTRATION)
+    # ============================================================
+    referrer_user_id = None
+    referral_code_used = None
+    
+    if request.referral_code:
+        try:
+            # Look up referrer by referral code
+            referrer_data = await db.referral_codes.find_one({"referral_code": request.referral_code})
+            
+            if referrer_data:
+                referrer_user_id = referrer_data["user_id"]
+                referral_code_used = request.referral_code
+                
+                # Set referred_by to the referrer's USER_ID (CRITICAL!)
+                account_dict['referred_by'] = referrer_user_id
+                account_dict['referral_code_used'] = referral_code_used
+                account_dict['referral_applied_at'] = datetime.now(timezone.utc).isoformat()
+                
+                logger.info(f"✅ Referral link used: {request.referral_code} → Referrer: {referrer_user_id}")
+            else:
+                logger.warning(f"⚠️ Invalid referral code provided: {request.referral_code}")
+        except Exception as ref_error:
+            logger.error(f"❌ Error processing referral code: {str(ref_error)}")
+    
     await db.user_accounts.insert_one(account_dict)
     
     # Send phone verification via Twilio Verify
