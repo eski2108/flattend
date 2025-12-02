@@ -33,16 +33,31 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
-    setLoading(true);
-    const result = await register(fullName, email, password);
-    setLoading(false);
+    if (password.length < 8) {
+      Alert.alert('Error', 'Password must be at least 8 characters long');
+      return;
+    }
 
-    if (result.success) {
-      Alert.alert('Success', 'Account created! Please login.', [
-        { text: 'OK', onPress: () => navigation.navigate('Login') },
-      ]);
-    } else {
-      Alert.alert('Registration Failed', result.error);
+    setLoading(true);
+    try {
+      console.log('📱 Registration attempt for:', email);
+      const result = await register(fullName, email, password);
+      console.log('📱 Registration result:', result);
+
+      if (result.success) {
+        // If auto-logged in, success message is different
+        const message = result.message || 'Account created successfully!';
+        Alert.alert('Success', message, [
+          { text: 'OK', onPress: () => navigation.navigate('Login') },
+        ]);
+      } else {
+        Alert.alert('Registration Failed', result.error || 'Unable to create account. Please try again.');
+      }
+    } catch (error) {
+      console.error('❌ Unexpected registration error:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
