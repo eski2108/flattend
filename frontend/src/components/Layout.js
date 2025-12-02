@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useWallet } from '@/contexts/WalletContext';
 import { Button } from '@/components/ui/button';
 import { IoBag, IoBarChart, IoCard, IoCash, IoChatbubbles, IoClose, IoDocument, IoFlash, IoGift, IoGrid, IoLogOut, IoMenu, IoNavigate, IoPieChart, IoTrendingDown, IoTrendingUp, IoWallet } from 'react-icons/io5';
@@ -13,6 +14,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Layout({ children }) {
   const { user, disconnectWallet } = useWallet();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,18 +22,18 @@ export default function Layout({ children }) {
 
   // Filter out Instant Buy from nav when on trading page to avoid confusion
   const allNavItems = [
-    { path: '/dashboard', label: 'Portfolio', icon: IoPieChart },
-    { path: '/wallet', label: 'Wallet', icon: IoCash },
-    { path: '/savings', label: 'Savings Vault', icon: IoWallet, highlight: true },
-    { path: '/allocations', label: 'Allocations', icon: IoNavigate, highlight: true },
-    { path: '/instant-buy', label: 'Instant Buy', icon: IoFlash, hideOnPaths: ['/trading'] },
-    { path: '/p2p-express', label: 'P2P Express', icon: IoTrendingUp },
-    { path: '/p2p-marketplace', label: 'P2P Marketplace', icon: IoBag },
-    { path: '/trading', label: 'Trading', icon: IoBarChart },
-    { path: '/swap-crypto', label: 'Swap Crypto', icon: IoFlash },
-    { path: '/referrals', label: 'Referrals', icon: IoGift },
-    { path: '/my-orders', label: 'Transaction History', icon: IoDocument },
-    { path: '/settings', label: 'Settings', icon: IoCard }
+    { path: '/dashboard', label: t('nav.dashboard'), icon: IoPieChart },
+    { path: '/wallet', label: t('nav.wallet'), icon: IoCash },
+    { path: '/savings', label: t('nav.savings'), icon: IoWallet, highlight: true },
+    { path: '/allocations', label: t('nav.allocations'), icon: IoNavigate, highlight: true },
+    { path: '/instant-buy', label: t('nav.instant_buy'), icon: IoFlash, hideOnPaths: ['/trading'] },
+    { path: '/p2p-express', label: t('nav.p2p_express'), icon: IoTrendingUp },
+    { path: '/p2p-marketplace', label: t('nav.p2p_marketplace'), icon: IoBag },
+    { path: '/trading', label: t('nav.trading'), icon: IoBarChart },
+    { path: '/swap-crypto', label: t('nav.swap'), icon: IoFlash },
+    { path: '/referrals', label: t('nav.referrals'), icon: IoGift },
+    { path: '/my-orders', label: t('nav.transaction_history'), icon: IoDocument },
+    { path: '/settings', label: t('nav.settings'), icon: IoCard }
   ];
   
   const navItems = allNavItems.filter(item => 
