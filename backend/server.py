@@ -9558,6 +9558,17 @@ async def place_trading_order(request: dict):
             upsert=True
         )
         
+        # Process referral commission
+        referral_engine = get_referral_engine()
+        await referral_engine.process_referral_commission(
+            user_id=user_id,
+            fee_amount=fee_amount,
+            fee_type="TRADING",
+            currency="GBP",
+            related_transaction_id=trade_id,
+            metadata={"pair": pair, "type": order_type, "amount": amount}
+        )
+        
         return {
             "success": True,
             "message": f"{order_type.upper()} order executed successfully",
