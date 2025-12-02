@@ -10,6 +10,7 @@ import { WalletProvider } from "@/contexts/WalletContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { applySamsungColorFix } from "@/utils/colorFix";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import './i18n'; // Multi-language support
 
 // Core pages - load immediately
 import LandingPage from "@/pages/LandingPage";
