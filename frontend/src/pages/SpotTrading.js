@@ -38,7 +38,8 @@ export default function SpotTrading() {
   useEffect(() => {
     fetchMarketStats();
     fetchTradingFee();
-    const interval = setInterval(fetchMarketStats, 60000);
+    // Refresh price every 5 seconds for live trading
+    const interval = setInterval(fetchMarketStats, 5000);
     return () => clearInterval(interval);
   }, [selectedPair]);
 
