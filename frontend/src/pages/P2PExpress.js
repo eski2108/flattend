@@ -518,7 +518,13 @@ export default function P2PExpress() {
 
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: isMobile ? '16px' : '24px',
+              flex: isMobile ? '0 0 auto' : '0 0 380px',
+              order: isMobile ? -1 : 0
+            }}>
               
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%)',
