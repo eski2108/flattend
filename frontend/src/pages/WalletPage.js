@@ -29,6 +29,12 @@ export default function WalletPage() {
     loadCoinMetadata();
     loadBalances(u.user_id);
 
+    // Auto-refresh balances every 10 seconds
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 Auto-refreshing wallet balances...');
+      loadBalances(u.user_id);
+    }, 10000); // 10 seconds
+
     // Listen for balance change events
     const handleBalanceChange = (e) => {
       if (e.key === 'wallet_balance_updated' && e.newValue) {
@@ -48,6 +54,7 @@ export default function WalletPage() {
     window.addEventListener('walletBalanceUpdated', handleCustomBalanceChange);
 
     return () => {
+      clearInterval(refreshInterval);
       window.removeEventListener('storage', handleBalanceChange);
       window.removeEventListener('walletBalanceUpdated', handleCustomBalanceChange);
     };
