@@ -336,24 +336,109 @@ export default function AllocationsPage() {
 
           {activeTab === 'coins' ? (
             <>
-              {/* Total Portfolio Value Card */}
+              {/* Premium Portfolio Overview */}
               {allocations.length > 0 && (
-                <div style={{ 
-                  background: 'linear-gradient(135deg, #2D82FF 0%, #1a5fd9 100%)', 
-                  borderRadius: '20px', 
-                  padding: '2rem',
-                  marginBottom: '2rem',
-                  textAlign: 'center',
-                  boxShadow: '0 8px 32px rgba(45, 130, 255, 0.4)'
-                }}>
-                  <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', marginBottom: '0.5rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    Total Portfolio Value
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px', marginBottom: isMobile ? '24px' : '32px' }}>
+                  
+                  {/* Total Portfolio Value */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
+                    border: '1px solid rgba(0, 240, 255, 0.3)',
+                    borderRadius: '16px',
+                    padding: isMobile ? '20px' : '24px',
+                    boxShadow: '0 0 30px rgba(0, 240, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: '-20px',
+                      right: '-20px',
+                      width: '80px',
+                      height: '80px',
+                      background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
+                      filter: 'blur(25px)',
+                      pointerEvents: 'none'
+                    }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Portfolio Value</div>
+                      <button
+                        onClick={() => setBalanceVisible(!balanceVisible)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#8F9BB3',
+                          cursor: 'pointer',
+                          padding: '4px'
+                        }}
+                      >
+                        {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
+                      </button>
+                    </div>
+                    <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 15px rgba(0, 240, 255, 0.5)', marginBottom: '8px' }}>
+                      {balanceVisible ? formatCurrency(totalValue) : '••••••'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                      Across {allocations.length} different assets
+                    </div>
                   </div>
-                  <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#FFF', marginBottom: '0.5rem' }}>
-                    {formatCurrency(totalValue)}
+
+                  {/* Asset Count */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
+                    border: '1px solid rgba(155, 77, 255, 0.3)',
+                    borderRadius: '16px',
+                    padding: isMobile ? '20px' : '24px',
+                    boxShadow: '0 0 30px rgba(155, 77, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: '-20px',
+                      right: '-20px',
+                      width: '80px',
+                      height: '80px',
+                      background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
+                      filter: 'blur(25px)',
+                      pointerEvents: 'none'
+                    }} />
+                    <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Assets</div>
+                    <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#9B4DFF', textShadow: '0 0 15px rgba(155, 77, 255, 0.5)', marginBottom: '8px' }}>
+                      {allocations.length}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                      Diversified portfolio
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
-                    Across {allocations.length} assets
+
+                  {/* Largest Holding */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    borderRadius: '16px',
+                    padding: isMobile ? '20px' : '24px',
+                    boxShadow: '0 0 30px rgba(34, 197, 94, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: '-20px',
+                      right: '-20px',
+                      width: '80px',
+                      height: '80px',
+                      background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)',
+                      filter: 'blur(25px)',
+                      pointerEvents: 'none'
+                    }} />
+                    <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Largest Holding</div>
+                    <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#22C55E', textShadow: '0 0 15px rgba(34, 197, 94, 0.5)', marginBottom: '8px' }}>
+                      {allocations.length > 0 ? `${allocations[0]?.percent?.toFixed(1) || 0}%` : '0%'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                      {allocations.length > 0 ? (COIN_NAMES[allocations[0]?.symbol] || allocations[0]?.symbol) : 'N/A'}
+                    </div>
                   </div>
                 </div>
               )}
