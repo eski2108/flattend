@@ -52,6 +52,360 @@ TEST_CREDENTIALS = {
     "admin": {"email": "admin", "password": "password123"}
 }
 
+class CoinHubXAPITester:
+    def __init__(self):
+        self.base_url = BASE_URL
+        self.session = requests.Session()
+        self.test_user_token = None
+        self.test_user_id = None
+        self.tests_run = 0
+        self.tests_passed = 0
+        self.test_results = []
+
+    def log_test(self, name, success, details=""):
+        """Log test result"""
+        self.tests_run += 1
+        if success:
+            self.tests_passed += 1
+            print(f"✅ {name}")
+        else:
+            print(f"❌ {name} - {details}")
+        
+        self.test_results.append({
+            "name": name,
+            "success": success,
+            "details": details,
+            "timestamp": datetime.now().isoformat()
+        })
+
+    def make_request(self, method, endpoint, data=None, expected_status=200):
+        """Make API request with error handling"""
+        url = f"{self.base_url}{endpoint}"
+        headers = {'Content-Type': 'application/json'}
+        
+        try:
+            if method.upper() == 'GET':
+                response = self.session.get(url, headers=headers)
+            elif method.upper() == 'POST':
+                response = self.session.post(url, json=data, headers=headers)
+            
+            success = response.status_code == expected_status
+            return success, response
+        except Exception as e:
+            return False, str(e)
+
+    def test_user_authentication(self):
+        """Test user registration and login flow"""
+        print("\n🔐 Testing User Authentication...")
+        
+        # Test main user login
+        success, response = self.make_request(
+            'POST', '/auth/login',
+            data=TEST_CREDENTIALS["main_user"]
+        )
+        
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success') and data.get('user'):
+                    self.test_user_token = data.get('token')
+                    self.test_user_id = data['user'].get('user_id')
+                    self.log_test("Main User Login", True, f"User ID: {self.test_user_id}")
+                else:
+                    self.log_test("Main User Login", False, "No user data in response")
+            except:
+                self.log_test("Main User Login", False, "Invalid JSON response")
+        else:
+            self.log_test("Main User Login", False, f"Status: {response.status_code}")
+
+    def test_portfolio_dashboard(self):
+        """Test Portfolio Dashboard - verify balances display correctly"""
+        print("\n💰 Testing Portfolio Dashboard...")
+        
+        if not self.test_user_id:
+            self.log_test("Portfolio Dashboard", False, "No user ID available")
+            return
+        
+        success, response = self.make_request(
+            'GET', f'/portfolio/summary/{self.test_user_id}'
+        )
+        
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    current_value = data.get('current_value', 0)
+                    self.log_test("Portfolio Summary API", True, f"Portfolio Value: £{current_value}")
+                    
+                    # Check if it matches expected £13,549 (allowing for some variance)
+                    expected_value = 13549
+                    if abs(current_value - expected_value) < 1000:
+                        self.log_test("Portfolio Value Check", True, f"Value close to expected £{expected_value}")
+                    else:
+                        self.log_test("Portfolio Value Check", False, f"Expected ~£{expected_value}, got £{current_value}")
+                else:
+                    self.log_test("Portfolio Summary API", False, "API returned success=false")
+            except Exception as e:
+                self.log_test("Portfolio Summary API", False, f"JSON parse error: {str(e)}")
+        else:
+            self.log_test("Portfolio Summary API", False, f"Status: {response.status_code}")
+
+    def test_live_prices(self):
+        """Test live price functionality"""
+        print("\n📈 Testing Live Prices...")
+        
+        success, response = self.make_request('GET', '/prices/live')
+        
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success') and data.get('prices'):
+                    prices = data['prices']
+                    btc_price = prices.get('BTC', {}).get('price_gbp', 0)
+                    eth_price = prices.get('ETH', {}).get('price_gbp', 0)
+                    
+                    self.log_test("Live Prices API", True, f"BTC: £{btc_price:,.2f}, ETH: £{eth_price:,.2f}")
+                    
+                    # Verify prices are reasonable
+                    if btc_price > 50000:
+                        self.log_test("BTC Price Validation", True, f"BTC price reasonable: £{btc_price:,.2f}")
+                    else:
+                        self.log_test("BTC Price Validation", False, f"BTC price seems low: £{btc_price:,.2f}")
+                else:
+                    self.log_test("Live Prices API", False, "No price data in response")
+            except Exception as e:
+                self.log_test("Live Prices API", False, f"JSON parse error: {str(e)}")
+        else:
+            self.log_test("Live Prices API", False, f"Status: {response.status_code}")
+
+    def test_p2p_express(self):
+        """Test P2P Express functionality"""
+        print("\n⚡ Testing P2P Express...")
+        
+        # Test available currencies
+        success, response = self.make_request('GET', '/nowpayments/currencies')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    currencies = data.get('currencies', [])
+                    self.log_test("P2P Express Currencies", True, f"Found {len(currencies)} available currencies")
+                else:
+                    self.log_test("P2P Express Currencies", False, "API returned success=false")
+            except:
+                self.log_test("P2P Express Currencies", False, "JSON parse error")
+        else:
+            self.log_test("P2P Express Currencies", False, f"Status: {response.status_code}")
+        
+        # Test liquidity check
+        success, response = self.make_request(
+            'POST', '/p2p/express/check-liquidity',
+            data={"crypto": "BTC", "crypto_amount": 0.001}
+        )
+        
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    has_liquidity = data.get('has_liquidity', False)
+                    self.log_test("P2P Express Liquidity Check", True, f"Liquidity available: {has_liquidity}")
+                else:
+                    self.log_test("P2P Express Liquidity Check", False, "API returned success=false")
+            except:
+                self.log_test("P2P Express Liquidity Check", False, "JSON parse error")
+        else:
+            self.log_test("P2P Express Liquidity Check", False, f"Status: {response.status_code}")
+
+    def test_p2p_marketplace(self):
+        """Test P2P Marketplace functionality"""
+        print("\n🏪 Testing P2P Marketplace...")
+        
+        # Test available coins
+        success, response = self.make_request('GET', '/p2p/marketplace/available-coins')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    coins = data.get('coins', [])
+                    self.log_test("P2P Marketplace Coins", True, f"Found {len(coins)} available coins")
+                else:
+                    self.log_test("P2P Marketplace Coins", False, "API returned success=false")
+            except:
+                self.log_test("P2P Marketplace Coins", False, "JSON parse error")
+        else:
+            self.log_test("P2P Marketplace Coins", False, f"Status: {response.status_code}")
+        
+        # Test getting offers
+        success, response = self.make_request('GET', '/p2p/offers?ad_type=sell&crypto_currency=BTC')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    offers = data.get('offers', [])
+                    self.log_test("P2P Marketplace Offers", True, f"Found {len(offers)} BTC sell offers")
+                else:
+                    self.log_test("P2P Marketplace Offers", False, "API returned success=false")
+            except:
+                self.log_test("P2P Marketplace Offers", False, "JSON parse error")
+        else:
+            self.log_test("P2P Marketplace Offers", False, f"Status: {response.status_code}")
+
+    def test_swap_crypto(self):
+        """Test Swap Crypto functionality"""
+        print("\n🔄 Testing Swap Crypto...")
+        
+        # Test available coins for swapping
+        success, response = self.make_request('GET', '/swap/available-coins')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    coins = data.get('coins_detailed', [])
+                    self.log_test("Swap Available Coins", True, f"Found {len(coins)} swappable coins")
+                else:
+                    self.log_test("Swap Available Coins", False, "API returned success=false")
+            except:
+                self.log_test("Swap Available Coins", False, "JSON parse error")
+        else:
+            self.log_test("Swap Available Coins", False, f"Status: {response.status_code}")
+
+    def test_wallet_balances(self):
+        """Test Wallet page functionality"""
+        print("\n💳 Testing Wallet Balances...")
+        
+        if not self.test_user_id:
+            self.log_test("Wallet Balances", False, "No user ID available")
+            return
+        
+        success, response = self.make_request(
+            'GET', f'/wallets/balances/{self.test_user_id}'
+        )
+        
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    balances = data.get('balances', [])
+                    self.log_test("Wallet Balances API", True, f"Found {len(balances)} currency balances")
+                    
+                    # Check for expected currencies
+                    currencies = [bal['currency'] for bal in balances]
+                    if 'GBP' in currencies:
+                        gbp_balance = next((bal for bal in balances if bal['currency'] == 'GBP'), None)
+                        if gbp_balance:
+                            self.log_test("GBP Balance Found", True, f"GBP: £{gbp_balance.get('total_balance', 0)}")
+                    
+                    if 'BTC' in currencies:
+                        btc_balance = next((bal for bal in balances if bal['currency'] == 'BTC'), None)
+                        if btc_balance:
+                            self.log_test("BTC Balance Found", True, f"BTC: {btc_balance.get('total_balance', 0)}")
+                else:
+                    self.log_test("Wallet Balances API", False, "API returned success=false")
+            except Exception as e:
+                self.log_test("Wallet Balances API", False, f"JSON parse error: {str(e)}")
+        else:
+            self.log_test("Wallet Balances API", False, f"Status: {response.status_code}")
+
+    def test_referral_system(self):
+        """Test Referral System"""
+        print("\n👥 Testing Referral System...")
+        
+        # Test referral settings
+        success, response = self.make_request('GET', '/referral/settings')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    settings = data.get('settings', {})
+                    standard_rate = settings.get('standard_commission_percent', 0)
+                    self.log_test("Referral Settings", True, f"Standard commission: {standard_rate}%")
+                    
+                    # Verify 20% commission
+                    if standard_rate == 20.0:
+                        self.log_test("Referral Commission Rate", True, "Standard rate is 20% as expected")
+                    else:
+                        self.log_test("Referral Commission Rate", False, f"Expected 20%, got {standard_rate}%")
+                else:
+                    self.log_test("Referral Settings", False, "API returned success=false")
+            except:
+                self.log_test("Referral Settings", False, "JSON parse error")
+        else:
+            self.log_test("Referral Settings", False, f"Status: {response.status_code}")
+
+    def test_admin_dashboard(self):
+        """Test Admin Dashboard functionality"""
+        print("\n👑 Testing Admin Dashboard...")
+        
+        # Test platform stats
+        success, response = self.make_request('GET', '/admin/platform-stats')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    stats = data.get('stats', {})
+                    self.log_test("Admin Platform Stats", True, f"Stats available: {len(stats)} metrics")
+                else:
+                    self.log_test("Admin Platform Stats", False, "API returned success=false")
+            except:
+                self.log_test("Admin Platform Stats", False, "JSON parse error")
+        else:
+            self.log_test("Admin Platform Stats", False, f"Status: {response.status_code}")
+        
+        # Test platform wallet balance
+        success, response = self.make_request('GET', '/admin/platform-wallet/balance')
+        if success and response.status_code == 200:
+            try:
+                data = response.json()
+                if data.get('success'):
+                    balance = data.get('balance', {})
+                    total_gbp = balance.get('total_gbp', 0)
+                    self.log_test("Platform Wallet Balance", True, f"Platform fees collected: £{total_gbp}")
+                else:
+                    self.log_test("Platform Wallet Balance", False, "API returned success=false")
+            except:
+                self.log_test("Platform Wallet Balance", False, "JSON parse error")
+        else:
+            self.log_test("Platform Wallet Balance", False, f"Status: {response.status_code}")
+
+    def run_all_tests(self):
+        """Run comprehensive test suite"""
+        print("🚀 Starting CoinHubX Comprehensive Backend Testing...")
+        print(f"Testing against: {self.base_url}")
+        print("=" * 60)
+        
+        # Run all test categories
+        self.test_user_authentication()
+        self.test_portfolio_dashboard()
+        self.test_wallet_balances()
+        self.test_live_prices()
+        self.test_p2p_express()
+        self.test_p2p_marketplace()
+        self.test_swap_crypto()
+        self.test_referral_system()
+        self.test_admin_dashboard()
+        
+        # Print summary
+        print("\n" + "=" * 60)
+        print(f"📊 TEST SUMMARY")
+        print(f"Tests Run: {self.tests_run}")
+        print(f"Tests Passed: {self.tests_passed}")
+        print(f"Success Rate: {(self.tests_passed/self.tests_run*100):.1f}%")
+        
+        if self.tests_passed == self.tests_run:
+            print("🎉 ALL TESTS PASSED!")
+            return 0
+        else:
+            print(f"⚠️  {self.tests_run - self.tests_passed} tests failed")
+            return 1
+
+def main():
+    """Main test execution"""
+    tester = CoinHubXAPITester()
+    return tester.run_all_tests()
+
+if __name__ == "__main__":
+    sys.exit(main())
+
 class TradingPlatformTester:
     def __init__(self):
         self.session = requests.Session()
