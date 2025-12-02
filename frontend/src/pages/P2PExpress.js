@@ -28,6 +28,7 @@ export default function P2PExpress() {
   const [hasAdminLiquidity, setHasAdminLiquidity] = useState(false);
   const [userBalance, setUserBalance] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
   const EXPRESS_FEE_PERCENT = 2.5;
 
