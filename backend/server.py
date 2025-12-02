@@ -22447,7 +22447,8 @@ async def get_portfolio_summary(user_id: str):
         
         for balance in wallet_balances:
             coin = balance.get("currency")
-            amount = Decimal(str(balance.get("balance", 0)))
+            # Use total_balance from wallet schema
+            amount = Decimal(str(balance.get("total_balance", 0)))
             
             # GBP is already in GBP, so price = 1
             if coin == "GBP":
