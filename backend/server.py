@@ -5336,41 +5336,123 @@ async def credit_wallet(request: dict):
 @api_router.get("/wallet/transactions/{user_id}")
 async def get_wallet_transactions(user_id: str, currency: str = None, limit: int = 100):
     """
-    Get ALL transaction history for user (wallet transactions + spot trades)
+    Get ALL transaction history for user from ALL sources
     """
     try:
+        all_transactions = []
+        
+        # 1. Get wallet transactions
         query = {"user_id": user_id}
         if currency:
             query["currency"] = currency
         
-        # Get wallet transactions
-        wallet_txs = await db.wallet_transactions.find(
-            query,
-            {"_id": 0}
-        ).sort("timestamp", -1).limit(limit).to_list(limit)
-        
-        # Get spot trades
-        spot_trades = await db.spot_trades.find(
-            {"user_id": user_id},
-            {"_id": 0}
-        ).sort("created_at", -1).limit(limit).to_list(limit)
-        
-        # Format spot trades to match transaction format
-        formatted_trades = []
-        for trade in spot_trades:
-            formatted_trades.append({
-                "type": trade.get("type", "buy"),  # "buy" or "sell"
-                "amount": trade.get("total", 0),  # Total GBP amount
-                "currency": "GBP",
-                "status": "completed",
-                "created_at": trade.get("created_at"),
-                "timestamp": trade.get("created_at"),
-                "description": f"{trade.get('type', '').upper()} {trade.get('amount', 0)} {trade.get('pair', '')[:3]}"
+        wallet_txs = await db.wallet_transactions.find(query, {"_id": 0}).sort("timestamp", -1).limit(limit).to_list(limit)
+        for tx in wallet_txs:
+            all_transactions.append({
+                "transaction_type": tx.get("transaction_type", "unknown"),
+                "amount": tx.get("amount", 0),
+                "currency": tx.get("currency", "Unknown"),
+                "status": tx.get("status", "completed"),
+                "timestamp": tx.get("timestamp"),
+                "description": tx.get("description", ""),
+                "reference_id": tx.get("reference_id"),
+                "source": "wallet"
             })
         
-        # Combine and sort by date
-        all_transactions = wallet_txs + formatted_trades
-        all_transactions.sort(key=lambda x: x.get("timestamp") or x.get("created_at"), reverse=True)
+        # 2. Get spot trades (trading)
+        spot_trades = await db.spot_trades.find({"user_id": user_id}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        for trade in spot_trades:
+            all_transactions.append({
+                "transaction_type": f"trading_{trade.get('type', 'buy')}",
+                "amount": trade.get("total", 0),
+                "currency": "GBP",
+                "status": "completed",
+                "timestamp": trade.get("created_at"),
+                "description": f"{trade.get('type', '').upper()} {trade.get('amount', 0)} {trade.get('pair', '')[:3]}",
+                "source": "trading"
+            })
+        
+        # 3. Get trading transactions
+        trading_txs = await db.trading_transactions.find({"user_id": user_id}, {"_id": 0}).sort("timestamp", -1).limit(limit).to_list(limit)
+        for tx in trading_txs:
+            all_transactions.append({
+                "transaction_type": f"trading_{tx.get('type', 'buy')}",
+                "amount": tx.get("amount", 0),
+                "currency": tx.get("pair", "").split("/")[0] if "/" in tx.get("pair", "") else "Unknown",
+                "status": "completed",
+                "timestamp": tx.get("timestamp"),
+                "description": f"{tx.get('type', '').upper()} {tx.get('amount', 0)} {tx.get('pair', '')}",
+                "source": "trading"
+            })
+        
+        # 4. Get swap history
+        swaps = await db.swap_history.find({"user_id": user_id}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        for swap in swaps:
+            all_transactions.append({
+                "transaction_type": "swap",
+                "amount": swap.get("from_amount", 0),
+                "currency": swap.get("from_currency", "Unknown"),
+                "status": swap.get("status", "completed"),
+                "timestamp": swap.get("created_at"),
+                "description": f"Swapped {swap.get('from_amount', 0)} {swap.get('from_currency', '')} → {swap.get('to_amount', 0)} {swap.get('to_currency', '')}",
+                "source": "swap"
+            })
+        
+        # 5. Get instant buy transactions
+        instant_buys = await db.instant_buy_transactions.find({"user_id": user_id}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        for ib in instant_buys:
+            all_transactions.append({
+                "transaction_type": "instant_buy",
+                "amount": ib.get("fiat_amount", 0),
+                "currency": "GBP",
+                "status": ib.get("status", "completed"),
+                "timestamp": ib.get("created_at"),
+                "description": f"Instant Buy {ib.get('crypto_amount', 0)} {ib.get('crypto_currency', '')}",
+                "source": "instant_buy"
+            })
+        
+        # 6. Get instant sell transactions
+        instant_sells = await db.instant_sell_transactions.find({"user_id": user_id}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        for ise in instant_sells:
+            all_transactions.append({
+                "transaction_type": "instant_sell",
+                "amount": ise.get("crypto_amount", 0),
+                "currency": ise.get("crypto_currency", "Unknown"),
+                "status": ise.get("status", "completed"),
+                "timestamp": ise.get("created_at"),
+                "description": f"Instant Sell {ise.get('crypto_amount', 0)} {ise.get('crypto_currency', '')} for £{ise.get('fiat_value', 0)}",
+                "source": "instant_sell"
+            })
+        
+        # 7. Get P2P trades
+        p2p_trades = await db.p2p_trades.find({"$or": [{"maker_id": user_id}, {"taker_id": user_id}]}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        for p2p in p2p_trades:
+            is_maker = p2p.get("maker_id") == user_id
+            all_transactions.append({
+                "transaction_type": "p2p_maker" if is_maker else "p2p_taker",
+                "amount": p2p.get("crypto_amount", 0),
+                "currency": p2p.get("crypto", "Unknown"),
+                "status": p2p.get("status", "pending"),
+                "timestamp": p2p.get("created_at"),
+                "description": f"P2P {'Sell' if is_maker else 'Buy'} {p2p.get('crypto_amount', 0)} {p2p.get('crypto', '')}",
+                "source": "p2p"
+            })
+        
+        # 8. Get savings transactions
+        savings_txs = await db.savings_transactions.find({"user_id": user_id}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        for stx in savings_txs:
+            all_transactions.append({
+                "transaction_type": f"savings_{stx.get('action', 'deposit')}",
+                "amount": stx.get("amount", 0),
+                "currency": stx.get("currency", "Unknown"),
+                "status": stx.get("status", "completed"),
+                "timestamp": stx.get("created_at"),
+                "description": f"Savings {stx.get('action', 'deposit').title()} {stx.get('amount', 0)} {stx.get('currency', '')}",
+                "source": "savings"
+            })
+        
+        # Sort all by timestamp descending
+        all_transactions.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
         
         return {
             "success": True,
