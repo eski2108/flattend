@@ -455,27 +455,37 @@ export default function SpotTrading() {
                 marginBottom: '16px'
               }}>
                 
-                {/* Success Message for Mobile */}
+                {/* Success Message for Mobile - PROMINENT */}
                 {orderSuccess && lastOrderDetails && (
                   <div style={{
-                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)',
-                    border: '2px solid rgba(34, 197, 94, 0.6)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    marginBottom: '16px',
-                    boxShadow: '0 0 30px rgba(34, 197, 94, 0.4)'
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 9999,
+                    width: '90%',
+                    maxWidth: '400px',
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.98) 0%, rgba(22, 163, 74, 0.95) 100%)',
+                    border: '3px solid #22C55E',
+                    borderRadius: '20px',
+                    padding: '32px 24px',
+                    boxShadow: '0 0 60px rgba(34, 197, 94, 0.8), 0 20px 50px rgba(0, 0, 0, 0.8)',
+                    animation: 'successPulse 0.5s ease-out'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                      <IoCheckmarkCircle size={24} color="#22C55E" />
-                      <div style={{ fontSize: '18px', fontWeight: '700', color: '#22C55E' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
+                      <IoCheckmarkCircle size={48} color="#FFFFFF" />
+                      <div style={{ fontSize: '32px', fontWeight: '900', color: '#FFFFFF', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
                         SUCCESS!
                       </div>
                     </div>
-                    <div style={{ fontSize: '14px', color: '#FFFFFF', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '18px', color: '#FFFFFF', marginBottom: '8px', textAlign: 'center', fontWeight: '700' }}>
                       {lastOrderDetails.type.toUpperCase()} {lastOrderDetails.amount} {lastOrderDetails.crypto}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#D1D5DB' }}>
+                    <div style={{ fontSize: '16px', color: '#FFFFFF', textAlign: 'center', opacity: 0.9 }}>
                       at ${lastOrderDetails.price.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#FFFFFF', textAlign: 'center', marginTop: '16px', opacity: 0.8 }}>
+                      Check your wallet for updated balance
                     </div>
                   </div>
                 )}
