@@ -108,10 +108,11 @@ echo ""
 
 # Test 7: No Debug Elements in Production Code
 echo "Test 7: No Debug Elements..."
-if grep -r "TOP OF COMPONENT\|TESTING IF CHANGES\|console.log" /app/frontend/src/pages/*.js 2>/dev/null | grep -v "node_modules" | head -5; then
-    echo -e "${YELLOW}⚠️  WARNING: Debug code found in production files${NC}"
+if grep -r "TOP OF COMPONENT\|TESTING IF CHANGES\|🔴 TESTING\|ULTRA TEST" /app/frontend/src/pages/*.js 2>/dev/null | grep -v "node_modules" | head -5; then
+    echo -e "${RED}❌ FAILED: Test banners found in production files${NC}"
+    ((FAILED++))
 else
-    echo -e "${GREEN}✅ PASSED: No debug elements found${NC}"
+    echo -e "${GREEN}✅ PASSED: No test banners found${NC}"
     ((PASSED++))
 fi
 echo ""
