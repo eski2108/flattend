@@ -81,19 +81,35 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (fullName, email, password) => {
     try {
+      console.log('📝 Attempting registration for:', email);
       const response = await api.post('/auth/register', {
         full_name: fullName,
         email,
         password,
       });
+      console.log('📡 Registration response:', response.data);
+      
       if (response.data.success) {
-        return { success: true };
+        // If registration returns user data and token, auto-login
+        if (response.data.user && response.data.token) {
+          const userData = response.data.user;
+          const token = response.data.token;
+          
+          await AsyncStorage.setItem('cryptobank_user', JSON.stringify(userData));
+          await AsyncStorage.setItem('auth_token', token);
+          await AsyncStorage.setItem('token', token);
+          setUser(userData);
+          console.log('✅ Registration successful with auto-login');
+        }
+        return { success: true, message: response.data.message };
       }
       return { success: false, error: response.data.message };
     } catch (error) {
+      console.error('❌ Registration error:', error);
+      console.error('❌ Error response:', error.response?.data);
       return {
         success: false,
-        error: error.response?.data?.detail || 'Registration failed',
+        error: error.response?.data?.detail || error.response?.data?.message || 'Registration failed',
       };
     }
   };
