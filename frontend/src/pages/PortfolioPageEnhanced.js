@@ -42,7 +42,8 @@ export default function PortfolioPageEnhanced() {
 
   const fetchPortfolio = async (userId) => {
     try {
-      const response = await axios.get(`${API}/api/wallets/portfolio/${userId}`);
+      // Add cache-busting timestamp
+      const response = await axios.get(`${API}/api/wallets/portfolio/${userId}?_t=${Date.now()}`);
       if (response.data.success) {
         const transformedAllocations = response.data.allocations.map(alloc => ({
           currency: alloc.currency,
