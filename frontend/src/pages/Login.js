@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoShield } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -9,6 +10,7 @@ import API_BASE_URL from '@/config/api';
 const API = API_BASE_URL;
 
 export default function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
