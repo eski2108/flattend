@@ -884,17 +884,43 @@ export default function ReferralDashboard() {
           )}
         </div>
 
-        {/* Earnings Breakdown by Fee Type */}
+        {/* Premium Earnings Breakdown */}
         <div style={{
-          background: 'rgba(168,85,247,0.05)',
-          border: '2px solid rgba(168,85,247,0.2)',
-          borderRadius: '16px',
-          padding: '2rem',
-          marginTop: '2rem'
+          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%)',
+          border: '2px solid rgba(168, 85, 247, 0.4)',
+          borderRadius: '24px',
+          padding: '3rem',
+          marginTop: '3rem',
+          boxShadow: '0 0 60px rgba(168, 85, 247, 0.3), inset 0 0 40px rgba(168, 85, 247, 0.08)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#A855F7', marginBottom: '1.5rem' }}>
-            <PieChart size={24} style={{ display: 'inline', marginRight: '8px' }} />
-            Earnings Breakdown by Fee Type
+          <div style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '300px',
+            height: '80px',
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent)',
+            filter: 'blur(50px)',
+            pointerEvents: 'none'
+          }} />
+          
+          <h2 style={{ 
+            fontSize: '28px', 
+            fontWeight: '900', 
+            color: '#A855F7',
+            marginBottom: '2rem',
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            textShadow: '0 0 20px rgba(168, 85, 247, 0.8)'
+          }}>
+            <PieChart size={28} style={{ filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.8))' }} />
+            Revenue Analytics Dashboard
           </h2>
           
           {referralData.earnings_by_fee_type && referralData.earnings_by_fee_type.length === 0 ? (
