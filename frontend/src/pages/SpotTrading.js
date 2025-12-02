@@ -587,33 +587,83 @@ export default function SpotTrading() {
                   </button>
                 </div>
                 
-                {/* Amount Input - SINGLE CLEAR FIELD */}
+                {/* Amount Input - WITH CURRENCY/CRYPTO TOGGLE */}
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '600' }}>
-                    Amount
-                  </label>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => {
-                      console.log('💰 Amount changed:', e.target.value, 'Pair:', selectedPair);
-                      setAmount(e.target.value);
-                    }}
-                    placeholder="0.001"
-                    step="0.00000001"
-                    style={{
-                      width: '100%',
-                      padding: '14px',
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: '2px solid rgba(0, 240, 255, 0.4)',
-                      borderRadius: '10px',
-                      color: '#FFFFFF',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      outline: 'none',
-                      textAlign: 'center'
-                    }}
-                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600' }}>
+                      Amount
+                    </label>
+                    <button
+                      onClick={toggleInputMode}
+                      style={{
+                        background: 'rgba(0, 240, 255, 0.1)',
+                        border: '1px solid rgba(0, 240, 255, 0.3)',
+                        borderRadius: '6px',
+                        padding: '4px 10px',
+                        color: '#00F0FF',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      ↔ {inputMode === 'fiat' ? 'GBP' : tradingPairs.find(p => p.symbol === selectedPair)?.base}
+                    </button>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    {inputMode === 'fiat' && (
+                      <span style={{
+                        position: 'absolute',
+                        left: '16px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#00F0FF',
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        pointerEvents: 'none'
+                      }}>
+                        £
+                      </span>
+                    )}
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => {
+                        setAmount(e.target.value);
+                      }}
+                      placeholder={inputMode === 'fiat' ? '20' : '0.001'}
+                      step={inputMode === 'fiat' ? '1' : '0.00000001'}
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        paddingLeft: inputMode === 'fiat' ? '32px' : '14px',
+                        background: 'rgba(0, 0, 0, 0.4)',
+                        border: '2px solid rgba(0, 240, 255, 0.4)',
+                        borderRadius: '10px',
+                        color: '#FFFFFF',
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        outline: 'none',
+                        textAlign: inputMode === 'fiat' ? 'left' : 'center'
+                      }}
+                    />
+                  </div>
+                  {/* Show calculated opposite value */}
+                  {amount && marketStats.lastPrice > 0 && (
+                    <div style={{ 
+                      marginTop: '6px', 
+                      fontSize: '11px', 
+                      color: '#8F9BB3',
+                      textAlign: 'right'
+                    }}>
+                      {inputMode === 'fiat' 
+                        ? `≈ ${calculateAmount().crypto.toFixed(6)} ${tradingPairs.find(p => p.symbol === selectedPair)?.base}`
+                        : `≈ £${calculateAmount().fiat.toFixed(2)}`
+                      }
+                    </div>
+                  )}
                   
                   {/* Market Price Display - NOT EDITABLE */}
                   <div style={{ 
