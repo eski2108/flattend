@@ -31,7 +31,9 @@ export default function LanguageSwitcher({ style }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ language: langCode })
         }).catch(err => console.log('Could not save language preference:', err));
-      } catch (e) {}
+      } catch (e) {
+        console.log('Error parsing user data:', e);
+      }
     }
   };
 
