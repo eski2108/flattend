@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://coinhubpro.preview.emergentagent.com/p2p-express
+https://crypto-exchange-hub-12.preview.emergentagent.com/p2p-express
 
 ---
 
