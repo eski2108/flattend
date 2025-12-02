@@ -541,40 +541,69 @@ export default function SpotTrading() {
                   </button>
                 </div>
                 
-                {/* Quick Amount Input */}
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                {/* Amount Input - SINGLE CLEAR FIELD */}
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '600' }}>
+                    Amount (BTC)
+                  </label>
                   <input
                     type="number"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Amount"
+                    onChange={(e) => {
+                      console.log('💰 Amount changed:', e.target.value);
+                      setAmount(e.target.value);
+                    }}
+                    placeholder="0.001"
+                    step="0.00000001"
                     style={{
-                      flex: 1,
-                      padding: '10px',
+                      width: '100%',
+                      padding: '14px',
                       background: 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(0, 240, 255, 0.3)',
-                      borderRadius: '8px',
+                      border: '2px solid rgba(0, 240, 255, 0.4)',
+                      borderRadius: '10px',
                       color: '#FFFFFF',
-                      fontSize: '14px',
-                      outline: 'none'
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      outline: 'none',
+                      textAlign: 'center'
                     }}
                   />
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder={`$${marketStats.lastPrice.toFixed(2)}`}
-                    style={{
-                      flex: 1,
+                  
+                  {/* Market Price Display - NOT EDITABLE */}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginTop: '10px',
+                    padding: '10px',
+                    background: 'rgba(0, 240, 255, 0.05)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(0, 240, 255, 0.2)'
+                  }}>
+                    <span style={{ fontSize: '12px', color: '#8F9BB3' }}>Market Price:</span>
+                    <span style={{ fontSize: '16px', color: '#00F0FF', fontWeight: '700' }}>
+                      ${marketStats.lastPrice.toLocaleString()}
+                    </span>
+                  </div>
+                  
+                  {/* Total Display */}
+                  {amount && parseFloat(amount) > 0 && (
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginTop: '8px',
                       padding: '10px',
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      background: 'rgba(34, 197, 94, 0.1)',
                       borderRadius: '8px',
-                      color: '#FFFFFF',
-                      fontSize: '14px',
-                      outline: 'none'
-                    }}
-                  />
+                      border: '1px solid rgba(34, 197, 94, 0.3)'
+                    }}>
+                      <span style={{ fontSize: '12px', color: '#8F9BB3' }}>Total:</span>
+                      <span style={{ fontSize: '16px', color: '#22C55E', fontWeight: '700' }}>
+                        ${(parseFloat(amount) * marketStats.lastPrice).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Mobile Trade Button */}
