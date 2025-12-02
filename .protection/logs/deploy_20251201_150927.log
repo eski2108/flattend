@@ -1,0 +1,214 @@
+========================================
+🛡️  DEPLOYMENT GUARD ACTIVATED
+========================================
+
+[1/4] Running pre-build validation...
+========================================
+🔍 PRE-BUILD VALIDATION STARTING
+========================================
+\n✓ Checking critical files...
+  ✓ /app/frontend/src/App.js
+  ✓ /app/frontend/src/components/Layout.js
+  ✓ /app/frontend/src/components/ErrorBoundary.js
+  ✓ /app/backend/server.py
+  ✓ /app/backend/wallet_service.py
+\n✓ Validating icon imports...
+⚠️  WARNING: Found 32 potential icon alias issues
+  Review icon imports before proceeding
+\n✓ Checking for undefined icons...
+⚠️  Found 615 icon usages - ensure all are imported
+\n✓ Validating package.json...
+\n✓ Checking JavaScript syntax...
+\n========================================
+✅ PRE-BUILD VALIDATION PASSED
+========================================
+✅ Pre-build validation passed
+
+[2/4] Validating icon system...
+========================================
+🎨 ICON SYSTEM VALIDATION
+========================================
+\n📄 Checking: /app/frontend/src/components/P2PNotifications.js
+\n📄 Checking: /app/frontend/src/components/NotificationBell.js
+\n📄 Checking: /app/frontend/src/components/ExpressBuyModal.js
+\n📄 Checking: /app/frontend/src/components/OTPModal.js
+\n📄 Checking: /app/frontend/src/components/PriceTickerEnhanced.js
+\n📄 Checking: /app/frontend/src/components/BoostOfferModal.js
+\n📄 Checking: /app/frontend/src/components/LiveChatWidget.js
+\n📄 Checking: /app/frontend/src/components/PromoBanner.js
+\n📄 Checking: /app/frontend/src/components/Layout.js
+\n📄 Checking: /app/frontend/src/components/PriceTicker.js
+\n📄 Checking: /app/frontend/src/components/widgets/AssetTablePremium.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/components/widgets/AssetTable.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/components/widgets/RecentTransactionsList.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/components/widgets/RecentTransactionWidget.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/components/widgets/PortfolioGraphTradingView.js
+\n📄 Checking: /app/frontend/src/components/CurrencySelector.js
+\n📄 Checking: /app/frontend/src/components/ChatWidget.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/components/PriceAlerts.js
+\n📄 Checking: /app/frontend/src/components/TradeChat.js
+\n📄 Checking: /app/frontend/src/components/ui/accordion.jsx
+\n📄 Checking: /app/frontend/src/components/ui/context-menu.jsx
+\n📄 Checking: /app/frontend/src/components/ui/select.jsx
+\n📄 Checking: /app/frontend/src/components/ui/sheet.jsx
+\n📄 Checking: /app/frontend/src/components/ui/navigation-menu.jsx
+\n📄 Checking: /app/frontend/src/components/ui/checkbox.jsx
+\n📄 Checking: /app/frontend/src/components/ui/toast.jsx
+\n📄 Checking: /app/frontend/src/components/ui/breadcrumb.jsx
+\n📄 Checking: /app/frontend/src/components/ui/dropdown-menu.jsx
+\n📄 Checking: /app/frontend/src/components/ui/calendar.jsx
+\n📄 Checking: /app/frontend/src/components/ui/pagination.jsx
+\n📄 Checking: /app/frontend/src/components/ui/carousel.jsx
+\n📄 Checking: /app/frontend/src/components/ui/menubar.jsx
+\n📄 Checking: /app/frontend/src/components/ui/command.jsx
+\n📄 Checking: /app/frontend/src/components/ui/input-otp.jsx
+\n📄 Checking: /app/frontend/src/components/ui/dialog.jsx
+\n📄 Checking: /app/frontend/src/components/FastBuyButton.js
+\n📄 Checking: /app/frontend/src/components/Footer.js
+\n📄 Checking: /app/frontend/src/pages/InstantBuy.js
+\n📄 Checking: /app/frontend/src/pages/SpotTrading.js
+\n📄 Checking: /app/frontend/src/pages/AdminLogin.js
+\n📄 Checking: /app/frontend/src/pages/Marketplace.js
+\n📄 Checking: /app/frontend/src/pages/P2PExpress.js
+\n📄 Checking: /app/frontend/src/pages/BuyCrypto.js
+\n📄 Checking: /app/frontend/src/pages/PortfolioPage.js
+\n📄 Checking: /app/frontend/src/pages/KYCVerification.js
+\n📄 Checking: /app/frontend/src/pages/LandingPage.js
+\n📄 Checking: /app/frontend/src/pages/ForgotPassword.js
+\n📄 Checking: /app/frontend/src/pages/WalletPage.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/AdminFees.js
+\n📄 Checking: /app/frontend/src/pages/AdminBusinessDashboard.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/Lend.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/ReferralLinkGenerator.js
+\n📄 Checking: /app/frontend/src/pages/MyOrders.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/TermsOfService.js
+\n📄 Checking: /app/frontend/src/pages/CreateOffer.js
+\n📄 Checking: /app/frontend/src/pages/Security.js
+\n📄 Checking: /app/frontend/src/pages/PortfolioPageEnhanced.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/OrderConfirmation.js
+\n📄 Checking: /app/frontend/src/pages/AdminSecurityLogs.js
+\n📄 Checking: /app/frontend/src/pages/DepositInstructions.js
+\n📄 Checking: /app/frontend/src/pages/Notifications.js
+\n📄 Checking: /app/frontend/src/pages/MyLoans.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/NotFound.js
+\n📄 Checking: /app/frontend/src/pages/SpotTrading_old_backup.js
+\n📄 Checking: /app/frontend/src/pages/DisputeCentre.js
+\n📄 Checking: /app/frontend/src/pages/ReferralDashboard.js
+\n📄 Checking: /app/frontend/src/pages/AdminEarnings.js
+\n📄 Checking: /app/frontend/src/pages/WithdrawalRequest.js
+\n📄 Checking: /app/frontend/src/pages/P2PMarketplace.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/SellCrypto.js
+\n📄 Checking: /app/frontend/src/pages/ReferralsPageNew.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/ReferralsPage.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/Login.js
+\n📄 Checking: /app/frontend/src/pages/P2PTradingExchange.js
+\n📄 Checking: /app/frontend/src/pages/MarketplaceExpress.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/PublicSellerProfile.js
+\n📄 Checking: /app/frontend/src/pages/PreviewOrder.js
+\n📄 Checking: /app/frontend/src/pages/InstantSell.js
+\n📄 Checking: /app/frontend/src/pages/Dashboard_OLD_BACKUP.js
+\n📄 Checking: /app/frontend/src/pages/P2PMarketplace_old_backup.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/AdminDisputes.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/AdminDashboard.js
+\n📄 Checking: /app/frontend/src/pages/PrivacyPolicy.js
+\n📄 Checking: /app/frontend/src/pages/AdminSupport.js
+\n📄 Checking: /app/frontend/src/pages/OrderPreview.js
+\n📄 Checking: /app/frontend/src/pages/AdminCMS.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/BuyCryptoPublic.js
+\n📄 Checking: /app/frontend/src/pages/AdminSetup.js
+\n📄 Checking: /app/frontend/src/pages/WalletPage_old.js
+\n📄 Checking: /app/frontend/src/pages/TraderBalance.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/Transactions.js
+\n📄 Checking: /app/frontend/src/pages/PaymentMethods.js
+\n📄 Checking: /app/frontend/src/pages/FAQ.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/Dashboard_backup_01.js
+\n📄 Checking: /app/frontend/src/pages/TradePageNew.js
+\n📄 Checking: /app/frontend/src/pages/PriceAlerts.js
+\n📄 Checking: /app/frontend/src/pages/P2PTradeDetailDemo.js
+\n📄 Checking: /app/frontend/src/pages/P2PTrading.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/EnhancedReferralDashboard.js
+\n📄 Checking: /app/frontend/src/pages/Verification.js
+\n📄 Checking: /app/frontend/src/pages/SpotTrading_backup.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/P2PMarketplacePremium.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/WalletPagePremium.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/MerchantCenter.js
+\n📄 Checking: /app/frontend/src/pages/Register.js
+\n📄 Checking: /app/frontend/src/pages/AdminCMSNew.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/CreateAd.js
+\n📄 Checking: /app/frontend/src/pages/AdminPlatformWallet.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/TradePage.js
+\n📄 Checking: /app/frontend/src/pages/Fees.js
+\n📄 Checking: /app/frontend/src/pages/TwoFactorSetup.js
+\n📄 Checking: /app/frontend/src/pages/P2PBoost.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/AccountUpgrade.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/SwapCrypto.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/LandingPage_ORIGINAL.js
+\n📄 Checking: /app/frontend/src/pages/AdminSupportChat.js
+\n📄 Checking: /app/frontend/src/pages/OrderDetails.js
+\n📄 Checking: /app/frontend/src/pages/AdminUsersManagement.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/SavingsPage.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n📄 Checking: /app/frontend/src/pages/ResetPassword.js
+\n📄 Checking: /app/frontend/src/pages/WalletSettings.js
+\n📄 Checking: /app/frontend/src/pages/Settings.js
+  ⚠️  WARNING: Complex alias detected - verify usage
+\n========================================
+✅ ICON VALIDATION PASSED
+Warnings: 32
+✅ Icon system checked
+
+[3/4] Creating safety backup...
+========================================
+💾 CREATING STABLE BACKUP
+========================================
+\n✓ Backing up frontend...
+✓ Backing up backend...
+\n✓ Creating compressed archive...
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+\n✓ Cleaning old backups (keeping last 5)...
+\n========================================
+✅ BACKUP COMPLETED: /app/.backups/stable/stable_20251201_150929.tar.gz
+========================================
+✅ Backup created
+
+[4/4] Checking services...
+✅ Services checked
+
+========================================
+✅ DEPLOYMENT GUARD PASSED
+========================================
+
+📋 Full log: /app/.protection/logs/deploy_20251201_150927.log
+
+⚠️  REMINDER: Test in staging before production!
