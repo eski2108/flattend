@@ -199,22 +199,31 @@ export default function SpotTrading() {
   };
 
   const handlePlaceOrder = async () => {
+    console.log('🔥 BUY BUTTON CLICKED! Amount:', amount, 'Type:', orderType);
+    
     if (!amount || parseFloat(amount) <= 0) {
+      console.error('❌ Invalid amount');
       toast.error('Please enter a valid amount');
       return;
     }
 
     setIsLoading(true);
+    console.log('⏳ Processing order...');
+    
     try {
       const userData = localStorage.getItem('cryptobank_user');
       if (!userData) {
+        console.error('❌ No user data');
         toast.error('Please login to trade');
         navigate('/login');
         return;
       }
 
       const user = JSON.parse(userData);
+      console.log('✓ User:', user.user_id);
+      
       const pairInfo = tradingPairs.find(p => p.symbol === selectedPair);
+      console.log('✓ Trading pair:', selectedPair, pairInfo);
       
       const orderData = {
         user_id: user.user_id,
