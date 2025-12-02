@@ -36,11 +36,14 @@ export default function SpotTrading() {
     { symbol: 'BNBUSD', name: 'BNB/USD', base: 'BNB', quote: 'USD' }
   ];
 
-  // Calculate crypto amount from fiat or vice versa
+  // Calculate crypto amount from fiat or vice versa with spread
   const calculateAmount = () => {
     if (!amount || !marketStats.lastPrice) return { crypto: 0, fiat: 0 };
     
-    const gbpPrice = marketStats.lastPrice * 1.27; // Convert USD to GBP
+    // Apply spread: +0.5% on BUY, -0.5% on SELL
+    const spread = orderType === 'buy' ? 1.005 : 0.995;
+    const priceWithSpread = marketStats.lastPrice * spread;
+    const gbpPrice = priceWithSpread * 1.27; // Convert USD to GBP with spread
     
     if (inputMode === 'fiat') {
       // User entered fiat (£20) -> calculate crypto
