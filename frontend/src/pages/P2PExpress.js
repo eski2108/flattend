@@ -209,20 +209,22 @@ export default function P2PExpress() {
       const response = await axios.post(`${API}/api/p2p/express/create`, orderData);
 
       if (response.data.success) {
-        // Show success state ON THIS PAGE
+        // Show success state ON THIS PAGE - DON'T REDIRECT
         setPurchaseSuccess(true);
         setLoading(false);
         
-        // Wait 3 seconds so user can see success message, then redirect
-        setTimeout(() => {
-          if (hasAdminLiquidity) {
-            navigate('/wallet');
-          } else {
-            navigate(`/p2p/trade/${response.data.trade_id}`);
-          }
-        }, 3000);
+        // Scroll to top so user can see success message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        return; // Don't execute finally block
+        // Clear the form after 5 seconds
+        setTimeout(() => {
+          setPurchaseSuccess(false);
+          setFiatAmount('');
+          setCryptoAmount('');
+          setQuote(null);
+        }, 8000);
+        
+        return; // Don't execute finally block, NO REDIRECT
       } else {
         toast.error(response.data.message || 'Failed to create order');
       }
