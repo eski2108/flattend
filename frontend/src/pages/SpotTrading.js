@@ -36,6 +36,34 @@ export default function SpotTrading() {
     { symbol: 'BNBUSD', name: 'BNB/USD', base: 'BNB', quote: 'USD' }
   ];
 
+  // Calculate crypto amount from fiat or vice versa
+  const calculateAmount = () => {
+    if (!amount || !marketStats.lastPrice) return { crypto: 0, fiat: 0 };
+    
+    const gbpPrice = marketStats.lastPrice * 1.27; // Convert USD to GBP
+    
+    if (inputMode === 'fiat') {
+      // User entered fiat (£20) -> calculate crypto
+      const cryptoAmount = parseFloat(amount) / gbpPrice;
+      return {
+        crypto: cryptoAmount,
+        fiat: parseFloat(amount)
+      };
+    } else {
+      // User entered crypto (0.001) -> calculate fiat
+      const fiatAmount = parseFloat(amount) * gbpPrice;
+      return {
+        crypto: parseFloat(amount),
+        fiat: fiatAmount
+      };
+    }
+  };
+
+  const toggleInputMode = () => {
+    setInputMode(inputMode === 'fiat' ? 'crypto' : 'fiat');
+    setAmount(''); // Clear amount when switching
+  };
+
   useEffect(() => {
     fetchMarketStats();
     fetchTradingFee();
