@@ -28,6 +28,29 @@ export default function WalletPage() {
     setUser(u);
     loadCoinMetadata();
     loadBalances(u.user_id);
+
+    // Listen for balance change events
+    const handleBalanceChange = (e) => {
+      if (e.key === 'wallet_balance_updated' && e.newValue) {
+        console.log('🔄 Wallet balance update detected, refreshing...');
+        loadBalances(u.user_id);
+      }
+    };
+
+    // Listen for storage events (from other tabs/components)
+    window.addEventListener('storage', handleBalanceChange);
+
+    // Listen for custom events (from same tab)
+    const handleCustomBalanceChange = () => {
+      console.log('🔄 Wallet balance update triggered, refreshing...');
+      loadBalances(u.user_id);
+    };
+    window.addEventListener('walletBalanceUpdated', handleCustomBalanceChange);
+
+    return () => {
+      window.removeEventListener('storage', handleBalanceChange);
+      window.removeEventListener('walletBalanceUpdated', handleCustomBalanceChange);
+    };
   }, [navigate]);
 
   const loadCoinMetadata = async () => {
