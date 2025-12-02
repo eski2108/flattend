@@ -155,35 +155,6 @@ export default function AllocationsPage() {
     return amount.toLocaleString('en-US', { maximumFractionDigits: 2 });
   };
 
-  // Remove external labels - show legend below instead
-  const renderCustomLabel = () => null;
-
-  const renderCenterLabel = ({ viewBox }) => {
-    const { cx, cy } = viewBox;
-    return (
-      <g>
-        <text 
-          x={cx} 
-          y={cy - 10} 
-          textAnchor="middle" 
-          dominantBaseline="middle"
-          style={{ fontSize: '14px', fill: 'rgba(255,255,255,0.6)', fontWeight: '600' }}
-        >
-          Total Value
-        </text>
-        <text 
-          x={cx} 
-          y={cy + 20} 
-          textAnchor="middle" 
-          dominantBaseline="middle"
-          style={{ fontSize: '32px', fill: '#FFF', fontWeight: '900' }}
-        >
-          {formatCurrency(totalValue)}
-        </text>
-      </g>
-    );
-  };
-
   if (loading) {
     return (
       <Layout>
@@ -334,126 +305,335 @@ export default function AllocationsPage() {
               </div>
             </div>
 
-          {activeTab === 'coins' ? (
-            <>
-              {/* Premium Portfolio Overview */}
-              {allocations.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px', marginBottom: isMobile ? '24px' : '32px' }}>
-                  
-                  {/* Total Portfolio Value */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
-                    border: '1px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '16px',
-                    padding: isMobile ? '20px' : '24px',
-                    boxShadow: '0 0 30px rgba(0, 240, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}>
+            {activeTab === 'coins' ? (
+              <>
+                {/* Premium Portfolio Overview */}
+                {allocations.length > 0 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px', marginBottom: isMobile ? '24px' : '32px' }}>
+                    
+                    {/* Total Portfolio Value */}
                     <div style={{
-                      position: 'absolute',
-                      top: '-20px',
-                      right: '-20px',
-                      width: '80px',
-                      height: '80px',
-                      background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
-                      filter: 'blur(25px)',
-                      pointerEvents: 'none'
-                    }} />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                      <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Portfolio Value</div>
-                      <button
-                        onClick={() => setBalanceVisible(!balanceVisible)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#8F9BB3',
-                          cursor: 'pointer',
-                          padding: '4px'
-                        }}
-                      >
-                        {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
-                      </button>
+                      background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
+                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '16px',
+                      padding: isMobile ? '20px' : '24px',
+                      boxShadow: '0 0 30px rgba(0, 240, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '-20px',
+                        right: '-20px',
+                        width: '80px',
+                        height: '80px',
+                        background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
+                        filter: 'blur(25px)',
+                        pointerEvents: 'none'
+                      }} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Portfolio Value</div>
+                        <button
+                          onClick={() => setBalanceVisible(!balanceVisible)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#8F9BB3',
+                            cursor: 'pointer',
+                            padding: '4px'
+                          }}
+                        >
+                          {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
+                        </button>
+                      </div>
+                      <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 15px rgba(0, 240, 255, 0.5)', marginBottom: '8px' }}>
+                        {balanceVisible ? formatCurrency(totalValue) : '••••••'}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                        Across {allocations.length} different assets
+                      </div>
                     </div>
-                    <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 15px rgba(0, 240, 255, 0.5)', marginBottom: '8px' }}>
-                      {balanceVisible ? formatCurrency(totalValue) : '••••••'}
+
+                    {/* Asset Count */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
+                      border: '1px solid rgba(155, 77, 255, 0.3)',
+                      borderRadius: '16px',
+                      padding: isMobile ? '20px' : '24px',
+                      boxShadow: '0 0 30px rgba(155, 77, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '-20px',
+                        right: '-20px',
+                        width: '80px',
+                        height: '80px',
+                        background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
+                        filter: 'blur(25px)',
+                        pointerEvents: 'none'
+                      }} />
+                      <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Assets</div>
+                      <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#9B4DFF', textShadow: '0 0 15px rgba(155, 77, 255, 0.5)', marginBottom: '8px' }}>
+                        {allocations.length}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                        Diversified portfolio
+                      </div>
                     </div>
-                    <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                      Across {allocations.length} different assets
+
+                    {/* Largest Holding */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)',
+                      borderRadius: '16px',
+                      padding: isMobile ? '20px' : '24px',
+                      boxShadow: '0 0 30px rgba(34, 197, 94, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '-20px',
+                        right: '-20px',
+                        width: '80px',
+                        height: '80px',
+                        background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)',
+                        filter: 'blur(25px)',
+                        pointerEvents: 'none'
+                      }} />
+                      <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Largest Holding</div>
+                      <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#22C55E', textShadow: '0 0 15px rgba(34, 197, 94, 0.5)', marginBottom: '8px' }}>
+                        {allocations.length > 0 ? `${allocations[0]?.percent?.toFixed(1) || 0}%` : '0%'}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                        {allocations.length > 0 ? (COIN_NAMES[allocations[0]?.symbol] || allocations[0]?.symbol) : 'N/A'}
+                      </div>
                     </div>
                   </div>
+                )}
 
-                  {/* Asset Count */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
-                    border: '1px solid rgba(155, 77, 255, 0.3)',
-                    borderRadius: '16px',
-                    padding: isMobile ? '20px' : '24px',
-                    boxShadow: '0 0 30px rgba(155, 77, 255, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}>
+                {/* Premium Chart and Allocation Grid */}
+                {allocations.length > 0 ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+                    
+                    {/* Stunning Pie Chart */}
                     <div style={{
-                      position: 'absolute',
-                      top: '-20px',
-                      right: '-20px',
-                      width: '80px',
-                      height: '80px',
-                      background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
-                      filter: 'blur(25px)',
-                      pointerEvents: 'none'
-                    }} />
-                    <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Assets</div>
-                    <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#9B4DFF', textShadow: '0 0 15px rgba(155, 77, 255, 0.5)', marginBottom: '8px' }}>
-                      {allocations.length}
+                      background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '20px',
+                      padding: '24px',
+                      boxShadow: '0 0 40px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                      backdropFilter: 'blur(20px)',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '0',
+                        left: '0',
+                        right: '0',
+                        bottom: '0',
+                        background: 'radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.1), transparent 50%)',
+                        pointerEvents: 'none'
+                      }} />
+                      
+                      <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '20px', textAlign: 'center' }}>
+                        Portfolio Distribution
+                      </h3>
+                      
+                      <div style={{ height: '300px', position: 'relative' }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={allocations}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              label={false}
+                              outerRadius={100}
+                              innerRadius={60}
+                              fill="#8884d8"
+                              dataKey="percent"
+                              stroke="none"
+                            >
+                              {allocations.map((entry, index) => (
+                                <Cell 
+                                  key={`cell-${index}`} 
+                                  fill={CHART_COLORS[entry.symbol] || '#8B95A8'}
+                                  style={{
+                                    filter: `drop-shadow(0 0 8px ${CHART_COLORS[entry.symbol] || '#8B95A8'}80)`,
+                                    transition: 'all 0.3s ease'
+                                  }}
+                                />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{
+                                background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%)',
+                                border: '1px solid rgba(0, 240, 255, 0.3)',
+                                borderRadius: '12px',
+                                color: '#FFFFFF',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                boxShadow: '0 0 20px rgba(0, 0, 0, 0.8)'
+                              }}
+                              formatter={(value, name, props) => [
+                                `${value.toFixed(2)}%`,
+                                COIN_NAMES[props.payload.symbol] || props.payload.symbol
+                              ]}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                        
+                        {/* Center Label */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          textAlign: 'center',
+                          pointerEvents: 'none'
+                        }}>
+                          <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', marginBottom: '4px' }}>
+                            Total Value
+                          </div>
+                          <div style={{ fontSize: '20px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }}>
+                            {balanceVisible ? formatCurrency(totalValue) : '••••••'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                      Diversified portfolio
+
+                    {/* Premium Allocation Cards */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr',
+                      gap: '12px',
+                      maxHeight: '400px',
+                      overflowY: 'auto',
+                      paddingRight: '8px'
+                    }}>
+                      {allocations.map((allocation, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            background: CARD_GRADIENTS[allocation.symbol] || CARD_GRADIENTS['OTHERS'],
+                            border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40`,
+                            borderRadius: '16px',
+                            padding: '16px',
+                            boxShadow: `0 0 20px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}20, inset 0 2px 10px rgba(0, 0, 0, 0.2)`,
+                            position: 'relative',
+                            overflow: 'hidden',
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer',
+                            backdropFilter: 'blur(10px)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateX(4px)';
+                            e.currentTarget.style.borderColor = `${CHART_COLORS[allocation.symbol] || '#8B95A8'}80`;
+                            e.currentTarget.style.boxShadow = `0 0 30px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40, inset 0 2px 10px rgba(0, 0, 0, 0.3)`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateX(0)';
+                            e.currentTarget.style.borderColor = `${CHART_COLORS[allocation.symbol] || '#8B95A8'}40`;
+                            e.currentTarget.style.boxShadow = `0 0 20px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}20, inset 0 2px 10px rgba(0, 0, 0, 0.2)`;
+                          }}
+                        >
+                          {/* Ambient glow */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '-10px',
+                            right: '-10px',
+                            width: '40px',
+                            height: '40px',
+                            background: `radial-gradient(circle, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40, transparent)`,
+                            filter: 'blur(15px)',
+                            pointerEvents: 'none'
+                          }} />
+
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              {/* Coin icon */}
+                              <div style={{
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '50%',
+                                background: `${CHART_COLORS[allocation.symbol] || '#8B95A8'}20`,
+                                border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '16px',
+                                fontWeight: '700',
+                                color: CHART_COLORS[allocation.symbol] || '#8B95A8',
+                                boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
+                              }}>
+                                {COIN_ICONS[allocation.symbol] || allocation.symbol.charAt(0)}
+                              </div>
+
+                              <div>
+                                <div style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
+                                  {COIN_NAMES[allocation.symbol] || allocation.coin}
+                                </div>
+                                {allocation.amount !== null && (
+                                  <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
+                                    {formatAmount(allocation.amount, allocation.symbol)} {allocation.symbol}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Percentage badge */}
+                            <div style={{
+                              background: `${CHART_COLORS[allocation.symbol] || '#8B95A8'}20`,
+                              border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`,
+                              color: CHART_COLORS[allocation.symbol] || '#8B95A8',
+                              padding: '6px 12px',
+                              borderRadius: '20px',
+                              fontSize: '14px',
+                              fontWeight: '700',
+                              boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
+                            }}>
+                              {allocation.percent.toFixed(1)}%
+                            </div>
+                          </div>
+
+                          {/* Value */}
+                          <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px' }}>
+                            {balanceVisible ? formatCurrency(allocation.value) : '••••••'}
+                          </div>
+
+                          {/* Progress bar */}
+                          <div style={{
+                            width: '100%',
+                            height: '4px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '2px',
+                            overflow: 'hidden'
+                          }}>
+                            <div style={{
+                              width: `${allocation.percent}%`,
+                              height: '100%',
+                              background: `linear-gradient(90deg, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}80)`,
+                              borderRadius: '2px',
+                              boxShadow: `0 0 8px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`
+                            }}></div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-
-                  {/* Largest Holding */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                    borderRadius: '16px',
-                    padding: isMobile ? '20px' : '24px',
-                    boxShadow: '0 0 30px rgba(34, 197, 94, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.3)',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      position: 'absolute',
-                      top: '-20px',
-                      right: '-20px',
-                      width: '80px',
-                      height: '80px',
-                      background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)',
-                      filter: 'blur(25px)',
-                      pointerEvents: 'none'
-                    }} />
-                    <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Largest Holding</div>
-                    <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#22C55E', textShadow: '0 0 15px rgba(34, 197, 94, 0.5)', marginBottom: '8px' }}>
-                      {allocations.length > 0 ? `${allocations[0]?.percent?.toFixed(1) || 0}%` : '0%'}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                      {allocations.length > 0 ? (COIN_NAMES[allocations[0]?.symbol] || allocations[0]?.symbol) : 'N/A'}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Premium Chart and Allocation Grid */}
-              {allocations.length > 0 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
-                  
-                  {/* Stunning Pie Chart */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '20px',
-                    padding: '24px',
-                    boxShadow: '0 0 40px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                ) : (
+                  <div style={{ 
+                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)', 
+                    border: '1px solid rgba(0, 240, 255, 0.2)',
+                    borderRadius: '20px', 
+                    padding: isMobile ? '2rem 1.5rem' : '3rem 2rem',
+                    marginBottom: '2rem',
+                    textAlign: 'center',
+                    boxShadow: '0 0 40px rgba(0, 240, 255, 0.1), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
                     backdropFilter: 'blur(20px)',
                     position: 'relative',
                     overflow: 'hidden'
@@ -464,685 +644,477 @@ export default function AllocationsPage() {
                       left: '0',
                       right: '0',
                       bottom: '0',
-                      background: 'radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.1), transparent 50%)',
+                      background: 'radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%)',
                       pointerEvents: 'none'
                     }} />
                     
-                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '20px', textAlign: 'center' }}>
-                      Portfolio Distribution
-                    </h3>
+                    <IoWallet size={64} color="#00F0FF" style={{ marginBottom: '24px', filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.5))' }} />
                     
-                    <div style={{ height: '300px', position: 'relative' }}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={allocations}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={false}
-                            outerRadius={100}
-                            innerRadius={60}
-                            fill="#8884d8"
-                            dataKey="percent"
-                            stroke="none"
-                          >
-                            {allocations.map((entry, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={CHART_COLORS[entry.symbol] || '#8B95A8'}
-                                style={{
-                                  filter: `drop-shadow(0 0 8px ${CHART_COLORS[entry.symbol] || '#8B95A8'}80)`,
-                                  transition: 'all 0.3s ease'
-                                }}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{
-                              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%)',
-                              border: '1px solid rgba(0, 240, 255, 0.3)',
-                              borderRadius: '12px',
-                              color: '#FFFFFF',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                              boxShadow: '0 0 20px rgba(0, 0, 0, 0.8)'
-                            }}
-                            formatter={(value, name, props) => [
-                              `${value.toFixed(2)}%`,
-                              COIN_NAMES[props.payload.symbol] || props.payload.symbol
-                            ]}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      
-                      {/* Center Label */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        textAlign: 'center',
-                        pointerEvents: 'none'
-                      }}>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', marginBottom: '4px' }}>
-                          Total Value
-                        </div>
-                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }}>
-                          {balanceVisible ? formatCurrency(totalValue) : '••••••'}
-                        </div>
-                      </div>
+                    <div style={{ color: '#FFFFFF', fontSize: isMobile ? '24px' : '28px', fontWeight: '700', marginBottom: '16px' }}>
+                      No Portfolio Data
                     </div>
-                  </div>
-
-                  {/* Premium Allocation Cards */}
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr',
-                    gap: '12px',
-                    maxHeight: '400px',
-                    overflowY: 'auto',
-                    paddingRight: '8px'
-                  }}>
-                    {allocations.map((allocation, index) => (
-                      <div
-                        key={index}
+                    <div style={{ color: '#8F9BB3', fontSize: isMobile ? '14px' : '16px', marginBottom: '32px', lineHeight: '1.6', maxWidth: '400px', margin: '0 auto 32px' }}>
+                      Start building your crypto portfolio by adding assets to your wallet or exploring our savings products
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => navigate('/wallet')}
                         style={{
-                          background: CARD_GRADIENTS[allocation.symbol] || CARD_GRADIENTS['OTHERS'],
-                          border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40`,
-                          borderRadius: '16px',
-                          padding: '16px',
-                          boxShadow: `0 0 20px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}20, inset 0 2px 10px rgba(0, 0, 0, 0.2)`,
-                          position: 'relative',
-                          overflow: 'hidden',
-                          transition: 'all 0.3s ease',
+                          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)',
+                          border: '1px solid rgba(0, 240, 255, 0.4)',
+                          color: '#00F0FF',
+                          padding: '12px 24px',
+                          borderRadius: '12px',
+                          fontWeight: '600',
                           cursor: 'pointer',
-                          backdropFilter: 'blur(10px)'
+                          fontSize: '14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.3s',
+                          boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateX(4px)';
-                          e.currentTarget.style.borderColor = `${CHART_COLORS[allocation.symbol] || '#8B95A8'}80`;
-                          e.currentTarget.style.boxShadow = `0 0 30px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40, inset 0 2px 10px rgba(0, 0, 0, 0.3)`;
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%)';
+                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateX(0)';
-                          e.currentTarget.style.borderColor = `${CHART_COLORS[allocation.symbol] || '#8B95A8'}40`;
-                          e.currentTarget.style.boxShadow = `0 0 20px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}20, inset 0 2px 10px rgba(0, 0, 0, 0.2)`;
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)';
+                          e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
                         }}
                       >
-                        {/* Ambient glow */}
-                        <div style={{
-                          position: 'absolute',
-                          top: '-10px',
-                          right: '-10px',
-                          width: '40px',
-                          height: '40px',
-                          background: `radial-gradient(circle, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}40, transparent)`,
-                          filter: 'blur(15px)',
-                          pointerEvents: 'none'
-                        }} />
-
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            {/* Coin icon */}
-                            <div style={{
-                              width: '36px',
-                              height: '36px',
-                              borderRadius: '50%',
-                              background: `${CHART_COLORS[allocation.symbol] || '#8B95A8'}20`,
-                              border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '16px',
-                              fontWeight: '700',
-                              color: CHART_COLORS[allocation.symbol] || '#8B95A8',
-                              boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
-                            }}>
-                              {COIN_ICONS[allocation.symbol] || allocation.symbol.charAt(0)}
-                            </div>
-
-                            <div>
-                              <div style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
-                                {COIN_NAMES[allocation.symbol] || allocation.coin}
-                              </div>
-                              {allocation.amount !== null && (
-                                <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                                  {formatAmount(allocation.amount, allocation.symbol)} {allocation.symbol}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Percentage badge */}
-                          <div style={{
-                            background: `${CHART_COLORS[allocation.symbol] || '#8B95A8'}20`,
-                            border: `1px solid ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`,
-                            color: CHART_COLORS[allocation.symbol] || '#8B95A8',
-                            padding: '6px 12px',
-                            borderRadius: '20px',
-                            fontSize: '14px',
-                            fontWeight: '700',
-                            boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
-                          }}>
-                            {allocation.percent.toFixed(1)}%
-                          </div>
-                        </div>
-
-                        {/* Value */}
-                        <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px' }}>
-                          {balanceVisible ? formatCurrency(allocation.value) : '••••••'}
-                        </div>
-
-                        {/* Progress bar */}
-                        <div style={{
-                          width: '100%',
-                          height: '4px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: '2px',
-                          overflow: 'hidden'
-                        }}>
-                          <div style={{
-                            width: `${allocation.percent}%`,
-                            height: '100%',
-                            background: `linear-gradient(90deg, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}, ${CHART_COLORS[allocation.symbol] || '#8B95A8'}80)`,
-                            borderRadius: '2px',
-                            boxShadow: `0 0 8px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}60`
-                          }}></div>
-                        </div>
-                      </div>
-                    ))}
+                        <IoWallet size={16} />
+                        Go to Wallet
+                      </button>
+                      
+                      <button
+                        onClick={() => navigate('/savings')}
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)',
+                          border: '1px solid rgba(155, 77, 255, 0.4)',
+                          color: '#9B4DFF',
+                          padding: '12px 24px',
+                          borderRadius: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.3s',
+                          boxShadow: '0 0 20px rgba(155, 77, 255, 0.2)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.3) 0%, rgba(155, 77, 255, 0.15) 100%)';
+                          e.currentTarget.style.borderColor = 'rgba(155, 77, 255, 0.6)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)';
+                          e.currentTarget.style.borderColor = 'rgba(155, 77, 255, 0.4)';
+                        }}
+                      >
+                        <IoShield size={16} />
+                        Explore Savings
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div style={{ 
-                  background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)', 
-                  border: '1px solid rgba(0, 240, 255, 0.2)',
-                  borderRadius: '20px', 
-                  padding: isMobile ? '2rem 1.5rem' : '3rem 2rem',
-                  marginBottom: '2rem',
-                  textAlign: 'center',
-                  boxShadow: '0 0 40px rgba(0, 240, 255, 0.1), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
-                  backdropFilter: 'blur(20px)',
+                )}
+              </>
+            ) : (
+              // Premium Products & Services Section
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
+                
+                {/* Savings Vault */}
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '20px',
+                  padding: '28px',
+                  boxShadow: '0 0 40px rgba(0, 240, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
                   position: 'relative',
-                  overflow: 'hidden'
-                }}>
+                  overflow: 'hidden',
+                  backdropFilter: 'blur(20px)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(0, 240, 255, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
+                >
                   <div style={{
                     position: 'absolute',
-                    top: '0',
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    background: 'radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%)',
+                    top: '-20px',
+                    right: '-20px',
+                    width: '100px',
+                    height: '100px',
+                    background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
+                    filter: 'blur(30px)',
                     pointerEvents: 'none'
                   }} />
                   
-                  <IoWallet size={64} color="#00F0FF" style={{ marginBottom: '24px', filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.5))' }} />
-                  
-                  <div style={{ color: '#FFFFFF', fontSize: isMobile ? '24px' : '28px', fontWeight: '700', marginBottom: '16px' }}>
-                    No Portfolio Data
-                  </div>
-                  <div style={{ color: '#8F9BB3', fontSize: isMobile ? '14px' : '16px', marginBottom: '32px', lineHeight: '1.6', maxWidth: '400px', margin: '0 auto 32px' }}>
-                    Start building your crypto portfolio by adding assets to your wallet or exploring our savings products
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                    <IoShield size={32} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                      Savings Vault
+                    </div>
                   </div>
                   
-                  <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <button
-                      onClick={() => navigate('/wallet')}
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)',
-                        border: '1px solid rgba(0, 240, 255, 0.4)',
-                        color: '#00F0FF',
-                        padding: '12px 24px',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        transition: 'all 0.3s',
-                        boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%)';
-                        e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)';
-                        e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
-                      }}
-                    >
-                      <IoWallet size={16} />
-                      Go to Wallet
-                    </button>
-                    
-                    <button
-                      onClick={() => navigate('/savings')}
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)',
-                        border: '1px solid rgba(155, 77, 255, 0.4)',
-                        color: '#9B4DFF',
-                        padding: '12px 24px',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        transition: 'all 0.3s',
-                        boxShadow: '0 0 20px rgba(155, 77, 255, 0.2)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.3) 0%, rgba(155, 77, 255, 0.15) 100%)';
-                        e.currentTarget.style.borderColor = 'rgba(155, 77, 255, 0.6)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)';
-                        e.currentTarget.style.borderColor = 'rgba(155, 77, 255, 0.4)';
-                      }}
-                    >
-                      <IoShield size={16} />
-                      Explore Savings
-                    </button>
+                  <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                    Secure your crypto assets with institutional-grade security. Earn competitive yields while maintaining full control of your funds.
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                    <div style={{ 
+                      background: 'rgba(0, 240, 255, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#00F0FF',
+                      fontWeight: '600'
+                    }}>
+                      Zero Fees
+                    </div>
+                    <div style={{ 
+                      background: 'rgba(0, 240, 255, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#00F0FF',
+                      fontWeight: '600'
+                    }}>
+                      Instant Access
+                    </div>
                   </div>
+                  
+                  <button 
+                    onClick={() => navigate('/savings')}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)',
+                      border: '1px solid rgba(0, 240, 255, 0.4)',
+                      color: '#00F0FF',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s',
+                      width: '100%',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)';
+                    }}
+                  >
+                    Explore Savings
+                    <IoArrowForward size={16} />
+                  </button>
                 </div>
-              )}
-            </>
-          ) : (
-            // Premium Products & Services Section
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
-              
-              {/* Savings Vault */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
-                borderRadius: '20px',
-                padding: '28px',
-                boxShadow: '0 0 40px rgba(0, 240, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
-                position: 'relative',
-                overflow: 'hidden',
-                backdropFilter: 'blur(20px)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 0 60px rgba(0, 240, 255, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              >
-                <div style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  width: '100px',
-                  height: '100px',
-                  background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
-                  filter: 'blur(30px)',
-                  pointerEvents: 'none'
-                }} />
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                  <IoShield size={32} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
-                    Savings Vault
-                  </div>
-                </div>
-                
-                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
-                  Secure your crypto assets with institutional-grade security. Earn competitive yields while maintaining full control of your funds.
-                </p>
-                
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                  <div style={{ 
-                    background: 'rgba(0, 240, 255, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#00F0FF',
-                    fontWeight: '600'
-                  }}>
-                    Zero Fees
-                  </div>
-                  <div style={{ 
-                    background: 'rgba(0, 240, 255, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#00F0FF',
-                    fontWeight: '600'
-                  }}>
-                    Instant Access
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => navigate('/savings')}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)',
-                    border: '1px solid rgba(0, 240, 255, 0.4)',
-                    color: '#00F0FF',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.3s',
-                    width: '100%',
-                    justifyContent: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.15) 100%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)';
-                  }}
-                >
-                  Explore Savings
-                  <IoArrowForward size={16} />
-                </button>
-              </div>
 
-              {/* Trading */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)',
-                border: '1px solid rgba(34, 197, 94, 0.3)',
-                borderRadius: '20px',
-                padding: '28px',
-                boxShadow: '0 0 40px rgba(34, 197, 94, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
-                position: 'relative',
-                overflow: 'hidden',
-                backdropFilter: 'blur(20px)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 0 60px rgba(34, 197, 94, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              >
+                {/* Trading */}
                 <div style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  width: '100px',
-                  height: '100px',
-                  background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)',
-                  filter: 'blur(30px)',
-                  pointerEvents: 'none'
-                }} />
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                  <IoTrendingUp size={32} color="#22C55E" style={{ filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.8))' }} />
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
-                    Advanced Trading
-                  </div>
-                </div>
-                
-                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
-                  Professional trading tools with real-time charts, advanced order types, and institutional-grade execution.
-                </p>
-                
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                  <div style={{ 
-                    background: 'rgba(34, 197, 94, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#22C55E',
-                    fontWeight: '600'
-                  }}>
-                    Low Fees
-                  </div>
-                  <div style={{ 
-                    background: 'rgba(34, 197, 94, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#22C55E',
-                    fontWeight: '600'
-                  }}>
-                    Pro Tools
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => navigate('/trading')}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)',
-                    border: '1px solid rgba(34, 197, 94, 0.4)',
-                    color: '#22C55E',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.3s',
-                    width: '100%',
-                    justifyContent: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.15) 100%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)';
-                  }}
+                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%)',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  borderRadius: '20px',
+                  padding: '28px',
+                  boxShadow: '0 0 40px rgba(34, 197, 94, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backdropFilter: 'blur(20px)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(34, 197, 94, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
                 >
-                  Start Trading
-                  <IoArrowForward size={16} />
-                </button>
-              </div>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    right: '-20px',
+                    width: '100px',
+                    height: '100px',
+                    background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent)',
+                    filter: 'blur(30px)',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                    <IoTrendingUp size={32} color="#22C55E" style={{ filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.8))' }} />
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                      Advanced Trading
+                    </div>
+                  </div>
+                  
+                  <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                    Professional trading tools with real-time charts, advanced order types, and institutional-grade execution.
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                    <div style={{ 
+                      background: 'rgba(34, 197, 94, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#22C55E',
+                      fontWeight: '600'
+                    }}>
+                      Low Fees
+                    </div>
+                    <div style={{ 
+                      background: 'rgba(34, 197, 94, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#22C55E',
+                      fontWeight: '600'
+                    }}>
+                      Pro Tools
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => navigate('/trading')}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)',
+                      border: '1px solid rgba(34, 197, 94, 0.4)',
+                      color: '#22C55E',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s',
+                      width: '100%',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.15) 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)';
+                    }}
+                  >
+                    Start Trading
+                    <IoArrowForward size={16} />
+                  </button>
+                </div>
 
-              {/* Swap & Exchange */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
-                border: '1px solid rgba(155, 77, 255, 0.3)',
-                borderRadius: '20px',
-                padding: '28px',
-                boxShadow: '0 0 40px rgba(155, 77, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
-                position: 'relative',
-                overflow: 'hidden',
-                backdropFilter: 'blur(20px)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 0 60px rgba(155, 77, 255, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 0 40px rgba(155, 77, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              >
+                {/* Swap & Exchange */}
                 <div style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  width: '100px',
-                  height: '100px',
-                  background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
-                  filter: 'blur(30px)',
-                  pointerEvents: 'none'
-                }} />
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                  <IoSwapHorizontal size={32} color="#9B4DFF" style={{ filter: 'drop-shadow(0 0 10px rgba(155, 77, 255, 0.8))' }} />
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
-                    Instant Swap
-                  </div>
-                </div>
-                
-                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
-                  Seamlessly exchange between cryptocurrencies with the best rates and minimal slippage across multiple DEXs.
-                </p>
-                
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                  <div style={{ 
-                    background: 'rgba(155, 77, 255, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#9B4DFF',
-                    fontWeight: '600'
-                  }}>
-                    Best Rates
-                  </div>
-                  <div style={{ 
-                    background: 'rgba(155, 77, 255, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#9B4DFF',
-                    fontWeight: '600'
-                  }}>
-                    Instant
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => navigate('/swap')}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)',
-                    border: '1px solid rgba(155, 77, 255, 0.4)',
-                    color: '#9B4DFF',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.3s',
-                    width: '100%',
-                    justifyContent: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.3) 0%, rgba(155, 77, 255, 0.15) 100%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)';
-                  }}
+                  background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.08) 0%, rgba(155, 77, 255, 0.03) 100%)',
+                  border: '1px solid rgba(155, 77, 255, 0.3)',
+                  borderRadius: '20px',
+                  padding: '28px',
+                  boxShadow: '0 0 40px rgba(155, 77, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backdropFilter: 'blur(20px)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(155, 77, 255, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(155, 77, 255, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
                 >
-                  Start Swapping
-                  <IoArrowForward size={16} />
-                </button>
-              </div>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    right: '-20px',
+                    width: '100px',
+                    height: '100px',
+                    background: 'radial-gradient(circle, rgba(155, 77, 255, 0.3), transparent)',
+                    filter: 'blur(30px)',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                    <IoSwapHorizontal size={32} color="#9B4DFF" style={{ filter: 'drop-shadow(0 0 10px rgba(155, 77, 255, 0.8))' }} />
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                      Instant Swap
+                    </div>
+                  </div>
+                  
+                  <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                    Seamlessly exchange between cryptocurrencies with the best rates and minimal slippage across multiple DEXs.
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                    <div style={{ 
+                      background: 'rgba(155, 77, 255, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#9B4DFF',
+                      fontWeight: '600'
+                    }}>
+                      Best Rates
+                    </div>
+                    <div style={{ 
+                      background: 'rgba(155, 77, 255, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#9B4DFF',
+                      fontWeight: '600'
+                    }}>
+                      Instant
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => navigate('/swap')}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)',
+                      border: '1px solid rgba(155, 77, 255, 0.4)',
+                      color: '#9B4DFF',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s',
+                      width: '100%',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.3) 0%, rgba(155, 77, 255, 0.15) 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(155, 77, 255, 0.2) 0%, rgba(155, 77, 255, 0.1) 100%)';
+                    }}
+                  >
+                    Start Swapping
+                    <IoArrowForward size={16} />
+                  </button>
+                </div>
 
-              {/* Instant Buy */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.03) 100%)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                borderRadius: '20px',
-                padding: '28px',
-                boxShadow: '0 0 40px rgba(245, 158, 11, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
-                position: 'relative',
-                overflow: 'hidden',
-                backdropFilter: 'blur(20px)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 0 60px rgba(245, 158, 11, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 0 40px rgba(245, 158, 11, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
-              }}
-              >
+                {/* Instant Buy */}
                 <div style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  width: '100px',
-                  height: '100px',
-                  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.3), transparent)',
-                  filter: 'blur(30px)',
-                  pointerEvents: 'none'
-                }} />
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                  <IoFlash size={32} color="#F59E0B" style={{ filter: 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.8))' }} />
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
-                    Instant Buy
-                  </div>
-                </div>
-                
-                <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
-                  Purchase crypto instantly with your debit card, bank transfer, or other payment methods. Simple and secure.
-                </p>
-                
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                  <div style={{ 
-                    background: 'rgba(245, 158, 11, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#F59E0B',
-                    fontWeight: '600'
-                  }}>
-                    Instant
-                  </div>
-                  <div style={{ 
-                    background: 'rgba(245, 158, 11, 0.1)', 
-                    padding: '8px 12px', 
-                    borderRadius: '8px', 
-                    fontSize: '12px', 
-                    color: '#F59E0B',
-                    fontWeight: '600'
-                  }}>
-                    Secure
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => navigate('/instant-buy')}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)',
-                    border: '1px solid rgba(245, 158, 11, 0.4)',
-                    color: '#F59E0B',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.3s',
-                    width: '100%',
-                    justifyContent: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)';
-                  }}
+                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.03) 100%)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '20px',
+                  padding: '28px',
+                  boxShadow: '0 0 40px rgba(245, 158, 11, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backdropFilter: 'blur(20px)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(245, 158, 11, 0.25), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(245, 158, 11, 0.15), inset 0 2px 20px rgba(0, 0, 0, 0.3)';
+                }}
                 >
-                  Buy Crypto Now
-                  <IoArrowForward size={16} />
-                </button>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    right: '-20px',
+                    width: '100px',
+                    height: '100px',
+                    background: 'radial-gradient(circle, rgba(245, 158, 11, 0.3), transparent)',
+                    filter: 'blur(30px)',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                    <IoFlash size={32} color="#F59E0B" style={{ filter: 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.8))' }} />
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                      Instant Buy
+                    </div>
+                  </div>
+                  
+                  <p style={{ color: '#8F9BB3', marginBottom: '24px', fontSize: '16px', lineHeight: '1.6' }}>
+                    Purchase crypto instantly with your debit card, bank transfer, or other payment methods. Simple and secure.
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                    <div style={{ 
+                      background: 'rgba(245, 158, 11, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#F59E0B',
+                      fontWeight: '600'
+                    }}>
+                      Instant
+                    </div>
+                    <div style={{ 
+                      background: 'rgba(245, 158, 11, 0.1)', 
+                      padding: '8px 12px', 
+                      borderRadius: '8px', 
+                      fontSize: '12px', 
+                      color: '#F59E0B',
+                      fontWeight: '600'
+                    }}>
+                      Secure
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => navigate('/instant-buy')}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                      color: '#F59E0B',
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s',
+                      width: '100%',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)';
+                    }}
+                  >
+                    Buy Crypto Now
+                    <IoArrowForward size={16} />
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </Layout>
