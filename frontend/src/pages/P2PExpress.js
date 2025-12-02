@@ -229,19 +229,37 @@ export default function P2PExpress() {
 
   return (
     <Layout>
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #05121F 0%, #0A1929 100%)', padding: '40px 20px' }}>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
+        paddingBottom: '60px'
+      }}>
         
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
+        <div style={{ padding: isMobile ? '16px' : '24px' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
-          <div style={{ marginBottom: '48px', textAlign: 'center' }}>
-            <h1 style={{ fontSize: '48px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-              <IoFlash size={48} color="#0CEBFF" strokeWidth={2.5} />
-              P2P Express
-            </h1>
-            <p style={{ fontSize: '18px', color: '#8F9BB3', margin: 0 }}>Instant crypto purchase • 2-5 minute delivery</p>
-          </div>
+            {/* Header - Matching Swap exactly */}
+            <div style={{ marginBottom: isMobile ? '28px' : '40px' }}>
+              <div>
+                <h1 style={{ 
+                  fontSize: isMobile ? '32px' : '42px', 
+                  fontWeight: '700', 
+                  color: '#FFFFFF', 
+                  marginBottom: '8px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '16px'
+                }}>
+                  <IoFlash size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} />
+                  P2P Express
+                </h1>
+                <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>
+                  Buy crypto with GBP instantly • 2-5 minute delivery
+                </p>
+              </div>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '48px', alignItems: 'start', justifyItems: 'stretch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? '24px' : '32px' }}>
             
             <div>
               
