@@ -19023,18 +19023,20 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
     apk_path = Path("/app/webview-app/android/app/build/outputs/apk/release/app-release.apk")
     
     if not apk_path.exists():
-        # If APK doesn't exist yet, return info page
+        # If APK doesn't exist yet, return premium info page
         return HTMLResponse(content=f"""
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Coin Hub X - Android App</title>
+            <title>CoinHubX - Premium Android App</title>
             <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700;900&display=swap');
+                
                 body {{
-                    font-family: 'Segoe UI', Arial, sans-serif;
-                    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                    font-family: 'Inter', sans-serif;
+                    background: linear-gradient(135deg, #0A1929 0%, #051018 100%);
                     color: #fff;
                     padding: 2rem;
                     text-align: center;
@@ -19042,31 +19044,110 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    margin: 0;
                 }}
                 .container {{
-                    max-width: 500px;
-                    background: rgba(30, 41, 59, 0.8);
-                    padding: 2rem;
-                    border-radius: 16px;
+                    max-width: 600px;
+                    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(123, 44, 255, 0.05) 100%);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    padding: 3rem 2rem;
+                    border-radius: 24px;
+                    border: 1px solid rgba(0, 240, 255, 0.3);
+                    box-shadow: 0 0 40px rgba(0, 240, 255, 0.2), 0 0 80px rgba(123, 44, 255, 0.1);
                 }}
-                h1 {{ color: #06b6d4; }}
+                .icon {{
+                    font-size: 5rem;
+                    margin-bottom: 1.5rem;
+                    filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.6));
+                }}
+                h1 {{
+                    font-family: 'Space Grotesk', sans-serif;
+                    font-size: 2.5rem;
+                    font-weight: 900;
+                    background: linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    margin-bottom: 1rem;
+                    filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.4));
+                }}
+                p {{
+                    font-size: 1.2rem;
+                    line-height: 1.6;
+                    color: rgba(255, 255, 255, 0.85);
+                    margin-bottom: 2rem;
+                }}
                 .btn {{
-                    background: linear-gradient(135deg, #06b6d4, #0891b2);
+                    background: linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%);
                     color: white;
-                    padding: 1rem 2rem;
-                    border-radius: 12px;
+                    padding: 1.2rem 2.5rem;
+                    border-radius: 16px;
                     text-decoration: none;
                     display: inline-block;
-                    margin-top: 1rem;
+                    margin: 0.5rem;
+                    font-weight: 700;
+                    font-size: 1.1rem;
+                    border: 1px solid rgba(0, 240, 255, 0.3);
+                    box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+                    transition: all 0.3s ease;
+                }}
+                .btn:hover {{
+                    transform: translateY(-3px) scale(1.02);
+                    box-shadow: 0 0 40px rgba(0, 240, 255, 0.6), 0 0 80px rgba(123, 44, 255, 0.4);
+                }}
+                .secondary {{
+                    background: rgba(0, 240, 255, 0.1);
+                    border: 1px solid rgba(0, 240, 255, 0.4);
+                    color: #00F0FF;
+                }}
+                .feature {{
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin: 0.5rem 1rem;
+                    font-size: 0.95rem;
+                    color: rgba(255, 255, 255, 0.8);
+                }}
+                .feature-icon {{
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #00F0FF, #A855F7);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
                 }}
             </style>
         </head>
         <body>
             <div class="container">
-                <div style="font-size: 4rem;">🤖📱</div>
-                <h1>Android App Coming Soon</h1>
-                <p>The Android APK is being built. Please check back soon or use our web app.</p>
-                <a href="/" class="btn">Use Web App</a>
+                <div class="icon">🚀📱</div>
+                <h1>Premium Android App</h1>
+                <p>Our premium Android APK is being prepared with cutting-edge security features and lightning-fast performance.</p>
+                
+                <div style="margin: 2rem 0;">
+                    <div class="feature">
+                        <div class="feature-icon">🛡️</div>
+                        <span>Military-Grade Security</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">⚡</div>
+                        <span>Lightning Fast Trading</span>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">💎</div>
+                        <span>Premium UI/UX</span>
+                    </div>
+                </div>
+                
+                <a href="/" class="btn">Use Premium Web App</a>
+                <a href="mailto:support@coinhubx.com" class="btn secondary">Get Notified</a>
+                
+                <p style="font-size: 0.9rem; margin-top: 2rem; color: rgba(255, 255, 255, 0.6);">
+                    Meanwhile, enjoy our premium web app with full mobile optimization
+                </p>
             </div>
         </body>
         </html>
