@@ -77,15 +77,19 @@ export default function WalletPage() {
 
   const loadBalances = async (userId) => {
     try {
-      const response = await axios.get(`${API}/api/wallets/balances/${userId}`);
+      // Add cache-busting timestamp
+      const response = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
       if (response.data.success) {
         const bals = response.data.balances || [];
+        console.log('📊 Loaded balances:', bals.length, 'currencies');
+        console.log('💰 Balances:', bals.map(b => `${b.currency}: £${b.gbp_value}`));
         setBalances(bals);
         
         // Use pre-calculated gbp_value from API instead of calculating manually
         const total = bals.reduce((sum, bal) => {
           return sum + (bal.gbp_value || 0);
         }, 0);
+        console.log('💵 Total GBP:', total);
         setTotalGBP(total);
       }
     } catch (error) {
