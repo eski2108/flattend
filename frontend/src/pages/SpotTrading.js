@@ -626,15 +626,16 @@ export default function SpotTrading() {
                   <div id="tradingview-chart" style={{ width: '100%', height: '100%', borderRadius: '16px' }}></div>
                 </div>
 
-                {/* Premium Order Panel */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
-                  border: '2px solid rgba(0, 240, 255, 0.4)',
-                  borderRadius: '20px',
-                  padding: isMobile ? '20px' : '28px',
-                  boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
-                  position: 'relative'
-                }}>
+                {/* Premium Order Panel - Hidden on mobile */}
+                {!isMobile && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                    border: '2px solid rgba(0, 240, 255, 0.4)',
+                    borderRadius: '20px',
+                    padding: '28px',
+                    boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+                    position: 'relative'
+                  }}>
                   {/* Floating Glow */}
                   <div style={{
                     position: 'absolute',
