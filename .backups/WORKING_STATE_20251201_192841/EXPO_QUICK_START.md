@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://crypto-exchange-hub-12.preview.emergentagent.com/api
+https://p2p-repair.preview.emergentagent.com/api
 ```
 
 This means:

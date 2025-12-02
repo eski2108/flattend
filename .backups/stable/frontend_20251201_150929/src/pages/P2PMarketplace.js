@@ -7,7 +7,7 @@ import { IoCheckmarkCircle as CheckCircle, IoChevronDown, IoClose, IoFilter, IoF
 import P2PNotifications from '@/components/P2PNotifications';
 import '../styles/globalSwapTheme.css';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-exchange-hub-12.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-repair.preview.emergentagent.com';
 
 function P2PMarketplace() {
   const navigate = useNavigate();

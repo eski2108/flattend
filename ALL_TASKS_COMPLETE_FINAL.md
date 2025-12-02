@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-exchange-hub-12.preview.emergentagent.com
+**URL:** https://p2p-repair.preview.emergentagent.com
 
 **Services Status:**
 ```bash

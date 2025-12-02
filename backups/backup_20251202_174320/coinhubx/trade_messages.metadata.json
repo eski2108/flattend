@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"4a751b02b6464aeea3cb0f9949762930","collectionName":"trade_messages","type":"collection"}
