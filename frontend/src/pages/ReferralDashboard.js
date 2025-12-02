@@ -149,11 +149,11 @@ export default function ReferralDashboard() {
             lineHeight: '1.6'
           }}>
             Earn <span style={{ 
-              color: referralData.referral_tier === 'golden' ? '#FFD700' : '#00F0FF',
+              color: '#00F0FF',
               fontWeight: '700',
-              textShadow: `0 0 10px ${referralData.referral_tier === 'golden' ? '#FFD700' : '#00F0FF'}80`
+              textShadow: '0 0 10px #00F0FF80'
             }}>
-              {referralData.referral_tier === 'golden' ? '50%' : '20%'} commission
+              20% commission
             </span> on every transaction your referrals make
           </p>
         </div>
