@@ -394,24 +394,41 @@ export default function P2PExpress() {
                   pointerEvents: 'none'
                 }} />
 
-                <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Select Cryptocurrency</label>
+                {/* Crypto Selector - Inner Card Style */}
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '18px',
+                  padding: isMobile ? '20px' : '24px',
+                  marginBottom: '24px',
+                  position: 'relative',
+                  zIndex: 1
+                }}>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: isMobile ? '11px' : '12px', 
+                    color: '#8F9BB3', 
+                    marginBottom: '12px', 
+                    fontWeight: '600', 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '1px' 
+                  }}>SELECT CRYPTOCURRENCY</label>
                   <select
                     value={selectedCoin}
                     onChange={(e) => setSelectedCoin(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '18px 20px',
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      border: '2px solid rgba(12, 235, 255, 0.3)',
-                      borderRadius: '12px',
+                      padding: isMobile ? '14px 16px' : '16px 18px',
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      border: '2px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '14px',
                       color: '#FFFFFF',
-                      fontSize: '16px',
+                      fontSize: isMobile ? '15px' : '16px',
                       fontWeight: '600',
                       outline: 'none',
                       cursor: 'pointer',
                       transition: 'all 0.3s',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                      boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)'
                     }}
                   >
                     {coins.map(coin => (
@@ -422,24 +439,41 @@ export default function P2PExpress() {
                   </select>
                 </div>
 
-                <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Select Country</label>
+                {/* Country Selector - Inner Card Style */}
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '18px',
+                  padding: isMobile ? '20px' : '24px',
+                  marginBottom: '24px',
+                  position: 'relative',
+                  zIndex: 1
+                }}>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: isMobile ? '11px' : '12px', 
+                    color: '#8F9BB3', 
+                    marginBottom: '12px', 
+                    fontWeight: '600', 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '1px' 
+                  }}>SELECT COUNTRY</label>
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '18px 20px',
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      border: '2px solid rgba(12, 235, 255, 0.3)',
-                      borderRadius: '12px',
+                      padding: isMobile ? '14px 16px' : '16px 18px',
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      border: '2px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '14px',
                       color: '#FFFFFF',
-                      fontSize: '16px',
+                      fontSize: isMobile ? '15px' : '16px',
                       fontWeight: '600',
                       outline: 'none',
                       cursor: 'pointer',
                       transition: 'all 0.3s',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                      boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.3)'
                     }}
                   >
                     {COUNTRIES.map(country => (
