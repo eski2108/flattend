@@ -229,90 +229,89 @@ export default function SpotTrading() {
   };
 
   const handlePlaceOrder = async () => {
-    console.log('🔥 BUY BUTTON CLICKED! Amount:', amount, 'Type:', orderType);
+    console.log('🔥 BUY/SELL CLICKED!', { amount, inputMode, orderType });
     
     if (!amount || parseFloat(amount) <= 0) {
-      console.error('❌ Invalid amount');
+      alert('Please enter a valid amount');
       toast.error('Please enter a valid amount');
       return;
     }
 
     setIsLoading(true);
-    console.log('⏳ Processing order...');
     
     try {
       const userData = localStorage.getItem('cryptobank_user');
       if (!userData) {
-        console.error('❌ No user data');
-        toast.error('Please login to trade');
+        alert('Please login to trade');
         navigate('/login');
         return;
       }
 
       const user = JSON.parse(userData);
-      console.log('✓ User:', user.user_id);
-      
       const pairInfo = tradingPairs.find(p => p.symbol === selectedPair);
-      console.log('✓ Trading pair:', selectedPair, pairInfo);
+      
+      // Calculate the correct crypto amount based on input mode
+      const calculated = calculateAmount();
+      const cryptoAmount = calculated.crypto;
+      const fiatAmount = calculated.fiat;
+      
+      console.log('💰 Calculated amounts:', { cryptoAmount, fiatAmount, inputMode });
+      
+      if (cryptoAmount <= 0) {
+        alert('Invalid amount calculated');
+        setIsLoading(false);
+        return;
+      }
+      
+      const gbpPrice = marketStats.lastPrice * 1.27;
       
       const orderData = {
         user_id: user.user_id,
         pair: selectedPair,
         type: orderType,
-        amount: parseFloat(amount),
-        price: price ? parseFloat(price) : marketStats.lastPrice,
+        amount: cryptoAmount, // Always send crypto amount
+        price: gbpPrice,
         fee_percent: tradingFee
       };
 
-      console.log('📡 Sending order to API:', orderData);
+      console.log('📡 Sending order:', orderData);
       const response = await axios.post(`${API}/api/trading/place-order`, orderData);
-      console.log('📡 API Response:', response.data);
-      console.log('📡 Success value:', response.data.success);
-      console.log('📡 Response type:', typeof response.data.success);
+      console.log('📡 Response:', response.data);
       
-      if (response.data.success) {
-        console.log('✅ ORDER SUCCESS!');
+      if (response.data && response.data.success) {
+        console.log('✅ SUCCESS!');
         
-        // FORCE ALERT FOR DEBUGGING
-        alert(`✅ ORDER PLACED! ${orderType.toUpperCase()} ${amount} BTC at $${price || marketStats.lastPrice}`);
+        alert(`✅ ORDER PLACED!\n${orderType.toUpperCase()} ${cryptoAmount.toFixed(6)} ${pairInfo.base}\nTotal: £${fiatAmount.toFixed(2)}`);
         
-        // Show success toast
-        toast.success(`Order placed successfully! ${orderType.toUpperCase()} ${amount} BTC`);
+        toast.success(`Order placed! ${orderType.toUpperCase()} ${cryptoAmount.toFixed(6)} ${pairInfo.base}`);
         
-        // Show success state
         setLastOrderDetails({
           type: orderType,
-          amount: parseFloat(amount),
+          amount: cryptoAmount,
           crypto: pairInfo.base,
-          price: price ? parseFloat(price) : marketStats.lastPrice
+          price: gbpPrice
         });
         setOrderSuccess(true);
-        setIsLoading(false);
         
-        // Clear form fields
+        // Clear form
         setAmount('');
-        setPrice('');
         
-        // Hide success message after 5 seconds
         setTimeout(() => {
           setOrderSuccess(false);
         }, 5000);
         
-        return; // Don't execute finally block
+        setIsLoading(false);
+        return;
       } else {
-        console.log('❌ Order failed:', response.data.message);
-        toast.error(response.data.message || 'Order failed');
+        const msg = response.data?.message || 'Order failed';
+        alert('ORDER FAILED: ' + msg);
+        toast.error(msg);
       }
     } catch (error) {
-      console.error('❌ Order error:', error);
-      console.error('❌ Error details:', error.response?.data);
-      
-      // Show error as alert popup too
+      console.error('❌ ERROR:', error);
       const errorMsg = error.response?.data?.message || error.message || 'Failed to place order';
+      alert('ERROR: ' + errorMsg);
       toast.error(errorMsg);
-      
-      // Also show as alert for visibility
-      alert('ORDER FAILED: ' + errorMsg);
     } finally {
       setIsLoading(false);
     }
