@@ -17,12 +17,13 @@ export default function Layout({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showExpressBuy, setShowExpressBuy] = useState(false);
 
-  const navItems = [
+  // Filter out Instant Buy from nav when on trading page to avoid confusion
+  const allNavItems = [
     { path: '/dashboard', label: 'Portfolio', icon: IoPieChart },
     { path: '/wallet', label: 'Wallet', icon: IoCash },
     { path: '/savings', label: 'Savings Vault', icon: IoWallet, highlight: true },
     { path: '/allocations', label: 'Allocations', icon: IoNavigate, highlight: true },
-    { path: '/instant-buy', label: 'Instant Buy', icon: IoFlash },
+    { path: '/instant-buy', label: 'Instant Buy', icon: IoFlash, hideOnPaths: ['/trading'] },
     { path: '/p2p-express', label: 'P2P Express', icon: IoTrendingUp },
     { path: '/p2p-marketplace', label: 'P2P Marketplace', icon: IoBag },
     { path: '/trading', label: 'Trading', icon: IoBarChart },
@@ -31,6 +32,10 @@ export default function Layout({ children }) {
     { path: '/my-orders', label: 'Transaction History', icon: IoDocument },
     { path: '/settings', label: 'Settings', icon: IoCard }
   ];
+  
+  const navItems = allNavItems.filter(item => 
+    !item.hideOnPaths || !item.hideOnPaths.includes(location.pathname)
+  );
 
   const handleSupportClick = () => {
     const userId = user?.user_id || user?.id || 'unknown';
