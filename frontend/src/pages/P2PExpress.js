@@ -526,18 +526,72 @@ export default function P2PExpress() {
               order: isMobile ? -1 : 0
             }}>
               
+              {/* Mobile Buy Now Button - Prominent at top */}
+              {isMobile && quote && (
+                <div style={{
+                  position: 'sticky',
+                  top: '80px',
+                  zIndex: 100,
+                  background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.15) 0%, rgba(0, 240, 255, 0.1) 100%)',
+                  border: '2px solid rgba(12, 235, 255, 0.5)',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  boxShadow: '0 0 40px rgba(12, 235, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5)',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <div style={{ marginBottom: '12px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '14px', color: '#8F9BB3', marginBottom: '4px' }}>You'll Receive</div>
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#0CEBFF' }}>
+                      {quote.cryptoAmount.toFixed(8)} {quote.coin}
+                    </div>
+                    <div style={{ fontSize: '16px', color: '#FFFFFF', marginTop: '2px' }}>
+                      ≈ £{quote.netAmount.toFixed(2)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleConfirmPurchase}
+                    disabled={loading || !quote}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      background: loading || !quote ? 'rgba(255, 255, 255, 0.1)' : 'linear-gradient(135deg, #0CEBFF, #00F0FF)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      color: loading || !quote ? '#666' : '#000',
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      cursor: loading || !quote ? 'not-allowed' : 'pointer',
+                      opacity: loading || !quote ? 0.5 : 1,
+                      transition: 'all 0.3s',
+                      boxShadow: loading || !quote ? 'none' : '0 0 30px rgba(12, 235, 255, 0.6)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '12px'
+                    }}
+                  >
+                    {loading ? 'Processing...' : (
+                      <>
+                        <IoFlash size={20} />
+                        Buy Now - Express Delivery
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+              
               <div style={{
                 background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%)',
                 border: '2px solid rgba(12, 235, 255, 0.4)',
                 borderRadius: '20px',
-                padding: '28px',
+                padding: isMobile ? '20px' : '28px',
                 boxShadow: '0 0 40px rgba(12, 235, 255, 0.2)'
               }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <h3 style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <IoTime size={22} color="#0CEBFF" strokeWidth={2.5} />
                   Delivery Time
                 </h3>
-                <div style={{ fontSize: '40px', fontWeight: '700', color: hasAdminLiquidity ? '#22C55E' : '#0CEBFF', marginBottom: '8px' }}>
+                <div style={{ fontSize: isMobile ? '32px' : '40px', fontWeight: '700', color: hasAdminLiquidity ? '#22C55E' : '#0CEBFF', marginBottom: '8px' }}>
                   {hasAdminLiquidity ? 'Instant' : '2-5 minutes'}
                 </div>
                 <div style={{ fontSize: '14px', color: '#D1D5DB' }}>
