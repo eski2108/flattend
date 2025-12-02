@@ -241,6 +241,7 @@ function SwapCrypto() {
         setToAmount('');
         fetchRecentSwaps();
         fetchWalletBalances(); // Refresh balances
+        notifyWalletBalanceUpdated(); // Notify other components to refresh
       } else {
         toast.error(response.data.message || 'Swap failed');
       }
