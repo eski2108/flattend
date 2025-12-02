@@ -8419,35 +8419,19 @@ async def resolve_dispute_final(request: dict):
     except Exception as fee_error:
         logger.warning(f"⚠️ Failed to deduct dispute fee from {losing_party}: {str(fee_error)}")
     
-    # Credit admin wallet
+    # Credit admin wallet with full dispute fee
+    # (Note: referral_engine already handles commission split and crediting)
     try:
         await wallet_service.credit(
             user_id="admin_wallet",
             currency="GBP",
-            amount=admin_fee,
+            amount=dispute_fee,
             transaction_type="dispute_fee",
             reference_id=dispute_id,
             metadata={"losing_party": losing_party, "total_fee": dispute_fee}
         )
     except Exception as admin_error:
         logger.warning(f"⚠️ Failed to credit admin dispute fee: {str(admin_error)}")
-    
-    # Credit referrer if applicable
-    if referrer_id and referrer_commission > 0:
-        try:
-            await wallet_service.credit(
-                user_id=referrer_id,
-                currency="GBP",
-                amount=referrer_commission,
-                transaction_type="referral_commission",
-                reference_id=dispute_id,
-                metadata={"referred_user_id": losing_party, "transaction_type": "dispute"}
-            )
-            
-            # Log referral commission
-            await db.referral_commissions.insert_one({
-                "referrer_id": referrer_id,
-                "referred_user_id": losing_party,
                 "transaction_type": "dispute",
                 "fee_amount": dispute_fee,
                 "commission_amount": referrer_commission,
