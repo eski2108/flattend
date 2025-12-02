@@ -209,9 +209,9 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
           onMouseEnter={() => setHoveredButton('googleplay')}
           onMouseLeave={() => setHoveredButton(null)}
           onClick={handleGooglePlayClick}
-          aria-label="Download CoinHubX for Android from Google Play"
+          aria-label="Download CoinHubX APK for Android"
         >
-          {/* Subtle glow overlay */}
+          {/* Premium glow overlay */}
           <div style={{
             position: 'absolute',
             top: 0,
@@ -219,30 +219,33 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
             right: 0,
             bottom: 0,
             background: hoveredButton === 'googleplay'
-              ? 'radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%)'
-              : 'transparent',
+              ? 'radial-gradient(circle at center, rgba(0, 240, 255, 0.2) 0%, rgba(123, 44, 255, 0.15) 50%, transparent 80%)'
+              : 'radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, rgba(123, 44, 255, 0.05) 50%, transparent 70%)',
             pointerEvents: 'none',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.4s ease',
+            borderRadius: '20px'
           }} />
           
           <div style={{
             ...iconContainerStyle,
-            background: 'rgba(0, 0, 0, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(0, 0, 0, 0.2)'
+            boxShadow: hoveredButton === 'googleplay' 
+              ? '0 0 25px rgba(0, 240, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.15)'
+              : '0 0 12px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.08)'
           }}>
             <IoLogoGooglePlaystore style={{ 
-              color: '#000000',
-              filter: hoveredButton === 'googleplay' ? 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' : 'none'
+              color: '#ffffff',
+              filter: hoveredButton === 'googleplay' 
+                ? 'drop-shadow(0 0 15px rgba(0, 240, 255, 1)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.6))' 
+                : 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.7))'
             }} />
           </div>
           
           <div style={textContainerStyle}>
-            <div style={labelStyle}>Get it on</div>
-            <div style={storeNameStyle}>Google Play</div>
+            <div style={labelStyle}>Download APK for</div>
+            <div style={storeNameStyle}>Android</div>
           </div>
           
-          <IoArrowForward style={arrowStyle} />
+          <IoCloudDownload style={arrowStyle} />
         </button>
       </div>
 
