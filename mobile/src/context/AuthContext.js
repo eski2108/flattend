@@ -35,18 +35,46 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('🔐 Attempting login for:', email);
       const response = await api.post('/auth/login', { email, password });
+      console.log('📡 Login response:', response.data);
+      
       if (response.data.success) {
         const userData = response.data.user;
+        const token = response.data.token;
+        
+        // Store both user data and token
         await AsyncStorage.setItem('cryptobank_user', JSON.stringify(userData));
+        if (token) {
+          await AsyncStorage.setItem('auth_token', token);
+          await AsyncStorage.setItem('token', token); // Also store as 'token' for compatibility
+          console.log('✅ Token stored successfully');
+        }
+        
         setUser(userData);
+        console.log('✅ Login successful');
         return { success: true };
       }
-      return { success: false, error: response.data.message };
+      
+      // Handle 2FA requirement
+      if (response.data.requires_2fa) {
+        console.log('🔐 2FA required');
+        return { 
+          success: false, 
+          requires2FA: true,
+          user_id: response.data.user_id,
+          email: response.data.email,
+          error: response.data.message 
+        };
+      }
+      
+      return { success: false, error: response.data.message || 'Login failed' };
     } catch (error) {
+      console.error('❌ Login error:', error);
+      console.error('❌ Error response:', error.response?.data);
       return {
         success: false,
-        error: error.response?.data?.detail || 'Login failed',
+        error: error.response?.data?.detail || error.response?.data?.message || 'Login failed. Please check your connection.',
       };
     }
   };
