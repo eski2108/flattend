@@ -3945,8 +3945,13 @@ async def create_p2p_express_order(order_data: Dict):
             )
             logger.info(f"✅ Debited £{order_data['fiat_amount']} from user {order_data['user_id']}")
         except Exception as e:
-            logger.error(f"❌ Failed to debit GBP: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to debit payment: {str(e)}")
+            error_message = str(e)
+            logger.error(f"❌ Failed to debit GBP: {error_message}")
+            # Return 400 for insufficient balance, 500 for other errors
+            if "Insufficient balance" in error_message:
+                raise HTTPException(status_code=400, detail=error_message)
+            else:
+                raise HTTPException(status_code=500, detail=f"Failed to debit payment: {error_message}")
         
         # 2. CREDIT crypto to user wallet
         try:
