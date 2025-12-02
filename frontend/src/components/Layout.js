@@ -172,7 +172,7 @@ export default function Layout({ children }) {
               }}
             >
               <IoChatbubbles size={18} />
-              <span>Support / Chat</span>
+              <span>{t('nav.support')}</span>
             </button>
             <button
               onClick={handleDisconnect}
