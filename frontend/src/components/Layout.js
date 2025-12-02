@@ -203,7 +203,7 @@ export default function Layout({ children }) {
               }}
             >
               <IoLogOut size={18} />
-              <span>Logout</span>
+              <span>{t('auth.logout')}</span>
             </button>
           </div>
         </aside>
