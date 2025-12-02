@@ -800,14 +800,41 @@ export default function ReferralDashboard() {
           </div>
         )}
 
-        {/* Referred Users Table */}
+        {/* Premium Referred Users Table */}
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '2px solid rgba(255,255,255,0.1)',
-          borderRadius: '16px',
-          padding: '2rem'
+          background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+          border: '2px solid rgba(0, 240, 255, 0.4)',
+          borderRadius: '24px',
+          padding: '3rem',
+          marginBottom: '3rem',
+          boxShadow: '0 0 60px rgba(0, 240, 255, 0.2), inset 0 0 40px rgba(0, 240, 255, 0.05)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Your Referrals</h2>
+          <div style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '300px',
+            height: '80px',
+            background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3), transparent)',
+            filter: 'blur(50px)',
+            pointerEvents: 'none'
+          }} />
+          
+          <h2 style={{ 
+            fontSize: '28px', 
+            fontWeight: '900', 
+            background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '2rem',
+            textAlign: 'center',
+            textShadow: '0 0 20px rgba(0, 240, 255, 0.5)'
+          }}>
+            Your Elite Network
+          </h2>
           
           {referralData.referred_users.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#A3AEC2' }}>
