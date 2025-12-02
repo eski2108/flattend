@@ -7002,7 +7002,7 @@ async def login_user(login_req: LoginRequest, request: Request):
         "user": {
             "user_id": user["user_id"],
             "email": user["email"],
-            "full_name": user["full_name"],
+            "full_name": user.get("full_name", f"{user.get('first_name', '')} {user.get('last_name', '')}").strip(),
             "wallet_address": user.get("wallet_address"),
             "role": user.get("role", "user")
         },
@@ -7079,7 +7079,7 @@ async def login_with_2fa(request: dict, req: Request):
         "user": {
             "user_id": user["user_id"],
             "email": user["email"],
-            "full_name": user["full_name"],
+            "full_name": user.get("full_name", f"{user.get('first_name', '')} {user.get('last_name', '')}").strip(),
             "wallet_address": user.get("wallet_address"),
             "role": user.get("role", "user")
         },
