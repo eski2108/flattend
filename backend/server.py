@@ -5451,8 +5451,14 @@ async def get_wallet_transactions(user_id: str, currency: str = None, limit: int
                 "source": "savings"
             })
         
-        # Sort all by timestamp descending
-        all_transactions.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
+        # Sort all by timestamp descending (handle both datetime and string timestamps)
+        def get_sort_key(tx):
+            ts = tx.get("timestamp")
+            if isinstance(ts, datetime):
+                return ts.isoformat()
+            return ts or ""
+        
+        all_transactions.sort(key=get_sort_key, reverse=True)
         
         return {
             "success": True,
