@@ -470,49 +470,67 @@ export default function P2PExpress() {
                   </div>
                 )}
 
-                <div style={{ position: 'relative', zIndex: 1 }}>
+                {/* Desktop Buy Now Button - Hidden on mobile */}
+                {!isMobile && (
+                  <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: '-20px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '90%',
+                      height: '60px',
+                      background: 'linear-gradient(90deg, rgba(12, 235, 255, 0.5), rgba(0, 240, 255, 0.5))',
+                      filter: 'blur(30px)',
+                      pointerEvents: 'none'
+                    }} />
+                    <button
+                      onClick={handleConfirmPurchase}
+                      disabled={loading || !quote}
+                      style={{
+                        width: '100%',
+                        padding: '20px',
+                        background: loading || !quote ? 'rgba(255, 255, 255, 0.1)' : 'linear-gradient(135deg, #0CEBFF, #00F0FF)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        color: loading || !quote ? '#666' : '#000',
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        cursor: loading || !quote ? 'not-allowed' : 'pointer',
+                        opacity: loading || !quote ? 0.5 : 1,
+                        transition: 'all 0.3s',
+                        boxShadow: loading || !quote ? 'none' : '0 0 40px rgba(12, 235, 255, 0.6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '12px',
+                        position: 'relative'
+                      }}
+                    >
+                      {loading ? 'Processing...' : (
+                        <>
+                          <IoFlash size={22} />
+                          Buy Now
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+                
+                {/* Mobile: Show simple message to scroll up for buy button */}
+                {isMobile && quote && (
                   <div style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '90%',
-                    height: '60px',
-                    background: 'linear-gradient(90deg, rgba(12, 235, 255, 0.5), rgba(0, 240, 255, 0.5))',
-                    filter: 'blur(30px)',
-                    pointerEvents: 'none'
-                  }} />
-                  <button
-                    onClick={handleConfirmPurchase}
-                    disabled={loading || !quote}
-                    style={{
-                      width: '100%',
-                      padding: '20px',
-                      background: loading || !quote ? 'rgba(255, 255, 255, 0.1)' : 'linear-gradient(135deg, #0CEBFF, #00F0FF)',
-                      border: 'none',
-                      borderRadius: '12px',
-                      color: loading || !quote ? '#666' : '#000',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      cursor: loading || !quote ? 'not-allowed' : 'pointer',
-                      opacity: loading || !quote ? 0.5 : 1,
-                      transition: 'all 0.3s',
-                      boxShadow: loading || !quote ? 'none' : '0 0 40px rgba(12, 235, 255, 0.6)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '12px',
-                      position: 'relative'
-                    }}
-                  >
-                    {loading ? 'Processing...' : (
-                      <>
-                        <IoFlash size={22} />
-                        Buy Now
-                      </>
-                    )}
-                  </button>
-                </div>
+                    textAlign: 'center',
+                    padding: '16px',
+                    background: 'rgba(12, 235, 255, 0.1)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(12, 235, 255, 0.3)'
+                  }}>
+                    <div style={{ fontSize: '14px', color: '#0CEBFF', fontWeight: '600' }}>
+                      ↑ Scroll up to complete your purchase
+                    </div>
+                  </div>
+                )}
 
               </div>
 
