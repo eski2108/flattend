@@ -334,24 +334,20 @@ async def execute_instant_sell_with_wallet(db, wallet_service, user_id: str, cry
         fee_amount = fiat_value * (fee_percent / 100)
         net_fiat_amount = fiat_value - fee_amount
         
-        # Check for referrer
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
-        referrer_id = user.get("referrer_id") if user else None
-        referrer_commission = 0.0
-        admin_fee = fee_amount
-        commission_percent = 0.0
+        # Process referral using centralized engine
+        from referral_engine import get_referral_engine
+        referral_engine = get_referral_engine()
+        commission_result = await referral_engine.process_referral_commission(
+            user_id=user_id,
+            fee_amount=fee_amount,
+            fee_type="INSTANT_SELL",
+            currency=fiat_currency,
+            related_transaction_id=sell_id,
+            metadata={"crypto_amount": crypto_amount, "crypto_currency": crypto_currency, "fiat_value": fiat_value}
+        )
         
-        if referrer_id:
-            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
-            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
-            
-            if referrer_tier == "golden":
-                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
-            else:
-                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
-            
-            referrer_commission = fee_amount * (commission_percent / 100.0)
-            admin_fee = fee_amount - referrer_commission
+        if commission_result["success"]:
+            logger.info(f"✅ Instant Sell referral commission: £{commission_result['commission_amount']:.2f}")
         
         # Debit crypto from user
         await wallet_service.debit(
