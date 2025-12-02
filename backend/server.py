@@ -18267,21 +18267,18 @@ async def get_unified_balances(user_id: str):
         }
         
         try:
-            # Get all prices in one call
-            coin_ids_list = ','.join([coin_ids.get(b['currency'], b['currency'].lower()) for b in balances])
-            response = requests.get(
-                f"https://api.coingecko.com/api/v3/simple/price?ids={coin_ids_list}&vs_currencies=usd",
-                timeout=10
-            )
-            if response.status_code == 200:
-                price_data = response.json()
-                for currency in [b['currency'] for b in balances]:
-                    coin_id = coin_ids.get(currency, currency.lower())
-                    if coin_id in price_data:
-                        prices[currency] = price_data[coin_id].get('usd', 0)
+            # Use the live pricing service
+            from live_pricing import get_live_prices
+            live_prices = await get_live_prices()
+            logger.info(f"📊 Got live prices: {list(live_prices.keys())}")
+            
+            for currency in [b['currency'] for b in balances]:
+                if currency in live_prices:
+                    prices[currency] = live_prices[currency].get('usd', 0)
+                    logger.info(f"💰 {currency}: ${prices[currency]}")
         except Exception as price_error:
-            logger.warning(f"Failed to fetch prices: {str(price_error)}")
-            # Default USDT/USDC to $1
+            logger.warning(f"Failed to fetch live prices: {str(price_error)}")
+            # Default USDT/USDC to $1 if live prices fail
             prices['USDT'] = 1.0
             prices['USDC'] = 1.0
         
