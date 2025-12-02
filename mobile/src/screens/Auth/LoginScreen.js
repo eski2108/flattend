@@ -28,11 +28,26 @@ const LoginScreen = ({ navigation }) => {
     }
 
     setLoading(true);
-    const result = await login(email, password);
-    setLoading(false);
-
-    if (!result.success) {
-      Alert.alert('Login Failed', result.error);
+    try {
+      console.log('📱 Login button pressed, email:', email);
+      const result = await login(email, password);
+      console.log('📱 Login result:', result);
+      
+      if (!result.success) {
+        if (result.requires2FA) {
+          // TODO: Navigate to 2FA screen
+          Alert.alert('2FA Required', 'Two-factor authentication is required for this account.');
+        } else {
+          Alert.alert('Login Failed', result.error || 'Unable to login. Please check your credentials and try again.');
+        }
+      } else {
+        console.log('✅ Login successful, user should be redirected');
+      }
+    } catch (error) {
+      console.error('❌ Unexpected login error:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
