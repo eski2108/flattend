@@ -600,6 +600,21 @@ export default function Settings() {
           </div>
         ))}
 
+        {/* Mobile App Download Section */}
+        <div style={{ marginBottom: '2rem' }}>
+          <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
+            📱 Mobile App
+          </h3>
+          <Card style={{
+            background: 'rgba(26, 31, 58, 0.8)',
+            border: '2px solid rgba(0, 240, 255, 0.3)',
+            borderRadius: '16px',
+            padding: '1.5rem'
+          }}>
+            <PremiumDownloadButtons showTitle={false} compact={true} />
+          </Card>
+        </div>
+
         {/* Logout Button */}
         <button
           onClick={handleLogout}
