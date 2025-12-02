@@ -12657,6 +12657,57 @@ async def get_referral_dashboard(user_id: str = None):
         "earnings_by_currency": earnings_list
     }
 
+@api_router.get("/referral/commissions/{user_id}")
+async def get_user_referral_commissions(user_id: str):
+    """Get all referral commissions for a user"""
+    try:
+        # Get user's account to determine tier
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        tier = user.get("referral_tier", "standard") if user else "standard"
+        
+        # Get all commissions where this user is the referrer
+        commissions = await db.referral_commissions.find(
+            {"referrer_id": user_id}
+        ).sort("created_at", -1).to_list(1000)
+        
+        commissions_list = []
+        for c in commissions:
+            commissions_list.append({
+                "commission_id": c.get("commission_id", "N/A"),
+                "fee_type": c.get("fee_type", "Unknown"),
+                "fee_amount": float(c.get("fee_amount", 0)),
+                "commission_amount": float(c.get("commission_amount", 0)),
+                "commission_rate": float(c.get("commission_rate", 0)),
+                "currency": c.get("currency", "GBP"),
+                "referrer_tier": c.get("referrer_tier", "standard"),
+                "referred_user_id": c.get("referred_user_id", "N/A"),
+                "related_transaction_id": c.get("related_transaction_id"),
+                "created_at": c.get("created_at").isoformat() if isinstance(c.get("created_at"), datetime) else c.get("created_at", "N/A"),
+                "status": c.get("status", "completed")
+            })
+        
+        # Calculate totals
+        total_earned = sum(c["commission_amount"] for c in commissions_list)
+        completed = [c for c in commissions_list if c["status"] == "completed"]
+        pending = [c for c in commissions_list if c["status"] == "pending"]
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "tier": tier,
+            "total_earned": total_earned,
+            "completed_count": len(completed),
+            "pending_count": len(pending),
+            "commissions": commissions_list
+        }
+    except Exception as e:
+        logger.error(f"Error getting commissions for {user_id}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "commissions": []
+        }
+
 @api_router.post("/referral/process-commission")
 async def check_and_award_referral_bonus(user_id: str, top_up_amount: float, currency: str):
     """
