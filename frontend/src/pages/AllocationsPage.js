@@ -205,78 +205,134 @@ export default function AllocationsPage() {
 
   return (
     <Layout>
-      <div style={{ minHeight: '100vh', background: '#0B0E13', padding: '2rem 1rem' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          
-          {/* Header */}
-          <div style={{ marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-              <h1 style={{ 
-                fontSize: '2rem', 
-                fontWeight: '900', 
-                color: '#FFF'
-              }}>
-                Portfolio Allocations
-              </h1>
-              
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                {/* Currency Selector */}
-                <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    background: '#1A1D26',
-                    border: '1px solid rgba(0, 224, 255, 0.3)',
-                    borderRadius: '8px',
-                    color: '#FFF',
-                    fontSize: '0.875rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="GBP">GBP (£)</option>
-                  <option value="USD">USD ($)</option>
-                  <option value="EUR">EUR (€)</option>
-                </select>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
+        paddingBottom: '60px'
+      }}>
+        <div style={{ padding: isMobile ? '16px' : '24px' }}>
+          <div style={{ maxWidth: '1800px', margin: '0 auto' }}>
+            
+            {/* Premium Header */}
+            <div style={{ marginBottom: isMobile ? '28px' : '40px' }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '16px', gap: isMobile ? '16px' : '0' }}>
+                <div>
+                  <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <IoAnalytics size={isMobile ? 32 : 42} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
+                    Portfolio Allocations
+                  </h1>
+                  <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>
+                    Analyze your crypto distribution and asset performance across your portfolio
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  {/* Currency Selector */}
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    style={{
+                      padding: '12px 16px',
+                      background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(0, 240, 255, 0.03) 100%)',
+                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '12px',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      boxShadow: '0 0 20px rgba(0, 240, 255, 0.1)'
+                    }}
+                  >
+                    <option value="GBP" style={{ background: '#071327', color: '#FFFFFF' }}>GBP (£)</option>
+                    <option value="USD" style={{ background: '#071327', color: '#FFFFFF' }}>USD ($)</option>
+                    <option value="EUR" style={{ background: '#071327', color: '#FFFFFF' }}>EUR (€)</option>
+                  </select>
+                  
+                  {/* Refresh Button */}
+                  <button
+                    onClick={() => fetchAllocations()}
+                    style={{
+                      padding: '12px 20px',
+                      background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)',
+                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '12px',
+                      color: '#00F0FF',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.25) 0%, rgba(0, 240, 255, 0.1) 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)';
+                    }}
+                  >
+                    <IoRefresh size={16} />
+                    Refresh
+                  </button>
+                </div>
               </div>
+              <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.6) 50%, transparent 100%)', boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }} />
             </div>
 
-            {/* Tabs */}
-            <div style={{ display: 'flex', gap: '1rem', borderBottom: '2px solid rgba(255, 255, 255, 0.1)' }}>
-              <button
-                onClick={() => setActiveTab('coins')}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: activeTab === 'coins' ? '3px solid #00F0FF' : '3px solid transparent',
-                  color: activeTab === 'coins' ? '#00F0FF' : 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '1rem',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                Coins
-              </button>
-              <button
-                onClick={() => setActiveTab('products')}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: activeTab === 'products' ? '3px solid #00F0FF' : '3px solid transparent',
-                  color: activeTab === 'products' ? '#00F0FF' : 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '1rem',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                Products
-              </button>
+            {/* Premium Tabs */}
+            <div style={{ marginBottom: isMobile ? '24px' : '32px' }}>
+              <div style={{ display: 'flex', gap: '8px', background: 'rgba(0, 0, 0, 0.3)', padding: '6px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
+                <button
+                  onClick={() => setActiveTab('coins')}
+                  style={{
+                    padding: '12px 24px',
+                    background: activeTab === 'coins' 
+                      ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)'
+                      : 'transparent',
+                    border: activeTab === 'coins' ? '1px solid rgba(0, 240, 255, 0.4)' : '1px solid transparent',
+                    borderRadius: '12px',
+                    color: activeTab === 'coins' ? '#00F0FF' : '#8F9BB3',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: activeTab === 'coins' ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none'
+                  }}
+                >
+                  <IoBarChart size={16} />
+                  Asset Allocation
+                </button>
+                <button
+                  onClick={() => setActiveTab('products')}
+                  style={{
+                    padding: '12px 24px',
+                    background: activeTab === 'products' 
+                      ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)'
+                      : 'transparent',
+                    border: activeTab === 'products' ? '1px solid rgba(0, 240, 255, 0.4)' : '1px solid transparent',
+                    borderRadius: '12px',
+                    color: activeTab === 'products' ? '#00F0FF' : '#8F9BB3',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: activeTab === 'products' ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none'
+                  }}
+                >
+                  <IoShield size={16} />
+                  Products & Services
+                </button>
+              </div>
             </div>
-          </div>
 
           {activeTab === 'coins' ? (
             <>
