@@ -176,6 +176,90 @@ export default function Footer() {
               <span style={{ color: '#888', fontSize: '14px' }}>Risk Notice</span>
             </div>
           </div>
+
+          {/* Mobile App Download */}
+          <div>
+            <h4 style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '700', marginBottom: '1rem' }}>Mobile App</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <button 
+                onClick={() => window.open('/api/download-app', '_blank')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 240, 255, 0.05))',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.75rem',
+                  color: '#00F0FF',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  textAlign: 'left'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.1))';
+                  e.target.style.borderColor = '#00F0FF';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 240, 255, 0.05))';
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="m22 2-5 10-5-4-5 10"/>
+                </svg>
+                Android APK
+              </button>
+              
+              <button 
+                onClick={() => {
+                  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                  if (isIOS) {
+                    alert('To install on iPhone:\n\n1. Tap Share button\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
+                  } else {
+                    window.open('https://p2p-repair.preview.emergentagent.com', '_blank');
+                  }
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05))',
+                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.75rem',
+                  color: '#A855F7',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  textAlign: 'left'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1))';
+                  e.target.style.borderColor = '#A855F7';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05))';
+                  e.target.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+                iPhone PWA
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
