@@ -29,38 +29,42 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: compact ? '1rem 1.5rem' : '1.25rem 2rem',
+    padding: compact ? '1.2rem 1.8rem' : '1.5rem 2.5rem',
     borderRadius: '20px',
     border: 'none',
     cursor: 'pointer',
     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-    minWidth: compact ? '280px' : '340px',
+    minWidth: compact ? '300px' : '360px',
     fontSize: '1rem',
     fontWeight: '700',
     fontFamily: "'Inter', sans-serif",
     overflow: 'hidden',
     textDecoration: 'none',
-    color: 'inherit'
+    color: 'inherit',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)'
   };
 
   const appStoreStyle = {
     ...buttonBaseStyle,
-    background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
+    background: 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)',
     boxShadow: hoveredButton === 'appstore' 
-      ? '0 20px 60px rgba(0, 240, 255, 0.4), 0 0 0 2px rgba(0, 240, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-      : '0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+      ? '0 0 40px rgba(0, 240, 255, 0.6), 0 0 80px rgba(123, 44, 255, 0.4), 0 20px 60px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+      : '0 0 28px rgba(0, 240, 255, 0.4), 0 0 56px rgba(123, 44, 255, 0.2), 0 12px 40px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
     transform: hoveredButton === 'appstore' ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
-    color: '#ffffff'
+    color: '#ffffff',
+    border: '1px solid rgba(0, 240, 255, 0.3)'
   };
 
   const googlePlayStyle = {
     ...buttonBaseStyle,
-    background: 'linear-gradient(135deg, #00F0FF 0%, #00D4E6 50%, #00B8CC 100%)',
+    background: 'linear-gradient(135deg, #00F0FF 0%, #00D4E6 30%, #7B2CFF 70%, #A855F7 100%)',
     boxShadow: hoveredButton === 'googleplay'
-      ? '0 20px 60px rgba(0, 240, 255, 0.6), 0 0 0 2px rgba(0, 240, 255, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-      : '0 12px 40px rgba(0, 240, 255, 0.4), 0 0 0 1px rgba(0, 240, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+      ? '0 0 40px rgba(0, 240, 255, 0.7), 0 0 80px rgba(123, 44, 255, 0.5), 0 20px 60px rgba(0, 240, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+      : '0 0 28px rgba(0, 240, 255, 0.5), 0 0 56px rgba(123, 44, 255, 0.3), 0 12px 40px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
     transform: hoveredButton === 'googleplay' ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
-    color: '#000000'
+    color: '#ffffff',
+    border: '1px solid rgba(0, 240, 255, 0.4)'
   };
 
   const iconContainerStyle = {
