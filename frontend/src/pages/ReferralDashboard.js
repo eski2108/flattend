@@ -948,15 +948,39 @@ export default function ReferralDashboard() {
           )}
         </div>
 
-        {/* Commission Earnings History */}
+        {/* Premium Commission History */}
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '2px solid rgba(255,255,255,0.1)',
-          borderRadius: '16px',
-          padding: '2rem',
-          marginTop: '2rem'
+          background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+          border: '2px solid rgba(34, 197, 94, 0.4)',
+          borderRadius: '24px',
+          padding: '3rem',
+          marginTop: '3rem',
+          boxShadow: '0 0 60px rgba(34, 197, 94, 0.3), inset 0 0 40px rgba(34, 197, 94, 0.08)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>Commission Earnings History</h2>
+          <div style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '300px',
+            height: '80px',
+            background: 'radial-gradient(circle, rgba(34, 197, 94, 0.4), transparent)',
+            filter: 'blur(50px)',
+            pointerEvents: 'none'
+          }} />
+          
+          <h2 style={{ 
+            fontSize: '28px', 
+            fontWeight: '900', 
+            color: '#22C55E',
+            marginBottom: '2rem',
+            textAlign: 'center',
+            textShadow: '0 0 20px rgba(34, 197, 94, 0.8)'
+          }}>
+            💰 Commission Earnings History
+          </h2>
           
           {referralData.commission_history && referralData.commission_history.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#A3AEC2' }}>
