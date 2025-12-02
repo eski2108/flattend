@@ -5304,23 +5304,47 @@ async def credit_wallet(request: dict):
 
 @api_router.get("/transactions/{user_id}")
 @api_router.get("/wallet/transactions/{user_id}")
-async def get_wallet_transactions(user_id: str, currency: str = None):
+async def get_wallet_transactions(user_id: str, currency: str = None, limit: int = 100):
     """
-    Get transaction history for user wallet
+    Get ALL transaction history for user (wallet transactions + spot trades)
     """
     try:
         query = {"user_id": user_id}
         if currency:
             query["currency"] = currency
         
-        transactions = await db.wallet_transactions.find(
+        # Get wallet transactions
+        wallet_txs = await db.wallet_transactions.find(
             query,
             {"_id": 0}
-        ).sort("timestamp", -1).limit(100).to_list(100)
+        ).sort("timestamp", -1).limit(limit).to_list(limit)
+        
+        # Get spot trades
+        spot_trades = await db.spot_trades.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(limit).to_list(limit)
+        
+        # Format spot trades to match transaction format
+        formatted_trades = []
+        for trade in spot_trades:
+            formatted_trades.append({
+                "type": trade.get("type", "buy"),  # "buy" or "sell"
+                "amount": trade.get("total", 0),  # Total GBP amount
+                "currency": "GBP",
+                "status": "completed",
+                "created_at": trade.get("created_at"),
+                "timestamp": trade.get("created_at"),
+                "description": f"{trade.get('type', '').upper()} {trade.get('amount', 0)} {trade.get('pair', '')[:3]}"
+            })
+        
+        # Combine and sort by date
+        all_transactions = wallet_txs + formatted_trades
+        all_transactions.sort(key=lambda x: x.get("timestamp") or x.get("created_at"), reverse=True)
         
         return {
             "success": True,
-            "transactions": transactions
+            "transactions": all_transactions[:limit]
         }
     except Exception as e:
         logger.error(f"Error getting wallet transactions: {str(e)}")
