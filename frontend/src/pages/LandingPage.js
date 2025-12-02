@@ -368,7 +368,7 @@ export default function LandingPage() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate('/buy-crypto-card');
+                navigate('/instant-buy');
               }}
               data-testid="landing-buy-card-btn"
               style={{
