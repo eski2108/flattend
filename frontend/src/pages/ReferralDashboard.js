@@ -1025,20 +1025,96 @@ export default function ReferralDashboard() {
           )}
         </div>
 
-        {/* How it Works */}
+        {/* Premium How It Works */}
         <div style={{
-          marginTop: '2rem',
-          background: 'rgba(0,240,255,0.05)',
-          border: '2px solid rgba(0,240,255,0.2)',
-          borderRadius: '16px',
-          padding: '2rem'
+          marginTop: '3rem',
+          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)',
+          border: '2px solid rgba(0, 240, 255, 0.4)',
+          borderRadius: '24px',
+          padding: '3rem',
+          boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#00F0FF', marginBottom: '1rem' }}>How It Works</h3>
-          <div style={{ display: 'grid', gap: '1rem', color: '#A3AEC2', fontSize: '14px', lineHeight: '1.6' }}>
-            <div>✅ <strong>Share your link</strong> - Send your unique referral link to friends</div>
-            <div>✅ <strong>They sign up</strong> - Your friends register using your link or code</div>
-            <div>✅ <strong>You earn</strong> - Get {referralData.referral_tier === 'golden' ? '50%' : '20%'} commission on every transaction they make</div>
-            <div>✅ <strong>Instant payouts</strong> - Commissions are paid directly to your wallet automatically</div>
+          <div style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '300px',
+            height: '80px',
+            background: 'radial-gradient(circle, rgba(0, 240, 255, 0.4), transparent)',
+            filter: 'blur(50px)',
+            pointerEvents: 'none'
+          }} />
+          
+          <h3 style={{ 
+            fontSize: '28px', 
+            fontWeight: '900', 
+            color: '#00F0FF', 
+            marginBottom: '2rem',
+            textAlign: 'center',
+            textShadow: '0 0 20px rgba(0, 240, 255, 0.8)'
+          }}>
+            🚀 How The Elite Program Works
+          </h3>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
+            {[
+              { 
+                icon: '🔗', 
+                title: 'Share Your Elite Link', 
+                desc: 'Send your unique premium referral link to friends and family',
+                color: '#00F0FF'
+              },
+              { 
+                icon: '👥', 
+                title: 'They Join The Elite', 
+                desc: 'Your friends register using your exclusive link or code',
+                color: '#A855F7'
+              },
+              { 
+                icon: '💰', 
+                title: 'You Earn Premium Rewards', 
+                desc: `Get ${referralData.referral_tier === 'golden' ? '50%' : '20%'} commission on every transaction they make`,
+                color: '#22C55E'
+              },
+              { 
+                icon: '⚡', 
+                title: 'Instant Elite Payouts', 
+                desc: 'Commissions are paid directly to your wallet automatically',
+                color: '#F59E0B'
+              }
+            ].map((step, index) => (
+              <div key={index} style={{
+                background: `linear-gradient(135deg, ${step.color}15 0%, ${step.color}05 100%)`,
+                border: `2px solid ${step.color}40`,
+                borderRadius: '16px',
+                padding: '2rem',
+                textAlign: 'center',
+                boxShadow: `0 0 30px ${step.color}20`,
+                position: 'relative'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '1rem' }}>{step.icon}</div>
+                <h4 style={{ 
+                  fontSize: '18px', 
+                  fontWeight: '700', 
+                  color: step.color, 
+                  marginBottom: '1rem',
+                  textShadow: `0 0 10px ${step.color}80`
+                }}>
+                  {step.title}
+                </h4>
+                <p style={{ 
+                  color: '#A3AEC2', 
+                  fontSize: '14px', 
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  {step.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
