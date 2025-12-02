@@ -5,6 +5,20 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import API_BASE_URL from '@/config/api';
+import { 
+  IoWallet, 
+  IoTrendingUp, 
+  IoTrendingDown, 
+  IoBarChart, 
+  IoEye, 
+  IoEyeOff, 
+  IoRefresh,
+  IoAnalytics,
+  IoArrowForward,
+  IoShield,
+  IoFlash,
+  IoSwapHorizontal
+} from 'react-icons/io5';
 
 const API = API_BASE_URL;
 
