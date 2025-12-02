@@ -371,15 +371,15 @@ export default function P2PExpress() {
                 </div>
               )}
 
+              {/* Main Purchase Card - Matching Swap */}
               <div style={{
-                background: 'linear-gradient(135deg, rgba(12, 235, 255, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%)',
-                border: '2px solid rgba(12, 235, 255, 0.3)',
-                borderRadius: isMobile ? '20px' : '24px',
-                padding: isMobile ? '24px' : '40px',
-                boxShadow: '0 0 60px rgba(12, 235, 255, 0.2)',
-                position: 'relative',
-                overflow: 'hidden',
-                width: '100%'
+                background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
+                border: '2px solid rgba(0, 240, 255, 0.4)',
+                borderRadius: '24px',
+                padding: isMobile ? '24px' : '32px',
+                marginBottom: isMobile ? '20px' : '32px',
+                boxShadow: '0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 40px rgba(0, 240, 255, 0.08)',
+                position: 'relative'
               }}>
                 
                 <div style={{
