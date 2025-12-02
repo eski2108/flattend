@@ -10214,6 +10214,41 @@ async def execute_trading_transaction(request: dict):
             logger.info(f"✅ Trading referral commission: £{commission_result['commission_amount']:.2f} "
                        f"to {commission_result['referrer_id']} (Tier: {commission_result['referrer_tier']})")
         
+        # ============================================================
+        # SPREAD PROFIT TRACKING (Admin Liquidity 0.5%)
+        # ============================================================
+        # Calculate spread profit: difference between adjusted price and market price
+        spread_profit = 0
+        if trade_type == "buy":
+            # Buy: User pays adjusted_price, market is market_price
+            # Spread profit = (adjusted_price - market_price) * amount
+            spread_profit = (adjusted_price - market_price) * amount
+        else:
+            # Sell: User gets adjusted_price, market is market_price  
+            # Spread profit = (market_price - adjusted_price) * amount
+            spread_profit = (market_price - adjusted_price) * amount
+        
+        # Process referral commission on spread profit
+        if spread_profit > 0:
+            spread_commission_result = await referral_engine.process_referral_commission(
+                user_id=user_id,
+                fee_amount=spread_profit,
+                fee_type="SPREAD_PROFIT",
+                currency=quote_currency,
+                related_transaction_id=None,
+                metadata={
+                    "pair": pair,
+                    "trade_type": trade_type,
+                    "amount": amount,
+                    "market_price": market_price,
+                    "adjusted_price": adjusted_price,
+                    "spread_percent": buy_markup_percent if trade_type == "buy" else sell_markdown_percent
+                }
+            )
+            
+            if spread_commission_result["success"]:
+                logger.info(f"✅ Spread profit commission: £{spread_commission_result['commission_amount']:.2f}")
+        
         # Credit admin wallet with platform fee
         # (Note: referral_engine already handles commission split)
         admin_fee = fee_amount if not commission_result["success"] else fee_amount
