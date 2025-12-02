@@ -81,7 +81,14 @@ export default function AllocationsPage() {
   const [totalValue, setTotalValue] = useState(0);
   const [currency, setCurrency] = useState('GBP');
   const [activeTab, setActiveTab] = useState('coins');
-  const [showPercentages, setShowPercentages] = useState(true);
+  const [balanceVisible, setBalanceVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchAllocations = useCallback(async () => {
     try {
