@@ -793,8 +793,7 @@ export default function ReferralDashboard() {
                 fontSize: '13px',
                 lineHeight: '1.6'
               }}>
-                <strong style={{ color: '#00F0FF' }}>💡 Note:</strong> VIP tier gives you the same 20% commission rate as Standard,
-                but with priority support and exclusive features. To earn 50% commission, contact admin for Golden tier upgrade.
+                <strong style={{ color: '#00F0FF' }}>💡 Note:</strong> VIP tier gives you lifetime 20% commission rate with priority support and exclusive features.
               </div>
             </div>
           </div>
