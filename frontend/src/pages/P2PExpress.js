@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
+import { notifyWalletBalanceUpdated } from '@/utils/walletEvents';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-exchange-fix.preview.emergentagent.com';
 
