@@ -177,36 +177,18 @@ class LiquiditySafetyTester:
             await self.db.user_accounts.insert_one(user_data)
             print(f"✅ Created test user: {test_user_id}")
         
-        # Ensure user has some BTC balance for withdrawal testing
-        # Check which balance collection is used by the wallet service
-        balance_collections = ["internal_balances", "crypto_balances", "user_balances"]
-        
-        for collection_name in balance_collections:
-            collection = getattr(self.db, collection_name)
-            balance_result = await collection.update_one(
-                {"user_id": test_user_id, "currency": "BTC"},
-                {
-                    "$set": {
-                        "available_balance": 1.0,  # 1 BTC for testing
-                        "locked_balance": 0.0,
-                        "total_balance": 1.0,
-                        "balance": 1.0,  # Alternative field name
-                        "updated_at": datetime.now(timezone.utc).isoformat()
-                    }
-                },
-                upsert=True
-            )
-            print(f"   Updated {collection_name}: matched={balance_result.matched_count}, modified={balance_result.modified_count}")
-        
-        # Also try updating user_accounts crypto_balances field
-        await self.db.user_accounts.update_one(
-            {"user_id": test_user_id},
+        # Ensure user has BTC balance in the wallets collection (used by wallet service)
+        balance_result = await self.db.wallets.update_one(
+            {"user_id": test_user_id, "currency": "BTC"},
             {
                 "$set": {
-                    "crypto_balances.BTC": 1.0,
+                    "available_balance": 1.0,  # 1 BTC for testing
+                    "locked_balance": 0.0,
+                    "total_balance": 1.0,
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 }
-            }
+            },
+            upsert=True
         )
         
         print(f"✅ Set test user BTC balance: 1.0 BTC")
