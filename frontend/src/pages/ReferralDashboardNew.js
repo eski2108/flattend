@@ -53,7 +53,7 @@ export default function ReferralDashboardNew() {
     if (user?.user_id) {
       fetchReferralData();
     }
-  }, [user]);
+  }, [user?.user_id]);
 
   const fetchReferralData = async () => {
     try {
