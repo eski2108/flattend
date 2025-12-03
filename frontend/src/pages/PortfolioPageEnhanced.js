@@ -284,6 +284,299 @@ export default function PortfolioPageEnhanced() {
           </div>
         </div>
 
+        {/* Portfolio Allocation Pie Chart */}
+        {portfolio.length > 0 && portfolio.some(p => p.total_amount > 0) && (
+          <div style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '2px solid rgba(0,240,255,0.2)',
+            borderRadius: '20px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Animated background glow */}
+            <div style={{
+              position: 'absolute',
+              top: '-50%',
+              left: '-50%',
+              width: '200%',
+              height: '200%',
+              background: 'radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 50%)',
+              animation: 'pulse 4s ease-in-out infinite',
+              pointerEvents: 'none'
+            }} />
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
+              <div style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 30px rgba(0,240,255,0.6)'
+              }}>
+                <PieChart size={28} style={{ color: '#000' }} />
+              </div>
+              <div>
+                <h2 style={{
+                  fontSize: '32px',
+                  fontWeight: '900',
+                  background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  margin: 0,
+                  textShadow: '0 0 30px rgba(0,240,255,0.3)'
+                }}>
+                  Portfolio Allocation
+                </h2>
+                <p style={{ 
+                  color: '#A3AEC2', 
+                  fontSize: '16px', 
+                  margin: 0,
+                  fontWeight: '600',
+                  letterSpacing: '0.5px'
+                }}>
+                  Asset distribution breakdown
+                </p>
+              </div>
+            </div>
+
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 400px', 
+              gap: '3rem', 
+              alignItems: 'center',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              {/* Pie Chart */}
+              <div style={{ position: 'relative' }}>
+                <Chart
+                  options={{
+                    chart: {
+                      type: 'pie',
+                      background: 'transparent',
+                      animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 1200,
+                        animateGradually: {
+                          enabled: true,
+                          delay: 150
+                        },
+                        dynamicAnimation: {
+                          enabled: true,
+                          speed: 800
+                        }
+                      }
+                    },
+                    colors: ['#00F0FF', '#A855F7', '#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'],
+                    labels: portfolio.filter(p => p.total_amount > 0).map(p => p.currency),
+                    legend: {
+                      show: false
+                    },
+                    dataLabels: {
+                      enabled: true,
+                      style: {
+                        fontSize: '16px',
+                        fontFamily: 'Inter, system-ui, sans-serif',
+                        fontWeight: '900',
+                        colors: ['#000']
+                      },
+                      formatter: function(val, opts) {
+                        return opts.w.config.series[opts.seriesIndex] > 5 ? val.toFixed(1) + '%' : '';
+                      },
+                      dropShadow: {
+                        enabled: true,
+                        top: 2,
+                        left: 2,
+                        blur: 4,
+                        color: '#000',
+                        opacity: 0.8
+                      }
+                    },
+                    plotOptions: {
+                      pie: {
+                        size: 300,
+                        donut: {
+                          size: '0%'
+                        },
+                        expandOnClick: true,
+                        customScale: 1.1
+                      }
+                    },
+                    stroke: {
+                      show: true,
+                      width: 4,
+                      colors: ['rgba(10, 14, 39, 0.8)']
+                    },
+                    tooltip: {
+                      enabled: true,
+                      theme: 'dark',
+                      style: {
+                        fontSize: '14px',
+                        fontFamily: 'Inter, system-ui, sans-serif'
+                      },
+                      y: {
+                        formatter: function(val, opts) {
+                          const currency = opts.w.config.labels[opts.seriesIndex];
+                          const holding = portfolio.find(p => p.currency === currency);
+                          return `£${holding?.current_value_usd?.toFixed(2) || '0.00'} (${val.toFixed(1)}%)`;
+                        }
+                      }
+                    },
+                    responsive: [{
+                      breakpoint: 768,
+                      options: {
+                        plotOptions: {
+                          pie: {
+                            size: 250
+                          }
+                        }
+                      }
+                    }]
+                  }}
+                  series={portfolio.filter(p => p.total_amount > 0).map(p => p.allocation_percent)}
+                  type="pie"
+                  height={350}
+                />
+              </div>
+
+              {/* Legend with Premium Styling */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {portfolio.filter(p => p.total_amount > 0).map((holding, index) => {
+                  const colors = ['#00F0FF', '#A855F7', '#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+                  return (
+                    <div key={index} style={{
+                      background: 'rgba(0,0,0,0.4)',
+                      border: `2px solid ${colors[index % colors.length]}40`,
+                      borderRadius: '16px',
+                      padding: '1.5rem',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = `0 8px 32px ${colors[index % colors.length]}40`;
+                      e.currentTarget.style.borderColor = colors[index % colors.length];
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                      e.currentTarget.style.borderColor = `${colors[index % colors.length]}40`;
+                    }}
+                    >
+                      {/* Glow effect */}
+                      <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '2px',
+                        background: `linear-gradient(90deg, transparent, ${colors[index % colors.length]}, transparent)`,
+                        opacity: 0.8
+                      }} />
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          background: colors[index % colors.length],
+                          boxShadow: `0 0 20px ${colors[index % colors.length]}80`,
+                          border: '2px solid rgba(255,255,255,0.2)'
+                        }} />
+                        <div style={{
+                          fontSize: '20px',
+                          fontWeight: '900',
+                          color: '#FFFFFF',
+                          textTransform: 'uppercase',
+                          letterSpacing: '1px',
+                          textShadow: '0 0 10px rgba(255,255,255,0.3)'
+                        }}>
+                          {holding.currency}
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                          <div style={{
+                            fontSize: '12px',
+                            color: '#A3AEC2',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1.5px',
+                            fontWeight: '700',
+                            marginBottom: '4px'
+                          }}>
+                            VALUE
+                          </div>
+                          <div style={{
+                            fontSize: '24px',
+                            fontWeight: '900',
+                            background: `linear-gradient(135deg, ${colors[index % colors.length]}, #FFFFFF)`,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            textShadow: `0 0 20px ${colors[index % colors.length]}50`
+                          }}>
+                            £{holding.current_value_usd.toFixed(2)}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div style={{
+                            fontSize: '12px',
+                            color: '#A3AEC2',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1.5px',
+                            fontWeight: '700',
+                            marginBottom: '4px'
+                          }}>
+                            ALLOCATION
+                          </div>
+                          <div style={{
+                            fontSize: '24px',
+                            fontWeight: '900',
+                            color: colors[index % colors.length],
+                            textShadow: `0 0 20px ${colors[index % colors.length]}50`
+                          }}>
+                            {holding.allocation_percent.toFixed(1)}%
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div style={{ marginTop: '0.75rem' }}>
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#A3AEC2',
+                          textTransform: 'uppercase',
+                          letterSpacing: '1.5px',
+                          fontWeight: '700',
+                          marginBottom: '4px'
+                        }}>
+                          BALANCE
+                        </div>
+                        <div style={{
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: '#FFFFFF',
+                          opacity: 0.9
+                        }}>
+                          {holding.total_amount.toFixed(8)} {holding.currency}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* TradingView Widget Section */}
         <div style={{
           background: 'rgba(255,255,255,0.03)',
