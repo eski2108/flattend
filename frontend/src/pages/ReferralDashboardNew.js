@@ -632,9 +632,17 @@ export default function ReferralDashboardNew() {
           </div>
         </div>
 
-      <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-        {/* Left Column */}
-        <div>
+        <div style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto', 
+          display: 'grid', 
+          gridTemplateColumns: '1fr 1fr', 
+          gap: '3rem',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          {/* Left Column */}
+          <div style={{ animation: 'slide-in-up 0.8s ease-out' }}>
           {/* Tier Card */}
           <div style={{
             background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
