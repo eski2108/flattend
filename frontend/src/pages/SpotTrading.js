@@ -66,7 +66,13 @@ export default function SpotTrading() {
         setTradingPairs(tradablePairs);
         // Set first pair as default
         if (tradablePairs.length > 0 && !selectedPair) {
-          setSelectedPair(tradablePairs[0].symbol);
+          // Check localStorage for last selected pair
+          const savedPair = localStorage.getItem('spotTradingPair');
+          if (savedPair && tradablePairs.find(p => p.symbol === savedPair)) {
+            setSelectedPair(savedPair);
+          } else {
+            setSelectedPair(tradablePairs[0].symbol);
+          }
         }
       }
     } catch (error) {
