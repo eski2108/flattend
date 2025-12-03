@@ -12846,6 +12846,23 @@ async def apply_referral_code(request: ApplyReferralCodeRequest, req: Request):
     }
 
 @api_router.get("/referrals/dashboard")
+@api_router.get("/referral/dashboard/comprehensive/{user_id}")
+async def get_comprehensive_referral_dashboard(user_id: str):
+    """
+    Get COMPREHENSIVE referral dashboard with 100% ACCURATE real-time data.
+    All figures pulled from actual database - NO PLACEHOLDERS.
+    """
+    try:
+        from referral_analytics import ReferralAnalytics
+        
+        analytics = ReferralAnalytics(db)
+        dashboard_data = await analytics.get_comprehensive_dashboard(user_id)
+        
+        return dashboard_data
+    except Exception as e:
+        logger.error(f"Error getting comprehensive dashboard: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/referral/dashboard/{user_id}")
 async def get_referral_dashboard(user_id: str = None):
     """Get user's referral dashboard"""
