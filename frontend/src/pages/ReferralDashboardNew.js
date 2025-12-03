@@ -1428,60 +1428,194 @@ export default function ReferralDashboardNew() {
               </div>
             </div>
 
-          {/* Recent Commissions */}
-          <div style={{
-            background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
-            borderRadius: '24px',
-            padding: '2rem',
-            border: '2px solid rgba(0, 240, 255, 0.3)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
-              <IoStatsChartOutline size={28} color="#00F0FF" />
-              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff' }}>Recent Commissions</h3>
-            </div>
-
-            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-              {commissions.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
-                  <IoGiftOutline size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
-                  <p>No commissions yet</p>
-                  <p style={{ fontSize: '14px', marginTop: '0.5rem' }}>Start referring friends to earn commissions!</p>
+            {/* Premium Recent Commissions */}
+            <div className="premium-card" style={{
+              background: `
+                linear-gradient(135deg, rgba(26, 31, 58, 0.9), rgba(19, 24, 42, 0.9)),
+                linear-gradient(45deg, transparent 30%, rgba(0, 240, 255, 0.05) 50%, transparent 70%)
+              `,
+              backdropFilter: 'blur(20px)',
+              borderRadius: '28px',
+              padding: '2.5rem',
+              border: '2px solid rgba(0, 240, 255, 0.4)',
+              boxShadow: `
+                0 0 40px rgba(0, 240, 255, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `,
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '16px', 
+                marginBottom: '2rem' 
+              }}>
+                <div className="floating-icon">
+                  <IoStatsChartOutline size={32} color="#00F0FF" />
                 </div>
-              ) : (
-                commissions.slice(0, 10).map((commission, index) => (
-                  <div key={index} style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    borderRadius: '12px',
-                    padding: '1rem',
-                    marginBottom: '1rem',
-                    border: '1px solid rgba(0, 240, 255, 0.1)'
+                <h3 style={{ 
+                  fontSize: '24px', 
+                  fontWeight: '900', 
+                  background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
+                  Recent Commissions
+                </h3>
+                <IoSparklesOutline 
+                  size={24} 
+                  color="#FFD700" 
+                  className="sparkle-effect"
+                />
+              </div>
+
+              <div style={{ 
+                maxHeight: '450px', 
+                overflowY: 'auto',
+                paddingRight: '8px'
+              }}>
+                {commissions.length === 0 ? (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    padding: '3rem 2rem',
+                    background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(168, 85, 247, 0.05))',
+                    borderRadius: '20px',
+                    border: '2px dashed rgba(0, 240, 255, 0.2)'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <div style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '700' }}>
-                        £{commission.commission_amount?.toFixed(2) || '0.00'}
+                    <div className="floating-icon">
+                      <IoGiftOutline size={64} style={{ 
+                        margin: '0 auto 1.5rem', 
+                        color: '#00F0FF',
+                        filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.5))'
+                      }} />
+                    </div>
+                    <p style={{ 
+                      color: 'rgba(255, 255, 255, 0.8)', 
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      marginBottom: '0.5rem'
+                    }}>
+                      No commissions yet
+                    </p>
+                    <p style={{ 
+                      fontSize: '14px', 
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontWeight: '500'
+                    }}>
+                      Start referring friends to earn commissions! 🚀
+                    </p>
+                  </div>
+                ) : (
+                  commissions.slice(0, 10).map((commission, index) => (
+                    <div 
+                      key={index} 
+                      className="premium-card"
+                      style={{
+                        background: `
+                          linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 240, 255, 0.02)),
+                          linear-gradient(45deg, transparent 30%, rgba(0, 240, 255, 0.01) 50%, transparent 70%)
+                        `,
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '16px',
+                        padding: '1.5rem',
+                        marginBottom: '1rem',
+                        border: '2px solid rgba(0, 240, 255, 0.15)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        animation: `bounce-in 0.6s ease-out ${index * 0.1}s both`
+                      }}
+                    >
+                      {/* Sparkle effect for high earnings */}
+                      {commission.commission_amount > 10 && (
+                        <IoSparklesOutline 
+                          size={16} 
+                          color="#FFD700" 
+                          className="sparkle-effect"
+                          style={{ 
+                            position: 'absolute', 
+                            top: '0.75rem', 
+                            right: '0.75rem' 
+                          }}
+                        />
+                      )}
+                      
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between', 
+                        marginBottom: '0.75rem' 
+                      }}>
+                        <div style={{ 
+                          background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          fontSize: '20px', 
+                          fontWeight: '900',
+                          textShadow: '0 0 20px rgba(0, 240, 255, 0.5)'
+                        }}>
+                          £{commission.commission_amount?.toFixed(2) || '0.00'}
+                        </div>
+                        <div style={{
+                          background: commission.status === 'completed' 
+                            ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1))' 
+                            : 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1))',
+                          color: commission.status === 'completed' ? '#22C55E' : '#FBBF24',
+                          padding: '6px 16px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: '700',
+                          border: commission.status === 'completed' 
+                            ? '1px solid rgba(34, 197, 94, 0.3)' 
+                            : '1px solid rgba(251, 191, 36, 0.3)',
+                          backdropFilter: 'blur(10px)',
+                          letterSpacing: '0.5px',
+                          textTransform: 'uppercase'
+                        }}>
+                          {commission.status === 'completed' ? '✅ ' : '⏳ '}
+                          {commission.status || 'pending'}
+                        </div>
                       </div>
-                      <div style={{
-                        background: commission.status === 'completed' ? '#22C55E20' : '#FBBF2420',
-                        color: commission.status === 'completed' ? '#22C55E' : '#FBBF24',
-                        padding: '4px 12px',
-                        borderRadius: '6px',
-                        fontSize: '12px',
+                      
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: '14px', 
+                        marginBottom: '0.5rem',
                         fontWeight: '600'
                       }}>
-                        {commission.status || 'pending'}
+                        💼 {commission.fee_type || 'Trading'}
                       </div>
+                      
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.5)', 
+                        fontSize: '12px',
+                        fontWeight: '500'
+                      }}>
+                        📅 {new Date(commission.created_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </div>
+                      
+                      {/* Progress bar for completed commissions */}
+                      {commission.status === 'completed' && (
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '0',
+                          left: '0',
+                          width: '100%',
+                          height: '3px',
+                          background: 'linear-gradient(90deg, #22C55E, #10B981)',
+                          borderRadius: '0 0 16px 16px'
+                        }} />
+                      )}
                     </div>
-                    <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.25rem' }}>
-                      {commission.fee_type || 'Trading'}
-                    </div>
-                    <div style={{ color: '#666', fontSize: '12px' }}>
-                      {new Date(commission.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
