@@ -162,6 +162,101 @@ const AdminLiquidityManager = () => {
           </div>
         )}
 
+        {/* Crypto Deposit Addresses */}
+        <div style={{
+          background: 'rgba(13, 23, 38, 0.6)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(123, 44, 255, 0.3)',
+          padding: '25px',
+          marginBottom: '30px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <h3 style={{ color: '#7B2CFF', fontSize: '18px', margin: 0 }}>
+              📥 Crypto Deposit Addresses
+            </h3>
+            <button
+              onClick={() => setShowAddresses(!showAddresses)}
+              style={{
+                padding: '8px 20px',
+                background: 'rgba(123, 44, 255, 0.2)',
+                border: '1px solid #7B2CFF',
+                borderRadius: '6px',
+                color: '#7B2CFF',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              {showAddresses ? '🔒 Hide Addresses' : '👁️ Show Addresses'}
+            </button>
+          </div>
+          
+          {showAddresses && Object.keys(depositAddresses).length > 0 && (
+            <div>
+              <p style={{ color: '#8E9BAE', fontSize: '14px', marginBottom: '20px' }}>
+                💡 Send crypto to these addresses to automatically top up liquidity. Each deposit will be credited within minutes.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px' }}>
+                {Object.entries(depositAddresses).slice(0, 8).map(([currency, address]) => (
+                  <div key={currency} style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(123, 44, 255, 0.2)',
+                    borderRadius: '8px',
+                    padding: '15px'
+                  }}>
+                    <div style={{ color: '#fff', fontWeight: '600', marginBottom: '8px', fontSize: '14px' }}>
+                      {currency}
+                    </div>
+                    <div style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      padding: '10px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontFamily: 'monospace',
+                      color: '#00FF88',
+                      wordBreak: 'break-all',
+                      marginBottom: '8px'
+                    }}>
+                      {address}
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(address);
+                        setMessage({ type: 'success', text: `${currency} address copied!` });
+                        setTimeout(() => setMessage({ type: '', text: '' }), 2000);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        background: 'rgba(123, 44, 255, 0.2)',
+                        border: '1px solid rgba(123, 44, 255, 0.4)',
+                        borderRadius: '4px',
+                        color: '#7B2CFF',
+                        fontSize: '12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      📋 Copy Address
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div style={{
+                marginTop: '20px',
+                padding: '15px',
+                background: 'rgba(255, 152, 0, 0.1)',
+                border: '1px solid rgba(255, 152, 0, 0.3)',
+                borderRadius: '8px',
+                color: '#FFA500',
+                fontSize: '13px'
+              }}>
+                ⚠️ <strong>DEMO MODE:</strong> These are example addresses. In production, integrate with NOWPayments or your own wallet infrastructure.
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Quick Actions */}
         <div style={{
           background: 'rgba(13, 23, 38, 0.6)',
@@ -172,7 +267,7 @@ const AdminLiquidityManager = () => {
           marginBottom: '30px'
         }}>
           <h3 style={{ color: '#00F0FF', marginBottom: '15px', fontSize: '18px' }}>
-            ⚡ Quick Top-Up
+            ⚡ Quick GBP Top-Up (Instant)
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
             {['GBP', 'BTC', 'ETH', 'USDT'].map(currency => (
