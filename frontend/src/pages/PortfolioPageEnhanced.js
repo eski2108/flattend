@@ -5,6 +5,7 @@ import axios from 'axios';
 import { IoArrowForward, IoCash, IoFlash, IoPieChart as PieChart, IoRefresh, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
+import Chart from 'react-apexcharts';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
