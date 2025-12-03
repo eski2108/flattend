@@ -10535,6 +10535,10 @@ async def get_trading_pairs():
         for coin in trading_coins:
             base = coin["symbol"]
             
+            # Skip if this coin is a quote currency (don't create GBP/GBP or USDT/USDT)
+            if base in fiat_currencies:
+                continue
+            
             # Get liquidity for this currency
             wallet = await db.admin_liquidity_wallets.find_one({"currency": base}, {"_id": 0})
             available = wallet.get("available", 0) if wallet else 0
