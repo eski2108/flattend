@@ -25,6 +25,7 @@ import AllocationsPageDirect from "@/pages/AllocationsPage";
 const Transactions = lazy(() => import("@/pages/Transactions"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const AdminLiquidity = lazy(() => import("@/pages/AdminLiquidity"));
+const AdminLiquidityManager = lazy(() => import("@/pages/AdminLiquidityManager"));
 const ManagerSettings = lazy(() => import("@/pages/ManagerSettings"));
 const MerchantCenter = lazy(() => import("@/pages/MerchantCenter"));
 const CreateAd = lazy(() => import("@/pages/CreateAd"));
