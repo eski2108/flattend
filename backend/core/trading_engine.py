@@ -267,15 +267,21 @@ class TradingEngine:
             
             logger.info(f"✅ BUY complete: {crypto_amount:.8f} {base_currency} for £{gbp_amount:.2f} | Spread profit: £{spread_profit:.4f}")
             
-            return {
-                "success": True,
-                "transaction_id": transaction_id,
-                "crypto_amount": crypto_amount,
-                "gbp_paid": gbp_amount,
-                "buy_price": buy_price,
-                "market_price": mid_market_price,
-                "spread_profit": spread_profit
-            }
+            # AUDIT LOGGING
+            try:
+                from audit_system import AuditLogger
+                audit = AuditLogger(self.db)
+                
+                # Get balances after for audit
+                user_balance_after = await self.db.internal_balances.find_one(
+                    {"user_id": user_id, "currency": base_currency}, {"_id": 0}
+                )
+                admin_balance_after = await self.db.admin_liquidity_wallets.find_one(
+                    {"currency": base_currency}, {"_id": 0}
+                )
+                
+                await audit.log_trade(
+                    user_id=user_id,\n                    trade_type=\"BUY\",\n                    pair=f\"{base_currency}/{quote_currency}\",\n                    amount=crypto_amount,\n                    price=buy_price,\n                    total=gbp_amount,\n                    fee=spread_profit,\n                    admin_profit=spread_profit,\n                    user_balance_before={\"available\": user_gbp_available},\n                    user_balance_after=user_balance_after or {},\n                    admin_balance_before={\"available\": admin_crypto_available},\n                    admin_balance_after=admin_balance_after or {},\n                    transaction_id=transaction_id\n                )\n            except Exception as e:\n                logger.warning(f\"Audit logging failed: {str(e)}\")\n            \n            return {\n                \"success\": True,\n                \"transaction_id\": transaction_id,\n                \"crypto_amount\": crypto_amount,\n                \"gbp_paid\": gbp_amount,\n                \"buy_price\": buy_price,\n                \"market_price\": mid_market_price,\n                \"spread_profit\": spread_profit\n            }
             
         except Exception as e:
             logger.error(f"❌ BUY failed: {str(e)}")
