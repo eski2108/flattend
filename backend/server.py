@@ -10603,6 +10603,44 @@ async def get_trading_pairs():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@api_router.get("/admin/proof-of-fees")
+async def admin_proof_of_fees():
+    """
+    Get proof of fee collection for business owner
+    Shows admin liquidity wallets, fee revenue, and proof of deductions
+    """
+    try:
+        # Get admin liquidity wallets
+        liquidity = await db.admin_liquidity_wallets.find({}).to_list(20)
+        
+        # Get admin fee wallet
+        fee_wallet = await db.internal_balances.find_one({"user_id": "admin_wallet", "currency": "GBP"})
+        
+        # Format response
+        liquidity_data = []
+        for liq in liquidity:
+            liquidity_data.append({
+                "currency": liq.get("currency"),
+                "balance": liq.get("balance", 0),
+                "available": liq.get("available", 0),
+                "reserved": liq.get("reserved", 0)
+            })
+        
+        return {
+            "success": True,
+            "data": {
+                "liquidity": liquidity_data,
+                "feeWallet": {
+                    "currency": "GBP",
+                    "available": fee_wallet.get("available", 0) if fee_wallet else 0,
+                    "balance": fee_wallet.get("balance", 0) if fee_wallet else 0
+                }
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting proof of fees: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/admin/trading-liquidity")
 async def get_admin_trading_liquidity():
     """
