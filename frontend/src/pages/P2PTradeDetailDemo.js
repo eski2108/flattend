@@ -371,13 +371,7 @@ export default function P2PTradeDetailDemo() {
                     Cancel Trade
                   </button>
                   <button
-                    onClick={() => {
-                      const reason = window.prompt('Please describe the issue:');
-                      if (reason) {
-                        // Open dispute logic
-                        toast.info('Dispute opened. Admin will review shortly.');
-                      }
-                    }}
+                    onClick={() => setShowDisputeModal(true)}
                     className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-4 rounded-xl transition-colors"
                   >
                     Open Dispute
