@@ -488,7 +488,7 @@ export default function ReferralDashboardNew() {
           </div>
         </div>
 
-        {/* User List Modal */}
+        {/* User List Modal - REAL DATA FROM REFERRAL TREE */}
         {showUsersList && (
           <div style={{
             background: 'rgba(26, 31, 58, 0.95)',
@@ -500,12 +500,22 @@ export default function ReferralDashboardNew() {
             <div style={{ fontSize: '14px', fontWeight: '700', color: '#00F0FF', marginBottom: '0.75rem' }}>
               {showUsersList === 'active' ? 'Active Referrals' : 'Pending Sign-ups'}
             </div>
-            {commissions.length === 0 ? (
-              <div style={{ color: '#888', fontSize: '12px', textAlign: 'center', padding: '1rem' }}>
-                No referrals yet. Start sharing your link!
-              </div>
-            ) : (
-              commissions.slice(0, 5).map((c, idx) => (
+            {(() => {
+              const referralTree = window.referralAnalytics?.referral_tree || {};
+              const referrals = referralTree.referrals || [];
+              const filteredReferrals = showUsersList === 'active' 
+                ? referrals.filter(r => r.status === 'active')
+                : referrals.filter(r => r.status === 'pending');
+              
+              if (filteredReferrals.length === 0) {
+                return (
+                  <div style={{ color: '#888', fontSize: '12px', textAlign: 'center', padding: '1rem' }}>
+                    No {showUsersList} referrals yet. Start sharing your link!
+                  </div>
+                );
+              }
+              
+              return filteredReferrals.slice(0, 10).map((referral, idx) => (
                 <div key={idx} style={{
                   padding: '0.75rem',
                   background: 'rgba(0, 0, 0, 0.3)',
@@ -514,11 +524,28 @@ export default function ReferralDashboardNew() {
                   fontSize: '12px',
                   color: '#fff'
                 }}>
-                  <div style={{ fontWeight: '600' }}>User {idx + 1}</div>
-                  <div style={{ color: '#888', fontSize: '11px' }}>Last activity: {new Date(c.created_at).toLocaleDateString()}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontWeight: '600' }}>{referral.username || `User ${idx + 1}`}</div>
+                      <div style={{ color: '#888', fontSize: '11px' }}>
+                        {referral.email_masked}
+                      </div>
+                      <div style={{ color: '#888', fontSize: '11px' }}>
+                        {referral.last_activity ? `Last: ${new Date(referral.last_activity).toLocaleDateString()}` : 'Joined: ' + new Date(referral.joined_date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ color: '#00FF88', fontWeight: '700' }}>
+                        £{referral.total_earned_from_user?.toFixed(2) || '0.00'}
+                      </div>
+                      <div style={{ color: '#888', fontSize: '10px' }}>
+                        {referral.transaction_count || 0} txns
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ))
-            )}
+              ));
+            })()}
           </div>
         )}
 
