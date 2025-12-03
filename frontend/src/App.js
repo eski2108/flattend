@@ -97,6 +97,7 @@ const Verification = lazy(() => import("@/pages/Verification"));
 const AccountUpgrade = lazy(() => import("@/pages/AccountUpgrade"));
 const P2PBoost = lazy(() => import("@/pages/P2PBoost"));
 const PriceAlerts = lazy(() => import("@/pages/PriceAlerts"));
+const UIShowcase = lazy(() => import("@/pages/UIShowcase"));
 import ChatWidget from "@/components/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 
