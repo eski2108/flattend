@@ -5471,9 +5471,39 @@ async def get_wallet_transactions(user_id: str, currency: str = None, limit: int
         
         all_transactions.sort(key=get_sort_key, reverse=True)
         
+        # Normalize transaction data format for frontend consistency
+        normalized_transactions = []
+        for tx in all_transactions[:limit]:
+            # Handle timestamp conversion to ISO string
+            timestamp = tx.get("timestamp")
+            if isinstance(timestamp, datetime):
+                timestamp_str = timestamp.isoformat()
+            elif isinstance(timestamp, str):
+                # Try to parse and format properly
+                try:
+                    parsed_date = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    timestamp_str = parsed_date.isoformat()
+                except:
+                    timestamp_str = datetime.utcnow().isoformat()
+            else:
+                timestamp_str = datetime.utcnow().isoformat()
+            
+            normalized_transactions.append({
+                "type": tx.get("transaction_type", "transaction"),
+                "transaction_type": tx.get("transaction_type", "transaction"),
+                "amount": tx.get("amount", 0),
+                "currency": tx.get("currency", "Unknown"),
+                "status": tx.get("status", "completed"),
+                "created_at": timestamp_str,
+                "timestamp": timestamp_str,
+                "description": tx.get("description", ""),
+                "reference_id": tx.get("reference_id"),
+                "source": tx.get("source", "unknown")
+            })
+        
         return {
             "success": True,
-            "transactions": all_transactions[:limit]
+            "transactions": normalized_transactions
         }
     except Exception as e:
         logger.error(f"Error getting wallet transactions: {str(e)}")
