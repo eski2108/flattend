@@ -190,7 +190,7 @@ class ReferralDashboardTester:
     
     async def cross_check_with_database(self, user_id: str, api_data: dict):
         """Cross-check API data with direct database queries"""
-        if not self.db:
+        if self.db is None:
             print("⚠️ Skipping database verification (no DB connection)")
             return
         
