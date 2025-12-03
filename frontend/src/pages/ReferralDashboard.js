@@ -713,28 +713,39 @@ export default function ReferralDashboard() {
 
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '1rem',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: '1.5rem',
                 marginBottom: '2rem'
               }}>
                 {[
-                  { icon: '💰', title: 'Lifetime 20% Commission', desc: 'Earn on every transaction' },
-                  { icon: '⚡', title: 'Priority Support', desc: 'Get help faster' },
-                  { icon: '🏆', title: 'Exclusive Badge', desc: 'Stand out from the crowd' },
-                  { icon: '📈', title: 'Advanced Analytics', desc: 'Track your earnings better' }
+                  { icon: '💰', title: '50% Commission Rate', desc: '2.5x more than standard!', highlight: true },
+                  { icon: '⚡', title: 'Priority Support', desc: 'Get help instantly' },
+                  { icon: '🏆', title: 'Golden Badge', desc: 'Exclusive VIP status' },
+                  { icon: '📈', title: 'Advanced Analytics', desc: 'Real-time earnings tracking' }
                 ].map((benefit, idx) => (
                   <div key={idx} style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    border: '1px solid rgba(168, 85, 247, 0.2)',
+                    background: benefit.highlight 
+                      ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1))'
+                      : 'rgba(0, 0, 0, 0.4)',
+                    border: benefit.highlight 
+                      ? '2px solid rgba(255, 215, 0, 0.5)'
+                      : '1px solid rgba(255, 215, 0, 0.2)',
                     borderRadius: '12px',
-                    padding: '1rem',
-                    textAlign: 'center'
+                    padding: '1.25rem',
+                    textAlign: 'center',
+                    boxShadow: benefit.highlight ? '0 0 30px rgba(255, 215, 0, 0.3)' : 'none'
                   }}>
-                    <div style={{ fontSize: '32px', marginBottom: '0.5rem' }}>{benefit.icon}</div>
-                    <h4 style={{ color: '#fff', fontSize: '14px', fontWeight: '700', marginBottom: '0.25rem' }}>
+                    <div style={{ fontSize: '36px', marginBottom: '0.75rem' }}>{benefit.icon}</div>
+                    <h4 style={{ 
+                      color: benefit.highlight ? '#FFD700' : '#fff', 
+                      fontSize: '15px', 
+                      fontWeight: '700', 
+                      marginBottom: '0.5rem',
+                      textShadow: benefit.highlight ? '0 0 10px rgba(255, 215, 0, 0.5)' : 'none'
+                    }}>
                       {benefit.title}
                     </h4>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '13px' }}>
                       {benefit.desc}
                     </p>
                   </div>
