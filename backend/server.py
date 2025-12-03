@@ -10063,6 +10063,77 @@ async def get_admin_withdrawals():
 # EXPRESS BUY ENDPOINTS (WITH ADMIN LIQUIDITY)
 # ===========================
 
+@api_router.post("/trading/execute-v2")
+async def execute_trading_v2(request: dict):
+    """
+    NEW LOCKED TRADING ENGINE - Version 2
+    
+    Uses protected trading_engine.py with locked formulas.
+    All prices calculated server-side from live market data.
+    Frontend CANNOT send prices - only amounts.
+    """
+    from core.trading_engine import TradingEngine
+    
+    try:
+        user_id = request.get("user_id")
+        pair = request.get("pair")  # e.g., "BTC/GBP"
+        trade_type = request.get("type")  # "buy" or "sell"
+        
+        # Parse pair
+        base_currency, quote_currency = pair.split("/")
+        
+        # Fetch REAL-TIME mid-market price (backend only, frontend cannot send this)
+        from live_pricing import get_live_price
+        mid_market_price = await get_live_price(base_currency)
+        
+        if not mid_market_price or mid_market_price <= 0:
+            return {
+                "success": False,
+                "message": f"Unable to fetch live price for {base_currency}"
+            }
+        
+        # Initialize locked trading engine
+        engine = TradingEngine(db)
+        
+        if trade_type == "buy":
+            # User enters GBP amount
+            gbp_amount = float(request.get("gbp_amount"))
+            
+            result = await engine.execute_buy(
+                user_id=user_id,
+                base_currency=base_currency,
+                quote_currency=quote_currency,
+                gbp_amount=gbp_amount,
+                mid_market_price=mid_market_price
+            )
+            
+        elif trade_type == "sell":
+            # User enters crypto amount
+            crypto_amount = float(request.get("crypto_amount"))
+            
+            result = await engine.execute_sell(
+                user_id=user_id,
+                base_currency=base_currency,
+                quote_currency=quote_currency,
+                crypto_amount=crypto_amount,
+                mid_market_price=mid_market_price
+            )
+        else:
+            return {
+                "success": False,
+                "message": "Invalid trade type. Must be 'buy' or 'sell'"
+            }
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Trading V2 error: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Trade failed: {str(e)}"
+        }
+
+
 @api_router.post("/trading/execute")
 async def execute_trading_transaction(request: dict):
     """
