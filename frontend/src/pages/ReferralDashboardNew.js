@@ -38,6 +38,7 @@ export default function ReferralDashboardNew() {
   const [showInfoTooltip, setShowInfoTooltip] = useState(false);
   const [showUsersList, setShowUsersList] = useState(null);
   const [copySuccess, setCopySuccess] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
