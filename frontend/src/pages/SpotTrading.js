@@ -436,41 +436,54 @@ export default function SpotTrading() {
                 <button
                   key={pair.symbol}
                   onClick={() => setSelectedPair(pair.symbol)}
+                  className={selectedPair === pair.symbol ? 'active' : ''}
                   style={{
-                    padding: '14px 18px',
+                    padding: '13px 16px',
                     background: selectedPair === pair.symbol
-                      ? 'linear-gradient(135deg, #00F0FF, #A855F7)'
-                      : 'rgba(15, 23, 42, 0.9)',
+                      ? 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)'
+                      : 'rgba(10, 15, 30, 0.85)',
                     border: selectedPair === pair.symbol 
                       ? '1px solid rgba(0, 240, 255, 0.6)' 
-                      : '1px solid rgba(0, 240, 255, 0.2)',
+                      : '1px solid rgba(0, 240, 255, 0.25)',
                     borderRadius: '10px',
                     color: selectedPair === pair.symbol ? '#000' : '#fff',
-                    fontSize: '14px',
-                    fontWeight: '700',
+                    fontSize: window.innerWidth >= 1200 ? '15px' : '14px',
+                    fontWeight: '800',
                     cursor: pair.is_tradable ? 'pointer' : 'not-allowed',
                     opacity: pair.is_tradable ? 1 : 0.5,
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                     boxShadow: selectedPair === pair.symbol 
-                      ? '0 4px 14px rgba(0, 240, 255, 0.4)' 
-                      : '0 2px 8px rgba(0, 240, 255, 0.1)',
+                      ? '0 4px 14px rgba(0, 240, 255, 0.4), 0 0 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                      : '0 2px 8px rgba(0, 0, 0, 0.3)',
                     height: '48px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
-                    if (pair.is_tradable && selectedPair !== pair.symbol) {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 4px 12px rgba(0, 240, 255, 0.2)';
+                    if (pair.is_tradable) {
+                      e.target.style.transform = 'translateY(-2px) scale(1.02)';
+                      e.target.style.boxShadow = selectedPair === pair.symbol
+                        ? '0 6px 18px rgba(0, 240, 255, 0.5), 0 0 30px rgba(168, 85, 247, 0.4)'
+                        : '0 4px 16px rgba(0, 240, 255, 0.3)';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (selectedPair !== pair.symbol) {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = 'none';
+                    e.target.style.transform = 'translateY(0) scale(1)';
+                    e.target.style.boxShadow = selectedPair === pair.symbol
+                      ? '0 4px 14px rgba(0, 240, 255, 0.4), 0 0 20px rgba(168, 85, 247, 0.3)'
+                      : '0 2px 8px rgba(0, 0, 0, 0.3)';
+                  }}
+                  onTouchStart={(e) => {
+                    if (pair.is_tradable) {
+                      e.target.style.transform = 'scale(0.95)';
                     }
+                  }}
+                  onTouchEnd={(e) => {
+                    e.target.style.transform = 'scale(1)';
                   }}
                   disabled={!pair.is_tradable}
                 >
