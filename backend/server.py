@@ -5471,7 +5471,9 @@ async def get_wallet_transactions(user_id: str, currency: str = None, limit: int
         
         all_transactions.sort(key=get_sort_key, reverse=True)
         
-        # Normalize transaction data format for frontend consistency
+        # 🔒 LOCKED: Transaction normalization - DO NOT MODIFY
+        # Fixes "Invalid Date" bug by ensuring all timestamps are ISO strings
+        # Provides both 'created_at' and 'timestamp' for frontend compatibility
         normalized_transactions = []
         for tx in all_transactions[:limit]:
             # Handle timestamp conversion to ISO string
@@ -5500,6 +5502,7 @@ async def get_wallet_transactions(user_id: str, currency: str = None, limit: int
                 "reference_id": tx.get("reference_id"),
                 "source": tx.get("source", "unknown")
             })
+        # 🔒 END LOCKED SECTION
         
         return {
             "success": True,
