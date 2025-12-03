@@ -24261,3 +24261,18 @@ app.include_router(api_router)
 # "FINAL ROUTER" section.
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
+@api_router.get("/admin/liquidity")
+async def get_admin_liquidity():
+    """Get admin liquidity wallet balances"""
+    try:
+        liquidity = await db.admin_liquidity_wallets.find({}, {"_id": 0}).sort("currency", 1).to_list(100)
+        return {
+            "success": True,
+            "liquidity": liquidity
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
