@@ -109,6 +109,18 @@ export default function PortfolioPageEnhanced() {
 
   return (
     <Layout>
+      <style>
+        {`
+          @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+          }
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
       <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         
