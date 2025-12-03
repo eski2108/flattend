@@ -11,7 +11,9 @@ const API = process.env.REACT_APP_BACKEND_URL || 'https://tradeliquidity.preview
 
 export default function SpotTrading() {
   const navigate = useNavigate();
-  const [selectedPair, setSelectedPair] = useState('BTCUSD');
+  const [user, setUser] = useState(null);
+  const [tradingPairs, setTradingPairs] = useState([]);
+  const [selectedPair, setSelectedPair] = useState(null);
   const [orderType, setOrderType] = useState('buy');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState('');
@@ -27,14 +29,7 @@ export default function SpotTrading() {
   const [isLoading, setIsLoading] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [lastOrderDetails, setLastOrderDetails] = useState(null);
-
-  const tradingPairs = [
-    { symbol: 'BTCUSD', name: 'BTC/USD', base: 'BTC', quote: 'USD' },
-    { symbol: 'ETHUSD', name: 'ETH/USD', base: 'ETH', quote: 'USD' },
-    { symbol: 'SOLUSD', name: 'SOL/USD', base: 'SOL', quote: 'USD' },
-    { symbol: 'XRPUSD', name: 'XRP/USD', base: 'XRP', quote: 'USD' },
-    { symbol: 'BNBUSD', name: 'BNB/USD', base: 'BNB', quote: 'USD' }
-  ];
+  const [availableLiquidity, setAvailableLiquidity] = useState(0);
 
   // Calculate crypto amount from fiat or vice versa with spread
   const calculateAmount = () => {
