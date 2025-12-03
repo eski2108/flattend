@@ -94,6 +94,38 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
         
         logger.info(f"Withdrawal fees for {currency}: Base {withdrawal_fee}, Network {network_fee}, Fiat {fiat_withdrawal_fee}, Total {total_fee}")
         
+        # 🔒 LIQUIDITY SAFETY CHECK - Prevent withdrawals if admin doesn't have liquidity
+        from liquidity_checker import LiquidityChecker
+        
+        liquidity_checker = LiquidityChecker(db)
+        liquidity_check = await liquidity_checker.check_and_log(
+            currency=currency,
+            amount=net_amount,  # Amount user will receive
+            operation_type=f"withdrawal_{currency}",
+            user_id=user_id,
+            metadata={
+                "gross_amount": amount,
+                "total_fee": total_fee,
+                "net_amount": net_amount,
+                "wallet_address": wallet_address,
+                "network": network,
+                "is_fiat": is_fiat
+            }
+        )
+        
+        if not liquidity_check["can_execute"]:
+            logger.error(f"🚫 WITHDRAWAL BLOCKED: {liquidity_check['message']}")
+            return {
+                "success": False,
+                "message": f"Withdrawal temporarily unavailable. {liquidity_check['message']}",
+                "reason": "insufficient_platform_liquidity",
+                "available_liquidity": liquidity_check.get("available_liquidity", 0),
+                "required_liquidity": liquidity_check.get("required_liquidity", 0),
+                "shortage": liquidity_check.get("shortage", 0)
+            }
+        
+        logger.info(f"✅ LIQUIDITY CHECK PASSED for withdrawal: {net_amount} {currency}")
+        
         # Create withdrawal request
         withdrawal = WithdrawalRequest(
             user_id=user_id,
