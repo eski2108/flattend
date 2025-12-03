@@ -808,16 +808,16 @@ export default function Dashboard() {
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF', textTransform: 'capitalize' }}>
-                              {tx.type || 'Transaction'}
+                              {tx.transaction_type?.replace(/_/g, ' ') || tx.type || 'Transaction'}
                             </div>
                             <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                              {new Date(tx.created_at).toLocaleDateString()}
+                              {formatDate(tx.created_at || tx.timestamp)}
                             </div>
                           </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '14px', fontWeight: '600', color: tx.type === 'deposit' ? '#22C55E' : '#EF4444' }}>
-                            {tx.type === 'deposit' ? '+' : '-'}{formatCurrency(tx.amount || 0)}
+                          <div style={{ fontSize: '14px', fontWeight: '600', color: (tx.type?.includes('buy') || tx.type?.includes('deposit') || tx.transaction_type?.includes('buy') || tx.transaction_type?.includes('deposit')) ? '#22C55E' : '#EF4444' }}>
+                            {(tx.type?.includes('buy') || tx.type?.includes('deposit') || tx.transaction_type?.includes('buy') || tx.transaction_type?.includes('deposit')) ? '+' : '-'}{formatCurrency(tx.amount || 0)}
                           </div>
                           <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'capitalize' }}>
                             {tx.status || 'Completed'}
