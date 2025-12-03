@@ -34,6 +34,15 @@ export default function ReferralDashboardNew() {
     this_month: 0,
     last_30_days: []
   });
+  const [animatedStats, setAnimatedStats] = useState({
+    total_earned: 0,
+    pending: 0,
+    completed: 0,
+    this_month: 0
+  });
+  const [copySuccess, setCopySuccess] = useState('');
+  const [upgradeHover, setUpgradeHover] = useState(false);
+  const particlesRef = useRef(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
