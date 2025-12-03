@@ -253,6 +253,185 @@ const AdminLiquidityManager = () => {
           </div>
         )}
 
+        {/* 🔒 Liquidity Sync Mode Toggle */}
+        <div style={{
+          background: 'rgba(255, 152, 0, 0.1)',
+          border: '1px solid rgba(255, 152, 0, 0.3)',
+          borderRadius: '12px',
+          padding: '25px',
+          marginBottom: '30px'
+        }}>
+          <h3 style={{ color: '#FFA500', marginBottom: '15px', fontSize: '18px' }}>
+            🔒 Liquidity Sync Mode
+          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '15px' }}>
+            <label style={{ 
+              color: '#fff', 
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              cursor: 'pointer'
+            }}>
+              <input
+                type="checkbox"
+                checked={realSyncMode}
+                onChange={toggleSyncMode}
+                disabled={!nowpaymentsEnabled || updating}
+                style={{ 
+                  width: '20px',
+                  height: '20px',
+                  cursor: nowpaymentsEnabled && !updating ? 'pointer' : 'not-allowed'
+                }}
+              />
+              <span style={{ fontWeight: '600' }}>
+                Use Real NOWPayments Sync
+              </span>
+            </label>
+          </div>
+          {realSyncMode ? (
+            <div style={{ 
+              padding: '12px',
+              background: 'rgba(0, 255, 136, 0.1)',
+              border: '1px solid rgba(0, 255, 136, 0.3)',
+              borderRadius: '8px',
+              color: '#00FF88',
+              fontSize: '13px'
+            }}>
+              ✅ <strong>Real sync ENABLED</strong> - All deposits will be automatically credited from NOWPayments. Manual entry is disabled.
+            </div>
+          ) : (
+            <div style={{ 
+              padding: '12px',
+              background: 'rgba(142, 155, 174, 0.1)',
+              border: '1px solid rgba(142, 155, 174, 0.3)',
+              borderRadius: '8px',
+              color: '#8E9BAE',
+              fontSize: '13px'
+            }}>
+              ℹ️ Manual mode active. Use the forms below to add liquidity manually.
+            </div>
+          )}
+          
+          {!nowpaymentsEnabled && (
+            <div style={{ 
+              marginTop: '15px',
+              padding: '12px',
+              background: 'rgba(255, 107, 107, 0.1)',
+              border: '1px solid rgba(255, 107, 107, 0.3)',
+              borderRadius: '8px',
+              color: '#FF6B6B',
+              fontSize: '13px'
+            }}>
+              ⚠️ NOWPayments API key not configured. Set NOWPAYMENTS_API_KEY in environment variables.
+            </div>
+          )}
+
+          {nowpaymentsEnabled && (
+            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+              <button
+                onClick={verifyNOWPayments}
+                disabled={updating}
+                style={{
+                  padding: '10px 20px',
+                  background: 'rgba(0, 240, 255, 0.2)',
+                  border: '1px solid #00F0FF',
+                  borderRadius: '6px',
+                  color: '#00F0FF',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: updating ? 'not-allowed' : 'pointer',
+                  opacity: updating ? 0.6 : 1
+                }}
+              >
+                {updating ? '⏳ Verifying...' : '🔍 Verify API Key'}
+              </button>
+              <button
+                onClick={generateNOWPaymentsAddresses}
+                disabled={updating}
+                style={{
+                  padding: '10px 20px',
+                  background: 'linear-gradient(135deg, #7B2CFF, #00F0FF)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: updating ? 'not-allowed' : 'pointer',
+                  opacity: updating ? 0.6 : 1
+                }}
+              >
+                {updating ? '⏳ Generating...' : '🔄 Generate Real Addresses'}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* 🚫 Recent Liquidity Blocks */}
+        {liquidityBlocks.length > 0 && (
+          <div style={{
+            background: 'rgba(255, 107, 107, 0.1)',
+            border: '1px solid rgba(255, 107, 107, 0.3)',
+            borderRadius: '12px',
+            padding: '25px',
+            marginBottom: '30px'
+          }}>
+            <h3 style={{ color: '#FF6B6B', marginBottom: '15px', fontSize: '18px' }}>
+              🚫 Recent Blocked Operations ({liquidityBlocks.length})
+            </h3>
+            <p style={{ color: '#8E9BAE', fontSize: '13px', marginBottom: '15px' }}>
+              Operations blocked due to insufficient platform liquidity:
+            </p>
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {liquidityBlocks.map((block, idx) => (
+                <div key={idx} style={{
+                  padding: '10px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 107, 107, 0.2)',
+                  borderRadius: '6px',
+                  marginBottom: '8px',
+                  fontSize: '12px',
+                  color: '#fff'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                    <span style={{ color: '#FF6B6B', fontWeight: '600' }}>
+                      {block.operation_type}
+                    </span>
+                    <span style={{ color: '#8E9BAE' }}>
+                      {new Date(block.timestamp).toLocaleString()}
+                    </span>
+                  </div>
+                  <div style={{ color: '#8E9BAE' }}>
+                    Required: <span style={{ color: '#FF6B6B' }}>{block.amount_required} {block.currency}</span>
+                    {' '} | Available: {block.available_liquidity} {block.currency}
+                    {' '} | Shortage: {block.shortage}
+                  </div>
+                  {block.user_id && (
+                    <div style={{ color: '#8E9BAE', marginTop: '3px' }}>
+                      User: {block.user_id}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={fetchLiquidityBlocks}
+              style={{
+                marginTop: '15px',
+                padding: '8px 16px',
+                background: 'rgba(255, 107, 107, 0.2)',
+                border: '1px solid #FF6B6B',
+                borderRadius: '6px',
+                color: '#FF6B6B',
+                fontSize: '12px',
+                cursor: 'pointer'
+              }}
+            >
+              🔄 Refresh Blocks
+            </button>
+          </div>
+        )}
+
         {/* Crypto Deposit Addresses */}
         <div style={{
           background: 'rgba(13, 23, 38, 0.6)',
