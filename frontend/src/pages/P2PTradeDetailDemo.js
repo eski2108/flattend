@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { IoAlertCircle, IoChatbubbles, IoCheckmark as Check, IoCheckmarkCircle, IoCloudUpload, IoShield, IoTime } from 'react-icons/io5';
 import OTPModal from '@/components/OTPModal';
 import P2PNotifications from '@/components/P2PNotifications';
+import DisputeModal from '@/components/DisputeModal';
+import DisputeChatModal from '@/components/DisputeChatModal';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function P2PTradeDetailDemo() {
@@ -19,6 +21,9 @@ export default function P2PTradeDetailDemo() {
   const [otpCode, setOtpCode] = useState('');
   const [proofFile, setProofFile] = useState(null);
   const [user, setUser] = useState(null);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [showDisputeChatModal, setShowDisputeChatModal] = useState(false);
+  const [dispute, setDispute] = useState(null);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
