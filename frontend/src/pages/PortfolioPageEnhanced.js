@@ -399,21 +399,21 @@ export default function PortfolioPageEnhanced() {
                     dataLabels: {
                       enabled: true,
                       style: {
-                        fontSize: '16px',
-                        fontFamily: 'Inter, system-ui, sans-serif',
-                        fontWeight: '900',
-                        colors: ['#000']
+                        fontSize: '20px',
+                        fontFamily: '"Inter", "Montserrat", system-ui, -apple-system, sans-serif',
+                        fontWeight: 'bold',
+                        colors: ['#FFFFFF']
                       },
                       formatter: function(val, opts) {
                         return opts.w.config.series[opts.seriesIndex] > 5 ? val.toFixed(1) + '%' : '';
                       },
                       dropShadow: {
                         enabled: true,
-                        top: 2,
-                        left: 2,
-                        blur: 4,
-                        color: '#000',
-                        opacity: 0.8
+                        top: 3,
+                        left: 3,
+                        blur: 6,
+                        color: '#000000',
+                        opacity: 0.95
                       }
                     },
                     plotOptions: {
