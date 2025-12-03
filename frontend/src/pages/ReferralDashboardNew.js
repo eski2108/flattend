@@ -12,8 +12,12 @@ import {
   IoTrendingUpOutline,
   IoPeopleOutline,
   IoTimeOutline,
-  IoTrophyOutline
+  IoTrophyOutline,
+  IoQrCodeOutline,
+  IoScanOutline,
+  IoPhonePortraitOutline
 } from 'react-icons/io5';
+import QRCode from 'qrcode';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;
