@@ -136,23 +136,53 @@ export default function ReferralDashboardComprehensive() {
     let labels = [];
     let data = [];
 
+    // Use REAL earnings data from backend
+    const earningsHistory = comprehensiveData?.earnings_history || [];
+
     if (period === 'daily') {
+      // Last 7 days
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
         labels.push(date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }));
-        data.push(Math.random() * 50); // Replace with real data
+        
+        // Sum earnings for this day
+        const dayEarnings = earningsHistory
+          .filter(e => e.date && e.date.startsWith(dateStr))
+          .reduce((sum, e) => sum + (e.amount || 0), 0);
+        data.push(dayEarnings);
       }
     } else if (period === 'weekly') {
+      // Last 8 weeks
       for (let i = 7; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - (i * 7));
         labels.push(`Week ${8-i}`);
-        data.push(Math.random() * 150); // Replace with real data
+        
+        // Sum earnings for this week
+        const weekStart = new Date(date);
+        weekStart.setDate(weekStart.getDate() - 7);
+        const weekStartStr = weekStart.toISOString().split('T')[0];
+        const weekEndStr = date.toISOString().split('T')[0];
+        
+        const weekEarnings = earningsHistory
+          .filter(e => e.date && e.date >= weekStartStr && e.date <= weekEndStr)
+          .reduce((sum, e) => sum + (e.amount || 0), 0);
+        data.push(weekEarnings);
       }
     } else {
+      // Last 12 months
       labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      data = Array(12).fill(0).map(() => Math.random() * 500); // Replace with real data
+      const currentYear = new Date().getFullYear();
+      
+      for (let month = 0; month < 12; month++) {
+        const monthStr = `${currentYear}-${String(month + 1).padStart(2, '0')}`;
+        const monthEarnings = earningsHistory
+          .filter(e => e.date && e.date.startsWith(monthStr))
+          .reduce((sum, e) => sum + (e.amount || 0), 0);
+        data.push(monthEarnings);
+      }
     }
 
     return {
