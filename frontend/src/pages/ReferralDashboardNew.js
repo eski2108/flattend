@@ -572,184 +572,435 @@ export default function ReferralDashboardNew() {
           </div>
         )}
 
-        {/* 6. SHARE SECTION */}
+        {/* 6. PREMIUM QR CODE & SHARE SECTION */}
         <div style={{
-          background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
-          borderRadius: '16px',
-          padding: '1.25rem',
-          border: '1px solid rgba(0, 240, 255, 0.3)',
-          marginBottom: '1rem'
+          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(168, 85, 247, 0.08))',
+          borderRadius: '20px',
+          padding: '2rem',
+          border: '2px solid rgba(0, 240, 255, 0.3)',
+          marginBottom: '1rem',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ fontSize: '14px', fontWeight: '700', color: '#00F0FF', marginBottom: '0.5rem' }}>
-            Share Your Link
-          </div>
-          <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '1rem' }}>
-            Every friend who joins with your link earns you lifetime commission.
-          </div>
-
-          {/* Share Icons */}
+          {/* Animated background particles */}
           <div style={{
-            display: 'flex',
-            gap: '0.75rem',
-            marginBottom: '1rem',
-            justifyContent: 'space-around'
-          }}>
-            <button
-              onClick={() => shareVia('whatsapp')}
-              style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '12px',
-                background: '#25D366',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff'
-              }}
-            >
-              <IoLogoWhatsapp size={24} />
-            </button>
-            
-            <button
-              onClick={() => shareVia('telegram')}
-              style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '12px',
-                background: '#0088cc',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: '20px',
-                fontWeight: '700'
-              }}
-            >
-              ✈️
-            </button>
-            
-            <button
-              onClick={() => shareVia('twitter')}
-              style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '12px',
-                background: '#1DA1F2',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff'
-              }}
-            >
-              <IoLogoTwitter size={24} />
-            </button>
-            
-            <button
-              onClick={() => shareVia('facebook')}
-              style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '12px',
-                background: '#1877F2',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff'
-              }}
-            >
-              <IoLogoFacebook size={24} />
-            </button>
-            
-            <button
-              onClick={() => copyToClipboard(referralData?.referral_link, 'link')}
-              style={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '12px',
-                background: copySuccess === 'link' ? '#00FF88' : 'rgba(0, 240, 255, 0.2)',
-                border: '1px solid #00F0FF',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: copySuccess === 'link' ? '#000' : '#00F0FF'
-              }}
-            >
-              {copySuccess === 'link' ? <IoCheckmarkCircleOutline size={24} /> : <IoCopyOutline size={24} />}
-            </button>
-          </div>
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 20% 80%, rgba(0,240,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(168,85,247,0.1) 0%, transparent 50%)',
+            animation: 'float 6s ease-in-out infinite',
+            pointerEvents: 'none'
+          }} />
 
-          {/* Referral Code */}
-          <div style={{ marginBottom: '0.75rem' }}>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px', textTransform: 'uppercase' }}>Your Referral Code</div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(0, 0, 0, 0.3)',
-              padding: '0.75rem',
-              borderRadius: '8px',
-              border: '1px solid rgba(0, 240, 255, 0.2)'
-            }}>
-              <div style={{ flex: 1, color: '#00F0FF', fontSize: '16px', fontWeight: '700' }}>
-                {referralData?.referral_code || 'Loading...'}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+              <div style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 40px rgba(0,240,255,0.6)',
+                animation: 'pulse 2s ease-in-out infinite'
+              }}>
+                <IoQrCodeOutline size={32} style={{ color: '#000' }} />
               </div>
-              <button
-                onClick={() => copyToClipboard(referralData?.referral_code, 'code')}
-                style={{
-                  padding: '8px 16px',
-                  background: copySuccess === 'code' ? '#00FF88' : 'rgba(0, 240, 255, 0.2)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  color: copySuccess === 'code' ? '#000' : '#00F0FF',
-                  cursor: 'pointer',
-                  fontSize: '12px',
+              <div>
+                <h3 style={{
+                  fontSize: '28px',
+                  fontWeight: '900',
+                  background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  margin: 0,
+                  textShadow: '0 0 30px rgba(0,240,255,0.3)'
+                }}>
+                  Share & Earn
+                </h3>
+                <p style={{ 
+                  color: '#A3AEC2', 
+                  fontSize: '16px', 
+                  margin: 0,
                   fontWeight: '600'
-                }}
-              >
-                {copySuccess === 'code' ? '✓' : 'Copy'}
-              </button>
+                }}>
+                  Scan to join • Lifetime commission
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Referral Link */}
-          <div>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px', textTransform: 'uppercase' }}>Your Referral Link</div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(0, 0, 0, 0.3)',
-              padding: '0.75rem',
-              borderRadius: '8px',
-              border: '1px solid rgba(0, 240, 255, 0.2)'
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '300px 1fr', 
+              gap: '2rem', 
+              alignItems: 'center' 
             }}>
-              <div style={{ flex: 1, color: '#00F0FF', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {referralData?.referral_link || 'Loading...'}
+              {/* Premium QR Code Section */}
+              <div style={{
+                background: 'rgba(0,0,0,0.6)',
+                borderRadius: '20px',
+                padding: '2rem',
+                border: '3px solid transparent',
+                backgroundImage: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), linear-gradient(135deg, #00F0FF, #A855F7)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'content-box, border-box',
+                position: 'relative',
+                textAlign: 'center'
+              }}>
+                {/* Scanning animation overlay */}
+                <div style={{
+                  position: 'absolute',
+                  top: '2rem',
+                  left: '2rem',
+                  right: '2rem',
+                  height: '2px',
+                  background: 'linear-gradient(90deg, transparent, #00F0FF, transparent)',
+                  animation: 'scan 3s ease-in-out infinite',
+                  zIndex: 2
+                }} />
+
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '900',
+                  color: '#00F0FF',
+                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '2px',
+                  textShadow: '0 0 20px rgba(0,240,255,0.5)'
+                }}>
+                  SCAN TO JOIN
+                </div>
+
+                {qrCodeUrl ? (
+                  <div style={{ position: 'relative' }}>
+                    <img 
+                      src={qrCodeUrl} 
+                      alt="Referral QR Code" 
+                      style={{
+                        width: '200px',
+                        height: '200px',
+                        borderRadius: '12px',
+                        border: '2px solid rgba(0,240,255,0.3)',
+                        boxShadow: '0 0 30px rgba(0,240,255,0.3)',
+                        background: '#0a0b1a'
+                      }}
+                    />
+                    {/* Corner decorations */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '-5px',
+                      left: '-5px',
+                      width: '30px',
+                      height: '30px',
+                      border: '3px solid #00F0FF',
+                      borderRight: 'none',
+                      borderBottom: 'none',
+                      borderRadius: '8px 0 0 0'
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      top: '-5px',
+                      right: '-5px',
+                      width: '30px',
+                      height: '30px',
+                      border: '3px solid #00F0FF',
+                      borderLeft: 'none',
+                      borderBottom: 'none',
+                      borderRadius: '0 8px 0 0'
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-5px',
+                      left: '-5px',
+                      width: '30px',
+                      height: '30px',
+                      border: '3px solid #00F0FF',
+                      borderRight: 'none',
+                      borderTop: 'none',
+                      borderRadius: '0 0 0 8px'
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-5px',
+                      right: '-5px',
+                      width: '30px',
+                      height: '30px',
+                      border: '3px solid #00F0FF',
+                      borderLeft: 'none',
+                      borderTop: 'none',
+                      borderRadius: '0 0 8px 0'
+                    }} />
+                  </div>
+                ) : (
+                  <div style={{
+                    width: '200px',
+                    height: '200px',
+                    borderRadius: '12px',
+                    border: '2px dashed rgba(0,240,255,0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#00F0FF',
+                    fontSize: '14px',
+                    fontWeight: '600'
+                  }}>
+                    Generating QR...
+                  </div>
+                )}
+
+                <div style={{
+                  fontSize: '14px',
+                  color: '#A855F7',
+                  marginTop: '1rem',
+                  fontWeight: '700',
+                  textShadow: '0 0 15px rgba(168,85,247,0.5)'
+                }}>
+                  Point camera here
+                </div>
               </div>
-              <button
-                onClick={() => copyToClipboard(referralData?.referral_link, 'link')}
-                style={{
-                  padding: '8px 16px',
-                  background: copySuccess === 'link' ? '#00FF88' : 'rgba(0, 240, 255, 0.2)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  color: copySuccess === 'link' ? '#000' : '#00F0FF',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: '600'
-                }}
-              >
-                {copySuccess === 'link' ? '✓' : 'Copy'}
-              </button>
+
+              {/* Share Options & Links */}
+              <div>
+                {/* Social Share Buttons */}
+                <div style={{ marginBottom: '2rem' }}>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '900',
+                    color: '#FFFFFF',
+                    marginBottom: '1rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
+                  }}>
+                    Share on Social Media
+                  </div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    gap: '1rem'
+                  }}>
+                    <button
+                      onClick={() => shareVia('whatsapp')}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '16px',
+                        background: 'linear-gradient(135deg, #25D366, #128C7E)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        boxShadow: '0 8px 32px rgba(37,211,102,0.4)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      <IoLogoWhatsapp size={28} />
+                    </button>
+                    
+                    <button
+                      onClick={() => shareVia('telegram')}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '16px',
+                        background: 'linear-gradient(135deg, #0088cc, #005577)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        boxShadow: '0 8px 32px rgba(0,136,204,0.4)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      ✈️
+                    </button>
+                    
+                    <button
+                      onClick={() => shareVia('twitter')}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '16px',
+                        background: 'linear-gradient(135deg, #1DA1F2, #0d8bd9)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        boxShadow: '0 8px 32px rgba(29,161,242,0.4)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      <IoLogoTwitter size={28} />
+                    </button>
+                    
+                    <button
+                      onClick={() => shareVia('facebook')}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '16px',
+                        background: 'linear-gradient(135deg, #1877F2, #166fe5)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        boxShadow: '0 8px 32px rgba(24,119,242,0.4)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      <IoLogoFacebook size={28} />
+                    </button>
+                    
+                    <button
+                      onClick={() => copyToClipboard(referralData?.referral_link, 'link')}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '16px',
+                        background: copySuccess === 'link' ? 'linear-gradient(135deg, #00FF88, #00cc6a)' : 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#000',
+                        boxShadow: copySuccess === 'link' ? '0 8px 32px rgba(0,255,136,0.4)' : '0 8px 32px rgba(0,240,255,0.4)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      {copySuccess === 'link' ? <IoCheckmarkCircleOutline size={28} /> : <IoCopyOutline size={28} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Referral Code */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{
+                    fontSize: '14px',
+                    color: '#A3AEC2',
+                    marginBottom: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    fontWeight: '700'
+                  }}>
+                    Your Referral Code
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    background: 'rgba(0,0,0,0.4)',
+                    padding: '1rem',
+                    borderRadius: '12px',
+                    border: '2px solid rgba(0,240,255,0.3)'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      fontSize: '20px',
+                      fontWeight: '900',
+                      background: 'linear-gradient(135deg, #00F0FF, #FFFFFF)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: '0 0 20px rgba(0,240,255,0.5)'
+                    }}>
+                      {referralData?.referral_code || 'Loading...'}
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(referralData?.referral_code, 'code')}
+                      style={{
+                        padding: '12px 20px',
+                        background: copySuccess === 'code' ? 'linear-gradient(135deg, #00FF88, #00cc6a)' : 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#000',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '900',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        boxShadow: '0 4px 16px rgba(0,240,255,0.3)'
+                      }}
+                    >
+                      {copySuccess === 'code' ? '✓ COPIED' : 'COPY'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Referral Link */}
+                <div>
+                  <div style={{
+                    fontSize: '14px',
+                    color: '#A3AEC2',
+                    marginBottom: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    fontWeight: '700'
+                  }}>
+                    Your Referral Link
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    background: 'rgba(0,0,0,0.4)',
+                    padding: '1rem',
+                    borderRadius: '12px',
+                    border: '2px solid rgba(168,85,247,0.3)'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      color: '#A855F7',
+                      fontSize: '14px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      fontWeight: '600'
+                    }}>
+                      {referralData?.referral_link || 'Loading...'}
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(referralData?.referral_link, 'link')}
+                      style={{
+                        padding: '12px 20px',
+                        background: copySuccess === 'link' ? 'linear-gradient(135deg, #00FF88, #00cc6a)' : 'linear-gradient(135deg, #A855F7, #00F0FF)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#000',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '900',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        boxShadow: '0 4px 16px rgba(168,85,247,0.3)'
+                      }}
+                    >
+                      {copySuccess === 'link' ? '✓ COPIED' : 'COPY'}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
