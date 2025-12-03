@@ -24414,6 +24414,188 @@ async def update_admin_liquidity(request: dict):
             "message": str(e)
         }
 
+# ==================== LIQUIDITY SAFETY & NOWPAYMENTS ====================
+
+@api_router.post("/webhooks/nowpayments")
+async def nowpayments_webhook(request: dict):
+    """
+    NOWPayments webhook for automatic deposit crediting.
+    🔒 Automatically credits admin liquidity when deposits are confirmed.
+    """
+    try:
+        from nowpayments_real_sync import NOWPaymentsRealSync
+        
+        api_key = os.getenv("NOWPAYMENTS_API_KEY")
+        if not api_key:
+            logger.warning("NOWPayments webhook called but API key not configured")
+            return {"success": False, "message": "NOWPayments not configured"}
+        
+        sync = NOWPaymentsRealSync(db, api_key)
+        result = await sync.process_webhook(request, verify_signature=False)
+        
+        return result
+    except Exception as e:
+        logger.error(f"NOWPayments webhook error: {str(e)}")
+        return {"success": False, "message": str(e)}
+
+@api_router.get("/admin/liquidity-sync-mode")
+async def get_liquidity_sync_mode():
+    """Get current liquidity sync mode (manual vs NOWPayments)"""
+    try:
+        settings = await db.platform_settings.find_one({}, {"_id": 0})
+        
+        use_real_sync = settings.get("use_real_liquidity_sync", False) if settings else False
+        nowpayments_enabled = bool(os.getenv("NOWPAYMENTS_API_KEY"))
+        
+        return {
+            "success": True,
+            "use_real_sync": use_real_sync,
+            "nowpayments_enabled": nowpayments_enabled,
+            "nowpayments_configured": nowpayments_enabled
+        }
+    except Exception as e:
+        logger.error(f"Error getting sync mode: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@api_router.post("/admin/toggle-real-sync")
+async def toggle_real_liquidity_sync(request: dict):
+    """Toggle between manual and real NOWPayments sync"""
+    try:
+        enable = request.get("enable", False)
+        
+        # Check if NOWPayments is configured
+        if enable and not os.getenv("NOWPAYMENTS_API_KEY"):
+            return {
+                "success": False,
+                "message": "NOWPayments API key not configured. Set NOWPAYMENTS_API_KEY environment variable."
+            }
+        
+        # Update platform settings
+        await db.platform_settings.update_one(
+            {},
+            {
+                "$set": {
+                    "use_real_liquidity_sync": enable,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        mode = "REAL NOWPayments Sync" if enable else "Manual Entry"
+        logger.info(f"✅ Liquidity sync mode changed to: {mode}")
+        
+        return {
+            "success": True,
+            "message": f"Switched to {mode}",
+            "use_real_sync": enable
+        }
+    except Exception as e:
+        logger.error(f"Error toggling sync mode: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@api_router.get("/admin/liquidity-status")
+async def get_liquidity_status():
+    """Get current liquidity status for all currencies"""
+    try:
+        from liquidity_checker import LiquidityChecker
+        
+        checker = LiquidityChecker(db)
+        result = await checker.get_liquidity_status()
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting liquidity status: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@api_router.get("/admin/liquidity-blocks")
+async def get_recent_liquidity_blocks(limit: int = 50):
+    """Get recent blocked operations due to insufficient liquidity"""
+    try:
+        from liquidity_checker import LiquidityChecker
+        
+        checker = LiquidityChecker(db)
+        result = await checker.get_recent_blocks(limit)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting liquidity blocks: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@api_router.post("/admin/nowpayments/verify")
+async def verify_nowpayments_key():
+    """Verify NOWPayments API key"""
+    try:
+        from nowpayments_real_sync import NOWPaymentsRealSync
+        
+        api_key = os.getenv("NOWPAYMENTS_API_KEY")
+        if not api_key:
+            return {
+                "success": False,
+                "message": "NOWPAYMENTS_API_KEY not set in environment variables"
+            }
+        
+        sync = NOWPaymentsRealSync(db, api_key)
+        result = await sync.verify_api_key()
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error verifying NOWPayments key: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@api_router.post("/admin/nowpayments/generate-addresses")
+async def generate_nowpayments_addresses():
+    """Generate real deposit addresses for all currencies via NOWPayments"""
+    try:
+        from nowpayments_real_sync import NOWPaymentsRealSync
+        
+        api_key = os.getenv("NOWPAYMENTS_API_KEY")
+        if not api_key:
+            return {
+                "success": False,
+                "message": "NOWPAYMENTS_API_KEY not configured"
+            }
+        
+        sync = NOWPaymentsRealSync(db, api_key)
+        result = await sync.generate_all_addresses()
+        
+        if result["success"]:
+            # Store addresses in database
+            await db.admin_deposit_addresses.update_one(
+                {"admin_id": "admin_liquidity"},
+                {
+                    "$set": {
+                        "addresses": result["addresses"],
+                        "source": "nowpayments",
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }
+                },
+                upsert=True
+            )
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error generating NOWPayments addresses: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
 # Include the API router in the main FastAPI app
 # This registers all endpoints defined above with the /api prefix
 app.include_router(api_router)
