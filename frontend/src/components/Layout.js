@@ -183,7 +183,7 @@ export default function Layout({ children }) {
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
-                {/* Android Button - PREMIUM */}
+                {/* Android Button - PREMIUM VIBRANT */}
                 <button
                   onClick={() => window.open('/api/download-app', '_blank')}
                   style={{
@@ -192,18 +192,20 @@ export default function Layout({ children }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '0.75rem',
-                    padding: '0.875rem 1rem',
-                    background: 'linear-gradient(135deg, #00F0FF 0%, #00D4E6 100%)',
-                    border: '2px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '12px',
-                    fontSize: '13px',
+                    padding: '1rem 1.25rem',
+                    background: 'linear-gradient(135deg, #00F0FF 0%, #00D4E6 50%, #00C4D6 100%)',
+                    border: '3px solid rgba(0, 240, 255, 0.4)',
+                    borderRadius: '14px',
+                    fontSize: '14px',
                     fontWeight: '900',
                     color: '#000000',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 15px rgba(0, 240, 255, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 6px 20px rgba(0, 240, 255, 0.5), 0 0 30px rgba(0, 240, 255, 0.3), inset 0 2px 12px rgba(255, 255, 255, 0.3)',
                     textTransform: 'uppercase',
-                    letterSpacing: '1px'
+                    letterSpacing: '1.5px',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
