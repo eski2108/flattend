@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://p2p-repair.preview.emergentagent.com
+**URL:** https://coinfix.preview.emergentagent.com
 
 **Services Status:**
 ```bash
