@@ -49,6 +49,7 @@ export default function SpotTrading() {
   // Update market stats when pair changes
   useEffect(() => {
     if (selectedPair) {
+      localStorage.setItem('spotTradingPair', selectedPair);
       fetchMarketStats();
       fetchLiquidity();
       loadTradingViewChart();
