@@ -409,9 +409,9 @@ export default function SpotTrading() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: '2px',
+                height: '1px',
                 background: 'linear-gradient(90deg, #00F0FF, #FFD700, #A855F7)',
-                borderRadius: '2px'
+                borderRadius: '1px'
               }}></div>
             </h1>
             <div style={{ 
