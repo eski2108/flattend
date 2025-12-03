@@ -142,7 +142,7 @@ const AdminLiquidityManager = () => {
             border: `1px solid ${message.type === 'success' ? '#00FF88' : '#FF6B6B'}`,
             color: message.type === 'success' ? '#00FF88' : '#FF6B6B'
           }}>
-            {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+            {message.type === 'success' ? '✅' : '⚠️'}
             {message.text}
           </div>
         )}
