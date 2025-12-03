@@ -53,6 +53,92 @@ const AdminLiquidityManager = () => {
     }
   };
 
+  const fetchSyncMode = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/liquidity-sync-mode`);
+      const data = await response.json();
+      if (data.success) {
+        setRealSyncMode(data.use_real_sync);
+        setNowpaymentsEnabled(data.nowpayments_enabled);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sync mode:', error);
+    }
+  };
+
+  const fetchLiquidityBlocks = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/liquidity-blocks?limit=10`);
+      const data = await response.json();
+      if (data.success) {
+        setLiquidityBlocks(data.blocks || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch liquidity blocks:', error);
+    }
+  };
+
+  const toggleSyncMode = async () => {
+    setUpdating(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/toggle-real-sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enable: !realSyncMode })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setRealSyncMode(!realSyncMode);
+        setMessage({ type: 'success', text: data.message });
+      } else {
+        setMessage({ type: 'error', text: data.message });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to toggle sync mode' });
+    }
+    setUpdating(false);
+    setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+  };
+
+  const verifyNOWPayments = async () => {
+    setUpdating(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/nowpayments/verify`, {
+        method: 'POST'
+      });
+      const data = await response.json();
+      if (data.success) {
+        setMessage({ type: 'success', text: '✅ NOWPayments API key verified!' });
+      } else {
+        setMessage({ type: 'error', text: `❌ ${data.message}` });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Verification failed' });
+    }
+    setUpdating(false);
+    setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+  };
+
+  const generateNOWPaymentsAddresses = async () => {
+    setUpdating(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/nowpayments/generate-addresses`, {
+        method: 'POST'
+      });
+      const data = await response.json();
+      if (data.success) {
+        setMessage({ type: 'success', text: `✅ Generated ${data.count} real deposit addresses!` });
+        fetchDepositAddresses();
+      } else {
+        setMessage({ type: 'error', text: data.message });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Address generation failed' });
+    }
+    setUpdating(false);
+    setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+  };
+
   const handleUpdateBalance = async (currency) => {
     setUpdating(true);
     try {
