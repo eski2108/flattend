@@ -313,6 +313,118 @@ export default function ReferralDashboardNew() {
             </div>
           </div>
 
+          {/* 🌟 GOLDEN TIER UPGRADE SECTION */}
+          {referralData?.tier?.toLowerCase() !== 'golden' && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%)',
+              border: '2px solid rgba(255, 215, 0, 0.5)',
+              borderRadius: '20px',
+              padding: '2rem',
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 0 60px rgba(255, 215, 0, 0.3)'
+            }}>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
+                  <span style={{ fontSize: '32px' }}>🏆</span>
+                  <h3 style={{
+                    fontSize: '24px',
+                    fontWeight: '900',
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}>
+                    Upgrade to GOLDEN TIER
+                  </h3>
+                </div>
+                
+                <p style={{ color: '#FFD700', fontSize: '18px', marginBottom: '0.5rem', fontWeight: '700' }}>
+                  Unlock <span style={{ fontSize: '24px' }}>50% COMMISSION</span> on ALL referrals!
+                </p>
+                
+                <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '14px', marginBottom: '1.5rem' }}>
+                  2.5x MORE earnings than standard tier!
+                </p>
+
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(255, 215, 0, 0.1))',
+                  border: '2px solid rgba(255, 215, 0, 0.6)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '1rem'
+                }}>
+                  <div>
+                    <div style={{ color: '#FFD700', fontSize: '14px', marginBottom: '0.5rem', fontWeight: '700' }}>
+                      One-Time Payment
+                    </div>
+                    <div style={{
+                      fontSize: '48px',
+                      fontWeight: '900',
+                      background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    }}>
+                      £150
+                    </div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                      Lifetime 50% • No recurring fees
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={async () => {
+                      try {
+                        const response = await axios.post(`${API}/api/referrals/purchase-vip`, {
+                          user_id: user.user_id
+                        });
+                        
+                        if (response.data.success) {
+                          toast.success('🎉 Upgraded to GOLDEN TIER! You now earn 50% commission!');
+                          fetchReferralData();
+                        } else {
+                          toast.error(response.data.message || 'Upgrade failed');
+                        }
+                      } catch (error) {
+                        console.error('Golden tier upgrade error:', error);
+                        toast.error(error.response?.data?.detail || 'Failed to upgrade');
+                      }
+                    }}
+                    style={{
+                      padding: '16px 40px',
+                      background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                      border: '2px solid rgba(255, 255, 255, 0.3)',
+                      borderRadius: '12px',
+                      color: '#000',
+                      fontSize: '16px',
+                      fontWeight: '900',
+                      cursor: 'pointer',
+                      boxShadow: '0 0 40px rgba(255, 215, 0, 0.8)',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
+                      e.currentTarget.style.boxShadow = '0 0 60px rgba(255, 215, 0, 1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                      e.currentTarget.style.boxShadow = '0 0 40px rgba(255, 215, 0, 0.8)';
+                    }}
+                  >
+                    🏆 Upgrade Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Referral Link Card */}
           <div style={{
             background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
