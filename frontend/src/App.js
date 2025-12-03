@@ -187,6 +187,7 @@ function App() {
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/admin-liquidity" element={<AdminLiquidity />} />
+            <Route path="/admin/liquidity-manager" element={<AdminLiquidityManager />} />
             <Route path="/manager-settings" element={<ManagerSettings />} />
             <Route path="/p2p/merchant" element={<MerchantCenter />} />
             <Route path="/p2p/create-ad" element={<CreateAd />} />
