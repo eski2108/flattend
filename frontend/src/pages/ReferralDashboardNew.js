@@ -398,80 +398,239 @@ export default function ReferralDashboardNew() {
           </p>
         </div>
 
-      {/* Stats Cards */}
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '1.5rem',
-        marginBottom: '2rem'
-      }}>
-        {/* Total Earned */}
+        {/* Premium Stats Cards */}
         <div style={{
-          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(168, 85, 247, 0.1))',
-          borderRadius: '20px',
-          padding: '1.5rem',
-          border: '2px solid rgba(0, 240, 255, 0.3)',
-          boxShadow: '0 8px 32px rgba(0, 240, 255, 0.2)'
+          maxWidth: '1400px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '2rem',
+          marginBottom: '3rem',
+          position: 'relative',
+          zIndex: 1
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-            <IoTrendingUpOutline size={28} color="#00F0FF" />
-            <span style={{ color: '#888', fontSize: '14px', fontWeight: '600' }}>TOTAL EARNED</span>
+          {/* Total Earned - Premium */}
+          <div className="premium-card" style={{
+            background: `
+              linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.1)),
+              linear-gradient(45deg, transparent 30%, rgba(0, 240, 255, 0.05) 50%, transparent 70%)
+            `,
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            padding: '2rem',
+            border: '2px solid rgba(0, 240, 255, 0.4)',
+            boxShadow: '0 8px 32px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Sparkle Effects */}
+            {animatedStats.total_earned > 0 && (
+              <>
+                <IoSparklesOutline 
+                  size={20} 
+                  color="#00F0FF" 
+                  className="sparkle-effect"
+                  style={{ position: 'absolute', top: '1rem', right: '1rem' }}
+                />
+                <IoSparklesOutline 
+                  size={16} 
+                  color="#A855F7" 
+                  className="sparkle-effect"
+                  style={{ 
+                    position: 'absolute', 
+                    bottom: '1rem', 
+                    left: '1rem',
+                    animationDelay: '1s'
+                  }}
+                />
+              </>
+            )}
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+              <div className="floating-icon">
+                <IoTrendingUpOutline size={32} color="#00F0FF" />
+              </div>
+              <span style={{ 
+                color: 'rgba(255, 255, 255, 0.8)', 
+                fontSize: '14px', 
+                fontWeight: '700',
+                letterSpacing: '1px'
+              }}>
+                TOTAL EARNED
+              </span>
+            </div>
+            <div style={{ 
+              fontSize: '40px', 
+              fontWeight: '900', 
+              background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 30px rgba(0, 240, 255, 0.5)'
+            }}>
+              £{animatedStats.total_earned.toFixed(2)}
+            </div>
+            {animatedStats.total_earned > 100 && (
+              <IoRocketOutline 
+                size={24} 
+                color="#FFD700" 
+                style={{ 
+                  position: 'absolute',
+                  bottom: '1rem',
+                  right: '1rem',
+                  animation: 'rocket-fly 2s ease-in-out infinite'
+                }}
+              />
+            )}
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>
-            £{stats.total_earned.toFixed(2)}
-          </div>
-        </div>
 
-        {/* Completed Commissions */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1))',
-          borderRadius: '20px',
-          padding: '1.5rem',
-          border: '2px solid rgba(34, 197, 94, 0.3)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-            <IoCheckmarkCircleOutline size={28} color="#22C55E" />
-            <span style={{ color: '#888', fontSize: '14px', fontWeight: '600' }}>COMPLETED</span>
+          {/* Completed Commissions - Premium */}
+          <div className="premium-card" style={{
+            background: `
+              linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.1)),
+              linear-gradient(45deg, transparent 30%, rgba(34, 197, 94, 0.05) 50%, transparent 70%)
+            `,
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            padding: '2rem',
+            border: '2px solid rgba(34, 197, 94, 0.4)',
+            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+              <div className="floating-icon">
+                <IoCheckmarkCircleOutline size={32} color="#22C55E" />
+              </div>
+              <span style={{ 
+                color: 'rgba(255, 255, 255, 0.8)', 
+                fontSize: '14px', 
+                fontWeight: '700',
+                letterSpacing: '1px'
+              }}>
+                COMPLETED
+              </span>
+            </div>
+            <div style={{ 
+              fontSize: '40px', 
+              fontWeight: '900', 
+              color: '#22C55E',
+              textShadow: '0 0 20px rgba(34, 197, 94, 0.5)'
+            }}>
+              {animatedStats.completed}
+            </div>
+            {/* Progress indicator */}
+            <div style={{
+              position: 'absolute',
+              bottom: '0',
+              left: '0',
+              width: `${Math.min((animatedStats.completed / 10) * 100, 100)}%`,
+              height: '4px',
+              background: 'linear-gradient(90deg, #22C55E, #10B981)',
+              borderRadius: '0 0 24px 24px',
+              transition: 'width 2s ease-out'
+            }} />
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>
-            {stats.completed}
-          </div>
-        </div>
 
-        {/* Pending Commissions */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1))',
-          borderRadius: '20px',
-          padding: '1.5rem',
-          border: '2px solid rgba(251, 191, 36, 0.3)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-            <IoHourglassOutline size={28} color="#FBBF24" />
-            <span style={{ color: '#888', fontSize: '14px', fontWeight: '600' }}>PENDING</span>
+          {/* Pending Commissions - Premium */}
+          <div className="premium-card" style={{
+            background: `
+              linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1)),
+              linear-gradient(45deg, transparent 30%, rgba(251, 191, 36, 0.05) 50%, transparent 70%)
+            `,
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            padding: '2rem',
+            border: '2px solid rgba(251, 191, 36, 0.4)',
+            boxShadow: '0 8px 32px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+              <div className="floating-icon">
+                <IoHourglassOutline size={32} color="#FBBF24" />
+              </div>
+              <span style={{ 
+                color: 'rgba(255, 255, 255, 0.8)', 
+                fontSize: '14px', 
+                fontWeight: '700',
+                letterSpacing: '1px'
+              }}>
+                PENDING
+              </span>
+            </div>
+            <div style={{ 
+              fontSize: '40px', 
+              fontWeight: '900', 
+              color: '#FBBF24',
+              textShadow: '0 0 20px rgba(251, 191, 36, 0.5)'
+            }}>
+              {animatedStats.pending}
+            </div>
+            {/* Pulsing indicator for pending */}
+            {animatedStats.pending > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                width: '12px',
+                height: '12px',
+                background: '#FBBF24',
+                borderRadius: '50%',
+                animation: 'glow-pulse 2s ease-in-out infinite'
+              }} />
+            )}
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '900', color: '#FBBF24' }}>
-            {stats.pending}
-          </div>
-        </div>
 
-        {/* This Month */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.1))',
-          borderRadius: '20px',
-          padding: '1.5rem',
-          border: '2px solid rgba(168, 85, 247, 0.3)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-            <IoTimeOutline size={28} color="#A855F7" />
-            <span style={{ color: '#888', fontSize: '14px', fontWeight: '600' }}>THIS MONTH</span>
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>
-            £{stats.this_month.toFixed(2)}
+          {/* This Month - Premium */}
+          <div className="premium-card" style={{
+            background: `
+              linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(139, 92, 246, 0.1)),
+              linear-gradient(45deg, transparent 30%, rgba(168, 85, 247, 0.05) 50%, transparent 70%)
+            `,
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            padding: '2rem',
+            border: '2px solid rgba(168, 85, 247, 0.4)',
+            boxShadow: '0 8px 32px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+              <div className="floating-icon">
+                <IoTimeOutline size={32} color="#A855F7" />
+              </div>
+              <span style={{ 
+                color: 'rgba(255, 255, 255, 0.8)', 
+                fontSize: '14px', 
+                fontWeight: '700',
+                letterSpacing: '1px'
+              }}>
+                THIS MONTH
+              </span>
+            </div>
+            <div style={{ 
+              fontSize: '40px', 
+              fontWeight: '900', 
+              background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 20px rgba(168, 85, 247, 0.5)'
+            }}>
+              £{animatedStats.this_month.toFixed(2)}
+            </div>
+            {/* Monthly progress bar */}
+            <div style={{
+              position: 'absolute',
+              bottom: '0',
+              left: '0',
+              width: `${Math.min((new Date().getDate() / 31) * 100, 100)}%`,
+              height: '4px',
+              background: 'linear-gradient(90deg, #A855F7, #8B5CF6)',
+              borderRadius: '0 0 24px 24px',
+              transition: 'width 1s ease-out'
+            }} />
           </div>
         </div>
-      </div>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         {/* Left Column */}
