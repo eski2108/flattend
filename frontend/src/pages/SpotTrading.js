@@ -331,11 +331,7 @@ export default function SpotTrading() {
             border: '1px solid rgba(0, 240, 255, 0.2)'
           }}>
             <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px', fontWeight: '700' }}>SELECT TRADING PAIR</div>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', 
-              gap: '10px'
-            }}>
+            <div className="trading-pair-grid">
               {tradingPairs.map(pair => (
                 <button
                   key={pair.symbol}
