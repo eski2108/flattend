@@ -774,117 +774,241 @@ export default function ReferralDashboardNew() {
               </div>
             </div>
 
-          {/* 🌟 GOLDEN TIER UPGRADE SECTION */}
-          {referralData?.tier?.toLowerCase() !== 'golden' && (
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%)',
-              border: '2px solid rgba(255, 215, 0, 0.5)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 0 60px rgba(255, 215, 0, 0.3)'
-            }}>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                  <span style={{ fontSize: '32px' }}>🏆</span>
-                  <h3 style={{
-                    fontSize: '24px',
-                    fontWeight: '900',
-                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                  }}>
-                    Upgrade to GOLDEN TIER
-                  </h3>
-                </div>
-                
-                <p style={{ color: '#FFD700', fontSize: '18px', marginBottom: '0.5rem', fontWeight: '700' }}>
-                  Unlock <span style={{ fontSize: '24px' }}>50% COMMISSION</span> on ALL referrals!
-                </p>
-                
-                <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '14px', marginBottom: '1.5rem' }}>
-                  2.5x MORE earnings than standard tier!
-                </p>
-
+            {/* 🌟 ULTRA-PREMIUM GOLDEN TIER UPGRADE SECTION */}
+            {referralData?.tier?.toLowerCase() !== 'golden' && (
+              <div 
+                className="golden-upgrade"
+                onMouseEnter={() => setUpgradeHover(true)}
+                onMouseLeave={() => setUpgradeHover(false)}
+                style={{
+                  background: `
+                    radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(255, 165, 0, 0.2) 0%, transparent 50%),
+                    linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%)
+                  `,
+                  border: '3px solid rgba(255, 215, 0, 0.6)',
+                  borderRadius: '28px',
+                  padding: '3rem',
+                  marginBottom: '2rem',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: `
+                    0 0 80px rgba(255, 215, 0, 0.4),
+                    0 20px 60px rgba(255, 165, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2)
+                  `,
+                  backdropFilter: 'blur(20px)',
+                  transform: upgradeHover ? 'scale(1.02)' : 'scale(1)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                {/* Rotating Golden Ring Effect */}
                 <div style={{
-                  background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(255, 215, 0, 0.1))',
-                  border: '2px solid rgba(255, 215, 0, 0.6)',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '1rem'
-                }}>
-                  <div>
-                    <div style={{ color: '#FFD700', fontSize: '14px', marginBottom: '0.5rem', fontWeight: '700' }}>
-                      One-Time Payment
-                    </div>
+                  position: 'absolute',
+                  top: '-50px',
+                  right: '-50px',
+                  width: '200px',
+                  height: '200px',
+                  border: '4px solid rgba(255, 215, 0, 0.3)',
+                  borderTop: '4px solid #FFD700',
+                  borderRadius: '50%',
+                  animation: 'golden-rotate 8s linear infinite'
+                }} />
+                
+                {/* Floating Particles */}
+                {upgradeHover && [...Array(8)].map((_, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      position: 'absolute',
+                      width: '6px',
+                      height: '6px',
+                      background: '#FFD700',
+                      borderRadius: '50%',
+                      left: Math.random() * 100 + '%',
+                      top: Math.random() * 100 + '%',
+                      animation: `particle-float ${Math.random() * 3 + 2}s ease-out infinite`,
+                      animationDelay: Math.random() * 2 + 's'
+                    }}
+                  />
+                ))}
+                
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '16px', 
+                    marginBottom: '1.5rem' 
+                  }}>
                     <div style={{
                       fontSize: '48px',
-                      fontWeight: '900',
-                      background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent'
+                      animation: 'crown-glow 2s ease-in-out infinite'
                     }}>
-                      £150
+                      🏆
                     </div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
-                      Lifetime 50% • No recurring fees
-                    </div>
+                    <h3 style={{
+                      fontSize: '32px',
+                      fontWeight: '900',
+                      background: 'linear-gradient(135deg, #FFD700, #FFA500, #FFD700)',
+                      backgroundSize: '200% 200%',
+                      animation: 'gradient-shift 3s ease infinite',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: '0 0 30px rgba(255, 215, 0, 0.8)'
+                    }}>
+                      Upgrade to GOLDEN TIER
+                    </h3>
+                    <IoTrophyOutline 
+                      size={32} 
+                      color="#FFD700" 
+                      className="floating-icon"
+                    />
+                  </div>
+                  
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1))',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    marginBottom: '2rem',
+                    border: '2px solid rgba(255, 215, 0, 0.3)'
+                  }}>
+                    <p style={{ 
+                      color: '#FFD700', 
+                      fontSize: '24px', 
+                      marginBottom: '0.5rem', 
+                      fontWeight: '900',
+                      textAlign: 'center'
+                    }}>
+                      Unlock <span style={{ 
+                        fontSize: '32px',
+                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                      }}>50% COMMISSION</span> on ALL referrals! ✨
+                    </p>
+                    
+                    <p style={{ 
+                      color: 'rgba(255, 255, 255, 0.9)', 
+                      fontSize: '16px', 
+                      textAlign: 'center',
+                      fontWeight: '600'
+                    }}>
+                      🚀 2.5x MORE earnings than standard tier!
+                    </p>
                   </div>
 
-                  <button
-                    onClick={async () => {
-                      try {
-                        const response = await axios.post(`${API}/api/referrals/purchase-vip`, {
-                          user_id: user.user_id
-                        });
-                        
-                        if (response.data.success) {
-                          toast.success('🎉 Upgraded to GOLDEN TIER! You now earn 50% commission!');
-                          fetchReferralData();
-                        } else {
-                          toast.error(response.data.message || 'Upgrade failed');
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(255, 215, 0, 0.1))',
+                    backdropFilter: 'blur(15px)',
+                    border: '2px solid rgba(255, 215, 0, 0.6)',
+                    borderRadius: '20px',
+                    padding: '2rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '2rem'
+                  }}>
+                    <div>
+                      <div style={{ 
+                        color: '#FFD700', 
+                        fontSize: '16px', 
+                        marginBottom: '0.5rem', 
+                        fontWeight: '700',
+                        letterSpacing: '1px'
+                      }}>
+                        💎 One-Time Payment
+                      </div>
+                      <div style={{
+                        fontSize: '56px',
+                        fontWeight: '900',
+                        background: 'linear-gradient(135deg, #FFD700, #FFA500, #FFD700)',
+                        backgroundSize: '200% 200%',
+                        animation: 'gradient-shift 3s ease infinite',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 0 40px rgba(255, 215, 0, 0.8)'
+                      }}>
+                        £150
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.8)', 
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}>
+                        ⭐ Lifetime 50% • No recurring fees
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={async () => {
+                        try {
+                          const response = await axios.post(`${API}/api/referrals/purchase-vip`, {
+                            user_id: user.user_id
+                          });
+                          
+                          if (response.data.success) {
+                            toast.success('🎉 Upgraded to GOLDEN TIER! You now earn 50% commission!');
+                            fetchReferralData();
+                          } else {
+                            toast.error(response.data.message || 'Upgrade failed');
+                          }
+                        } catch (error) {
+                          console.error('Golden tier upgrade error:', error);
+                          toast.error(error.response?.data?.detail || 'Failed to upgrade');
                         }
-                      } catch (error) {
-                        console.error('Golden tier upgrade error:', error);
-                        toast.error(error.response?.data?.detail || 'Failed to upgrade');
-                      }
-                    }}
-                    style={{
-                      padding: '16px 40px',
-                      background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-                      border: '2px solid rgba(255, 255, 255, 0.3)',
-                      borderRadius: '12px',
-                      color: '#000',
-                      fontSize: '16px',
-                      fontWeight: '900',
-                      cursor: 'pointer',
-                      boxShadow: '0 0 40px rgba(255, 215, 0, 0.8)',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
-                      e.currentTarget.style.boxShadow = '0 0 60px rgba(255, 215, 0, 1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                      e.currentTarget.style.boxShadow = '0 0 40px rgba(255, 215, 0, 0.8)';
-                    }}
-                  >
-                    🏆 Upgrade Now
-                  </button>
+                      }}
+                      style={{
+                        padding: '20px 50px',
+                        background: `
+                          linear-gradient(135deg, #FFD700, #FFA500, #FFD700),
+                          linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%)
+                        `,
+                        backgroundSize: '200% 200%, 100% 100%',
+                        animation: 'gradient-shift 3s ease infinite',
+                        border: '3px solid rgba(255, 255, 255, 0.4)',
+                        borderRadius: '16px',
+                        color: '#000',
+                        fontSize: '18px',
+                        fontWeight: '900',
+                        cursor: 'pointer',
+                        boxShadow: `
+                          0 0 60px rgba(255, 215, 0, 0.8),
+                          0 10px 30px rgba(255, 165, 0, 0.6),
+                          inset 0 1px 0 rgba(255, 255, 255, 0.3)
+                        `,
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)';
+                        e.currentTarget.style.boxShadow = `
+                          0 0 80px rgba(255, 215, 0, 1),
+                          0 20px 40px rgba(255, 165, 0, 0.8),
+                          inset 0 1px 0 rgba(255, 255, 255, 0.4)
+                        `;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                        e.currentTarget.style.boxShadow = `
+                          0 0 60px rgba(255, 215, 0, 0.8),
+                          0 10px 30px rgba(255, 165, 0, 0.6),
+                          inset 0 1px 0 rgba(255, 255, 255, 0.3)
+                        `;
+                      }}
+                    >
+                      <IoTrophyOutline size={24} />
+                      🏆 UPGRADE NOW
+                      <IoSparklesOutline size={20} className="sparkle-effect" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Referral Link Card */}
           <div style={{
