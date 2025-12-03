@@ -12415,7 +12415,24 @@ async def get_user_crypto_transactions(user_id: str, limit: int = 100):
             })
         
         # Sort all transactions by date (newest first)
-        all_transactions.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        # Handle both string and datetime objects
+        def get_sort_key(tx):
+            created_at = tx.get("created_at", "")
+            if isinstance(created_at, str):
+                # Try to parse string dates
+                try:
+                    from datetime import datetime
+                    return datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                except:
+                    return created_at
+            return created_at or ""
+        
+        all_transactions.sort(key=get_sort_key, reverse=True)
+        
+        # Convert all datetime objects to ISO strings for JSON serialization
+        for tx in all_transactions:
+            if isinstance(tx.get("created_at"), datetime):
+                tx["created_at"] = tx["created_at"].isoformat()
         
         # Limit to requested number
         all_transactions = all_transactions[:limit]
