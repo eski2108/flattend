@@ -282,7 +282,7 @@ export default function SpotTrading() {
       <style>{`
         .trading-pair-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
           gap: 12px;
           width: 100%;
         }
@@ -290,19 +290,24 @@ export default function SpotTrading() {
           width: 100%;
           box-sizing: border-box;
         }
-        @media (max-width: 1024px) {
+        @media (min-width: 1200px) {
+          .trading-pair-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+        @media (min-width: 768px) and (max-width: 1199px) {
           .trading-pair-grid {
             grid-template-columns: repeat(3, 1fr);
           }
         }
-        @media (max-width: 768px) {
+        @media (min-width: 480px) and (max-width: 767px) {
           .trading-pair-grid {
             grid-template-columns: repeat(2, 1fr);
           }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 479px) {
           .trading-pair-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
           }
         }
       `}</style>
