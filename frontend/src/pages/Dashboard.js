@@ -101,6 +101,26 @@ export default function Dashboard() {
     return `${parseFloat(amount).toFixed(8)} ${symbol}`;
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      // Format as: Dec 3, 2025
+      return date.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error('Date formatting error:', error);
+      return 'Invalid Date';
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
