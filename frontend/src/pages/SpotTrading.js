@@ -374,26 +374,63 @@ export default function SpotTrading() {
           {/* Header */}
           <div style={{ marginBottom: '2rem' }}>
             <h1 style={{
-              fontSize: '32px',
+              fontSize: '34px',
               fontWeight: '900',
               background: 'linear-gradient(135deg, #00F0FF, #FFD700)',
               WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
+              WebkitTextFillColor: 'transparent',
+              marginBottom: '0.5rem',
+              position: 'relative',
+              paddingBottom: '1rem'
             }}>
               ⚡ Spot Trading
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '2px',
+                background: 'linear-gradient(90deg, #00F0FF, #FFD700, #A855F7)',
+                borderRadius: '2px'
+              }}></div>
             </h1>
-            <p style={{ color: '#888', fontSize: '14px' }}>Trade crypto with locked pricing engine</p>
+            <p style={{ 
+              color: '#888', 
+              fontSize: '14px',
+              position: 'relative',
+              paddingBottom: '0.5rem'
+            }}>
+              Trade crypto with locked pricing engine
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100px',
+                height: '1px',
+                background: '#00F0FF',
+                boxShadow: '0 0 10px rgba(0, 240, 255, 0.6)'
+              }}></div>
+            </p>
           </div>
 
           {/* Pair selector */}
           <div style={{
-            background: 'rgba(26, 31, 58, 0.8)',
+            background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(15, 23, 42, 0.95))',
             borderRadius: '12px',
-            padding: '1rem',
+            padding: '1.5rem 1rem 1rem',
             marginBottom: '1.5rem',
-            border: '1px solid rgba(0, 240, 255, 0.2)'
+            border: '1px solid rgba(0, 240, 255, 0.3)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 240, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            position: 'relative'
           }}>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px', fontWeight: '700' }}>SELECT TRADING PAIR</div>
+            <div style={{ 
+              fontSize: '11px', 
+              color: '#00F0FF', 
+              marginBottom: '16px', 
+              fontWeight: '800',
+              letterSpacing: '1px',
+              textTransform: 'uppercase'
+            }}>SELECT TRADING PAIR</div>
             <div className="trading-pair-grid">
               {tradingPairs.map(pair => (
                 <button
