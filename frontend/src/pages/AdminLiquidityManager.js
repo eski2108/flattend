@@ -12,6 +12,7 @@ const AdminLiquidityManager = () => {
 
   useEffect(() => {
     fetchLiquidity();
+    fetchDepositAddresses();
   }, []);
 
   const fetchLiquidity = async () => {
