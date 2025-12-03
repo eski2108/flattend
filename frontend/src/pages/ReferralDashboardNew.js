@@ -120,17 +120,47 @@ export default function ReferralDashboardNew() {
     }
   };
 
+  // Animate numbers function
+  const animateNumbers = (targetStats) => {
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const stepDuration = duration / steps;
+    
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      
+      setAnimatedStats({
+        total_earned: targetStats.total_earned * easeOutQuart,
+        pending: Math.floor(targetStats.pending * easeOutQuart),
+        completed: Math.floor(targetStats.completed * easeOutQuart),
+        this_month: targetStats.this_month * easeOutQuart
+      });
+      
+      if (currentStep >= steps) {
+        clearInterval(interval);
+        setAnimatedStats(targetStats);
+      }
+    }, stepDuration);
+  };
+
   const copyReferralLink = () => {
     if (referralData?.referral_link) {
       navigator.clipboard.writeText(referralData.referral_link);
-      toast.success('Referral link copied to clipboard!');
+      setCopySuccess('link');
+      toast.success('🎉 Referral link copied to clipboard!');
+      setTimeout(() => setCopySuccess(''), 2000);
     }
   };
 
   const copyReferralCode = () => {
     if (referralData?.referral_code) {
       navigator.clipboard.writeText(referralData.referral_code);
-      toast.success('Referral code copied!');
+      setCopySuccess('code');
+      toast.success('🎉 Referral code copied!');
+      setTimeout(() => setCopySuccess(''), 2000);
     }
   };
 
