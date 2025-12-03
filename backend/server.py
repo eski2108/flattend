@@ -24247,6 +24247,62 @@ async def get_2fa_status(user_id: str):
 # ADMIN LIQUIDITY MANAGER ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════════════════
 
+@api_router.get("/admin/deposit-addresses")
+async def get_admin_deposit_addresses():
+    """Get admin deposit addresses for crypto top-ups"""
+    try:
+        from admin_wallet_generator import initialize_admin_deposit_addresses
+        
+        # Get or create deposit addresses
+        addresses_doc = await initialize_admin_deposit_addresses(db)
+        
+        if not addresses_doc:
+            return {
+                "success": False,
+                "message": "Failed to initialize deposit addresses"
+            }
+        
+        return {
+            "success": True,
+            "addresses": addresses_doc.get("addresses", {}),
+            "notes": addresses_doc.get("notes", "")
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching deposit addresses: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@api_router.post("/admin/manual-deposit")
+async def manual_crypto_deposit(request: dict):
+    """Manually record a crypto deposit to update liquidity"""
+    try:
+        from deposit_monitor import DepositMonitor
+        
+        currency = request.get("currency")
+        amount = float(request.get("amount"))
+        note = request.get("note", "")
+        
+        if not currency or amount <= 0:
+            return {
+                "success": False,
+                "message": "Invalid currency or amount"
+            }
+        
+        monitor = DepositMonitor(db)
+        result = await monitor.manual_deposit(currency, amount, note)
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error processing manual deposit: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
 @api_router.get("/admin/liquidity-all")
 async def get_all_admin_liquidity():
     """Get all admin liquidity wallets"""
