@@ -20,6 +20,7 @@ import WalletPage from "@/pages/WalletPage";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import AllocationsPageDirect from "@/pages/AllocationsPage";
+import SpotTradingDirect from "@/pages/SpotTrading";
 
 // Lazy load non-critical pages for better performance
 const Transactions = lazy(() => import("@/pages/Transactions"));
