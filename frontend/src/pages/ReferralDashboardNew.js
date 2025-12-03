@@ -195,12 +195,36 @@ export default function ReferralDashboardNew() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)',
-      padding: '1rem',
-      paddingTop: '80px'
-    }}>
+    <>
+      <style>
+        {`
+          @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(1deg); }
+            66% { transform: translateY(5px) rotate(-1deg); }
+          }
+          @keyframes scan {
+            0% { top: 2rem; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: calc(100% - 4rem); opacity: 0; }
+          }
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)',
+        padding: '1rem',
+        paddingTop: '80px'
+      }}>
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
         
         {/* 1. HEADER */}
