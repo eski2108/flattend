@@ -12313,18 +12313,127 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
 # Withdrawal fee config endpoint REMOVED - internal fee percentage not exposed to users
 
 @api_router.get("/crypto-bank/transactions/{user_id}")
-async def get_user_crypto_transactions(user_id: str, limit: int = 50):
-    """Get transaction history for a user"""
-    transactions = await db.crypto_transactions.find(
-        {"user_id": user_id},
-        {"_id": 0}
-    ).sort("created_at", -1).limit(limit).to_list(limit)
+async def get_user_crypto_transactions(user_id: str, limit: int = 100):
+    """Get comprehensive transaction history for a user from ALL collections"""
+    all_transactions = []
     
-    return {
-        "success": True,
-        "transactions": transactions,
-        "count": len(transactions)
-    }
+    try:
+        # 1. Get wallet transactions (deposits, withdrawals, transfers)
+        wallet_txs = await db.wallet_transactions.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("timestamp", -1).to_list(limit)
+        
+        for tx in wallet_txs:
+            all_transactions.append({
+                "transaction_id": tx.get("transaction_id", ""),
+                "transaction_type": tx.get("transaction_type", "unknown"),
+                "currency": tx.get("currency", ""),
+                "amount": tx.get("amount", 0),
+                "direction": tx.get("direction", ""),
+                "status": "completed",
+                "created_at": tx.get("timestamp", ""),
+                "metadata": tx.get("metadata", {}),
+                "balance_after": tx.get("balance_after", 0)
+            })
+        
+        # 2. Get P2P trades
+        p2p_trades = await db.trades.find(
+            {"$or": [{"buyer_id": user_id}, {"seller_id": user_id}]},
+            {"_id": 0}
+        ).sort("created_at", -1).to_list(limit)
+        
+        for trade in p2p_trades:
+            is_buyer = trade.get("buyer_id") == user_id
+            all_transactions.append({
+                "transaction_id": trade.get("trade_id", ""),
+                "transaction_type": "p2p_buy" if is_buyer else "p2p_sell",
+                "currency": trade.get("crypto_currency", ""),
+                "amount": trade.get("crypto_amount", 0),
+                "fiat_amount": trade.get("fiat_amount", 0),
+                "fiat_currency": trade.get("fiat_currency", "GBP"),
+                "direction": "incoming" if is_buyer else "outgoing",
+                "status": trade.get("status", "unknown"),
+                "created_at": trade.get("created_at", ""),
+                "payment_method": trade.get("payment_method", ""),
+                "price_per_unit": trade.get("price_per_unit", 0)
+            })
+        
+        # 3. Get spot trades
+        spot_trades = await db.spot_trades.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("created_at", -1).to_list(limit)
+        
+        for trade in spot_trades:
+            all_transactions.append({
+                "transaction_id": trade.get("trade_id", ""),
+                "transaction_type": f"spot_{trade.get('type', 'trade')}",
+                "currency": trade.get("pair", ""),
+                "amount": trade.get("amount", 0),
+                "price": trade.get("price", 0),
+                "total": trade.get("total", 0),
+                "direction": "buy" if trade.get("type") == "buy" else "sell",
+                "status": trade.get("status", "completed"),
+                "created_at": trade.get("created_at", ""),
+                "fee_amount": trade.get("fee_amount", 0)
+            })
+        
+        # 4. Get admin liquidity trades
+        admin_trades = await db.admin_liquidity_trades.find(
+            {"buyer_id": user_id},
+            {"_id": 0}
+        ).sort("created_at", -1).to_list(limit)
+        
+        for trade in admin_trades:
+            all_transactions.append({
+                "transaction_id": trade.get("trade_id", ""),
+                "transaction_type": "instant_buy",
+                "currency": trade.get("crypto_currency", ""),
+                "amount": trade.get("crypto_amount", 0),
+                "fiat_amount": trade.get("fiat_amount", 0),
+                "direction": "incoming",
+                "status": "completed",
+                "created_at": trade.get("completed_at") or trade.get("created_at", "")
+            })
+        
+        # 5. Get legacy crypto_transactions if any exist
+        legacy_txs = await db.crypto_transactions.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("created_at", -1).to_list(limit)
+        
+        for tx in legacy_txs:
+            all_transactions.append({
+                "transaction_id": tx.get("transaction_id", ""),
+                "transaction_type": tx.get("transaction_type", "unknown"),
+                "currency": tx.get("currency", ""),
+                "amount": tx.get("amount", 0),
+                "status": tx.get("status", "completed"),
+                "created_at": tx.get("created_at", ""),
+                "metadata": tx.get("metadata", {})
+            })
+        
+        # Sort all transactions by date (newest first)
+        all_transactions.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        
+        # Limit to requested number
+        all_transactions = all_transactions[:limit]
+        
+        return {
+            "success": True,
+            "transactions": all_transactions,
+            "count": len(all_transactions)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching user transactions: {str(e)}")
+        return {
+            "success": False,
+            "transactions": [],
+            "count": 0,
+            "error": str(e)
+        }
 
 
 @api_router.get("/crypto-bank/transactions/{user_id}/categorized")
