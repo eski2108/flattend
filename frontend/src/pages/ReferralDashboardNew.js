@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -11,7 +11,11 @@ import {
   IoStatsChartOutline,
   IoTimeOutline,
   IoCheckmarkCircleOutline,
-  IoHourglassOutline
+  IoHourglassOutline,
+  IoRocketOutline,
+  IoSparklesOutline,
+  IoTrophyOutline,
+  IoStarOutline
 } from 'react-icons/io5';
 import API_BASE_URL from '@/config/api';
 
