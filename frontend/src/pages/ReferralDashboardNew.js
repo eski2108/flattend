@@ -53,7 +53,7 @@ export default function ReferralDashboardNew() {
     if (user?.user_id) {
       fetchReferralData();
     }
-  }, [user?.user_id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.user_id]);
 
   const fetchReferralData = async () => {
     try {
