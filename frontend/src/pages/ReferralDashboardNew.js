@@ -1110,5 +1110,6 @@ export default function ReferralDashboardNew() {
 
       </div>
     </div>
+    </>
   );
 }
