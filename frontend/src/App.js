@@ -219,6 +219,7 @@ function App() {
             <Route path="/help" element={<FAQ />} />
             <Route path="/upload-apk" element={<UploadAPK />} />
             <Route path="/verify-email" element={<EmailVerified />} />
+            <Route path="/ui-showcase" element={<UIShowcase />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
