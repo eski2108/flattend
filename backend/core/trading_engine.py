@@ -90,23 +90,40 @@ class TradingEngine:
         mid_market_price: float
     ) -> Dict:
         """
-        LOCKED BUY FLOW
+        LOCKED BUY FLOW WITH BALANCE LOCKING
         
-        1. Calculate BUY price (market + 0.5%)
-        2. Calculate crypto amount user receives
-        3. Validate user has enough GBP
-        4. Validate admin has enough crypto
-        5. Deduct GBP from user
-        6. Add crypto to user
-        7. Deduct crypto from admin liquidity
+        1. LOCK user's quote currency balance
+        2. LOCK admin's base currency liquidity
+        3. Calculate BUY price (market + 0.5%)
+        4. Calculate crypto amount user receives
+        5. Validate user has enough quote currency
+        6. Validate admin has enough crypto
+        7. Execute atomic balance updates
         8. Record spread profit as revenue
         9. Process referral commission (on fee only)
         10. Log transaction
+        11. RELEASE all locks
         
         Returns:
             Success/failure with transaction details
         """
+        from balance_lock_system import BalanceLock
+        
+        lock_system = BalanceLock(self.db)
+        locks = None
+        
         try:
+            # STEP 1: ACQUIRE LOCKS
+            locks = await lock_system.acquire_multiple_locks([
+                {"user_id": user_id, "currency": quote_currency, "action": "BUY_DEDUCT"},
+                {"user_id": "admin", "currency": base_currency, "action": "BUY_TRANSFER"}
+            ])
+            
+            if not locks:
+                return {
+                    "success": False,
+                    "message": "Unable to lock balances. Another transaction in progress. Please try again."
+                }
             # Step 1: Calculate BUY price
             buy_price = self.calculate_buy_price(mid_market_price)
             
