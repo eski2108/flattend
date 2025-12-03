@@ -177,9 +177,10 @@ export default function Layout({ children }) {
                     borderRadius: '8px',
                     fontSize: '0.8rem',
                     fontWeight: '600',
-                    color: '#000',
+                    color: '#ffffff',
                     cursor: 'pointer',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'scale(1.02)';
