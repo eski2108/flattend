@@ -148,7 +148,30 @@ class TradingEngine:
                 }
             )
             
-            # Step 6: Add crypto to user
+            # Step 5b: Add GBP to admin liquidity (CRITICAL - CLOSED SYSTEM)
+            await self.db.admin_liquidity_wallets.update_one(
+                {"currency": quote_currency},
+                {
+                    "$inc": {"available": gbp_amount, "balance": gbp_amount},
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
+                    "$setOnInsert": {
+                        "reserved": 0,
+                        "created_at": datetime.now(timezone.utc).isoformat()
+                    }
+                },
+                upsert=True
+            )
+            
+            # Step 6: Deduct crypto from admin liquidity
+            await self.db.admin_liquidity_wallets.update_one(
+                {"currency": base_currency},
+                {
+                    "$inc": {"available": -crypto_amount, "balance": -crypto_amount},
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
+            )
+            
+            # Step 7: Add crypto to user
             await self.db.internal_balances.update_one(
                 {"user_id": user_id, "currency": base_currency},
                 {
@@ -160,15 +183,6 @@ class TradingEngine:
                     }
                 },
                 upsert=True
-            )
-            
-            # Step 7: Deduct crypto from admin liquidity
-            await self.db.admin_liquidity_wallets.update_one(
-                {"currency": base_currency},
-                {
-                    "$inc": {"available": -crypto_amount, "balance": -crypto_amount},
-                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-                }
             )
             
             # Step 8: Calculate spread profit (this is the fee revenue)
