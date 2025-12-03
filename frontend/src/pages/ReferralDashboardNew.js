@@ -156,6 +156,24 @@ export default function ReferralDashboardNew() {
       padding: '2rem',
       paddingTop: '100px'
     }}>
+      {/* Company Logo */}
+      <div style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', marginBottom: '2rem' }}>
+        <img 
+          src="/logo.png" 
+          alt="CoinHub X" 
+          style={{ 
+            height: '60px',
+            filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.6))'
+          }}
+          onError={(e) => {
+            e.target.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.innerHTML = '<div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, #00F0FF, #7B2CFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">COIN HUB X</div>';
+            e.target.parentNode.appendChild(fallback);
+          }}
+        />
+      </div>
+
       {/* Header */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', marginBottom: '2rem' }}>
         <h1 style={{
@@ -164,11 +182,12 @@ export default function ReferralDashboardNew() {
           background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          marginBottom: '0.5rem'
+          marginBottom: '0.5rem',
+          textAlign: 'center'
         }}>
           🎁 Referral Dashboard
         </h1>
-        <p style={{ color: '#888', fontSize: '16px' }}>Invite friends and earn commission on every transaction</p>
+        <p style={{ color: '#888', fontSize: '16px', textAlign: 'center' }}>Invite friends and earn commission on every transaction</p>
       </div>
 
       {/* Stats Cards */}
