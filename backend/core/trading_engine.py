@@ -365,7 +365,16 @@ class TradingEngine:
                 upsert=True
             )
             
-            # Step 7: Add GBP to user
+            # Step 7: Deduct GBP from admin liquidity (CRITICAL - NO MINTING)
+            await self.db.admin_liquidity_wallets.update_one(
+                {"currency": quote_currency},
+                {
+                    "$inc": {"available": -gbp_amount, "balance": -gbp_amount},
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
+            )
+            
+            # Step 8: Add GBP to user
             await self.db.internal_balances.update_one(
                 {"user_id": user_id, "currency": quote_currency},
                 {
@@ -379,7 +388,7 @@ class TradingEngine:
                 upsert=True
             )
             
-            # Step 8: Calculate spread profit (this is the fee revenue)
+            # Step 9: Calculate spread profit (this is the fee revenue)
             spread_profit = self.calculate_spread_profit(
                 mid_market_price, sell_price, crypto_amount, "sell"
             )
