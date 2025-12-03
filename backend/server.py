@@ -10065,9 +10065,15 @@ async def get_admin_withdrawals():
 
 @api_router.post("/trading/execute")
 async def execute_trading_transaction(request: dict):
-    """Execute a spot trading transaction using admin liquidity with full protection
-    NOTE: This is a simplified version for MVP. In production, enable MongoDB replica set
-    for full transaction support and better concurrency protection.
+    """
+    STRICT CLOSED-SYSTEM TRADING - NO MINTING ALLOWED
+    
+    All trades move funds between:
+    - user internal_balances
+    - admin_liquidity_wallets
+    
+    NEVER mint GBP or crypto from thin air.
+    Admin earns spread + fee on every trade.
     """
     try:
         user_id = request.get("user_id")
@@ -10079,38 +10085,37 @@ async def execute_trading_transaction(request: dict):
         # Parse pair
         base_currency, quote_currency = pair.split("/")
         
-        # Get platform settings for fees and markup/markdown
+        # Get platform settings
         platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
         
-        # Get trading fee (separate from P2P and Express Buy) - Default 3%
-        trading_fees_by_pair = platform_settings.get("trading_fees_by_pair", {}) if platform_settings else {}
-        trading_fee_percent = trading_fees_by_pair.get(pair, platform_settings.get("spot_trading_fee_percent", PLATFORM_CONFIG["spot_trading_fee_percent"])) if platform_settings else PLATFORM_CONFIG["spot_trading_fee_percent"]
+        # Spread settings (default 0.5%)
+        buy_spread_percent = platform_settings.get("buy_markup_percent", 0.5) if platform_settings else 0.5
+        sell_spread_percent = platform_settings.get("sell_markdown_percent", 0.5) if platform_settings else 0.5
         
-        # Get markup/markdown percentages (hidden from frontend)
-        buy_markup_percent = platform_settings.get("buy_markup_percent", 0.5) if platform_settings else 0.5
-        sell_markdown_percent = platform_settings.get("sell_markdown_percent", 0.5) if platform_settings else 0.5
+        # Fee settings (default 1%)
+        trading_fee_percent = platform_settings.get("spot_trading_fee_percent", 1.0) if platform_settings else 1.0
         
-        # Check for per-pair overrides
-        trading_markup_by_pair = platform_settings.get("trading_markup_by_pair", {}) if platform_settings else {}
-        trading_markdown_by_pair = platform_settings.get("trading_markdown_by_pair", {}) if platform_settings else {}
-        
-        if pair in trading_markup_by_pair:
-            buy_markup_percent = trading_markup_by_pair[pair]
-        if pair in trading_markdown_by_pair:
-            sell_markdown_percent = trading_markdown_by_pair[pair]
-        
-        # Apply hidden markup/markdown to protect platform
+        # Calculate prices with spread
         if trade_type == "buy":
-            # User buys at market price + markup
-            adjusted_price = market_price * (1 + buy_markup_percent / 100)
+            # User buys at market + spread
+            user_price = market_price * (1 + buy_spread_percent / 100)
+            spread_profit = (user_price - market_price) * amount
         else:
-            # User sells at market price - markdown
-            adjusted_price = market_price * (1 - sell_markdown_percent / 100)
+            # User sells at market - spread
+            user_price = market_price * (1 - sell_spread_percent / 100)
+            spread_profit = (market_price - user_price) * amount
         
-        # Calculate amounts with adjusted price
-        total_fiat = amount * adjusted_price
-        fee_amount = total_fiat * (trading_fee_percent / 100)
-        final_amount = total_fiat + fee_amount  # User pays total + fee
+        # Calculate GBP amounts
+        gross_gbp = amount * user_price
+        fee_amount = gross_gbp * (trading_fee_percent / 100)
+        
+        # Snapshot admin liquidity BEFORE trade
+        admin_crypto_before = await db.admin_liquidity_wallets.find_one(
+            {"currency": base_currency}, {"_id": 0}
+        )
+        admin_gbp_before = await db.admin_liquidity_wallets.find_one(
+            {"currency": quote_currency}, {"_id": 0}
+        )
         
         if trade_type == "buy":
             # User buys crypto, admin sells crypto
