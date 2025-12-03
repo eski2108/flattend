@@ -199,6 +199,33 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
         to_amount = net_value_gbp / to_price
         swap_fee_crypto = swap_fee_gbp / from_price
         
+        # 🔒 LIQUIDITY SAFETY CHECK - Ensure admin has destination currency
+        from liquidity_checker import LiquidityChecker
+        
+        liquidity_checker = LiquidityChecker(db)
+        liquidity_check = await liquidity_checker.check_and_log(
+            currency=to_currency,
+            amount=to_amount,
+            operation_type="swap",
+            user_id=user_id,
+            metadata={
+                "from_currency": from_currency,
+                "from_amount": from_amount,
+                "to_currency": to_currency,
+                "to_amount": to_amount,
+                "swap_fee": swap_fee_crypto
+            }
+        )
+        
+        if not liquidity_check["can_execute"]:
+            logger.error(f"🚫 SWAP BLOCKED: {liquidity_check['message']}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Swap unavailable: {liquidity_check['message']}"
+            )
+        
+        logger.info(f"✅ LIQUIDITY CHECK PASSED for swap: {to_amount} {to_currency}")
+        
         # Check if user has referrer and calculate commission
         user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
         referrer_id = user.get("referrer_id") if user else None
