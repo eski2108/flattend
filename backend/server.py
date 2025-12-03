@@ -24303,6 +24303,58 @@ async def manual_crypto_deposit(request: dict):
             "message": str(e)
         }
 
+@api_router.post("/admin/simulate-deposit")
+async def simulate_crypto_deposit(request: dict):
+    """Simulate a blockchain deposit (for testing)"""
+    try:
+        from blockchain_simulator import BlockchainSimulator
+        
+        currency = request.get("currency")
+        amount = float(request.get("amount"))
+        
+        if not currency or amount <= 0:
+            return {
+                "success": False,
+                "message": "Invalid currency or amount"
+            }
+        
+        simulator = BlockchainSimulator(db)
+        result = await simulator.simulate_deposit(currency, amount)
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error simulating deposit: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@api_router.get("/admin/pending-deposits")
+async def get_pending_deposits():
+    """Get all pending deposits"""
+    try:
+        from blockchain_simulator import BlockchainSimulator
+        
+        simulator = BlockchainSimulator(db)
+        deposits = await simulator.get_pending_deposits()
+        
+        # Remove _id from results
+        for deposit in deposits:
+            deposit.pop('_id', None)
+        
+        return {
+            "success": True,
+            "deposits": deposits
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching pending deposits: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @api_router.get("/admin/liquidity-all")
 async def get_all_admin_liquidity():
     """Get all admin liquidity wallets"""
