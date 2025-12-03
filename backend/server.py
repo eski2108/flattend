@@ -10522,6 +10522,8 @@ async def get_trading_pairs():
             {"_id": 0, "symbol": 1, "name": 1}
         ).sort("symbol", 1).to_list(100)
         
+        log_info(f"🔍 Trading coins found: {len(trading_coins)}")
+        
         # Get platform settings to determine supported fiat currencies
         platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
         
@@ -10530,6 +10532,8 @@ async def get_trading_pairs():
         if platform_settings and "trading_fiat_currencies" in platform_settings:
             fiat_currencies = platform_settings["trading_fiat_currencies"]
         
+        log_info(f"🔍 Quote currencies: {fiat_currencies}")
+        
         # Dynamically generate trading pairs from enabled coins
         pairs_with_status = []
         for coin in trading_coins:
@@ -10537,6 +10541,7 @@ async def get_trading_pairs():
             
             # Skip if this coin is a quote currency (don't create GBP/GBP or USDT/USDT)
             if base in fiat_currencies:
+                log_info(f"⏭️ Skipping {base} (is a quote currency)")
                 continue
             
             # Get liquidity for this currency
@@ -10546,14 +10551,18 @@ async def get_trading_pairs():
             
             # Create pair for each supported fiat currency
             for quote in fiat_currencies:
-                pairs_with_status.append({
+                pair = {
                     "symbol": f"{base}/{quote}",
                     "base": base,
                     "quote": quote,
                     "available_liquidity": available,
                     "is_tradable": is_tradable,
                     "status": "active" if is_tradable else "paused"
-                })
+                }
+                pairs_with_status.append(pair)
+                log_info(f"✅ Created pair: {pair['symbol']}")
+        
+        log_info(f"🎯 Total pairs generated: {len(pairs_with_status)}")
         
         return {
             "success": True,
@@ -10561,6 +10570,7 @@ async def get_trading_pairs():
             "count": len(pairs_with_status)
         }
     except Exception as e:
+        log_error(f"Error in get_trading_pairs: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
