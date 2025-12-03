@@ -247,7 +247,34 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
         import uuid
         swap_id = str(uuid.uuid4())
         
+        # Execute swap
         await wallet_service.debit(user_id=user_id, currency=from_currency, amount=from_amount, transaction_type="swap_out", reference_id=swap_id, metadata={"to_currency": to_currency, "to_amount": to_amount})
+        
+        # 🔒 DEDUCT DESTINATION CURRENCY FROM ADMIN LIQUIDITY (NO MINTING)
+        await db.admin_liquidity_wallets.update_one(
+            {"currency": to_currency},
+            {
+                "$inc": {"available": -to_amount, "balance": -to_amount},
+                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+            }
+        )
+        
+        # 🔒 ADD SOURCE CURRENCY TO ADMIN LIQUIDITY (CLOSED SYSTEM)
+        await db.admin_liquidity_wallets.update_one(
+            {"currency": from_currency},
+            {
+                "$inc": {"available": from_amount, "balance": from_amount},
+                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
+                "$setOnInsert": {
+                    "reserved": 0,
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info(f"💰 SWAP LIQUIDITY: Deducted {to_amount} {to_currency}, Added {from_amount} {from_currency}")
+        
         await wallet_service.credit(user_id=user_id, currency=to_currency, amount=to_amount, transaction_type="swap_in", reference_id=swap_id, metadata={"from_currency": from_currency})
         
         # Credit admin wallet with admin portion of fee (using PLATFORM_FEES for consistency)
