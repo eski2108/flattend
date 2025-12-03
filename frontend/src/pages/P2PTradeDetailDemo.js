@@ -174,6 +174,50 @@ export default function P2PTradeDetailDemo() {
           </div>
         </div>
 
+        {/* Dispute Banner */}
+        {trade.status === 'disputed' && (
+          <div className="bg-gradient-to-r from-red-900/50 to-orange-900/50 border-2 border-red-500 rounded-xl p-6 mb-6">
+            <div className="flex items-start gap-4">
+              <IoAlertCircle className="w-8 h-8 text-red-400 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-red-300 mb-2">⚠️ Dispute In Progress</h3>
+                <p className="text-gray-300 mb-3">
+                  This trade is under admin review. Both parties can submit evidence and communicate with the admin.
+                  The losing party will be charged a £5 dispute fee.
+                </p>
+                {dispute && (
+                  <div className="bg-black/20 rounded-lg p-4 mb-3">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-gray-400">Dispute ID:</span>
+                        <span className="text-white ml-2 font-mono">{dispute.dispute_id?.slice(0, 8)}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Status:</span>
+                        <span className="text-orange-400 ml-2 font-semibold">{dispute.status}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Opened:</span>
+                        <span className="text-white ml-2">{new Date(dispute.created_at).toLocaleString()}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Reason:</span>
+                        <span className="text-white ml-2 capitalize">{dispute.reason?.replace(/_/g, ' ')}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={() => setShowDisputeChatModal(true)}
+                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+                >
+                  View Dispute Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Trade Details */}
           <div className="lg:col-span-2 space-y-6">
