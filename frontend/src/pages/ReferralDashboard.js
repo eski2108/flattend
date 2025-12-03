@@ -648,45 +648,67 @@ export default function ReferralDashboard() {
           </div>
         </div>
 
-        {/* VIP Upgrade Section */}
+        {/* 🏆 GOLDEN TIER 50% UPGRADE SECTION */}
         {referralData.referral_tier === 'standard' && (
           <div style={{
-            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(123, 44, 255, 0.05) 100%)',
-            border: '2px solid rgba(168, 85, 247, 0.3)',
+            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%)',
+            border: '2px solid rgba(255, 215, 0, 0.5)',
             borderRadius: '20px',
-            padding: '2rem',
+            padding: '2.5rem',
             marginBottom: '2rem',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: '0 0 60px rgba(255, 215, 0, 0.3)'
           }}>
-            {/* Glow Effect */}
+            {/* Golden Glow Effect */}
             <div style={{
               position: 'absolute',
               top: '-50%',
               right: '-10%',
-              width: '300px',
-              height: '300px',
-              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%)',
-              filter: 'blur(60px)',
+              width: '400px',
+              height: '400px',
+              background: 'radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%)',
+              filter: 'blur(80px)',
               pointerEvents: 'none'
             }} />
 
             <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                <IoTrophy size={32} style={{ color: '#A855F7' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1.5rem' }}>
+                <IoTrophy size={40} style={{ 
+                  color: '#FFD700',
+                  filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.8))'
+                }} />
                 <h2 style={{
-                  fontSize: '28px',
+                  fontSize: '36px',
                   fontWeight: '900',
-                  background: 'linear-gradient(135deg, #A855F7, #7B2CFF)',
+                  background: 'linear-gradient(135deg, #FFD700, #FFA500)',
                   WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '0 0 30px rgba(255, 215, 0, 0.5)'
                 }}>
-                  Upgrade to VIP Tier
+                  🌟 Upgrade to GOLDEN TIER
                 </h2>
               </div>
 
-              <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px', marginBottom: '1.5rem', lineHeight: '1.6' }}>
-                Unlock lifetime 20% commission on ALL revenue streams your referrals generate!
+              <p style={{ 
+                color: '#FFD700', 
+                fontSize: '20px', 
+                marginBottom: '0.5rem', 
+                lineHeight: '1.6',
+                fontWeight: '700',
+                textShadow: '0 0 10px rgba(255, 215, 0, 0.3)'
+              }}>
+                Unlock <span style={{
+                  fontSize: '28px',
+                  background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: '900'
+                }}>50% COMMISSION</span> on ALL your referrals!
+              </p>
+              
+              <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '16px', marginBottom: '2rem', lineHeight: '1.6' }}>
+                2.5x MORE earnings than standard tier! Get lifetime 50% commission on every transaction your referrals make.
               </p>
 
               <div style={{
