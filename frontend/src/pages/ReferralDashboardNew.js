@@ -54,29 +54,43 @@ export default function ReferralDashboardNew() {
     try {
       setLoading(true);
       
-      const dashboardRes = await axios.get(`${API}/referral/dashboard/${user.user_id}`);
-      setReferralData(dashboardRes.data);
+      // 🔥 USE COMPREHENSIVE ENDPOINT - 100% REAL DATA FROM ALL SOURCES
+      const comprehensiveRes = await axios.get(`${API}/referral/dashboard/comprehensive/${user.user_id}`);
+      const data = comprehensiveRes.data;
       
-      const commissionsRes = await axios.get(`${API}/referral/commissions/${user.user_id}`);
-      setCommissions(commissionsRes.data.commissions || []);
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to load dashboard');
+      }
       
-      const totalEarned = commissionsRes.data.commissions?.reduce((sum, c) => sum + (c.commission_amount || 0), 0) || 0;
-      const completed = commissionsRes.data.commissions?.filter(c => c.status === 'completed').length || 0;
-      const pending = commissionsRes.data.commissions?.filter(c => c.status === 'pending').length || 0;
-      
-      const now = new Date();
-      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-      const thisMonth = commissionsRes.data.commissions?.filter(c => {
-        const date = new Date(c.created_at);
-        return date >= thisMonthStart;
-      }).reduce((sum, c) => sum + (c.commission_amount || 0), 0) || 0;
-      
-      setStats({
-        total_earned: totalEarned,
-        pending: pending,
-        completed: completed,
-        this_month: thisMonth
+      // Set referral basic info
+      setReferralData({
+        referral_code: data.referral_code,
+        referral_link: data.referral_link,
+        tier: data.tier
       });
+      
+      // Set real-time stats from ALL revenue streams
+      setStats({
+        total_earned: data.total_earnings?.total_gbp || 0,
+        this_month: data.earnings_by_period?.month?.amount || 0,
+        completed: data.referral_stats?.active_referrals || 0,
+        pending: data.referral_stats?.pending_signups || 0,
+        today: data.earnings_by_period?.today?.amount || 0,
+        week: data.earnings_by_period?.week?.amount || 0,
+        year: data.earnings_by_period?.year?.amount || 0
+      });
+      
+      // Set activity timeline (real transactions)
+      setCommissions(data.activity_timeline || []);
+      
+      // Store comprehensive data for advanced features
+      window.referralAnalytics = {
+        earnings_by_stream: data.earnings_by_stream || [],
+        referral_tree: data.referral_tree || {},
+        conversion_metrics: data.conversion_metrics || {},
+        geographic_breakdown: data.geographic_breakdown || [],
+        tier_progress: data.tier_progress || {}
+      };
       
     } catch (error) {
       console.error('Error fetching referral data:', error);
