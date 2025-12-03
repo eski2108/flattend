@@ -9115,26 +9115,40 @@ async def execute_swap_OLD(request: dict):
         # Initialize balance if doesn't exist using trader balance system
         await initialize_trader_balance(db, user_id, to_currency, to_amount)
     
-    # Add swap fee to admin balance
-    admin_balance = await db.internal_balances.find_one({"currency": from_currency})
-    
-    if admin_balance:
-        await db.internal_balances.update_one(
-            {"currency": from_currency},
-            {
-                "$inc": {
-                    "swap_fees": swap_fee_crypto,
-                    "total_fees": swap_fee_crypto
-                }
+    # Add swap fee to admin liquidity wallet (100% goes to admin)
+    await db.admin_liquidity_wallets.update_one(
+        {"currency": from_currency},
+        {
+            "$inc": {
+                "available": swap_fee_crypto,
+                "balance": swap_fee_crypto
+            },
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
+            "$setOnInsert": {
+                "currency": from_currency,
+                "reserved": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
             }
-        )
-    else:
-        await db.internal_balances.insert_one({
-            "currency": from_currency,
-            "swap_fees": swap_fee_crypto,
-            "total_fees": swap_fee_crypto,
-            "created_at": datetime.now(timezone.utc)
-        })
+        },
+        upsert=True
+    )
+    
+    # Also track in admin fee revenue for accounting
+    await db.internal_balances.update_one(
+        {"user_id": "admin_wallet", "currency": from_currency},
+        {
+            "$inc": {
+                "available": swap_fee_crypto,
+                "balance": swap_fee_crypto
+            },
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
+            "$setOnInsert": {
+                "reserved": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+        },
+        upsert=True
+    )
     
     # Record swap transaction (internal record includes fee details)
     swap_id = str(uuid.uuid4())
