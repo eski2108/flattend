@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://tradeliquidity.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://p2pcryptomarket.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

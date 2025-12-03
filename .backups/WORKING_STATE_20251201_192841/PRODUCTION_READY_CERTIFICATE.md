@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://tradeliquidity.preview.emergentagent.com`
-- Backend API: `https://tradeliquidity.preview.emergentagent.com/api`
+- Frontend: `https://p2pcryptomarket.preview.emergentagent.com`
+- Backend API: `https://p2pcryptomarket.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

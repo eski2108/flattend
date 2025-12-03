@@ -150,7 +150,7 @@ Once built, you can distribute the APK by:
 
 1. **Backend URL:** The app is configured to connect to:
    ```
-   https://tradeliquidity.preview.emergentagent.com/api
+   https://p2pcryptomarket.preview.emergentagent.com/api
    ```
 
 2. **Permissions:** The app requests:
