@@ -63,6 +63,27 @@ export default function PortfolioPageEnhanced() {
     }
   };
 
+  useEffect(() => {
+    const userData = localStorage.getItem('cryptobank_user');
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    const u = JSON.parse(userData);
+    setUser(u);
+    fetchPortfolio(u.user_id);
+
+    // Auto-refresh portfolio every 10 seconds
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 Auto-refreshing portfolio...');
+      fetchPortfolio(u.user_id);
+    }, 10000); // 10 seconds
+
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, [navigate]);
+
   const handleRefresh = () => {
     if (!refreshing && user) {
       setRefreshing(true);
