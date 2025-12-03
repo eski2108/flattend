@@ -96,6 +96,24 @@ export default function ReferralDashboardNew() {
         geographic_breakdown: data.geographic_breakdown || [],
         tier_progress: data.tier_progress || {}
       };
+
+      // Generate QR code for referral link
+      if (data.referral_link) {
+        try {
+          const qrUrl = await QRCode.toDataURL(data.referral_link, {
+            width: 300,
+            margin: 2,
+            color: {
+              dark: '#00F0FF',
+              light: '#0a0b1a'
+            },
+            errorCorrectionLevel: 'M'
+          });
+          setQrCodeUrl(qrUrl);
+        } catch (error) {
+          console.error('Error generating QR code:', error);
+        }
+      }
       
     } catch (error) {
       console.error('Error fetching referral data:', error);
