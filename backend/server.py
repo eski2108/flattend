@@ -10121,100 +10121,69 @@ async def execute_trading_transaction(request: dict):
         # BUY LOGIC: User buys crypto with GBP
         # ============================================================
         if trade_type == "buy":
-            # User buys crypto, admin sells crypto
-            # Check admin liquidity
-            admin_wallet = await db.admin_liquidity_wallets.find_one(
-        {"currency": base_currency}
+            total_gbp_required = gross_gbp + fee_amount
+            
+            # STEP 1: Validate admin has enough CRYPTO liquidity
+            if not admin_crypto_before or admin_crypto_before.get("available", 0) < amount:
+                return {
+                    "success": False,
+                    "message": f"Insufficient platform crypto liquidity. Available: {admin_crypto_before.get('available', 0) if admin_crypto_before else 0} {base_currency}"
+                }
+            
+            # STEP 2: Validate user has enough GBP
+            user_gbp = await db.internal_balances.find_one(
+                {"user_id": user_id, "currency": quote_currency}
+            )
+            user_gbp_available = user_gbp.get("available", 0) if user_gbp else 0
+            
+            if user_gbp_available < total_gbp_required:
+                return {
+                    "success": False,
+                    "message": f"Insufficient {quote_currency}. Need £{total_gbp_required:.2f}, have £{user_gbp_available:.2f}"
+                }
+            
+            # STEP 3: Deduct GBP from user
+            await db.internal_balances.update_one(
+                {"user_id": user_id, "currency": quote_currency},
+                {
+                    "$inc": {
+                        "available": -total_gbp_required,
+                        "balance": -total_gbp_required
+                    },
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
             )
             
-            if not admin_wallet:
-                return {
-                    "success": False,
-                    "message": f"Trading unavailable for {pair} due to insufficient platform liquidity."
-                }
-            
-            # Check if manually disabled by admin
-            if admin_wallet.get("manually_disabled", False):
-                return {
-                    "success": False,
-                    "message": f"Trading is currently paused for {pair}. Please try again later."
-                }
-            
-            available = admin_wallet.get("available", 0)
-            
-            # Check if liquidity is zero or insufficient
-            if available <= 0:
-                return {
-                    "success": False,
-                    "message": f"Trading paused for {pair} due to insufficient platform liquidity."
-                }
-            
-            if available < amount:
-                return {
-                    "success": False,
-                    "message": f"Insufficient platform liquidity for this amount. Maximum available: {available} {base_currency}."
-                }
-            
-            # Atomic liquidity deduction - single operation prevents race conditions
-            updated_wallet = await db.admin_liquidity_wallets.find_one_and_update(
+            # STEP 4: Add GBP to admin liquidity (CLOSED SYSTEM - NO MINTING)
+            await db.admin_liquidity_wallets.update_one(
+                {"currency": quote_currency},
                 {
-                    "currency": base_currency,
-                    "available": {"$gte": amount}  # Only update if enough liquidity
+                    "$inc": {
+                        "available": gross_gbp,  # Only gross amount, fee goes separate
+                        "balance": gross_gbp
+                    },
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
+                    "$setOnInsert": {
+                        "reserved": 0,
+                        "created_at": datetime.now(timezone.utc).isoformat()
+                    }
                 },
+                upsert=True
+            )
+            
+            # STEP 5: Deduct crypto from admin liquidity
+            await db.admin_liquidity_wallets.update_one(
+                {"currency": base_currency},
                 {
                     "$inc": {
                         "available": -amount,
                         "balance": -amount
                     },
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-                },
-                return_document=True
-            )
-            
-            # If no document was updated, liquidity was insufficient (atomic check+update failed)
-            if not updated_wallet:
-                return {
-                    "success": False,
-                    "message": f"Trade failed due to insufficient liquidity. Another user may have completed a trade simultaneously."
                 }
-            
-            # Check user has enough GBP balance for BUY trade
-            user_balance = await db.internal_balances.find_one(
-                {"user_id": user_id, "currency": quote_currency}
             )
             
-            user_available = user_balance.get("available", 0) if user_balance else 0
-            
-            if user_available < final_amount:
-                # Rollback admin liquidity deduction
-                await db.admin_liquidity_wallets.update_one(
-                    {"currency": base_currency},
-                    {
-                        "$inc": {
-                            "available": amount,
-                            "balance": amount
-                        }
-                    }
-                )
-                return {
-                    "success": False,
-                    "message": f"Insufficient {quote_currency} balance. You need {final_amount:.2f} {quote_currency} but only have {user_available:.2f} {quote_currency}."
-                }
-            
-            # Deduct GBP from user and add crypto to user wallet
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": quote_currency},
-                {
-                    "$inc": {
-                        "available": -final_amount,
-                        "balance": -final_amount
-                    },
-                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-                },
-                upsert=False
-            )
-            
-            # Add crypto to user balance
+            # STEP 6: Add crypto to user
             await db.internal_balances.update_one(
                 {"user_id": user_id, "currency": base_currency},
                 {
