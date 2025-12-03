@@ -15,13 +15,8 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
   };
 
   const handleGooglePlayClick = () => {
-    // Trigger APK download
-    const link = document.createElement('a');
-    link.href = '/api/download-app';
-    link.download = 'CoinHubX.apk';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Download latest APK from AppsGeyser (always has latest features)
+    window.open('https://appsgeyser.com/19313870/Coinhubx', '_blank');
   };
 
   const buttonBaseStyle = {
