@@ -342,13 +342,13 @@ export default function SpotTrading() {
                   key={pair.symbol}
                   onClick={() => setSelectedPair(pair.symbol)}
                   style={{
-                    padding: '12px 16px',
+                    padding: '14px 18px',
                     background: selectedPair === pair.symbol
                       ? 'linear-gradient(135deg, #00F0FF, #A855F7)'
-                      : 'rgba(15, 23, 42, 0.8)',
+                      : 'rgba(15, 23, 42, 0.9)',
                     border: selectedPair === pair.symbol 
                       ? '1px solid rgba(0, 240, 255, 0.6)' 
-                      : '1px solid rgba(0, 240, 255, 0.15)',
+                      : '1px solid rgba(0, 240, 255, 0.2)',
                     borderRadius: '10px',
                     color: selectedPair === pair.symbol ? '#000' : '#fff',
                     fontSize: '14px',
@@ -357,12 +357,13 @@ export default function SpotTrading() {
                     opacity: pair.is_tradable ? 1 : 0.5,
                     transition: 'all 0.2s ease',
                     boxShadow: selectedPair === pair.symbol 
-                      ? '0 4px 12px rgba(0, 240, 255, 0.3)' 
-                      : 'none',
-                    minHeight: '44px',
+                      ? '0 4px 14px rgba(0, 240, 255, 0.4)' 
+                      : '0 2px 8px rgba(0, 240, 255, 0.1)',
+                    height: '48px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    whiteSpace: 'nowrap'
                   }}
                   onMouseEnter={(e) => {
                     if (pair.is_tradable && selectedPair !== pair.symbol) {
