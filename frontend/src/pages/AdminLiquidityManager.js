@@ -36,6 +36,18 @@ const AdminLiquidityManager = () => {
     }
   };
 
+  const fetchDepositAddresses = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/deposit-addresses`);
+      const data = await response.json();
+      if (data.success) {
+        setDepositAddresses(data.addresses);
+      }
+    } catch (error) {
+      console.error('Error fetching deposit addresses:', error);
+    }
+  };
+
   const handleUpdateBalance = async (currency) => {
     setUpdating(true);
     try {
