@@ -91,12 +91,13 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
 
   const labelStyle = {
     fontSize: compact ? '0.7rem' : '0.75rem',
-    opacity: 0.8,
+    opacity: 0.9,
     fontWeight: '600',
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
     marginBottom: '2px',
-    lineHeight: '1'
+    lineHeight: '1',
+    color: '#ffffff'
   };
 
   const storeNameStyle = {
@@ -104,7 +105,8 @@ const PremiumDownloadButtons = ({ showTitle = true, compact = false }) => {
     fontWeight: '900',
     letterSpacing: '-0.5px',
     lineHeight: '1',
-    fontFamily: "'Space Grotesk', sans-serif"
+    fontFamily: "'Space Grotesk', sans-serif",
+    color: '#ffffff'
   };
 
   const arrowStyle = {
