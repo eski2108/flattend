@@ -102,6 +102,24 @@ export default function ReferralDashboard() {
       }} />
       
       <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        {/* Company Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <img 
+            src="/logo.png" 
+            alt="CoinHub X" 
+            style={{ 
+              height: '60px', 
+              filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.6))'
+            }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+              const fallback = document.createElement('div');
+              fallback.innerHTML = '<div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, #00F0FF, #7B2CFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">COIN HUB X</div>';
+              e.target.parentNode.appendChild(fallback);
+            }}
+          />
+        </div>
+
         {/* Premium Header */}
         <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
           <div style={{
