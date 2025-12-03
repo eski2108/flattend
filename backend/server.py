@@ -10082,6 +10082,8 @@ async def execute_trading_v2(request: dict):
     """
     NEW LOCKED TRADING ENGINE - Version 2
     
+    WITH DOUBLE-TRADE PROTECTION AND RATE LIMITING
+    
     Uses protected trading_engine.py with locked formulas.
     All prices calculated server-side from live market data.
     Frontend CANNOT send prices - only amounts.
@@ -10089,11 +10091,22 @@ async def execute_trading_v2(request: dict):
     Supports ALL quote currencies: GBP, USDT, etc.
     """
     from core.trading_engine import TradingEngine
+    from rate_limiter import RateLimiter
     
     try:
         user_id = request.get("user_id")
         pair = request.get("pair")  # e.g., "BTC/GBP" or "BTC/USDT"
         trade_type = request.get("type")  # "buy" or "sell"
+        
+        # RATE LIMIT CHECK
+        rate_limiter = RateLimiter(db)
+        rate_check = await rate_limiter.check_rate_limit(user_id, f"TRADE_{trade_type.upper()}")
+        
+        if not rate_check["allowed"]:
+            return {
+                "success": False,
+                "message": f"Please wait {rate_check['wait_seconds']} seconds before trading again"
+            }
         
         # Parse pair
         base_currency, quote_currency = pair.split("/")
