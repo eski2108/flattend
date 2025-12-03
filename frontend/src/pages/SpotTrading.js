@@ -280,15 +280,65 @@ export default function SpotTrading() {
   return (
     <Layout>
       <style>{`
+        @keyframes pulse {
+          0%, 100% { box-shadow: 0 4px 14px rgba(0, 240, 255, 0.4), 0 0 20px rgba(168, 85, 247, 0.3); }
+          50% { box-shadow: 0 4px 18px rgba(0, 240, 255, 0.6), 0 0 30px rgba(168, 85, 247, 0.5); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes ripple {
+          0% { transform: scale(0.8); opacity: 1; }
+          100% { transform: scale(2); opacity: 0; }
+        }
         .trading-pair-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-          gap: 12px;
+          gap: 10px;
           width: 100%;
         }
         .trading-pair-grid button {
           width: 100%;
           box-sizing: border-box;
+          position: relative;
+          overflow: hidden;
+        }
+        .trading-pair-grid button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s infinite;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        .trading-pair-grid button:hover::before {
+          opacity: 1;
+        }
+        .trading-pair-grid button.active {
+          animation: pulse 2s infinite;
+        }
+        .trading-pair-grid button::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          border-radius: 50%;
+          background: rgba(0, 240, 255, 0.4);
+          transform: translate(-50%, -50%);
+          transition: width 0.6s, height 0.6s;
+        }
+        .trading-pair-grid button:active::after {
+          width: 300px;
+          height: 300px;
+          opacity: 0;
         }
         @media (min-width: 1200px) {
           .trading-pair-grid {
@@ -309,6 +359,9 @@ export default function SpotTrading() {
           .trading-pair-grid {
             grid-template-columns: repeat(2, 1fr);
           }
+        }
+        html {
+          scroll-behavior: smooth;
         }
       `}</style>
       <div style={{
