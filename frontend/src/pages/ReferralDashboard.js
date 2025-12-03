@@ -753,31 +753,50 @@ export default function ReferralDashboard() {
               </div>
 
               <div style={{
-                background: 'rgba(0, 0, 0, 0.4)',
-                border: '2px solid rgba(168, 85, 247, 0.4)',
-                borderRadius: '16px',
-                padding: '1.5rem',
+                background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(255, 215, 0, 0.1))',
+                border: '3px solid rgba(255, 215, 0, 0.6)',
+                borderRadius: '20px',
+                padding: '2rem',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 flexWrap: 'wrap',
-                gap: '1rem'
+                gap: '2rem',
+                boxShadow: '0 0 40px rgba(255, 215, 0, 0.4), inset 0 0 30px rgba(255, 215, 0, 0.1)'
               }}>
                 <div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginBottom: '0.5rem' }}>
-                    One-Time Payment
+                  <div style={{ 
+                    color: '#FFD700', 
+                    fontSize: '16px', 
+                    marginBottom: '0.75rem',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
+                  }}>
+                    🎯 One-Time Investment
                   </div>
                   <div style={{
-                    fontSize: '48px',
+                    fontSize: '64px',
                     fontWeight: '900',
-                    background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
                     WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
+                    WebkitTextFillColor: 'transparent',
+                    lineHeight: '1',
+                    marginBottom: '0.5rem',
+                    textShadow: '0 0 30px rgba(255, 215, 0, 0.5)'
                   }}>
                     £150
                   </div>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', marginTop: '0.25rem' }}>
-                    Lifetime access • No recurring fees
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.8)', 
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <span>✅ Lifetime 50% Commission</span>
+                    <span style={{ color: '#FFD700' }}>•</span>
+                    <span>✅ No Recurring Fees</span>
                   </div>
                 </div>
 
@@ -789,56 +808,66 @@ export default function ReferralDashboard() {
                       });
                       
                       if (response.data.success) {
-                        toast.success('🎉 Upgraded to VIP! Welcome to the exclusive club!');
+                        toast.success('🎉 Upgraded to GOLDEN TIER! You now earn 50% commission!');
                         loadReferralData(user.user_id);
                       } else {
                         toast.error(response.data.message || 'Upgrade failed');
                       }
                     } catch (error) {
-                      console.error('VIP upgrade error:', error);
-                      toast.error(error.response?.data?.detail || 'Failed to upgrade to VIP');
+                      console.error('Golden tier upgrade error:', error);
+                      toast.error(error.response?.data?.detail || 'Failed to upgrade to Golden Tier');
                     }
                   }}
                   style={{
-                    padding: '16px 48px',
-                    background: 'linear-gradient(135deg, #A855F7, #7B2CFF)',
-                    border: 'none',
-                    borderRadius: '12px',
-                    color: '#fff',
-                    fontSize: '18px',
-                    fontWeight: '700',
+                    padding: '20px 60px',
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                    border: '3px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '15px',
+                    color: '#000',
+                    fontSize: '20px',
+                    fontWeight: '900',
                     cursor: 'pointer',
-                    boxShadow: '0 0 30px rgba(168, 85, 247, 0.5)',
+                    boxShadow: '0 0 50px rgba(255, 215, 0, 0.8), inset 0 2px 10px rgba(255, 255, 255, 0.3)',
                     transition: 'all 0.3s ease',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px'
+                    gap: '12px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 0 40px rgba(168, 85, 247, 0.7)';
+                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 0 80px rgba(255, 215, 0, 1), inset 0 2px 15px rgba(255, 255, 255, 0.5)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = '0 0 50px rgba(255, 215, 0, 0.8), inset 0 2px 10px rgba(255, 255, 255, 0.3)';
                   }}
                 >
-                  <IoTrophy size={24} />
-                  Upgrade to VIP Now
+                  <IoTrophy size={28} />
+                  Upgrade to Golden Now
                 </button>
               </div>
 
               <div style={{
-                marginTop: '1rem',
-                padding: '1rem',
-                background: 'rgba(0, 240, 255, 0.05)',
-                border: '1px solid rgba(0, 240, 255, 0.2)',
+                marginTop: '1.5rem',
+                padding: '1.5rem',
+                background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05))',
+                border: '2px solid rgba(255, 215, 0, 0.3)',
                 borderRadius: '12px',
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '13px',
-                lineHeight: '1.6'
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '14px',
+                lineHeight: '1.8'
               }}>
-                <strong style={{ color: '#00F0FF' }}>💡 Note:</strong> VIP tier gives you lifetime 20% commission rate with priority support and exclusive features.
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <span style={{ fontSize: '24px' }}>💡</span>
+                  <div>
+                    <strong style={{ color: '#FFD700', fontSize: '16px' }}>Why Golden Tier?</strong>
+                    <p style={{ marginTop: '0.5rem', marginBottom: '0' }}>
+                      Pay once, earn <strong style={{ color: '#FFD700' }}>50% FOREVER</strong>. If you refer just 3 active traders, this upgrade pays for itself. Every referral after that is pure profit at 2.5x the standard rate!
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
