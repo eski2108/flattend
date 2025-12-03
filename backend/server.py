@@ -10200,22 +10200,32 @@ async def execute_trading_transaction(request: dict):
                 upsert=True
             )
         
+        # ============================================================
+        # SELL LOGIC: User sells crypto for GBP
+        # ============================================================
         else:  # sell
-            # User sells crypto, admin buys crypto
-            # Check user has enough crypto balance for SELL trade
-            user_crypto_balance = await db.internal_balances.find_one(
+            net_gbp_to_user = gross_gbp - fee_amount
+            
+            # STEP 1: Validate admin has enough GBP liquidity to pay user
+            if not admin_gbp_before or admin_gbp_before.get("available", 0) < net_gbp_to_user:
+                return {
+                    "success": False,
+                    "message": f"Insufficient platform GBP liquidity. SELL temporarily disabled. Available: £{admin_gbp_before.get('available', 0) if admin_gbp_before else 0}"
+                }
+            
+            # STEP 2: Validate user has enough crypto
+            user_crypto = await db.internal_balances.find_one(
                 {"user_id": user_id, "currency": base_currency}
             )
-            
-            user_crypto_available = user_crypto_balance.get("available", 0) if user_crypto_balance else 0
+            user_crypto_available = user_crypto.get("available", 0) if user_crypto else 0
             
             if user_crypto_available < amount:
                 return {
                     "success": False,
-                    "message": f"Insufficient {base_currency} balance. You need {amount} {base_currency} but only have {user_crypto_available} {base_currency}."
+                    "message": f"Insufficient {base_currency}. Need {amount}, have {user_crypto_available}"
                 }
             
-            # Deduct crypto from user
+            # STEP 3: Deduct crypto from user
             await db.internal_balances.update_one(
                 {"user_id": user_id, "currency": base_currency},
                 {
@@ -10224,20 +10234,16 @@ async def execute_trading_transaction(request: dict):
                         "balance": -amount
                     },
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-                },
-                upsert=False
+                }
             )
             
-            # Calculate amount user receives (after fee)
-            amount_after_fee = total_fiat - fee_amount
-            
-            # Add GBP to user balance
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": quote_currency},
+            # STEP 4: Add crypto to admin liquidity
+            await db.admin_liquidity_wallets.update_one(
+                {"currency": base_currency},
                 {
                     "$inc": {
-                        "available": amount_after_fee,
-                        "balance": amount_after_fee
+                        "available": amount,
+                        "balance": amount
                     },
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
                     "$setOnInsert": {
@@ -10248,13 +10254,25 @@ async def execute_trading_transaction(request: dict):
                 upsert=True
             )
             
-            # Atomic liquidity addition - use upsert for atomic operation
+            # STEP 5: Deduct GBP from admin liquidity (CRITICAL - NO MINTING)
             await db.admin_liquidity_wallets.update_one(
-                {"currency": base_currency},
+                {"currency": quote_currency},
                 {
                     "$inc": {
-                        "available": amount,
-                        "balance": amount
+                        "available": -net_gbp_to_user,
+                        "balance": -net_gbp_to_user
+                    },
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
+            )
+            
+            # STEP 6: Add GBP to user
+            await db.internal_balances.update_one(
+                {"user_id": user_id, "currency": quote_currency},
+                {
+                    "$inc": {
+                        "available": net_gbp_to_user,
+                        "balance": net_gbp_to_user
                     },
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
                     "$setOnInsert": {
