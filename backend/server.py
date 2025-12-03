@@ -24493,21 +24493,36 @@ async def update_admin_liquidity(request: dict):
 # ==================== LIQUIDITY SAFETY & NOWPAYMENTS ====================
 
 @api_router.post("/webhooks/nowpayments")
-async def nowpayments_webhook(request: dict):
+async def nowpayments_webhook(request: Request):
     """
     NOWPayments webhook for automatic deposit crediting.
     🔒 Automatically credits admin liquidity when deposits are confirmed.
+    🔒 SIGNATURE VERIFICATION ENFORCED - NO FAKE DEPOSITS ALLOWED
     """
     try:
         from nowpayments_real_sync import NOWPaymentsRealSync
+        from nowpayments_integration import NOWPaymentsService
         
         api_key = os.getenv("NOWPAYMENTS_API_KEY")
         if not api_key:
             logger.warning("NOWPayments webhook called but API key not configured")
             return {"success": False, "message": "NOWPayments not configured"}
         
+        # CRITICAL: VERIFY SIGNATURE
+        body = await request.body()
+        signature = request.headers.get('x-nowpayments-sig', '')
+        
+        nowpayments_service = NOWPaymentsService()
+        if not nowpayments_service.verify_ipn_signature(body, signature):
+            logger.error("❌ INVALID WEBHOOK SIGNATURE - Rejecting")
+            return {"success": False, "message": "Invalid signature"}
+        
+        # Parse webhook data
+        import json
+        webhook_data = json.loads(body.decode('utf-8'))
+        
         sync = NOWPaymentsRealSync(db, api_key)
-        result = await sync.process_webhook(request, verify_signature=False)
+        result = await sync.process_webhook(webhook_data, verify_signature=True)
         
         return result
     except Exception as e:
