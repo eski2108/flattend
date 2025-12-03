@@ -32,7 +32,7 @@ export default function SpotTrading() {
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
-      navigate('/login');
+      navigate('/auth');
       return;
     }
     setUser(JSON.parse(userData));
