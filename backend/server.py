@@ -10332,7 +10332,9 @@ async def execute_trading_transaction(request: dict):
             {"currency": quote_currency}, {"_id": 0}
         )
         
-        # Log transaction (for both buy and sell)
+        # ============================================================
+        # TRANSACTION LOGGING WITH LIQUIDITY SNAPSHOTS
+        # ============================================================
         transaction_id = str(uuid.uuid4())
         await db.trading_transactions.insert_one({
             "transaction_id": transaction_id,
@@ -10341,28 +10343,32 @@ async def execute_trading_transaction(request: dict):
             "type": trade_type,
             "amount": amount,
             "market_price": market_price,
-            "adjusted_price": adjusted_price,
-            "markup_percent": buy_markup_percent if trade_type == "buy" else sell_markdown_percent,
-            "total": total_fiat,
+            "user_price": user_price,
+            "spread_percent": buy_spread_percent if trade_type == "buy" else sell_spread_percent,
+            "spread_profit": spread_profit,
+            "gross_gbp": gross_gbp,
             "fee": fee_amount,
             "fee_percent": trading_fee_percent,
-            "admin_fee": admin_fee,
+            "net_gbp": gross_gbp - fee_amount if trade_type == "sell" else gross_gbp + fee_amount,
             "referrer_commission": commission_result.get("commission_amount", 0) if commission_result["success"] else 0,
             "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
-            "final_amount": final_amount,
-            "source": "spot_trading",
+            "admin_crypto_before": admin_crypto_before.get("balance", 0) if admin_crypto_before else 0,
+            "admin_crypto_after": admin_crypto_after.get("balance", 0) if admin_crypto_after else 0,
+            "admin_gbp_before": admin_gbp_before.get("balance", 0) if admin_gbp_before else 0,
+            "admin_gbp_after": admin_gbp_after.get("balance", 0) if admin_gbp_after else 0,
+            "source": "spot_trading_closed_system",
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
-        # Log to fee_transactions for business dashboard
+        # Log fee transaction
         await db.fee_transactions.insert_one({
             "user_id": user_id,
             "transaction_type": "trading",
-            "fee_type": "trading_fee_percent",
-            "amount": total_fiat,
+            "fee_type": "trading_fee",
+            "amount": gross_gbp,
             "fee_amount": fee_amount,
             "fee_percent": trading_fee_percent,
-            "admin_fee": admin_fee,
+            "admin_fee": fee_amount,
             "referrer_commission": commission_result.get("commission_amount", 0) if commission_result["success"] else 0,
             "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
             "currency": quote_currency,
@@ -10371,6 +10377,11 @@ async def execute_trading_transaction(request: dict):
             "reference_id": transaction_id,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
+        
+        logger.info(f"✅ {trade_type.upper()} trade: {amount} {base_currency} @ £{user_price:.2f} | "
+                   f"Spread profit: £{spread_profit:.2f} | Fee: £{fee_amount:.2f} | "
+                   f"Admin GBP: £{admin_gbp_before.get('balance', 0) if admin_gbp_before else 0:.2f} → "
+                   f"£{admin_gbp_after.get('balance', 0) if admin_gbp_after else 0:.2f}")
         
         # Prepare response with clear amounts
         if trade_type == "buy":
