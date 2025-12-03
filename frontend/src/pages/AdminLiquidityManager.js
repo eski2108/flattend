@@ -9,10 +9,15 @@ const AdminLiquidityManager = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [editValues, setEditValues] = useState({});
   const [showAddresses, setShowAddresses] = useState(false);
+  const [realSyncMode, setRealSyncMode] = useState(false);
+  const [nowpaymentsEnabled, setNowpaymentsEnabled] = useState(false);
+  const [liquidityBlocks, setLiquidityBlocks] = useState([]);
 
   useEffect(() => {
     fetchLiquidity();
     fetchDepositAddresses();
+    fetchSyncMode();
+    fetchLiquidityBlocks();
   }, []);
 
   const fetchLiquidity = async () => {
