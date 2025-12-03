@@ -166,19 +166,20 @@ export default function Layout({ children }) {
               }}></div>
               
               <div style={{ 
-                fontSize: '11px', 
+                fontSize: '13px', 
                 fontWeight: '900', 
                 marginBottom: '1rem',
                 textAlign: 'center',
                 textTransform: 'uppercase',
-                letterSpacing: '1.5px',
-                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                letterSpacing: '2px',
+                background: 'linear-gradient(135deg, #00F0FF 0%, #FFD700 50%, #A855F7 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 position: 'relative',
-                zIndex: 1
+                zIndex: 1,
+                textShadow: '0 0 30px rgba(0, 240, 255, 0.5)'
               }}>
-                📱 Download Mobile App
+                📱 GET MOBILE APP
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
