@@ -1257,44 +1257,176 @@ export default function ReferralDashboardNew() {
 
           {/* Right Column */}
           <div style={{ animation: 'slide-in-up 0.8s ease-out 0.2s both' }}>
-          {/* Referral Stats */}
-          <div style={{
-            background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
-            borderRadius: '24px',
-            padding: '2rem',
-            border: '2px solid rgba(0, 240, 255, 0.3)',
-            marginBottom: '2rem'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
-              <IoPeopleOutline size={28} color="#00F0FF" />
-              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff' }}>Referral Stats</h3>
-            </div>
+            {/* Premium Referral Stats */}
+            <div className="premium-card" style={{
+              background: `
+                linear-gradient(135deg, rgba(26, 31, 58, 0.9), rgba(19, 24, 42, 0.9)),
+                linear-gradient(45deg, transparent 30%, rgba(0, 240, 255, 0.05) 50%, transparent 70%)
+              `,
+              backdropFilter: 'blur(20px)',
+              borderRadius: '28px',
+              padding: '2.5rem',
+              border: '2px solid rgba(0, 240, 255, 0.4)',
+              boxShadow: `
+                0 0 40px rgba(0, 240, 255, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `,
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '16px', 
+                marginBottom: '2rem' 
+              }}>
+                <div className="floating-icon">
+                  <IoPeopleOutline size={32} color="#00F0FF" />
+                </div>
+                <h3 style={{ 
+                  fontSize: '24px', 
+                  fontWeight: '900', 
+                  background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
+                  Referral Stats
+                </h3>
+                <IoStarOutline 
+                  size={24} 
+                  color="#FFD700" 
+                  className="sparkle-effect"
+                />
+              </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div style={{
-                background: 'rgba(0, 240, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '1rem',
-                textAlign: 'center'
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr', 
+                gap: '1.5rem' 
               }}>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>
-                  {referralData?.total_signups || 0}
+                <div className="premium-card" style={{
+                  background: `
+                    linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 240, 255, 0.05)),
+                    linear-gradient(45deg, transparent 30%, rgba(0, 240, 255, 0.02) 50%, transparent 70%)
+                  `,
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  textAlign: 'center',
+                  border: '2px solid rgba(0, 240, 255, 0.2)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Animated background pulse */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.1) 0%, transparent 70%)',
+                    animation: 'glow-pulse 3s ease-in-out infinite'
+                  }} />
+                  
+                  <div style={{ 
+                    fontSize: '40px', 
+                    fontWeight: '900', 
+                    background: 'linear-gradient(135deg, #00F0FF, #0EA5E9)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    marginBottom: '0.5rem',
+                    position: 'relative',
+                    zIndex: 1
+                  }}>
+                    {referralData?.total_signups || 0}
+                  </div>
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.7)', 
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    letterSpacing: '0.5px',
+                    position: 'relative',
+                    zIndex: 1
+                  }}>
+                    Total Signups
+                  </div>
+                  
+                  {/* Progress indicator */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '0',
+                    left: '0',
+                    width: `${Math.min(((referralData?.total_signups || 0) / 50) * 100, 100)}%`,
+                    height: '3px',
+                    background: 'linear-gradient(90deg, #00F0FF, #0EA5E9)',
+                    borderRadius: '0 0 16px 16px',
+                    transition: 'width 2s ease-out'
+                  }} />
                 </div>
-                <div style={{ color: '#888', fontSize: '13px', marginTop: '0.5rem' }}>Total Signups</div>
-              </div>
-              <div style={{
-                background: 'rgba(168, 85, 247, 0.05)',
-                borderRadius: '12px',
-                padding: '1rem',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>
-                  {referralData?.active_referrals || 0}
+                
+                <div className="premium-card" style={{
+                  background: `
+                    linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05)),
+                    linear-gradient(45deg, transparent 30%, rgba(168, 85, 247, 0.02) 50%, transparent 70%)
+                  `,
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  textAlign: 'center',
+                  border: '2px solid rgba(168, 85, 247, 0.2)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Animated background pulse */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%)',
+                    animation: 'glow-pulse 3s ease-in-out infinite 1s'
+                  }} />
+                  
+                  <div style={{ 
+                    fontSize: '40px', 
+                    fontWeight: '900', 
+                    background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    marginBottom: '0.5rem',
+                    position: 'relative',
+                    zIndex: 1
+                  }}>
+                    {referralData?.active_referrals || 0}
+                  </div>
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.7)', 
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    letterSpacing: '0.5px',
+                    position: 'relative',
+                    zIndex: 1
+                  }}>
+                    Active Referrals
+                  </div>
+                  
+                  {/* Progress indicator */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '0',
+                    left: '0',
+                    width: `${Math.min(((referralData?.active_referrals || 0) / 20) * 100, 100)}%`,
+                    height: '3px',
+                    background: 'linear-gradient(90deg, #A855F7, #8B5CF6)',
+                    borderRadius: '0 0 16px 16px',
+                    transition: 'width 2s ease-out'
+                  }} />
                 </div>
-                <div style={{ color: '#888', fontSize: '13px', marginTop: '0.5rem' }}>Active Referrals</div>
               </div>
             </div>
-          </div>
 
           {/* Recent Commissions */}
           <div style={{
