@@ -522,7 +522,17 @@ export default function SpotTrading() {
                     </div>
                   </div>
                 </div>
-                <div id="tradingview-chart" style={{ height: '400px', width: '100%' }}></div>
+                <div 
+                  id="tradingview-chart" 
+                  style={{ 
+                    height: '400px', 
+                    width: '100%',
+                    border: '1px solid rgba(0, 240, 255, 0.3)',
+                    borderRadius: '12px',
+                    boxShadow: '0 0 20px rgba(0, 240, 255, 0.15)',
+                    overflow: 'hidden'
+                  }}
+                ></div>
               </div>
 
               {/* Trading panel */}
