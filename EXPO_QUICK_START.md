@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://liquidity-hub-4.preview.emergentagent.com/api
+https://tradeliquidity.preview.emergentagent.com/api
 ```
 
 This means:
