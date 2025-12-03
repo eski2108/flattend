@@ -1255,8 +1255,8 @@ export default function ReferralDashboardNew() {
             </div>
         </div>
 
-        {/* Right Column */}
-        <div>
+          {/* Right Column */}
+          <div style={{ animation: 'slide-in-up 0.8s ease-out 0.2s both' }}>
           {/* Referral Stats */}
           <div style={{
             background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
