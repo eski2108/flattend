@@ -308,24 +308,50 @@ export default function SpotTrading() {
             marginBottom: '1.5rem',
             border: '1px solid rgba(0, 240, 255, 0.2)'
           }}>
-            <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px', fontWeight: '700' }}>SELECT TRADING PAIR</div>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px', fontWeight: '700' }}>SELECT TRADING PAIR</div>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', 
+              gap: '10px'
+            }}>
               {tradingPairs.map(pair => (
                 <button
                   key={pair.symbol}
                   onClick={() => setSelectedPair(pair.symbol)}
                   style={{
-                    padding: '10px 16px',
+                    padding: '12px 16px',
                     background: selectedPair === pair.symbol
                       ? 'linear-gradient(135deg, #00F0FF, #A855F7)'
-                      : 'rgba(0, 0, 0, 0.3)',
-                    border: selectedPair === pair.symbol ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '8px',
+                      : 'rgba(15, 23, 42, 0.8)',
+                    border: selectedPair === pair.symbol 
+                      ? '1px solid rgba(0, 240, 255, 0.6)' 
+                      : '1px solid rgba(0, 240, 255, 0.15)',
+                    borderRadius: '10px',
                     color: selectedPair === pair.symbol ? '#000' : '#fff',
                     fontSize: '14px',
                     fontWeight: '700',
                     cursor: pair.is_tradable ? 'pointer' : 'not-allowed',
-                    opacity: pair.is_tradable ? 1 : 0.5
+                    opacity: pair.is_tradable ? 1 : 0.5,
+                    transition: 'all 0.2s ease',
+                    boxShadow: selectedPair === pair.symbol 
+                      ? '0 4px 12px rgba(0, 240, 255, 0.3)' 
+                      : 'none',
+                    minHeight: '44px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (pair.is_tradable && selectedPair !== pair.symbol) {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(0, 240, 255, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedPair !== pair.symbol) {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = 'none';
+                    }
                   }}
                   disabled={!pair.is_tradable}
                 >
