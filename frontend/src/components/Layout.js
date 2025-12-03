@@ -144,25 +144,45 @@ export default function Layout({ children }) {
             padding: '1rem',
             borderTop: '1px solid rgba(0, 240, 255, 0.2)'
           }}>
-            {/* Mobile App Download - Compact Sidebar Version */}
-            <div style={{ 
-              marginBottom: '1rem',
-              padding: '1rem 0.5rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+            {/* 🔥 PREMIUM MOBILE APP DOWNLOAD SECTION - COMPLETELY REDESIGNED */}
+            <div style={{
+              padding: '1rem',
+              background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(168, 85, 247, 0.1))',
+              borderTop: '2px solid rgba(0, 240, 255, 0.3)',
+              borderBottom: '2px solid rgba(168, 85, 247, 0.3)',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
+              {/* Animated background glow */}
+              <div style={{
+                position: 'absolute',
+                top: '-50%',
+                left: '-50%',
+                width: '200%',
+                height: '200%',
+                background: 'radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%)',
+                animation: 'pulse 4s ease-in-out infinite',
+                pointerEvents: 'none'
+              }}></div>
+              
               <div style={{ 
-                fontSize: '0.75rem', 
-                color: '#00F0FF', 
-                fontWeight: '700', 
-                marginBottom: '0.75rem',
+                fontSize: '11px', 
+                fontWeight: '900', 
+                marginBottom: '1rem',
                 textAlign: 'center',
                 textTransform: 'uppercase',
-                letterSpacing: '0.5px'
+                letterSpacing: '1.5px',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                position: 'relative',
+                zIndex: 1
               }}>
-                📱 Mobile App
+                📱 Download Mobile App
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
+                {/* Android Button - PREMIUM */}
                 <button
                   onClick={() => window.open('/api/download-app', '_blank')}
                   style={{
@@ -170,39 +190,41 @@ export default function Layout({ children }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem',
-                    background: 'linear-gradient(135deg, #00F0FF, #00D4E6)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#ffffff',
+                    gap: '0.75rem',
+                    padding: '0.875rem 1rem',
+                    background: 'linear-gradient(135deg, #00F0FF 0%, #00D4E6 100%)',
+                    border: '2px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    fontSize: '13px',
+                    fontWeight: '900',
+                    color: '#000000',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                    boxShadow: '0 4px 15px rgba(0, 240, 255, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.2)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 240, 255, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 240, 255, 0.5), inset 0 2px 8px rgba(255, 255, 255, 0.3)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 240, 255, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.2)';
                   }}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="m22 2-5 10-5-4-5 10"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3,3H11V11H3V3M13,3H21V11H13V3M3,13H11V21H3V13M18,13H21V16H18V13M13,18H16V21H13V18M16,13H18V18H16V13M18,16H21V21H18V16Z"/>
                   </svg>
-                  Android
+                  <span>Android App</span>
                 </button>
+                
+                {/* iPhone Button - PREMIUM */}
                 <button
                   onClick={() => {
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                     if (isIOS) {
-                      alert('To install on iPhone:\n\n1. Tap Share button\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
+                      alert('📱 Install on iPhone:\n\n1. Tap Share button (bottom)\n2. Tap "Add to Home Screen"\n3. Tap "Add"\n\n✨ Instant access from your home screen!');
                     } else {
                       window.open('https://liquidity-hub-4.preview.emergentagent.com', '_blank');
                     }
@@ -212,32 +234,47 @@ export default function Layout({ children }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem',
-                    background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#fff',
+                    gap: '0.75rem',
+                    padding: '0.875rem 1rem',
+                    background: 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%)',
+                    border: '2px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    fontSize: '13px',
+                    fontWeight: '900',
+                    color: '#ffffff',
                     cursor: 'pointer',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(168, 85, 247, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.1)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(168, 85, 247, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(168, 85, 247, 0.5), inset 0 2px 8px rgba(255, 255, 255, 0.2)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(168, 85, 247, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.1)';
                   }}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z"/>
                   </svg>
-                  iPhone
+                  <span>iPhone App</span>
                 </button>
+              </div>
+              
+              <div style={{
+                marginTop: '0.75rem',
+                textAlign: 'center',
+                fontSize: '10px',
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontWeight: '600',
+                letterSpacing: '0.5px',
+                position: 'relative',
+                zIndex: 1
+              }}>
+                ⚡ Trade anytime, anywhere
               </div>
             </div>
 
