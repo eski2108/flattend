@@ -63,6 +63,7 @@ const AdminSecurityLogs = lazy(() => import("@/pages/AdminSecurityLogs"));
 const AdminEarnings = lazy(() => import("@/pages/AdminEarnings"));
 const AdminFees = lazy(() => import("@/pages/AdminFees"));
 const AdminUsersManagement = lazy(() => import("@/pages/AdminUsersManagement"));
+const AdminDisputes = lazy(() => import("@/pages/AdminDisputes"));
 const ReferralDashboard = lazy(() => import("@/pages/ReferralDashboard"));
 const ReferralDashboardNew = lazy(() => import("@/pages/ReferralDashboardNew"));
 const ReferralDashboardComprehensive = lazy(() => import("@/pages/ReferralDashboardComprehensive"));
