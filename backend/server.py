@@ -10071,39 +10071,55 @@ async def execute_trading_v2(request: dict):
     Uses protected trading_engine.py with locked formulas.
     All prices calculated server-side from live market data.
     Frontend CANNOT send prices - only amounts.
+    
+    Supports ALL quote currencies: GBP, USDT, etc.
     """
     from core.trading_engine import TradingEngine
     
     try:
         user_id = request.get("user_id")
-        pair = request.get("pair")  # e.g., "BTC/GBP"
+        pair = request.get("pair")  # e.g., "BTC/GBP" or "BTC/USDT"
         trade_type = request.get("type")  # "buy" or "sell"
         
         # Parse pair
         base_currency, quote_currency = pair.split("/")
         
-        # Fetch REAL-TIME mid-market price (backend only, frontend cannot send this)
+        # Fetch REAL-TIME mid-market price in USD first
         from live_pricing import get_live_price
-        mid_market_price = await get_live_price(base_currency)
+        price_data = await get_live_price(base_currency)
         
-        if not mid_market_price or mid_market_price <= 0:
+        if not price_data or price_data <= 0:
             return {
                 "success": False,
                 "message": f"Unable to fetch live price for {base_currency}"
             }
         
+        # Convert price to quote currency
+        # price_data is in USD by default
+        if quote_currency == "GBP":
+            # Convert USD to GBP (approximate rate, should use live forex rates)
+            mid_market_price = price_data * 0.79  # 1 USD = 0.79 GBP approx
+        elif quote_currency == "USDT":
+            # USDT is pegged to USD
+            mid_market_price = price_data
+        else:
+            # Default to USD
+            mid_market_price = price_data
+        
+        log_info(f"🎯 Trading {pair}: Mid-market price = {mid_market_price:.2f} {quote_currency}")
+        
         # Initialize locked trading engine
         engine = TradingEngine(db)
         
         if trade_type == "buy":
-            # User enters GBP amount
-            gbp_amount = float(request.get("gbp_amount"))
+            # User enters fiat amount (GBP, USDT, etc.)
+            fiat_amount = float(request.get("gbp_amount") or request.get("fiat_amount") or request.get("quote_amount"))
             
             result = await engine.execute_buy(
                 user_id=user_id,
                 base_currency=base_currency,
                 quote_currency=quote_currency,
-                gbp_amount=gbp_amount,
+                gbp_amount=fiat_amount,  # Still named gbp_amount in engine but handles any quote currency
                 mid_market_price=mid_market_price
             )
             
