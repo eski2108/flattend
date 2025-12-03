@@ -257,6 +257,98 @@ const AdminLiquidityManager = () => {
           )}
         </div>
 
+        {/* Simulate Crypto Deposit (Testing) */}
+        <div style={{
+          background: 'rgba(13, 23, 38, 0.6)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 152, 0, 0.3)',
+          padding: '25px',
+          marginBottom: '30px'
+        }}>
+          <h3 style={{ color: '#FFA500', marginBottom: '10px', fontSize: '18px' }}>
+            🧪 Test Blockchain Deposit (Simulator)
+          </h3>
+          <p style={{ color: '#8E9BAE', fontSize: '13px', marginBottom: '15px' }}>
+            Simulate receiving crypto deposits to test the automated crediting system. Deposits take 30-60 seconds to process.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+            {['BTC', 'ETH', 'USDT_ERC20', 'LTC'].map(currency => (
+              <div key={currency}>
+                <label style={{ color: '#8E9BAE', fontSize: '14px', display: 'block', marginBottom: '5px' }}>
+                  Simulate {currency} Deposit
+                </label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="number"
+                    placeholder="Amount"
+                    id={`simulate-${currency}`}
+                    step="any"
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 152, 0, 0.3)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  />
+                  <button
+                    onClick={async () => {
+                      const input = document.getElementById(`simulate-${currency}`);
+                      const amount = input.value;
+                      if (amount && parseFloat(amount) > 0) {
+                        setUpdating(true);
+                        try {
+                          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/simulate-deposit`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ currency, amount: parseFloat(amount) })
+                          });
+                          const data = await response.json();
+                          if (data.success) {
+                            setMessage({ 
+                              type: 'success', 
+                              text: `🧪 Simulating ${amount} ${currency} deposit. Check back in 30-60 seconds!` 
+                            });
+                            input.value = '';
+                            // Auto-refresh after 60 seconds
+                            setTimeout(() => {
+                              fetchLiquidity();
+                              setMessage({ type: 'success', text: '✅ Deposit should be credited now!' });
+                            }, 60000);
+                          } else {
+                            setMessage({ type: 'error', text: data.message || 'Simulation failed' });
+                          }
+                        } catch (error) {
+                          setMessage({ type: 'error', text: 'Network error' });
+                        }
+                        setUpdating(false);
+                        setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+                      }
+                    }}
+                    disabled={updating}
+                    style={{
+                      padding: '10px 20px',
+                      background: 'linear-gradient(135deg, #FFA500, #FF6B35)',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: updating ? 'not-allowed' : 'pointer',
+                      opacity: updating ? 0.6 : 1
+                    }}
+                  >
+                    🧪
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <div style={{
           background: 'rgba(13, 23, 38, 0.6)',
