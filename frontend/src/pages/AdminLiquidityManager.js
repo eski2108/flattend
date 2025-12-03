@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { DollarSign, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
 
 const AdminLiquidityManager = () => {
   const [liquidity, setLiquidity] = useState([]);
