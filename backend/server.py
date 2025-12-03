@@ -10117,6 +10117,9 @@ async def execute_trading_transaction(request: dict):
             {"currency": quote_currency}, {"_id": 0}
         )
         
+        # ============================================================
+        # BUY LOGIC: User buys crypto with GBP
+        # ============================================================
         if trade_type == "buy":
             # User buys crypto, admin sells crypto
             # Check admin liquidity
