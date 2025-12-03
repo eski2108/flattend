@@ -191,32 +191,30 @@ export default function Layout({ children }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.75rem',
-                    padding: '1rem 1.25rem',
+                    gap: '0.5rem',
+                    padding: '0.5rem 0.75rem',
                     background: 'linear-gradient(135deg, #00F0FF 0%, #00D4E6 50%, #00C4D6 100%)',
-                    border: '3px solid rgba(0, 240, 255, 0.4)',
-                    borderRadius: '14px',
-                    fontSize: '14px',
-                    fontWeight: '900',
+                    border: '1px solid rgba(0, 240, 255, 0.3)',
+                    borderRadius: '8px',
+                    fontSize: '11px',
+                    fontWeight: '700',
                     color: '#000000',
                     cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 6px 20px rgba(0, 240, 255, 0.5), 0 0 30px rgba(0, 240, 255, 0.3), inset 0 2px 12px rgba(255, 255, 255, 0.3)',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(0, 240, 255, 0.3)',
                     textTransform: 'uppercase',
-                    letterSpacing: '1.5px',
-                    position: 'relative',
-                    overflow: 'hidden'
+                    letterSpacing: '0.5px'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 240, 255, 0.5), inset 0 2px 8px rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 240, 255, 0.4)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 240, 255, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 240, 255, 0.3)';
                   }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M3,3H11V11H3V3M13,3H21V11H13V3M3,13H11V21H3V13M18,13H21V16H18V13M13,18H16V21H13V18M16,13H18V18H16V13M18,16H21V21H18V16Z"/>
                   </svg>
                   <span>Android App</span>
