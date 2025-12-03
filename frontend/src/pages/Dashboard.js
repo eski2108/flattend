@@ -799,12 +799,12 @@ export default function Dashboard() {
                             width: '40px',
                             height: '40px',
                             borderRadius: '50%',
-                            background: tx.type === 'deposit' ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'linear-gradient(135deg, #EF4444, #DC2626)',
+                            background: (tx.type?.includes('buy') || tx.type?.includes('deposit') || tx.transaction_type?.includes('buy') || tx.transaction_type?.includes('deposit')) ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'linear-gradient(135deg, #EF4444, #DC2626)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-                            {tx.type === 'deposit' ? <IoArrowDown size={20} color="#FFFFFF" /> : <IoArrowUp size={20} color="#FFFFFF" />}
+                            {(tx.type?.includes('buy') || tx.type?.includes('deposit') || tx.transaction_type?.includes('buy') || tx.transaction_type?.includes('deposit')) ? <IoArrowDown size={20} color="#FFFFFF" /> : <IoArrowUp size={20} color="#FFFFFF" />}
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF', textTransform: 'capitalize' }}>
