@@ -10383,34 +10383,37 @@ async def execute_trading_transaction(request: dict):
                    f"Admin GBP: £{admin_gbp_before.get('balance', 0) if admin_gbp_before else 0:.2f} → "
                    f"£{admin_gbp_after.get('balance', 0) if admin_gbp_after else 0:.2f}")
         
-        # Prepare response with clear amounts
+        # Return response
         if trade_type == "buy":
             return {
                 "success": True,
                 "transaction": {
+                    "transaction_id": transaction_id,
                     "pair": pair,
                     "type": trade_type,
-                    "amount": amount,  # Crypto amount received
-                    "price": adjusted_price,  # Price per unit (with markup)
-                    "total": total_fiat,  # Total fiat cost before fee
-                    "fee": fee_amount,  # Trading fee
-                    "final_amount": amount,  # Crypto amount user receives
-                    "total_paid": final_amount  # Total fiat user paid
+                    "amount": amount,
+                    "price": user_price,
+                    "market_price": market_price,
+                    "spread_percent": buy_spread_percent,
+                    "total_paid": gross_gbp + fee_amount,
+                    "fee": fee_amount,
+                    "crypto_received": amount
                 }
             }
         else:  # sell
-            amount_after_fee = total_fiat - fee_amount
             return {
                 "success": True,
                 "transaction": {
+                    "transaction_id": transaction_id,
                     "pair": pair,
                     "type": trade_type,
-                    "amount": amount,  # Crypto amount sold
-                    "price": adjusted_price,  # Price per unit (with markdown)
-                    "total": total_fiat,  # Total fiat value before fee
-                    "fee": fee_amount,  # Trading fee
-                    "final_amount": amount_after_fee,  # Fiat amount user receives
-                    "crypto_sold": amount  # Crypto amount sold
+                    "amount": amount,
+                    "price": user_price,
+                    "market_price": market_price,
+                    "spread_percent": sell_spread_percent,
+                    "gross_gbp": gross_gbp,
+                    "fee": fee_amount,
+                    "gbp_received": gross_gbp - fee_amount
                 }
             }
         
