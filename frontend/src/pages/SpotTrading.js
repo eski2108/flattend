@@ -401,7 +401,7 @@ export default function SpotTrading() {
                 borderRadius: '2px'
               }}></div>
             </h1>
-            <p style={{ 
+            <div style={{ 
               color: '#888', 
               fontSize: '14px',
               position: 'relative',
@@ -417,7 +417,7 @@ export default function SpotTrading() {
                 background: '#00F0FF',
                 boxShadow: '0 0 10px rgba(0, 240, 255, 0.6)'
               }}></div>
-            </p>
+            </div>
           </div>
 
           {/* Pair selector */}
