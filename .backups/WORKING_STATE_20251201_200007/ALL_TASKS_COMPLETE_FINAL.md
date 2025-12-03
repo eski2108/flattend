@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://coinfix.preview.emergentagent.com
+**URL:** https://liquidity-hub-4.preview.emergentagent.com
 
 **Services Status:**
 ```bash

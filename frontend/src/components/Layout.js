@@ -204,7 +204,7 @@ export default function Layout({ children }) {
                     if (isIOS) {
                       alert('To install on iPhone:\n\n1. Tap Share button\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
                     } else {
-                      window.open('https://coinfix.preview.emergentagent.com', '_blank');
+                      window.open('https://liquidity-hub-4.preview.emergentagent.com', '_blank');
                     }
                   }}
                   style={{
