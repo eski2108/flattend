@@ -16,6 +16,7 @@ import './i18n'; // Multi-language support
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import WalletPage from "@/pages/WalletPage";
+import SpotTrading from "@/pages/SpotTrading";
 // Auth pages - load immediately (user needs these first)
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
