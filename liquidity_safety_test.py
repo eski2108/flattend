@@ -240,16 +240,31 @@ class LiquiditySafetyTester:
         
         # Step 4: Verify withdrawal was blocked
         print("\n✅ Step 4: Verifying withdrawal was blocked...")
-        if withdrawal_response["success"]:
-            print("   ❌ UNEXPECTED: Withdrawal was NOT blocked!")
-            return False
-        else:
+        # Check if the API response indicates failure (success: false in response body)
+        api_success = withdrawal_response["data"].get("success", True)
+        if not api_success:
             print("   ✅ EXPECTED: Withdrawal was blocked")
             error_message = withdrawal_response["data"].get("message", "")
             if "insufficient" in error_message.lower() and "liquidity" in error_message.lower():
                 print(f"   ✅ EXPECTED: Error message mentions insufficient liquidity: {error_message}")
+                
+                # Check for liquidity-specific fields
+                reason = withdrawal_response["data"].get("reason")
+                if reason == "insufficient_platform_liquidity":
+                    print(f"   ✅ EXPECTED: Reason is 'insufficient_platform_liquidity'")
+                
+                available = withdrawal_response["data"].get("available_liquidity")
+                required = withdrawal_response["data"].get("required_liquidity") 
+                shortage = withdrawal_response["data"].get("shortage")
+                
+                if available is not None and required is not None and shortage is not None:
+                    print(f"   ✅ EXPECTED: Liquidity details provided - Available: {available}, Required: {required}, Shortage: {shortage}")
+                
             else:
                 print(f"   ⚠️  WARNING: Error message doesn't mention liquidity: {error_message}")
+        else:
+            print("   ❌ UNEXPECTED: Withdrawal was NOT blocked!")
+            return False
         
         # Step 5: Check liquidity_events collection for blocked entry
         print("\n📋 Step 5: Checking liquidity_events for blocked withdrawal...")
