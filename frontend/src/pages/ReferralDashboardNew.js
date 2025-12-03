@@ -124,12 +124,16 @@ export default function ReferralDashboardNew() {
   };
 
   const calculateGoldenValue = () => {
-    const standardEarnings = stats.total_earned;
-    const goldenEarnings = standardEarnings * 2.5;
-    const difference = goldenEarnings - standardEarnings;
-    const breakEvenNeeded = Math.max(0, 150 - difference);
+    // Use REAL tier progress data from backend
+    const tierProgress = window.referralAnalytics?.tier_progress || {};
     
-    return { goldenEarnings, difference, breakEvenNeeded };
+    return {
+      goldenEarnings: tierProgress.golden_potential_earnings || (stats.total_earned * 2.5),
+      difference: tierProgress.difference || (stats.total_earned * 1.5),
+      breakEvenNeeded: tierProgress.break_even_needed || Math.max(0, 150 - (stats.total_earned * 1.5)),
+      progress_percentage: tierProgress.progress_percentage || 0,
+      is_worth_upgrading: tierProgress.is_worth_upgrading || false
+    };
   };
 
   const getTierInfo = (tier) => {
