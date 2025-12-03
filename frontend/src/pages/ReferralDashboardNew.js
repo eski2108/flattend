@@ -64,11 +64,11 @@ export default function ReferralDashboardNew() {
       setLoading(true);
       
       // Fetch referral dashboard data
-      const dashboardRes = await axios.get(`${API}/api/referral/dashboard/${user.user_id}`);
+      const dashboardRes = await axios.get(`${API}/referral/dashboard/${user.user_id}`);
       setReferralData(dashboardRes.data);
       
       // Fetch commissions
-      const commissionsRes = await axios.get(`${API}/api/referral/commissions/${user.user_id}`);
+      const commissionsRes = await axios.get(`${API}/referral/commissions/${user.user_id}`);
       setCommissions(commissionsRes.data.commissions || []);
       
       // Calculate stats
