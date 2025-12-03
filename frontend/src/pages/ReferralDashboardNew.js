@@ -731,7 +731,7 @@ export default function ReferralDashboardNew() {
           </div>
         </div>
 
-        {/* 9. ACTIVITY TIMELINE */}
+        {/* 9. ACTIVITY TIMELINE - REAL TRANSACTION DATA */}
         {commissions.length > 0 && (
           <div style={{
             background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
@@ -742,7 +742,7 @@ export default function ReferralDashboardNew() {
             <div style={{ fontSize: '14px', fontWeight: '700', color: '#00F0FF', marginBottom: '1rem' }}>
               Recent Activity
             </div>
-            {commissions.slice(0, 5).map((c, idx) => (
+            {commissions.slice(0, 10).map((activity, idx) => (
               <div key={idx} style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -751,25 +751,52 @@ export default function ReferralDashboardNew() {
                 background: 'rgba(0, 0, 0, 0.3)',
                 borderRadius: '8px',
                 marginBottom: '0.5rem',
-                fontSize: '12px'
+                fontSize: '12px',
+                border: '1px solid rgba(0, 240, 255, 0.1)'
               }}>
-                <div>
-                  <div style={{ color: '#fff', fontWeight: '600' }}>
-                    {c.transaction_type === 'trading' ? 'Trade completed' : 'Transaction'}
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: '#fff', fontWeight: '600', marginBottom: '4px' }}>
+                    {activity.transaction_type || 'Transaction'}
                   </div>
                   <div style={{ color: '#888', fontSize: '11px' }}>
-                    {new Date(c.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                    {activity.referred_user || 'User'} • {new Date(activity.date).toLocaleDateString('en-GB', { 
+                      day: '2-digit', 
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                  <div style={{ 
+                    color: activity.status === 'completed' ? '#00FF88' : '#FFA500',
+                    fontSize: '10px',
+                    marginTop: '4px',
+                    textTransform: 'uppercase',
+                    fontWeight: '600'
+                  }}>
+                    {activity.status || 'completed'}
                   </div>
                 </div>
                 <div style={{
                   color: '#00FF88',
-                  fontWeight: '700',
-                  fontSize: '14px'
+                  fontWeight: '900',
+                  fontSize: '16px',
+                  textAlign: 'right'
                 }}>
-                  +£{c.commission_amount?.toFixed(2) || '0.00'}
+                  +£{activity.amount?.toFixed(2) || '0.00'}
                 </div>
               </div>
             ))}
+            
+            {commissions.length > 10 && (
+              <div style={{ 
+                textAlign: 'center', 
+                marginTop: '1rem',
+                color: '#888',
+                fontSize: '12px'
+              }}>
+                Showing 10 of {commissions.length} transactions
+              </div>
+            )}
           </div>
         )}
 
