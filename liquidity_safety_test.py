@@ -433,7 +433,9 @@ class LiquiditySafetyTester:
         withdrawal_response = await self.api_request("POST", "/wallet/withdraw", params=withdrawal_params)
         print(f"   Withdrawal response: {withdrawal_response}")
         
-        if withdrawal_response["success"]:
+        # Check if withdrawal succeeded (success: true in response body)
+        api_success = withdrawal_response["data"].get("success", False)
+        if api_success:
             print("   ✅ Withdrawal now works with sufficient liquidity")
             
             # Check that a "passed" liquidity event was created
