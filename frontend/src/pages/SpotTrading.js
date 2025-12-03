@@ -375,8 +375,21 @@ export default function SpotTrading() {
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)',
         padding: '1rem',
-        paddingTop: '80px'
+        paddingTop: '80px',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.03), transparent 50%), radial-gradient(circle at 80% 50%, rgba(168, 85, 247, 0.03), transparent 50%)',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+          zIndex: 0
+        }}></div>
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           {/* Header */}
           <div style={{ marginBottom: '2rem' }}>
