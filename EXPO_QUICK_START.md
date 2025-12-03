@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://p2p-repair.preview.emergentagent.com/api
+https://coinfix.preview.emergentagent.com/api
 ```
 
 This means:
