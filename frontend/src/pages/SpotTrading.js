@@ -279,6 +279,28 @@ export default function SpotTrading() {
 
   return (
     <Layout>
+      <style>{`
+        .trading-pair-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 10px;
+        }
+        @media (max-width: 1024px) {
+          .trading-pair-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+        @media (max-width: 768px) {
+          .trading-pair-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 480px) {
+          .trading-pair-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)',
