@@ -215,7 +215,7 @@ class LiquiditySafetyTester:
         test_user_id = await self.create_test_user()
         
         # Attempt withdrawal of 0.01 BTC (10x more than available 0.001)
-        withdrawal_data = {
+        withdrawal_params = {
             "user_id": test_user_id,
             "currency": "BTC",
             "amount": 0.01,
@@ -223,8 +223,8 @@ class LiquiditySafetyTester:
             "network": "bitcoin"
         }
         
-        print(f"   Attempting withdrawal: {withdrawal_data}")
-        withdrawal_response = await self.api_request("POST", "/wallet/withdraw", withdrawal_data)
+        print(f"   Attempting withdrawal: {withdrawal_params}")
+        withdrawal_response = await self.api_request("POST", "/wallet/withdraw", params=withdrawal_params)
         print(f"   Withdrawal response: {withdrawal_response}")
         
         # Step 4: Verify withdrawal was blocked
