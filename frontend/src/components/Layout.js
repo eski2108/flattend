@@ -222,7 +222,7 @@ export default function Layout({ children }) {
                   <span>Android App</span>
                 </button>
                 
-                {/* iPhone Button - PREMIUM */}
+                {/* iPhone Button - PREMIUM VIBRANT */}
                 <button
                   onClick={() => {
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -238,18 +238,20 @@ export default function Layout({ children }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '0.75rem',
-                    padding: '0.875rem 1rem',
-                    background: 'linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%)',
-                    border: '2px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '12px',
-                    fontSize: '13px',
+                    padding: '1rem 1.25rem',
+                    background: 'linear-gradient(135deg, #FF6B9D 0%, #C084FC 50%, #A855F7 100%)',
+                    border: '3px solid rgba(255, 107, 157, 0.4)',
+                    borderRadius: '14px',
+                    fontSize: '14px',
                     fontWeight: '900',
                     color: '#ffffff',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 15px rgba(168, 85, 247, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 6px 20px rgba(255, 107, 157, 0.5), 0 0 30px rgba(168, 85, 247, 0.3), inset 0 2px 12px rgba(255, 255, 255, 0.2)',
                     textTransform: 'uppercase',
-                    letterSpacing: '1px'
+                    letterSpacing: '1.5px',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
