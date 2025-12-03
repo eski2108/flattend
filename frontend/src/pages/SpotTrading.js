@@ -283,7 +283,12 @@ export default function SpotTrading() {
         .trading-pair-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
+          gap: 12px;
+          width: 100%;
+        }
+        .trading-pair-grid button {
+          width: 100%;
+          box-sizing: border-box;
         }
         @media (max-width: 1024px) {
           .trading-pair-grid {
