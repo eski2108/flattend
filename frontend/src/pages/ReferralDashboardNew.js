@@ -448,7 +448,7 @@ export default function ReferralDashboardNew() {
                   </div>
                 ) : (
                   <div style={{ marginTop: '6px', color: '#00FF88' }}>
-                    ✅ You've already earned enough to justify the upgrade!
+                    ✅ You&apos;ve already earned enough to justify the upgrade!
                   </div>
                 )}
               </div>
