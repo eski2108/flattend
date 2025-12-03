@@ -201,45 +201,202 @@ export default function ReferralDashboardNew() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)',
-      padding: '2rem',
-      paddingTop: '100px'
-    }}>
-      {/* Company Logo */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', marginBottom: '2rem' }}>
-        <img 
-          src="/logo.png" 
-          alt="CoinHub X" 
-          style={{ 
-            height: '60px',
-            filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.6))'
-          }}
-          onError={(e) => {
-            e.target.style.display = 'none';
-            const fallback = document.createElement('div');
-            fallback.innerHTML = '<div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, #00F0FF, #7B2CFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">COIN HUB X</div>';
-            e.target.parentNode.appendChild(fallback);
-          }}
-        />
-      </div>
-
-      {/* Header */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', marginBottom: '2rem' }}>
-        <h1 style={{
-          fontSize: '36px',
-          fontWeight: '900',
-          background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          marginBottom: '0.5rem',
-          textAlign: 'center'
+    <>
+      <style>
+        {`
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+          }
+          
+          @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.8), 0 0 60px rgba(0, 240, 255, 0.4); }
+          }
+          
+          @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          
+          @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+          }
+          
+          @keyframes golden-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          
+          @keyframes particle-float {
+            0% { transform: translateY(0px) translateX(0px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+          }
+          
+          @keyframes bounce-in {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.05) rotate(5deg); }
+            70% { transform: scale(0.9) rotate(-2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          }
+          
+          @keyframes slide-in-up {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+          }
+          
+          @keyframes rocket-fly {
+            0% { transform: translateX(-20px) translateY(0px) rotate(-10deg); }
+            100% { transform: translateX(20px) translateY(-20px) rotate(10deg); }
+          }
+          
+          @keyframes crown-glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) drop-shadow(0 0 35px rgba(255, 165, 0, 0.8)); }
+          }
+          
+          @keyframes moving-bg {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+          }
+          
+          .premium-card {
+            animation: bounce-in 0.8s ease-out;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          .premium-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 240, 255, 0.3) !important;
+          }
+          
+          .golden-upgrade {
+            animation: glow-pulse 3s ease-in-out infinite;
+          }
+          
+          .sparkle-effect {
+            animation: sparkle 2s ease-in-out infinite;
+          }
+          
+          .floating-icon {
+            animation: float 3s ease-in-out infinite;
+          }
+          
+          .gradient-text {
+            background: linear-gradient(135deg, #00F0FF, #A855F7, #FFD700);
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+          
+          .copy-success {
+            animation: bounce-in 0.5s ease-out;
+          }
+        `}
+      </style>
+      
+      <div style={{
+        minHeight: '100vh',
+        background: `
+          radial-gradient(circle at 20% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+          linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)
+        `,
+        backgroundSize: '100% 100%, 100% 100%, 100% 100%, 100% 100%',
+        animation: 'moving-bg 20s ease infinite',
+        padding: '2rem',
+        paddingTop: '100px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Floating Particles Background */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          zIndex: 0
         }}>
-          🎁 Referral Dashboard
-        </h1>
-        <p style={{ color: '#888', fontSize: '16px', textAlign: 'center' }}>Invite friends and earn commission on every transaction</p>
-      </div>
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                width: Math.random() * 6 + 2 + 'px',
+                height: Math.random() * 6 + 2 + 'px',
+                background: `linear-gradient(45deg, ${['#00F0FF', '#A855F7', '#FFD700'][Math.floor(Math.random() * 3)]}, transparent)`,
+                borderRadius: '50%',
+                left: Math.random() * 100 + '%',
+                top: Math.random() * 100 + '%',
+                animation: `particle-float ${Math.random() * 10 + 15}s linear infinite`,
+                animationDelay: Math.random() * 5 + 's'
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Company Logo */}
+        <div style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto', 
+          textAlign: 'center', 
+          marginBottom: '2rem',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <div className="floating-icon">
+            <img 
+              src="/logo.png" 
+              alt="CoinHub X" 
+              style={{ 
+                height: '60px',
+                filter: 'drop-shadow(0 0 30px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.4))'
+              }}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.innerHTML = '<div class="gradient-text" style="font-size: 40px; font-weight: 900;">COIN HUB X</div>';
+                e.target.parentNode.appendChild(fallback);
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Header */}
+        <div style={{ 
+          maxWidth: '1400px', 
+          margin: '0 auto', 
+          marginBottom: '3rem',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h1 className="gradient-text" style={{
+            fontSize: '48px',
+            fontWeight: '900',
+            marginBottom: '1rem',
+            textAlign: 'center',
+            textShadow: '0 0 30px rgba(0, 240, 255, 0.5)'
+          }}>
+            🎁 Referral Dashboard
+          </h1>
+          <p style={{ 
+            color: 'rgba(255, 255, 255, 0.8)', 
+            fontSize: '18px', 
+            textAlign: 'center',
+            fontWeight: '500'
+          }}>
+            Invite friends and earn commission on every transaction ✨
+          </p>
+        </div>
 
       {/* Stats Cards */}
       <div style={{
