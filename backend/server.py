@@ -10515,6 +10515,7 @@ async def get_trading_pairs():
     Get all available trading pairs with their liquidity status (FULLY DYNAMIC)
     Pairs are automatically generated from enabled coins in supported_coins collection
     """
+    print("🔥🔥🔥 GET_TRADING_PAIRS CALLED 🔥🔥🔥")
     try:
         # Get all enabled coins that support trading from CMS
         trading_coins = await db.supported_coins.find(
@@ -10522,6 +10523,7 @@ async def get_trading_pairs():
             {"_id": 0, "symbol": 1, "name": 1}
         ).sort("symbol", 1).to_list(100)
         
+        print(f"🔍 Trading coins found: {len(trading_coins)}")
         log_info(f"🔍 Trading coins found: {len(trading_coins)}")
         
         # Get platform settings to determine supported fiat currencies
