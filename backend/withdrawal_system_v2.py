@@ -443,13 +443,49 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
 async def mark_withdrawal_completed_v2(db, withdrawal_id: str, admin_id: str) -> dict:
     """
     Mark withdrawal as completed after admin has sent the crypto
+    🔒 DEDUCTS FROM ADMIN LIQUIDITY (NO MINTING)
     """
+    # Get withdrawal details
+    withdrawal = await db.withdrawal_requests.find_one({"withdrawal_id": withdrawal_id, "status": "approved"})
+    
+    if not withdrawal:
+        return {
+            "success": False,
+            "message": "Withdrawal not found or not in approved status"
+        }
+    
+    currency = withdrawal.get("currency")
+    net_amount = withdrawal.get("net_amount")
+    
+    # 🔒 DEDUCT FROM ADMIN LIQUIDITY (CRITICAL - NO MINTING)
+    admin_wallet = await db.admin_liquidity_wallets.find_one({"currency": currency})
+    if not admin_wallet or admin_wallet.get("available", 0) < net_amount:
+        logger.error(f"❌ CRITICAL: Admin liquidity insufficient for withdrawal {withdrawal_id}")
+        return {
+            "success": False,
+            "message": "CRITICAL: Admin liquidity check failed. Contact administrator.",
+            "reason": "admin_liquidity_mismatch"
+        }
+    
+    # Deduct from admin liquidity
+    await db.admin_liquidity_wallets.update_one(
+        {"currency": currency},
+        {
+            "$inc": {"available": -net_amount, "balance": -net_amount},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        }
+    )
+    
+    logger.info(f"💰 Deducted {net_amount} {currency} from admin liquidity for withdrawal {withdrawal_id}")
+    
     result = await db.withdrawal_requests.update_one(
         {"withdrawal_id": withdrawal_id, "status": "approved"},
         {
             "$set": {
                 "status": "completed",
-                "completed_at": datetime.now(timezone.utc).isoformat()
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "admin_liquidity_deducted": True,
+                "admin_liquidity_deducted_at": datetime.now(timezone.utc).isoformat()
             }
         }
     )
@@ -458,10 +494,10 @@ async def mark_withdrawal_completed_v2(db, withdrawal_id: str, admin_id: str) ->
         logger.info(f"✅ Withdrawal {withdrawal_id} marked as completed")
         return {
             "success": True,
-            "message": "Withdrawal marked as completed"
+            "message": "Withdrawal marked as completed and admin liquidity deducted"
         }
     else:
         return {
             "success": False,
-            "message": "Withdrawal not found or not in approved status"
+            "message": "Failed to update withdrawal status"
         }
