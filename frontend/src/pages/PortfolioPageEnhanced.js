@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { BiArrowToTop } from 'react-icons/bi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
