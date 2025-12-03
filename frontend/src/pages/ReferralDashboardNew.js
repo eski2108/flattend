@@ -759,12 +759,22 @@ export default function ReferralDashboardNew() {
                     {activity.transaction_type || 'Transaction'}
                   </div>
                   <div style={{ color: '#888', fontSize: '11px' }}>
-                    {activity.referred_user || 'User'} • {new Date(activity.date).toLocaleDateString('en-GB', { 
-                      day: '2-digit', 
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    {activity.referred_user || 'User'} • {(() => {
+                      try {
+                        const date = new Date(activity.date);
+                        if (isNaN(date.getTime())) {
+                          return 'Recent';
+                        }
+                        return date.toLocaleDateString('en-GB', { 
+                          day: '2-digit', 
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        });
+                      } catch (e) {
+                        return 'Recent';
+                      }
+                    })()}
                   </div>
                   <div style={{ 
                     color: activity.status === 'completed' ? '#00FF88' : '#FFA500',
