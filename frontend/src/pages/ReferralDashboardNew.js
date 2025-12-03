@@ -103,6 +103,14 @@ export default function ReferralDashboardNew() {
         this_month: thisMonth,
         last_30_days: last30Days
       });
+
+      // Animate numbers
+      animateNumbers({
+        total_earned: totalEarned,
+        pending: pending,
+        completed: completed,
+        this_month: thisMonth
+      });
       
     } catch (error) {
       console.error('Error fetching referral data:', error);
