@@ -70,12 +70,12 @@ export default function PortfolioPageEnhanced() {
       return;
     }
     const u = JSON.parse(userData);
-    setUser(u);
+    setUser(u); // eslint-disable-line react-hooks/set-state-in-effect
   }, [navigate]);
 
   useEffect(() => {
     if (user?.user_id) {
-      fetchPortfolio(user.user_id);
+      fetchPortfolio(user.user_id); // eslint-disable-line react-hooks/set-state-in-effect
 
       // Auto-refresh portfolio every 10 seconds
       const refreshInterval = setInterval(() => {
