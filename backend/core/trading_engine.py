@@ -306,6 +306,11 @@ class TradingEngine:
                 "success": False,
                 "message": f"Trade failed: {str(e)}"
             }
+        finally:
+            # ALWAYS RELEASE LOCKS
+            if locks and locks.get("lock_ids"):
+                await lock_system.release_multiple_locks(locks["lock_ids"])
+                logger.info("🔓 All trade locks released")
     
     async def execute_sell(
         self,
