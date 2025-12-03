@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://tradeliquidity.preview.emergentagent.com
+**URL:** https://p2pcryptomarket.preview.emergentagent.com
 
 **Services Status:**
 ```bash
