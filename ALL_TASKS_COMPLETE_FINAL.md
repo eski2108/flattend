@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://liquidity-hub-4.preview.emergentagent.com
+**URL:** https://tradeliquidity.preview.emergentagent.com
 
 **Services Status:**
 ```bash

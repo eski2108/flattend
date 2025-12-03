@@ -7,7 +7,7 @@ import CHXButton from '@/components/CHXButton';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { Activity, BarChart3, DollarSign, Info, IoBarChart, IoCheckmarkCircle, IoFlash, IoPulse, IoTrendingDown, IoTrendingUp, TrendingUpDown } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://liquidity-hub-4.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradeliquidity.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

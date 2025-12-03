@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://liquidity-hub-4.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradeliquidity.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

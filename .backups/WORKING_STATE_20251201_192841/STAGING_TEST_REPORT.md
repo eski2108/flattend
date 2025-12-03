@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://liquidity-hub-4.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://tradeliquidity.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {
