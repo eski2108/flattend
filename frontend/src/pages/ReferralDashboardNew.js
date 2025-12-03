@@ -943,7 +943,7 @@ export default function ReferralDashboardNew() {
                     <button
                       onClick={async () => {
                         try {
-                          const response = await axios.post(`${API}/api/referrals/purchase-vip`, {
+                          const response = await axios.post(`${API}/referrals/purchase-vip`, {
                             user_id: user.user_id
                           });
                           
