@@ -152,8 +152,48 @@ async def calculate_savings_interest_with_profit(db, wallet_service, user_id: st
         # Platform profit = difference
         platform_profit = platform_total_earnings - user_interest
         
+        # 🔒 LIQUIDITY SAFETY CHECK - Ensure admin can pay interest
+        from liquidity_checker import LiquidityChecker
+        
+        liquidity_checker = LiquidityChecker(db)
+        liquidity_check = await liquidity_checker.check_and_log(
+            currency=currency,
+            amount=user_interest,
+            operation_type="savings_interest_payout",
+            user_id=user_id,
+            metadata={
+                "apy": apy_rate,
+                "days": days,
+                "principal": savings_balance,
+                "interest_amount": user_interest,
+                "platform_profit": platform_profit
+            }
+        )
+        
+        if not liquidity_check["can_execute"]:
+            logger.error(f"🚫 SAVINGS INTEREST BLOCKED: {liquidity_check['message']}")
+            return {
+                "success": False,
+                "can_execute": False,
+                "message": f"Interest payout delayed: {liquidity_check['message']}",
+                "reason": "insufficient_platform_liquidity"
+            }
+        
+        logger.info(f"✅ LIQUIDITY CHECK PASSED for savings interest: {user_interest} {currency}")
+        
         # Credit user with their interest
         interest_id = f"savings_interest_{user_id}_{currency}_{int(datetime.now(timezone.utc).timestamp())}"
+        
+        # 🔒 DEDUCT FROM ADMIN LIQUIDITY FIRST (NO MINTING)
+        await db.admin_liquidity_wallets.update_one(
+            {"currency": currency},
+            {
+                "$inc": {"available": -user_interest, "balance": -user_interest},
+                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+            }
+        )
+        
+        logger.info(f"💰 Deducted {user_interest} {currency} from admin liquidity for interest payout")
         
         await wallet_service.credit(
             user_id=user_id,
