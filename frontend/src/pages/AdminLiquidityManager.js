@@ -3,10 +3,12 @@ import Layout from '../components/Layout';
 
 const AdminLiquidityManager = () => {
   const [liquidity, setLiquidity] = useState([]);
+  const [depositAddresses, setDepositAddresses] = useState({});
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [editValues, setEditValues] = useState({});
+  const [showAddresses, setShowAddresses] = useState(false);
 
   useEffect(() => {
     fetchLiquidity();
