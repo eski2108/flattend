@@ -1,386 +1,334 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-import { IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle, IoDocument as FileText, IoEye, IoTime as Clock } from 'react-icons/io5';
+import { IoAlertCircle, IoCheckmarkCircle, IoTime, IoEye, IoChatbubbles } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2pcryptomarket.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL;
 
-function AdminDisputes() {
+export default function AdminDisputes() {
   const navigate = useNavigate();
   const [disputes, setDisputes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState('open');
   const [selectedDispute, setSelectedDispute] = useState(null);
+  const [showResolveModal, setShowResolveModal] = useState(false);
   const [adminNote, setAdminNote] = useState('');
-  const adminId = localStorage.getItem('user_id');
+  const [winner, setWinner] = useState('');
+  const [resolution, setResolution] = useState('');
 
   useEffect(() => {
-    fetchDisputes();
-  }, [filterStatus]);
+    loadDisputes();
+  }, []);
 
-  const fetchDisputes = async () => {
+  const loadDisputes = async () => {
     try {
-      setLoading(true);
-      const response = await axios.get(`${API}/api/admin/disputes/all?status=${filterStatus}`);
+      const response = await axios.get(`${API}/api/admin/disputes/all`);
       if (response.data.success) {
-        setDisputes(response.data.disputes || []);
+        setDisputes(response.data.disputes);
       }
     } catch (error) {
-      console.error('Error fetching disputes:', error);
+      console.error('Error loading disputes:', error);
       toast.error('Failed to load disputes');
     } finally {
       setLoading(false);
     }
   };
 
-  const resolveDispute = async (disputeId, resolution) => {
-    if (!window.confirm(`Are you sure you want to ${resolution === 'release_to_buyer' ? 'release funds to buyer' : 'return funds to seller'}?`)) {
+  const handleResolve = async () => {
+    if (!winner || !resolution.trim()) {
+      toast.error('Please select a winner and provide resolution details');
       return;
     }
 
     try {
-      await axios.post(`${API}/api/admin/disputes/${disputeId}/resolve`, {
-        admin_id: adminId,
+      const response = await axios.post(`${API}/api/admin/disputes/${selectedDispute.dispute_id}/resolve`, {
+        winner: winner,
         resolution: resolution,
+        admin_id: 'admin',
         admin_note: adminNote
       });
 
-      toast.success('Dispute resolved successfully');
-      setAdminNote('');
-      fetchDisputes();
+      if (response.data.success) {
+        toast.success('Dispute resolved successfully');
+        setShowResolveModal(false);
+        setSelectedDispute(null);
+        loadDisputes();
+      }
     } catch (error) {
       console.error('Error resolving dispute:', error);
       toast.error('Failed to resolve dispute');
     }
   };
 
-  const addAdminNote = async (disputeId) => {
-    if (!adminNote.trim()) {
-      toast.error('Please enter a note');
-      return;
-    }
-
-    try {
-      await axios.post(`${API}/api/admin/disputes/${disputeId}/note`, {
-        admin_id: adminId,
-        note: adminNote.trim()
-      });
-
-      toast.success('Note added');
-      setAdminNote('');
-      fetchDisputes();
-    } catch (error) {
-      console.error('Error adding note:', error);
-      toast.error('Failed to add note');
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'open': return 'text-yellow-400 bg-yellow-900/20';
+      case 'under_review': return 'text-orange-400 bg-orange-900/20';
+      case 'resolved': return 'text-green-400 bg-green-900/20';
+      default: return 'text-gray-400 bg-gray-900/20';
     }
   };
 
   return (
     <Layout>
-      <div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', minHeight: '100vh' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: '900', color: '#00F0FF', marginBottom: '1.5rem' }}>
-          Dispute Management
-        </h1>
-
-        {/* Status Filter */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-          <button
-            onClick={() => setFilterStatus('open')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: filterStatus === 'open' ? 'linear-gradient(135deg, #FCD34D, #F59E0B)' : 'rgba(255, 255, 255, 0.05)',
-              border: 'none',
-              borderRadius: '8px',
-              color: filterStatus === 'open' ? '#000' : '#888',
-              fontWeight: '700',
-              cursor: 'pointer'
-            }}
-          >
-            Open Disputes
-          </button>
-          <button
-            onClick={() => setFilterStatus('resolved')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: filterStatus === 'resolved' ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'rgba(255, 255, 255, 0.05)',
-              border: 'none',
-              borderRadius: '8px',
-              color: filterStatus === 'resolved' ? '#fff' : '#888',
-              fontWeight: '700',
-              cursor: 'pointer'
-            }}
-          >
-            Resolved
-          </button>
-        </div>
-
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>Loading disputes...</div>
-        ) : disputes.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '3rem',
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid rgba(0, 240, 255, 0.2)',
-            borderRadius: '12px'
-          }}>
-            <div style={{ color: '#888', fontSize: '16px' }}>No {filterStatus} disputes</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-white mb-2">🚨 Admin Dispute Management</h1>
+            <p className="text-gray-400">Review and resolve P2P trade disputes</p>
           </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {disputes.map((dispute) => (
-              <div
-                key={dispute.dispute_id}
-                style={{
-                  padding: '1.5rem',
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid rgba(0, 240, 255, 0.2)',
-                  borderRadius: '12px'
-                }}
-              >
-                {/* Dispute Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', margin: 0 }}>
-                        {dispute.dispute_id}
-                      </h3>
-                      {dispute.status === 'open' ? (
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.25rem',
-                          padding: '0.25rem 0.75rem',
-                          background: 'rgba(252, 211, 77, 0.15)',
-                          border: '1px solid rgba(252, 211, 77, 0.4)',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: '700',
-                          color: '#FCD34D'
-                        }}>
-                          <AlertTriangle size={12} />
-                          OPEN
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <IoAlertCircle className="w-6 h-6 text-yellow-400" />
+                <h3 className="text-lg font-semibold text-white">Open Disputes</h3>
+              </div>
+              <p className="text-3xl font-bold text-yellow-400">
+                {disputes.filter(d => d.status === 'open').length}
+              </p>
+            </div>
+            <div className="bg-slate-800/50 border border-orange-500/30 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <IoTime className="w-6 h-6 text-orange-400" />
+                <h3 className="text-lg font-semibold text-white">Under Review</h3>
+              </div>
+              <p className="text-3xl font-bold text-orange-400">
+                {disputes.filter(d => d.status === 'under_review').length}
+              </p>
+            </div>
+            <div className="bg-slate-800/50 border border-green-500/30 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <IoCheckmarkCircle className="w-6 h-6 text-green-400" />
+                <h3 className="text-lg font-semibold text-white">Resolved</h3>
+              </div>
+              <p className="text-3xl font-bold text-green-400">
+                {disputes.filter(d => d.status === 'resolved').length}
+              </p>
+            </div>
+          </div>
+
+          {/* Disputes List */}
+          {loading ? (
+            <div className="text-center text-white py-12">
+              <div className="animate-spin w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p>Loading disputes...</p>
+            </div>
+          ) : disputes.length === 0 ? (
+            <div className="bg-slate-800/50 rounded-xl p-12 text-center">
+              <IoCheckmarkCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg">No disputes to review</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {disputes.map(dispute => (
+                <div
+                  key={dispute.dispute_id}
+                  className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-cyan-500/50 transition-colors"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      {/* Header */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(dispute.status)}`}>
+                          {dispute.status?.toUpperCase()}
+                        </span>
+                        <span className="text-gray-400 text-sm">
+                          Trade ID: <span className="text-white font-mono">{dispute.trade_id?.slice(0, 8)}</span>
+                        </span>
+                        <span className="text-gray-400 text-sm">
+                          Dispute ID: <span className="text-white font-mono">{dispute.dispute_id?.slice(0, 8)}</span>
+                        </span>
+                      </div>
+
+                      {/* Details Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                          <p className="text-gray-400 text-sm">Amount</p>
+                          <p className="text-white font-semibold">
+                            {dispute.amount} {dispute.currency}
+                          </p>
                         </div>
-                      ) : (
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.25rem',
-                          padding: '0.25rem 0.75rem',
-                          background: 'rgba(34, 197, 94, 0.15)',
-                          border: '1px solid rgba(34, 197, 94, 0.4)',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: '700',
-                          color: '#22C55E'
-                        }}>
-                          <IoCheckmarkCircle size={12} />
-                          RESOLVED
+                        <div>
+                          <p className="text-gray-400 text-sm">Reason</p>
+                          <p className="text-white capitalize">
+                            {dispute.reason?.replace(/_/g, ' ')}
+                          </p>
                         </div>
-                      )}
-                    </div>
-                    <div style={{ color: '#888', fontSize: '13px' }}>
-                      Trade ID: {dispute.trade_id}
-                    </div>
-                    <div style={{ color: '#888', fontSize: '13px' }}>
-                      Opened: {new Date(dispute.created_at).toLocaleString()}
-                    </div>
-                  </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Initiated By</p>
+                          <p className="text-orange-400 font-semibold capitalize">
+                            {dispute.initiated_by}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Created</p>
+                          <p className="text-white">
+                            {new Date(dispute.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                      onClick={() => navigate(`/disputes/${dispute.dispute_id}`)}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        background: 'rgba(0, 240, 255, 0.1)',
-                        border: '1px solid rgba(0, 240, 255, 0.3)',
-                        borderRadius: '6px',
-                        color: '#00F0FF',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                      }}
-                    >
-                      <IoEye size={14} />
-                      View Details
-                    </button>
-                  </div>
-                </div>
+                      {/* Description */}
+                      <div className="bg-slate-900/50 rounded-lg p-4 mb-4">
+                        <p className="text-gray-400 text-sm mb-1">Description:</p>
+                        <p className="text-white">{dispute.description}</p>
+                      </div>
 
-                {/* Parties */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '1rem',
-                  marginBottom: '1rem',
-                  padding: '1rem',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  borderRadius: '8px'
-                }}>
-                  <div>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>BUYER</div>
-                    <div style={{ color: '#fff', fontSize: '14px', fontWeight: '600' }}>
-                      {dispute.buyer_info?.username || dispute.buyer_info?.email || 'Unknown'}
+                      {/* Parties */}
+                      <div className="flex gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-400">Buyer:</span>
+                          <span className="text-cyan-400 ml-2 font-mono">
+                            {dispute.buyer_id?.slice(0, 8)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Seller:</span>
+                          <span className="text-purple-400 ml-2 font-mono">
+                            {dispute.seller_id?.slice(0, 8)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>SELLER</div>
-                    <div style={{ color: '#fff', fontSize: '14px', fontWeight: '600' }}>
-                      {dispute.seller_info?.username || dispute.seller_info?.email || 'Unknown'}
-                    </div>
-                  </div>
-                </div>
 
-                {/* Stats */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '1rem',
-                  marginBottom: '1rem'
-                }}>
-                  <div style={{
-                    padding: '0.75rem',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    borderRadius: '8px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>MESSAGES</div>
-                    <div style={{ color: '#00F0FF', fontSize: '18px', fontWeight: '900' }}>
-                      {dispute.messages?.length || 0}
-                    </div>
-                  </div>
-                  <div style={{
-                    padding: '0.75rem',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    borderRadius: '8px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>EVIDENCE</div>
-                    <div style={{ color: '#A855F7', fontSize: '18px', fontWeight: '900' }}>
-                      {dispute.evidence?.length || 0}
-                    </div>
-                  </div>
-                  <div style={{
-                    padding: '0.75rem',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    borderRadius: '8px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>NOTES</div>
-                    <div style={{ color: '#FCD34D', fontSize: '18px', fontWeight: '900' }}>
-                      {dispute.admin_notes?.length || 0}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Admin Actions (only for open disputes) */}
-                {dispute.status === 'open' && (
-                  <div style={{
-                    padding: '1rem',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <div style={{ marginBottom: '1rem' }}>
-                      <textarea
-                        value={adminNote}
-                        onChange={(e) => setAdminNote(e.target.value)}
-                        placeholder="Add admin note (optional)..."
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem',
-                          background: 'rgba(0, 0, 0, 0.5)',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                          borderRadius: '6px',
-                          color: '#fff',
-                          fontSize: '13px',
-                          minHeight: '60px',
-                          resize: 'vertical'
-                        }}
-                      />
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    {/* Actions */}
+                    <div className="flex flex-col gap-2 ml-4">
                       <button
-                        onClick={() => resolveDispute(dispute.dispute_id, 'release_to_buyer')}
-                        style={{
-                          flex: 1,
-                          padding: '0.75rem',
-                          background: 'linear-gradient(135deg, #22C55E, #16A34A)',
-                          border: 'none',
-                          borderRadius: '8px',
-                          color: '#fff',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          fontSize: '14px'
-                        }}
+                        onClick={() => navigate(`/admin/disputes/${dispute.dispute_id}`)}
+                        className="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                       >
-                        Release to Buyer
+                        <IoEye className="w-4 h-4" />
+                        View Details
                       </button>
-                      <button
-                        onClick={() => resolveDispute(dispute.dispute_id, 'return_to_seller')}
-                        style={{
-                          flex: 1,
-                          padding: '0.75rem',
-                          background: 'linear-gradient(135deg, #EF4444, #DC2626)',
-                          border: 'none',
-                          borderRadius: '8px',
-                          color: '#fff',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          fontSize: '14px'
-                        }}
-                      >
-                        Return to Seller
-                      </button>
-                      {adminNote.trim() && (
+                      {dispute.status !== 'resolved' && (
                         <button
-                          onClick={() => addAdminNote(dispute.dispute_id)}
-                          style={{
-                            padding: '0.75rem 1.5rem',
-                            background: 'rgba(168, 85, 247, 0.2)',
-                            border: '1px solid rgba(168, 85, 247, 0.4)',
-                            borderRadius: '8px',
-                            color: '#A855F7',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                            fontSize: '14px'
+                          onClick={() => {
+                            setSelectedDispute(dispute);
+                            setShowResolveModal(true);
                           }}
+                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                         >
-                          Add Note
+                          <IoCheckmarkCircle className="w-4 h-4" />
+                          Resolve
                         </button>
                       )}
                     </div>
                   </div>
-                )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-                {/* Resolution Info (for resolved disputes) */}
-                {dispute.status === 'resolved' && (
-                  <div style={{
-                    padding: '1rem',
-                    background: 'rgba(34, 197, 94, 0.1)',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                    borderRadius: '8px'
-                  }}>
-                    <div style={{ color: '#22C55E', fontSize: '14px', fontWeight: '700', marginBottom: '0.25rem' }}>
-                      {dispute.resolution === 'release_to_buyer' ? '✓ Funds released to buyer' : '✓ Funds returned to seller'}
-                    </div>
-                    <div style={{ color: '#888', fontSize: '12px' }}>
-                      Resolved on {new Date(dispute.resolved_at).toLocaleString()}
-                    </div>
-                  </div>
-                )}
+        {/* Resolve Modal */}
+        {showResolveModal && selectedDispute && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-slate-900 border-2 border-green-500 rounded-2xl max-w-2xl w-full shadow-2xl">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-6 rounded-t-2xl">
+                <h2 className="text-2xl font-bold text-white">Resolve Dispute</h2>
+                <p className="text-green-100 text-sm mt-1">
+                  ID: {selectedDispute.dispute_id?.slice(0, 8)}
+                </p>
               </div>
-            ))}
+
+              {/* Form */}
+              <div className="p-6 space-y-4">
+                {/* Winner Selection */}
+                <div>
+                  <label className="block text-gray-300 font-semibold mb-2">Select Winner *</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setWinner('buyer')}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        winner === 'buyer'
+                          ? 'border-cyan-500 bg-cyan-500/20 text-cyan-300'
+                          : 'border-slate-700 bg-slate-800 text-gray-400 hover:border-slate-600'
+                      }`}
+                    >
+                      <p className="font-semibold">Buyer Wins</p>
+                      <p className="text-sm opacity-75">Buyer: {selectedDispute.buyer_id?.slice(0, 8)}</p>
+                    </button>
+                    <button
+                      onClick={() => setWinner('seller')}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        winner === 'seller'
+                          ? 'border-purple-500 bg-purple-500/20 text-purple-300'
+                          : 'border-slate-700 bg-slate-800 text-gray-400 hover:border-slate-600'
+                      }`}
+                    >
+                      <p className="font-semibold">Seller Wins</p>
+                      <p className="text-sm opacity-75">Seller: {selectedDispute.seller_id?.slice(0, 8)}</p>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Resolution */}
+                <div>
+                  <label className="block text-gray-300 font-semibold mb-2">
+                    Resolution Details *
+                  </label>
+                  <textarea
+                    value={resolution}
+                    onChange={(e) => setResolution(e.target.value)}
+                    placeholder="Explain why this decision was made. This will be visible to both parties."
+                    rows={4}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:outline-none resize-none"
+                  />
+                </div>
+
+                {/* Admin Note */}
+                <div>
+                  <label className="block text-gray-300 font-semibold mb-2">
+                    Internal Admin Note (Optional)
+                  </label>
+                  <textarea
+                    value={adminNote}
+                    onChange={(e) => setAdminNote(e.target.value)}
+                    placeholder="Private notes for admin records only. Not visible to users."
+                    rows={3}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:outline-none resize-none"
+                  />
+                </div>
+
+                {/* Fee Info */}
+                <div className="bg-orange-500/10 border-l-4 border-orange-500 p-4">
+                  <p className="text-orange-300 text-sm">
+                    <strong>Note:</strong> A £5 dispute fee will be charged to the losing party.
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => {
+                      setShowResolveModal(false);
+                      setSelectedDispute(null);
+                      setWinner('');
+                      setResolution('');
+                      setAdminNote('');
+                    }}
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleResolve}
+                    disabled={!winner || !resolution.trim()}
+                    className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg transition-all font-semibold"
+                  >
+                    Resolve Dispute
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
     </Layout>
   );
 }
-
-export default AdminDisputes;
