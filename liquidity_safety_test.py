@@ -63,13 +63,24 @@ class LiquiditySafetyTester:
                     }
             elif method.upper() == "POST":
                 headers = {"Content-Type": "application/json"}
-                async with self.session.post(url, json=data, headers=headers) as response:
-                    result = await response.json()
-                    return {
-                        "status": response.status,
-                        "data": result,
-                        "success": response.status < 400
-                    }
+                # For POST requests, use params as query parameters if data is None
+                if data is not None:
+                    async with self.session.post(url, json=data, headers=headers, params=params) as response:
+                        result = await response.json()
+                        return {
+                            "status": response.status,
+                            "data": result,
+                            "success": response.status < 400
+                        }
+                else:
+                    # POST with only query parameters (no body)
+                    async with self.session.post(url, params=params) as response:
+                        result = await response.json()
+                        return {
+                            "status": response.status,
+                            "data": result,
+                            "success": response.status < 400
+                        }
         except Exception as e:
             return {
                 "status": 500,
