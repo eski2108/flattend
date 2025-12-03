@@ -431,12 +431,12 @@ export default function P2PTradeDetailDemo() {
       <OTPModal
         isOpen={showOtpModal}
         onClose={() => setShowOtpModal(false)}
-        onVerify={async (otpCode) => {
+        onVerify={async (code) => {
           try {
-            const response = await axios.post(`${API}/api/p2p/release-crypto`, {
-              trade_id: tradeId,
-              seller_id: user.user_id,
-              otp_code: otpCode
+            const response = await axios.post(`${API}/api/crypto-market/release-crypto`, {
+              order_id: tradeId,
+              otp_code: code,
+              seller_id: user.user_id
             });
             
             if (response.data.success) {
@@ -456,6 +456,30 @@ export default function P2PTradeDetailDemo() {
         userId={user?.user_id}
         action="p2p_release"
       />
+
+      {/* Dispute Modal */}
+      <DisputeModal
+        isOpen={showDisputeModal}
+        onClose={() => setShowDisputeModal(false)}
+        tradeId={tradeId}
+        userId={user?.user_id}
+        onDisputeCreated={(newDispute) => {
+          setDispute(newDispute);
+          setShowDisputeModal(false);
+          loadTradeDetails();
+        }}
+      />
+
+      {/* Dispute Chat Modal */}
+      {dispute && (
+        <DisputeChatModal
+          isOpen={showDisputeChatModal}
+          onClose={() => setShowDisputeChatModal(false)}
+          disputeId={dispute.dispute_id}
+          userId={user?.user_id}
+          userRole={user?.user_id === trade?.buyer_id ? 'buyer' : 'seller'}
+        />
+      )}
     </div>
   );
 }
