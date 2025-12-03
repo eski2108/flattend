@@ -101,6 +101,9 @@ export default function Dashboard() {
     return `${parseFloat(amount).toFixed(8)} ${symbol}`;
   };
 
+  // 🔒 LOCKED: Date formatter - DO NOT MODIFY
+  // Fixes "Invalid Date" bug in Recent Activity
+  // Handles null/undefined, validates dates, returns "Dec 3, 2025" format
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     try {
@@ -120,6 +123,7 @@ export default function Dashboard() {
       return 'Invalid Date';
     }
   };
+  // 🔒 END LOCKED SECTION
 
   if (loading) {
     return (
