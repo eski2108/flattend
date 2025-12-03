@@ -42,8 +42,7 @@ const P2PMarketplace = lazy(() => import("@/pages/P2PMarketplace"));
 const P2PTradeDetailDemo = lazy(() => import("@/pages/P2PTradeDetailDemo"));
 const DisputeCentre = lazy(() => import("@/pages/DisputeCentre"));
 const AdminDisputes = lazy(() => import("@/pages/AdminDisputes"));
-// SpotTrading loaded directly for testing
-// const SpotTrading = lazy(() => import("@/pages/SpotTrading"));
+const SpotTrading = lazy(() => import("@/pages/SpotTrading"));
 const AdminProofPage = lazy(() => import("@/pages/AdminProofPage"));
 const TradePage = lazy(() => import("@/pages/TradePageNew"));
 const CreateOffer = lazy(() => import("@/pages/CreateOffer"));
