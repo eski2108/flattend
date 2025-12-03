@@ -643,50 +643,136 @@ export default function ReferralDashboardNew() {
         }}>
           {/* Left Column */}
           <div style={{ animation: 'slide-in-up 0.8s ease-out' }}>
-          {/* Tier Card */}
-          <div style={{
-            background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
-            borderRadius: '24px',
-            padding: '2rem',
-            border: `2px solid ${tierInfo.color}`,
-            boxShadow: `0 8px 32px ${tierInfo.color}40`,
-            marginBottom: '2rem'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-              <div>
-                <div style={{ color: '#888', fontSize: '14px', marginBottom: '0.5rem' }}>YOUR TIER</div>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: tierInfo.color }}>
-                  {tierInfo.name}
+            {/* Premium Tier Card */}
+            <div className="premium-card" style={{
+              background: `
+                linear-gradient(135deg, rgba(26, 31, 58, 0.9), rgba(19, 24, 42, 0.9)),
+                linear-gradient(45deg, transparent 30%, ${tierInfo.color}10 50%, transparent 70%)
+              `,
+              backdropFilter: 'blur(20px)',
+              borderRadius: '28px',
+              padding: '2.5rem',
+              border: `3px solid ${tierInfo.color}`,
+              boxShadow: `
+                0 0 60px ${tierInfo.color}40,
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `,
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              {/* Animated background pattern */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: `radial-gradient(circle at 50% 50%, ${tierInfo.color}05 0%, transparent 70%)`,
+                animation: 'glow-pulse 4s ease-in-out infinite'
+              }} />
+              
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                marginBottom: '2rem',
+                position: 'relative',
+                zIndex: 1
+              }}>
+                <div>
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.7)', 
+                    fontSize: '14px', 
+                    marginBottom: '0.5rem',
+                    fontWeight: '600',
+                    letterSpacing: '1px'
+                  }}>
+                    YOUR TIER
+                  </div>
+                  <div style={{ 
+                    fontSize: '36px', 
+                    fontWeight: '900', 
+                    background: `linear-gradient(135deg, ${tierInfo.color}, ${tierInfo.color}CC)`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    textShadow: `0 0 30px ${tierInfo.color}80`
+                  }}>
+                    {tierInfo.name}
+                  </div>
+                </div>
+                <div style={{
+                  background: `${tierInfo.color}20`,
+                  borderRadius: '50%',
+                  width: '90px',
+                  height: '90px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '48px',
+                  border: `2px solid ${tierInfo.color}40`,
+                  boxShadow: `0 0 30px ${tierInfo.color}60`,
+                  animation: tierInfo.name === 'Golden' ? 'crown-glow 3s ease-in-out infinite' : 'float 3s ease-in-out infinite'
+                }}>
+                  {tierInfo.name === 'VIP' ? '👑' : tierInfo.name === 'Golden' ? '⭐' : '🎯'}
                 </div>
               </div>
+              
               <div style={{
-                background: `${tierInfo.color}20`,
-                borderRadius: '50%',
-                width: '80px',
-                height: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '40px'
+                background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2))',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '1.5rem',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                position: 'relative',
+                zIndex: 1
               }}>
-                {tierInfo.name === 'VIP' ? '👑' : tierInfo.name === 'Golden' ? '⭐' : '🎯'}
+                <div style={{ 
+                  color: 'rgba(255, 255, 255, 0.7)', 
+                  fontSize: '13px', 
+                  marginBottom: '0.5rem',
+                  fontWeight: '600',
+                  letterSpacing: '1px'
+                }}>
+                  COMMISSION RATE
+                </div>
+                <div style={{ 
+                  fontSize: '32px', 
+                  fontWeight: '900', 
+                  background: `linear-gradient(135deg, ${tierInfo.color}, #FFD700)`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '0.5rem'
+                }}>
+                  {tierInfo.rate}
+                </div>
+                <div style={{ 
+                  color: 'rgba(255, 255, 255, 0.6)', 
+                  fontSize: '13px',
+                  lineHeight: '1.4'
+                }}>
+                  You earn {tierInfo.rate} of all fees generated by your referrals
+                </div>
+                
+                {/* Percentage indicator */}
+                <div style={{
+                  marginTop: '1rem',
+                  height: '6px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '3px',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    width: tierInfo.rate,
+                    height: '100%',
+                    background: `linear-gradient(90deg, ${tierInfo.color}, #FFD700)`,
+                    borderRadius: '3px',
+                    transition: 'width 2s ease-out'
+                  }} />
+                </div>
               </div>
             </div>
-            <div style={{
-              background: 'rgba(0, 0, 0, 0.3)',
-              borderRadius: '12px',
-              padding: '1rem',
-              marginBottom: '1rem'
-            }}>
-              <div style={{ color: '#888', fontSize: '13px', marginBottom: '0.5rem' }}>COMMISSION RATE</div>
-              <div style={{ fontSize: '28px', fontWeight: '900', color: tierInfo.color }}>
-                {tierInfo.rate}
-              </div>
-              <div style={{ color: '#888', fontSize: '12px', marginTop: '0.5rem' }}>
-                You earn {tierInfo.rate} of all fees generated by your referrals
-              </div>
-            </div>
-          </div>
 
           {/* 🌟 GOLDEN TIER UPGRADE SECTION */}
           {referralData?.tier?.toLowerCase() !== 'golden' && (
