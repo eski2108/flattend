@@ -385,7 +385,7 @@ class LiquiditySafetyTester:
         test_user_id = "liquidity_test_user_001"  # Use same test user
         
         # Attempt smaller withdrawal that should now succeed (0.001 BTC)
-        withdrawal_data = {
+        withdrawal_params = {
             "user_id": test_user_id,
             "currency": "BTC", 
             "amount": 0.001,
@@ -393,8 +393,8 @@ class LiquiditySafetyTester:
             "network": "bitcoin"
         }
         
-        print(f"   Attempting small withdrawal: {withdrawal_data}")
-        withdrawal_response = await self.api_request("POST", "/wallet/withdraw", withdrawal_data)
+        print(f"   Attempting small withdrawal: {withdrawal_params}")
+        withdrawal_response = await self.api_request("POST", "/wallet/withdraw", params=withdrawal_params)
         print(f"   Withdrawal response: {withdrawal_response}")
         
         if withdrawal_response["success"]:
