@@ -258,28 +258,49 @@ function P2PMarketplace() {
       }
       
       // AUTO-MATCH: Find best counterparty
-      const matchResponse = await axios.post(`${API}/api/p2p/auto-match`, {
-        user_id: user.user_id,
-        type: activeTab,
-        crypto: selectedCrypto,
-        amount: cryptoAmount,
-        payment_method: offer.payment_method || null
-      });
-      
-      if (matchResponse.data.success) {
-        const tradeId = matchResponse.data.trade_id;
-        toast.success(`✅ Matched! Redirecting to order page...`);
+      try {
+        const matchResponse = await axios.post(`${API}/api/p2p/auto-match`, {
+          user_id: user.user_id,
+          type: activeTab,
+          crypto: selectedCrypto,
+          amount: cryptoAmount,
+          payment_method: offer.payment_method || null
+        });
         
-        // Navigate to P2P order page
-        setTimeout(() => {
-          navigate(`/p2p/order/${tradeId}`);
-        }, 500);
-      } else {
-        toast.error(matchResponse.data.detail || 'No matches found');
+        if (matchResponse.data.success) {
+          const tradeId = matchResponse.data.trade_id;
+          toast.success(`✅ Matched! Redirecting to order page...`);
+          
+          // Navigate to P2P order page
+          setTimeout(() => {
+            navigate(`/p2p/order/${tradeId}`);
+          }, 500);
+        } else {
+          // No match found - show clear error
+          toast.error(
+            'No suitable offer found. Please adjust amount, currency, or filters.',
+            { duration: 5000 }
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error in handleBuyOffer:', error);
+        
+        // Enhanced error messages
+        const errorMsg = error.response?.data?.detail || error.message;
+        
+        if (errorMsg.includes('limit') || errorMsg.includes('amount')) {
+          toast.error('Amount is outside seller limits. Please adjust your amount.');
+        } else if (errorMsg.includes('payment')) {
+          toast.error('Payment method not supported. Please select a different offer.');
+        } else if (errorMsg.includes('liquidity') || errorMsg.includes('available')) {
+          toast.error('No suitable offer found. Please adjust amount, currency, or filters.');
+        } else {
+          toast.error(`Failed to match: ${errorMsg}`);
+        }
       }
     } catch (error) {
-      console.error('❌ Error in handleBuyOffer:', error);
-      toast.error(error.response?.data?.detail || 'Failed to match');
+      console.error('❌ Outer error in handleBuyOffer:', error);
+      toast.error('Failed to process request. Please try again.');
     } finally {
       setProcessing(false);
     }
