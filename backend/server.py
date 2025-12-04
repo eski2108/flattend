@@ -276,6 +276,15 @@ PLATFORM_CONFIG = {
     "p2p_taker_fee_percent": 1.0,
     "p2p_express_fee_percent": 2.0,
     
+    # P2P AUTO-MATCH FLAGS (per market)
+    "p2p_auto_match_enabled": {
+        "BTC_GBP": True,
+        "ETH_GBP": True,
+        "USDT_GBP": True,
+        "BTC_USD": True,
+        "ETH_USD": True
+    },
+    
     # INSTANT BUY/SELL & SWAP
     "instant_buy_fee_percent": 3.0,
     "instant_sell_fee_percent": 2.0,
