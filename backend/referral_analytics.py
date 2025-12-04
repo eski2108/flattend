@@ -560,10 +560,20 @@ class ReferralAnalytics:
                 # Active if traded in last 30 days
                 is_active = False
                 if last_commission:
-                    last_activity = last_commission.get("created_at")
+                    last_activity = last_commission.get("created_at") or last_commission.get("timestamp")
                     if isinstance(last_activity, datetime):
+                        # Make timezone-aware if naive
+                        if last_activity.tzinfo is None:
+                            last_activity = last_activity.replace(tzinfo=timezone.utc)
                         days_since = (datetime.now(timezone.utc) - last_activity).days
                         is_active = days_since <= 30
+                    elif isinstance(last_activity, str):
+                        try:
+                            last_activity = datetime.fromisoformat(last_activity.replace('Z', '+00:00'))
+                            days_since = (datetime.now(timezone.utc) - last_activity).days
+                            is_active = days_since <= 30
+                        except:
+                            pass
                 
                 result.append({
                     "user_id": user_id_ref,
