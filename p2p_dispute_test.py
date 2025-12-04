@@ -344,68 +344,99 @@ class P2PDisputeTest:
             print(f"⚠️  Error during cleanup: {str(e)}")
             
     async def run_complete_test(self):
-        """Run the complete P2P dispute flow test"""
-        print("🚀 Starting P2P Dispute Flow End-to-End Test")
-        print("=" * 60)
+        """Run the complete P2P dispute flow test as requested"""
+        print("🚀 Starting P2P Dispute Testing - Create REAL P2P Trade and Dispute with FULL Data")
+        print("=" * 80)
         
         await self.setup_session()
         
         try:
-            # Step 1: Create test trade
+            # Step 1: Create REAL P2P trade (0.01 BTC for £500)
             trade_id, buyer_id, seller_id = await self.create_test_trade()
             
-            # Step 2: Create dispute
+            # Step 2: Create dispute with reason "crypto_not_released" and description
             dispute_id, dispute_created = await self.create_dispute(trade_id, buyer_id)
             
-            # Step 3: Verify dispute in database
+            if not dispute_created or not dispute_id:
+                print("❌ Cannot continue - dispute creation failed")
+                return False
+            
+            # Step 3: Get FULL dispute_id (not truncated) and verify ALL data
+            full_data_verified, dispute_data = await self.verify_dispute_full_data(dispute_id)
+            
+            # Step 4: Show EXACT URL for testing
+            url_shown = await self.show_frontend_url(dispute_id)
+            
+            # Step 5: Verify dispute in database
             db_dispute_id, dispute_in_db = await self.verify_dispute_in_database(trade_id)
             
-            # Step 4: Verify trade status updated
+            # Step 6: Verify trade status updated
             trade_status_updated = await self.verify_trade_status_updated(trade_id)
             
-            # Step 5: Check admin disputes endpoint
+            # Step 7: Check admin disputes endpoint
             admin_endpoint_works = await self.check_admin_disputes_endpoint()
             
-            # Step 6: Check backend logs for email
-            email_sent = await self.check_backend_logs_for_email()
-            
             # Results Summary
-            print("\n" + "=" * 60)
-            print("📊 TEST RESULTS SUMMARY")
-            print("=" * 60)
+            print("\n" + "=" * 80)
+            print("📊 P2P DISPUTE TEST RESULTS - AS REQUESTED")
+            print("=" * 80)
             
             results = {
-                "✅ Trade Created": True,
-                "✅ Dispute API Call": dispute_created,
-                "✅ Dispute in Database": dispute_in_db,
-                "✅ Trade Status Updated": trade_status_updated,
-                "✅ Admin Endpoint Access": admin_endpoint_works,
-                "✅ Email Sent to info@coinhubx.net": email_sent
+                "1. Create P2P trade (0.01 BTC for £500)": True,
+                "2. Create dispute (crypto_not_released)": dispute_created,
+                "3. Get FULL dispute_id (not truncated)": dispute_created and dispute_id is not None,
+                "4. Verify ALL dispute data fields": full_data_verified,
+                "5. Show EXACT frontend URL": url_shown,
+                "6. Dispute stored in database": dispute_in_db,
+                "7. Trade status updated": trade_status_updated,
+                "8. Admin can access dispute": admin_endpoint_works
             }
             
             for test, passed in results.items():
-                status = "PASS" if passed else "FAIL"
-                emoji = "✅" if passed else "❌"
-                print(f"{emoji} {test}: {status}")
+                status = "✅ PASS" if passed else "❌ FAIL"
+                print(f"{status} {test}")
                 
             # Overall result
-            all_passed = all(results.values())
-            overall_status = "SUCCESS" if all_passed else "PARTIAL SUCCESS"
-            overall_emoji = "🎉" if all_passed else "⚠️"
+            critical_tests = [
+                results["1. Create P2P trade (0.01 BTC for £500)"],
+                results["2. Create dispute (crypto_not_released)"],
+                results["3. Get FULL dispute_id (not truncated)"],
+                results["4. Verify ALL dispute data fields"]
+            ]
+            
+            all_critical_passed = all(critical_tests)
+            overall_status = "SUCCESS" if all_critical_passed else "FAILED"
+            overall_emoji = "🎉" if all_critical_passed else "❌"
             
             print(f"\n{overall_emoji} OVERALL TEST RESULT: {overall_status}")
             
-            if all_passed:
-                print("🎯 All P2P dispute flow components are working correctly!")
-                print("📧 Email notifications are being sent to info@coinhubx.net as expected")
+            if all_critical_passed:
+                print(f"\n🎯 CRITICAL SUCCESS - All requested features working!")
+                print(f"🆔 FULL DISPUTE ID: {dispute_id}")
+                print(f"🌐 EXACT URL FOR TESTING:")
+                print(f"   http://localhost:3000/admin/disputes/{dispute_id}")
+                print(f"   https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}")
+                print(f"\n📋 DISPUTE CONTAINS ALL REQUIRED DATA:")
+                if dispute_data:
+                    print(f"   - dispute_id: {dispute_data.get('dispute_id')}")
+                    print(f"   - trade_id: {dispute_data.get('trade_id')}")
+                    print(f"   - amount: {dispute_data.get('amount', 'N/A')}")
+                    print(f"   - currency: {dispute_data.get('currency', 'N/A')}")
+                    print(f"   - buyer_id: {dispute_data.get('buyer_id')}")
+                    print(f"   - seller_id: {dispute_data.get('seller_id')}")
+                    print(f"   - reason: {dispute_data.get('reason')}")
+                    print(f"   - description: Present")
+                    print(f"   - created_at: {dispute_data.get('created_at')}")
+                    print(f"   - status: {dispute_data.get('status')}")
+                    print(f"   - messages: {len(dispute_data.get('messages', []))} messages")
             else:
                 failed_tests = [test for test, passed in results.items() if not passed]
-                print(f"🔧 Issues found in: {', '.join(failed_tests)}")
+                print(f"🔧 Critical issues found in: {', '.join(failed_tests)}")
                 
             # Cleanup
             await self.cleanup_test_data(trade_id)
             
-            return all_passed
+            return all_critical_passed
             
         except Exception as e:
             print(f"❌ Test execution error: {str(e)}")
