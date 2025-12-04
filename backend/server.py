@@ -14890,6 +14890,66 @@ async def get_support_email_config():
         logger.error(f"Error getting support emails: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/telegram/link")
+async def link_telegram_account(request: Request):
+    """Link Telegram chat_id to user account"""
+    try:
+        body = await request.json()
+        user_id = body.get("user_id")
+        telegram_chat_id = body.get("telegram_chat_id")
+        telegram_username = body.get("telegram_username")
+        
+        if not user_id or not telegram_chat_id:
+            raise HTTPException(status_code=400, detail="user_id and telegram_chat_id required")
+        
+        # Update user account with telegram info
+        result = await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "telegram_chat_id": str(telegram_chat_id),
+                "telegram_username": telegram_username,
+                "telegram_linked_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        if result.modified_count > 0 or result.matched_count > 0:
+            logger.info(f"Telegram linked for user {user_id}: chat_id={telegram_chat_id}")
+            return {
+                "success": True,
+                "message": "Telegram account linked successfully"
+            }
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error linking Telegram: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/telegram/link-status/{user_id}")
+async def get_telegram_link_status(user_id: str):
+    """Check if user has linked Telegram"""
+    try:
+        user = await db.user_accounts.find_one(
+            {"user_id": user_id},
+            {"telegram_chat_id": 1, "telegram_username": 1, "_id": 0}
+        )
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {
+            "success": True,
+            "linked": bool(user.get("telegram_chat_id")),
+            "telegram_username": user.get("telegram_username")
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error checking Telegram link status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/admin/support/emails")
 async def update_support_email_config(request: dict):
     """Update support email addresses"""
