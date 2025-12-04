@@ -206,6 +206,7 @@ function App() {
             <Route path="/admin/disputes" element={<AdminDisputes />} />
             <Route path="/admin/disputes/:disputeId" element={<AdminDisputeDetail />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/merchant/:userId" element={<MerchantProfile />} />
             <Route path="/admin/support" element={<AdminSupport />} />
             <Route path="/admin/earnings" element={<AdminEarnings />} />
             <Route path="/admin/fees" element={<AdminFees />} />
