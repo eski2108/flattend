@@ -91,14 +91,16 @@ class DisputeEmailTester:
         if success:
             try:
                 data = response.json()
-                if data.get('success') and data.get('user'):
-                    self.buyer_user_id = data['user']['user_id']
+                if data.get('success') and data.get('user_id'):
+                    self.buyer_user_id = data['user_id']
                     self.log_test("Buyer Registration", True, f"Buyer ID: {self.buyer_user_id}")
                 else:
-                    self.log_test("Buyer Registration", False, "No user data in response")
+                    self.log_test("Buyer Registration", False, "No user_id in response")
+                    print(f"   Response: {data}")
                     return False
-            except:
-                self.log_test("Buyer Registration", False, "Invalid JSON response")
+            except Exception as e:
+                self.log_test("Buyer Registration", False, f"JSON parse error: {str(e)}")
+                print(f"   Raw response: {response.text}")
                 return False
         else:
             # Try login if user already exists
