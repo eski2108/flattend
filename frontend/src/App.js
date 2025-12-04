@@ -98,7 +98,7 @@ const Notifications = lazy(() => import("@/pages/Notifications"));
 const OTCDesk = lazy(() => import("@/pages/OTCDesk"));
 const Subscriptions = lazy(() => import("@/pages/Subscriptions"));
 const Transfer = lazy(() => import("@/pages/Transfer"));
-const InstantSell = lazy(() => import("@/pages/InstantSell"));
+const InstantSell = lazy(() => import("@/pages/InstantSellNew"));
 const UploadAPK = lazy(() => import("@/pages/UploadAPK"));
 const EmailVerified = lazy(() => import("@/pages/EmailVerified"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
