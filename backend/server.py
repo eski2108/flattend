@@ -142,6 +142,7 @@ from ai_chat_service import (
     get_chat_history,
     get_open_chat_sessions
 )
+from user_service import get_user_service
 from price_alerts import (
     create_price_alert,
     delete_price_alert,
