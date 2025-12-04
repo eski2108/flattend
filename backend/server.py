@@ -22973,6 +22973,151 @@ async def get_trader_feedback(
 
 
 # ================================
+# ADMIN P2P DISPUTE RESOLUTION
+# ================================
+
+@app.post("/api/admin/p2p/dispute/{trade_id}/resolve")
+async def admin_resolve_p2p_dispute(trade_id: str, request: Request):
+    """
+    Admin resolves P2P dispute
+    
+    Body:
+    - admin_id: Admin user ID
+    - winner: "buyer" or "seller"
+    - resolution_notes: Admin notes
+    - apply_dispute_fee: boolean
+    """
+    try:
+        data = await request.json()
+        admin_id = data.get("admin_id")
+        winner = data.get("winner")  # "buyer" or "seller"
+        resolution_notes = data.get("resolution_notes", "")
+        apply_dispute_fee = data.get("apply_dispute_fee", True)
+        
+        # Verify admin
+        admin = await db.users.find_one({"user_id": admin_id})
+        if not admin or admin.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Admin access required")
+        
+        # Get trade and dispute
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        if trade["status"] != "disputed":
+            raise HTTPException(status_code=400, detail="Trade is not in disputed status")
+        
+        dispute = await db.p2p_disputes.find_one({"trade_id": trade_id, "status": "open"})
+        if not dispute:
+            raise HTTPException(status_code=404, detail="Open dispute not found")
+        
+        crypto_currency = trade["crypto_currency"]
+        crypto_amount = trade["crypto_amount"]
+        
+        # Determine winner and loser
+        winner_id = trade["buyer_id"] if winner == "buyer" else trade["seller_id"]
+        loser_id = trade["seller_id"] if winner == "buyer" else trade["buyer_id"]
+        
+        # Calculate dispute fee (2% of trade value)
+        dispute_fee_percent = PLATFORM_CONFIG.get("dispute_fee_percent", 2.0)
+        dispute_fee = crypto_amount * (dispute_fee_percent / 100)
+        amount_after_fee = crypto_amount - dispute_fee if apply_dispute_fee else crypto_amount
+        
+        # Release crypto to winner
+        if winner == "buyer":
+            # Release to buyer
+            await db.users.update_one(
+                {"user_id": trade["seller_id"]},
+                {"$inc": {f"wallets.{crypto_currency}": -crypto_amount}}
+            )
+            await db.users.update_one(
+                {"user_id": trade["buyer_id"]},
+                {"$inc": {f"wallets.{crypto_currency}": amount_after_fee}}
+            )
+        else:
+            # Return to seller
+            await db.users.update_one(
+                {"user_id": trade["buyer_id"]},
+                {"$inc": {f"wallets.{crypto_currency}": 0}}  # Buyer gets nothing
+            )
+            await db.users.update_one(
+                {"user_id": trade["seller_id"]},
+                {"$inc": {f"wallets.{crypto_currency}": amount_after_fee}}
+            )
+        
+        # Log dispute fee revenue
+        if apply_dispute_fee:
+            await db.admin_revenue.insert_one({
+                "trade_id": trade_id,
+                "user_id": loser_id,
+                "fee_type": "p2p_dispute_fee",
+                "fee_amount": dispute_fee,
+                "fee_currency": crypto_currency,
+                "created_at": datetime.now()
+            })
+        
+        # Update dispute
+        await db.p2p_disputes.update_one(
+            {"dispute_id": dispute["dispute_id"]},
+            {
+                "$set": {
+                    "status": "resolved",
+                    "resolved_at": datetime.now(),
+                    "resolved_by": admin_id,
+                    "winner": winner,
+                    "resolution_notes": resolution_notes,
+                    "dispute_fee_applied": apply_dispute_fee,
+                    "dispute_fee_amount": dispute_fee if apply_dispute_fee else 0
+                }
+            }
+        )
+        
+        # Update trade
+        await db.p2p_trades.update_one(
+            {"trade_id": trade_id},
+            {
+                "$set": {
+                    "status": "resolved",
+                    "resolved_at": datetime.now(),
+                    "resolved_by": admin_id,
+                    "resolution_winner": winner,
+                    "escrow_locked": False
+                }
+            }
+        )
+        
+        # Post system message
+        await post_system_message(
+            trade_id,
+            f"⚖️ Admin has resolved the dispute in favor of {winner}. {resolution_notes}"
+        )
+        
+        # Send notifications
+        await notify_p2p_dispute_resolved(
+            db=db,
+            trade_id=trade_id,
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            winner=winner_id
+        )
+        
+        logger.info(f"✅ Dispute resolved for trade {trade_id} - Winner: {winner}")
+        
+        return {
+            "success": True,
+            "message": "Dispute resolved successfully",
+            "winner": winner,
+            "dispute_fee": dispute_fee if apply_dispute_fee else 0
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Resolve dispute error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ================================
 # PRICE ALERTS ENDPOINTS
 # ================================
 
