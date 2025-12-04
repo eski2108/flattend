@@ -3698,16 +3698,41 @@ export default function AdminDashboard() {
 
             {revenueSummary && (
               <>
-                {/* Total Profit Card */}
-                <Card style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1))', border: '2px solid rgba(34, 197, 94, 0.5)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
-                  <div style={{ fontSize: '14px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700' }}>Total Platform Profit</div>
-                  <div style={{ fontSize: '48px', fontWeight: '900', color: '#22C55E', marginBottom: '0.5rem' }}>
-                    £{revenueSummary.total_profit?.toLocaleString() || '0'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#888' }}>
-                    For the selected period
-                  </div>
-                </Card>
+                {/* Revenue Summary Cards Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  {/* Total Revenue (All Fees) */}
+                  <Card style={{ background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(6, 182, 212, 0.1))', border: '2px solid rgba(14, 165, 233, 0.5)', borderRadius: '16px', padding: '2rem' }}>
+                    <div style={{ fontSize: '14px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700' }}>Total Revenue (All Fees)</div>
+                    <div style={{ fontSize: '42px', fontWeight: '900', color: '#0EA5E9', marginBottom: '0.5rem' }}>
+                      £{revenueSummary.revenue_breakdown?.total_revenue?.toLocaleString() || '0'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>
+                      Before referral commissions
+                    </div>
+                  </Card>
+
+                  {/* Referral Commissions Paid */}
+                  <Card style={{ background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.1))', border: '2px solid rgba(168, 85, 247, 0.5)', borderRadius: '16px', padding: '2rem' }}>
+                    <div style={{ fontSize: '14px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700' }}>Referral Commissions Paid</div>
+                    <div style={{ fontSize: '42px', fontWeight: '900', color: '#A855F7', marginBottom: '0.5rem' }}>
+                      £{revenueSummary.revenue_breakdown?.referral_commissions?.toLocaleString() || '0'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>
+                      Paid to referrers
+                    </div>
+                  </Card>
+
+                  {/* Net Platform Profit */}
+                  <Card style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1))', border: '2px solid rgba(34, 197, 94, 0.5)', borderRadius: '16px', padding: '2rem' }}>
+                    <div style={{ fontSize: '14px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700' }}>Net Platform Profit</div>
+                    <div style={{ fontSize: '42px', fontWeight: '900', color: '#22C55E', marginBottom: '0.5rem' }}>
+                      £{revenueSummary.total_profit?.toLocaleString() || '0'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>
+                      After all commissions
+                    </div>
+                  </Card>
+                </div>
 
                 {/* Revenue Breakdown Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
