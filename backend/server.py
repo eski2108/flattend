@@ -22183,6 +22183,85 @@ async def get_public_seller_profile(seller_identifier: str):
 
 
 # ================================
+# P2P LEADERBOARD ENDPOINTS
+# ================================
+
+@app.get("/api/p2p/leaderboard")
+async def get_p2p_trading_leaderboard(
+    timeframe: str = Query(default="7d", regex="^(24h|7d|30d|all)$"),
+    limit: int = Query(default=50, ge=1, le=100)
+):
+    """
+    Get P2P trading leaderboard
+    Public endpoint - no authentication required
+    
+    Query Parameters:
+    - timeframe: "24h", "7d", "30d", or "all" (default: "7d")
+    - limit: Number of top traders to return (1-100, default: 50)
+    
+    Returns:
+    - List of top traders ranked by trading volume
+    - Each entry includes: rank, username, volume, trades, completion rate, badges
+    """
+    try:
+        leaderboard_service = get_p2p_leaderboard(db)
+        leaderboard = await leaderboard_service.get_leaderboard(
+            timeframe=timeframe,
+            limit=limit
+        )
+        
+        return {
+            "success": True,
+            "timeframe": timeframe,
+            "total_traders": len(leaderboard),
+            "leaderboard": leaderboard,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Leaderboard error: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "leaderboard": []
+        }
+
+
+@app.get("/api/p2p/leaderboard/user/{user_id}")
+async def get_user_leaderboard_rank(
+    user_id: str,
+    timeframe: str = Query(default="7d", regex="^(24h|7d|30d|all)$")
+):
+    """
+    Get specific user's rank and stats on the leaderboard
+    
+    Path Parameters:
+    - user_id: User's ID
+    
+    Query Parameters:
+    - timeframe: "24h", "7d", "30d", or "all" (default: "7d")
+    
+    Returns:
+    - User's rank, position, stats, and percentile
+    """
+    try:
+        leaderboard_service = get_p2p_leaderboard(db)
+        result = await leaderboard_service.get_user_rank(
+            user_id=user_id,
+            timeframe=timeframe
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"❌ User rank error: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ================================
 # PRICE ALERTS ENDPOINTS
 # ================================
 
