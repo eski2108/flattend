@@ -286,6 +286,7 @@ PLATFORM_CONFIG = {
     "p2p_maker_fee_percent": 1.0,
     "p2p_taker_fee_percent": 1.0,
     "p2p_express_fee_percent": 2.0,
+    "dispute_fee_percent": 2.0,
     
     # P2P AUTO-MATCH FLAGS (per market)
     "p2p_auto_match_enabled": {
