@@ -446,29 +446,44 @@ class ReferralAnalytics:
             
             result = []
             for c in commissions:
-                # Get referred user info
-                referred_user = await self.db.user_accounts.find_one(
-                    {"user_id": c.get("referred_user_id")},
-                    {"full_name": 1, "email": 1, "_id": 0}
-                )
+                # Get referred user info (handle both old and new schema)
+                referred_user_id = c.get("referred_user_id") or c.get("referee_id")
+                referred_user = None
+                if referred_user_id:
+                    referred_user = await self.db.user_accounts.find_one(
+                        {"user_id": referred_user_id},
+                        {"full_name": 1, "email": 1, "_id": 0}
+                    )
                 
-                # Determine tier badge
-                tier_used = c.get("tier_used", "standard")
-                tier_badge = "🥇 GOLDEN 50%" if "golden" in tier_used.lower() else "⭐ STANDARD 20%"
+                # Determine tier badge (handle both schemas)
+                tier_used = c.get("tier_used") or c.get("tier", "standard")
+                commission_rate = c.get("commission_rate", c.get("rate", 0.20))
+                if isinstance(commission_rate, float) and commission_rate <= 1:
+                    commission_rate = commission_rate * 100  # Convert 0.20 to 20
+                
+                tier_badge = "🥇 GOLDEN 50%" if "golden" in str(tier_used).lower() or commission_rate >= 45 else "⭐ STANDARD 20%"
+                
+                # Get timestamp (handle both schemas)
+                created_at = c.get("created_at") or c.get("timestamp") or c.get("created_at_iso")
+                if isinstance(created_at, datetime):
+                    created_at = created_at.isoformat()
+                
+                # Get commission amount (handle both schemas)
+                commission_amount = c.get("commission_amount", c.get("amount", 0))
                 
                 result.append({
-                    "commission_id": c.get("commission_id"),
-                    "commission_amount": float(c.get("commission_amount", 0)),
+                    "commission_id": c.get("commission_id", str(c.get("_id"))),
+                    "commission_amount": float(commission_amount),
                     "currency": c.get("currency", "GBP"),
-                    "fee_type": c.get("fee_type", "unknown"),
+                    "fee_type": c.get("fee_type") or c.get("source") or c.get("transaction_type", "unknown"),
                     "fee_amount": float(c.get("fee_amount", 0)),
-                    "commission_rate": float(c.get("commission_rate", 20)),
+                    "commission_rate": float(commission_rate),
                     "tier_used": tier_used,
                     "tier_badge": tier_badge,
                     "referred_user": referred_user.get("full_name", "Unknown User") if referred_user else "Unknown User",
                     "referred_user_email": self._mask_email(referred_user.get("email", "")) if referred_user else "",
-                    "trade_id": c.get("related_transaction_id"),
-                    "created_at": c.get("created_at").isoformat() if isinstance(c.get("created_at"), datetime) else c.get("created_at", ""),
+                    "trade_id": c.get("related_transaction_id") or c.get("trade_id"),
+                    "created_at": created_at,
                     "status": c.get("status", "completed")
                 })
             
