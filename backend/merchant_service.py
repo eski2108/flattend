@@ -256,8 +256,14 @@ class MerchantService:
             # Get account age
             account_age_days = 0
             if user and user.get("created_at"):
-                created = datetime.fromisoformat(user["created_at"].replace('Z', '+00:00')) if isinstance(user["created_at"], str) else user["created_at"]
-                account_age_days = (datetime.now(timezone.utc) - created).days
+                try:
+                    created = datetime.fromisoformat(user["created_at"].replace('Z', '+00:00')) if isinstance(user["created_at"], str) else user["created_at"]
+                    # Ensure both datetimes are timezone-aware
+                    if created.tzinfo is None:
+                        created = created.replace(tzinfo=timezone.utc)
+                    account_age_days = (datetime.now(timezone.utc) - created).days
+                except:
+                    account_age_days = 0
             
             # Get active ads
             active_ads = await self.db.p2p_listings.find(
