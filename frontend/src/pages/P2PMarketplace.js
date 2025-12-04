@@ -44,6 +44,10 @@ function P2PMarketplace() {
   const [showSellerProfile, setShowSellerProfile] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(null);
+  const [countdown, setCountdown] = useState(0);
+  const [processing, setProcessing] = useState(false);
   
   const [sortBy, setSortBy] = useState('best_price');
   const [filters, setFilters] = useState({
