@@ -22508,6 +22508,9 @@ async def cancel_p2p_trade(request: Request):
             }
         )
         
+        # Post system message
+        await post_system_message(trade_id, "❌ Trade has been cancelled. Funds returned to seller.")
+        
         logger.info(f"✅ Trade {trade_id} cancelled by {user_id}")
         
         return {
