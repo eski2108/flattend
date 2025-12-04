@@ -25699,6 +25699,120 @@ async def _update_stats_after_trade(trade_id: str):
     except Exception as e:
         logger.error(f"Error updating stats after trade: {str(e)}")
 
+# =============================================================================
+# ADMIN LIQUIDITY QUOTE SYSTEM (PRICE LOCK & PROFIT PROTECTION)
+# =============================================================================
+
+@api_router.post("/admin-liquidity/quote")
+async def generate_admin_liquidity_quote(request: dict):
+    """
+    Generate locked quote for admin liquidity instant buy/sell
+    
+    This is COMPLETELY SEPARATE from P2P trading.
+    Price is LOCKED and expires after 5 minutes.
+    Settlement uses ONLY locked price to guarantee profit.
+    """
+    try:
+        user_id = request.get("user_id")
+        trade_type = request.get("type")  # "buy" or "sell"
+        crypto_currency = request.get("crypto")
+        crypto_amount = float(request.get("amount", 0))
+        
+        if not all([user_id, trade_type, crypto_currency, crypto_amount]):
+            raise HTTPException(
+                status_code=400,
+                detail="Missing required fields: user_id, type, crypto, amount"
+            )
+        
+        # Get quote service
+        quote_service = get_quote_service(db)
+        
+        # Generate locked quote
+        result = await quote_service.generate_quote(
+            user_id=user_id,
+            trade_type=trade_type,
+            crypto_currency=crypto_currency,
+            crypto_amount=crypto_amount
+        )
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating admin liquidity quote: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin-liquidity/execute")
+async def execute_admin_liquidity_quote(request: dict):
+    """
+    Execute quote at LOCKED price
+    
+    Settlement uses ONLY the locked price from the quote.
+    Live market price is NEVER fetched or used.
+    This guarantees platform profitability.
+    """
+    try:
+        quote_id = request.get("quote_id")
+        user_id = request.get("user_id")
+        
+        if not all([quote_id, user_id]):
+            raise HTTPException(
+                status_code=400,
+                detail="Missing required fields: quote_id, user_id"
+            )
+        
+        # Get quote service
+        quote_service = get_quote_service(db)
+        
+        # Execute at locked price
+        result = await quote_service.execute_quote(
+            quote_id=quote_id,
+            user_id=user_id
+        )
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error executing admin liquidity quote: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin-liquidity/quote/{quote_id}")
+async def get_admin_liquidity_quote(quote_id: str, user_id: str):
+    """Get quote details including time remaining"""
+    try:
+        quote = await db.admin_liquidity_quotes.find_one(
+            {"quote_id": quote_id},
+            {"_id": 0}
+        )
+        
+        if not quote:
+            raise HTTPException(status_code=404, detail="Quote not found")
+        
+        # Verify ownership
+        if quote["user_id"] != user_id:
+            raise HTTPException(status_code=403, detail="Not your quote")
+        
+        # Calculate time remaining
+        expires_at = datetime.fromisoformat(quote["expires_at"])
+        now = datetime.now(timezone.utc)
+        seconds_remaining = max(0, int((expires_at - now).total_seconds()))
+        
+        return {
+            "success": True,
+            "quote": quote,
+            "seconds_remaining": seconds_remaining,
+            "expired": seconds_remaining == 0
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching quote: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # 🔒 END LOCKED SECTION
 # =============================================================================
 
