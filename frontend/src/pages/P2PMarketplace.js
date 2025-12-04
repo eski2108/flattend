@@ -98,7 +98,7 @@ function P2PMarketplace() {
     try {
       const userId = localStorage.getItem('user_id');
       if (userId) {
-        const response = await axios.get(`${API}/api/p2p/favorites/${userId}`);
+        const response = await axios.get(`${API}/api/p2p/favourites/${userId}`);
         if (response.data.success) {
           setFavorites(response.data.favorites || []);
         }
