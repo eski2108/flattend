@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 """
-P2P Dispute Flow End-to-End Test
-Tests the complete P2P dispute creation flow and email notification system
+P2P Dispute Testing - Create REAL P2P Trade and Dispute with FULL Data
+Testing the complete P2P dispute flow as requested:
+
+1. Create a P2P trade with realistic data (0.01 BTC for £500)
+2. Create a dispute with reason "crypto_not_released" and description
+3. Get the FULL dispute_id (not truncated)
+4. Call GET /api/p2p/disputes/{full_dispute_id} to verify it returns ALL data:
+   - dispute_id, trade_id, amount, currency, buyer_id, seller_id
+   - reason, description, created_at, status, messages array
+5. Show the EXACT URL: http://localhost:3000/admin/disputes/{FULL_DISPUTE_ID}
+
+Backend URL: https://p2pcryptomarket.preview.emergentagent.com/api
 """
 
 import asyncio
