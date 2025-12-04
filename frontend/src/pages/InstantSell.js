@@ -16,6 +16,9 @@ export default function InstantSell() {
   const [selling, setSelling] = useState(false);
   const [livePrices, setLivePrices] = useState({});
   const [loading, setLoading] = useState(true);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(null);
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
