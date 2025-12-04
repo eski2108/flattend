@@ -32,7 +32,7 @@ Tests all newly implemented security features for Coin Hub X as requested in rev
    - Verify JWT token is returned in response
    - Test token usage to access admin endpoints
 
-**Backend URL:** https://tradingplatform-14.preview.emergentagent.com/api
+**Backend URL:** https://p2p-market-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -45,7 +45,7 @@ from datetime import datetime
 import os
 
 # Configuration
-BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
 
 # Test Users for security testing
 SECURITY_TEST_USER = {

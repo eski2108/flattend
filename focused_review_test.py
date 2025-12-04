@@ -43,7 +43,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
 
 # Test credentials from review request
 EXISTING_USER = {

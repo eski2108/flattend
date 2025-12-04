@@ -50,7 +50,7 @@ Tests the new Trading System backend endpoints with focus on liquidity protectio
    - Execute a sell trade  
    - Verify adjusted_price < market_price (markdown applied)
 
-**Backend URL:** https://tradingplatform-14.preview.emergentagent.com/api
+**Backend URL:** https://p2p-market-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -62,7 +62,7 @@ import threading
 import concurrent.futures
 
 # Configuration
-BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
 
 # Test Users for trading system testing
 TRADER_USER_1 = {

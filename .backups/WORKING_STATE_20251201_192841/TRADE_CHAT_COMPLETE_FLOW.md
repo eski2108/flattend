@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://tradingplatform-14.preview.emergentagent.com
+**Test it now at:** https://p2p-market-1.preview.emergentagent.com

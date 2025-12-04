@@ -9,7 +9,7 @@ Test Cases:
 3. Login with wrong password - should return 401 error
 4. Check backend logs for any login errors
 
-Backend URL: https://tradingplatform-14.preview.emergentagent.com/api
+Backend URL: https://p2p-market-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -19,7 +19,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
 
 # Test User as specified in the review request
 URGENT_TEST_USER = {
