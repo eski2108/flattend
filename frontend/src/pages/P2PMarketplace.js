@@ -523,7 +523,7 @@ function P2PMarketplace() {
             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
             style={{
               padding: '0.5rem 1rem',
-              background: 'rgba(0, 198, 255, 0.1)',
+              background: showAdvancedFilters ? 'rgba(0, 198, 255, 0.2)' : 'rgba(0, 198, 255, 0.1)',
               border: '1px solid rgba(0, 198, 255, 0.3)',
               borderRadius: '6px',
               color: '#00C6FF',
@@ -532,10 +532,11 @@ function P2PMarketplace() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              transition: 'all 0.2s'
             }}
           >
-            <IoOptions size={14} />
+            <IoFilter size={14} />
             {showAdvancedFilters ? 'Hide Filters' : 'Advanced Filters'}
           </button>
 
