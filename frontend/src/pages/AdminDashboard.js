@@ -210,9 +210,36 @@ export default function AdminDashboard() {
 
   const fetchRevenueSummary = async (period = 'day') => {
     try {
-      const response = await axios.get(`${API}/api/admin/revenue/summary?period=${period}`);
+      // Use comprehensive dashboard API
+      const response = await axios.get(`${API}/api/admin/revenue/dashboard?timeframe=${period}`);
       if (response.data.success) {
-        setRevenueSummary(response.data.summary);
+        // Map the new API response to existing state structure
+        const data = response.data;
+        setRevenueSummary({
+          total_profit: data.summary.net_revenue_gbp, // Net revenue after referrals
+          revenue_breakdown: {
+            total_revenue: data.summary.total_revenue_gbp,
+            referral_commissions: data.summary.referral_commissions_paid_gbp,
+            // Map by fee type to breakdown
+            ...data.by_fee_type.reduce((acc, fee) => {
+              acc[fee.fee_type] = fee.total_revenue;
+              return acc;
+            }, {})
+          },
+          fee_wallet_breakdown: data.by_currency.reduce((acc, curr) => {
+            acc[curr.currency] = {
+              total_fees: curr.total_revenue,
+              net_revenue: curr.net_revenue,
+              referral_paid: curr.referral_paid,
+              gbp_value: curr.total_revenue
+            };
+            return acc;
+          }, {}),
+          total_fee_wallet_gbp: data.summary.total_revenue_gbp
+        });
+        
+        // Also set transactions
+        setRevenueTransactions(data.recent_transactions || []);
       }
     } catch (error) {
       console.error('Error fetching revenue summary:', error);
@@ -222,9 +249,15 @@ export default function AdminDashboard() {
 
   const fetchRevenueTransactions = async (period = 'day', type = 'all') => {
     try {
-      const response = await axios.get(`${API}/api/admin/revenue/transactions?period=${period}&transaction_type=${type}`);
-      if (response.data.success) {
-        setRevenueTransactions(response.data.transactions);
+      // This is now handled by fetchRevenueSummary
+      // But keep the function for compatibility
+      const response = await axios.get(`${API}/api/admin/revenue/dashboard?timeframe=${period}`);
+      if (response.data.success && response.data.recent_transactions) {
+        let transactions = response.data.recent_transactions;
+        if (type !== 'all') {
+          transactions = transactions.filter(tx => tx.fee_type === type);
+        }
+        setRevenueTransactions(transactions);
       }
     } catch (error) {
       console.error('Error fetching revenue transactions:', error);
