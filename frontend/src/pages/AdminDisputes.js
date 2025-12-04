@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-import { IoAlertCircle, IoCheckmarkCircle, IoTime, IoEye, IoChatbubbles } from 'react-icons/io5';
+import { IoAlertCircle, IoCheckmarkCircle, IoTime, IoEye, IoWarning } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -53,6 +53,9 @@ export default function AdminDisputes() {
         toast.success('Dispute resolved successfully');
         setShowResolveModal(false);
         setSelectedDispute(null);
+        setWinner('');
+        setResolution('');
+        setAdminNote('');
         loadDisputes();
       }
     } catch (error) {
@@ -63,49 +66,49 @@ export default function AdminDisputes() {
 
   const getStatusColor = (status) => {
     switch(status) {
-      case 'open': return 'text-yellow-400 bg-yellow-900/20';
-      case 'under_review': return 'text-orange-400 bg-orange-900/20';
-      case 'resolved': return 'text-green-400 bg-green-900/20';
-      default: return 'text-gray-400 bg-gray-900/20';
+      case 'open': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
+      case 'under_review': return 'bg-orange-500/20 text-orange-400 border-orange-500/50';
+      case 'resolved': return 'bg-green-500/20 text-green-400 border-green-500/50';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
     }
   };
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">🚨 Admin Dispute Management</h1>
-            <p className="text-gray-400">Review and resolve P2P trade disputes</p>
+          <div className="mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">🚨 Admin Dispute Management</h1>
+            <p className="text-gray-400 text-sm md:text-base">Review and resolve P2P trade disputes</p>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <IoAlertCircle className="w-6 h-6 text-yellow-400" />
-                <h3 className="text-lg font-semibold text-white">Open Disputes</h3>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <IoAlertCircle className="w-5 h-5 text-yellow-400" />
+                <h3 className="text-sm font-semibold text-white">Open Disputes</h3>
               </div>
-              <p className="text-3xl font-bold text-yellow-400">
+              <p className="text-2xl font-bold text-yellow-400">
                 {disputes.filter(d => d.status === 'open').length}
               </p>
             </div>
-            <div className="bg-slate-800/50 border border-orange-500/30 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <IoTime className="w-6 h-6 text-orange-400" />
-                <h3 className="text-lg font-semibold text-white">Under Review</h3>
+            <div className="bg-slate-800/50 border border-orange-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <IoTime className="w-5 h-5 text-orange-400" />
+                <h3 className="text-sm font-semibold text-white">Under Review</h3>
               </div>
-              <p className="text-3xl font-bold text-orange-400">
+              <p className="text-2xl font-bold text-orange-400">
                 {disputes.filter(d => d.status === 'under_review').length}
               </p>
             </div>
-            <div className="bg-slate-800/50 border border-green-500/30 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <IoCheckmarkCircle className="w-6 h-6 text-green-400" />
-                <h3 className="text-lg font-semibold text-white">Resolved</h3>
+            <div className="bg-slate-800/50 border border-green-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <IoCheckmarkCircle className="w-5 h-5 text-green-400" />
+                <h3 className="text-sm font-semibold text-white">Resolved</h3>
               </div>
-              <p className="text-3xl font-bold text-green-400">
+              <p className="text-2xl font-bold text-green-400">
                 {disputes.filter(d => d.status === 'resolved').length}
               </p>
             </div>
@@ -127,82 +130,25 @@ export default function AdminDisputes() {
               {disputes.map(dispute => (
                 <div
                   key={dispute.dispute_id}
-                  className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-cyan-500/50 transition-colors"
+                  className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:border-cyan-500/50 transition-colors"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      {/* Header */}
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(dispute.status)}`}>
-                          {dispute.status?.toUpperCase()}
-                        </span>
-                        <span className="text-gray-400 text-sm">
-                          Trade ID: <span className="text-white font-mono">{dispute.trade_id?.slice(0, 8)}</span>
-                        </span>
-                        <span className="text-gray-400 text-sm">
-                          Dispute ID: <span className="text-white font-mono">{dispute.dispute_id?.slice(0, 8)}</span>
-                        </span>
-                      </div>
-
-                      {/* Details Grid */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div>
-                          <p className="text-gray-400 text-sm">Amount</p>
-                          <p className="text-white font-semibold">
-                            {dispute.amount} {dispute.currency}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-400 text-sm">Reason</p>
-                          <p className="text-white capitalize">
-                            {dispute.reason?.replace(/_/g, ' ')}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-400 text-sm">Initiated By</p>
-                          <p className="text-orange-400 font-semibold capitalize">
-                            {dispute.initiated_by}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-400 text-sm">Created</p>
-                          <p className="text-white">
-                            {new Date(dispute.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <div className="bg-slate-900/50 rounded-lg p-4 mb-4">
-                        <p className="text-gray-400 text-sm mb-1">Description:</p>
-                        <p className="text-white">{dispute.description}</p>
-                      </div>
-
-                      {/* Parties */}
-                      <div className="flex gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-400">Buyer:</span>
-                          <span className="text-cyan-400 ml-2 font-mono">
-                            {dispute.buyer_id?.slice(0, 8)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-400">Seller:</span>
-                          <span className="text-purple-400 ml-2 font-mono">
-                            {dispute.seller_id?.slice(0, 8)}
-                          </span>
-                        </div>
-                      </div>
+                  {/* Header Row */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(dispute.status)}`}>
+                        {dispute.status?.toUpperCase()}
+                      </span>
+                      <span className="text-gray-400 text-xs">
+                        Trade: <span className="text-white font-mono">{dispute.trade_id?.slice(0, 12)}...</span>
+                      </span>
                     </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-col gap-2 ml-4">
+                    <div className="flex gap-2">
                       <button
                         onClick={() => navigate(`/admin/disputes/${dispute.dispute_id}`)}
-                        className="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                        className="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 flex-1 md:flex-none justify-center"
                       >
                         <IoEye className="w-4 h-4" />
-                        View Details
+                        View
                       </button>
                       {dispute.status !== 'resolved' && (
                         <button
@@ -210,13 +156,47 @@ export default function AdminDisputes() {
                             setSelectedDispute(dispute);
                             setShowResolveModal(true);
                           }}
-                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                          className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 flex-1 md:flex-none justify-center"
                         >
                           <IoCheckmarkCircle className="w-4 h-4" />
                           Resolve
                         </button>
                       )}
                     </div>
+                  </div>
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                    <div>
+                      <p className="text-gray-400 text-xs mb-1">Amount</p>
+                      <p className="text-white font-semibold text-sm">
+                        {dispute.amount} {dispute.currency}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs mb-1">Reason</p>
+                      <p className="text-white capitalize text-sm">
+                        {dispute.reason?.replace(/_/g, ' ')}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs mb-1">Initiated By</p>
+                      <p className="text-orange-400 font-semibold capitalize text-sm">
+                        {dispute.initiated_by}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs mb-1">Created</p>
+                      <p className="text-white text-sm">
+                        {new Date(dispute.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <p className="text-gray-400 text-xs mb-1">Description:</p>
+                    <p className="text-white text-sm">{dispute.description}</p>
                   </div>
                 </div>
               ))}
@@ -227,83 +207,86 @@ export default function AdminDisputes() {
         {/* Resolve Modal */}
         {showResolveModal && selectedDispute && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-slate-900 border-2 border-green-500 rounded-2xl max-w-2xl w-full shadow-2xl">
+            <div className="bg-slate-900 border-2 border-green-500 rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
               {/* Header */}
-              <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-6 rounded-t-2xl">
-                <h2 className="text-2xl font-bold text-white">Resolve Dispute</h2>
-                <p className="text-green-100 text-sm mt-1">
-                  ID: {selectedDispute.dispute_id?.slice(0, 8)}
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-4 rounded-t-2xl sticky top-0">
+                <h2 className="text-xl md:text-2xl font-bold text-white">Resolve Dispute</h2>
+                <p className="text-green-100 text-xs mt-1">
+                  ID: {selectedDispute.dispute_id?.slice(0, 12)}...
                 </p>
               </div>
 
               {/* Form */}
-              <div className="p-6 space-y-4">
+              <div className="p-4 md:p-6 space-y-4">
                 {/* Winner Selection */}
                 <div>
-                  <label className="block text-gray-300 font-semibold mb-2">Select Winner *</label>
+                  <label className="block text-gray-300 font-semibold mb-2 text-sm">Select Winner *</label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => setWinner('buyer')}
-                      className={`p-4 rounded-lg border-2 transition-all ${
+                      className={`p-3 rounded-lg border-2 transition-all text-sm ${
                         winner === 'buyer'
                           ? 'border-cyan-500 bg-cyan-500/20 text-cyan-300'
                           : 'border-slate-700 bg-slate-800 text-gray-400 hover:border-slate-600'
                       }`}
                     >
                       <p className="font-semibold">Buyer Wins</p>
-                      <p className="text-sm opacity-75">Buyer: {selectedDispute.buyer_id?.slice(0, 8)}</p>
+                      <p className="text-xs opacity-75 truncate">ID: {selectedDispute.buyer_id?.slice(0, 8)}</p>
                     </button>
                     <button
                       onClick={() => setWinner('seller')}
-                      className={`p-4 rounded-lg border-2 transition-all ${
+                      className={`p-3 rounded-lg border-2 transition-all text-sm ${
                         winner === 'seller'
                           ? 'border-purple-500 bg-purple-500/20 text-purple-300'
                           : 'border-slate-700 bg-slate-800 text-gray-400 hover:border-slate-600'
                       }`}
                     >
                       <p className="font-semibold">Seller Wins</p>
-                      <p className="text-sm opacity-75">Seller: {selectedDispute.seller_id?.slice(0, 8)}</p>
+                      <p className="text-xs opacity-75 truncate">ID: {selectedDispute.seller_id?.slice(0, 8)}</p>
                     </button>
                   </div>
                 </div>
 
                 {/* Resolution */}
                 <div>
-                  <label className="block text-gray-300 font-semibold mb-2">
+                  <label className="block text-gray-300 font-semibold mb-2 text-sm">
                     Resolution Details *
                   </label>
                   <textarea
                     value={resolution}
                     onChange={(e) => setResolution(e.target.value)}
-                    placeholder="Explain why this decision was made. This will be visible to both parties."
+                    placeholder="Explain why this decision was made..."
                     rows={4}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:outline-none resize-none"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-green-500 focus:outline-none resize-none"
                   />
                 </div>
 
                 {/* Admin Note */}
                 <div>
-                  <label className="block text-gray-300 font-semibold mb-2">
+                  <label className="block text-gray-300 font-semibold mb-2 text-sm">
                     Internal Admin Note (Optional)
                   </label>
                   <textarea
                     value={adminNote}
                     onChange={(e) => setAdminNote(e.target.value)}
-                    placeholder="Private notes for admin records only. Not visible to users."
-                    rows={3}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:outline-none resize-none"
+                    placeholder="Private notes for admin records only..."
+                    rows={2}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-green-500 focus:outline-none resize-none"
                   />
                 </div>
 
                 {/* Fee Info */}
-                <div className="bg-orange-500/10 border-l-4 border-orange-500 p-4">
-                  <p className="text-orange-300 text-sm">
-                    <strong>Note:</strong> A £5 dispute fee will be charged to the losing party.
-                  </p>
+                <div className="bg-orange-500/10 border-l-4 border-orange-500 p-3">
+                  <div className="flex items-start gap-2">
+                    <IoWarning className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-orange-300 text-xs">
+                      <strong>Note:</strong> A £5 dispute fee will be charged to the losing party.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 pt-4">
+                <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => {
                       setShowResolveModal(false);
@@ -312,14 +295,14 @@ export default function AdminDisputes() {
                       setResolution('');
                       setAdminNote('');
                     }}
-                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg transition-colors font-semibold text-sm"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleResolve}
                     disabled={!winner || !resolution.trim()}
-                    className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg transition-all font-semibold"
+                    className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg transition-all font-semibold text-sm"
                   >
                     Resolve Dispute
                   </button>
