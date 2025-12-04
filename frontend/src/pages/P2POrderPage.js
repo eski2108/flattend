@@ -60,6 +60,14 @@ export default function P2POrderPage() {
     return () => clearInterval(interval);
   }, [tradeId, navigate]);
 
+  // Check block status when trade is loaded
+  useEffect(() => {
+    if (trade && currentUser) {
+      const counterpartyId = isBuyer ? trade.seller_id : trade.buyer_id;
+      checkBlockStatus(counterpartyId);
+    }
+  }, [trade, currentUser]);
+
   useEffect(() => {
     if (trade && trade.expires_at) {
       const updateCountdown = setInterval(() => {
