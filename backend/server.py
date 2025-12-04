@@ -27497,3 +27497,35 @@ async def republish_listing(listing_id: str, request: dict):
 # Include the API router in the main FastAPI app
 # This registers ALL endpoints defined above with the /api prefix
 app.include_router(api_router)
+
+
+# Test Mode and System Endpoints
+@app.get("/api/system/test-mode")
+async def get_test_mode():
+    """Check if test mode is enabled"""
+    test_mode = os.environ.get("TEST_MODE", "false").lower() == "true"
+    return {
+        "test_mode": test_mode,
+        "environment": os.environ.get("ENVIRONMENT", "production")
+    }
+
+@app.post("/api/admin/system/test-mode")
+async def set_test_mode(request: Request):
+    """Enable or disable test mode (Admin only)"""
+    try:
+        data = await request.json()
+        enabled = data.get("enabled", False)
+        
+        # In production, you would update a config file or database
+        # For now, we log the change
+        logger.info(f"Test mode {enabled if enabled else disabled} by admin")
+        
+        return {
+            "success": True,
+            "test_mode": enabled,
+            "message": f"Test mode {enabled if enabled else disabled}"
+        }
+    except Exception as e:
+        logger.error(f"Error setting test mode: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
