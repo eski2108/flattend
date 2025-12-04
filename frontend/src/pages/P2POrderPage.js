@@ -536,7 +536,34 @@ export default function P2POrderPage() {
               padding: '24px',
               height: 'fit-content'
             }}>
-              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Chat with {counterparty}</h3>
+              {/* Chat Header with Block Button */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>Chat with {counterparty}</h3>
+                {!checkingBlock && (
+                  <button
+                    onClick={handleBlockToggle}
+                    disabled={processing}
+                    title={isBlocked ? 'Unblock user' : 'Block user'}
+                    style={{
+                      padding: '8px 16px',
+                      background: isBlocked ? 'rgba(239, 68, 68, 0.1)' : 'rgba(143, 155, 179, 0.1)',
+                      border: `1px solid ${isBlocked ? 'rgba(239, 68, 68, 0.3)' : 'rgba(143, 155, 179, 0.3)'}`,
+                      borderRadius: '8px',
+                      color: isBlocked ? '#EF4444' : '#8F9BB3',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: processing ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <IoEyeOff size={14} />
+                    {isBlocked ? 'Unblock' : 'Block'}
+                  </button>
+                )}
+              </div>
               
               <div style={{
                 height: '400px',
