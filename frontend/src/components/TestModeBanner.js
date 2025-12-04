@@ -7,14 +7,6 @@ export default function TestModeBanner() {
   const [testMode, setTestMode] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
-  useEffect(() => {
-    checkTestMode();
-    const dismissedSession = sessionStorage.getItem('test_mode_dismissed');
-    if (dismissedSession) {
-      setDismissed(true);
-    }
-  }, []);
-
   const checkTestMode = async () => {
     try {
       const response = await fetch(`${API}/api/system/test-mode`);
@@ -24,6 +16,14 @@ export default function TestModeBanner() {
       console.error('Failed to check test mode:', error);
     }
   };
+
+  useEffect(() => {
+    checkTestMode();
+    const dismissedSession = sessionStorage.getItem('test_mode_dismissed');
+    if (dismissedSession) {
+      setDismissed(true);
+    }
+  }, []);
 
   const handleDismiss = () => {
     setDismissed(true);
