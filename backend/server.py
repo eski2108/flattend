@@ -48,7 +48,13 @@ class SafeJSONResponse(JSONResponse):
     """JSONResponse that automatically converts ObjectId to string"""
     def render(self, content) -> bytes:
         return super().render(convert_objectid(content))
-from email_service import email_service
+from email_service import (
+    email_service,
+    p2p_payment_marked_email,
+    p2p_crypto_released_email,
+    p2p_dispute_opened_email,
+    p2p_admin_dispute_alert
+)
 from p2p_enhanced import (
     GLOBAL_PAYMENT_METHODS,
     GLOBAL_CURRENCIES,
