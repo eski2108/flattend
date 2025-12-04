@@ -22658,6 +22658,63 @@ async def open_p2p_dispute(request: Request):
         # Post system message
         await post_system_message(trade_id, "⚠️ A dispute has been opened. Admin is reviewing the case. Please do not take any further action.")
         
+        # Send notifications
+        await notify_p2p_dispute_opened(
+            db=db,
+            trade_id=trade_id,
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            reported_by=user_id
+        )
+        
+        # Send emails to both parties
+        buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
+        seller = await db.users.find_one({"user_id": trade["seller_id"]})
+        
+        if buyer and buyer.get("email"):
+            email_html = p2p_dispute_opened_email(
+                trade_id=trade_id,
+                crypto_amount=trade.get("crypto_amount", 0),
+                crypto=trade.get("crypto_currency", "BTC"),
+                role="Buyer"
+            )
+            await email_service.send_email(
+                to_email=buyer["email"],
+                subject=f"⚠️ Dispute Opened – P2P Order #{trade_id[:8]}",
+                html_content=email_html
+            )
+        
+        if seller and seller.get("email"):
+            email_html = p2p_dispute_opened_email(
+                trade_id=trade_id,
+                crypto_amount=trade.get("crypto_amount", 0),
+                crypto=trade.get("crypto_currency", "BTC"),
+                role="Seller"
+            )
+            await email_service.send_email(
+                to_email=seller["email"],
+                subject=f"⚠️ Dispute Opened – P2P Order #{trade_id[:8]}",
+                html_content=email_html
+            )
+        
+        # Send email to admins
+        admins = await db.users.find({"role": "admin"}).to_list(length=10)
+        admin_email_html = p2p_admin_dispute_alert(
+            trade_id=trade_id,
+            crypto_amount=trade.get("crypto_amount", 0),
+            crypto=trade.get("crypto_currency", "BTC"),
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            reported_by=user_id
+        )
+        for admin in admins:
+            if admin.get("email"):
+                await email_service.send_email(
+                    to_email=admin["email"],
+                    subject=f"🚨 New P2P Dispute – Order #{trade_id[:8]}",
+                    html_content=admin_email_html
+                )
+        
         logger.info(f"✅ Dispute {dispute_id} opened for trade {trade_id}")
         
         return {
