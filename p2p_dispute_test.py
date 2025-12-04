@@ -42,35 +42,41 @@ class P2PDisputeTest:
             await self.session.close()
             
     async def create_test_trade(self):
-        """Create a P2P trade in database with status 'buyer_marked_paid'"""
-        print("🔧 Creating test P2P trade in database...")
+        """Create a REAL P2P trade with realistic data (0.01 BTC for £500)"""
+        print("🔧 Creating REAL P2P trade: 0.01 BTC for £500...")
         
-        trade_id = f"trade_test_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
-        buyer_id = "buyer_123"
-        seller_id = "seller_456"
+        trade_id = f"trade_dispute_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+        buyer_id = f"buyer_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+        seller_id = f"seller_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
         
+        # REALISTIC DATA as requested: 0.01 BTC for £500
         trade_data = {
             "trade_id": trade_id,
             "buyer_id": buyer_id,
             "seller_id": seller_id,
             "crypto_currency": "BTC",
-            "crypto_amount": 0.05,
+            "crypto_amount": 0.01,  # EXACTLY 0.01 BTC as requested
             "fiat_currency": "GBP",
-            "fiat_amount": 2500.00,
+            "fiat_amount": 500.00,  # EXACTLY £500 as requested
             "status": "buyer_marked_paid",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "payment_method": "faster_payments",
             "escrow_locked": True,
-            "payment_marked_at": datetime.now(timezone.utc).isoformat()
+            "payment_marked_at": datetime.now(timezone.utc).isoformat(),
+            "buyer_wallet_address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+            "seller_wallet_address": "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
+            "price_per_unit": 50000.00,  # £50,000 per BTC
+            "payment_reference": "FP12345678901",
+            "terms": "Payment within 30 minutes. Include reference number."
         }
         
         # Insert trade into database
         await self.db.p2p_trades.insert_one(trade_data)
-        print(f"✅ Test trade created: {trade_id}")
+        print(f"✅ REAL P2P trade created: {trade_id}")
+        print(f"   - Amount: {trade_data['crypto_amount']} {trade_data['crypto_currency']} for £{trade_data['fiat_amount']}")
         print(f"   - Buyer: {buyer_id}")
         print(f"   - Seller: {seller_id}")
-        print(f"   - Amount: {trade_data['crypto_amount']} {trade_data['crypto_currency']}")
         print(f"   - Status: {trade_data['status']}")
         
         return trade_id, buyer_id, seller_id
