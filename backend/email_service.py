@@ -1137,3 +1137,143 @@ class EmailService:
 
 # Create a global instance
 email_service = EmailService()
+
+
+# P2P Email Templates
+def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, fiat_amount: float, buyer_username: str):
+    """Email template for seller when buyer marks payment"""
+    return f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #051018 0%, #0A1929 100%); border: 1px solid #00C6FF; border-radius: 12px; padding: 30px;">
+            <h2 style="color: #00C6FF;">💳 Payment Marked as Sent</h2>
+            <p>Hello,</p>
+            <p><strong>{buyer_username}</strong> has marked payment as sent for your P2P trade.</p>
+            
+            <div style="background: rgba(0, 198, 255, 0.1); border-left: 4px solid #00C6FF; padding: 15px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Trade ID:</strong> {trade_id}</p>
+                <p style="margin: 5px 0;"><strong>Amount:</strong> {crypto_amount} {crypto}</p>
+                <p style="margin: 5px 0;"><strong>Fiat Value:</strong> £{fiat_amount:.2f}</p>
+            </div>
+            
+            <p style="color: #FFA500;"><strong>⚠️ Action Required:</strong></p>
+            <p>Please verify the payment in your bank account and release the crypto.</p>
+            
+            <a href="https://tradingplatform-14.preview.emergentagent.com/p2p/order/{trade_id}" 
+               style="display: inline-block; background: linear-gradient(135deg, #22C55E, #16A34A); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
+                View Order
+            </a>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #8F9BB3;">
+                This is an automated email from CoinHubX P2P Marketplace.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+
+
+def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, seller_username: str):
+    """Email template for buyer when seller releases crypto"""
+    return f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #051018 0%, #0A1929 100%); border: 1px solid #22C55E; border-radius: 12px; padding: 30px;">
+            <h2 style="color: #22C55E;">✅ Trade Completed!</h2>
+            <p>Congratulations!</p>
+            <p><strong>{seller_username}</strong> has released the crypto for your P2P trade.</p>
+            
+            <div style="background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22C55E; padding: 15px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Trade ID:</strong> {trade_id}</p>
+                <p style="margin: 5px 0;"><strong>Received:</strong> {crypto_amount} {crypto}</p>
+                <p style="margin: 5px 0;"><strong>Status:</strong> COMPLETED</p>
+            </div>
+            
+            <p>The {crypto} has been added to your wallet. You can now use or withdraw it.</p>
+            
+            <a href="https://tradingplatform-14.preview.emergentagent.com/p2p/order/{trade_id}" 
+               style="display: inline-block; background: linear-gradient(135deg, #00C6FF, #0096CC); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
+                View Receipt
+            </a>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #8F9BB3;">
+                This is an automated email from CoinHubX P2P Marketplace.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+
+
+def p2p_dispute_opened_email(trade_id: str, crypto_amount: float, crypto: str, role: str):
+    """Email template when dispute is opened"""
+    return f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #051018 0%, #0A1929 100%); border: 1px solid #EF4444; border-radius: 12px; padding: 30px;">
+            <h2 style="color: #EF4444;">⚠️ Dispute Opened</h2>
+            <p>A dispute has been opened for your P2P trade.</p>
+            
+            <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #EF4444; padding: 15px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Trade ID:</strong> {trade_id}</p>
+                <p style="margin: 5px 0;"><strong>Amount:</strong> {crypto_amount} {crypto}</p>
+                <p style="margin: 5px 0;"><strong>Your Role:</strong> {role}</p>
+            </div>
+            
+            <p>Our admin team is reviewing the case. Please:</p>
+            <ul>
+                <li>Do NOT take any further action on the trade</li>
+                <li>Respond to admin requests for information</li>
+                <li>Provide any evidence (screenshots, receipts) in the chat</li>
+            </ul>
+            
+            <a href="https://tradingplatform-14.preview.emergentagent.com/p2p/order/{trade_id}" 
+               style="display: inline-block; background: linear-gradient(135deg, #EF4444, #DC2626); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
+                View Dispute
+            </a>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #8F9BB3;">
+                This is an automated email from CoinHubX P2P Marketplace.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+
+
+def p2p_admin_dispute_alert(trade_id: str, crypto_amount: float, crypto: str, buyer_id: str, seller_id: str, reported_by: str):
+    """Email template for admin when dispute is opened"""
+    return f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #051018 0%, #0A1929 100%); border: 1px solid #FFA500; border-radius: 12px; padding: 30px;">
+            <h2 style="color: #FFA500;">🚨 New P2P Dispute - Action Required</h2>
+            <p><strong>Admin Alert:</strong> A new P2P dispute has been opened and requires review.</p>
+            
+            <div style="background: rgba(255, 165, 0, 0.1); border-left: 4px solid #FFA500; padding: 15px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Trade ID:</strong> {trade_id}</p>
+                <p style="margin: 5px 0;"><strong>Amount:</strong> {crypto_amount} {crypto}</p>
+                <p style="margin: 5px 0;"><strong>Buyer:</strong> {buyer_id}</p>
+                <p style="margin: 5px 0;"><strong>Seller:</strong> {seller_id}</p>
+                <p style="margin: 5px 0;"><strong>Reported By:</strong> {reported_by}</p>
+            </div>
+            
+            <p><strong>Required Actions:</strong></p>
+            <ul>
+                <li>Review trade details and chat history</li>
+                <li>Request evidence from both parties if needed</li>
+                <li>Resolve dispute in admin panel</li>
+            </ul>
+            
+            <a href="https://tradingplatform-14.preview.emergentagent.com/admin/disputes" 
+               style="display: inline-block; background: linear-gradient(135deg, #FFA500, #FF8C00); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
+                Go to Admin Panel
+            </a>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #8F9BB3;">
+                This is an automated admin alert from CoinHubX.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
