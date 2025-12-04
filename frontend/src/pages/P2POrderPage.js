@@ -682,6 +682,141 @@ export default function P2POrderPage() {
           </div>
         </div>
       )}
+
+      {/* Feedback Modal */}
+      {showFeedbackModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+            border: '1px solid rgba(0, 198, 255, 0.3)',
+            borderRadius: '16px',
+            padding: '32px',
+            maxWidth: '480px',
+            width: '90%'
+          }}>
+            <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>
+              Rate Your Counterparty
+            </h3>
+            <p style={{ color: '#8F9BB3', marginBottom: '20px' }}>
+              How was your experience with {counterparty}?
+            </p>
+            
+            {/* Rating Selection */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ color: '#8F9BB3', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                Rating *
+              </label>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                {['positive', 'neutral', 'negative'].map((rating) => (
+                  <button
+                    key={rating}
+                    onClick={() => setFeedbackRating(rating)}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      background: feedbackRating === rating 
+                        ? rating === 'positive' ? 'rgba(34, 197, 94, 0.2)' 
+                        : rating === 'neutral' ? 'rgba(255, 165, 0, 0.2)'
+                        : 'rgba(239, 68, 68, 0.2)'
+                        : 'rgba(143, 155, 179, 0.1)',
+                      border: feedbackRating === rating 
+                        ? rating === 'positive' ? '2px solid #22C55E' 
+                        : rating === 'neutral' ? '2px solid #FFA500'
+                        : '2px solid #EF4444'
+                        : '1px solid rgba(143, 155, 179, 0.3)',
+                      borderRadius: '8px',
+                      color: feedbackRating === rating 
+                        ? rating === 'positive' ? '#22C55E' 
+                        : rating === 'neutral' ? '#FFA500'
+                        : '#EF4444'
+                        : '#8F9BB3',
+                      fontWeight: feedbackRating === rating ? '700' : '400',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    {rating === 'positive' ? '👍 Positive' : rating === 'neutral' ? '😐 Neutral' : '👎 Negative'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Comment */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ color: '#8F9BB3', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                Comment (Optional)
+              </label>
+              <textarea
+                value={feedbackComment}
+                onChange={(e) => setFeedbackComment(e.target.value)}
+                placeholder="Share your experience... (max 500 characters)"
+                maxLength={500}
+                style={{
+                  width: '100%',
+                  height: '100px',
+                  padding: '12px',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '1px solid rgba(0, 198, 255, 0.3)',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+              />
+              <div style={{ textAlign: 'right', fontSize: '12px', color: '#8F9BB3', marginTop: '4px' }}>
+                {feedbackComment.length}/500
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowFeedbackModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: 'rgba(143, 155, 179, 0.1)',
+                  border: '1px solid rgba(143, 155, 179, 0.3)',
+                  borderRadius: '8px',
+                  color: '#8F9BB3',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Skip
+              </button>
+              <button
+                onClick={handleSubmitFeedback}
+                disabled={processing}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontWeight: '700',
+                  cursor: processing ? 'not-allowed' : 'pointer',
+                  opacity: processing ? 0.6 : 1
+                }}
+              >
+                {processing ? 'Submitting...' : 'Submit Feedback'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
