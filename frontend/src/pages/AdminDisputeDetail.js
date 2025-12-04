@@ -250,34 +250,34 @@ export default function AdminDisputeDetail() {
               </div>
 
               {/* Messages/Evidence */}
-              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <IoChatbubbles className="w-6 h-6 text-cyan-400" />
+              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold text-white mb-3 md:mb-4 flex items-center gap-2">
+                  <IoChatbubbles className="w-5 h-5 md:w-6 md:h-6 text-cyan-400" />
                   Messages & Evidence
                 </h2>
                 <div className="space-y-3 mb-4 max-h-96 overflow-y-auto">
                   {messages.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No messages yet</p>
+                    <p className="text-gray-500 text-center py-8 text-sm">No messages yet</p>
                   ) : (
                     messages.map((msg, idx) => (
                       <div
                         key={idx}
                         className={`p-3 rounded-lg ${
                           msg.sender_type === 'admin'
-                            ? 'bg-purple-600/20 border border-purple-500/30 ml-8'
-                            : 'bg-slate-900/50 border border-slate-700 mr-8'
+                            ? 'bg-purple-600/20 border border-purple-500/30 ml-4 md:ml-8'
+                            : 'bg-slate-900/50 border border-slate-700 mr-4 md:mr-8'
                         }`}
                       >
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           {msg.sender_type === 'admin' && <IoShield className="w-4 h-4 text-purple-400" />}
-                          <span className="text-sm font-semibold text-white capitalize">
+                          <span className="text-xs md:text-sm font-semibold text-white capitalize">
                             {msg.sender_type}
                           </span>
                           <span className="text-xs text-gray-400">
                             {new Date(msg.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <p className="text-white text-sm">{msg.message}</p>
+                        <p className="text-white text-xs md:text-sm break-words">{msg.message}</p>
                       </div>
                     ))
                   )}
@@ -290,13 +290,13 @@ export default function AdminDisputeDetail() {
                     value={adminMessage}
                     onChange={(e) => setAdminMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendAdminMessage()}
-                    placeholder="Send message to both parties..."
-                    className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="Message both parties..."
+                    className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white text-sm focus:border-purple-500 focus:outline-none"
                   />
                   <button
                     onClick={sendAdminMessage}
                     disabled={!adminMessage.trim()}
-                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-3 py-2 md:px-6 md:py-3 rounded-lg transition-colors font-semibold text-sm md:text-base whitespace-nowrap flex-shrink-0"
                   >
                     Send
                   </button>
