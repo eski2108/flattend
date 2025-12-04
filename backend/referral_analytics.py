@@ -436,9 +436,13 @@ class ReferralAnalytics:
         For Earnings Tab display.
         """
         try:
+            # Query both old and new schema (referrer_id OR referrer_user_id)
             commissions = await self.db.referral_commissions.find(
-                {"referrer_user_id": user_id}
-            ).sort("created_at", -1).to_list(1000)
+                {"$or": [
+                    {"referrer_user_id": user_id},
+                    {"referrer_id": user_id}
+                ]}
+            ).sort([("created_at", -1), ("timestamp", -1)]).to_list(1000)
             
             result = []
             for c in commissions:
