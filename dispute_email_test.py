@@ -174,38 +174,27 @@ class DisputeEmailTester:
         """Step 2: Create a fresh P2P trade in database"""
         print("\n💱 STEP 2: Creating Fresh P2P Trade...")
         
-        if not self.buyer_user_id or not self.seller_user_id:
-            self.log_test("P2P Trade Creation", False, "Missing user IDs")
+        if not self.buyer_user_id:
+            self.log_test("P2P Trade Creation", False, "Missing buyer user ID")
             return False
         
-        # First, create a P2P offer from seller
-        offer_data = {
-            "seller_id": self.seller_user_id,
-            "crypto_currency": "BTC",
-            "fiat_currency": "GBP", 
-            "crypto_amount": 0.01,
-            "price_per_unit": 70000,
-            "min_purchase": 0.005,
-            "max_purchase": 0.01,
-            "payment_methods": ["bank_transfer"],
-            "payment_time_limit": 30,
-            "terms": "Fast and secure BTC sale for dispute testing"
-        }
-        
-        success, response = self.make_request('POST', '/p2p/create-offer', data=offer_data)
+        # Get existing offers instead of creating new one
+        success, response = self.make_request('GET', '/p2p/offers?ad_type=sell&crypto_currency=BTC')
         if success:
             try:
                 data = response.json()
-                if data.get('success') and data.get('offer'):
-                    offer_id = data['offer']['order_id']
-                    self.log_test("P2P Offer Creation", True, f"Offer ID: {offer_id}")
+                if data.get('success') and data.get('offers') and len(data['offers']) > 0:
+                    offer = data['offers'][0]  # Use first available offer
+                    offer_id = offer['order_id']
+                    min_purchase = offer['min_purchase']
+                    self.log_test("Found Existing Offer", True, f"Using Offer ID: {offer_id}")
                     
-                    # Now create a trade from this offer
+                    # Now create a trade from this existing offer
                     trade_data = {
                         "buyer_id": self.buyer_user_id,
                         "sell_order_id": offer_id,
-                        "crypto_amount": 0.01,
-                        "payment_method": "bank_transfer",
+                        "crypto_amount": min_purchase,  # Use minimum purchase amount
+                        "payment_method": offer['payment_methods'][0],  # Use first available payment method
                         "buyer_wallet_address": "bc1qtest_buyer_wallet_address_for_dispute",
                         "buyer_wallet_network": "bitcoin",
                         "is_express": False
@@ -232,15 +221,15 @@ class DisputeEmailTester:
                         print(f"   Response: {response.text}")
                         return False
                 else:
-                    self.log_test("P2P Offer Creation", False, "No offer data in response")
+                    self.log_test("Get Existing Offers", False, "No offers available")
                     print(f"   Response: {data}")
                     return False
             except Exception as e:
-                self.log_test("P2P Offer Creation", False, f"JSON parse error: {str(e)}")
+                self.log_test("Get Existing Offers", False, f"JSON parse error: {str(e)}")
                 print(f"   Raw response: {response.text}")
                 return False
         else:
-            self.log_test("P2P Offer Creation", False, f"Status: {response.status_code}")
+            self.log_test("Get Existing Offers", False, f"Status: {response.status_code}")
             print(f"   Response: {response.text}")
             return False
 
