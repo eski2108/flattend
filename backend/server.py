@@ -25250,13 +25250,7 @@ async def _update_stats_after_trade(trade_id: str):
         logger.error(f"Error updating stats after trade: {str(e)}")
 
 # 🔒 END LOCKED SECTION
-
 # =============================================================================
-# MERCHANT PROFILE & RANKING SYSTEM API ENDPOINTS
-# =============================================================================
-
-@api_router.get("/merchant/profile/{user_id}")
-async def get_merchant_profile_api(user_id: str):
     """
     Get public merchant profile with stats, rank, verification badges, and active ads
     """
