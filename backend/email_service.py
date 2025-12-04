@@ -189,15 +189,17 @@ class EmailService:
         </html>
         """
         
-        # Send to admin
-        success = await self.send_email(ADMIN_EMAIL, subject, html_content)
+        # Send to all admin emails
+        success_count = 0
+        for admin_email in ADMIN_EMAILS:
+            success = await self.send_email(admin_email, subject, html_content)
+            if success:
+                success_count += 1
+                logger.info(f"✅ Admin dispute alert sent to {admin_email} for {dispute_id}")
+            else:
+                logger.error(f"❌ Failed to send admin dispute alert to {admin_email} for {dispute_id}")
         
-        if success:
-            logger.info(f"✅ Admin dispute alert sent for {dispute_id}")
-        else:
-            logger.error(f"❌ Failed to send admin dispute alert for {dispute_id}")
-        
-        return success
+        return success_count > 0
     
     async def send_deposit_notification(self, user_email: str, user_name: str, amount: float, currency: str, transaction_id: str):
         """Send notification for successful deposit"""
