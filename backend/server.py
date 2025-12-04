@@ -24777,3 +24777,58 @@ async def generate_nowpayments_addresses():
 # Include the API router in the main FastAPI app
 # This registers all endpoints defined above with the /api prefix
 app.include_router(api_router)
+
+# 🔒 LOCKED: Admin Settings Endpoints - DO NOT MODIFY WITHOUT APPROVAL
+@api_router.get("/admin/settings")
+async def get_admin_settings():
+    """Get admin settings including dispute email"""
+    try:
+        settings = await db.admin_settings.find_one({"setting_type": "general"}, {"_id": 0})
+        if not settings:
+            # Return default settings
+            settings = {
+                "dispute_email": "info@coinhubx.net"
+            }
+        
+        return {
+            "success": True,
+            "settings": settings
+        }
+    except Exception as e:
+        logger.error(f"Error getting admin settings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/settings")
+async def save_admin_settings(request: dict):
+    """Save admin settings"""
+    try:
+        dispute_email = request.get("dispute_email")
+        
+        if not dispute_email or "@" not in dispute_email:
+            raise HTTPException(status_code=400, detail="Valid dispute_email required")
+        
+        # Upsert settings
+        await db.admin_settings.update_one(
+            {"setting_type": "general"},
+            {
+                "$set": {
+                    "dispute_email": dispute_email,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info(f"✅ Admin settings updated: dispute_email={dispute_email}")
+        
+        return {
+            "success": True,
+            "message": "Settings saved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error saving admin settings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+# 🔒 END LOCKED SECTION
+
