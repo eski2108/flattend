@@ -556,6 +556,61 @@ class ReferralAnalytics:
         except:
             return 0.0
     
+    async def _get_tier_breakdown(self, user_id: str) -> Dict:
+        """Get breakdown of earnings by Golden vs Standard tier"""
+        try:
+            pipeline = [
+                {"$match": {"referrer_user_id": user_id, "status": "completed"}},
+                {
+                    "$group": {
+                        "_id": "$tier_used",
+                        "total_earnings": {"$sum": "$commission_amount"},
+                        "count": {"$sum": 1}
+                    }
+                }
+            ]
+            
+            result = await self.db.referral_commissions.aggregate(pipeline).to_list(10)
+            
+            golden_earnings = 0.0
+            golden_count = 0
+            standard_earnings = 0.0
+            standard_count = 0
+            
+            for item in result:
+                tier = item["_id"] or "standard"
+                if "golden" in tier.lower():
+                    golden_earnings += float(item["total_earnings"])
+                    golden_count += item["count"]
+                else:
+                    standard_earnings += float(item["total_earnings"])
+                    standard_count += item["count"]
+            
+            total = golden_earnings + standard_earnings
+            
+            return {
+                "golden": {
+                    "earnings": golden_earnings,
+                    "count": golden_count,
+                    "percentage": round((golden_earnings / total * 100) if total > 0 else 0, 2)
+                },
+                "standard": {
+                    "earnings": standard_earnings,
+                    "count": standard_count,
+                    "percentage": round((standard_earnings / total * 100) if total > 0 else 0, 2)
+                },
+                "total_earnings": total,
+                "total_commissions": golden_count + standard_count
+            }
+        except Exception as e:
+            logger.error(f"Error getting tier breakdown: {str(e)}")
+            return {
+                "golden": {"earnings": 0, "count": 0, "percentage": 0},
+                "standard": {"earnings": 0, "count": 0, "percentage": 0},
+                "total_earnings": 0,
+                "total_commissions": 0
+            }
+    
     async def _get_leaderboard(self) -> List[Dict]:
         """
         Get global referral leaderboard.
