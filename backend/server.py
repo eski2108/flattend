@@ -26786,7 +26786,10 @@ async def auto_match_trade(request: dict):
         market_key = f"{crypto}_{fiat_currency}"
         auto_match_enabled = PLATFORM_CONFIG.get("p2p_auto_match_enabled", {}).get(market_key, True)
         
+        logger.info(f"🔍 Auto-match request: user={user_id}, type={trade_type}, crypto={crypto}, amount={amount}, market={market_key}, enabled={auto_match_enabled}")
+        
         if not auto_match_enabled:
+            logger.warning(f"⚠️ Auto-match disabled for market {market_key}")
             raise HTTPException(status_code=403, detail="Auto-match is disabled for this market")
         
         # Get blocked users
