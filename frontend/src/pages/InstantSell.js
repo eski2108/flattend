@@ -142,7 +142,10 @@ export default function InstantSell() {
         toast.success(`✅ Sold ${currentQuote.cryptoAmount} ${currentQuote.currency} for £${gbpReceived.toFixed(2)}!`);
         setAmount('');
         setShowQuoteModal(false);
+        
+        // Refresh balances and liquidity
         loadBalances(user.user_id);
+        fetchPrices();
       } else {
         toast.error(response.data.message || 'Sell failed');
       }
