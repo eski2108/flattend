@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
+BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
 ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
 
 def get_admin_access():

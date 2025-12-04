@@ -223,7 +223,7 @@ export default function Footer() {
                   if (isIOS) {
                     alert('To install on iPhone:\n\n1. Tap Share button\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
                   } else {
-                    window.open('https://p2p-trader-board.preview.emergentagent.com', '_blank');
+                    window.open('https://tradingplatform-14.preview.emergentagent.com', '_blank');
                   }
                 }}
                 style={{

@@ -35,7 +35,7 @@
 **Blocker**: Testing agent reported navigation issue but code looks correct
 
 **What to Do**:
-1. Open browser: https://p2p-trader-board.preview.emergentagent.com
+1. Open browser: https://tradingplatform-14.preview.emergentagent.com
 2. Login with: gads21083@gmail.com / Test123!
 3. Navigate to P2P Marketplace
 4. Click "Buy BTC" button on any offer

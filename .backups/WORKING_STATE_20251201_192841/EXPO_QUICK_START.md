@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://p2p-trader-board.preview.emergentagent.com/api
+https://tradingplatform-14.preview.emergentagent.com/api
 ```
 
 This means:

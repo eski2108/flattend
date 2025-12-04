@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://p2p-trader-board.preview.emergentagent.com
+**URL:** https://tradingplatform-14.preview.emergentagent.com
 
 **Services Status:**
 ```bash

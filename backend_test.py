@@ -24,7 +24,7 @@ Tests the newly created P2P Leaderboard endpoints as requested in review.
 - Collection: p2p_trades
 - Backend running on port 8001
 
-**Backend URL:** https://p2p-trader-board.preview.emergentagent.com/api
+**Backend URL:** https://tradingplatform-14.preview.emergentagent.com/api
 """
 
 import asyncio
@@ -36,7 +36,7 @@ from typing import Dict, List, Any
 import time
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://p2p-trader-board.preview.emergentagent.com"
+BACKEND_URL = "https://tradingplatform-14.preview.emergentagent.com"
 
 class P2PLeaderboardTester:
     """Comprehensive P2P Leaderboard API tester"""

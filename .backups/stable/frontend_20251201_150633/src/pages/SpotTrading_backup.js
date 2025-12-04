@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import * as LightweightCharts from 'lightweight-charts';
 import { IoCash as DollarSign, IoChevronDown, IoClose as X, IoFlash, IoMenu, IoPulse, IoTime as Clock, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-trader-board.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradingplatform-14.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

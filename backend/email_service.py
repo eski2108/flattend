@@ -194,7 +194,7 @@ class EmailService:
                                 <table cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
-                                            <a href="https://p2p-trader-board.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+                                            <a href="https://tradingplatform-14.preview.emergentagent.com/admin/disputes/{dispute_id}" 
                                                target="_blank"
                                                style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
                                                 🚨 RESOLVE DISPUTE NOW →
@@ -213,7 +213,7 @@ class EmailService:
                         </p>
                         <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
                             <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-                                https://p2p-trader-board.preview.emergentagent.com/admin/disputes/{dispute_id}
+                                https://tradingplatform-14.preview.emergentagent.com/admin/disputes/{dispute_id}
                             </p>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
@@ -224,7 +224,7 @@ class EmailService:
                     <!-- Alternative Text Link (if button doesn't work) -->
                     <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
                         Button not working? Click here: 
-                        <a href="https://p2p-trader-board.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+                        <a href="https://tradingplatform-14.preview.emergentagent.com/admin/disputes/{dispute_id}" 
                            style="color: #EF4444; font-weight: bold; text-decoration: underline;">
                             Open Dispute #{dispute_id}
                         </a>

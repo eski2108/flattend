@@ -3,7 +3,7 @@
 SIMPLIFIED P2P BUYER FLOW TEST - Using Legacy System
 Test Scenario: Complete buyer journey using working legacy P2P endpoints
 
-Backend URL: https://p2p-trader-board.preview.emergentagent.com/api
+Backend URL: https://tradingplatform-14.preview.emergentagent.com/api
 """
 
 import requests
@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import uuid
 
 # Configuration
-BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
+BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class SimplifiedP2PBuyerFlowTester:

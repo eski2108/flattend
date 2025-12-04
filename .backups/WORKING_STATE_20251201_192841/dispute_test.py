@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
+BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
 
 # Test Users for dispute
 DISPUTE_BUYER = {
