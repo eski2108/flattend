@@ -270,9 +270,9 @@ function P2PMarketplace() {
         const tradeId = matchResponse.data.trade_id;
         toast.success(`✅ Matched! Redirecting to order page...`);
         
-        // Navigate to order page
+        // Navigate to P2P order page
         setTimeout(() => {
-          navigate(`/order/${tradeId}`);
+          navigate(`/p2p/order/${tradeId}`);
         }, 500);
       } else {
         toast.error(matchResponse.data.detail || 'No matches found');
