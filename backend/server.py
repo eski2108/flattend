@@ -17570,6 +17570,10 @@ async def create_dispute(request: dict):
             "reason": reason,
             "description": description,
             "status": "open",
+            "amount": trade.get("crypto_amount"),  # Add amount from trade
+            "currency": trade.get("crypto_currency"),  # Add currency from trade
+            "fiat_amount": trade.get("fiat_amount"),  # Add fiat amount from trade
+            "fiat_currency": trade.get("fiat_currency"),  # Add fiat currency from trade
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "messages": [],
