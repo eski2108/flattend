@@ -18649,64 +18649,21 @@ async def get_unified_balances(user_id: str):
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
         
-        # Get current prices from CoinGecko
-        import requests
-        coin_ids = {
-            'BTC': 'bitcoin',
-            'ETH': 'ethereum',
-            'USDT': 'tether',
-            'USDC': 'usd-coin',
-            'BNB': 'binancecoin',
-            'SOL': 'solana',
-            'XRP': 'ripple',
-            'ADA': 'cardano',
-            'DOGE': 'dogecoin',
-            'TRX': 'tron',
-            'DOT': 'polkadot',
-            'MATIC': 'matic-network',
-            'LTC': 'litecoin',
-            'SHIB': 'shiba-inu',
-            'AVAX': 'avalanche-2',
-            'LINK': 'chainlink',
-            'BCH': 'bitcoin-cash',
-            'XLM': 'stellar',
-            'ATOM': 'cosmos',
-            'UNI': 'uniswap'
-        }
+        # 🔒 LOCKED: Use unified pricing system (same as Portfolio/Dashboard)
+        # This MUST match the pricing used in /api/wallets/portfolio and /api/portfolio/summary
+        all_prices = await fetch_live_prices()
+        prices_gbp = {}
+        for symbol, data in all_prices.items():
+            prices_gbp[symbol] = data.get("gbp", 0)
         
-        # Initialize prices with fiat currencies
-        prices = {
-            'GBP': 1.27,  # GBP to USD
-            'USD': 1.0,
-            'EUR': 1.09  # EUR to USD
-        }
+        # 🔒 LOCKED: Fiat currencies in GBP
+        prices_gbp['GBP'] = 1.0  # GBP to GBP = 1
+        prices_gbp['USD'] = all_prices.get('USD', {}).get('gbp', 0.79)
+        prices_gbp['EUR'] = all_prices.get('EUR', {}).get('gbp', 0.86)
         
-        try:
-            # Use the live pricing service
-            from live_pricing import get_all_live_prices
-            live_prices_dict = await get_all_live_prices('usd')
-            logger.info(f"📊 Got {len(live_prices_dict)} live prices")
-            
-            for currency in [b['currency'] for b in balances]:
-                if currency in live_prices_dict:
-                    prices[currency] = live_prices_dict[currency]
-                    logger.info(f"💰 {currency}: ${prices[currency]:.2f}")
-                elif currency == 'USDT' or currency == 'USDC':
-                    prices[currency] = 1.0
-        except Exception as price_error:
-            logger.error(f"❌ Failed to fetch live prices: {str(price_error)}")
-            import traceback
-            logger.error(traceback.format_exc())
-            # Default USDT/USDC to $1 if live prices fail
-            prices['USDT'] = 1.0
-            prices['USDC'] = 1.0
-        
-        # Calculate USD and GBP values
-        total_usd = 0.0
+        # Calculate GBP values
+        total_gbp = 0.0
         enriched_balances = []
-        
-        # GBP conversion rate (1 GBP = ~1.27 USD, so 1 USD = ~0.787 GBP)
-        usd_to_gbp = 0.787
         
         for balance in balances:
             currency = balance['currency']
