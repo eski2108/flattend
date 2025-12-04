@@ -220,6 +220,16 @@ export default function AdminDisputes() {
                     </div>
                     <div className="flex gap-2">
                       <button
+                        onClick={() => {
+                          const link = `${window.location.origin}/admin/disputes/${dispute.dispute_id}`;
+                          navigator.clipboard.writeText(link);
+                          toast.success('Dispute link copied!');
+                        }}
+                        className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
+                      >
+                        <IoCopy className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => navigate(`/admin/disputes/${dispute.dispute_id}`)}
                         className="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 flex-1 md:flex-none justify-center"
                       >
