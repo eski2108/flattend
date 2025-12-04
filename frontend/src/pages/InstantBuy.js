@@ -699,17 +699,19 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
               </div>
             </div>
 
-            {/* Quick Buy Buttons */}
+            {/* Quick Buy Section */}
             {coin.has_liquidity && (
               <div style={{ paddingTop: '8px' }}>
                 <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px', fontWeight: '600' }}>Quick Buy</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                  {amounts.map(amt => {
+                
+                {/* Preset Amount Buttons */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '16px' }}>
+                  {[50, 100, 150, 200].map(amt => {
                     const cryptoAmount = coin.price_gbp ? (amt / coin.price_gbp).toFixed(6) : '0';
                     const insufficient = userBalance < amt;
                     
                     return (
-                      <CHXButton
+                      <button
                         key={amt}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -718,19 +720,119 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                             onBuy(coin, amt);
                           }
                         }}
-                        coinColor={insufficient ? '#EF4444' : '#22C55E'}
-                        variant="primary"
-                        size="small"
-                        fullWidth
                         disabled={processing || insufficient}
+                        style={{
+                          padding: '12px 8px',
+                          background: insufficient ? 'rgba(239, 68, 68, 0.1)' : 'linear-gradient(135deg, #22C55E, #16A34A)',
+                          border: insufficient ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
+                          borderRadius: '8px',
+                          color: insufficient ? '#EF4444' : '#FFFFFF',
+                          fontSize: '14px',
+                          fontWeight: '700',
+                          cursor: (processing || insufficient) ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s',
+                          position: 'relative',
+                          zIndex: 100,
+                          pointerEvents: 'auto'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!insufficient && !processing) {
+                            e.target.style.transform = 'translateY(-2px)';
+                            e.target.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.4)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = 'none';
+                        }}
                       >
                         <div style={{ textAlign: 'center' }}>
                           <div style={{ fontSize: '15px', fontWeight: '700' }}>£{amt}</div>
-                          <div style={{ fontSize: '10px', opacity: 0.8 }}>≈{cryptoAmount} {coin.symbol}</div>
+                          <div style={{ fontSize: '9px', opacity: 0.8 }}>≈{cryptoAmount} {coin.symbol}</div>
                         </div>
-                      </CHXButton>
+                      </button>
                     );
                   })}
+                </div>
+                
+                {/* Custom Amount Input */}
+                <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Custom Amount</div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="number"
+                      placeholder="Enter £ amount"
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        const value = parseFloat(e.target.value) || 0;
+                        e.target.dataset.customAmount = value;
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: '12px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(0, 198, 255, 0.3)',
+                        borderRadius: '8px',
+                        color: '#FFFFFF',
+                        fontSize: '14px',
+                        outline: 'none',
+                        position: 'relative',
+                        zIndex: 100,
+                        pointerEvents: 'auto'
+                      }}
+                      onFocus={(e) => {
+                        e.stopPropagation();
+                        e.target.style.borderColor = 'rgba(0, 198, 255, 0.6)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(0, 198, 255, 0.3)';
+                      }}
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const input = e.target.parentElement.querySelector('input');
+                        const customAmount = parseFloat(input.value) || 0;
+                        if (customAmount > 0 && customAmount <= userBalance && !processing) {
+                          onBuy(coin, customAmount);
+                        } else if (customAmount <= 0) {
+                          toast.error('Please enter a valid amount');
+                        } else if (customAmount > userBalance) {
+                          toast.error('Insufficient balance');
+                        }
+                      }}
+                      disabled={processing}
+                      style={{
+                        padding: '12px 24px',
+                        background: 'linear-gradient(135deg, #00C6FF, #0096CC)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#FFFFFF',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        cursor: processing ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s',
+                        position: 'relative',
+                        zIndex: 100,
+                        pointerEvents: 'auto',
+                        whiteSpace: 'nowrap'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!processing) {
+                          e.target.style.transform = 'translateY(-2px)';
+                          e.target.style.boxShadow = '0 4px 12px rgba(0, 198, 255, 0.4)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    >
+                      Buy Now
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
