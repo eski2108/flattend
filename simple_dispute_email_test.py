@@ -107,8 +107,8 @@ class SimpleDisputeEmailTester:
             if response.status_code == 200:
                 try:
                     data = response.json()
-                    if data.get('success') and data.get('dispute'):
-                        self.dispute_id = data['dispute']['dispute_id']
+                    if data.get('success') and data.get('dispute_id'):
+                        self.dispute_id = data['dispute_id']
                         self.log_test("Dispute Creation", True, f"Dispute ID: {self.dispute_id}")
                         
                         # Show expected URL format
