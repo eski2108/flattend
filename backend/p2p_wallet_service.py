@@ -257,23 +257,28 @@ async def p2p_release_crypto_with_wallet(
         platform_fee = crypto_amount * (fee_percent / 100.0)
         amount_to_buyer = crypto_amount - platform_fee
         
-        # Check for referrer (seller's referrer gets commission)
-        seller = await db.user_accounts.find_one({"user_id": seller_id}, {"_id": 0})
-        referrer_id = seller.get("referrer_id") if seller else None
+        # Calculate referral commission using NEW Binance-style system
+        from referral_commission_calculator import ReferralCommissionCalculator
+        calculator = ReferralCommissionCalculator(db)
+        
+        # Check if seller was referred
+        seller = await db.user_accounts.find_one({"user_id": seller_id}, {"_id": 0, "referred_by": 1})
+        referrer_id = seller.get("referred_by") if seller else None
         referrer_commission = 0.0
         admin_fee = platform_fee
+        commission_rate = 0.0
+        tier_used = "none"
         
         if referrer_id:
-            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
-            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
-            
-            if referrer_tier == "golden":
-                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
-            else:
-                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
-            
-            referrer_commission = platform_fee * (commission_percent / 100.0)
+            # Use NEW calculator - automatically determines tier based on signup
+            commission_amount, commission_rate, tier_used = await calculator.calculate_commission(
+                referred_user_id=seller_id,
+                referrer_user_id=referrer_id,
+                fee_amount=platform_fee
+            )
+            referrer_commission = commission_amount
             admin_fee = platform_fee - referrer_commission
+            logger.info(f"💰 Referral Commission: {referrer_commission} {currency} ({tier_used} tier - {commission_rate*100}%)")
         
         # Step 1: Release locked funds from seller (this removes from locked AND total)
         try:
