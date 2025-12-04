@@ -198,9 +198,9 @@ class ReferralAnalytics:
                         created_at = created_at.replace(tzinfo=timezone.utc)
                     
                     if created_at >= start_date:
-                    amount = c.get("commission_amount", c.get("amount", 0))
-                    total += float(amount)
-                    count += 1
+                        amount = c.get("commission_amount", c.get("amount", 0))
+                        total += float(amount)
+                        count += 1
             
             result[period_name] = {"amount": total, "count": count}
         
