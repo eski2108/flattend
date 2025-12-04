@@ -72,6 +72,7 @@ const ReferralDashboardComprehensive = lazy(() => import("@/pages/ReferralDashbo
 const EnhancedReferralDashboard = lazy(() => import("@/pages/EnhancedReferralDashboard"));
 const AdminReferralControl = lazy(() => import("@/pages/AdminReferralControl"));
 const AdminRevenueDashboard = lazy(() => import("@/pages/AdminRevenueDashboard"));
+const AdminSupportSettings = lazy(() => import("@/pages/AdminSupportSettings"));
 const ReferralsPage = lazy(() => import("@/pages/ReferralsPage"));
 const ReferralsPageNew = lazy(() => import("@/pages/ReferralsPageNew"));
 const ReferralLinkGenerator = lazy(() => import("@/pages/ReferralLinkGenerator"));
