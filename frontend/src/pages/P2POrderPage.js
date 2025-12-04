@@ -235,6 +235,42 @@ export default function P2POrderPage() {
     }
   };
 
+  const checkBlockStatus = async (counterpartyId) => {
+    try {
+      const response = await axios.get(`${API}/api/p2p/blocked/${currentUser.user_id}`);
+      if (response.data.success) {
+        const blockedList = response.data.blocked_users || [];
+        setIsBlocked(blockedList.includes(counterpartyId));
+      }
+    } catch (error) {
+      console.error('Error checking block status:', error);
+    } finally {
+      setCheckingBlock(false);
+    }
+  };
+
+  const handleBlockToggle = async () => {
+    const counterpartyId = isBuyer ? trade.seller_id : trade.buyer_id;
+    setProcessing(true);
+    
+    try {
+      const endpoint = isBlocked ? '/api/p2p/unblock' : '/api/p2p/block';
+      const response = await axios.post(`${API}${endpoint}`, {
+        user_id: currentUser.user_id,
+        blocked_user_id: counterpartyId
+      });
+      
+      if (response.data.success) {
+        setIsBlocked(!isBlocked);
+        toast.success(isBlocked ? '✅ User unblocked' : '🚫 User blocked');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update block status');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
