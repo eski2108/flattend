@@ -22404,6 +22404,33 @@ async def mark_p2p_trade_as_paid(request: Request):
         # Post system message
         await post_system_message(trade_id, "💳 Buyer has marked payment as sent. Seller, please verify and release crypto.")
         
+        # Send notification to seller
+        await notify_p2p_payment_marked(
+            db=db,
+            trade_id=trade_id,
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            crypto_amount=trade.get("crypto_amount", 0),
+            crypto=trade.get("crypto_currency", "BTC")
+        )
+        
+        # Send email to seller
+        seller = await db.users.find_one({"user_id": trade["seller_id"]})
+        buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
+        if seller and seller.get("email"):
+            email_html = p2p_payment_marked_email(
+                trade_id=trade_id,
+                crypto_amount=trade.get("crypto_amount", 0),
+                crypto=trade.get("crypto_currency", "BTC"),
+                fiat_amount=trade.get("fiat_amount", 0),
+                buyer_username=buyer.get("username", "Buyer") if buyer else "Buyer"
+            )
+            await email_service.send_email(
+                to_email=seller["email"],
+                subject=f"💳 Payment Marked as Sent – P2P Order #{trade_id[:8]}",
+                html_content=email_html
+            )
+        
         logger.info(f"✅ Trade {trade_id} marked as paid by buyer {user_id}")
         
         return {
