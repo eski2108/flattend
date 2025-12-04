@@ -144,6 +144,7 @@ from ai_chat_service import (
 )
 from user_service import get_user_service
 from admin_liquidity_quotes import get_quote_service
+from p2p_leaderboard import get_p2p_leaderboard
 from price_alerts import (
     create_price_alert,
     delete_price_alert,
