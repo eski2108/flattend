@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://p2p-trading-hub.preview.emergentagent.com/api
+https://referboost-4.preview.emergentagent.com/api
 ```
 
 This means:

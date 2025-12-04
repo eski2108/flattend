@@ -6,7 +6,7 @@ Check internal balances collection directly
 import requests
 import json
 
-BACKEND_URL = "https://p2p-trading-hub.preview.emergentagent.com"
+BACKEND_URL = "https://referboost-4.preview.emergentagent.com"
 
 def check_collections():
     print("=== CHECKING INTERNAL BALANCE COLLECTIONS ===")

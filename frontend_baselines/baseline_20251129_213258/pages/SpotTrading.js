@@ -13,7 +13,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-trading-hub.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://referboost-4.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();
