@@ -89,8 +89,14 @@ export default function Dashboard() {
         setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
       }
       
-      // Load recent transactions (with cache busting)
-      const txRes = await axios.get(`${API}/api/transactions/${userId}?limit=5&_t=${Date.now()}`);
+      // Load recent transactions (with cache busting + headers)
+      const txRes = await axios.get(`${API}/api/transactions/${userId}?limit=5&_t=${Date.now()}`, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       if (txRes.data.success) {
         setRecentTransactions(txRes.data.transactions || []);
       }
