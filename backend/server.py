@@ -22584,6 +22584,15 @@ async def cancel_p2p_trade(request: Request):
         # Post system message
         await post_system_message(trade_id, "❌ Trade has been cancelled. Funds returned to seller.")
         
+        # Send notification to both parties
+        await notify_p2p_trade_cancelled(
+            db=db,
+            trade_id=trade_id,
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            crypto=trade.get("crypto_currency", "BTC")
+        )
+        
         logger.info(f"✅ Trade {trade_id} cancelled by {user_id}")
         
         return {
