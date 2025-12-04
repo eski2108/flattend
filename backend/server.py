@@ -25844,6 +25844,78 @@ async def get_admin_liquidity_quote(quote_id: str, user_id: str):
         logger.error(f"Error fetching quote: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# =============================================================================
+# P2P LISTING MANAGEMENT (AUTO-EXPIRE & REPUBLISH)
+# =============================================================================
+
+@api_router.get("/p2p/listings/expired/{user_id}")
+async def get_expired_listings(user_id: str):
+    """Get user's expired P2P listings"""
+    try:
+        listings = await db.p2p_listings.find(
+            {"seller_id": user_id, "status": "expired"},
+            {"_id": 0}
+        ).sort("expired_at", -1).to_list(100)
+        
+        return {
+            "success": True,
+            "expired_listings": listings,
+            "count": len(listings)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching expired listings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/p2p/listings/republish/{listing_id}")
+async def republish_listing(listing_id: str, request: dict):
+    """Republish an expired listing"""
+    try:
+        user_id = request.get("user_id")
+        
+        # Get listing
+        listing = await db.p2p_listings.find_one({"listing_id": listing_id})
+        
+        if not listing:
+            raise HTTPException(status_code=404, detail="Listing not found")
+        
+        # Verify ownership
+        if listing.get("seller_id") != user_id:
+            raise HTTPException(status_code=403, detail="Not your listing")
+        
+        # Verify it's expired
+        if listing.get("status") != "expired":
+            raise HTTPException(status_code=400, detail="Listing is not expired")
+        
+        # Republish
+        now = datetime.now(timezone.utc).isoformat()
+        await db.p2p_listings.update_one(
+            {"listing_id": listing_id},
+            {
+                "$set": {
+                    "status": "active",
+                    "last_active_at": now,
+                    "updated_at": now,
+                    "republished_at": now,
+                    "expired_at": None,
+                    "expired_reason": None
+                }
+            }
+        )
+        
+        logger.info(f"✅ Republished listing {listing_id}")
+        
+        return {
+            "success": True,
+            "message": "Listing republished successfully",
+            "listing_id": listing_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error republishing listing: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # 🔒 END LOCKED SECTION
 # =============================================================================
 
