@@ -444,6 +444,10 @@ class ReferralAnalytics:
                     {"full_name": 1, "email": 1, "_id": 0}
                 )
                 
+                # Determine tier badge
+                tier_used = c.get("tier_used", "standard")
+                tier_badge = "🥇 GOLDEN 50%" if "golden" in tier_used.lower() else "⭐ STANDARD 20%"
+                
                 result.append({
                     "commission_id": c.get("commission_id"),
                     "commission_amount": float(c.get("commission_amount", 0)),
@@ -451,6 +455,8 @@ class ReferralAnalytics:
                     "fee_type": c.get("fee_type", "unknown"),
                     "fee_amount": float(c.get("fee_amount", 0)),
                     "commission_rate": float(c.get("commission_rate", 20)),
+                    "tier_used": tier_used,
+                    "tier_badge": tier_badge,
                     "referred_user": referred_user.get("full_name", "Unknown User") if referred_user else "Unknown User",
                     "referred_user_email": self._mask_email(referred_user.get("email", "")) if referred_user else "",
                     "trade_id": c.get("related_transaction_id"),
