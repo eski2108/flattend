@@ -188,7 +188,18 @@ function P2PMarketplace() {
   const fetchOffers = async () => {
     setLoading(true);
     try {
-      const userId = localStorage.getItem('user_id');
+      // Get user_id from stored user object
+      let userId = null;
+      const userStr = localStorage.getItem('cryptobank_user') || localStorage.getItem('user');
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          userId = user.user_id;
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+        }
+      }
+      
       // Determine ad_type based on activeTab: if user wants to 'buy', they need 'sell' offers
       const adType = activeTab === 'buy' ? 'sell' : 'buy';
       
