@@ -212,7 +212,11 @@ const AdminRevenueDashboard = () => {
                   <span className="text-purple-400">Ref: {formatCurrency(curr.referral_paid, curr.currency)}</span>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-400">No currency data available</p>
+              </div>
+            )}
           </div>
         </div>
 
