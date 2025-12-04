@@ -6,7 +6,7 @@ Test crypto balances endpoint specifically
 import requests
 import json
 
-BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
 USER_ID = "b382449d-f995-4c9e-a02d-39b7bf1ebb5d"
 
 def test_crypto_balances():

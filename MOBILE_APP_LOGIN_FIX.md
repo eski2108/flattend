@@ -70,7 +70,7 @@ await AsyncStorage.setItem('token', token); // Compatibility
 ### 4. API Configuration (`/app/mobile/src/config/api.js`)
 
 **Current Configuration**:
-- ✅ API Base URL: `https://tradingplatform-14.preview.emergentagent.com`
+- ✅ API Base URL: `https://p2p-market-1.preview.emergentagent.com`
 - ✅ Timeout: 30 seconds (good for mobile networks)
 - ✅ Request interceptor: Automatically adds auth token to requests
 - ✅ Response interceptor: Handles 401 errors and clears tokens
@@ -235,7 +235,7 @@ Refer to `/app/mobile/BUILD_INSTRUCTIONS.md` for detailed build steps.
 ### Issue: "Network Error" or timeout
 **Solution**: 
 1. Check internet connection
-2. Verify API URL is correct: `https://tradingplatform-14.preview.emergentagent.com`
+2. Verify API URL is correct: `https://p2p-market-1.preview.emergentagent.com`
 3. Backend might be restarting - wait 30 seconds and retry
 
 ### Issue: "Invalid credentials"
@@ -253,7 +253,7 @@ Refer to `/app/mobile/BUILD_INSTRUCTIONS.md` for detailed build steps.
 
 ### API Endpoint Test:
 ```bash
-curl -X POST https://tradingplatform-14.preview.emergentagent.com/api/auth/login \
+curl -X POST https://p2p-market-1.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "gads21083@gmail.com", "password": "123456789"}'
 ```

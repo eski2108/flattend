@@ -7,7 +7,7 @@ This script tests the payment flow endpoints with minimal setup:
 2. Tests Admin payment marking with mock data
 3. Tests Seller payout with mock balance
 
-Backend URL: https://tradingplatform-14.preview.emergentagent.com
+Backend URL: https://p2p-market-1.preview.emergentagent.com
 """
 
 import requests
@@ -18,7 +18,7 @@ from datetime import datetime, timezone, timedelta
 import sys
 
 # Configuration
-BACKEND_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
+BACKEND_URL = "https://p2p-market-1.preview.emergentagent.com/api"
 
 def print_section(title):
     """Print a formatted section header"""

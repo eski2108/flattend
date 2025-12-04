@@ -14,7 +14,7 @@ The website has ALL the latest features right now:
 
 1. Go to: **https://www.pwabuilder.com/**
 
-2. Enter this URL: **https://tradingplatform-14.preview.emergentagent.com**
+2. Enter this URL: **https://p2p-market-1.preview.emergentagent.com**
 
 3. Click "Start" then "Package for Stores"
 

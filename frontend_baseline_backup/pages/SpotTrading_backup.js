@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://tradingplatform-14.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-market-1.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {
