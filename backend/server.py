@@ -14923,10 +14923,9 @@ async def link_telegram_account(request: Request):
 async def get_telegram_link_status(user_id: str):
     """Check if user has linked Telegram"""
     try:
-        user = await db.user_accounts.find_one(
-            {"user_id": user_id},
-            {"telegram_chat_id": 1, "telegram_username": 1, "_id": 0}
-        )
+        # Use UserService for unified access
+        user_service = get_user_service(db)
+        user = await user_service.get_user_by_id(user_id)
         
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
