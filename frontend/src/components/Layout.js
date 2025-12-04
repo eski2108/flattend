@@ -78,8 +78,8 @@ export default function Layout({ children }) {
             <Logo size={48} showText={false} style={{ height: '48px', width: 'auto' }} />
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <LanguageSwitcher />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginRight: '12px' }}>
+            <LanguageSwitcher style={{ marginRight: '6px' }} />
             <NotificationBell />
             <button
               className="mobile-menu-btn"
