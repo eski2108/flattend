@@ -196,28 +196,67 @@ export default function P2PExpress() {
     try {
       const user = JSON.parse(userData);
 
-      const orderData = {
+      // STEP 1: Generate Admin Liquidity Quote
+      const quoteResponse = await axios.post(`${API}/api/admin-liquidity/quote`, {
         user_id: user.user_id,
+        type: 'buy',
         crypto: selectedCoin,
-        country: selectedCountry,
-        fiat_amount: quote.fiatAmount,
-        crypto_amount: quote.cryptoAmount,
-        base_rate: quote.baseRate,
-        express_fee: quote.expressFee,
-        express_fee_percent: EXPRESS_FEE_PERCENT,
-        net_amount: quote.netAmount,
-        has_admin_liquidity: hasAdminLiquidity
-      };
+        amount: parseFloat(cryptoAmount)
+      });
 
-      const response = await axios.post(`${API}/api/p2p/express/create`, orderData);
+      if (quoteResponse.data.success) {
+        const adminQuote = quoteResponse.data.quote;
+        setCurrentQuote({
+          ...adminQuote,
+          cryptoAmount: parseFloat(cryptoAmount),
+          currency: selectedCoin
+        });
+        setShowQuoteModal(true);
+        
+        // Start countdown timer
+        const expiresAt = new Date(adminQuote.expires_at);
+        const updateTimer = setInterval(() => {
+          const now = new Date();
+          const remaining = Math.floor((expiresAt - now) / 1000);
+          if (remaining <= 0) {
+            clearInterval(updateTimer);
+            setShowQuoteModal(false);
+            toast.error('Quote expired. Please try again.');
+          } else {
+            setCountdown(remaining);
+          }
+        }, 1000);
+      } else {
+        toast.error(quoteResponse.data.message || 'Failed to get quote');
+      }
+    } catch (error) {
+      console.error('Error getting quote:', error);
+      toast.error(error.response?.data?.message || 'Failed to get quote');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmQuote = async () => {
+    if (!currentQuote) return;
+    
+    setLoading(true);
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = JSON.parse(userData);
+      
+      // STEP 2: Execute with locked price
+      const response = await axios.post(`${API}/api/admin-liquidity/execute`, {
+        user_id: user.user_id,
+        quote_id: currentQuote.quote_id
+      });
 
       if (response.data.success) {
-        // Show success state ON THIS PAGE - DON'T REDIRECT
+        // Show success state
         setPurchaseSuccess(true);
-        setLoading(false);
+        setShowQuoteModal(false);
         
-        // Scroll to top so user can see success message
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        toast.success(`✅ Bought ${currentQuote.cryptoAmount} ${currentQuote.currency}!`);
         
         // Clear the form after 5 seconds
         setTimeout(() => {
@@ -226,14 +265,12 @@ export default function P2PExpress() {
           setCryptoAmount('');
           setQuote(null);
         }, 8000);
-        
-        return; // Don't execute finally block, NO REDIRECT
       } else {
-        toast.error(response.data.message || 'Failed to create order');
+        toast.error(response.data.message || 'Failed to execute trade');
       }
     } catch (error) {
-      console.error('Error creating express order:', error);
-      toast.error(error.response?.data?.message || 'Failed to create order');
+      console.error('Error executing trade:', error);
+      toast.error(error.response?.data?.message || 'Failed to execute trade');
     } finally {
       setLoading(false);
     }
