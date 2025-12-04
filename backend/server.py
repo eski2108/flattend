@@ -23227,6 +23227,129 @@ async def get_blocked_users(user_id: str):
 
 
 # ================================
+# ADMIN P2P DASHBOARD STATS
+# ================================
+
+@app.get("/api/admin/p2p/stats")
+async def get_p2p_admin_stats(timeframe: str = Query(default="week")):
+    """Get P2P stats for admin dashboard"""
+    try:
+        from datetime import timedelta
+        
+        # Calculate time range
+        now = datetime.now()
+        if timeframe == "day":
+            start_date = now - timedelta(days=1)
+        elif timeframe == "week":
+            start_date = now - timedelta(weeks=1)
+        elif timeframe == "month":
+            start_date = now - timedelta(days=30)
+        else:
+            start_date = datetime(2020, 1, 1)
+        
+        # Get all trades in timeframe
+        trades = await db.p2p_trades.find({"created_at": {"$gte": start_date}}).to_list(length=10000)
+        
+        total_trades = len(trades)
+        completed_trades = len([t for t in trades if t.get("status") == "completed"])
+        cancelled_trades = len([t for t in trades if t.get("status") == "cancelled"])
+        disputed_trades = len([t for t in trades if t.get("status") in ["disputed", "resolved"]])
+        
+        # Calculate total volume
+        total_volume = sum([t.get("fiat_amount", 0) for t in trades if t.get("status") == "completed"])
+        
+        # Calculate dispute rate
+        dispute_rate = (disputed_trades / total_trades * 100) if total_trades > 0 else 0
+        
+        # Calculate average completion time
+        completion_times = []
+        for t in trades:
+            if t.get("status") == "completed" and t.get("completed_at") and t.get("created_at"):
+                delta = t["completed_at"] - t["created_at"]
+                completion_times.append(delta.total_seconds() / 60)
+        
+        avg_completion_time = int(sum(completion_times) / len(completion_times)) if completion_times else 0
+        
+        # Volume by crypto
+        volume_by_crypto = {}
+        for t in trades:
+            if t.get("status") == "completed":
+                crypto = t.get("crypto_currency", "BTC")
+                volume_by_crypto[crypto] = volume_by_crypto.get(crypto, 0) + t.get("fiat_amount", 0)
+        
+        # Get top merchants
+        merchant_stats = {}
+        for t in trades:
+            seller_id = t.get("seller_id")
+            if seller_id:
+                if seller_id not in merchant_stats:
+                    merchant_stats[seller_id] = {
+                        "total_trades": 0,
+                        "completed_trades": 0,
+                        "total_volume": 0
+                    }
+                merchant_stats[seller_id]["total_trades"] += 1
+                if t.get("status") == "completed":
+                    merchant_stats[seller_id]["completed_trades"] += 1
+                    merchant_stats[seller_id]["total_volume"] += t.get("fiat_amount", 0)
+        
+        # Get top 10 merchants
+        top_merchants_list = []
+        for user_id, stats in sorted(merchant_stats.items(), key=lambda x: x[1]["total_volume"], reverse=True)[:10]:
+            user = await db.users.find_one({"user_id": user_id})
+            if user:
+                top_merchants_list.append({
+                    "user_id": user_id,
+                    "username": user.get("username", "Unknown"),
+                    "total_trades": stats["total_trades"],
+                    "completed_trades": stats["completed_trades"],
+                    "total_volume": stats["total_volume"],
+                    "completion_rate": (stats["completed_trades"] / stats["total_trades"] * 100) if stats["total_trades"] > 0 else 0,
+                    "rating": user.get("p2p_rating", 5.0)
+                })
+        
+        # Calculate fee revenue
+        maker_fees = 0
+        taker_fees = 0
+        dispute_fees = 0
+        
+        fee_records = await db.admin_revenue.find({
+            "fee_type": {"$in": ["p2p_maker_fee", "p2p_taker_fee", "p2p_dispute_fee"]},
+            "created_at": {"$gte": start_date}
+        }).to_list(length=10000)
+        
+        for record in fee_records:
+            if record.get("fee_type") == "p2p_maker_fee":
+                maker_fees += record.get("fee_amount", 0)
+            elif record.get("fee_type") == "p2p_taker_fee":
+                taker_fees += record.get("fee_amount", 0)
+            elif record.get("fee_type") == "p2p_dispute_fee":
+                dispute_fees += record.get("fee_amount", 0)
+        
+        return {
+            "success": True,
+            "stats": {
+                "total_volume": round(total_volume, 2),
+                "total_trades": total_trades,
+                "completed_trades": completed_trades,
+                "cancelled_trades": cancelled_trades,
+                "disputed_trades": disputed_trades,
+                "dispute_rate": round(dispute_rate, 2),
+                "avg_completion_time": avg_completion_time,
+                "volume_by_crypto": {k: round(v, 2) for k, v in volume_by_crypto.items()},
+                "top_merchants": top_merchants_list,
+                "maker_fees": round(maker_fees, 2),
+                "taker_fees": round(taker_fees, 2),
+                "dispute_fees": round(dispute_fees, 2)
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Get P2P stats error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ================================
 # PRICE ALERTS ENDPOINTS
 # ================================
 
