@@ -77,8 +77,14 @@ export default function Dashboard() {
         });
       }
       
-      // Load top assets (with cache busting)
-      const assetsRes = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
+      // Load top assets (with cache busting + headers)
+      const assetsRes = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       if (assetsRes.data.success) {
         setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
       }
