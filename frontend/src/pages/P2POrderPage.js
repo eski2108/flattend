@@ -24,6 +24,25 @@ export default function P2POrderPage() {
   const [feedbackRating, setFeedbackRating] = useState('positive');
   const [feedbackComment, setFeedbackComment] = useState('');
 
+  // Show feedback modal for completed trades
+  useEffect(() => {
+    if (trade && trade.status === 'completed' && !showFeedbackModal) {
+      // Check if user already left feedback
+      const checkFeedback = async () => {
+        try {
+          const response = await axios.get(`${API}/api/p2p/trade/${tradeId}/feedback-check?user_id=${currentUser?.user_id}`);
+          if (!response.data.feedback_given) {
+            setTimeout(() => setShowFeedbackModal(true), 1000);
+          }
+        } catch (error) {
+          // If endpoint doesn't exist, show modal anyway
+          setTimeout(() => setShowFeedbackModal(true), 1000);
+        }
+      };
+      if (currentUser) checkFeedback();
+    }
+  }, [trade?.status, currentUser]);
+
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
