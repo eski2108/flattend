@@ -3,6 +3,7 @@ from sendgrid.helpers.mail import Mail
 import os
 from typing import Optional
 import logging
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
