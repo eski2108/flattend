@@ -157,12 +157,15 @@ class DisputeEmailTester:
                         self.log_test("Seller Login", True, f"Existing seller ID: {self.seller_user_id}")
                     else:
                         self.log_test("Seller Login", False, "Login failed")
+                        print(f"   Response: {data}")
                         return False
-                except:
-                    self.log_test("Seller Login", False, "Invalid JSON response")
+                except Exception as e:
+                    self.log_test("Seller Login", False, f"JSON parse error: {str(e)}")
+                    print(f"   Raw response: {response.text}")
                     return False
             else:
                 self.log_test("Seller Registration/Login", False, f"Status: {response.status_code}")
+                print(f"   Response: {response.text}")
                 return False
         
         return True
