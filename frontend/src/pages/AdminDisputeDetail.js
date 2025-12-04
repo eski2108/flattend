@@ -84,21 +84,27 @@ export default function AdminDisputeDetail() {
     }
 
     try {
+      // Convert winner to backend format
+      const resolutionValue = winner === 'buyer' ? 'release_to_buyer' : 'return_to_seller';
+      
       const response = await axios.post(`${API}/api/admin/disputes/${disputeId}/resolve`, {
-        winner: winner,
-        resolution: resolution,
+        resolution: resolutionValue,
         admin_id: 'admin',
-        admin_note: `Admin resolved in favor of ${winner}`
+        admin_note: `${resolution} | Winner: ${winner}`
       });
 
       if (response.data.success) {
         toast.success(`Crypto ${winner === 'buyer' ? 'released to buyer' : 'returned to seller'}`);
         setShowResolveModal(false);
+        setResolution('');
+        setSelectedWinner('');
         loadDisputeDetails();
+      } else {
+        toast.error(response.data.message || 'Failed to resolve dispute');
       }
     } catch (error) {
       console.error('Error resolving dispute:', error);
-      toast.error('Failed to resolve dispute');
+      toast.error(error.response?.data?.detail || 'Failed to resolve dispute');
     }
   };
 
