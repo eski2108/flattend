@@ -352,22 +352,22 @@ async def p2p_release_crypto_with_wallet(
                     amount=referrer_commission,
                     transaction_type="referral_commission",
                     reference_id=trade_id,
-                    metadata={"referred_user_id": seller_id, "transaction_type": "p2p_trade"}
+                    metadata={"referred_user_id": seller_id, "transaction_type": "p2p_trade", "tier_used": tier_used}
                 )
-                logger.info(f"✅ P2P: Paid {referrer_commission} {currency} commission to referrer {referrer_id}")
+                logger.info(f"✅ P2P: Paid {referrer_commission} {currency} commission to referrer {referrer_id} ({tier_used} tier)")
                 
-                # Log referral commission
-                await db.referral_commissions.insert_one({
-                    "referrer_id": referrer_id,
-                    "referred_user_id": seller_id,
-                    "transaction_type": "p2p_trade",
-                    "fee_amount": platform_fee,
-                    "commission_amount": referrer_commission,
-                    "commission_percent": commission_percent,
-                    "currency": currency,
-                    "trade_id": trade_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                })
+                # Save commission using NEW calculator
+                await calculator.save_commission(
+                    referrer_user_id=referrer_id,
+                    referred_user_id=seller_id,
+                    fee_amount=platform_fee,
+                    commission_amount=referrer_commission,
+                    commission_rate=commission_rate,
+                    tier_used=tier_used,
+                    fee_type="p2p_trade",
+                    currency=currency,
+                    transaction_id=trade_id
+                )
             except Exception as comm_error:
                 logger.warning(f"⚠️ P2P: Referrer commission payment failed: {str(comm_error)}")
         
