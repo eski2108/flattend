@@ -470,10 +470,7 @@ class ReferralAnalytics:
                 referred_user_id = c.get("referred_user_id") or c.get("referee_id")
                 referred_user = None
                 if referred_user_id:
-                    referred_user = await self.db.user_accounts.find_one(
-                        {"user_id": referred_user_id},
-                        {"full_name": 1, "email": 1, "_id": 0}
-                    )
+                    referred_user = await self.user_service.get_user_by_id(referred_user_id)
                 
                 # Determine tier badge (handle both schemas)
                 tier_used = c.get("tier_used") or c.get("tier", "standard")
