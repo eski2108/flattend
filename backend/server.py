@@ -26256,9 +26256,17 @@ async def auto_match_trade(request: dict):
         crypto = request.get("crypto", "BTC")
         amount = request.get("amount")
         payment_method = request.get("payment_method")
+        fiat_currency = request.get("fiat_currency", "GBP")
         
         if not all([user_id, trade_type, amount]):
             raise HTTPException(status_code=400, detail="user_id, type, and amount required")
+        
+        # Check if auto-match is enabled for this market
+        market_key = f"{crypto}_{fiat_currency}"
+        auto_match_enabled = PLATFORM_CONFIG.get("p2p_auto_match_enabled", {}).get(market_key, True)
+        
+        if not auto_match_enabled:
+            raise HTTPException(status_code=403, detail="Auto-match is disabled for this market")
         
         if trade_type == "buy":
             # Find best seller
