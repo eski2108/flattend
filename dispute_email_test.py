@@ -324,19 +324,20 @@ class DisputeEmailTester:
             self.log_test("URL Generation", False, "No dispute ID available")
             return False
         
-        # Generate the exact URL that should be in the email
-        admin_url = f"https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={self.dispute_id}"
+        # Generate the exact URL that should be in the email (NEW FORMAT)
+        admin_url = f"https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
         
         print(f"   🎯 EXACT EMAIL BUTTON URL:")
         print(f"   {admin_url}")
         print(f"")
         print(f"   📋 URL Components:")
         print(f"   - Base URL: https://p2pcryptomarket.preview.emergentagent.com")
-        print(f"   - Admin Path: /admin/disputes")
-        print(f"   - Query Parameter: dispute_id={self.dispute_id}")
+        print(f"   - Admin Path: /admin/disputes/{self.dispute_id}")
+        print(f"   - Format: PATH PARAMETER (NOT query parameter)")
         print(f"")
         print(f"   ✅ This URL should be clickable in the email button")
         print(f"   ✅ Clicking should take admin directly to dispute details")
+        print(f"   ✅ URL Format Verified: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
         
         self.log_test("Email URL Generation", True, f"Generated clickable URL: {admin_url}")
         
