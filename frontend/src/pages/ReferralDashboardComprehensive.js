@@ -83,8 +83,15 @@ export default function ReferralDashboardComprehensive() {
     try {
       setLoading(true);
       const response = await axios.get(`${API}/referral/dashboard/comprehensive/${user.user_id}`);
+      
+      // Also fetch NEW referral links (Standard + Golden if applicable)
+      const linksResponse = await axios.get(`${API}/referral/links/${user.user_id}`);
+      
       if (response.data.success) {
-        setComprehensiveData(response.data);
+        setComprehensiveData({
+          ...response.data,
+          newReferralLinks: linksResponse.data // Store new links separately
+        });
       }
     } catch (error) {
       console.error('Error fetching data:', error);
