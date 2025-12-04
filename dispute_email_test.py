@@ -382,7 +382,8 @@ class DisputeEmailTester:
             print("\n🎉 DISPUTE EMAIL TEST COMPLETED SUCCESSFULLY!")
             print(f"✅ Dispute ID: {self.dispute_id}")
             print(f"✅ Email should be sent to: info@coinhubx.net")
-            print(f"✅ Clickable URL: https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={self.dispute_id}")
+            print(f"✅ Clickable URL: https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
+            print(f"✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
             return 0
         else:
             print(f"\n⚠️ Some tests failed - check details above")
