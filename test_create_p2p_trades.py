@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import uuid
 
 MONGO_URL = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
-DB_NAME = "crypto_exchange"
+DB_NAME = os.getenv('DB_NAME', 'coinhubx')
 
 async def create_test_trades():
     client = AsyncIOMotorClient(MONGO_URL)
