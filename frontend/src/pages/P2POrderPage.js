@@ -262,7 +262,7 @@ export default function P2POrderPage() {
     setProcessing(true);
     
     try {
-      const endpoint = isBlocked ? '/api/p2p/unblock' : '/api/p2p/block';
+      const endpoint = isBlocked ? '/api/p2p/block/remove' : '/api/p2p/block/add';
       const response = await axios.post(`${API}${endpoint}`, {
         user_id: currentUser.user_id,
         blocked_user_id: counterpartyId
@@ -270,7 +270,19 @@ export default function P2POrderPage() {
       
       if (response.data.success) {
         setIsBlocked(!isBlocked);
-        toast.success(isBlocked ? '✅ User unblocked' : '🚫 User blocked');
+        toast.success(isBlocked ? '✅ User unblocked' : '🚫 User blocked - they will no longer appear in your marketplace');
+        
+        // If blocked a favourite, remove from favourites
+        if (!isBlocked) {
+          try {
+            await axios.post(`${API}/api/p2p/favourites/remove`, {
+              user_id: currentUser.user_id,
+              merchant_id: counterpartyId
+            });
+          } catch (e) {
+            console.error('Failed to remove from favourites:', e);
+          }
+        }
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to update block status');
