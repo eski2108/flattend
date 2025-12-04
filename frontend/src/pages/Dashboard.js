@@ -77,8 +77,8 @@ export default function Dashboard() {
         setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
       }
       
-      // Load recent transactions
-      const txRes = await axios.get(`${API}/api/transactions/${userId}?limit=5`);
+      // Load recent transactions (with cache busting)
+      const txRes = await axios.get(`${API}/api/transactions/${userId}?limit=5&_t=${Date.now()}`);
       if (txRes.data.success) {
         setRecentTransactions(txRes.data.transactions || []);
       }
