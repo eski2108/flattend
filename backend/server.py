@@ -12985,7 +12985,11 @@ async def apply_referral_code(request: ApplyReferralCodeRequest, req: Request):
 @api_router.get("/referrals/dashboard")
 @api_router.get("/referral/links/{user_id}")
 async def get_referral_links(user_id: str):
-    """Get both Standard (20%) and Golden (50%) referral links"""
+    """
+    Get referral links for user.
+    Regular users: Standard link only
+    Golden users: Both Standard and Golden links
+    """
     try:
         from referral_commission_calculator import ReferralCommissionCalculator
         calculator = ReferralCommissionCalculator(db)
@@ -12993,22 +12997,136 @@ async def get_referral_links(user_id: str):
         
         return {
             "success": True,
-            "standard": {
-                "link": links["standard_link"],
-                "rate": "20%",
-                "duration": "Lifetime",
-                "description": "20% commission on all fees, forever"
-            },
-            "golden": {
-                "link": links["golden_link"],
-                "rate": "50%",
-                "duration": "100 days",
-                "description": "50% commission on all fees for first 100 days per referral"
-            },
-            "referral_code": links["referral_code"]
+            **links
         }
     except Exception as e:
         logger.error(f"Error getting referral links: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/referral/toggle-golden")
+async def admin_toggle_golden_referrer(request: Request):
+    """
+    Admin-only: Activate or deactivate Golden Referrer status for a user.
+    Golden = 50% lifetime commission (no time limits, no automatic unlock).
+    """
+    try:
+        body = await request.json()
+        target_user_id = body.get("user_id")
+        set_golden = body.get("set_golden", True)  # True to activate, False to deactivate
+        admin_user_id = body.get("admin_user_id")
+        
+        if not target_user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        # Verify admin (simple check - enhance with proper admin auth)
+        admin = await db.users.find_one({"user_id": admin_user_id})
+        if not admin or not admin.get("is_admin", False):
+            raise HTTPException(status_code=403, detail="Admin access required")
+        
+        # Update user's golden status
+        await db.users.update_one(
+            {"user_id": target_user_id},
+            {"$set": {
+                "is_golden_referrer": set_golden,
+                "golden_activated_at": datetime.now(timezone.utc).isoformat() if set_golden else None,
+                "golden_activated_by": admin_user_id if set_golden else None
+            }}
+        )
+        
+        # Generate golden code if activating
+        if set_golden:
+            from referral_commission_calculator import ReferralCommissionCalculator
+            calculator = ReferralCommissionCalculator(db)
+            # This will generate golden code if it doesn't exist
+            await calculator.get_referral_links(target_user_id)
+        
+        status_text = "ACTIVATED" if set_golden else "DEACTIVATED"
+        logger.info(f"✅ Golden Referrer {status_text} for {target_user_id} by admin {admin_user_id}")
+        
+        return {
+            "success": True,
+            "user_id": target_user_id,
+            "is_golden_referrer": set_golden,
+            "message": f"Golden Referrer status {status_text}"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error toggling golden status: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/referral/user-status/{user_id}")
+async def admin_get_referral_status(user_id: str):
+    """
+    Admin-only: Get referral status and stats for a user.
+    """
+    try:
+        user = await db.users.find_one(
+            {"user_id": user_id},
+            {"username": 1, "email": 1, "is_golden_referrer": 1, 
+             "golden_activated_at": 1, "golden_activated_by": 1, "_id": 0}
+        )
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get referral codes
+        codes = await db.referral_codes.find_one(
+            {"user_id": user_id},
+            {"standard_code": 1, "golden_code": 1, "_id": 0}
+        )
+        
+        # Get total earnings
+        pipeline = [
+            {"$match": {"referrer_user_id": user_id, "status": "completed"}},
+            {
+                "$group": {
+                    "_id": "$tier_used",
+                    "total": {"$sum": "$commission_amount"},
+                    "count": {"$sum": 1}
+                }
+            }
+        ]
+        earnings = await db.referral_commissions.aggregate(pipeline).to_list(10)
+        
+        earnings_summary = {
+            "standard": {"total": 0, "count": 0},
+            "golden": {"total": 0, "count": 0}
+        }
+        
+        for e in earnings:
+            tier = e["_id"] or "standard"
+            if "golden" in tier.lower():
+                earnings_summary["golden"]["total"] += e["total"]
+                earnings_summary["golden"]["count"] += e["count"]
+            else:
+                earnings_summary["standard"]["total"] += e["total"]
+                earnings_summary["standard"]["count"] += e["count"]
+        
+        return {
+            "success": True,
+            "user": {
+                "user_id": user_id,
+                "username": user.get("username"),
+                "email": user.get("email"),
+                "is_golden_referrer": user.get("is_golden_referrer", False),
+                "golden_activated_at": user.get("golden_activated_at"),
+                "golden_activated_by": user.get("golden_activated_by")
+            },
+            "codes": {
+                "standard": codes.get("standard_code") if codes else None,
+                "golden": codes.get("golden_code") if codes else None
+            },
+            "earnings": earnings_summary
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting user referral status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/referral/dashboard/comprehensive/{user_id}")
