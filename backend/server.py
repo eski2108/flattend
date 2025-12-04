@@ -13086,14 +13086,21 @@ async def admin_toggle_golden_referrer(request: Request):
         if not admin or not admin.get("is_admin", False):
             raise HTTPException(status_code=403, detail="Admin access required")
         
-        # Update user's golden status
+        # Update user's golden status in BOTH collections (for compatibility)
+        update_data = {
+            "is_golden_referrer": set_golden,
+            "golden_activated_at": datetime.now(timezone.utc).isoformat() if set_golden else None,
+            "golden_activated_by": admin_user_id if set_golden else None
+        }
+        
         await db.user_accounts.update_one(
             {"user_id": target_user_id},
-            {"$set": {
-                "is_golden_referrer": set_golden,
-                "golden_activated_at": datetime.now(timezone.utc).isoformat() if set_golden else None,
-                "golden_activated_by": admin_user_id if set_golden else None
-            }}
+            {"$set": update_data}
+        )
+        
+        await db.users.update_one(
+            {"user_id": target_user_id},
+            {"$set": update_data}
         )
         
         # Generate golden code if activating
