@@ -116,48 +116,87 @@ class ReferralCommissionCalculator:
     
     async def get_referral_links(self, user_id: str) -> Dict:
         """
-        Get both standard and golden referral links for a user.
+        Get referral links for user.
+        Returns both Standard and Golden links if user is Golden referrer.
+        Regular users only get Standard link.
         """
         try:
-            # Get user's referral code
-            referral_code = await self.db.referral_codes.find_one(
+            # Check if user is Golden referrer
+            user = await self.db.users.find_one(
                 {"user_id": user_id},
-                {"referral_code": 1, "_id": 0}
+                {"is_golden_referrer": 1, "username": 1, "email": 1, "_id": 0}
             )
             
-            if not referral_code:
-                # Generate if doesn't exist
-                user = await self.db.users.find_one(
-                    {"user_id": user_id},
-                    {"username": 1, "email": 1, "_id": 0}
-                )
-                
-                name = user.get("username", user.get("email", "USER"))
-                code = self._generate_code(name)
-                
-                await self.db.referral_codes.insert_one({
-                    "user_id": user_id,
-                    "referral_code": code,
-                    "created_at": datetime.now(timezone.utc).isoformat()
-                })
-                
-                referral_code = {"referral_code": code}
+            is_golden = user.get("is_golden_referrer", False) if user else False
             
-            code = referral_code["referral_code"]
+            # Get or generate standard referral code
+            referral_codes = await self.db.referral_codes.find_one(
+                {"user_id": user_id},
+                {"standard_code": 1, "golden_code": 1, "_id": 0}
+            )
+            
+            if not referral_codes:
+                # Generate codes
+                name = user.get("username", user.get("email", "USER")) if user else "USER"
+                standard_code = self._generate_code(name)
+                golden_code = self._generate_code(name + "GOLD") if is_golden else None
+                
+                referral_codes = {
+                    "user_id": user_id,
+                    "standard_code": standard_code,
+                    "golden_code": golden_code,
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+                
+                await self.db.referral_codes.insert_one(referral_codes)
+            else:
+                standard_code = referral_codes.get("standard_code")
+                golden_code = referral_codes.get("golden_code")
+                
+                # Generate golden code if user just became golden
+                if is_golden and not golden_code:
+                    name = user.get("username", user.get("email", "USER"))
+                    golden_code = self._generate_code(name + "GOLD")
+                    await self.db.referral_codes.update_one(
+                        {"user_id": user_id},
+                        {"$set": {"golden_code": golden_code}}
+                    )
+            
             base_url = "https://coinhubx.com/register"
             
-            return {
-                "standard_link": f"{base_url}?ref={code}&tier=standard",
-                "golden_link": f"{base_url}?ref={code}&tier=golden",
-                "referral_code": code
+            result = {
+                "is_golden_referrer": is_golden,
+                "standard": {
+                    "code": standard_code,
+                    "link": f"{base_url}?ref={standard_code}&tier=standard",
+                    "rate": "20%",
+                    "description": "Standard Referral - 20% lifetime commission"
+                }
             }
+            
+            # Only include golden link if user is golden referrer
+            if is_golden and golden_code:
+                result["golden"] = {
+                    "code": golden_code,
+                    "link": f"{base_url}?ref={golden_code}&tier=golden",
+                    "rate": "50%",
+                    "description": "Golden Referral - 50% lifetime commission (VIP Partners Only)"
+                }
+            
+            return result
             
         except Exception as e:
             logger.error(f"Error getting referral links: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             return {
-                "standard_link": "",
-                "golden_link": "",
-                "referral_code": ""
+                "is_golden_referrer": False,
+                "standard": {
+                    "code": "",
+                    "link": "",
+                    "rate": "20%",
+                    "description": "Standard Referral - 20% lifetime commission"
+                }
             }
     
     def _generate_code(self, name: str) -> str:
