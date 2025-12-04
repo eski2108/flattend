@@ -106,9 +106,23 @@ function P2PMarketplace() {
     fetchOffers();
   }, [selectedCrypto, sortBy, activeTab, selectedFiatCurrency, filters.favoritesOnly, filters.trustedOnly, filters.fastPaymentOnly]);
 
+  // Helper to get user_id from localStorage
+  const getUserId = () => {
+    const userStr = localStorage.getItem('cryptobank_user') || localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        return user.user_id;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
+    return null;
+  };
+
   const loadFavorites = async () => {
     try {
-      const userId = localStorage.getItem('user_id');
+      const userId = getUserId();
       if (userId) {
         const response = await axios.get(`${API}/api/p2p/favourites/${userId}`);
         if (response.data.success) {
@@ -122,7 +136,7 @@ function P2PMarketplace() {
 
   const toggleFavorite = async (sellerId, e) => {
     e.stopPropagation();
-    const userId = localStorage.getItem('user_id');
+    const userId = getUserId();
     if (!userId) {
       toast.error('Please login to save favorites');
       return;
