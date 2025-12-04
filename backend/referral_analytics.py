@@ -499,10 +499,23 @@ class ReferralAnalytics:
         For Activity Tab display.
         """
         try:
-            # Find all users who were referred by this user
-            referred_users = await self.db.users.find(
+            # Find all users who were referred by this user (check both collections)
+            referred_users_from_users = await self.db.users.find(
                 {"referred_by": user_id}
             ).sort("created_at", -1).to_list(1000)
+            
+            referred_users_from_accounts = await self.db.user_accounts.find(
+                {"referred_by": user_id}
+            ).sort("created_at", -1).to_list(1000)
+            
+            # Combine and deduplicate by user_id
+            seen_ids = set()
+            referred_users = []
+            for user in referred_users_from_users + referred_users_from_accounts:
+                uid = user.get("user_id")
+                if uid and uid not in seen_ids:
+                    seen_ids.add(uid)
+                    referred_users.append(user)
             
             result = []
             for user in referred_users:
