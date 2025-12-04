@@ -94,6 +94,60 @@ export default function AdminDisputes() {
             <p className="text-gray-400 text-sm md:text-base">Review and resolve P2P trade disputes</p>
           </div>
 
+          {/* Filters */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                statusFilter === 'all'
+                  ? 'bg-cyan-600 text-white'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              All ({disputes.length})
+            </button>
+            <button
+              onClick={() => setStatusFilter('open')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                statusFilter === 'open'
+                  ? 'bg-yellow-600 text-white'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              Open ({disputes.filter(d => d.status === 'open').length})
+            </button>
+            <button
+              onClick={() => setStatusFilter('under_review')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                statusFilter === 'under_review'
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              Under Review ({disputes.filter(d => d.status === 'under_review').length})
+            </button>
+            <button
+              onClick={() => setStatusFilter('resolved')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                statusFilter === 'resolved'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              Resolved ({disputes.filter(d => d.status === 'resolved').length})
+            </button>
+            <button
+              onClick={() => setStatusFilter('cancelled')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                statusFilter === 'cancelled'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+              }`}
+            >
+              Cancelled ({disputes.filter(d => d.status === 'cancelled').length})
+            </button>
+          </div>
+
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-4">
