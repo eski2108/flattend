@@ -111,9 +111,10 @@ class SimpleDisputeEmailTester:
                         self.dispute_id = data['dispute_id']
                         self.log_test("Dispute Creation", True, f"Dispute ID: {self.dispute_id}")
                         
-                        # Show expected URL format
-                        expected_url = f"https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={self.dispute_id}"
+                        # Show expected URL format (UPDATED - NO QUERY PARAMS)
+                        expected_url = f"https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
                         print(f"   📧 Expected Email Button URL: {expected_url}")
+                        print(f"   ✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
                         
                         return True
                     else:
