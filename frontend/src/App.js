@@ -130,6 +130,7 @@ function App() {
       <CurrencyProvider>
         <WalletProvider>
           <div className="App">
+            <TestModeBanner />
             <Toaster position="top-right" richColors />
             <BrowserRouter>
           <Suspense fallback={
