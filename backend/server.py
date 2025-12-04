@@ -26652,6 +26652,10 @@ async def auto_match_trade(request: dict):
         if not auto_match_enabled:
             raise HTTPException(status_code=403, detail="Auto-match is disabled for this market")
         
+        # Get blocked users
+        blocked_doc = await db.user_blocks.find_one({"user_id": user_id})
+        blocked_users = blocked_doc.get("blocked_users", []) if blocked_doc else []
+        
         if trade_type == "buy":
             # Find best seller
             pipeline = [
@@ -26660,7 +26664,8 @@ async def auto_match_trade(request: dict):
                         "crypto": crypto,
                         "status": "active",
                         "amount_available": {"$gte": float(amount)},
-                        "seller_uid": {"$ne": user_id}
+                        "seller_uid": {"$ne": user_id},
+                        "seller_uid": {"$nin": blocked_users}  # Exclude blocked users
                     }
                 },
                 {
