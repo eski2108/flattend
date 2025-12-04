@@ -515,7 +515,12 @@ export default function ReferralDashboardComprehensive() {
               </p>
             </div>
 
-            {/* Referral Links - NEW BINANCE-STYLE SYSTEM */}
+            {/* Referral Links - ADMIN-CONTROLLED SYSTEM
+                - Standard Link (20%): Always visible
+                - Golden Link (50%): Only visible if admin activated (is_golden_referrer = true in backend)
+                - Users CANNOT activate Golden themselves
+                - Admin controls this via /admin/referral-control panel
+            */}
             <div style={{
               background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
               borderRadius: '16px',
@@ -526,7 +531,7 @@ export default function ReferralDashboardComprehensive() {
                 🔗 Your Referral Links
               </h3>
 
-              {/* Golden Status Badge - ONLY shows if admin activated it */}
+              {/* Golden Status Badge - ONLY shows if admin activated it (backend-controlled) */}
               {comprehensiveData?.newReferralLinks?.is_golden_referrer && (
                 <div style={{
                   display: 'inline-flex',
