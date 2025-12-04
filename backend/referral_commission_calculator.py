@@ -1,20 +1,21 @@
 """Centralized Referral Commission Calculator
 
-Handles both Golden and Standard referral tiers with proper date checking.
+Binance-Style Dual Tier System:
+- Standard: 20% lifetime (default for all users)
+- Golden: 50% lifetime (admin-activated only, no time limits)
 """
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from typing import Dict, Optional, Tuple
 import logging
 
 logger = logging.getLogger(__name__)
 
 class ReferralCommissionCalculator:
-    """Calculate referral commissions based on tier and time limits"""
+    """Calculate referral commissions based on tier - NO TIME LIMITS"""
     
-    STANDARD_RATE = 0.20  # 20%
-    GOLDEN_RATE = 0.50    # 50%
-    GOLDEN_DAYS_LIMIT = 100  # Golden only lasts 100 days per referred user
+    STANDARD_RATE = 0.20  # 20% lifetime
+    GOLDEN_RATE = 0.50    # 50% lifetime (admin-activated only)
     
     def __init__(self, db):
         self.db = db
