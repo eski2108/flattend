@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
+BASE_URL = "https://tradingplatform-14.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

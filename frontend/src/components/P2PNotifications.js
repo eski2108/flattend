@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IoAlertCircle, IoChatbubbles, IoCheckmark, IoCheckmarkCircle, IoClose, IoNotifications, IoTime } from 'react-icons/io5';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://p2p-trader-board.preview.emergentagent.com';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://tradingplatform-14.preview.emergentagent.com';
 
 const P2PNotifications = ({ userId, tradeId = null, onNotificationClick }) => {
   const [notifications, setNotifications] = useState([]);

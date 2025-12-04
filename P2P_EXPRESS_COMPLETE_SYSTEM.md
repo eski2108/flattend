@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://p2p-trader-board.preview.emergentagent.com/p2p-express
+https://tradingplatform-14.preview.emergentagent.com/p2p-express
 
 ---
 
