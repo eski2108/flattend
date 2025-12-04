@@ -13022,6 +13022,50 @@ async def get_referral_links(user_id: str):
         logger.error(f"Error getting referral links: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/admin/referral/search-users")
+async def admin_search_users_for_golden(email: str = None, user_id: str = None):
+    """
+    Admin-only: Search for users to manage Golden Referrer status.
+    """
+    try:
+        if not email and not user_id:
+            raise HTTPException(status_code=400, detail="Provide email or user_id")
+        
+        # Build query
+        query = {}
+        if email:
+            query["email"] = email
+        if user_id:
+            query["user_id"] = user_id
+        
+        # Search in user_accounts collection
+        user = await db.user_accounts.find_one(query, {"_id": 0})
+        
+        if not user:
+            return {
+                "success": False,
+                "message": "User not found",
+                "user": None
+            }
+        
+        return {
+            "success": True,
+            "user": {
+                "user_id": user.get("user_id"),
+                "email": user.get("email"),
+                "full_name": user.get("full_name"),
+                "is_golden_referrer": user.get("is_golden_referrer", False),
+                "golden_activated_at": user.get("golden_activated_at"),
+                "golden_activated_by": user.get("golden_activated_by")
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error searching users: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/admin/referral/toggle-golden")
 async def admin_toggle_golden_referrer(request: Request):
     """
@@ -13038,12 +13082,12 @@ async def admin_toggle_golden_referrer(request: Request):
             raise HTTPException(status_code=400, detail="user_id required")
         
         # Verify admin (simple check - enhance with proper admin auth)
-        admin = await db.users.find_one({"user_id": admin_user_id})
+        admin = await db.user_accounts.find_one({"user_id": admin_user_id})
         if not admin or not admin.get("is_admin", False):
             raise HTTPException(status_code=403, detail="Admin access required")
         
         # Update user's golden status
-        await db.users.update_one(
+        await db.user_accounts.update_one(
             {"user_id": target_user_id},
             {"$set": {
                 "is_golden_referrer": set_golden,
