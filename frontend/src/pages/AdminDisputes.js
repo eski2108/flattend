@@ -23,6 +23,15 @@ export default function AdminDisputes() {
     loadDisputes();
   }, []);
 
+  useEffect(() => {
+    // Apply filter
+    if (statusFilter === 'all') {
+      setFilteredDisputes(disputes);
+    } else {
+      setFilteredDisputes(disputes.filter(d => d.status === statusFilter));
+    }
+  }, [disputes, statusFilter]);
+
   const loadDisputes = async () => {
     try {
       const response = await axios.get(`${API}/api/admin/disputes/all`);
