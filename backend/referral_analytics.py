@@ -203,26 +203,38 @@ class ReferralAnalytics:
     
     async def _calculate_earnings_by_stream(self, user_id: str) -> List[Dict]:
         """Calculate earnings by revenue stream (trading, swap, P2P, etc.)"""
-        pipeline = [
-            {"$match": {"referrer_user_id": user_id, "status": "completed"}},
-            {"$group": {
-                "_id": "$transaction_type",
-                "total": {"$sum": "$commission_amount"},
-                "count": {"$sum": 1}
-            }},
-            {"$sort": {"total": -1}}
+        # Get all commissions
+        all_commissions = await self.db.referral_commissions.find({
+            "$or": [
+                {"referrer_user_id": user_id},
+                {"referrer_id": user_id}
+            ]
+        }).to_list(10000)
+        
+        # Aggregate by transaction type
+        stream_map = {}
+        for c in all_commissions:
+            tx_type = c.get("fee_type") or c.get("source") or c.get("transaction_type", "Unknown")
+            amount = c.get("commission_amount", c.get("amount", 0))
+            
+            if tx_type not in stream_map:
+                stream_map[tx_type] = {"total": 0, "count": 0}
+            
+            stream_map[tx_type]["total"] += float(amount)
+            stream_map[tx_type]["count"] += 1
+        
+        streams = [
+            {
+                "stream": tx_type,
+                "amount": data["total"],
+                "count": data["count"],
+                "percentage": 0
+            }
+            for tx_type, data in stream_map.items()
         ]
         
-        result = await self.db.referral_commissions.aggregate(pipeline).to_list(100)
-        
-        streams = []
-        for item in result:
-            streams.append({
-                "stream": item["_id"] or "Unknown",
-                "amount": item["total"],
-                "count": item["count"],
-                "percentage": 0  # Will calculate after
-            })
+        # Sort by amount
+        streams.sort(key=lambda x: x["amount"], reverse=True)
         
         # Calculate percentages
         total = sum(s["amount"] for s in streams)
