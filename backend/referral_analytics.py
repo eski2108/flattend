@@ -128,16 +128,28 @@ class ReferralAnalytics:
     async def _calculate_total_earnings(self, user_id: str) -> Dict:
         """Calculate total lifetime earnings from referral_commissions"""
         try:
-            pipeline = [
-                {"$match": {"referrer_user_id": user_id, "status": "completed"}},
-                {"$group": {
-                    "_id": "$currency",
-                    "total": {"$sum": "$commission_amount"},
-                    "count": {"$sum": 1}
-                }}
-            ]
+            # Get all commissions for this user (handle both schemas)
+            commissions = await self.db.referral_commissions.find({
+                "$or": [
+                    {"referrer_user_id": user_id},
+                    {"referrer_id": user_id}
+                ]
+            }).to_list(10000)
             
-            result = await self.db.referral_commissions.aggregate(pipeline).to_list(100)
+            # Aggregate manually
+            breakdown = {}
+            total_gbp = 0
+            
+            for c in commissions:
+                currency = c.get("currency", "GBP")
+                amount = c.get("commission_amount", c.get("amount", 0))
+                
+                if currency not in breakdown:
+                    breakdown[currency] = {"amount": 0, "count": 0}
+                
+                breakdown[currency]["amount"] += float(amount)
+                breakdown[currency]["count"] += 1
+                total_gbp += float(amount)  # Assuming all is GBP or converted
             
             total_gbp = 0
             breakdown = {}
