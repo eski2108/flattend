@@ -48,7 +48,7 @@ class ReferralAnalytics:
             referral_code_data = await self.db.referral_codes.find_one({"user_id": user_id})
             if not referral_code_data:
                 # Create if doesn't exist
-                user = await self.db.user_accounts.find_one({"user_id": user_id})
+                user = await self.user_service.get_user_by_id(user_id)
                 if user:
                     referral_code = self._generate_referral_code(user.get("full_name", "user"))
                     referral_code_data = {
@@ -60,7 +60,7 @@ class ReferralAnalytics:
                     await self.db.referral_codes.insert_one(referral_code_data)
             
             # Get user's tier
-            user = await self.db.user_accounts.find_one({"user_id": user_id})
+            user = await self.user_service.get_user_by_id(user_id)
             current_tier = user.get("referral_tier", "standard").lower() if user else "standard"
             
             # === 1. TOTAL EARNINGS (LIFETIME) ===
