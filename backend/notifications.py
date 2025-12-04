@@ -308,7 +308,7 @@ async def notify_p2p_dispute_resolved(db, trade_id: str, buyer_id: str, seller_i
             user_id=user_id,
             notification_type='p2p_dispute_resolved',
             title='✅ Dispute Resolved' if is_winner else '❌ Dispute Resolved',
-            message=f'Dispute has been resolved in {"your" if is_winner else "counterparty\'s"} favor.',
+            message=f'Dispute has been resolved in {"your" if is_winner else "counterparty's"} favor.',
             link=f'/p2p/order/{trade_id}',
             metadata={'trade_id': trade_id, 'winner': winner}
         )
