@@ -190,6 +190,17 @@ export default function AdminDisputes() {
               <IoCheckmarkCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
               <p className="text-gray-400 text-lg">No disputes to review</p>
             </div>
+          ) : filteredDisputes.length === 0 ? (
+            <div className="bg-slate-800/50 rounded-xl p-12 text-center">
+              <IoAlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg">No disputes match the selected filter</p>
+              <button
+                onClick={() => setStatusFilter('all')}
+                className="mt-4 bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Show All Disputes
+              </button>
+            </div>
           ) : (
             <div className="space-y-4">
               {filteredDisputes.map(dispute => (
