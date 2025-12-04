@@ -515,7 +515,7 @@ export default function ReferralDashboardComprehensive() {
               </p>
             </div>
 
-            {/* Referral Links */}
+            {/* Referral Links - NEW BINANCE-STYLE SYSTEM */}
             <div style={{
               background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
               borderRadius: '16px',
@@ -525,9 +525,45 @@ export default function ReferralDashboardComprehensive() {
               <h3 style={{ color: '#00F0FF', fontSize: '18px', fontWeight: '900', marginBottom: '1rem' }}>
                 🔗 Your Referral Links
               </h3>
+
+              {/* Golden Status Badge (if applicable) */}
+              {comprehensiveData?.newReferralLinks?.is_golden_referrer && (
+                <div style={{
+                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  textAlign: 'center',
+                  fontWeight: '900',
+                  color: '#000',
+                  fontSize: '14px'
+                }}>
+                  ⭐ GOLDEN REFERRER STATUS ACTIVE ⭐
+                </div>
+              )}
               
-              <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '700' }}>Referral Code</div>
+              {/* Standard Link (20%) - Everyone has this */}
+              <div style={{ marginBottom: comprehensiveData?.newReferralLinks?.golden ? '1.5rem' : '1rem' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: '6px' 
+                }}>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>
+                    Standard Referral Link
+                  </div>
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#00FF88', 
+                    fontWeight: '700',
+                    background: 'rgba(0, 255, 136, 0.1)',
+                    padding: '4px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    20% Commission
+                  </div>
+                </div>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -537,58 +573,94 @@ export default function ReferralDashboardComprehensive() {
                   borderRadius: '8px',
                   border: '1px solid rgba(0, 240, 255, 0.2)'
                 }}>
-                  <div style={{ flex: 1, color: '#00F0FF', fontSize: '16px', fontWeight: '700' }}>
-                    {comprehensiveData?.referral_code}
+                  <div style={{ flex: 1, color: '#00F0FF', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {comprehensiveData?.newReferralLinks?.standard?.link || comprehensiveData?.referral_link}
                   </div>
                   <button
-                    onClick={() => copyToClipboard(comprehensiveData?.referral_code, 'Code')}
+                    onClick={() => copyToClipboard(comprehensiveData?.newReferralLinks?.standard?.link || comprehensiveData?.referral_link, 'StandardLink')}
                     style={{
                       padding: '8px 16px',
-                      background: copySuccess === 'Code' ? '#00FF88' : 'rgba(0, 240, 255, 0.2)',
+                      background: copySuccess === 'StandardLink' ? '#00FF88' : 'rgba(0, 240, 255, 0.2)',
                       border: 'none',
                       borderRadius: '6px',
-                      color: copySuccess === 'Code' ? '#000' : '#00F0FF',
+                      color: copySuccess === 'StandardLink' ? '#000' : '#00F0FF',
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: '600'
                     }}
                   >
-                    {copySuccess === 'Code' ? '✓' : 'Copy'}
+                    {copySuccess === 'StandardLink' ? '✓' : 'Copy'}
                   </button>
                 </div>
               </div>
 
-              <div>
-                <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '700' }}>Referral Link</div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  padding: '0.75rem',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(0, 240, 255, 0.2)'
+              {/* Golden Link (50%) - Only if user is Golden Referrer */}
+              {comprehensiveData?.newReferralLinks?.golden && (
+                <div style={{ 
+                  marginBottom: '1rem',
+                  padding: '1rem',
+                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%)',
+                  borderRadius: '12px',
+                  border: '2px solid rgba(255, 215, 0, 0.3)'
                 }}>
-                  <div style={{ flex: 1, color: '#00F0FF', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {comprehensiveData?.referral_link}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '6px' 
+                  }}>
+                    <div style={{ fontSize: '11px', color: '#FFD700', textTransform: 'uppercase', fontWeight: '900' }}>
+                      ⭐ GOLDEN VIP LINK (Exclusive)
+                    </div>
+                    <div style={{ 
+                      fontSize: '12px', 
+                      color: '#FFD700', 
+                      fontWeight: '900',
+                      background: 'rgba(255, 215, 0, 0.2)',
+                      padding: '4px 8px',
+                      borderRadius: '4px'
+                    }}>
+                      50% Commission
+                    </div>
                   </div>
-                  <button
-                    onClick={() => copyToClipboard(comprehensiveData?.referral_link, 'Link')}
-                    style={{
-                      padding: '8px 16px',
-                      background: copySuccess === 'Link' ? '#00FF88' : 'rgba(0, 240, 255, 0.2)',
-                      border: 'none',
-                      borderRadius: '6px',
-                      color: copySuccess === 'Link' ? '#000' : '#00F0FF',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                      fontWeight: '600'
-                    }}
-                  >
-                    {copySuccess === 'Link' ? '✓' : 'Copy'}
-                  </button>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 215, 0, 0.3)'
+                  }}>
+                    <div style={{ flex: 1, color: '#FFD700', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {comprehensiveData?.newReferralLinks?.golden?.link}
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(comprehensiveData?.newReferralLinks?.golden?.link, 'GoldenLink')}
+                      style={{
+                        padding: '8px 16px',
+                        background: copySuccess === 'GoldenLink' ? '#FFD700' : 'rgba(255, 215, 0, 0.2)',
+                        border: 'none',
+                        borderRadius: '6px',
+                        color: copySuccess === 'GoldenLink' ? '#000' : '#FFD700',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: '900'
+                      }}
+                    >
+                      {copySuccess === 'GoldenLink' ? '✓' : 'Copy'}
+                    </button>
+                  </div>
+                  <p style={{ 
+                    color: '#FFD700', 
+                    fontSize: '11px', 
+                    marginTop: '0.5rem',
+                    fontStyle: 'italic'
+                  }}>
+                    Share this with VIP partners for 50% lifetime commission on their trades!
+                  </p>
                 </div>
-              </div>
+              )}
 
               {/* Share Buttons */}
               <div style={{ marginTop: '1.5rem' }}>
