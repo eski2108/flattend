@@ -1,53 +1,88 @@
 #!/usr/bin/env python3
 """
-CoinHubX Comprehensive Backend API Testing
-Testing ALL features mentioned in the review request:
+P2P Leaderboard API Testing Suite
+Tests the newly created P2P Leaderboard endpoints as requested in review.
 
-**CORE FEATURES TO TEST:**
-1. User Registration and Login flow
-2. Portfolio Dashboard - verify balances display correctly (should show £13,549 for test user gads21083@gmail.com)
-3. P2P Express - test buying BTC with GBP (£100 test purchase)
-4. P2P Express - verify GBP → Crypto flow is clear and centered on mobile
-5. P2P Express - verify Live Price card displays correctly
-6. P2P Marketplace - test creating an offer
-7. P2P Marketplace - test buying from an offer
-8. P2P Marketplace - verify DualCurrencyInput works on order preview
-9. Swap Crypto - test swapping BTC → ETH
-10. Swap Crypto - verify balance warning shows when balance is 0
-11. Swap Crypto - verify 'Buy BTC Now' button appears when balance is 0
-12. Spot Trading - test placing buy order
-13. Spot Trading - test placing sell order
-14. Wallet page - verify all balances display correctly
-15. Wallet page - verify portfolio value matches dashboard
-16. Referral System - verify commission is credited (20% of fees)
-17. Admin Dashboard - verify fees are collected in PLATFORM_FEES wallet
-18. Payment flow - verify money deducted from user wallet
-19. Payment flow - verify crypto credited to user
-20. Payment flow - verify fees go to admin wallet
-21. Payment flow - verify referrer gets 20% commission
+**ENDPOINTS TO TEST:**
+1. GET /api/p2p/leaderboard
+   - Default query (7d timeframe, 50 limit)
+   - Different timeframes: "24h", "7d", "30d", "all"
+   - Different limits: 10, 50, 100
+   - Invalid timeframe (should fail validation)
+   - Invalid limit (0, negative, >100)
 
-**Test Credentials:**
-- Test User: gads21083@gmail.com / 123456789
-- Referrer Test: referrer@test.com / testpass123
-- Referred Test: referred@test.com / testpass123
-- Admin: admin / password123
+2. GET /api/p2p/leaderboard/user/{user_id}
+   - Valid user_id with completed trades
+   - Valid user_id but no trades (should return not in rankings)
+   - Different timeframes: "7d", "30d", "all"
+   - Invalid/non-existent user_id
+
+**Context:**
+- Just created 30 completed P2P trades with 3 test users
+- All trades in past 30 days
+- Database: coin_hub_x
+- Collection: p2p_trades
+- Backend running on port 8001
 
 **Backend URL:** https://p2p-trader-board.preview.emergentagent.com/api
 """
 
-import requests
+import asyncio
+import aiohttp
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+from typing import Dict, List, Any
 import time
 
-# Configuration
-BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
+# Backend URL from frontend .env
+BACKEND_URL = "https://p2p-trader-board.preview.emergentagent.com"
 
-# Test credentials from review request
-TEST_CREDENTIALS = {
-    "main_user": {"email": "gads21083@gmail.com", "password": "123456789"},
-    "referrer": {"email": "referrer@test.com", "password": "testpass123"},
+class P2PLeaderboardTester:
+    """Comprehensive P2P Leaderboard API tester"""
+    
+    def __init__(self):
+        self.base_url = f"{BACKEND_URL}/api"
+        self.session = None
+        self.test_results = []
+        
+    async def __aenter__(self):
+        self.session = aiohttp.ClientSession()
+        return self
+        
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.session:
+            await self.session.close()
+    
+    def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
+        """Log test result"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} {test_name}")
+        if details:
+            print(f"    {details}")
+        if response_data and not success:
+            print(f"    Response: {json.dumps(response_data, indent=2)}")
+        
+        self.test_results.append({
+            "test": test_name,
+            "success": success,
+            "details": details,
+            "response": response_data
+        })
+    
+    async def make_request(self, method: str, endpoint: str, **kwargs) -> tuple:
+        """Make HTTP request and return (success, response_data, status_code)"""
+        try:
+            url = f"{self.base_url}{endpoint}"
+            async with self.session.request(method, url, **kwargs) as response:
+                try:
+                    data = await response.json()
+                except:
+                    data = await response.text()
+                
+                return response.status == 200, data, response.status
+        except Exception as e:
+            return False, {"error": str(e)}, 0
     "referred": {"email": "referred@test.com", "password": "testpass123"},
     "admin": {"email": "admin", "password": "password123"}
 }
