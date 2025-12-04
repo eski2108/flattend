@@ -40,6 +40,11 @@ export default function PortfolioPage() {
         }
       });
       if (response.data.success) {
+        console.log('🔍 Portfolio API Response:', {
+          total_value_usd: response.data.total_value_usd,
+          timestamp: new Date().toISOString(),
+          url: response.config.url
+        });
         // Transform the backend response to match frontend expectations
         const transformedAllocations = response.data.allocations.map(alloc => ({
           currency: alloc.currency,
