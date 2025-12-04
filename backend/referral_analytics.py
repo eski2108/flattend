@@ -88,6 +88,15 @@ class ReferralAnalytics:
             # === 9. ACTIVE VS PENDING REFERRALS ===
             referral_stats = await self._get_referral_stats(user_id)
             
+            # === 10. COMMISSIONS ARRAY (for Earnings tab) ===
+            commissions = await self._get_commissions_list(user_id)
+            
+            # === 11. RECENT REFERRALS (for Activity tab) ===
+            recent_referrals = await self._get_recent_referrals(user_id)
+            
+            # === 12. LEADERBOARD (for Leaderboard tab) ===
+            leaderboard = await self._get_leaderboard()
+            
             return {
                 "success": True,
                 "referral_code": referral_code_data.get("referral_code"),
@@ -102,6 +111,9 @@ class ReferralAnalytics:
                 "geographic_breakdown": geographic_breakdown,
                 "tier_progress": tier_progress,
                 "referral_stats": referral_stats,
+                "commissions": commissions,
+                "recent_referrals": recent_referrals,
+                "leaderboard": leaderboard,
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
             
