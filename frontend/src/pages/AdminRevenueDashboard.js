@@ -229,7 +229,7 @@ const AdminRevenueDashboard = () => {
               Top 5 Revenue Streams
             </h2>
             <div className="space-y-3">
-              {revenueData?.by_fee_type?.slice(0, 5).map((fee, idx) => (
+              {revenueData?.by_fee_type && revenueData.by_fee_type.length > 0 ? revenueData.by_fee_type.slice(0, 5).map((fee, idx) => (
                 <div key={idx} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="text-2xl font-bold text-cyan-400">#{idx + 1}</div>
