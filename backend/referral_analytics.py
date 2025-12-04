@@ -170,33 +170,34 @@ class ReferralAnalytics:
             "year": now - timedelta(days=365)
         }
         
+        # Get all commissions for this user
+        all_commissions = await self.db.referral_commissions.find({
+            "$or": [
+                {"referrer_user_id": user_id},
+                {"referrer_id": user_id}
+            ]
+        }).to_list(10000)
+        
         result = {}
         for period_name, start_date in periods.items():
-            pipeline = [
-                {
-                    "$match": {
-                        "referrer_user_id": user_id,
-                        "status": "completed",
-                        "created_at": {"$gte": start_date.isoformat()}
-                    }
-                },
-                {
-                    "$group": {
-                        "_id": None,
-                        "total": {"$sum": "$commission_amount"},
-                        "count": {"$sum": 1}
-                    }
-                }
-            ]
+            total = 0
+            count = 0
             
-            agg_result = await self.db.referral_commissions.aggregate(pipeline).to_list(1)
-            if agg_result:
-                result[period_name] = {
-                    "amount": agg_result[0]["total"],
-                    "count": agg_result[0]["count"]
-                }
-            else:
-                result[period_name] = {"amount": 0, "count": 0}
+            for c in all_commissions:
+                # Get timestamp (handle both schemas)
+                created_at = c.get("created_at") or c.get("timestamp")
+                if isinstance(created_at, str):
+                    try:
+                        created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                    except:
+                        continue
+                
+                if isinstance(created_at, datetime) and created_at >= start_date:
+                    amount = c.get("commission_amount", c.get("amount", 0))
+                    total += float(amount)
+                    count += 1
+            
+            result[period_name] = {"amount": total, "count": count}
         
         return result
     
