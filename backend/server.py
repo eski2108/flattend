@@ -14872,6 +14872,59 @@ async def send_support_message(request: dict):
         "message_id": chat_message.message_id
     }
 
+@api_router.get("/admin/support/emails")
+async def get_support_email_config():
+    """Get configured support email addresses"""
+    try:
+        config = await db.admin_settings.find_one({"setting_key": "support_emails"})
+        if config:
+            return {
+                "success": True,
+                "emails": config.get("emails", [])
+            }
+        return {
+            "success": True,
+            "emails": []
+        }
+    except Exception as e:
+        logger.error(f"Error getting support emails: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/support/emails")
+async def update_support_email_config(request: dict):
+    """Update support email addresses"""
+    try:
+        emails = request.get("emails", [])
+        
+        # Validate emails
+        import re
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        for email in emails:
+            if not re.match(email_pattern, email):
+                raise HTTPException(status_code=400, detail=f"Invalid email: {email}")
+        
+        # Update or create configuration
+        await db.admin_settings.update_one(
+            {"setting_key": "support_emails"},
+            {"$set": {
+                "setting_key": "support_emails",
+                "emails": emails,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }},
+            upsert=True
+        )
+        
+        return {
+            "success": True,
+            "emails": emails,
+            "message": "Support emails updated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating support emails: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/support/chat/{user_id}")
 async def get_support_chat(user_id: str):
     """Get support chat history for user"""
