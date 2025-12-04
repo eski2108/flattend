@@ -85,23 +85,70 @@ export default function InstantSell() {
 
     setSelling(true);
     try {
-      const response = await axios.post(`${API}/api/monetization/instant-sell`, {
+      // STEP 1: Get locked-price quote
+      const quoteResponse = await axios.post(`${API}/api/admin-liquidity/quote`, {
         user_id: user.user_id,
-        currency: selectedCrypto,
-        crypto_amount: parseFloat(amount),
-        gbp_amount: calculateSellAmount()
+        type: 'sell',
+        crypto: selectedCrypto,
+        amount: parseFloat(amount)
+      });
+
+      if (quoteResponse.data.success) {
+        const quote = quoteResponse.data.quote;
+        setCurrentQuote({
+          ...quote,
+          cryptoAmount: parseFloat(amount),
+          currency: selectedCrypto
+        });
+        setShowQuoteModal(true);
+        
+        // Start countdown timer
+        const expiresAt = new Date(quote.expires_at);
+        const updateTimer = setInterval(() => {
+          const now = new Date();
+          const remaining = Math.floor((expiresAt - now) / 1000);
+          if (remaining <= 0) {
+            clearInterval(updateTimer);
+            setShowQuoteModal(false);
+            toast.error('Quote expired. Please try again.');
+          } else {
+            setCountdown(remaining);
+          }
+        }, 1000);
+      } else {
+        toast.error(quoteResponse.data.message || 'Failed to get quote');
+      }
+    } catch (error) {
+      console.error('Quote error:', error);
+      toast.error(error.response?.data?.message || 'Failed to get quote');
+    } finally {
+      setSelling(false);
+    }
+  };
+
+  const confirmSell = async () => {
+    if (!currentQuote) return;
+    
+    setSelling(true);
+    try {
+      // STEP 2: Execute with locked price
+      const response = await axios.post(`${API}/api/admin-liquidity/execute`, {
+        user_id: user.user_id,
+        quote_id: currentQuote.quote_id
       });
 
       if (response.data.success) {
-        toast.success('Crypto sold successfully!');
+        const gbpReceived = currentQuote.cryptoAmount * currentQuote.locked_price;
+        toast.success(`✅ Sold ${currentQuote.cryptoAmount} ${currentQuote.currency} for £${gbpReceived.toFixed(2)}!`);
         setAmount('');
+        setShowQuoteModal(false);
         loadBalances(user.user_id);
       } else {
         toast.error(response.data.message || 'Sell failed');
       }
     } catch (error) {
       console.error('Sell error:', error);
-      toast.error(error.response?.data?.message || 'Failed to process sell');
+      toast.error(error.response?.data?.message || 'Failed to sell crypto');
     } finally {
       setSelling(false);
     }
