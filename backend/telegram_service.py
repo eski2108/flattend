@@ -352,10 +352,10 @@ class TelegramService:
         
         if user and user.get('telegram_chat_id'):
             message = (
-                f"⚠️ **Golden Referrer Status Revoked**\n\n"
-                f"Your Golden Referrer status has been deactivated.\n"
-                f"You've been removed from the Golden VIP chat.\n\n"
-                f"Your Standard referral link (20%) is still active."
+                "⚠️ **Golden Referrer Status Revoked**\n\n"
+                "Your Golden Referrer status has been deactivated.\n"
+                "You've been removed from the Golden VIP chat.\n\n"
+                "Your Standard referral link (20%) is still active."
             )
             await self.send_message(user['telegram_chat_id'], message)
             
