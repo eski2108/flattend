@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """
-Dispute Email Template Testing
-Testing the updated email template with clickable link functionality
+CoinHubX Dispute Email System Test
+Testing the complete email system with direct dispute link as requested:
 
-Test Steps:
-1. Create a fresh P2P trade in database
-2. Create a dispute via API: POST /api/p2p/disputes/create
-3. Check backend logs to confirm email sent to info@coinhubx.net
-4. Verify the dispute_id in the logs
-5. Show me the exact URL that would be in the email button
+**Test Flow:**
+1. Create a P2P trade
+2. Create a dispute via API 
+3. Verify email sent to info@coinhubx.net
+4. Extract the dispute_id from the API response
+5. Show me the exact button URL that will be in the email: https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}
+6. Verify the URL format is correct (not using query params)
+7. Check backend logs for email send confirmation
 
-Expected:
-- Email sent successfully
-- URL format: https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={actual_dispute_id}
-- Button should be clickable when received
+**Expected:**
+- Dispute created successfully  
+- Email sent to info@coinhubx.net
+- Button URL format: `/admin/disputes/{dispute_id}` (NOT `?dispute_id=`)
+- Logs show successful SendGrid email delivery
+
+This is the FINAL test to confirm the email button links to the correct dispute detail page.
 """
 
 import requests
