@@ -6,8 +6,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Admin email for notifications
-ADMIN_EMAIL = "gads21083@gmail.com"
+# Admin emails for notifications
+ADMIN_EMAILS = ["gads21083@gmail.com", "info@coinhubx.net"]
 
 class EmailService:
     def __init__(self, api_key: Optional[str] = None, sender_email: Optional[str] = None):
