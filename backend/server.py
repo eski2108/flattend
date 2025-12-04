@@ -17665,24 +17665,28 @@ async def create_dispute(request: dict):
 async def add_dispute_message(dispute_id: str, request: dict):
     """Add a message to dispute thread"""
     try:
-        user_id = request.get("user_id")
+        sender_id = request.get("sender_id") or request.get("user_id")
+        sender_type = request.get("sender_type", "user")
         message = request.get("message")
+        recipient = request.get("recipient", "all")  # "all", "buyer", "seller"
         
-        if not user_id or not message:
-            raise HTTPException(status_code=400, detail="user_id and message required")
+        if not sender_id or not message:
+            raise HTTPException(status_code=400, detail="sender_id and message required")
         
         # Get dispute
         dispute = await db.p2p_disputes.find_one({"dispute_id": dispute_id})
         if not dispute:
             raise HTTPException(status_code=404, detail="Dispute not found")
         
-        # Check authorization
-        if user_id not in [dispute.get("buyer_id"), dispute.get("seller_id")]:
+        # Check authorization (allow admin, buyer, or seller)
+        if sender_type != "admin" and sender_id not in [dispute.get("buyer_id"), dispute.get("seller_id")]:
             raise HTTPException(status_code=403, detail="Not authorized")
         
         message_data = {
             "message_id": f"msg_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
-            "user_id": user_id,
+            "sender_id": sender_id,
+            "sender_type": sender_type,
+            "recipient": recipient,
             "message": message,
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
