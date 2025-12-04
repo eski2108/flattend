@@ -18040,6 +18040,19 @@ async def create_dispute(request: dict):
         except Exception as e:
             logger.error(f"❌ Failed to create admin notification for dispute {dispute_id}: {str(e)}")
         
+        # 3. Send Telegram Alert to Admin
+        try:
+            await telegram_service.notify_dispute_opened({
+                "dispute_id": dispute_id,
+                "trade_id": trade_id,
+                "reason": reason,
+                "description": description,
+                "initiated_by": user_id
+            })
+            logger.info(f"✅ Telegram alert sent for dispute {dispute_id}")
+        except Exception as e:
+            logger.error(f"❌ Failed to send Telegram alert for dispute {dispute_id}: {str(e)}")
+        
         return {
             "success": True,
             "dispute_id": dispute_id,
