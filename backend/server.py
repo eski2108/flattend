@@ -14831,6 +14831,41 @@ async def send_support_message(request: dict):
         {"$set": {"last_message_at": datetime.now(timezone.utc).isoformat()}}
     )
     
+    # Send email notification to admin
+    try:
+        # Get admin email configuration
+        admin_config = await db.admin_settings.find_one({"setting_key": "support_emails"})
+        if admin_config and admin_config.get("emails"):
+            # Get user info
+            user = await db.user_accounts.find_one({"user_id": user_id}, {"email": 1, "full_name": 1, "_id": 0})
+            
+            # Send email to all configured admin emails
+            from sendgrid import SendGridAPIClient
+            from sendgrid.helpers.mail import Mail
+            
+            sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+            if sendgrid_api_key:
+                for admin_email in admin_config.get("emails", []):
+                    email_message = Mail(
+                        from_email='support@coinhubx.com',
+                        to_emails=admin_email,
+                        subject=f'New Support Message from {user.get("full_name", "User")}',
+                        html_content=f'''
+                        <h2>New Support Message</h2>
+                        <p><strong>From:</strong> {user.get("full_name", "Unknown")} ({user.get("email", "Unknown")})</p>
+                        <p><strong>User ID:</strong> {user_id}</p>
+                        <p><strong>Message:</strong></p>
+                        <p>{message}</p>
+                        <p><a href="https://coinhubx.com/admin/support">View in Admin Panel</a></p>
+                        '''
+                    )
+                    sg = SendGridAPIClient(sendgrid_api_key)
+                    sg.send(email_message)
+                    logger.info(f"Support notification sent to {admin_email}")
+    except Exception as email_error:
+        logger.warning(f"Failed to send email notification: {str(email_error)}")
+        # Don't fail the request if email fails
+    
     return {
         "success": True,
         "chat_id": chat_id,
