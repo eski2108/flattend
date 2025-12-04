@@ -10938,9 +10938,9 @@ async def get_available_coins_for_instant_buy():
         
         default_markup = settings.get("admin_sell_spread_percent", 3.0) if settings else 3.0
         
-        # Get live prices from live_pricing module
-        from live_pricing import LivePricing
-        pricing = LivePricing(db)
+        # Get live prices
+        from live_pricing import get_all_live_prices
+        live_prices = await get_all_live_prices()
         
         # Format response with coin info and prices
         available_coins = []
@@ -10948,14 +10948,15 @@ async def get_available_coins_for_instant_buy():
             currency = wallet.get("currency")
             available_amount = wallet.get("available", 0)
             
-            if available_amount <= 0:
+            if available_amount <= 0 or currency == "GBP":
                 continue
             
             # Get live market price
-            try:
-                price_gbp = await pricing.get_price(currency, "GBP")
-            except:
-                logger.warning(f"Could not get price for {currency}, skipping")
+            price_data = live_prices.get(currency, {})
+            price_gbp = price_data.get("gbp", 0)
+            
+            if price_gbp <= 0:
+                logger.warning(f"No price available for {currency}, skipping")
                 continue
             
             # Apply markup for user buy price
