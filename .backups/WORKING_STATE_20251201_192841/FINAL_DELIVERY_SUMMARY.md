@@ -260,7 +260,7 @@ OVERALL:              95% ██████████████████
 ## 🚀 Deployment Status
 
 ### Current Environment:
-- **URL**: https://referboost-4.preview.emergentagent.com
+- **URL**: https://cryptosupport-1.preview.emergentagent.com
 - **Backend**: RUNNING (FastAPI on port 8001)
 - **Frontend**: RUNNING (React on port 3000)
 - **Database**: RUNNING (MongoDB on localhost:27017)
@@ -348,8 +348,8 @@ These are **optional enhancements** that can be completed post-launch:
    - Database: coinhubx
 
 5. **Access**
-   - Frontend: https://referboost-4.preview.emergentagent.com
-   - Backend API: https://referboost-4.preview.emergentagent.com/api
+   - Frontend: https://cryptosupport-1.preview.emergentagent.com
+   - Backend API: https://cryptosupport-1.preview.emergentagent.com/api
 
 ---
 

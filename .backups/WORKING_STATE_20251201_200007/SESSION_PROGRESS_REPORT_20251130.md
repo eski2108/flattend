@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://referboost-4.preview.emergentagent.com/api/admin/fees/test
+$ curl https://cryptosupport-1.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://referboost-4.preview.emergentagent.com/api/admin/fees/all
+$ curl https://cryptosupport-1.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

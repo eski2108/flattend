@@ -32,7 +32,7 @@ Testing ALL features mentioned in the review request:
 - Referred Test: referred@test.com / testpass123
 - Admin: admin / password123
 
-**Backend URL:** https://referboost-4.preview.emergentagent.com/api
+**Backend URL:** https://cryptosupport-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -42,7 +42,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://referboost-4.preview.emergentagent.com/api"
+BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
 
 # Test credentials from review request
 TEST_CREDENTIALS = {
