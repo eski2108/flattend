@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-import { IoAlertCircle, IoCheckmarkCircle, IoTime, IoEye, IoWarning } from 'react-icons/io5';
+import { IoAlertCircle, IoCheckmarkCircle, IoTime, IoEye, IoWarning, IoCopy } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
