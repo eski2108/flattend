@@ -232,20 +232,20 @@ export default function AdminDisputeDetail() {
               </div>
 
               {/* Parties Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
-                  <h3 className="text-cyan-400 font-bold mb-2 flex items-center gap-2">
-                    <IoShield className="w-5 h-5" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                <div className="bg-cyan-500/10 border-2 border-cyan-500/30 rounded-xl p-3 md:p-4">
+                  <h3 className="text-cyan-400 font-bold mb-2 flex items-center gap-2 text-sm">
+                    <IoShield className="w-4 h-4 md:w-5 md:h-5" />
                     Buyer
                   </h3>
-                  <p className="text-white font-mono text-sm">{dispute.buyer_id}</p>
+                  <p className="text-white font-mono text-xs break-all">{dispute.buyer_id || 'N/A'}</p>
                 </div>
-                <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
-                  <h3 className="text-purple-400 font-bold mb-2 flex items-center gap-2">
-                    <IoShield className="w-5 h-5" />
+                <div className="bg-purple-500/10 border-2 border-purple-500/30 rounded-xl p-3 md:p-4">
+                  <h3 className="text-purple-400 font-bold mb-2 flex items-center gap-2 text-sm">
+                    <IoShield className="w-4 h-4 md:w-5 md:h-5" />
                     Seller
                   </h3>
-                  <p className="text-white font-mono text-sm">{dispute.seller_id}</p>
+                  <p className="text-white font-mono text-xs break-all">{dispute.seller_id || 'N/A'}</p>
                 </div>
               </div>
 
