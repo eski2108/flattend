@@ -712,16 +712,7 @@ class ReferralAnalytics:
                 referrer_id = item["_id"]
                 
                 # Get user info
-                user = await self.db.user_accounts.find_one(
-                    {"user_id": referrer_id},
-                    {"full_name": 1, "username": 1, "_id": 0}
-                )
-                
-                if not user:
-                    user = await self.db.users.find_one(
-                        {"user_id": referrer_id},
-                        {"username": 1, "email": 1, "_id": 0}
-                    )
+                user = await self.user_service.get_user_by_id(referrer_id)
                 
                 username = "Anonymous"
                 if user:
