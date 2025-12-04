@@ -17,6 +17,9 @@ function InstantBuy() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCoin, setExpandedCoin] = useState(null);
   const [userBalance, setUserBalance] = useState(0);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(null);
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     fetchCoins();
