@@ -10,12 +10,14 @@ const API = process.env.REACT_APP_BACKEND_URL;
 export default function AdminDisputes() {
   const navigate = useNavigate();
   const [disputes, setDisputes] = useState([]);
+  const [filteredDisputes, setFilteredDisputes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDispute, setSelectedDispute] = useState(null);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [adminNote, setAdminNote] = useState('');
   const [winner, setWinner] = useState('');
   const [resolution, setResolution] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     loadDisputes();
