@@ -82,14 +82,15 @@ class P2PDisputeTest:
         return trade_id, buyer_id, seller_id
         
     async def create_dispute(self, trade_id, buyer_id):
-        """Call the dispute creation endpoint"""
-        print(f"\n🚨 Creating dispute for trade {trade_id}...")
+        """Create dispute with reason 'crypto_not_released' and detailed description"""
+        print(f"\n🚨 Creating dispute with reason 'crypto_not_released'...")
         
+        # DETAILED DESCRIPTION as requested
         dispute_data = {
             "trade_id": trade_id,
-            "user_id": buyer_id,  # Changed from initiated_by to user_id as per backend code
-            "reason": "crypto_not_released",
-            "description": "Seller has not released crypto after 2 hours. I have payment proof."
+            "user_id": buyer_id,
+            "reason": "crypto_not_released",  # EXACT reason as requested
+            "description": "I have completed the payment of £500 for 0.01 BTC as agreed in the trade. The payment was made via Faster Payments with reference FP12345678901 and I have provided proof of payment. However, the seller has not released the cryptocurrency after 24 hours despite multiple attempts to contact them. I am requesting admin intervention to resolve this dispute and release my purchased cryptocurrency."
         }
         
         url = f"{BACKEND_URL}/p2p/disputes/create"
@@ -104,7 +105,10 @@ class P2PDisputeTest:
                     result = json.loads(response_text)
                     if result.get("success"):
                         dispute_id = result.get("dispute_id")
-                        print(f"✅ Dispute created successfully: {dispute_id}")
+                        print(f"✅ Dispute created successfully!")
+                        print(f"🆔 FULL DISPUTE ID: {dispute_id}")
+                        print(f"⚠️  Reason: {dispute_data['reason']}")
+                        print(f"📝 Description: {dispute_data['description'][:100]}...")
                         return dispute_id, True
                     else:
                         print(f"❌ Dispute creation failed: {result}")
