@@ -196,6 +196,7 @@ function P2PMarketplace() {
         ad_type: adType,
         crypto_currency: selectedCrypto,
         sort_by: sortBy,
+        ...(userId && { user_id: userId }), // Always send user_id for block filtering
         ...(selectedFiatCurrency && { fiat_currency: selectedFiatCurrency }),
         ...(filters.paymentMethod && { payment_method: filters.paymentMethod }),
         ...(filters.minPrice && { min_price: filters.minPrice }),
@@ -207,7 +208,7 @@ function P2PMarketplace() {
         ...(filters.verifiedOnly && { verified_only: true }),
         ...(filters.fastPaymentOnly && { fast_payment_only: true }),
         ...(filters.trustedOnly && { trusted_only: true }),
-        ...(filters.favoritesOnly && { favorites_only: true, user_id: userId }),
+        ...(filters.favoritesOnly && { favorites_only: true }),
         ...(filters.newSellerOnly && { new_seller_only: true }),
         ...(filters.country && { country: filters.country }),
         ...(filters.region && { region: filters.region })
