@@ -166,6 +166,81 @@ class P2PDisputeTest:
             print(f"❌ Database error: {str(e)}")
             return False
             
+    async def verify_dispute_full_data(self, dispute_id):
+        """Call GET /api/p2p/disputes/{full_dispute_id} to verify ALL data is returned"""
+        print(f"\n🔍 Verifying FULL dispute data retrieval...")
+        
+        url = f"{BACKEND_URL}/p2p/disputes/{dispute_id}"
+        
+        try:
+            async with self.session.get(url) as response:
+                response_text = await response.text()
+                print(f"📡 Dispute Detail API Status: {response.status}")
+                
+                if response.status == 200:
+                    result = json.loads(response_text)
+                    if result.get("success") and result.get("dispute"):
+                        dispute = result["dispute"]
+                        
+                        # VERIFY ALL REQUIRED FIELDS as requested
+                        required_fields = [
+                            'dispute_id', 'trade_id', 'amount', 'currency',
+                            'buyer_id', 'seller_id', 'reason', 'description',
+                            'created_at', 'status', 'messages'
+                        ]
+                        
+                        print(f"✅ Dispute data retrieved successfully!")
+                        print(f"\n📋 COMPLETE DISPUTE DATA:")
+                        
+                        missing_fields = []
+                        for field in required_fields:
+                            if field in dispute:
+                                value = dispute[field]
+                                if field == 'messages':
+                                    print(f"   {field}: {len(value)} messages")
+                                elif field == 'description':
+                                    print(f"   {field}: {value[:100]}...")
+                                else:
+                                    print(f"   {field}: {value}")
+                            else:
+                                missing_fields.append(field)
+                                print(f"   {field}: ❌ MISSING")
+                        
+                        if not missing_fields:
+                            print(f"\n✅ ALL {len(required_fields)} REQUIRED FIELDS PRESENT!")
+                            return True, dispute
+                        else:
+                            print(f"\n❌ MISSING FIELDS: {missing_fields}")
+                            return False, dispute
+                    else:
+                        print(f"❌ Dispute detail response invalid: {result}")
+                        return False, None
+                else:
+                    print(f"❌ Dispute detail HTTP Error {response.status}: {response_text}")
+                    return False, None
+                    
+        except Exception as e:
+            print(f"❌ Exception during dispute detail test: {str(e)}")
+            return False, None
+
+    async def show_frontend_url(self, dispute_id):
+        """Show the EXACT URL for testing the dispute detail page"""
+        print(f"\n🌐 FRONTEND URL FOR TESTING...")
+        
+        # As requested: http://localhost:3000/admin/disputes/{FULL_DISPUTE_ID}
+        # But we'll also show the actual frontend URL
+        localhost_url = f"http://localhost:3000/admin/disputes/{dispute_id}"
+        frontend_url = f"https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}"
+        
+        print(f"\n🎯 EXACT URL FOR TESTING DISPUTE DETAIL PAGE:")
+        print(f"   Localhost: {localhost_url}")
+        print(f"   Frontend:  {frontend_url}")
+        print(f"\n🆔 FULL DISPUTE ID: {dispute_id}")
+        print(f"💰 Trade Details: 0.01 BTC for £500")
+        print(f"⚠️  Dispute Reason: crypto_not_released")
+        
+        return True
+
     async def check_admin_disputes_endpoint(self):
         """Call GET /api/admin/disputes/all to verify admin can see the dispute"""
         print(f"\n👨‍💼 Testing admin disputes endpoint...")
