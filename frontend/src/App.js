@@ -211,6 +211,7 @@ function App() {
             <Route path="/admin/cms" element={<AdminCMS />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/blocked" element={<BlockedUsers />} />
             <Route path="/admin-liquidity" element={<AdminLiquidity />} />
             <Route path="/admin/liquidity-manager" element={<AdminLiquidityManager />} />
             <Route path="/manager-settings" element={<ManagerSettings />} />
