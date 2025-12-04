@@ -168,7 +168,7 @@ const AdminRevenueDashboard = () => {
             Revenue Breakdown by Fee Type
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {revenueData?.by_fee_type?.map((fee, idx) => (
+            {revenueData?.by_fee_type && revenueData.by_fee_type.length > 0 ? revenueData.by_fee_type.map((fee, idx) => (
               <div
                 key={idx}
                 className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 hover:border-cyan-500/50 transition-all"
