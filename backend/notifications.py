@@ -14,6 +14,11 @@ logger = logging.getLogger(__name__)
 NOTIFICATION_TYPES = {
     'login_alert': 'Security',
     'p2p_trade_update': 'Trading',
+    'p2p_payment_marked': 'Trading',
+    'p2p_crypto_released': 'Trading',
+    'p2p_trade_cancelled': 'Trading',
+    'p2p_dispute_opened': 'Trading',
+    'p2p_dispute_resolved': 'Trading',
     'deposit_confirmed': 'Trading',
     'withdrawal_completed': 'Trading',
     'withdrawal_requested': 'Trading',
