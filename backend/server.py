@@ -25249,3 +25249,7 @@ async def _update_stats_after_trade(trade_id: str):
 
 # 🔒 END LOCKED SECTION
 # =============================================================================
+
+# Include the API router in the main FastAPI app
+# This registers ALL endpoints defined above with the /api prefix
+app.include_router(api_router)
