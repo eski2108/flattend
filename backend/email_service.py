@@ -89,7 +89,22 @@ class EmailService:
         await self.send_email(ADMIN_EMAIL, admin_subject, admin_html)
     
     async def send_dispute_alert_to_admin(self, trade_id: str, dispute_id: str, buyer_id: str, seller_id: str, amount: float, currency: str, reason: str, description: str, initiated_by: str):
-        """Send immediate alert to admin when dispute is created"""
+        """Send urgent dispute alert to admin"""
+        # 🔒 LOCKED: Load admin email from database
+        from motor.motor_asyncio import AsyncIOMotorClient
+        import os
+        
+        try:
+            client = AsyncIOMotorClient(os.getenv('MONGO_URL', 'mongodb://localhost:27017'))
+            db = client[os.getenv('DB_NAME', 'coinhubx')]
+            settings = await client[os.getenv('DB_NAME', 'coinhubx')].admin_settings.find_one({"setting_type": "general"}, {"_id": 0})
+            admin_email = settings.get("dispute_email") if settings else ADMIN_EMAIL_FALLBACK
+            logger.info(f"Using dispute email: {admin_email}")
+        except Exception as e:
+            logger.warning(f"Failed to load dispute email from DB, using fallback: {str(e)}")
+            admin_email = ADMIN_EMAIL_FALLBACK
+        # 🔒 END LOCKED SECTION
+        
         subject = f"🚨 URGENT: P2P Trade Dispute - {trade_id}"
         
         dispute_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
