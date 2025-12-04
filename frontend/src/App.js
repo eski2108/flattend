@@ -18,7 +18,7 @@ import Dashboard from "@/pages/Dashboard";
 import WalletPage from "@/pages/WalletPage";
 import SpotTrading from "@/pages/SpotTrading";
 // Support Chat Widget
-import SupportChatWidget from "@/components/SupportChatWidget";
+// Support Chat Widget removed
 
 // Auth pages - load immediately (user needs these first)
 import Login from "@/pages/Login";
