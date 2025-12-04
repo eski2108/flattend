@@ -192,7 +192,7 @@ export default function AdminDisputes() {
             </div>
           ) : (
             <div className="space-y-4">
-              {disputes.map(dispute => (
+              {filteredDisputes.map(dispute => (
                 <div
                   key={dispute.dispute_id}
                   className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:border-cyan-500/50 transition-colors"
