@@ -539,10 +539,7 @@ class ReferralAnalytics:
                 user_id_ref = user.get("user_id")
                 
                 # Get account info
-                account = await self.db.user_accounts.find_one(
-                    {"user_id": user_id_ref},
-                    {"full_name": 1, "email": 1, "_id": 0}
-                )
+                account = await self.user_service.get_user_by_id(user_id_ref)
                 
                 # Get last activity (last commission or trade)
                 last_commission = await self.db.referral_commissions.find_one(
