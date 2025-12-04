@@ -23431,9 +23431,19 @@ async def google_callback_alt(code: str = None, error: str = None):
     return await google_callback(code=code, error=error)
 
 
+# 🔒 LOCKED: Dashboard Portfolio Calculation - DO NOT MODIFY
+# This endpoint MUST match the Wallet/Portfolio page calculation exactly
+# Both pages MUST show the SAME total value in GBP
+# Uses unified pricing system via fetch_live_prices() - returns GBP prices
+# Source: db.wallets collection (same as Portfolio page)
 @api_router.get("/portfolio/summary/{user_id}")
 async def get_portfolio_summary(user_id: str):
-    """Get portfolio P/L summary with daily/weekly/monthly stats"""
+    """
+    Get portfolio P/L summary with daily/weekly/monthly stats
+    
+    🔒 CRITICAL: This endpoint MUST return the SAME total value as /api/wallets/portfolio
+    Uses unified GBP pricing via fetch_live_prices()
+    """
     try:
         from decimal import Decimal
         from datetime import timedelta
