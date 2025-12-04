@@ -71,8 +71,8 @@ export default function Dashboard() {
         });
       }
       
-      // Load top assets
-      const assetsRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
+      // Load top assets (with cache busting)
+      const assetsRes = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
       if (assetsRes.data.success) {
         setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
       }
