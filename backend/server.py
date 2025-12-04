@@ -22381,6 +22381,9 @@ async def mark_p2p_trade_as_paid(request: Request):
             }
         )
         
+        # Post system message
+        await post_system_message(trade_id, "💳 Buyer has marked payment as sent. Seller, please verify and release crypto.")
+        
         logger.info(f"✅ Trade {trade_id} marked as paid by buyer {user_id}")
         
         return {
