@@ -171,9 +171,20 @@ class EmailService:
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://coinhubx.com/admin/disputes/{dispute_id}" style="display: inline-block; background: #EF4444; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                        <a href="https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={dispute_id}" style="display: inline-block; background: #EF4444; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                             RESOLVE DISPUTE NOW →
                         </a>
+                    </div>
+                    
+                    <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                        <p style="margin: 0; font-size: 14px; color: #374151; font-weight: bold;">
+                            Direct Link (Shareable):
+                        </p>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #6B7280; word-break: break-all;">
+                            <a href="https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={dispute_id}" style="color: #3B82F6; text-decoration: none;">
+                                https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={dispute_id}
+                            </a>
+                        </p>
                     </div>
                     
                     <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px;">
