@@ -191,7 +191,7 @@ class ReferralAnalytics:
                 if isinstance(created_at, str):
                     try:
                         created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                    except:
+                    except ValueError:
                         continue
                 
                 # Make timezone-aware if naive
