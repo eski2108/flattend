@@ -86,7 +86,7 @@ class TelegramService:
         if not order:
             return
         
-        seller = await self.db.user_accounts.find_one({"user_id": order['seller_id']})
+        seller = await self.user_service.get_user_by_id(order['seller_id'])
         
         if seller and seller.get('telegram_chat_id'):
             message = (
