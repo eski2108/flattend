@@ -185,6 +185,7 @@ function App() {
             <Route path="/referrals/old" element={<ReferralDashboard />} />
             <Route path="/admin/referral-control" element={<AdminReferralControl />} />
             <Route path="/admin/revenue" element={<AdminRevenueDashboard />} />
+            <Route path="/admin/p2p" element={<AdminP2PDashboard />} />
             <Route path="/admin/support-settings" element={<AdminSupportSettings />} />
             <Route path="/order/:orderId" element={<OrderDetails />} />
             <Route path="/p2p/order/:tradeId" element={<P2POrderPage />} />
