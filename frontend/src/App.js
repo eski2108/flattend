@@ -180,6 +180,7 @@ function App() {
             <Route path="/referrals/old" element={<ReferralDashboard />} />
             <Route path="/admin/referral-control" element={<AdminReferralControl />} />
             <Route path="/admin/revenue" element={<AdminRevenueDashboard />} />
+            <Route path="/admin/support-settings" element={<AdminSupportSettings />} />
             <Route path="/order/:orderId" element={<OrderDetails />} />
             <Route path="/fees" element={<Fees />} />
             <Route path="/payment-methods" element={<PaymentMethods />} />
