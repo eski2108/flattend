@@ -1,17 +1,526 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'sonner';
+import Layout from '@/components/Layout';
+import CHXButton from '@/components/CHXButton';
+import CoinSparkline from '@/components/widgets/CoinSparkline';
+import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat, ChevronDown } from 'lucide-react';
+
+const API = process.env.REACT_APP_BACKEND_URL;
 
 function InstantBuy() {
   const navigate = useNavigate();
-  
-  // Redirect to P2P Express (Instant Buy backend not configured)
-  useEffect(() => {
-    toast.info('Redirecting to P2P Express for instant purchases...');
-    navigate('/p2p-express');
-  }, [navigate]);
+  const [coins, setCoins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCoin, setExpandedCoin] = useState(null);
+  const [userBalance, setUserBalance] = useState(0);
 
-  return null;
+  useEffect(() => {
+    fetchCoins();
+    fetchUserBalance();
+  }, []);
+
+  const fetchUserBalance = async () => {
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = userData ? JSON.parse(userData) : null;
+      
+      if (user?.user_id) {
+        const response = await axios.get(`${API}/api/wallets/balances/${user.user_id}`);
+        if (response.data.success) {
+          const gbpBalance = response.data.balances.find(b => b.currency === 'GBP');
+          setUserBalance(gbpBalance?.available_balance || 0);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
+
+  const fetchCoins = async () => {
+    try {
+      const metadataResponse = await axios.get(`${API}/api/wallets/coin-metadata`);
+      const liquidityResponse = await axios.get(`${API}/api/instant-buy/available-coins`);
+      
+      if (metadataResponse.data.success) {
+        const allCoins = metadataResponse.data.coins;
+        const liquidityMap = {};
+        
+        if (liquidityResponse.data.success) {
+          liquidityResponse.data.coins.forEach(coin => {
+            liquidityMap[coin.symbol] = coin;
+          });
+        }
+        
+        const enrichedCoins = allCoins.map(coin => ({
+          symbol: coin.symbol,
+          name: coin.name,
+          color: coin.color,
+          network: coin.network,
+          decimals: coin.decimals,
+          nowpayments_code: coin.nowpayments_code,
+          price_gbp: liquidityMap[coin.symbol]?.price_gbp || 0,
+          available_amount: liquidityMap[coin.symbol]?.available_amount || 0,
+          has_liquidity: !!liquidityMap[coin.symbol],
+          markup_percent: liquidityMap[coin.symbol]?.markup_percent || 3.0
+        }));
+        
+        setCoins(enrichedCoins);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to load coins');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBuy = async (coin, amount) => {
+    if (userBalance < amount) {
+      toast.error(`Insufficient balance. You need £${amount} but have £${userBalance.toFixed(2)}`);
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = userData ? JSON.parse(userData) : null;
+      
+      if (!user?.user_id) {
+        navigate('/login');
+        return;
+      }
+
+      const cryptoAmount = amount / (coin.price_gbp || 1);
+      const response = await axios.post(`${API}/api/express-buy/execute`, {
+        user_id: user.user_id,
+        crypto_currency: coin.symbol,
+        fiat_amount: amount,
+        crypto_amount: cryptoAmount,
+        ad_id: 'ADMIN_LIQUIDITY',
+        buyer_wallet_address: 'internal_wallet',
+        buyer_wallet_network: 'mainnet'
+      });
+
+      if (response.data.success) {
+        toast.success(`✅ Bought ${cryptoAmount.toFixed(8)} ${coin.symbol}!`);
+        setUserBalance(prev => prev - amount);
+        setTimeout(() => navigate('/wallet'), 2000);
+      } else {
+        toast.error(response.data.message || 'Failed');
+      }
+    } catch (error) {
+      const msg = error.response?.data?.detail || error.response?.data?.message || error.message;
+      toast.error(`Purchase failed: ${msg}`);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const toggleCoin = (coinSymbol) => {
+    setExpandedCoin(expandedCoin === coinSymbol ? null : coinSymbol);
+  };
+
+  const handleDeposit = (coin) => {
+    navigate(`/deposit/${coin.symbol.toLowerCase()}`, {
+      state: {
+        currency: coin.symbol,
+        name: coin.name,
+        network: coin.network,
+        decimals: coin.decimals,
+        nowpayments_currency: coin.nowpayments_code,
+        color: coin.color
+      }
+    });
+  };
+
+  const handleWithdraw = (coin) => {
+    navigate(`/withdraw/${coin.symbol.toLowerCase()}`, {
+      state: {
+        currency: coin.symbol,
+        name: coin.name,
+        network: coin.network,
+        decimals: coin.decimals,
+        nowpayments_currency: coin.nowpayments_code,
+        color: coin.color
+      }
+    });
+  };
+
+  const handleSwap = (coin) => {
+    navigate(`/swap-crypto?from=${coin.symbol.toLowerCase()}`, {
+      state: {
+        from_currency: coin.symbol,
+        decimals: coin.decimals,
+        color: coin.color
+      }
+    });
+  };
+
+  const filtered = coins.filter(c => 
+    c.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const amounts = [50, 100, 250, 500];
+
+  const [searchFocused, setSearchFocused] = useState(false);
+
+  return (
+    <Layout>
+      <div style={{ padding: '24px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 8px' }}>
+          
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '10px 20px', 
+              background: 'linear-gradient(135deg, #22C55E, #16A34A)', 
+              borderRadius: '20px', 
+              marginBottom: '12px',
+              boxShadow: '0 0 25px rgba(34, 197, 94, 0.6), 0 4px 16px rgba(34, 197, 94, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              <Zap size={22} color="#fff" />
+              <span style={{ color: '#fff', fontWeight: '700', fontSize: '15px', letterSpacing: '0.5px' }}>INSTANT BUY</span>
+            </div>
+            <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Buy Crypto Instantly</h1>
+            <p style={{ color: '#A3AEC2', fontSize: '15px', marginBottom: '16px', lineHeight: '1.4' }}>Expand any coin to see Deposit, Withdraw & Swap options</p>
+            <div style={{ 
+              padding: '12px 24px', 
+              background: 'rgba(0,198,255,0.08)', 
+              border: '1px solid rgba(0,198,255,0.3)', 
+              borderRadius: '14px', 
+              display: 'inline-block',
+              boxShadow: '0 0 15px rgba(0, 198, 255, 0.15)'
+            }}>
+              <span style={{ color: '#A3AEC2', fontSize: '14px' }}>Available Balance: </span>
+              <span style={{ color: '#00C6FF', fontSize: '18px', fontWeight: '700' }}>£{userBalance.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {/* Ticker Bar with Shadow */}
+          <div style={{ 
+            height: '2px', 
+            width: '100%', 
+            background: 'linear-gradient(90deg, transparent 0%, #00C6FF 50%, transparent 100%)',
+            boxShadow: '0 2px 8px rgba(0, 198, 255, 0.3)',
+            marginBottom: '24px'
+          }} />
+
+          {/* Search */}
+          <div style={{ marginBottom: '28px', maxWidth: '520px', margin: '0 auto 28px' }}>
+            <div style={{ position: 'relative' }}>
+              <Search size={20} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: searchFocused ? '#00C6FF' : '#8F9BB3', transition: 'color 0.2s' }} />
+              <input
+                type="text"
+                placeholder="Search coins..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                style={{
+                  width: '100%',
+                  padding: '16px 16px 16px 50px',
+                  background: 'rgba(0,0,0,0.4)',
+                  border: searchFocused ? '1px solid rgba(0,198,255,0.5)' : '1px solid rgba(0,198,255,0.2)',
+                  borderRadius: '14px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  outline: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  transition: 'all 0.2s ease',
+                  boxShadow: searchFocused ? '0 0 20px rgba(0, 198, 255, 0.25)' : 'none'
+                }}
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px', color: '#A3AEC2' }}>
+              <Loader size={32} style={{ animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+              <div>Loading coins...</div>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+              {filtered.map(coin => (
+                <CoinCard
+                  key={coin.symbol}
+                  coin={coin}
+                  expanded={expandedCoin === coin.symbol}
+                  onToggle={() => toggleCoin(coin.symbol)}
+                  onDeposit={() => handleDeposit(coin)}
+                  onWithdraw={() => handleWithdraw(coin)}
+                  onSwap={() => handleSwap(coin)}
+                  onBuy={handleBuy}
+                  amounts={amounts}
+                  userBalance={userBalance}
+                  processing={processing}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </Layout>
+  );
+}
+
+function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onBuy, amounts, userBalance, processing }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <div
+      onClick={onToggle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setIsPressed(false);
+      }}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      style={{
+        background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+        border: expanded 
+          ? `1px solid ${coin.color}88`
+          : isHovered 
+          ? `1px solid rgba(0, 198, 255, 0.35)`
+          : `1px solid rgba(0, 198, 255, 0.25)`,
+        borderRadius: '16px',
+        padding: '22px',
+        cursor: 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        boxShadow: expanded 
+          ? `0 0 30px rgba(${hexToRgb(coin.color)}, 0.25), inset 0 0 25px rgba(${hexToRgb(coin.color)}, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3)`
+          : isPressed
+          ? `0 0 20px rgba(0, 198, 255, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.4)`
+          : isHovered
+          ? `0 0 25px rgba(0, 198, 255, 0.22), 0 4px 16px rgba(0, 198, 255, 0.15)`
+          : `0 0 18px rgba(0, 198, 255, 0.18), 0 2px 8px rgba(0, 0, 0, 0.2)`,
+        opacity: 0.96,
+        minHeight: expanded ? 'auto' : '140px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        transform: isPressed ? 'scale(0.98)' : isHovered && !expanded ? 'translateY(-2px)' : 'translateY(0)'
+      }}
+    >
+      {/* Coin Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '18px' : '0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+          {/* Coin Icon */}
+          <div style={{
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${coin.color}, ${coin.color}DD)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '22px',
+            fontWeight: '700',
+            color: '#FFFFFF',
+            boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
+            border: `2px solid ${coin.color}22`
+          }}>
+            {coin.symbol[0]}
+          </div>
+          
+          {/* Coin Info */}
+          <div style={{ textAlign: 'left', flex: 1 }}>
+            <div style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#FFFFFF', 
+              marginBottom: '4px',
+              letterSpacing: '0.3px'
+            }}>
+              {coin.symbol}
+            </div>
+            <div style={{ 
+              fontSize: '13px', 
+              fontWeight: '500', 
+              color: '#8F9BB3',
+              lineHeight: '1.3'
+            }}>
+              {coin.name}
+            </div>
+          </div>
+        </div>
+
+        {/* Expand Arrow */}
+        <ChevronDown 
+          size={22} 
+          color={expanded ? coin.color : '#00C6FF'}
+          style={{
+            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.18s ease-in-out, color 0.2s',
+            flexShrink: 0
+          }}
+        />
+      </div>
+
+      {/* 24H Sparkline Chart (Collapsed View Only) */}
+      {!expanded && (
+        <div style={{ 
+          marginTop: '16px',
+          marginBottom: '12px',
+          padding: '0 4px',
+          opacity: 0.85
+        }}>
+          <CoinSparkline symbol={coin.symbol} color={coin.color} height={40} />
+        </div>
+      )}
+
+      {/* Liquidity Status */}
+      {!expanded && (
+        <div style={{ 
+          marginTop: '8px', 
+          textAlign: 'center',
+          padding: '8px 12px',
+          background: coin.has_liquidity ? 'rgba(34, 197, 94, 0.08)' : 'rgba(143, 155, 179, 0.08)',
+          borderRadius: '8px',
+          border: `1px solid ${coin.has_liquidity ? 'rgba(34, 197, 94, 0.2)' : 'rgba(143, 155, 179, 0.15)'}`
+        }}>
+          {coin.has_liquidity ? (
+            <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600', letterSpacing: '0.3px' }}>
+              ✓ {coin.available_amount.toFixed(4)} {coin.symbol} Available
+            </div>
+          ) : (
+            <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '500' }}>
+              No liquidity
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Expanded Content */}
+      <div style={{
+        maxHeight: expanded ? '600px' : '0',
+        overflow: 'hidden',
+        transition: 'max-height 0.18s ease-in-out, opacity 0.18s ease-in-out',
+        opacity: expanded ? 1 : 0
+      }}>
+        {expanded && (
+          <div onClick={(e) => e.stopPropagation()}>
+            {/* Price & Stock Info */}
+            <div style={{ 
+              marginBottom: '18px', 
+              padding: '18px', 
+              background: 'rgba(0, 198, 255, 0.06)', 
+              borderRadius: '14px', 
+              border: '1px solid rgba(0, 198, 255, 0.2)',
+              boxShadow: '0 0 12px rgba(0, 198, 255, 0.08)'
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+                <div>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Price</div>
+                  <div style={{ fontSize: '19px', fontWeight: '700', color: coin.has_liquidity ? '#22C55E' : '#8F9BB3', letterSpacing: '0.3px' }}>
+                    {coin.has_liquidity ? `£${coin.price_gbp.toLocaleString()}` : 'N/A'}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stock</div>
+                  <div style={{ fontSize: '19px', fontWeight: '700', color: '#FFFFFF', letterSpacing: '0.3px' }}>
+                    {coin.available_amount.toFixed(4)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Deposit/Withdraw/Swap Buttons */}
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Actions</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+                <CHXButton
+                  onClick={onDeposit}
+                  coinColor={coin.color}
+                  variant="primary"
+                  size="small"
+                  fullWidth
+                  icon={<ArrowDownLeft size={16} />}
+                >
+                  Deposit
+                </CHXButton>
+                <CHXButton
+                  onClick={onWithdraw}
+                  coinColor={coin.color}
+                  variant="secondary"
+                  size="small"
+                  fullWidth
+                  icon={<ArrowUpRight size={16} />}
+                >
+                  Withdraw
+                </CHXButton>
+                <CHXButton
+                  onClick={onSwap}
+                  coinColor={coin.color}
+                  variant="secondary"
+                  size="small"
+                  fullWidth
+                  icon={<Repeat size={16} />}
+                >
+                  Swap
+                </CHXButton>
+              </div>
+            </div>
+
+            {/* Quick Buy Buttons */}
+            {coin.has_liquidity && (
+              <div>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Quick Buy</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  {amounts.map(amt => {
+                    const cryptoAmount = coin.price_gbp ? (amt / coin.price_gbp).toFixed(6) : '0';
+                    const insufficient = userBalance < amt;
+                    
+                    return (
+                      <CHXButton
+                        key={amt}
+                        onClick={() => !insufficient && onBuy(coin, amt)}
+                        coinColor={insufficient ? '#EF4444' : '#22C55E'}
+                        variant="primary"
+                        size="small"
+                        fullWidth
+                        disabled={processing || insufficient}
+                      >
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ fontSize: '15px', fontWeight: '700' }}>£{amt}</div>
+                          <div style={{ fontSize: '10px', opacity: 0.8 }}>≈{cryptoAmount} {coin.symbol}</div>
+                        </div>
+                      </CHXButton>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* No Liquidity Message */}
+            {!coin.has_liquidity && (
+              <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', textAlign: 'center' }}>
+                <div style={{ fontSize: '13px', color: '#EF4444', fontWeight: '600', marginBottom: '8px' }}>No Liquidity Available</div>
+                <div style={{ fontSize: '12px', color: '#FCA5A5' }}>Admin needs to add liquidity for instant buy</div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : '0, 198, 255';
 }
 
 export default InstantBuy;
