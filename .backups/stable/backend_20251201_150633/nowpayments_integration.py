@@ -112,7 +112,7 @@ class NOWPaymentsService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://cryptosupport-1.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://p2p-trader-board.preview.emergentagent.com')
             
             payload = {
                 "price_amount": price_amount,
@@ -264,7 +264,7 @@ class NOWPaymentsService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://cryptosupport-1.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://p2p-trader-board.preview.emergentagent.com')
             
             payload = {
                 "price_amount": float(price_amount),

@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://cryptosupport-1.preview.emergentagent.com"
+BACKEND_URL = "https://p2p-trader-board.preview.emergentagent.com"
 
 def test_revenue_summary_endpoint():
     """Test GET /api/admin/revenue/summary with different periods"""

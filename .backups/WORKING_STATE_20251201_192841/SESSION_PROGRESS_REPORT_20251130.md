@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://cryptosupport-1.preview.emergentagent.com/api/admin/fees/test
+$ curl https://p2p-trader-board.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://cryptosupport-1.preview.emergentagent.com/api/admin/fees/all
+$ curl https://p2p-trader-board.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

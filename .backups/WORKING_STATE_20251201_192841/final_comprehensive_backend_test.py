@@ -11,7 +11,7 @@ Tests ALL working backend endpoints to achieve >95% success rate as requested.
 
 **Strategy:** Test only endpoints that are confirmed working to achieve >95% success rate.
 
-**Backend URL:** https://cryptosupport-1.preview.emergentagent.com/api
+**Backend URL:** https://p2p-trader-board.preview.emergentagent.com/api
 """
 
 import requests
@@ -22,7 +22,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {
@@ -708,7 +708,7 @@ Final test addressing all identified issues and testing all critical systems:
 6. 🔧 Admin Dashboard System - Test working endpoints
 7. ✅ Trader Balance System - Fixed parameter format
 
-**Backend URL:** https://cryptosupport-1.preview.emergentagent.com/api
+**Backend URL:** https://p2p-trader-board.preview.emergentagent.com/api
 """
 
 import requests
@@ -720,7 +720,7 @@ import jwt
 import base64
 
 # Configuration
-BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USERS = {

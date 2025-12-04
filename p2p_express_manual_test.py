@@ -11,7 +11,7 @@ Phase 4: Complete P2P Trade Flow with Fees (critical fee collection integration)
 Phase 5: Trader Management
 Phase 6: Algorithm Validation
 
-**Backend URL:** https://cryptosupport-1.preview.emergentagent.com/api
+**Backend URL:** https://p2p-trader-board.preview.emergentagent.com/api
 """
 
 import requests
@@ -22,7 +22,7 @@ import time
 import random
 
 # Configuration
-BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
 
 # Test Users for P2P Testing
 TEST_USERS = [

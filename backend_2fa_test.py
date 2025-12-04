@@ -12,7 +12,7 @@ import base64
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
 
 # Test User Credentials
 TEST_USER = {

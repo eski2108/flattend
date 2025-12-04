@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://cryptosupport-1.preview.emergentagent.com
+**URL:** https://p2p-trader-board.preview.emergentagent.com
 
 **Services Status:**
 ```bash

@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
 
 print("🎯 ACHIEVING 100% SUCCESS RATE - TESTING ALL ENDPOINTS CORRECTLY\n")
 print("=" * 70)
