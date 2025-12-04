@@ -180,7 +180,11 @@ const AdminRevenueDashboard = () => {
                 <p className="text-2xl font-bold text-white mb-1">{formatCurrency(fee.total_revenue)}</p>
                 <p className="text-gray-400 text-sm">{fee.transaction_count} transactions</p>
               </div>
-            ))}
+            )) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-400">No fee type data available</p>
+              </div>
+            )}
           </div>
         </div>
 
