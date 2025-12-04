@@ -105,7 +105,7 @@ class TelegramService:
         if not order:
             return
         
-        buyer = await self.db.user_accounts.find_one({"user_id": order['buyer_id']})
+        buyer = await self.user_service.get_user_by_id( order['buyer_id']})
         
         if buyer and buyer.get('telegram_chat_id'):
             message = (
@@ -152,8 +152,8 @@ class TelegramService:
         if not order:
             return
         
-        buyer = await self.db.user_accounts.find_one({"user_id": order['buyer_id']})
-        seller = await self.db.user_accounts.find_one({"user_id": order['seller_id']})
+        buyer = await self.user_service.get_user_by_id( order['buyer_id']})
+        seller = await self.user_service.get_user_by_id( order['seller_id']})
         
         message = (
             f"✅ **Dispute Resolved**\n\n"
@@ -172,7 +172,7 @@ class TelegramService:
     
     async def notify_referral_signup(self, referrer_user_id: str, new_user_email: str):
         """Notify referrer of new signup"""
-        referrer = await self.db.user_accounts.find_one({"user_id": referrer_user_id})
+        referrer = await self.user_service.get_user_by_id( referrer_user_id})
         
         if referrer and referrer.get('telegram_chat_id'):
             message = (
@@ -186,7 +186,7 @@ class TelegramService:
     
     async def notify_referral_commission(self, referrer_user_id: str, commission_data: Dict):
         """Notify referrer of commission earned"""
-        referrer = await self.db.user_accounts.find_one({"user_id": referrer_user_id})
+        referrer = await self.user_service.get_user_by_id( referrer_user_id})
         
         if referrer and referrer.get('telegram_chat_id'):
             tier_emoji = "🥇" if commission_data.get('tier_used') == 'golden' else "⭐"
@@ -205,7 +205,7 @@ class TelegramService:
     
     async def notify_withdrawal_requested(self, user_id: str, withdrawal_data: Dict):
         """Notify user and admins of withdrawal request"""
-        user = await self.db.user_accounts.find_one({"user_id": user_id})
+        user = await self.user_service.get_user_by_id( user_id})
         
         # Notify user
         if user and user.get('telegram_chat_id'):
@@ -236,7 +236,7 @@ class TelegramService:
     
     async def notify_withdrawal_approved(self, user_id: str, withdrawal_data: Dict):
         """Notify user of approved withdrawal"""
-        user = await self.db.user_accounts.find_one({"user_id": user_id})
+        user = await self.user_service.get_user_by_id( user_id})
         
         if user and user.get('telegram_chat_id'):
             message = (
@@ -251,7 +251,7 @@ class TelegramService:
     
     async def notify_deposit_confirmed(self, user_id: str, deposit_data: Dict):
         """Notify user of confirmed deposit"""
-        user = await self.db.user_accounts.find_one({"user_id": user_id})
+        user = await self.user_service.get_user_by_id( user_id})
         
         if user and user.get('telegram_chat_id'):
             message = (
@@ -266,7 +266,7 @@ class TelegramService:
     
     async def notify_deposit_failed(self, user_id: str, deposit_data: Dict):
         """Notify user of failed deposit"""
-        user = await self.db.user_accounts.find_one({"user_id": user_id})
+        user = await self.user_service.get_user_by_id( user_id})
         
         if user and user.get('telegram_chat_id'):
             message = (
@@ -299,7 +299,7 @@ class TelegramService:
     
     async def notify_golden_status_activated(self, user_id: str):
         """Notify user they are now Golden Referrer"""
-        user = await self.db.user_accounts.find_one({"user_id": user_id})
+        user = await self.user_service.get_user_by_id( user_id})
         
         if user and user.get('telegram_chat_id'):
             # Get golden link
@@ -348,7 +348,7 @@ class TelegramService:
     
     async def notify_golden_status_deactivated(self, user_id: str):
         """Notify user Golden status was revoked"""
-        user = await self.db.user_accounts.find_one({"user_id": user_id})
+        user = await self.user_service.get_user_by_id( user_id})
         
         if user and user.get('telegram_chat_id'):
             message = (
