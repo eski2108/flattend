@@ -14896,17 +14896,15 @@ async def link_telegram_account(request: Request):
         if not user_id or not telegram_chat_id:
             raise HTTPException(status_code=400, detail="user_id and telegram_chat_id required")
         
-        # Update user account with telegram info
-        result = await db.user_accounts.update_one(
-            {"user_id": user_id},
-            {"$set": {
-                "telegram_chat_id": str(telegram_chat_id),
-                "telegram_username": telegram_username,
-                "telegram_linked_at": datetime.now(timezone.utc).isoformat()
-            }}
-        )
+        # Use UserService for unified update (syncs both collections)
+        user_service = get_user_service(db)
+        updated = await user_service.update_user(user_id, {
+            "telegram_chat_id": str(telegram_chat_id),
+            "telegram_username": telegram_username,
+            "telegram_linked_at": datetime.now(timezone.utc).isoformat()
+        })
         
-        if result.modified_count > 0 or result.matched_count > 0:
+        if updated:
             logger.info(f"Telegram linked for user {user_id}: chat_id={telegram_chat_id}")
             return {
                 "success": True,
