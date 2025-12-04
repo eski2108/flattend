@@ -526,19 +526,22 @@ export default function ReferralDashboardComprehensive() {
                 🔗 Your Referral Links
               </h3>
 
-              {/* Golden Status Badge (if applicable) */}
+              {/* Golden Status Badge - ONLY shows if admin activated it */}
               {comprehensiveData?.newReferralLinks?.is_golden_referrer && (
                 <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
                   background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                  padding: '0.75rem',
-                  borderRadius: '8px',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '6px',
                   marginBottom: '1rem',
-                  textAlign: 'center',
-                  fontWeight: '900',
+                  fontWeight: '800',
                   color: '#000',
-                  fontSize: '14px'
+                  fontSize: '12px',
+                  boxShadow: '0 2px 8px rgba(255, 215, 0, 0.3)'
                 }}>
-                  ⭐ GOLDEN REFERRER STATUS ACTIVE ⭐
+                  ⭐ Golden Referrer Active
                 </div>
               )}
               
