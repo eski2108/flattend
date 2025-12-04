@@ -23465,13 +23465,14 @@ async def get_portfolio_summary(user_id: str):
             {"_id": 0}
         ).to_list(100)
         
-        # Get live prices - fetch fresh prices for accurate portfolio value
+        # 🔒 LOCKED: Get GBP prices using unified pricing system
+        # This is the SAME price source used by Portfolio/Wallet page
         prices = {}
         try:
             # Use the live price fetching function
             all_prices = await fetch_live_prices()
             for symbol, data in all_prices.items():
-                prices[symbol] = data.get("gbp", 0)
+                prices[symbol] = data.get("gbp", 0)  # Always use GBP
         except Exception as e:
             logger.error(f"Failed to fetch live prices: {e}")
             # Fallback to database prices
