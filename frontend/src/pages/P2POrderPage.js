@@ -419,6 +419,26 @@ export default function P2POrderPage() {
                   </button>
                 )}
 
+                {trade.status === 'completed' && (
+                  <button
+                    onClick={() => setShowFeedbackModal(true)}
+                    style={{
+                      flex: 1,
+                      padding: '16px',
+                      background: 'linear-gradient(135deg, #FFA500, #FF8C00)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      color: '#FFFFFF',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      boxShadow: '0 0 20px rgba(255, 165, 0, 0.4)'
+                    }}
+                  >
+                    ⭐ Rate This Trade
+                  </button>
+                )}
+
                 {trade.status !== 'completed' && trade.status !== 'cancelled' && trade.status !== 'disputed' && (
                   <>
                     <button
