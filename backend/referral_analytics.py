@@ -601,7 +601,7 @@ class ReferralAnalytics:
                 },
                 {
                     "$group": {
-                        "_id": null,
+                        "_id": None,
                         "total": {"$sum": "$commission_amount"}
                     }
                 }
@@ -609,7 +609,8 @@ class ReferralAnalytics:
             
             result = await self.db.referral_commissions.aggregate(pipeline).to_list(1)
             return float(result[0]["total"]) if result else 0.0
-        except:
+        except Exception as e:
+            logger.error(f"Error calculating earnings by stream: {e}")
             return 0.0
     
     async def _get_tier_breakdown(self, user_id: str) -> Dict:
