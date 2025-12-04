@@ -1,0 +1,22 @@
+ACTUAL P2P 12 FEATURES - REAL IMPLEMENTATION
+
+DONE SO FAR (BACKEND ONLY):
+- Favourites endpoint (1 line in DB)
+- Dispute resolution endpoint (no UI)
+- Some notification functions (not wired)
+
+MISSING EVERYTHING:
+1. Auto-match UX - NO visible text, NO toggle
+2. Sell-side auto-match - NO UI at all
+3. Feedback system - NO modal shows, NO ratings visible
+4. Payment notifications - NO emails sent, NO banner
+5. Dispute flow - NO admin panel, NO buttons
+6. Favourites - NO star icon on cards
+7. Blocking - NO block button anywhere
+8. Advanced filters - ZERO
+9. Admin dashboard - ZERO
+10. Telegram - ZERO
+11. Test mode - ZERO
+12. Polish - ZERO
+
+STARTING NOW - BUILDING REAL UI
