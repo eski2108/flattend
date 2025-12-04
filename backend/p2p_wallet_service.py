@@ -403,6 +403,20 @@ async def p2p_release_crypto_with_wallet(
         
         logger.info(f"✅ P2P trade completed: {trade_id}, Fee: {platform_fee} {currency} (Admin: {admin_fee}, Referrer: {referrer_commission})")
         
+        # 🔒 LOCKED: Update Merchant Statistics
+        try:
+            from merchant_service import MerchantService
+            merchant_service = MerchantService(db)
+            await merchant_service.update_stats_on_trade_complete(
+                trade_id=trade_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id
+            )
+            logger.info(f"✅ Merchant stats updated for trade {trade_id}")
+        except Exception as stats_error:
+            logger.error(f"❌ Failed to update merchant stats: {str(stats_error)}")
+            # Don't fail the trade if stats update fails
+        
         # Send notifications
         try:
             from p2p_notification_service import get_notification_service
