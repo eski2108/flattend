@@ -705,7 +705,13 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                     return (
                       <CHXButton
                         key={amt}
-                        onClick={() => !insufficient && onBuy(coin, amt)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          if (!insufficient && !processing) {
+                            onBuy(coin, amt);
+                          }
+                        }}
                         coinColor={insufficient ? '#EF4444' : '#22C55E'}
                         variant="primary"
                         size="small"
