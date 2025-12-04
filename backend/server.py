@@ -23563,9 +23563,11 @@ async def get_portfolio_summary(user_id: str):
         total_pl = current_value - total_invested
         plPercent = float((total_pl / total_invested * 100) if total_invested > 0 else 0)
         
+        logger.info(f"✅ Dashboard portfolio calculated for {user_id}: £{float(current_value):.2f} GBP")
+        
         return {
             "success": True,
-            "current_value": float(current_value),
+            "current_value": float(current_value),  # GBP value
             "total_invested": float(total_invested),
             "todayPL": todayPL,
             "weekPL": weekPL,
@@ -23576,7 +23578,10 @@ async def get_portfolio_summary(user_id: str):
         
     except Exception as e:
         logger.error(f"Portfolio summary error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
+# 🔒 END LOCKED SECTION - Dashboard Portfolio Calculation
 
 
 @api_router.get("/portfolio/chart/{user_id}")
