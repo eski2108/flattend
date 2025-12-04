@@ -153,7 +153,7 @@ class TelegramService:
             return
         
         buyer = await self.user_service.get_user_by_id(order['buyer_id'])
-        seller = await self.user_service.get_user_by_id( order['seller_id']})
+        seller = await self.user_service.get_user_by_id(order['seller_id'])
         
         message = (
             f"✅ **Dispute Resolved**\n\n"
