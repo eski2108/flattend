@@ -649,21 +649,39 @@ class ReferralAnalytics:
         For Leaderboard Tab display.
         """
         try:
-            # Aggregate earnings by referrer
-            pipeline = [
-                {"$match": {"status": "completed"}},
-                {
-                    "$group": {
-                        "_id": "$referrer_user_id",
-                        "total_earnings": {"$sum": "$commission_amount"},
-                        "referral_count": {"$sum": 1}
+            # Get all commissions and aggregate manually (to handle both schemas)
+            all_commissions = await self.db.referral_commissions.find({}).to_list(10000)
+            
+            # Aggregate by referrer
+            earnings_map = {}
+            for c in all_commissions:
+                referrer_id = c.get("referrer_user_id") or c.get("referrer_id")
+                if not referrer_id:
+                    continue
+                
+                commission_amount = c.get("commission_amount", c.get("amount", 0))
+                
+                if referrer_id not in earnings_map:
+                    earnings_map[referrer_id] = {
+                        "total_earnings": 0,
+                        "referral_count": 0
                     }
-                },
-                {"$sort": {"total_earnings": -1}},
-                {"$limit": 100}
+                
+                earnings_map[referrer_id]["total_earnings"] += float(commission_amount)
+                earnings_map[referrer_id]["referral_count"] += 1
+            
+            # Convert to list and sort
+            result = [
+                {
+                    "_id": referrer_id,
+                    "total_earnings": data["total_earnings"],
+                    "referral_count": data["referral_count"]
+                }
+                for referrer_id, data in earnings_map.items()
             ]
             
-            result = await self.db.referral_commissions.aggregate(pipeline).to_list(100)
+            result.sort(key=lambda x: x["total_earnings"], reverse=True)
+            result = result[:100]  # Top 100
             
             leaderboard = []
             for idx, item in enumerate(result):
