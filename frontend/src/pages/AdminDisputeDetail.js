@@ -307,13 +307,13 @@ export default function AdminDisputeDetail() {
             {/* Actions Sidebar */}
             <div className="space-y-4">
               {dispute.status !== 'resolved' && (
-                <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <IoWarning className="w-6 h-6 text-orange-400" />
+                <div className="bg-slate-800/50 border-2 border-orange-500/30 rounded-xl p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-bold text-white mb-3 md:mb-4 flex items-center gap-2">
+                    <IoWarning className="w-5 h-5 md:w-6 md:h-6 text-orange-400" />
                     Resolve Dispute
                   </h3>
                   
-                  <p className="text-gray-400 text-sm mb-4">
+                  <p className="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">
                     Choose the winning party. The losing party will be charged a £5 dispute fee.
                   </p>
 
@@ -323,9 +323,9 @@ export default function AdminDisputeDetail() {
                         setSelectedWinner('buyer');
                         setShowResolveModal(true);
                       }}
-                      className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-6 py-4 rounded-xl transition-all font-semibold flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-4 py-3 md:px-6 md:py-4 rounded-xl transition-all font-semibold flex items-center justify-center gap-2 text-sm md:text-base"
                     >
-                      <IoCheckmarkCircle className="w-5 h-5" />
+                      <IoCheckmarkCircle className="w-4 h-4 md:w-5 md:h-5" />
                       Release Crypto to Buyer
                     </button>
                     
@@ -334,9 +334,9 @@ export default function AdminDisputeDetail() {
                         setSelectedWinner('seller');
                         setShowResolveModal(true);
                       }}
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-4 rounded-xl transition-all font-semibold flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-3 md:px-6 md:py-4 rounded-xl transition-all font-semibold flex items-center justify-center gap-2 text-sm md:text-base"
                     >
-                      <IoCheckmarkCircle className="w-5 h-5" />
+                      <IoCheckmarkCircle className="w-4 h-4 md:w-5 md:h-5" />
                       Return Crypto to Seller
                     </button>
                   </div>
