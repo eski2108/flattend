@@ -97,6 +97,9 @@ class ReferralAnalytics:
             # === 12. LEADERBOARD (for Leaderboard tab) ===
             leaderboard = await self._get_leaderboard()
             
+            # === 13. TIER BREAKDOWN ===
+            tier_breakdown = await self._get_tier_breakdown(user_id)
+            
             return {
                 "success": True,
                 "referral_code": referral_code_data.get("referral_code"),
