@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { TrendingDown, AlertCircle } from 'lucide-react';
+import { TrendingDown, AlertCircle, Clock, Lock } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
