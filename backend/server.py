@@ -25250,5 +25250,619 @@ async def _update_stats_after_trade(trade_id: str):
         logger.error(f"Error updating stats after trade: {str(e)}")
 
 # 🔒 END LOCKED SECTION
+
+# =============================================================================
+# MERCHANT PROFILE & RANKING SYSTEM API ENDPOINTS
+# =============================================================================
+
+@api_router.get("/merchant/profile/{user_id}")
+async def get_merchant_profile_api(user_id: str):
+    """
+    Get public merchant profile with stats, rank, verification badges, and active ads
+    """
+    try:
+        merchant_service = MerchantService(db)
+        profile = await merchant_service.get_merchant_profile(user_id)
+        
+        if not profile:
+            # Initialize stats if merchant doesn't exist yet
+            await merchant_service.initialize_merchant_stats(user_id)
+            profile = await merchant_service.get_merchant_profile(user_id)
+        
+        return {
+            "success": True,
+            "profile": profile
+        }
+    except Exception as e:
+        logger.error(f"Error fetching merchant profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/merchant/deposit/create")
+async def create_merchant_deposit(request: Request):
+    """
+    Create a security deposit for merchant ranking
+    Locks USDT/USDC for 90 days
+    """
+    try:
+        body = await request.json()
+        user_id = body.get("user_id")
+        amount = float(body.get("amount", 0))
+        currency = body.get("currency", "USDT")
+        
+        if not user_id or amount <= 0:
+            raise HTTPException(status_code=400, detail="Invalid request data")
+        
+        if currency not in ["USDT", "USDC"]:
+            raise HTTPException(status_code=400, detail="Only USDT and USDC deposits are accepted")
+        
+        # Check if user has balance
+        wallet_service = get_wallet_service()
+        balance = await wallet_service.get_balance(user_id, currency)
+        
+        if balance["available_balance"] < amount:
+            raise HTTPException(status_code=400, detail="Insufficient balance")
+        
+        # Check if user already has an active deposit
+        existing = await db.merchant_deposits.find_one({
+            "user_id": user_id,
+            "status": "active"
+        })
+        
+        if existing:
+            raise HTTPException(status_code=400, detail="You already have an active deposit")
+        
+        # Deduct from wallet (lock the amount)
+        debit_success = await wallet_service.debit(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            transaction_type="merchant_deposit",
+            reference_id=f"deposit_{user_id}_{datetime.now(timezone.utc).timestamp()}",
+            metadata={"purpose": "security_deposit", "tier": amount}
+        )
+        
+        if not debit_success:
+            raise HTTPException(status_code=500, detail="Failed to lock deposit")
+        
+        # Create deposit record
+        deposit_id = str(uuid.uuid4())
+        locked_until = datetime.now(timezone.utc) + timedelta(days=90)
+        
+        deposit = {
+            "deposit_id": deposit_id,
+            "user_id": user_id,
+            "amount": amount,
+            "currency": currency,
+            "status": "active",
+            "deposited_at": datetime.now(timezone.utc).isoformat(),
+            "can_withdraw_after": locked_until.isoformat(),
+            "withdrawn_at": None,
+            "penalty_paid": 0
+        }
+        
+        await db.merchant_deposits.insert_one(deposit)
+        
+        # Recalculate rank with new deposit
+        merchant_service = MerchantService(db)
+        await merchant_service.calculate_merchant_rank(user_id)
+        
+        logger.info(f"✅ Merchant deposit created: {user_id} staked {amount} {currency}")
+        
+        return {
+            "success": True,
+            "deposit_id": deposit_id,
+            "locked_until": locked_until.isoformat(),
+            "message": f"Successfully staked {amount} {currency} as security deposit"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating merchant deposit: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/merchant/deposit/withdraw")
+async def withdraw_merchant_deposit(request: Request):
+    """
+    Withdraw security deposit
+    If withdrawn before 90 days, 10% penalty is applied
+    """
+    try:
+        body = await request.json()
+        user_id = body.get("user_id")
+        
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        # Find active deposit
+        deposit = await db.merchant_deposits.find_one({
+            "user_id": user_id,
+            "status": "active"
+        }, {"_id": 0})
+        
+        if not deposit:
+            raise HTTPException(status_code=404, detail="No active deposit found")
+        
+        # Check if locked period has passed
+        locked_until = datetime.fromisoformat(deposit["can_withdraw_after"].replace('Z', '+00:00')) if isinstance(deposit["can_withdraw_after"], str) else deposit["can_withdraw_after"]
+        now = datetime.now(timezone.utc)
+        
+        penalty = 0
+        if now < locked_until:
+            # Early withdrawal - apply 10% penalty
+            penalty = deposit["amount"] * 0.1
+            return_amount = deposit["amount"] - penalty
+            penalty_msg = f" (10% penalty applied: £{penalty:.2f})"
+        else:
+            return_amount = deposit["amount"]
+            penalty_msg = ""
+        
+        # Return funds to wallet
+        wallet_service = get_wallet_service()
+        credit_success = await wallet_service.credit(
+            user_id=user_id,
+            currency=deposit["currency"],
+            amount=return_amount,
+            transaction_type="merchant_deposit_return",
+            reference_id=deposit["deposit_id"],
+            metadata={"penalty": penalty}
+        )
+        
+        if not credit_success:
+            raise HTTPException(status_code=500, detail="Failed to return deposit")
+        
+        # Update deposit record
+        await db.merchant_deposits.update_one(
+            {"deposit_id": deposit["deposit_id"]},
+            {
+                "$set": {
+                    "status": "withdrawn",
+                    "withdrawn_at": now.isoformat(),
+                    "penalty_paid": penalty
+                }
+            }
+        )
+        
+        # Recalculate rank (will lose deposit benefits)
+        merchant_service = MerchantService(db)
+        await merchant_service.calculate_merchant_rank(user_id)
+        
+        logger.info(f"✅ Merchant deposit withdrawn: {user_id} received {return_amount} {deposit['currency']}, penalty: {penalty}")
+        
+        return {
+            "success": True,
+            "amount_returned": return_amount,
+            "penalty": penalty,
+            "message": f"Deposit withdrawn successfully{penalty_msg}"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error withdrawing merchant deposit: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/merchant/deposit/status/{user_id}")
+async def get_deposit_status(user_id: str):
+    """Get current deposit status for user"""
+    try:
+        deposit = await db.merchant_deposits.find_one({
+            "user_id": user_id,
+            "status": "active"
+        }, {"_id": 0})
+        
+        if not deposit:
+            return {
+                "success": True,
+                "has_deposit": False,
+                "deposit": None
+            }
+        
+        # Calculate if withdrawal is penalty-free
+        locked_until = datetime.fromisoformat(deposit["can_withdraw_after"].replace('Z', '+00:00')) if isinstance(deposit["can_withdraw_after"], str) else deposit["can_withdraw_after"]
+        now = datetime.now(timezone.utc)
+        days_remaining = (locked_until - now).days
+        
+        return {
+            "success": True,
+            "has_deposit": True,
+            "deposit": {
+                **deposit,
+                "days_until_penalty_free": max(0, days_remaining),
+                "can_withdraw_without_penalty": now >= locked_until
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting deposit status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/merchant/verification/address")
+async def submit_address_verification(request: Request):
+    """
+    Submit address verification for review
+    """
+    try:
+        body = await request.json()
+        user_id = body.get("user_id")
+        full_name = body.get("full_name")
+        street_address = body.get("street_address")
+        postcode = body.get("postcode")
+        country = body.get("country")
+        document_url = body.get("document_url")
+        
+        if not all([user_id, full_name, street_address, postcode, country, document_url]):
+            raise HTTPException(status_code=400, detail="All fields are required")
+        
+        # Update or create user_verifications record
+        verification_data = {
+            "full_name": full_name,
+            "street_address": street_address,
+            "postcode": postcode,
+            "country": country,
+            "document_url": document_url,
+            "submitted_at": datetime.now(timezone.utc).isoformat(),
+            "reviewed_by": None,
+            "reviewed_at": None,
+            "status": "pending"
+        }
+        
+        await db.user_verifications.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "address_data": verification_data,
+                    "address_verification_pending": True
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info(f"✅ Address verification submitted for {user_id}")
+        
+        # TODO: Send email notification to admin
+        
+        return {
+            "success": True,
+            "message": "Address verification submitted for review"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error submitting address verification: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/merchant/verification/status/{user_id}")
+async def get_verification_status(user_id: str):
+    """Get verification status for user"""
+    try:
+        verification = await db.user_verifications.find_one(
+            {"user_id": user_id},
+            {"_id": 0}
+        )
+        
+        if not verification:
+            return {
+                "success": True,
+                "email_verified": False,
+                "sms_verified": False,
+                "address_verified": False,
+                "address_pending": False
+            }
+        
+        address_data = verification.get("address_data", {})
+        
+        return {
+            "success": True,
+            "email_verified": verification.get("email_verified", False),
+            "sms_verified": verification.get("sms_verified", False),
+            "address_verified": verification.get("address_verified", False),
+            "address_pending": address_data.get("status") == "pending" if address_data else False,
+            "address_status": address_data.get("status") if address_data else None
+        }
+    except Exception as e:
+        logger.error(f"Error getting verification status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/merchant/leaderboard")
+async def get_merchant_leaderboard(
+    rank: Optional[str] = None,
+    limit: int = 100
+):
+    """
+    Get merchant leaderboard
+    rank: Filter by rank (platinum, gold, silver, bronze, or all)
+    limit: Number of results (default 100, max 500)
+    """
+    try:
+        limit = min(limit, 500)  # Cap at 500
+        
+        # Build query
+        query = {}
+        if rank and rank.lower() in ["platinum", "gold", "silver", "bronze"]:
+            query["rank"] = rank.lower()
+        elif rank and rank.lower() != "all":
+            raise HTTPException(status_code=400, detail="Invalid rank filter")
+        
+        # Get top merchants by rank and stats
+        pipeline = [
+            {"$match": query} if query else {"$match": {}},
+            {
+                "$lookup": {
+                    "from": "merchant_stats",
+                    "localField": "user_id",
+                    "foreignField": "user_id",
+                    "as": "stats"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$stats",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "user_accounts",
+                    "localField": "user_id",
+                    "foreignField": "user_id",
+                    "as": "user"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$user",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$addFields": {
+                    "score": {
+                        "$add": [
+                            {"$multiply": [{"$ifNull": ["$total_trades", 0]}, 10]},
+                            {"$multiply": [{"$ifNull": ["$completion_rate", 0]}, 5]},
+                            {"$multiply": [{"$ifNull": ["$deposit_amount", 0]}, 0.01]},
+                            {
+                                "$switch": {
+                                    "branches": [
+                                        {"case": {"$eq": ["$rank", "platinum"]}, "then": 1000},
+                                        {"case": {"$eq": ["$rank", "gold"]}, "then": 500},
+                                        {"case": {"$eq": ["$rank", "silver"]}, "then": 200},
+                                        {"case": {"$eq": ["$rank", "bronze"]}, "then": 100}
+                                    ],
+                                    "default": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {"$sort": {"score": -1}},
+            {"$limit": limit},
+            {
+                "$project": {
+                    "_id": 0,
+                    "user_id": 1,
+                    "username": "$user.username",
+                    "rank": 1,
+                    "total_trades": 1,
+                    "completion_rate": 1,
+                    "deposit_amount": 1,
+                    "avg_release_time": 1,
+                    "score": 1,
+                    "thirty_day_trades": "$stats.thirty_day_trades",
+                    "thirty_day_completion_rate": "$stats.thirty_day_completion_rate"
+                }
+            }
+        ]
+        
+        leaderboard = await db.merchant_ranks.aggregate(pipeline).to_list(limit)
+        
+        return {
+            "success": True,
+            "leaderboard": leaderboard,
+            "total": len(leaderboard)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching leaderboard: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/merchant/auto-match/buyer")
+async def auto_match_buyer(
+    crypto: str,
+    fiat_amount: float,
+    payment_method: Optional[str] = None
+):
+    """
+    Auto-match buyer with best seller
+    Criteria: Best price, highest completion rate, fastest release time
+    """
+    try:
+        # Find active sellers for this crypto
+        query = {
+            "crypto": crypto.upper(),
+            "status": "active",
+            "amount_available": {"$gt": 0}
+        }
+        
+        if payment_method:
+            query["payment_methods"] = payment_method
+        
+        listings = await db.p2p_listings.find(query, {"_id": 0}).to_list(100)
+        
+        if not listings:
+            return {
+                "success": True,
+                "matches": [],
+                "message": "No available sellers found"
+            }
+        
+        # Enrich with merchant data
+        matches = []
+        for listing in listings:
+            seller_id = listing.get("seller_uid")
+            
+            # Get merchant stats and rank
+            stats = await db.merchant_stats.find_one({"user_id": seller_id}, {"_id": 0})
+            rank_doc = await db.merchant_ranks.find_one({"user_id": seller_id}, {"_id": 0})
+            
+            if not stats:
+                continue
+            
+            # Calculate match score
+            completion_rate = stats.get("thirty_day_completion_rate", 0)
+            avg_release_time = stats.get("average_release_time_seconds", 999999)
+            rank = rank_doc.get("rank", "none") if rank_doc else "none"
+            
+            # Score: higher completion rate + faster release + higher rank = better match
+            rank_score = {"platinum": 100, "gold": 75, "silver": 50, "bronze": 25, "none": 0}.get(rank, 0)
+            time_score = max(0, 100 - (avg_release_time / 60))  # Lower time = higher score
+            match_score = (completion_rate * 0.4) + (time_score * 0.3) + (rank_score * 0.3)
+            
+            matches.append({
+                "merchant_id": seller_id,
+                "listing_id": listing.get("listing_id"),
+                "rank": rank,
+                "completion_rate": completion_rate,
+                "avg_release_time_seconds": avg_release_time,
+                "price": listing.get("price_fixed"),
+                "available_amount": listing.get("amount_available"),
+                "payment_methods": listing.get("payment_methods", []),
+                "match_score": round(match_score, 2)
+            })
+        
+        # Sort by match score
+        matches.sort(key=lambda x: x["match_score"], reverse=True)
+        
+        return {
+            "success": True,
+            "matches": matches[:10],  # Return top 10 matches
+            "total_available": len(matches)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error auto-matching buyer: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/merchant/auto-match/seller")
+async def auto_match_seller(
+    crypto: str,
+    crypto_amount: float,
+    payment_method: Optional[str] = None
+):
+    """
+    Auto-match seller with best buyer
+    Criteria: Buyer with good payment history, high completion rate
+    """
+    try:
+        # Find buyers who have completed trades successfully
+        pipeline = [
+            {
+                "$match": {
+                    "all_time_buy_count": {"$gt": 0},
+                    "thirty_day_completion_rate": {"$gte": 80}
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "merchant_ranks",
+                    "localField": "user_id",
+                    "foreignField": "user_id",
+                    "as": "rank"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$rank",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$addFields": {
+                    "match_score": {
+                        "$add": [
+                            {"$multiply": ["$thirty_day_completion_rate", 0.5]},
+                            {
+                                "$multiply": [
+                                    {
+                                        "$divide": [
+                                            1,
+                                            {"$add": [{"$ifNull": ["$average_pay_time_seconds", 1]}, 1]}
+                                        ]
+                                    },
+                                    5000
+                                ]
+                            },
+                            {
+                                "$switch": {
+                                    "branches": [
+                                        {"case": {"$eq": ["$rank.rank", "platinum"]}, "then": 50},
+                                        {"case": {"$eq": ["$rank.rank", "gold"]}, "then": 35},
+                                        {"case": {"$eq": ["$rank.rank", "silver"]}, "then": 20},
+                                        {"case": {"$eq": ["$rank.rank", "bronze"]}, "then": 10}
+                                    ],
+                                    "default": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {"$sort": {"match_score": -1}},
+            {"$limit": 10},
+            {
+                "$project": {
+                    "_id": 0,
+                    "user_id": 1,
+                    "rank": "$rank.rank",
+                    "completion_rate": "$thirty_day_completion_rate",
+                    "avg_pay_time_seconds": "$average_pay_time_seconds",
+                    "total_trades": "$all_time_trades",
+                    "match_score": 1
+                }
+            }
+        ]
+        
+        matches = await db.merchant_stats.aggregate(pipeline).to_list(10)
+        
+        return {
+            "success": True,
+            "matches": [
+                {
+                    **match,
+                    "match_score": round(match.get("match_score", 0), 2)
+                }
+                for match in matches
+            ],
+            "message": "Top buyers matched based on completion rate and payment history"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error auto-matching seller: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+# =============================================================================
+# END MERCHANT PROFILE & RANKING SYSTEM API ENDPOINTS
 # =============================================================================
 
