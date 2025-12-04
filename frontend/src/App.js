@@ -55,7 +55,7 @@ const TradePage = lazy(() => import("@/pages/TradePageNew"));
 const CreateOffer = lazy(() => import("@/pages/CreateOffer"));
 const OrderConfirmation = lazy(() => import("@/pages/OrderConfirmation"));
 const SwapCrypto = lazy(() => import("@/pages/SwapCrypto"));
-const InstantBuy = lazy(() => import("@/pages/InstantBuy"));
+const InstantBuy = lazy(() => import("@/pages/InstantBuyNew"));
 const P2PExpress = lazy(() => import("@/pages/P2PExpress"));
 const Fees = lazy(() => import("@/pages/Fees"));
 const PaymentMethods = lazy(() => import("@/pages/PaymentMethods"));
