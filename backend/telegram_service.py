@@ -205,7 +205,7 @@ class TelegramService:
     
     async def notify_withdrawal_requested(self, user_id: str, withdrawal_data: Dict):
         """Notify user and admins of withdrawal request"""
-        user = await self.user_service.get_user_by_id( user_id})
+        user = await self.user_service.get_user_by_id(user_id)
         
         # Notify user
         if user and user.get('telegram_chat_id'):
@@ -236,7 +236,7 @@ class TelegramService:
     
     async def notify_withdrawal_approved(self, user_id: str, withdrawal_data: Dict):
         """Notify user of approved withdrawal"""
-        user = await self.user_service.get_user_by_id( user_id})
+        user = await self.user_service.get_user_by_id(user_id)
         
         if user and user.get('telegram_chat_id'):
             message = (
@@ -251,7 +251,7 @@ class TelegramService:
     
     async def notify_deposit_confirmed(self, user_id: str, deposit_data: Dict):
         """Notify user of confirmed deposit"""
-        user = await self.user_service.get_user_by_id( user_id})
+        user = await self.user_service.get_user_by_id(user_id)
         
         if user and user.get('telegram_chat_id'):
             message = (
@@ -266,7 +266,7 @@ class TelegramService:
     
     async def notify_deposit_failed(self, user_id: str, deposit_data: Dict):
         """Notify user of failed deposit"""
-        user = await self.user_service.get_user_by_id( user_id})
+        user = await self.user_service.get_user_by_id(user_id)
         
         if user and user.get('telegram_chat_id'):
             message = (
@@ -299,7 +299,7 @@ class TelegramService:
     
     async def notify_golden_status_activated(self, user_id: str):
         """Notify user they are now Golden Referrer"""
-        user = await self.user_service.get_user_by_id( user_id})
+        user = await self.user_service.get_user_by_id(user_id)
         
         if user and user.get('telegram_chat_id'):
             # Get golden link
@@ -348,7 +348,7 @@ class TelegramService:
     
     async def notify_golden_status_deactivated(self, user_id: str):
         """Notify user Golden status was revoked"""
-        user = await self.user_service.get_user_by_id( user_id})
+        user = await self.user_service.get_user_by_id(user_id)
         
         if user and user.get('telegram_chat_id'):
             message = (
