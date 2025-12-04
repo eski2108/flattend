@@ -24876,6 +24876,12 @@ async def get_merchant_profile(user_id: str):
     try:
         profile = await merchant_service.get_merchant_profile(user_id)
         if not profile:
+            # Initialize merchant stats if don't exist
+            logger.info(f"Initializing merchant profile for {user_id}")
+            await merchant_service.initialize_merchant_stats(user_id)
+            profile = await merchant_service.get_merchant_profile(user_id)
+        
+        if not profile:
             raise HTTPException(status_code=404, detail="Profile not found")
         
         return {
@@ -24886,6 +24892,8 @@ async def get_merchant_profile(user_id: str):
         raise
     except Exception as e:
         logger.error(f"Error getting merchant profile: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/merchant/stats/{user_id}")
