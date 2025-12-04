@@ -13038,8 +13038,12 @@ async def admin_search_users_for_golden(email: str = None, user_id: str = None):
         if user_id:
             query["user_id"] = user_id
         
-        # Search in user_accounts collection
+        # Search in user_accounts collection first, then fallback to users
         user = await db.user_accounts.find_one(query, {"_id": 0})
+        
+        if not user:
+            # Try users collection as fallback
+            user = await db.users.find_one(query, {"_id": 0})
         
         if not user:
             return {
