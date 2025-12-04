@@ -5,6 +5,7 @@ import logging
 import aiohttp
 from datetime import datetime, timezone
 from typing import Optional, Dict, List
+from user_service import get_user_service
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ class TelegramService:
     def __init__(self, db):
         self.db = db
         self.bot_token = BOT_TOKEN
+        self.user_service = get_user_service(db)
         
     async def send_message(self, chat_id: str, text: str, parse_mode: str = 'Markdown'):
         """Send message to Telegram chat"""
