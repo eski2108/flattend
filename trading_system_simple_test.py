@@ -14,7 +14,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://referboost-4.preview.emergentagent.com/api"
+BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
 
 class SimpleTradingSystemTester:
     def __init__(self):

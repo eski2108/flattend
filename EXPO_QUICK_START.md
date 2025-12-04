@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://referboost-4.preview.emergentagent.com/api
+https://cryptosupport-1.preview.emergentagent.com/api
 ```
 
 This means:
