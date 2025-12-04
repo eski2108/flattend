@@ -158,6 +158,10 @@ function InstantBuy() {
         toast.success(`✅ Bought ${currentQuote.cryptoAmount.toFixed(8)} ${currentQuote.coin.symbol}!`);
         setUserBalance(prev => prev - currentQuote.fiatAmount);
         setShowQuoteModal(false);
+        
+        // Refresh liquidity to show updated values
+        fetchCoins();
+        
         setTimeout(() => navigate('/wallet'), 2000);
       } else {
         toast.error(response.data.message || 'Purchase failed');
