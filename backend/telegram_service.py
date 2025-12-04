@@ -105,7 +105,7 @@ class TelegramService:
         if not order:
             return
         
-        buyer = await self.user_service.get_user_by_id( order['buyer_id']})
+        buyer = await self.user_service.get_user_by_id(order['buyer_id'])
         
         if buyer and buyer.get('telegram_chat_id'):
             message = (
@@ -152,7 +152,7 @@ class TelegramService:
         if not order:
             return
         
-        buyer = await self.user_service.get_user_by_id( order['buyer_id']})
+        buyer = await self.user_service.get_user_by_id(order['buyer_id'])
         seller = await self.user_service.get_user_by_id( order['seller_id']})
         
         message = (
