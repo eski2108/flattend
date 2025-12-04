@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { ArrowLeft, IoAlertCircle, IoArrowBack, IoCheckmark as Check, IoCheckmarkCircle, IoShield, IoTime as Clock } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptosupport-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-trader-board.preview.emergentagent.com';
 
 function OrderConfirmation() {
   const navigate = useNavigate();

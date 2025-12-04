@@ -57,7 +57,7 @@ This test executes the exact 8-point verification plan requested in the review:
 - Verify /api/admin/trading-liquidity is admin-only (test without admin token)
 - Confirm execute endpoint prevents overdraft (try to buy more than available liquidity)
 
-**Backend URL:** https://cryptosupport-1.preview.emergentagent.com/api
+**Backend URL:** https://p2p-trader-board.preview.emergentagent.com/api
 """
 
 import requests
@@ -68,7 +68,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://cryptosupport-1.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-trader-board.preview.emergentagent.com/api"
 
 class SpotTradingComprehensiveTester:
     def __init__(self):

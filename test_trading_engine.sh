@@ -22,11 +22,11 @@ sudo supervisorctl status | grep -E "backend|frontend"
 
 echo ""
 echo "[2] Testing price feed endpoint..."
-curl -s "https://cryptosupport-1.preview.emergentagent.com/api/prices/live" | python3 -c "import sys, json; data=json.load(sys.stdin); print('✅ Price feed working') if data.get('success') else print('❌ Price feed failed')"
+curl -s "https://p2p-trader-board.preview.emergentagent.com/api/prices/live" | python3 -c "import sys, json; data=json.load(sys.stdin); print('✅ Price feed working') if data.get('success') else print('❌ Price feed failed')"
 
 echo ""
 echo "[3] Testing market-price endpoint..."
-curl -s "https://cryptosupport-1.preview.emergentagent.com/api/market-price?pair=BTCUSD" | python3 -c "import sys, json; data=json.load(sys.stdin); print('✅ Market price: $' + str(data['price'])) if data.get('success') else print('❌ Market price failed')"
+curl -s "https://p2p-trader-board.preview.emergentagent.com/api/market-price?pair=BTCUSD" | python3 -c "import sys, json; data=json.load(sys.stdin); print('✅ Market price: $' + str(data['price'])) if data.get('success') else print('❌ Market price failed')"
 
 echo ""
 echo "[4] Checking database connection..."

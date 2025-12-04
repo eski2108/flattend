@@ -218,11 +218,11 @@ export default React.memo(DualCurrencyInput);
 ### Backend Caching Test:
 ```bash
 # First call (cache miss):
-time curl https://cryptosupport-1.preview.emergentagent.com/api/prices/live
+time curl https://p2p-trader-board.preview.emergentagent.com/api/prices/live
 # Result: 0.068s
 
 # Second call (cache hit):
-time curl https://cryptosupport-1.preview.emergentagent.com/api/prices/live
+time curl https://p2p-trader-board.preview.emergentagent.com/api/prices/live
 # Result: 0.047s (31% faster)
 ```
 

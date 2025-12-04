@@ -29,7 +29,7 @@
 REACT_APP_BACKEND_URL=https://coinhubx.com
 
 # Staging/Preview
-REACT_APP_BACKEND_URL=https://cryptosupport-1.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://p2p-trader-board.preview.emergentagent.com
 
 # Local Development
 REACT_APP_BACKEND_URL=http://localhost:8001
