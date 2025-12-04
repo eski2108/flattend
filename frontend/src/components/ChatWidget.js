@@ -164,7 +164,7 @@ export default function ChatWidget() {
     <div style={{
       position: 'fixed',
       bottom: '28px',
-      right: '28px',
+      left: '28px',
       width: '400px',
       maxWidth: 'calc(100vw - 56px)',
       height: isMinimized ? '72px' : '600px',
