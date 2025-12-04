@@ -96,7 +96,6 @@ class EmailService:
         
         try:
             client = AsyncIOMotorClient(os.getenv('MONGO_URL', 'mongodb://localhost:27017'))
-            db = client[os.getenv('DB_NAME', 'coinhubx')]
             settings = await client[os.getenv('DB_NAME', 'coinhubx')].admin_settings.find_one({"setting_type": "general"}, {"_id": 0})
             admin_email = settings.get("dispute_email") if settings else ADMIN_EMAIL_FALLBACK
             logger.info(f"Using dispute email: {admin_email}")
