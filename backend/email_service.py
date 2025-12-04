@@ -170,22 +170,48 @@ class EmailService:
                         </ol>
                     </div>
                     
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}" style="display: inline-block; background: #EF4444; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                            RESOLVE DISPUTE NOW →
-                        </a>
+                    <!-- Red Action Button -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                        <tr>
+                            <td align="center">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
+                                            <a href="https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+                                               target="_blank"
+                                               style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
+                                                🚨 RESOLVE DISPUTE NOW →
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Copyable Direct Link Box -->
+                    <div style="background: #FEF3C7; border: 2px solid #F59E0B; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <p style="margin: 0 0 10px 0; font-size: 14px; color: #92400E; font-weight: bold; text-align: center;">
+                            📋 COPY & SHARE THIS LINK WITH YOUR TEAM:
+                        </p>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
+                            <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
+                                https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}
+                            </p>
+                        </div>
+                        <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
+                            Click anywhere on the link above to select and copy
+                        </p>
                     </div>
                     
-                    <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
-                        <p style="margin: 0; font-size: 14px; color: #374151; font-weight: bold;">
-                            Direct Link (Shareable with Staff):
-                        </p>
-                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #6B7280; word-break: break-all;">
-                            <a href="https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}" style="color: #3B82F6; text-decoration: none;">
-                                https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}
-                            </a>
-                        </p>
-                    </div>
+                    <!-- Alternative Text Link (if button doesn't work) -->
+                    <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
+                        Button not working? Click here: 
+                        <a href="https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+                           style="color: #EF4444; font-weight: bold; text-decoration: underline;">
+                            Open Dispute #{dispute_id}
+                        </a>
+                    </p>
                     
                     <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px;">
                         <p style="margin: 0; font-size: 12px; color: #6B7280;">
