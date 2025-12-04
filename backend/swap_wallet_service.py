@@ -226,23 +226,28 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
         
         logger.info(f"✅ LIQUIDITY CHECK PASSED for swap: {to_amount} {to_currency}")
         
-        # Check if user has referrer and calculate commission
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
-        referrer_id = user.get("referrer_id") if user else None
+        # Calculate referral commission using NEW Binance-style system
+        from referral_commission_calculator import ReferralCommissionCalculator
+        calculator = ReferralCommissionCalculator(db)
+        
+        # Check if user was referred
+        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0, "referred_by": 1})
+        referrer_id = user.get("referred_by") if user else None
         referrer_commission = 0.0
         admin_fee = swap_fee_crypto
+        commission_rate = 0.0
+        tier_used = "none"
         
         if referrer_id:
-            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
-            referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
-            
-            if referrer_tier == "golden":
-                commission_percent = await fee_manager.get_fee("referral_golden_commission_percent")
-            else:
-                commission_percent = await fee_manager.get_fee("referral_standard_commission_percent")
-            
-            referrer_commission = swap_fee_crypto * (commission_percent / 100.0)
+            # Use NEW calculator - automatically determines tier based on signup
+            commission_amount, commission_rate, tier_used = await calculator.calculate_commission(
+                referred_user_id=user_id,
+                referrer_user_id=referrer_id,
+                fee_amount=swap_fee_crypto
+            )
+            referrer_commission = commission_amount
             admin_fee = swap_fee_crypto - referrer_commission
+            logger.info(f"💰 Swap Referral Commission: {referrer_commission} {from_currency} ({tier_used} tier - {commission_rate*100}%)")
         
         import uuid
         swap_id = str(uuid.uuid4())
