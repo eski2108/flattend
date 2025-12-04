@@ -22631,6 +22631,178 @@ async def send_p2p_trade_message(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/p2p/trade/{trade_id}/feedback")
+async def submit_p2p_feedback(trade_id: str, request: Request):
+    """
+    Submit feedback after completed P2P trade
+    
+    Body:
+    - from_user_id: User submitting feedback
+    - rating: "positive", "neutral", or "negative"
+    - comment: Optional text (max 500 chars)
+    """
+    try:
+        data = await request.json()
+        from_user_id = data.get("from_user_id")
+        rating = data.get("rating")
+        comment = data.get("comment", "")
+        
+        # Validate rating
+        if rating not in ["positive", "neutral", "negative"]:
+            raise HTTPException(status_code=400, detail="Rating must be positive, neutral, or negative")
+        
+        # Validate comment length
+        if len(comment) > 500:
+            raise HTTPException(status_code=400, detail="Comment too long (max 500 characters)")
+        
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify user is buyer or seller
+        if from_user_id not in [trade["buyer_id"], trade["seller_id"]]:
+            raise HTTPException(status_code=403, detail="Unauthorized")
+        
+        # Verify trade is completed
+        if trade["status"] != "completed":
+            raise HTTPException(status_code=400, detail="Can only leave feedback on completed trades")
+        
+        # Determine counterparty
+        to_user_id = trade["seller_id"] if from_user_id == trade["buyer_id"] else trade["buyer_id"]
+        
+        # Check if feedback already exists
+        existing = await db.p2p_feedback.find_one({
+            "trade_id": trade_id,
+            "from_user_id": from_user_id
+        })
+        
+        if existing:
+            raise HTTPException(status_code=400, detail="You have already left feedback for this trade")
+        
+        # Create feedback record
+        feedback = {
+            "trade_id": trade_id,
+            "from_user_id": from_user_id,
+            "to_user_id": to_user_id,
+            "rating": rating,
+            "comment": comment,
+            "created_at": datetime.now()
+        }
+        
+        await db.p2p_feedback.insert_one(feedback)
+        
+        # Update user's aggregate rating stats
+        await update_user_rating_stats(to_user_id)
+        
+        logger.info(f"✅ Feedback submitted: {from_user_id} → {to_user_id} ({rating})")
+        
+        return {
+            "success": True,
+            "message": "Feedback submitted successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Submit feedback error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+async def update_user_rating_stats(user_id: str):
+    """Update user's aggregated rating statistics"""
+    try:
+        # Count all feedback received by this user
+        positive_count = await db.p2p_feedback.count_documents({
+            "to_user_id": user_id,
+            "rating": "positive"
+        })
+        
+        neutral_count = await db.p2p_feedback.count_documents({
+            "to_user_id": user_id,
+            "rating": "neutral"
+        })
+        
+        negative_count = await db.p2p_feedback.count_documents({
+            "to_user_id": user_id,
+            "rating": "negative"
+        })
+        
+        total_feedback = positive_count + neutral_count + negative_count
+        
+        # Calculate percentage
+        positive_rate = (positive_count / total_feedback * 100) if total_feedback > 0 else 100
+        
+        # Calculate overall rating (1-5 stars)
+        # positive = 5, neutral = 3, negative = 1
+        if total_feedback > 0:
+            weighted_sum = (positive_count * 5) + (neutral_count * 3) + (negative_count * 1)
+            overall_rating = weighted_sum / total_feedback
+        else:
+            overall_rating = 5.0
+        
+        # Update user document
+        await db.users.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "p2p_rating": overall_rating,
+                    "p2p_positive_feedback": positive_count,
+                    "p2p_neutral_feedback": neutral_count,
+                    "p2p_negative_feedback": negative_count,
+                    "p2p_total_feedback": total_feedback,
+                    "p2p_positive_rate": positive_rate
+                }
+            }
+        )
+        
+        logger.info(f"✅ Updated rating stats for {user_id}: {overall_rating:.2f} ({positive_rate:.1f}% positive)")
+        
+    except Exception as e:
+        logger.error(f"❌ Update rating stats error: {str(e)}")
+
+
+@app.get("/api/p2p/trader/{user_id}/feedback")
+async def get_trader_feedback(
+    user_id: str,
+    limit: int = Query(default=20, le=100),
+    skip: int = Query(default=0)
+):
+    """
+    Get feedback received by a trader
+    
+    Returns recent feedback with ratings and comments
+    """
+    try:
+        # Get feedback
+        feedback_cursor = db.p2p_feedback.find(
+            {"to_user_id": user_id}
+        ).sort("created_at", -1).skip(skip).limit(limit)
+        
+        feedback_list = await feedback_cursor.to_list(length=limit)
+        
+        # Get usernames for feedback senders
+        for item in feedback_list:
+            sender = await db.users.find_one({"user_id": item["from_user_id"]})
+            item["from_username"] = sender.get("username", "Unknown") if sender else "Unknown"
+            item["_id"] = str(item["_id"])
+            if "created_at" in item:
+                item["created_at"] = item["created_at"].isoformat()
+        
+        # Get total count
+        total_count = await db.p2p_feedback.count_documents({"to_user_id": user_id})
+        
+        return {
+            "success": True,
+            "feedback": feedback_list,
+            "total": total_count
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Get feedback error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ================================
 # PRICE ALERTS ENDPOINTS
 # ================================
