@@ -121,11 +121,17 @@ class ReferralCommissionCalculator:
         Regular users only get Standard link.
         """
         try:
-            # Check if user is Golden referrer
-            user = await self.db.users.find_one(
+            # Check if user is Golden referrer (check user_accounts first, then fallback to users)
+            user = await self.db.user_accounts.find_one(
                 {"user_id": user_id},
-                {"is_golden_referrer": 1, "username": 1, "email": 1, "_id": 0}
+                {"is_golden_referrer": 1, "username": 1, "email": 1, "full_name": 1, "_id": 0}
             )
+            
+            if not user:
+                user = await self.db.users.find_one(
+                    {"user_id": user_id},
+                    {"is_golden_referrer": 1, "username": 1, "email": 1, "_id": 0}
+                )
             
             is_golden = user.get("is_golden_referrer", False) if user else False
             
