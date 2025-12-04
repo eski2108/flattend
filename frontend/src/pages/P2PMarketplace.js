@@ -740,6 +740,148 @@ function P2PMarketplace() {
           </div>
         )}
 
+        {/* Advanced Filters Panel */}
+        {showAdvancedFilters && (
+          <div style={{
+            marginTop: '1rem',
+            padding: '20px',
+            background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+            border: '1px solid rgba(0, 198, 255, 0.3)',
+            borderRadius: '12px'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+              {/* Payment Methods Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
+                  Payment Methods
+                </label>
+                <select
+                  multiple
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    minHeight: '80px'
+                  }}
+                >
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="paypal">PayPal</option>
+                  <option value="revolut">Revolut</option>
+                  <option value="wise">Wise</option>
+                  <option value="cash_app">Cash App</option>
+                </select>
+              </div>
+
+              {/* Min Rating Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
+                  Minimum Rating
+                </label>
+                <select
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="">Any Rating</option>
+                  <option value="4.5">4.5★ and above</option>
+                  <option value="4.0">4.0★ and above</option>
+                  <option value="3.5">3.5★ and above</option>
+                  <option value="3.0">3.0★ and above</option>
+                </select>
+              </div>
+
+              {/* Min Completion Rate */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
+                  Min Completion Rate
+                </label>
+                <select
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="">Any Rate</option>
+                  <option value="95">95% and above</option>
+                  <option value="90">90% and above</option>
+                  <option value="80">80% and above</option>
+                </select>
+              </div>
+
+              {/* Country Filter */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
+                  Country/Region
+                </label>
+                <select
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="">All Countries</option>
+                  <option value="GB">🇬🇧 United Kingdom</option>
+                  <option value="US">🇺🇸 United States</option>
+                  <option value="EU">🇪🇺 European Union</option>
+                  <option value="IN">🇮🇳 India</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Save Filters Button */}
+            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button
+                style={{
+                  padding: '10px 20px',
+                  background: 'rgba(143, 155, 179, 0.1)',
+                  border: '1px solid rgba(143, 155, 179, 0.3)',
+                  borderRadius: '8px',
+                  color: '#8F9BB3',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Reset Filters
+              </button>
+              <button
+                style={{
+                  padding: '10px 20px',
+                  background: 'linear-gradient(135deg, #00C6FF, #0096CC)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                💾 Save as Default
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Offers List */}
         <div>
           <div style={{ marginBottom: '1rem', color: '#888', fontSize: '13px' }}>Showing {offers.length} offers</div>
