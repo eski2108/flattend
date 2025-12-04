@@ -44,6 +44,7 @@ const P2PTradeDetailDemo = lazy(() => import("@/pages/P2PTradeDetailDemo"));
 const DisputeCentre = lazy(() => import("@/pages/DisputeCentre"));
 const AdminDisputes = lazy(() => import("@/pages/AdminDisputes"));
 const AdminDisputeDetail = lazy(() => import("@/pages/AdminDisputeDetail"));
+const AdminSettings = lazy(() => import("@/pages/AdminSettings"));
 // SpotTrading moved to core imports above
 const AdminProofPage = lazy(() => import("@/pages/AdminProofPage"));
 const TradePage = lazy(() => import("@/pages/TradePageNew"));
