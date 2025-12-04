@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://p2p-trading-hub.preview.emergentagent.com/api"
+BASE_URL = "https://referboost-4.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)
