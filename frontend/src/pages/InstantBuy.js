@@ -663,6 +663,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 <CHXButton
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     onWithdraw();
                   }}
                   coinColor={coin.color}
