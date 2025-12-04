@@ -603,10 +603,16 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         maxHeight: expanded ? '600px' : '0',
         overflow: 'hidden',
         transition: 'max-height 0.18s ease-in-out, opacity 0.18s ease-in-out',
-        opacity: expanded ? 1 : 0
+        opacity: expanded ? 1 : 0,
+        pointerEvents: expanded ? 'auto' : 'none',
+        position: 'relative',
+        zIndex: expanded ? 10 : 1
       }}>
         {expanded && (
-          <div onClick={(e) => e.stopPropagation()}>
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: 'relative', zIndex: 20 }}
+          >
             {/* Price & Stock Info */}
             <div style={{ 
               marginBottom: '18px', 
