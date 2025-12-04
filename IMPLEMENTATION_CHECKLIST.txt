@@ -1,0 +1,16 @@
+P2P 12 FEATURES - EXECUTION CHECKLIST
+
+[ ] 1. Auto-Match UX - Complete
+[ ] 2. Sell-Side Auto-Match - Build
+[ ] 3. Feedback Frontend - Build
+[ ] 4. Notifications & Email - Wire all events
+[ ] 5. Dispute Flow - Admin panel + fee logic
+[ ] 6. Image Attachments - Already done
+[ ] 7. Favourites & Blocking - Build
+[ ] 8. Advanced Filters - Build
+[ ] 9. P2P Admin Dashboard - Build
+[ ] 10. Telegram Bot - Wire
+[ ] 11. Test Mode - Add flag + logging
+[ ] 12. Final Polish - Check all flows
+
+EXECUTION START: 2025-12-04 19:20
