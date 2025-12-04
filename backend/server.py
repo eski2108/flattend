@@ -22447,6 +22447,9 @@ async def release_p2p_crypto(request: Request):
             }
         )
         
+        # Post system message
+        await post_system_message(trade_id, f"✅ Seller has released {crypto_amount} {crypto_currency}. Trade completed successfully!")
+        
         logger.info(f"✅ Trade {trade_id} completed - {crypto_amount} {crypto_currency} released to buyer")
         
         return {
