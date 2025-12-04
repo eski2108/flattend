@@ -24859,9 +24859,7 @@ async def generate_nowpayments_addresses():
             "message": str(e)
         }
 
-# Include the API router in the main FastAPI app
-# This registers all endpoints defined above with the /api prefix
-app.include_router(api_router)
+# Router will be included at the end of the file after all endpoints are defined
 
 # 🔒 LOCKED: Admin Settings Endpoints - DO NOT MODIFY WITHOUT APPROVAL
 @api_router.get("/admin/settings")
