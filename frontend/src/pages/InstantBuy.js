@@ -98,22 +98,70 @@ function InstantBuy() {
       }
 
       const cryptoAmount = amount / (coin.price_gbp || 1);
-      const response = await axios.post(`${API}/api/express-buy/execute`, {
+      
+      // STEP 1: Get locked-price quote
+      const quoteResponse = await axios.post(`${API}/api/admin-liquidity/quote`, {
         user_id: user.user_id,
-        crypto_currency: coin.symbol,
-        fiat_amount: amount,
-        crypto_amount: cryptoAmount,
-        ad_id: 'ADMIN_LIQUIDITY',
-        buyer_wallet_address: 'internal_wallet',
-        buyer_wallet_network: 'mainnet'
+        type: 'buy',
+        crypto: coin.symbol,
+        amount: cryptoAmount
+      });
+
+      if (quoteResponse.data.success) {
+        const quote = quoteResponse.data.quote;
+        setCurrentQuote({
+          ...quote,
+          coin: coin,
+          fiatAmount: amount,
+          cryptoAmount: cryptoAmount
+        });
+        setShowQuoteModal(true);
+        
+        // Start countdown timer
+        const expiresAt = new Date(quote.expires_at);
+        const updateTimer = setInterval(() => {
+          const now = new Date();
+          const remaining = Math.floor((expiresAt - now) / 1000);
+          if (remaining <= 0) {
+            clearInterval(updateTimer);
+            setShowQuoteModal(false);
+            toast.error('Quote expired. Please try again.');
+          } else {
+            setCountdown(remaining);
+          }
+        }, 1000);
+      } else {
+        toast.error(quoteResponse.data.message || 'Failed to get quote');
+      }
+    } catch (error) {
+      const msg = error.response?.data?.detail || error.response?.data?.message || error.message;
+      toast.error(`Quote failed: ${msg}`);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const confirmPurchase = async () => {
+    if (!currentQuote) return;
+    
+    setProcessing(true);
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = userData ? JSON.parse(userData) : null;
+      
+      // STEP 2: Execute with locked price
+      const response = await axios.post(`${API}/api/admin-liquidity/execute`, {
+        user_id: user.user_id,
+        quote_id: currentQuote.quote_id
       });
 
       if (response.data.success) {
-        toast.success(`✅ Bought ${cryptoAmount.toFixed(8)} ${coin.symbol}!`);
-        setUserBalance(prev => prev - amount);
+        toast.success(`✅ Bought ${currentQuote.cryptoAmount.toFixed(8)} ${currentQuote.coin.symbol}!`);
+        setUserBalance(prev => prev - currentQuote.fiatAmount);
+        setShowQuoteModal(false);
         setTimeout(() => navigate('/wallet'), 2000);
       } else {
-        toast.error(response.data.message || 'Failed');
+        toast.error(response.data.message || 'Purchase failed');
       }
     } catch (error) {
       const msg = error.response?.data?.detail || error.response?.data?.message || error.message;
