@@ -745,6 +745,159 @@ export default function P2PExpress() {
 
         </div>
 
+        {/* Admin Liquidity Quote Modal */}
+        {showQuoteModal && currentQuote && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            backdropFilter: 'blur(8px)'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+              border: '1px solid rgba(0, 198, 255, 0.3)',
+              borderRadius: '20px',
+              padding: '32px',
+              maxWidth: '480px',
+              width: '90%',
+              boxShadow: '0 0 40px rgba(0, 198, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5)'
+            }}>
+              {/* Header */}
+              <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #00C6FF, #0099CC)',
+                  borderRadius: '16px',
+                  marginBottom: '16px',
+                  boxShadow: '0 0 20px rgba(0, 198, 255, 0.4)'
+                }}>
+                  <IoShield size={20} color="#fff" />
+                  <span style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+                    LOCKED PRICE QUOTE
+                  </span>
+                </div>
+                <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px' }}>
+                  Confirm Purchase
+                </h2>
+              </div>
+
+              {/* Quote Details */}
+              <div style={{
+                background: 'rgba(0, 198, 255, 0.08)',
+                border: '1px solid rgba(0, 198, 255, 0.2)',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    You're Buying
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                    {currentQuote.cryptoAmount} {currentQuote.currency}
+                  </div>
+                </div>
+
+                <div style={{ height: '1px', background: 'rgba(0, 198, 255, 0.2)', margin: '16px 0' }} />
+
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Locked Price
+                  </div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: '#22C55E' }}>
+                    £{currentQuote.locked_price.toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', marginTop: '4px' }}>
+                    Market: £{currentQuote.market_price_at_quote.toLocaleString()} ({currentQuote.spread_percent}% spread)
+                  </div>
+                </div>
+
+                <div style={{ height: '1px', background: 'rgba(0, 198, 255, 0.2)', margin: '16px 0' }} />
+
+                <div>
+                  <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Total Cost
+                  </div>
+                  <div style={{ fontSize: '28px', fontWeight: '700', color: '#00C6FF' }}>
+                    £{(currentQuote.cryptoAmount * currentQuote.locked_price).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Countdown Timer */}
+              <div style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '24px',
+                textAlign: 'center'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <IoTime size={18} color="#EF4444" />
+                  <span style={{ fontSize: '14px', color: '#EF4444', fontWeight: '600' }}>
+                    Quote expires in: {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <button
+                  onClick={() => {
+                    setShowQuoteModal(false);
+                    setCurrentQuote(null);
+                  }}
+                  disabled={loading}
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(143, 155, 179, 0.1)',
+                    border: '1px solid rgba(143, 155, 179, 0.3)',
+                    borderRadius: '12px',
+                    color: '#8F9BB3',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmQuote}
+                  disabled={loading}
+                  style={{
+                    padding: '16px',
+                    background: loading 
+                      ? 'rgba(143, 155, 179, 0.2)' 
+                      : 'linear-gradient(135deg, #22C55E, #16A34A)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    boxShadow: loading ? 'none' : '0 0 20px rgba(34, 197, 94, 0.4)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {loading ? 'Processing...' : 'Confirm Purchase'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </Layout>
   );
