@@ -307,6 +307,10 @@ function P2PMarketplace() {
     }
   };
 
+  const confirmQuote = () => {
+    // Placeholder function - modal is disabled
+  };
+
   return (
     <Layout>
       <div style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 50%, rgba(2, 6, 24, 0.98) 100%)', minHeight: '100vh' }}>
