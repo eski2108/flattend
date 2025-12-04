@@ -1732,6 +1732,13 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     tx_buy_dict['timestamp'] = tx_buy_dict['timestamp'].isoformat()
     await db.transactions.insert_one(tx_buy_dict)
     
+    # 🔒 LOCKED: Update merchant stats after successful trade
+    try:
+        await _update_stats_after_trade(order_id)
+    except Exception as e:
+        logger.error(f"Failed to update stats: {str(e)}")
+    # 🔒 END LOCKED SECTION
+    
     return {
         "success": True,
         "message": "Crypto released from escrow successfully"
