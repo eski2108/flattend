@@ -10938,9 +10938,9 @@ async def get_available_coins_for_instant_buy():
         
         default_markup = settings.get("admin_sell_spread_percent", 3.0) if settings else 3.0
         
-        # Get live prices from pricing system
-        from pricing_system import PricingSystem
-        pricing = PricingSystem(db)
+        # Get live prices from live_pricing module
+        from live_pricing import LivePricing
+        pricing = LivePricing(db)
         
         # Format response with coin info and prices
         available_coins = []
