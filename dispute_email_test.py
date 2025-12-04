@@ -367,6 +367,10 @@ class DisputeEmailTester:
         if success and not self.step_5_show_email_url():
             success = False
         
+        if success:
+            self.step_6_verify_url_format()
+            self.step_7_check_backend_logs()
+        
         # Print summary
         print("\n" + "=" * 80)
         print(f"📊 DISPUTE EMAIL TEST SUMMARY")
