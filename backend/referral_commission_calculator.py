@@ -27,59 +27,43 @@ class ReferralCommissionCalculator:
         fee_amount: float
     ) -> Tuple[float, float, str]:
         """
-        Calculate commission amount and rate based on referral tier.
+        Calculate commission based on referral tier.
+        NO TIME LIMITS - Golden is lifetime if admin-activated.
         
         Returns:
             (commission_amount, commission_rate, tier_used)
         """
         try:
-            # Get referred user's referral record
+            # Get the referral relationship record
             referred_user = await self.db.users.find_one(
                 {"user_id": referred_user_id},
-                {"referred_by": 1, "referral_tier": 1, "created_at": 1, "_id": 0}
+                {"referred_by": 1, "referral_tier": 1, "referred_via_link": 1, "_id": 0}
             )
             
             if not referred_user or referred_user.get("referred_by") != referrer_user_id:
                 logger.warning(f"User {referred_user_id} not referred by {referrer_user_id}")
                 return 0.0, 0.0, "none"
             
-            # Get referral tier
+            # Determine which tier was used for signup
+            # Priority: Check which link they signed up with
             referral_tier = referred_user.get("referral_tier", "standard")
+            referred_via = referred_user.get("referred_via_link", "standard")
             
-            # Check if Golden tier is still valid (within 100 days)
-            if referral_tier == "golden":
-                created_at = referred_user.get("created_at")
-                if isinstance(created_at, str):
-                    created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                elif not isinstance(created_at, datetime):
-                    created_at = datetime.now(timezone.utc)
-                
-                # Ensure timezone aware
-                if created_at.tzinfo is None:
-                    created_at = created_at.replace(tzinfo=timezone.utc)
-                
-                days_since_joined = (datetime.now(timezone.utc) - created_at).days
-                
-                if days_since_joined <= self.GOLDEN_DAYS_LIMIT:
-                    # Golden tier still active
-                    commission_rate = self.GOLDEN_RATE
-                    tier_used = "golden"
-                    logger.info(f"Golden tier active for {referred_user_id}: Day {days_since_joined}/{self.GOLDEN_DAYS_LIMIT}")
-                else:
-                    # Golden expired, use standard
-                    commission_rate = self.STANDARD_RATE
-                    tier_used = "standard_expired_golden"
-                    logger.info(f"Golden tier EXPIRED for {referred_user_id}: Day {days_since_joined}/{self.GOLDEN_DAYS_LIMIT}")
+            # Use the tier they signed up with (locked at signup)
+            if referral_tier == "golden" or referred_via == "golden":
+                commission_rate = self.GOLDEN_RATE
+                tier_used = "golden"
+                logger.info(f"Golden tier (50%) for {referred_user_id} - LIFETIME")
             else:
-                # Standard tier - lifetime 20%
                 commission_rate = self.STANDARD_RATE
                 tier_used = "standard"
+                logger.info(f"Standard tier (20%) for {referred_user_id} - LIFETIME")
             
             commission_amount = fee_amount * commission_rate
             
             logger.info(
-                f"Commission calculated: {commission_amount:.2f} "
-                f"({commission_rate*100}% of {fee_amount:.2f}) - Tier: {tier_used}"
+                f"Commission: £{commission_amount:.2f} "
+                f"({commission_rate*100}% of £{fee_amount:.2f}) - Tier: {tier_used}"
             )
             
             return commission_amount, commission_rate, tier_used
