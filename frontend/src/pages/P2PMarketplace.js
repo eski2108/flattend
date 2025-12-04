@@ -1162,8 +1162,8 @@ function P2PMarketplace() {
           </div>
         )}
         
-        {/* Admin Liquidity Quote Modal */}
-        {showQuoteModal && currentQuote && (
+        {/* Modal removed - using auto-match now */}
+        {false && showQuoteModal && currentQuote && (
           <div style={{
             position: 'fixed',
             top: 0,
