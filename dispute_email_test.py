@@ -170,33 +170,35 @@ class DisputeEmailTester:
         
         # First, create a P2P offer from seller
         offer_data = {
-            "user_id": self.seller_user_id,
-            "ad_type": "sell",
+            "seller_id": self.seller_user_id,
             "crypto_currency": "BTC",
             "fiat_currency": "GBP", 
             "crypto_amount": 0.01,
-            "price_per_crypto": 70000,
-            "min_order_limit": 500,
-            "max_order_limit": 700,
+            "price_per_unit": 70000,
+            "min_purchase": 0.005,
+            "max_purchase": 0.01,
             "payment_methods": ["bank_transfer"],
             "payment_time_limit": 30,
             "terms": "Fast and secure BTC sale for dispute testing"
         }
         
-        success, response = self.make_request('POST', '/p2p/offers/create', data=offer_data)
+        success, response = self.make_request('POST', '/p2p/create-offer', data=offer_data)
         if success:
             try:
                 data = response.json()
                 if data.get('success') and data.get('offer'):
-                    offer_id = data['offer']['offer_id']
+                    offer_id = data['offer']['order_id']
                     self.log_test("P2P Offer Creation", True, f"Offer ID: {offer_id}")
                     
                     # Now create a trade from this offer
                     trade_data = {
                         "buyer_id": self.buyer_user_id,
-                        "offer_id": offer_id,
+                        "sell_order_id": offer_id,
                         "crypto_amount": 0.01,
-                        "buyer_wallet_address": "bc1qtest_buyer_wallet_address_for_dispute"
+                        "payment_method": "bank_transfer",
+                        "buyer_wallet_address": "bc1qtest_buyer_wallet_address_for_dispute",
+                        "buyer_wallet_network": "bitcoin",
+                        "is_express": False
                     }
                     
                     success, response = self.make_request('POST', '/p2p/create-trade', data=trade_data)
@@ -209,21 +211,27 @@ class DisputeEmailTester:
                                 return True
                             else:
                                 self.log_test("P2P Trade Creation", False, "No trade data in response")
+                                print(f"   Response: {data}")
                                 return False
-                        except:
-                            self.log_test("P2P Trade Creation", False, "Invalid JSON response")
+                        except Exception as e:
+                            self.log_test("P2P Trade Creation", False, f"JSON parse error: {str(e)}")
+                            print(f"   Raw response: {response.text}")
                             return False
                     else:
                         self.log_test("P2P Trade Creation", False, f"Status: {response.status_code}")
+                        print(f"   Response: {response.text}")
                         return False
                 else:
                     self.log_test("P2P Offer Creation", False, "No offer data in response")
+                    print(f"   Response: {data}")
                     return False
-            except:
-                self.log_test("P2P Offer Creation", False, "Invalid JSON response")
+            except Exception as e:
+                self.log_test("P2P Offer Creation", False, f"JSON parse error: {str(e)}")
+                print(f"   Raw response: {response.text}")
                 return False
         else:
             self.log_test("P2P Offer Creation", False, f"Status: {response.status_code}")
+            print(f"   Response: {response.text}")
             return False
 
     def step_3_create_dispute(self):
