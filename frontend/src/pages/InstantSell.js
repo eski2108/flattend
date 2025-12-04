@@ -338,6 +338,121 @@ export default function InstantSell() {
           </div>
         </div>
       </div>
+
+      {/* Quote Modal */}
+      {showQuoteModal && currentQuote && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
+            border: '2px solid rgba(0, 240, 255, 0.3)',
+            borderRadius: '20px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '100%',
+            boxShadow: '0 0 30px rgba(0, 240, 255, 0.2)'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <Lock size={32} color="#00F0FF" style={{ marginBottom: '8px' }} />
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>
+                Price Locked
+              </h3>
+              <p style={{ fontSize: '14px', color: '#A3AEC2' }}>
+                Confirm your sell order within {countdown} seconds
+              </p>
+            </div>
+
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.3)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '14px', color: '#A3AEC2' }}>Selling</span>
+                <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>
+                  {currentQuote.cryptoAmount} {currentQuote.currency}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ fontSize: '14px', color: '#A3AEC2' }}>Locked Price</span>
+                <span style={{ fontSize: '14px', color: '#00F0FF', fontWeight: '600' }}>
+                  £{currentQuote.locked_price?.toFixed(2)} / {currentQuote.currency}
+                </span>
+              </div>
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '12px 0' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '16px', color: '#FFFFFF', fontWeight: '600' }}>You Receive</span>
+                <span style={{ fontSize: '18px', color: '#22C55E', fontWeight: '700' }}>
+                  £{(currentQuote.cryptoAmount * currentQuote.locked_price).toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowQuoteModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSell}
+                disabled={selling}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: selling ? 'rgba(34, 197, 94, 0.5)' : 'linear-gradient(135deg, #22C55E, #16A34A)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#FFFFFF',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: selling ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {selling ? 'Processing...' : 'Confirm Sell'}
+              </button>
+            </div>
+
+            <div style={{
+              marginTop: '16px',
+              padding: '12px',
+              background: 'rgba(251, 191, 36, 0.1)',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <Clock size={16} color="#FBBF24" />
+              <span style={{ fontSize: '12px', color: '#FBBF24' }}>
+                Price expires in {countdown}s
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
