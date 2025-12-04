@@ -118,7 +118,7 @@ function P2PMarketplace() {
 
     try {
       if (favorites.includes(sellerId)) {
-        await axios.post(`${API}/api/p2p/favorites/remove`, { user_id: userId, seller_id: sellerId });
+        await axios.post(`${API}/api/p2p/favourites/remove`, { user_id: userId, merchant_id: sellerId });
         setFavorites(favorites.filter(id => id !== sellerId));
         toast.success('Removed from favorites');
       } else {
