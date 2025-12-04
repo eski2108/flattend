@@ -193,7 +193,8 @@ class SimpleDisputeEmailTester:
             print(f"✅ Dispute ID: {self.dispute_id}")
             print(f"✅ Trade ID: {self.trade_id}")
             print(f"✅ Email should be sent to: info@coinhubx.net")
-            print(f"✅ Clickable URL: https://p2pcryptomarket.preview.emergentagent.com/admin/disputes?dispute_id={self.dispute_id}")
+            print(f"✅ Clickable URL: https://p2pcryptomarket.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
+            print(f"✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
             print(f"\n🔍 CHECK BACKEND LOGS:")
             print(f"   Look for: '✅ Admin email alert sent for dispute {self.dispute_id}'")
             return 0
