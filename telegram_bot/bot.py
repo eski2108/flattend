@@ -51,12 +51,56 @@ class CoinHubXBot:
         self.application = None
         
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /start command"""
+        """Handle /start command - Links Telegram to CoinHubX account"""
         user = update.effective_user
-        await update.message.reply_text(
-            f"🚀 Welcome to CoinHubX, {user.first_name}!\n\n"
-            f"I'm your trading assistant. Use /help to see available commands."
-        )
+        chat_id = update.effective_chat.id
+        
+        # Check if user_id was passed as parameter (from Connect Telegram button)
+        if context.args and len(context.args) > 0:
+            user_id = context.args[0]
+            
+            # Link telegram_chat_id to user account via backend API
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(
+                        f"{BACKEND_URL}/telegram/link",
+                        json={
+                            "user_id": user_id,
+                            "telegram_chat_id": str(chat_id),
+                            "telegram_username": user.username or user.first_name
+                        }
+                    ) as response:
+                        if response.status == 200:
+                            await update.message.reply_text(
+                                f"✅ Success!\n\n"
+                                f"Your Telegram account has been linked to CoinHubX.\n\n"
+                                f"You'll now receive notifications for:\n"
+                                f"• P2P order updates\n"
+                                f"• Referral earnings\n"
+                                f"• Deposits & withdrawals\n"
+                                f"• Important alerts\n\n"
+                                f"Use /help to see available commands."
+                            )
+                            logger.info(f"Linked user {user_id} to chat_id {chat_id}")
+                        else:
+                            await update.message.reply_text(
+                                "❌ Failed to link account. Please try again from the website."
+                            )
+            except Exception as e:
+                logger.error(f"Error linking account: {e}")
+                await update.message.reply_text(
+                    "❌ Error linking account. Please try again."
+                )
+        else:
+            # No user_id parameter - show instructions
+            await update.message.reply_text(
+                f"🚀 Welcome to CoinHubX, {user.first_name}!\n\n"
+                f"To connect your account:\n"
+                f"1. Go to https://coinhubx.com/settings\n"
+                f"2. Click 'Connect Telegram'\n"
+                f"3. You'll be redirected here automatically\n\n"
+                f"Use /help to see available commands."
+            )
         
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /help command"""
