@@ -22404,6 +22404,37 @@ async def get_monetization_settings():
 async def update_monetization_settings(updates: Dict):
     """Update monetization settings - Admin only"""
     try:
+        # VALIDATE SPREAD SETTINGS TO PREVENT PLATFORM LOSS
+        if "admin_sell_spread_percent" in updates:
+            spread = updates["admin_sell_spread_percent"]
+            if spread <= 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"❌ CRITICAL ERROR: admin_sell_spread_percent is {spread}%. "
+                           f"Admin MUST sell ABOVE market (positive spread like +3%). "
+                           f"Current value would cause PLATFORM LOSS!"
+                )
+            if spread < 0.5:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"⚠️ Spread too small: {spread}%. Minimum safe spread is 0.5%."
+                )
+        
+        if "admin_buy_spread_percent" in updates:
+            spread = updates["admin_buy_spread_percent"]
+            if spread >= 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"❌ CRITICAL ERROR: admin_buy_spread_percent is {spread}%. "
+                           f"Admin MUST buy BELOW market (negative spread like -2.5%). "
+                           f"Current value would cause PLATFORM LOSS!"
+                )
+            if abs(spread) < 0.5:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"⚠️ Spread too small: {spread}%. Minimum safe spread is ±0.5%."
+                )
+        
         # Add metadata
         updates["updated_at"] = datetime.now(timezone.utc).isoformat()
         updates["updated_by"] = updates.get("admin_id", "admin")
