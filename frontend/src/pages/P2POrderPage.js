@@ -23,6 +23,8 @@ export default function P2POrderPage() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackRating, setFeedbackRating] = useState('positive');
   const [feedbackComment, setFeedbackComment] = useState('');
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [checkingBlock, setCheckingBlock] = useState(true);
 
   // Show feedback modal for completed trades
   useEffect(() => {
