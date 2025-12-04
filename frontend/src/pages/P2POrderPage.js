@@ -281,7 +281,7 @@ export default function P2POrderPage() {
       
       if (response.data.success) {
         setIsBlocked(!isBlocked);
-        toast.success(isBlocked ? '✅ User unblocked' : '🚫 User blocked - they will no longer appear in your marketplace');
+        toast.success(isBlocked ? '✅ User unblocked - Marketplace will update' : '🚫 User blocked - Redirecting to marketplace...');
         
         // If blocked a favourite, remove from favourites
         if (!isBlocked) {
@@ -294,6 +294,11 @@ export default function P2POrderPage() {
             console.error('Failed to remove from favourites:', e);
           }
         }
+        
+        // Redirect to marketplace after blocking so user sees updated list
+        setTimeout(() => {
+          navigate('/p2p');
+        }, 1500);
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to update block status');
