@@ -39,6 +39,7 @@ const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const TraderBalance = lazy(() => import("@/pages/TraderBalance"));
 const MyOrders = lazy(() => import("@/pages/MyOrders"));
 const OrderDetails = lazy(() => import("@/pages/OrderDetails"));
+const P2POrderPage = lazy(() => import("@/pages/P2POrderPage"));
 const OrderPreview = lazy(() => import("@/pages/OrderPreview"));
 const PreviewOrder = lazy(() => import("@/pages/PreviewOrder"));
 const P2PTrading = lazy(() => import("@/pages/P2PTrading"));
