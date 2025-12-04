@@ -251,12 +251,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
-          {/* AI + Tawk.to Chat Widget - Shows on ALL pages */}
+          {/* AI Chat Widget - Shows on ALL pages */}
           <ChatWidget />
         </BrowserRouter>
-        
-        {/* Support Chat Widget - Shows on all pages */}
-        <SupportChatWidget />
       </div>
     </WalletProvider>
     </CurrencyProvider>
