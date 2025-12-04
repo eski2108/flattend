@@ -6814,22 +6814,40 @@ async def register_user(request: RegisterRequest, req: Request):
     # ============================================================
     referrer_user_id = None
     referral_code_used = None
+    referral_tier_used = "standard"  # Default to standard
     
     if request.referral_code:
         try:
-            # Look up referrer by referral code
-            referrer_data = await db.referral_codes.find_one({"referral_code": request.referral_code})
+            # Look up referrer by referral code (check both standard and golden codes)
+            referrer_data = await db.referral_codes.find_one({
+                "$or": [
+                    {"referral_code": request.referral_code},
+                    {"standard_code": request.referral_code},
+                    {"golden_code": request.referral_code}
+                ]
+            })
             
             if referrer_data:
                 referrer_user_id = referrer_data["user_id"]
                 referral_code_used = request.referral_code
                 
+                # Determine which tier was used
+                if referrer_data.get("golden_code") == request.referral_code:
+                    referral_tier_used = "golden"
+                elif referrer_data.get("standard_code") == request.referral_code:
+                    referral_tier_used = "standard"
+                else:
+                    # Old referral code system - check tier parameter
+                    referral_tier_used = request.referral_tier or "standard"
+                
                 # Set referred_by to the referrer's USER_ID (CRITICAL!)
                 account_dict['referred_by'] = referrer_user_id
                 account_dict['referral_code_used'] = referral_code_used
+                account_dict['referral_tier'] = referral_tier_used  # Store tier used at signup
+                account_dict['referred_via_link'] = referral_tier_used  # For commission calculator
                 account_dict['referral_applied_at'] = datetime.now(timezone.utc).isoformat()
                 
-                logger.info(f"✅ Referral link used: {request.referral_code} → Referrer: {referrer_user_id}")
+                logger.info(f"✅ Referral link used: {request.referral_code} → Referrer: {referrer_user_id} (Tier: {referral_tier_used})")
             else:
                 logger.warning(f"⚠️ Invalid referral code provided: {request.referral_code}")
         except Exception as ref_error:
