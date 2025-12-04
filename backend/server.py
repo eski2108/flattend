@@ -22573,6 +22573,9 @@ async def open_p2p_dispute(request: Request):
             }
         )
         
+        # Post system message
+        await post_system_message(trade_id, "⚠️ A dispute has been opened. Admin is reviewing the case. Please do not take any further action.")
+        
         logger.info(f"✅ Dispute {dispute_id} opened for trade {trade_id}")
         
         return {
