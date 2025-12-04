@@ -4,7 +4,6 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-import CoinSparkline from '@/components/widgets/CoinSparkline';
 import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat, ChevronDown, Clock, Lock } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
