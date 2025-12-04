@@ -33,6 +33,21 @@ async def p2p_create_trade_with_wallet(
         if not sell_order or sell_order["status"] != "active":
             raise HTTPException(status_code=400, detail="Offer not available")
         
+        seller_id = sell_order["seller_id"]
+        
+        # **BLOCKING VALIDATION**: Check if users have blocked each other
+        buyer_blocks_doc = await db.user_blocks.find_one({"user_id": buyer_id})
+        buyer_blocked_users = buyer_blocks_doc.get("blocked_users", []) if buyer_blocks_doc else []
+        
+        seller_blocks_doc = await db.user_blocks.find_one({"user_id": seller_id})
+        seller_blocked_users = seller_blocks_doc.get("blocked_users", []) if seller_blocks_doc else []
+        
+        if seller_id in buyer_blocked_users:
+            raise HTTPException(status_code=403, detail="You have blocked this seller. Unblock them to trade.")
+        
+        if buyer_id in seller_blocked_users:
+            raise HTTPException(status_code=403, detail="This seller has blocked you. Cannot create trade.")
+        
         # Validate buyer wallet (temporarily disabled for testing)
         # wallet_validation = validate_wallet_address(
         #     buyer_wallet_address,
