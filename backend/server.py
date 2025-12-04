@@ -17546,8 +17546,13 @@ async def create_dispute(request: dict):
             raise HTTPException(status_code=400, detail="trade_id and user_id required")
         
         # Get trade details
+        logger.info(f"Looking for trade_id: {trade_id}")
         trade = await db.p2p_trades.find_one({"trade_id": trade_id})
+        logger.info(f"Trade found: {trade is not None}")
         if not trade:
+            # Check if ANY trades exist
+            count = await db.p2p_trades.count_documents({})
+            logger.error(f"Trade {trade_id} not found. Total p2p_trades in DB: {count}")
             raise HTTPException(status_code=404, detail="Trade not found")
         
         # Check if user is buyer or seller
