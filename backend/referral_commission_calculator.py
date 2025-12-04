@@ -34,11 +34,17 @@ class ReferralCommissionCalculator:
             (commission_amount, commission_rate, tier_used)
         """
         try:
-            # Get the referral relationship record
-            referred_user = await self.db.users.find_one(
+            # Get the referral relationship record (check user_accounts first, then users)
+            referred_user = await self.db.user_accounts.find_one(
                 {"user_id": referred_user_id},
                 {"referred_by": 1, "referral_tier": 1, "referred_via_link": 1, "_id": 0}
             )
+            
+            if not referred_user:
+                referred_user = await self.db.users.find_one(
+                    {"user_id": referred_user_id},
+                    {"referred_by": 1, "referral_tier": 1, "referred_via_link": 1, "_id": 0}
+                )
             
             if not referred_user or referred_user.get("referred_by") != referrer_user_id:
                 logger.warning(f"User {referred_user_id} not referred by {referrer_user_id}")
