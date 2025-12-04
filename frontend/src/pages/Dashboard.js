@@ -68,12 +68,14 @@ export default function Dashboard() {
         }
       });
       if (res.data.success) {
+        const value = res.data.current_value || 0;
         console.log('🔍 Dashboard API Response:', {
-          current_value: res.data.current_value,
+          current_value: value,
           timestamp: new Date().toISOString(),
           url: res.config.url
         });
-        setTotalValue(res.data.current_value || 0);
+        console.log(`💰 DASHBOARD PORTFOLIO VALUE: £${value.toFixed(2)}`);
+        setTotalValue(value);
         setPortfolioData({
           change24h: res.data.plPercent || 0, // Use P/L percentage as 24h change
           totalAssets: 5, // We know user has 5 different assets
