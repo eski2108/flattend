@@ -174,9 +174,16 @@ class IsolatedWalletService:
             return False
     
     async def lock_balance(self, user_id: str, currency: str, amount: float,
-                          reference_id: str) -> bool:
+                          lock_type: str, reference_id: str) -> bool:
         """
         Lock balance for escrow/pending operations
+        
+        Args:
+            user_id: User whose balance to lock
+            currency: Currency to lock (BTC, ETH, etc.)
+            amount: Amount to lock
+            lock_type: Type of lock (p2p_escrow, withdrawal_pending, etc.)
+            reference_id: Reference ID (trade_id, withdrawal_id, etc.)
         """
         try:
             amount = float(amount)
