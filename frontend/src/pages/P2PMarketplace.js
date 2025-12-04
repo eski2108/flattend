@@ -749,30 +749,38 @@ function P2PMarketplace() {
             border: '1px solid rgba(0, 198, 255, 0.3)',
             borderRadius: '12px'
           }}>
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <IoFilter size={18} color="#00C6FF" />
+              <h3 style={{ margin: 0, color: '#00C6FF', fontSize: '16px', fontWeight: '700' }}>Advanced Filters</h3>
+            </div>
+            
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
               {/* Payment Methods Filter */}
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
-                  Payment Methods
+                  Payment Method
                 </label>
                 <select
-                  multiple
+                  value={filters.paymentMethod}
+                  onChange={(e) => setFilters({...filters, paymentMethod: e.target.value})}
                   style={{
                     width: '100%',
-                    padding: '8px',
+                    padding: '10px',
                     background: 'rgba(0, 0, 0, 0.3)',
                     border: '1px solid rgba(0, 198, 255, 0.3)',
                     borderRadius: '8px',
                     color: '#FFFFFF',
                     fontSize: '12px',
-                    minHeight: '80px'
+                    cursor: 'pointer',
+                    outline: 'none'
                   }}
                 >
-                  <option value="bank_transfer">Bank Transfer</option>
-                  <option value="paypal">PayPal</option>
-                  <option value="revolut">Revolut</option>
-                  <option value="wise">Wise</option>
-                  <option value="cash_app">Cash App</option>
+                  <option value="">All Payment Methods</option>
+                  <option value="bank_transfer">🏦 Bank Transfer</option>
+                  <option value="paypal">💳 PayPal</option>
+                  <option value="revolut">💜 Revolut</option>
+                  <option value="wise">🌐 Wise</option>
+                  <option value="cash_app">💵 Cash App</option>
                 </select>
               </div>
 
@@ -782,21 +790,25 @@ function P2PMarketplace() {
                   Minimum Rating
                 </label>
                 <select
+                  value={filters.minRating}
+                  onChange={(e) => setFilters({...filters, minRating: e.target.value})}
                   style={{
                     width: '100%',
-                    padding: '8px',
+                    padding: '10px',
                     background: 'rgba(0, 0, 0, 0.3)',
                     border: '1px solid rgba(0, 198, 255, 0.3)',
                     borderRadius: '8px',
                     color: '#FFFFFF',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    outline: 'none'
                   }}
                 >
                   <option value="">Any Rating</option>
-                  <option value="4.5">4.5★ and above</option>
-                  <option value="4.0">4.0★ and above</option>
-                  <option value="3.5">3.5★ and above</option>
-                  <option value="3.0">3.0★ and above</option>
+                  <option value="4.5">⭐ 4.5 and above</option>
+                  <option value="4.0">⭐ 4.0 and above</option>
+                  <option value="3.5">⭐ 3.5 and above</option>
+                  <option value="3.0">⭐ 3.0 and above</option>
                 </select>
               </div>
 
@@ -806,20 +818,25 @@ function P2PMarketplace() {
                   Min Completion Rate
                 </label>
                 <select
+                  value={filters.minCompletionRate}
+                  onChange={(e) => setFilters({...filters, minCompletionRate: e.target.value})}
                   style={{
                     width: '100%',
-                    padding: '8px',
+                    padding: '10px',
                     background: 'rgba(0, 0, 0, 0.3)',
                     border: '1px solid rgba(0, 198, 255, 0.3)',
                     borderRadius: '8px',
                     color: '#FFFFFF',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    outline: 'none'
                   }}
                 >
                   <option value="">Any Rate</option>
-                  <option value="95">95% and above</option>
-                  <option value="90">90% and above</option>
-                  <option value="80">80% and above</option>
+                  <option value="95">✅ 95% and above</option>
+                  <option value="90">✅ 90% and above</option>
+                  <option value="80">✅ 80% and above</option>
+                  <option value="70">✅ 70% and above</option>
                 </select>
               </div>
 
@@ -829,14 +846,18 @@ function P2PMarketplace() {
                   Country/Region
                 </label>
                 <select
+                  value={filters.country}
+                  onChange={(e) => setFilters({...filters, country: e.target.value})}
                   style={{
                     width: '100%',
-                    padding: '8px',
+                    padding: '10px',
                     background: 'rgba(0, 0, 0, 0.3)',
                     border: '1px solid rgba(0, 198, 255, 0.3)',
                     borderRadius: '8px',
                     color: '#FFFFFF',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    outline: 'none'
                   }}
                 >
                   <option value="">All Countries</option>
@@ -844,36 +865,171 @@ function P2PMarketplace() {
                   <option value="US">🇺🇸 United States</option>
                   <option value="EU">🇪🇺 European Union</option>
                   <option value="IN">🇮🇳 India</option>
+                  <option value="NG">🇳🇬 Nigeria</option>
+                  <option value="CA">🇨🇦 Canada</option>
                 </select>
+              </div>
+
+              {/* Price Range */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
+                  Price Range (Min)
+                </label>
+                <input
+                  type="number"
+                  value={filters.minPrice}
+                  onChange={(e) => setFilters({...filters, minPrice: e.target.value})}
+                  placeholder="Min Price"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: '#8F9BB3', marginBottom: '8px', fontWeight: '600' }}>
+                  Price Range (Max)
+                </label>
+                <input
+                  type="number"
+                  value={filters.maxPrice}
+                  onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
+                  placeholder="Max Price"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    outline: 'none'
+                  }}
+                />
               </div>
             </div>
 
-            {/* Save Filters Button */}
-            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+            {/* Toggle Filters */}
+            <div style={{ marginTop: '20px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px',
+                background: filters.verifiedOnly ? 'rgba(0, 198, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)',
+                border: `1px solid ${filters.verifiedOnly ? 'rgba(0, 198, 255, 0.5)' : 'rgba(143, 155, 179, 0.3)'}`,
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={filters.verifiedOnly}
+                  onChange={(e) => setFilters({...filters, verifiedOnly: e.target.checked})}
+                  style={{ cursor: 'pointer' }}
+                />
+                <IoShield size={16} color={filters.verifiedOnly ? '#00C6FF' : '#8F9BB3'} />
+                <span style={{ color: filters.verifiedOnly ? '#00C6FF' : '#8F9BB3', fontSize: '12px', fontWeight: '600' }}>
+                  Verified Only
+                </span>
+              </label>
+
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px',
+                background: filters.newSellerOnly ? 'rgba(0, 198, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)',
+                border: `1px solid ${filters.newSellerOnly ? 'rgba(0, 198, 255, 0.5)' : 'rgba(143, 155, 179, 0.3)'}`,
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={filters.newSellerOnly}
+                  onChange={(e) => setFilters({...filters, newSellerOnly: e.target.checked})}
+                  style={{ cursor: 'pointer' }}
+                />
+                <span style={{ color: filters.newSellerOnly ? '#00C6FF' : '#8F9BB3', fontSize: '12px', fontWeight: '600' }}>
+                  New Sellers
+                </span>
+              </label>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
               <button
+                onClick={() => {
+                  setFilters({
+                    paymentMethod: '',
+                    minPrice: '',
+                    maxPrice: '',
+                    minAmount: '',
+                    maxAmount: '',
+                    minRating: '',
+                    minCompletionRate: '',
+                    verifiedOnly: false,
+                    fastPaymentOnly: false,
+                    trustedOnly: false,
+                    favoritesOnly: false,
+                    newSellerOnly: false,
+                    country: '',
+                    region: ''
+                  });
+                  toast.success('Filters reset!');
+                }}
                 style={{
-                  padding: '10px 20px',
+                  padding: '12px 24px',
                   background: 'rgba(143, 155, 179, 0.1)',
                   border: '1px solid rgba(143, 155, 179, 0.3)',
                   borderRadius: '8px',
                   color: '#8F9BB3',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(143, 155, 179, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(143, 155, 179, 0.1)';
                 }}
               >
-                Reset Filters
+                🔄 Reset Filters
               </button>
               <button
+                onClick={() => {
+                  localStorage.setItem('p2p_saved_filters', JSON.stringify(filters));
+                  toast.success('✅ Filters saved as default!');
+                }}
                 style={{
-                  padding: '10px 20px',
+                  padding: '12px 24px',
                   background: 'linear-gradient(135deg, #00C6FF, #0096CC)',
                   border: 'none',
                   borderRadius: '8px',
                   color: '#FFFFFF',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontWeight: '700',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 12px rgba(0, 198, 255, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 16px rgba(0, 198, 255, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(0, 198, 255, 0.3)';
                 }}
               >
                 💾 Save as Default
