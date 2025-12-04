@@ -567,7 +567,7 @@ class ReferralAnalytics:
                             last_activity = datetime.fromisoformat(last_activity.replace('Z', '+00:00'))
                             days_since = (datetime.now(timezone.utc) - last_activity).days
                             is_active = days_since <= 30
-                        except:
+                        except (ValueError, AttributeError):
                             pass
                 
                 result.append({
