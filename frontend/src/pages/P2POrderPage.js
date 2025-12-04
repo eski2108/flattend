@@ -93,10 +93,21 @@ export default function P2POrderPage() {
         if (response.data.messages) {
           setMessages(response.data.messages);
         }
+        
+        // Check if this trade involves a blocked user
+        if (response.data.blocked) {
+          toast.error('This trade involves a blocked user. Redirecting...');
+          setTimeout(() => navigate('/p2p'), 2000);
+        }
       }
     } catch (error) {
       console.error('Error fetching trade:', error);
-      toast.error('Failed to load trade details');
+      if (error.response?.status === 403) {
+        toast.error('Access denied: User is blocked');
+        navigate('/p2p');
+      } else {
+        toast.error('Failed to load trade details');
+      }
     } finally {
       setLoading(false);
     }
