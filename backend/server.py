@@ -23482,7 +23482,7 @@ async def get_portfolio_summary(user_id: str):
                     if coin_symbol != "_id" and isinstance(price_data, dict):
                         prices[coin_symbol] = price_data.get('gbp', 0)
         
-        # Calculate current portfolio value
+        # 🔒 LOCKED: Calculate current portfolio value in GBP
         current_value = Decimal('0')
         
         for balance in wallet_balances:
@@ -23495,7 +23495,7 @@ async def get_portfolio_summary(user_id: str):
                 current_value += amount
             else:
                 price = Decimal(str(prices.get(coin, 0)))
-                current_value += amount * price
+                current_value += amount * price  # Calculate in GBP
         
         for saving in savings_balances:
             coin = saving.get("currency")
