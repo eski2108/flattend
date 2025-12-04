@@ -68,6 +68,11 @@ export default function Dashboard() {
         }
       });
       if (res.data.success) {
+        console.log('🔍 Dashboard API Response:', {
+          current_value: res.data.current_value,
+          timestamp: new Date().toISOString(),
+          url: res.config.url
+        });
         setTotalValue(res.data.current_value || 0);
         setPortfolioData({
           change24h: res.data.plPercent || 0, // Use P/L percentage as 24h change
