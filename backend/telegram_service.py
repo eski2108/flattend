@@ -52,8 +52,8 @@ class TelegramService:
         if not order:
             return
         
-        buyer = await self.db.user_accounts.find_one({"user_id": order['buyer_id']})
-        seller = await self.db.user_accounts.find_one({"user_id": order['seller_id']})
+        buyer = await self.user_service.get_user_by_id(order['buyer_id'])
+        seller = await self.user_service.get_user_by_id(order['seller_id'])
         
         # Notify buyer
         if buyer and buyer.get('telegram_chat_id'):
