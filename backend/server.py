@@ -17906,6 +17906,58 @@ async def resolve_dispute(dispute_id: str, request: dict):
             }
         )
         
+        # Determine winner and loser
+        winner = "buyer" if resolution == "release_to_buyer" else "seller"
+        loser = "seller" if winner == "buyer" else "buyer"
+        winner_id = dispute.get("buyer_id") if winner == "buyer" else dispute.get("seller_id")
+        loser_id = dispute.get("seller_id") if winner == "buyer" else dispute.get("buyer_id")
+        
+        # Charge £5 dispute fee to loser
+        dispute_fee = 5.0
+        fee_transaction_id = f"fee_dispute_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+        
+        await db.fee_transactions.insert_one({
+            "transaction_id": fee_transaction_id,
+            "user_id": loser_id,
+            "type": "dispute_fee",
+            "amount": dispute_fee,
+            "currency": "GBP",
+            "dispute_id": dispute_id,
+            "trade_id": dispute.get("trade_id"),
+            "status": "completed",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Update admin revenue
+        await db.admin_revenue.update_one(
+            {"revenue_type": "dispute_fees"},
+            {
+                "$inc": {"total_amount": dispute_fee},
+                "$push": {
+                    "transactions": {
+                        "transaction_id": fee_transaction_id,
+                        "amount": dispute_fee,
+                        "timestamp": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            },
+            upsert=True
+        )
+        
+        # Release crypto from escrow (if buyer wins)
+        if resolution == "release_to_buyer":
+            # Update buyer's balance
+            await db.internal_balances.update_one(
+                {"user_id": winner_id},
+                {
+                    "$inc": {
+                        f"balances.{dispute.get('currency', 'BTC')}": dispute.get('amount', 0)
+                    }
+                },
+                upsert=True
+            )
+            logger.info(f"✅ Released {dispute.get('amount')} {dispute.get('currency')} to buyer {winner_id}")
+        
         # Update trade status
         trade_status = "completed" if resolution == "release_to_buyer" else "cancelled"
         await db.p2p_trades.update_one(
@@ -17913,14 +17965,33 @@ async def resolve_dispute(dispute_id: str, request: dict):
             {
                 "$set": {
                     "status": trade_status,
-                    "resolved_at": datetime.now(timezone.utc).isoformat()
+                    "resolved_at": datetime.now(timezone.utc).isoformat(),
+                    "dispute_winner": winner,
+                    "dispute_fee_charged_to": loser_id
                 }
             }
         )
         
+        # Store resolution details in dispute
+        await db.p2p_disputes.update_one(
+            {"dispute_id": dispute_id},
+            {
+                "$set": {
+                    "winner": winner,
+                    "loser": loser,
+                    "dispute_fee_charged": dispute_fee
+                }
+            }
+        )
+        
+        logger.info(f"✅ Dispute {dispute_id} resolved. Winner: {winner}, Fee charged to: {loser_id}")
+        
         return {
             "success": True,
-            "message": f"Dispute resolved: {resolution}"
+            "message": f"Dispute resolved: {resolution}",
+            "winner": winner,
+            "fee_charged": dispute_fee,
+            "fee_charged_to": loser
         }
     except HTTPException:
         raise
