@@ -59,7 +59,8 @@ export default function Dashboard() {
 
   const loadData = async (userId) => {
     try {
-      const res = await axios.get(`${API}/api/portfolio/summary/${userId}`);
+      // Cache-busting: Add timestamp to prevent stale data
+      const res = await axios.get(`${API}/api/portfolio/summary/${userId}?_t=${Date.now()}`);
       if (res.data.success) {
         setTotalValue(res.data.current_value || 0);
         setPortfolioData({
