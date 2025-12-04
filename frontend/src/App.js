@@ -186,6 +186,7 @@ function App() {
             <Route path="/admin/revenue" element={<AdminRevenueDashboard />} />
             <Route path="/admin/support-settings" element={<AdminSupportSettings />} />
             <Route path="/order/:orderId" element={<OrderDetails />} />
+            <Route path="/order/:tradeId" element={<P2POrderPage />} />
             <Route path="/fees" element={<Fees />} />
             <Route path="/payment-methods" element={<PaymentMethods />} />
             <Route path="/wallet" element={<WalletPage />} />
