@@ -122,7 +122,12 @@ from notifications import (
     get_unread_count,
     mark_notifications_as_read,
     mark_all_as_read,
-    broadcast_notification
+    broadcast_notification,
+    notify_p2p_payment_marked,
+    notify_p2p_crypto_released,
+    notify_p2p_trade_cancelled,
+    notify_p2p_dispute_opened,
+    notify_p2p_dispute_resolved
 )
 from platform_wallet import (
     get_platform_balance,
