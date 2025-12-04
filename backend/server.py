@@ -13134,11 +13134,9 @@ async def admin_get_referral_status(user_id: str):
     Admin-only: Get referral status and stats for a user.
     """
     try:
-        user = await db.users.find_one(
-            {"user_id": user_id},
-            {"username": 1, "email": 1, "is_golden_referrer": 1, 
-             "golden_activated_at": 1, "golden_activated_by": 1, "_id": 0}
-        )
+        # Use UserService for unified access
+        user_service = get_user_service(db)
+        user = await user_service.get_user_by_id(user_id)
         
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
