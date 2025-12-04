@@ -170,6 +170,7 @@ function App() {
             <Route path="/p2p-express" element={<P2PExpress />} />
             <Route path="/referrals" element={<ReferralDashboardComprehensive />} />
             <Route path="/referrals/old" element={<ReferralDashboardNew />} />
+            <Route path="/merchant/profile/:userId" element={<MerchantProfile />} />
             <Route path="/referrals/premium" element={<ReferralsPage />} />
             <Route path="/referrals/enhanced" element={<EnhancedReferralDashboard />} />
             <Route path="/referrals/new" element={<ReferralsPageNew />} />
