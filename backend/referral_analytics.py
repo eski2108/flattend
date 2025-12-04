@@ -151,17 +151,6 @@ class ReferralAnalytics:
                 breakdown[currency]["count"] += 1
                 total_gbp += float(amount)  # Assuming all is GBP or converted
             
-            total_gbp = 0
-            breakdown = {}
-            for item in result:
-                currency = item["_id"]
-                amount = item["total"]
-                breakdown[currency] = {
-                    "amount": amount,
-                    "count": item["count"]
-                }
-                total_gbp += amount  # Assuming all is GBP or converted
-            
             return {
                 "total_gbp": total_gbp,
                 "by_currency": breakdown
