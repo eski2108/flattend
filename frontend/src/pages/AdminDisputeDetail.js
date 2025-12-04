@@ -211,21 +211,21 @@ export default function AdminDisputeDetail() {
               </div>
 
               {/* Dispute Details */}
-              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4">Dispute Reason</h2>
+              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold text-white mb-3 md:mb-4">Dispute Reason</h2>
                 <div className="space-y-3">
-                  <div>
-                    <p className="text-gray-400 text-sm">Reason</p>
-                    <p className="text-orange-400 font-semibold capitalize">{dispute.reason?.replace(/_/g, ' ')}</p>
+                  <div className="bg-slate-900/50 p-3 rounded-lg">
+                    <p className="text-gray-400 text-xs mb-1">Reason</p>
+                    <p className="text-orange-400 font-semibold capitalize text-sm">{dispute.reason?.replace(/_/g, ' ') || 'Not specified'}</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded-lg">
+                    <p className="text-gray-400 text-xs mb-1">Initiated By</p>
+                    <p className="text-white capitalize text-sm">{dispute.initiated_by || 'Unknown'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Initiated By</p>
-                    <p className="text-white capitalize">{dispute.initiated_by}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 text-sm">Description</p>
-                    <div className="bg-slate-900/50 rounded-lg p-4 mt-2">
-                      <p className="text-white">{dispute.description}</p>
+                    <p className="text-gray-400 text-xs mb-2">Description</p>
+                    <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-3">
+                      <p className="text-white text-sm">{dispute.description || 'No description provided'}</p>
                     </div>
                   </div>
                 </div>
