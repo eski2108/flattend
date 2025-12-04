@@ -227,3 +227,88 @@ async def broadcast_notification(
     except Exception as e:
         logger.error(f"Failed to broadcast notification: {str(e)}")
         return 0
+
+
+# P2P-specific notification helpers
+async def notify_p2p_payment_marked(db, trade_id: str, buyer_id: str, seller_id: str, crypto_amount: float, crypto: str):
+    """Notify seller that buyer marked payment as sent"""
+    await create_notification(
+        db=db,
+        user_id=seller_id,
+        notification_type='p2p_payment_marked',
+        title='💳 Payment Marked as Sent',
+        message=f'Buyer has marked payment as sent for {crypto_amount} {crypto}. Please verify and release.',
+        link=f'/p2p/order/{trade_id}',
+        metadata={'trade_id': trade_id, 'buyer_id': buyer_id}
+    )
+
+
+async def notify_p2p_crypto_released(db, trade_id: str, buyer_id: str, seller_id: str, crypto_amount: float, crypto: str):
+    """Notify buyer that seller released crypto"""
+    await create_notification(
+        db=db,
+        user_id=buyer_id,
+        notification_type='p2p_crypto_released',
+        title='✅ Crypto Released',
+        message=f'Seller has released {crypto_amount} {crypto}. Trade completed!',
+        link=f'/p2p/order/{trade_id}',
+        metadata={'trade_id': trade_id, 'seller_id': seller_id}
+    )
+
+
+async def notify_p2p_trade_cancelled(db, trade_id: str, buyer_id: str, seller_id: str, crypto: str):
+    """Notify both parties that trade was cancelled"""
+    for user_id in [buyer_id, seller_id]:
+        await create_notification(
+            db=db,
+            user_id=user_id,
+            notification_type='p2p_trade_cancelled',
+            title='❌ Trade Cancelled',
+            message=f'P2P trade for {crypto} has been cancelled.',
+            link=f'/p2p/order/{trade_id}',
+            metadata={'trade_id': trade_id}
+        )
+
+
+async def notify_p2p_dispute_opened(db, trade_id: str, buyer_id: str, seller_id: str, reported_by: str):
+    """Notify both parties and admin that dispute was opened"""
+    counterparty_id = seller_id if reported_by == buyer_id else buyer_id
+    
+    # Notify counterparty
+    await create_notification(
+        db=db,
+        user_id=counterparty_id,
+        notification_type='p2p_dispute_opened',
+        title='⚠️ Dispute Opened',
+        message='A dispute has been opened for your P2P trade. Admin is reviewing.',
+        link=f'/p2p/order/{trade_id}',
+        metadata={'trade_id': trade_id, 'reported_by': reported_by}
+    )
+    
+    # Notify admins
+    admins = await db.users.find({'role': 'admin'}).to_list(length=100)
+    for admin in admins:
+        await create_notification(
+            db=db,
+            user_id=admin['user_id'],
+            notification_type='p2p_dispute_opened',
+            title='⚠️ New P2P Dispute',
+            message=f'New dispute opened for trade {trade_id}. Please review.',
+            link=f'/admin/disputes/{trade_id}',
+            metadata={'trade_id': trade_id, 'reported_by': reported_by}
+        )
+
+
+async def notify_p2p_dispute_resolved(db, trade_id: str, buyer_id: str, seller_id: str, winner: str):
+    """Notify both parties that dispute was resolved"""
+    for user_id in [buyer_id, seller_id]:
+        is_winner = user_id == winner
+        await create_notification(
+            db=db,
+            user_id=user_id,
+            notification_type='p2p_dispute_resolved',
+            title='✅ Dispute Resolved' if is_winner else '❌ Dispute Resolved',
+            message=f'Dispute has been resolved in {"your" if is_winner else "counterparty\'s"} favor.',
+            link=f'/p2p/order/{trade_id}',
+            metadata={'trade_id': trade_id, 'winner': winner}
+        )
