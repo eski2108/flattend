@@ -17,6 +17,9 @@ import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import WalletPage from "@/pages/WalletPage";
 import SpotTrading from "@/pages/SpotTrading";
+// Support Chat Widget
+import SupportChatWidget from "@/components/SupportChatWidget";
+
 // Auth pages - load immediately (user needs these first)
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
