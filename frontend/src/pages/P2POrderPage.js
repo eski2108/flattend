@@ -187,6 +187,33 @@ export default function P2POrderPage() {
     }
   };
 
+  const handleSubmitFeedback = async () => {
+    if (!feedbackComment.trim() && feedbackRating === '') {
+      toast.error('Please provide a rating');
+      return;
+    }
+    
+    setProcessing(true);
+    try {
+      const response = await axios.post(`${API}/api/p2p/trade/${tradeId}/feedback`, {
+        from_user_id: currentUser.user_id,
+        rating: feedbackRating,
+        comment: feedbackComment.trim()
+      });
+      
+      if (response.data.success) {
+        toast.success('✅ Feedback submitted!');
+        setShowFeedbackModal(false);
+        setFeedbackRating('positive');
+        setFeedbackComment('');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to submit feedback');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
