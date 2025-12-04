@@ -23119,6 +23119,114 @@ async def admin_resolve_p2p_dispute(trade_id: str, request: Request):
 
 
 # ================================
+# P2P FAVOURITES & BLOCKING
+# ================================
+
+@app.post("/api/p2p/favourites/add")
+async def add_favourite_merchant(request: Request):
+    """Add merchant to favourites"""
+    try:
+        data = await request.json()
+        user_id = data.get("user_id")
+        merchant_id = data.get("merchant_id")
+        
+        await db.user_favourites.update_one(
+            {"user_id": user_id},
+            {
+                "$addToSet": {"favourite_merchants": merchant_id},
+                "$set": {"updated_at": datetime.now()}
+            },
+            upsert=True
+        )
+        
+        return {"success": True, "message": "Merchant added to favourites"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/p2p/favourites/remove")
+async def remove_favourite_merchant(request: Request):
+    """Remove merchant from favourites"""
+    try:
+        data = await request.json()
+        user_id = data.get("user_id")
+        merchant_id = data.get("merchant_id")
+        
+        await db.user_favourites.update_one(
+            {"user_id": user_id},
+            {"$pull": {"favourite_merchants": merchant_id}}
+        )
+        
+        return {"success": True, "message": "Merchant removed from favourites"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/p2p/favourites/{user_id}")
+async def get_favourite_merchants(user_id: str):
+    """Get user's favourite merchants"""
+    try:
+        doc = await db.user_favourites.find_one({"user_id": user_id})
+        favourites = doc.get("favourite_merchants", []) if doc else []
+        
+        return {"success": True, "favourites": favourites}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/p2p/block/add")
+async def block_user(request: Request):
+    """Block a user from P2P"""
+    try:
+        data = await request.json()
+        user_id = data.get("user_id")
+        blocked_user_id = data.get("blocked_user_id")
+        
+        await db.user_blocks.update_one(
+            {"user_id": user_id},
+            {
+                "$addToSet": {"blocked_users": blocked_user_id},
+                "$set": {"updated_at": datetime.now()}
+            },
+            upsert=True
+        )
+        
+        return {"success": True, "message": "User blocked"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/p2p/block/remove")
+async def unblock_user(request: Request):
+    """Unblock a user"""
+    try:
+        data = await request.json()
+        user_id = data.get("user_id")
+        blocked_user_id = data.get("blocked_user_id")
+        
+        await db.user_blocks.update_one(
+            {"user_id": user_id},
+            {"$pull": {"blocked_users": blocked_user_id}}
+        )
+        
+        return {"success": True, "message": "User unblocked"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/p2p/blocked/{user_id}")
+async def get_blocked_users(user_id: str):
+    """Get user's blocked list"""
+    try:
+        doc = await db.user_blocks.find_one({"user_id": user_id})
+        blocked = doc.get("blocked_users", []) if doc else []
+        
+        return {"success": True, "blocked": blocked}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ================================
 # PRICE ALERTS ENDPOINTS
 # ================================
 
