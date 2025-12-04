@@ -22277,8 +22277,12 @@ async def get_p2p_trade_details(trade_id: str, user_id: str = Query(...)):
     - Chat messages
     """
     try:
+        logger.info(f"🔍 Fetching P2P trade: {trade_id} for user: {user_id}")
+        
         # Get trade
         trade = await db.p2p_trades.find_one({"trade_id": trade_id})
+        logger.info(f"🔍 Trade found: {trade is not None}")
+        
         if not trade:
             raise HTTPException(status_code=404, detail="Trade not found")
         
