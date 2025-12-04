@@ -54,20 +54,22 @@ export default function AdminDisputeDetail() {
     toast.success('Dispute link copied to clipboard');
   };
 
-  const sendAdminMessage = async () => {
+  const sendAdminMessage = async (recipient = 'all') => {
     if (!adminMessage.trim()) return;
 
     try {
       const response = await axios.post(`${API}/api/p2p/disputes/${disputeId}/message`, {
         sender_id: 'admin',
         sender_type: 'admin',
-        message: adminMessage
+        message: adminMessage,
+        recipient: recipient
       });
 
       if (response.data.success) {
         setAdminMessage('');
         loadDisputeDetails();
-        toast.success('Message sent');
+        const recipientText = recipient === 'all' ? 'both parties' : recipient;
+        toast.success(`Message sent to ${recipientText}`);
       }
     } catch (error) {
       console.error('Error sending message:', error);
