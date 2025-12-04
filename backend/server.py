@@ -26375,9 +26375,92 @@ async def auto_match_trade(request: dict):
             }
         
         elif trade_type == "sell":
-            # Similar logic for selling - match with best buyer
-            # For now, create a listing that buyers can match with
-            raise HTTPException(status_code=501, detail="Sell matching coming soon")
+            # Find best BUYER (match seller with buyer)
+            # In a real P2P system, we'd match with existing buy orders
+            # For this implementation, we'll find active buy listings
+            pipeline = [
+                {
+                    "$match": {
+                        "crypto": crypto,
+                        "side": "buy",  # Looking for buyers
+                        "status": "active",
+                        "min_limit": {"$lte": float(amount)},
+                        "max_limit": {"$gte": float(amount)},
+                        "buyer_uid": {"$ne": user_id}
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "users",
+                        "localField": "buyer_uid",
+                        "foreignField": "user_id",
+                        "as": "buyer_info"
+                    }
+                },
+                {
+                    "$addFields": {
+                        "buyer_rating": {"$arrayElemAt": ["$buyer_info.p2p_rating", 0]},
+                        "buyer_completion": {"$arrayElemAt": ["$buyer_info.p2p_positive_rate", 0]}
+                    }
+                },
+                {
+                    "$sort": {
+                        "price_fixed": -1,  # Highest price first (best for seller)
+                        "buyer_rating": -1,
+                        "buyer_completion": -1
+                    }
+                },
+                {"$limit": 1}
+            ]
+            
+            results = await db.p2p_listings.aggregate(pipeline).to_list(1)
+            
+            if not results:
+                raise HTTPException(status_code=404, detail="No buyers available")
+            
+            best_match = results[0]
+            
+            # Create trade (seller is user, buyer is matched)
+            trade_id = f"trade_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            
+            trade = {
+                "trade_id": trade_id,
+                "listing_id": best_match.get("listing_id"),
+                "buyer_id": best_match.get("buyer_uid"),
+                "seller_id": user_id,
+                "crypto": crypto,
+                "crypto_amount": float(amount),
+                "crypto_currency": crypto,
+                "fiat_amount": float(amount) * best_match.get("price_fixed", 0),
+                "fiat_currency": fiat_currency,
+                "status": "pending_payment",
+                "created_at": datetime.now(timezone.utc),
+                "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30),
+                "payment_methods": best_match.get("payment_methods", []),
+                "escrow_locked": True
+            }
+            
+            # Deduct crypto from seller's wallet (escrow)
+            await db.users.update_one(
+                {"user_id": user_id},
+                {"$inc": {f"wallets.{crypto}": -float(amount)}}
+            )
+            
+            await db.p2p_trades.insert_one(trade)
+            
+            logger.info(f"✅ Auto-matched seller {user_id} with buyer {best_match.get('buyer_uid')}")
+            
+            return {
+                "success": True,
+                "trade_id": trade_id,
+                "match": {
+                    "buyer_id": best_match.get("buyer_uid"),
+                    "price": best_match.get("price_fixed"),
+                    "rating": best_match.get("buyer_rating"),
+                    "completion_rate": best_match.get("buyer_completion")
+                },
+                "message": "Matched with best buyer"
+            }
         
     except HTTPException:
         raise
