@@ -178,7 +178,10 @@ class AdminLiquidityQuoteService:
             }
             
             # Store in dedicated collection
-            await self.db.admin_liquidity_quotes.insert_one(quote)
+            insert_result = await self.db.admin_liquidity_quotes.insert_one(quote)
+            
+            # Remove MongoDB _id before returning
+            quote.pop("_id", None)
             
             logger.info(
                 f"✅ Generated admin liquidity quote: {quote_id} | "
