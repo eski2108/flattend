@@ -621,22 +621,216 @@ export default function ReferralDashboardComprehensive() {
           </div>
         )}
 
-        {/* Placeholder for other tabs */}
-        {activeTab !== 'overview' && activeTab !== 'links' && (
+        {/* Earnings Tab */}
+        {activeTab === 'earnings' && (
           <div style={{
             background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
             borderRadius: '16px',
-            padding: '3rem',
-            border: '1px solid rgba(0, 240, 255, 0.3)',
-            textAlign: 'center'
+            padding: '2rem',
+            border: '1px solid rgba(0, 240, 255, 0.3)'
           }}>
-            <div style={{ fontSize: '48px', marginBottom: '1rem' }}>🚧</div>
-            <h3 style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '900', marginBottom: '0.5rem' }}>
-              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Section
+            <h3 style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '900', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              💰 Detailed Earnings History
             </h3>
-            <p style={{ color: '#888', fontSize: '14px' }}>
-              This section is under development and will be available soon!
-            </p>
+            {comprehensiveData?.commissions && comprehensiveData.commissions.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {comprehensiveData.commissions.map((commission, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '16px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(0, 240, 255, 0.2)'
+                  }}>
+                    <div>
+                      <div style={{ color: '#fff', fontWeight: '700', fontSize: '14px' }}>
+                        {commission.fee_type?.replace('_', ' ').toUpperCase() || 'Commission'}
+                      </div>
+                      <div style={{ color: '#888', fontSize: '12px' }}>
+                        {new Date(commission.created_at).toLocaleDateString('en-GB', { 
+                          day: '2-digit', 
+                          month: 'short', 
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ color: '#00FF88', fontWeight: '900', fontSize: '20px' }}>
+                        +£{commission.commission_amount?.toFixed(2) || '0.00'}
+                      </div>
+                      <div style={{ color: '#00F0FF', fontSize: '11px' }}>
+                        {commission.commission_rate}% rate
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                <div style={{ fontSize: '48px', marginBottom: '1rem' }}>💸</div>
+                <p style={{ fontSize: '16px' }}>No earnings yet</p>
+                <p style={{ fontSize: '14px', marginTop: '8px' }}>
+                  Share your referral link to start earning commissions!
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Activity Tab */}
+        {activeTab === 'activity' && (
+          <div style={{
+            background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
+            borderRadius: '16px',
+            padding: '2rem',
+            border: '1px solid rgba(0, 240, 255, 0.3)'
+          }}>
+            <h3 style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '900', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              📊 Referral Activity Timeline
+            </h3>
+            {comprehensiveData?.recent_referrals && comprehensiveData.recent_referrals.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {comprehensiveData.recent_referrals.map((ref, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '16px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(0, 240, 255, 0.2)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: '900',
+                        color: '#000'
+                      }}>
+                        {ref.referred_username?.charAt(0).toUpperCase() || '?'}
+                      </div>
+                      <div>
+                        <div style={{ color: '#fff', fontWeight: '700', fontSize: '14px' }}>
+                          {ref.referred_username || 'New User'}
+                        </div>
+                        <div style={{ color: '#888', fontSize: '12px' }}>
+                          Joined {new Date(ref.referred_at).toLocaleDateString('en-GB', { 
+                            day: '2-digit', 
+                            month: 'short', 
+                            year: 'numeric'
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{
+                      padding: '6px 12px',
+                      background: ref.status === 'active' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 215, 0, 0.2)',
+                      border: `1px solid ${ref.status === 'active' ? '#00FF88' : '#FFD700'}`,
+                      borderRadius: '20px',
+                      color: ref.status === 'active' ? '#00FF88' : '#FFD700',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase'
+                    }}>
+                      {ref.status || 'Pending'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                <div style={{ fontSize: '48px', marginBottom: '1rem' }}>🔍</div>
+                <p style={{ fontSize: '16px' }}>No activity yet</p>
+                <p style={{ fontSize: '14px', marginTop: '8px' }}>
+                  Your referral activity will appear here once people join using your link
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Leaderboard Tab */}
+        {activeTab === 'leaderboard' && (
+          <div style={{
+            background: 'linear-gradient(135deg, #1a1f3a 0%, #13182a 100%)',
+            borderRadius: '16px',
+            padding: '2rem',
+            border: '1px solid rgba(0, 240, 255, 0.3)'
+          }}>
+            <h3 style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '900', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              🏆 Top Referrers This Month
+            </h3>
+            {comprehensiveData?.leaderboard && comprehensiveData.leaderboard.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {comprehensiveData.leaderboard.slice(0, 10).map((leader, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '16px',
+                    background: idx === 0 ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05))' 
+                      : idx === 1 ? 'linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(192, 192, 192, 0.05))'
+                      : idx === 2 ? 'linear-gradient(135deg, rgba(205, 127, 50, 0.15), rgba(205, 127, 50, 0.05))'
+                      : 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '12px',
+                    border: `2px solid ${idx === 0 ? '#FFD700' : idx === 1 ? '#C0C0C0' : idx === 2 ? '#CD7F32' : 'rgba(0, 240, 255, 0.2)'}`
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        background: idx === 0 ? 'linear-gradient(135deg, #FFD700, #FFA500)' 
+                          : idx === 1 ? 'linear-gradient(135deg, #C0C0C0, #808080)'
+                          : idx === 2 ? 'linear-gradient(135deg, #CD7F32, #8B4513)'
+                          : 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: '900',
+                        color: '#000',
+                        fontSize: '16px'
+                      }}>
+                        #{idx + 1}
+                      </div>
+                      <div>
+                        <div style={{ color: '#fff', fontWeight: '700', fontSize: '14px' }}>
+                          {leader.username || `User ${idx + 1}`}
+                        </div>
+                        <div style={{ color: '#888', fontSize: '12px' }}>
+                          {leader.referral_count || 0} referrals
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ color: '#00FF88', fontWeight: '900', fontSize: '18px' }}>
+                        £{leader.total_earnings?.toFixed(2) || '0.00'}
+                      </div>
+                      <div style={{ color: '#00F0FF', fontSize: '11px' }}>
+                        Total earned
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                <div style={{ fontSize: '48px', marginBottom: '1rem' }}>👑</div>
+                <p style={{ fontSize: '16px' }}>Leaderboard loading...</p>
+                <p style={{ fontSize: '14px', marginTop: '8px' }}>
+                  Top referrers will be displayed here
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
