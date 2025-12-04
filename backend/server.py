@@ -22709,6 +22709,24 @@ async def submit_p2p_feedback(trade_id: str, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+async def post_system_message(trade_id: str, message: str):
+    """Post a system message in trade chat"""
+    try:
+        msg = {
+            "trade_id": trade_id,
+            "sender_id": "SYSTEM",
+            "message": message,
+            "attachment": None,
+            "timestamp": datetime.now()
+        }
+        
+        await db.p2p_trade_messages.insert_one(msg)
+        logger.info(f"📨 System message posted to trade {trade_id}")
+        
+    except Exception as e:
+        logger.error(f"❌ Post system message error: {str(e)}")
+
+
 async def update_user_rating_stats(user_id: str):
     """Update user's aggregated rating statistics"""
     try:
