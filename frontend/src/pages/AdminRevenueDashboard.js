@@ -243,7 +243,11 @@ const AdminRevenueDashboard = () => {
                     <p className="text-cyan-400 text-sm">{fee.percentage.toFixed(1)}%</p>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">No revenue stream data available</p>
+                </div>
+              )}
             </div>
           </div>
 
