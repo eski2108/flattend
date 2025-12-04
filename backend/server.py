@@ -23584,6 +23584,144 @@ async def get_complete_revenue(period: str = "all"):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@api_router.get("/admin/revenue/dashboard")
+async def get_admin_revenue_dashboard(timeframe: str = "all"):
+    """
+    Comprehensive Admin Revenue Dashboard
+    Aggregates all fee revenue, referral commissions, and provides complete breakdown
+    """
+    try:
+        from datetime import timedelta
+        
+        now = datetime.now(timezone.utc)
+        
+        # Calculate time range
+        if timeframe == "today":
+            start_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        elif timeframe == "week":
+            start_time = now - timedelta(days=7)
+        elif timeframe == "month":
+            start_time = now - timedelta(days=30)
+        else:  # all
+            start_time = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        
+        start_time_iso = start_time.isoformat()
+        
+        # Get all fee transactions
+        fee_txns = await db.fee_transactions.find({
+            "timestamp": {"$gte": start_time_iso}
+        }).to_list(100000)
+        
+        # Initialize aggregators
+        total_revenue = 0
+        net_revenue = 0
+        referral_commissions_paid = 0
+        total_transactions = len(fee_txns)
+        
+        by_fee_type = {}
+        by_currency = {}
+        recent_transactions = []
+        
+        for txn in fee_txns:
+            fee_type = txn.get("fee_type", "unknown")
+            currency = txn.get("currency", "GBP")
+            total_fee = float(txn.get("total_fee", 0))
+            admin_fee = float(txn.get("admin_fee", 0))
+            referrer_commission = float(txn.get("referrer_commission", 0))
+            
+            # Aggregate totals (assuming GBP or convert if needed)
+            total_revenue += total_fee
+            net_revenue += admin_fee
+            referral_commissions_paid += referrer_commission
+            
+            # By fee type
+            if fee_type not in by_fee_type:
+                by_fee_type[fee_type] = {
+                    "total_revenue": 0,
+                    "transaction_count": 0
+                }
+            by_fee_type[fee_type]["total_revenue"] += total_fee
+            by_fee_type[fee_type]["transaction_count"] += 1
+            
+            # By currency
+            if currency not in by_currency:
+                by_currency[currency] = {
+                    "total_revenue": 0,
+                    "net_revenue": 0,
+                    "referral_paid": 0
+                }
+            by_currency[currency]["total_revenue"] += total_fee
+            by_currency[currency]["net_revenue"] += admin_fee
+            by_currency[currency]["referral_paid"] += referrer_commission
+        
+        # Convert by_fee_type to sorted array with percentages
+        by_fee_type_array = []
+        for fee_type, data in by_fee_type.items():
+            percentage = (data["total_revenue"] / total_revenue * 100) if total_revenue > 0 else 0
+            by_fee_type_array.append({
+                "fee_type": fee_type,
+                "total_revenue": data["total_revenue"],
+                "transaction_count": data["transaction_count"],
+                "percentage": percentage
+            })
+        by_fee_type_array.sort(key=lambda x: x["total_revenue"], reverse=True)
+        
+        # Convert by_currency to array with percentages
+        by_currency_array = []
+        for currency, data in by_currency.items():
+            percentage = (data["total_revenue"] / total_revenue * 100) if total_revenue > 0 else 0
+            by_currency_array.append({
+                "currency": currency,
+                "total_revenue": data["total_revenue"],
+                "net_revenue": data["net_revenue"],
+                "referral_paid": data["referral_paid"],
+                "percentage": percentage
+            })
+        by_currency_array.sort(key=lambda x: x["total_revenue"], reverse=True)
+        
+        # Get recent transactions (last 20)
+        recent_transactions = sorted(
+            fee_txns,
+            key=lambda x: x.get("timestamp", ""),
+            reverse=True
+        )[:20]
+        
+        return {
+            "success": True,
+            "summary": {
+                "total_revenue_gbp": round(total_revenue, 2),
+                "net_revenue_gbp": round(net_revenue, 2),
+                "referral_commissions_paid_gbp": round(referral_commissions_paid, 2),
+                "total_transactions": total_transactions,
+                "timeframe": timeframe
+            },
+            "by_fee_type": by_fee_type_array,
+            "by_currency": by_currency_array,
+            "recent_transactions": [
+                {
+                    "transaction_id": tx.get("transaction_id"),
+                    "fee_type": tx.get("fee_type"),
+                    "total_fee": tx.get("total_fee"),
+                    "admin_fee": tx.get("admin_fee"),
+                    "referrer_commission": tx.get("referrer_commission", 0),
+                    "currency": tx.get("currency", "GBP"),
+                    "timestamp": tx.get("timestamp")
+                }
+                for tx in recent_transactions
+            ],
+            "last_updated": now.isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in admin revenue dashboard: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 # Google OAuth routes (without /api prefix for standard OAuth compatibility)
 @app.get("/auth/google/callback")
 async def google_callback_direct(code: str = None, error: str = None):
