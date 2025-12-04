@@ -18,12 +18,14 @@ import logging
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from user_service import get_user_service
 
 logger = logging.getLogger(__name__)
 
 class ReferralAnalytics:
     def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
+        self.user_service = get_user_service(db)
     
     async def get_comprehensive_dashboard(self, user_id: str) -> Dict:
         """
