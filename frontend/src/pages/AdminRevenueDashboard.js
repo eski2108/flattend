@@ -195,7 +195,7 @@ const AdminRevenueDashboard = () => {
             Revenue by Currency
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {revenueData?.by_currency?.map((curr, idx) => (
+            {revenueData?.by_currency && revenueData.by_currency.length > 0 ? revenueData.by_currency.map((curr, idx) => (
               <div
                 key={idx}
                 className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 hover:border-cyan-500/50 transition-all"
