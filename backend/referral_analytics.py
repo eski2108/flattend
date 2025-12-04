@@ -317,9 +317,8 @@ class ReferralAnalytics:
         timeline = []
         for commission in commissions:
             # Get referred user name
-            referred_user = await self.db.user_accounts.find_one(
-                {"user_id": commission.get("referred_user_id")},
-                {"full_name": 1}
+            referred_user = await self.user_service.get_user_by_id(
+                commission.get("referred_user_id")
             )
             
             timeline.append({
