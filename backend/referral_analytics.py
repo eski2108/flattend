@@ -192,7 +192,12 @@ class ReferralAnalytics:
                     except:
                         continue
                 
-                if isinstance(created_at, datetime) and created_at >= start_date:
+                # Make timezone-aware if naive
+                if isinstance(created_at, datetime):
+                    if created_at.tzinfo is None:
+                        created_at = created_at.replace(tzinfo=timezone.utc)
+                    
+                    if created_at >= start_date:
                     amount = c.get("commission_amount", c.get("amount", 0))
                     total += float(amount)
                     count += 1
