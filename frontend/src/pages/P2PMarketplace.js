@@ -68,7 +68,6 @@ function P2PMarketplace() {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const sortOptions = [
     { value: 'best_price', label: 'Best Price' },
