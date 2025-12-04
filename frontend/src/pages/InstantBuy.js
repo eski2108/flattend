@@ -570,26 +570,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         />
       </div>
 
-      {/* 24H Sparkline Chart (Collapsed View Only) */}
-      {!expanded && (
-        <div style={{ 
-          marginTop: '16px',
-          marginBottom: '12px',
-          padding: '0 4px',
-          opacity: 0.6,
-          height: '40px'
-        }}>
-          <svg width="100%" height="40" style={{ opacity: 0.6 }}>
-            <polyline
-              points="0,30 25,20 50,25 75,15 100,18 125,22 150,12 175,20 200,16 225,25 250,28"
-              fill="none"
-              stroke={coin.color}
-              strokeWidth="2"
-              opacity="0.8"
-            />
-          </svg>
-        </div>
-      )}
+      {/* Sparkline removed - was placeholder data */}
 
       {/* Liquidity Status */}
       {!expanded && (
