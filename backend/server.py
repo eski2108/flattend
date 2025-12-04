@@ -26889,7 +26889,7 @@ async def auto_match_trade(request: dict):
                 {"$inc": {"amount_available": -float(amount)}}
             )
             
-            logger.info(f"✅ Auto-matched buyer {user_id} with seller {best_match.get('seller_uid')}")
+            logger.info(f"✅ Auto-matched buyer {user_id} with seller {best_match.get('seller_uid')} | Trade: {trade_id} | Price: {best_match.get('price_fixed')} | Amount: {amount} {crypto}")
             
             return {
                 "success": True,
