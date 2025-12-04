@@ -20,6 +20,9 @@ export default function P2POrderPage() {
   const [paymentProof, setPaymentProof] = useState(null);
   const [disputeReason, setDisputeReason] = useState('');
   const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState('positive');
+  const [feedbackComment, setFeedbackComment] = useState('');
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
