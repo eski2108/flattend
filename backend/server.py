@@ -10922,36 +10922,57 @@ async def remove_trading_liquidity(request: dict):
 
 @api_router.get("/instant-buy/available-coins")
 async def get_available_coins_for_instant_buy():
-    """Get list of coins with available admin liquidity for Fast Buy and Express Buy"""
+    """Get list of coins with available admin liquidity for Instant Buy/Sell"""
     try:
-        # Get all active admin liquidity offers from enhanced_sell_orders
-        offers = await db.enhanced_sell_orders.find(
-            {
-                "is_admin_liquidity": True,
-                "status": "active",
-                "crypto_amount": {"$gt": 0}
-            },
+        # Get REAL admin liquidity from admin_liquidity_wallets collection
+        admin_wallets = await db.admin_liquidity_wallets.find(
+            {"available": {"$gt": 0}},
             {"_id": 0}
         ).to_list(100)
         
+        # Get monetization settings for markup
+        settings = await db.monetization_settings.find_one(
+            {"setting_id": "default_monetization"},
+            {"_id": 0}
+        )
+        
+        default_markup = settings.get("admin_sell_spread_percent", 3.0) if settings else 3.0
+        
+        # Get live prices from pricing system
+        from pricing_system import PricingSystem
+        pricing = PricingSystem(db)
+        
         # Format response with coin info and prices
         available_coins = []
-        for offer in offers:
-            currency = offer.get("crypto_currency")
-            crypto_amount = offer.get("crypto_amount", 0)
-            price_per_unit = offer.get("price_per_unit", 0)
-            market_price = offer.get("market_price", price_per_unit)
+        for wallet in admin_wallets:
+            currency = wallet.get("currency")
+            available_amount = wallet.get("available", 0)
+            
+            if available_amount <= 0:
+                continue
+            
+            # Get live market price
+            try:
+                price_gbp = await pricing.get_price(currency, "GBP")
+            except:
+                logger.warning(f"Could not get price for {currency}, skipping")
+                continue
+            
+            # Apply markup for user buy price
+            user_buy_price = price_gbp * (1 + default_markup / 100)
             
             available_coins.append({
                 "symbol": currency,
-                "available_amount": crypto_amount,
-                "price_gbp": price_per_unit,
-                "market_price_gbp": market_price,
-                "markup_percent": offer.get("markup_percent", 3.0),
-                "max_order_gbp": offer.get("max_order", crypto_amount * price_per_unit),
-                "min_order_gbp": offer.get("min_order", 10.0),
+                "available_amount": available_amount,
+                "price_gbp": user_buy_price,
+                "market_price_gbp": price_gbp,
+                "markup_percent": default_markup,
+                "max_order_gbp": available_amount * user_buy_price,
+                "min_order_gbp": 10.0,
                 "is_active": True
             })
+        
+        logger.info(f"📊 Instant Buy: Returning {len(available_coins)} coins with REAL liquidity")
         
         return {
             "success": True,
