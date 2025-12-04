@@ -17547,12 +17547,15 @@ async def create_dispute(request: dict):
         
         # Get trade details
         logger.info(f"Looking for trade_id: {trade_id}")
-        trade = await db.p2p_trades.find_one({"trade_id": trade_id})
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
         logger.info(f"Trade found: {trade is not None}")
         if not trade:
             # Check if ANY trades exist
             count = await db.p2p_trades.count_documents({})
             logger.error(f"Trade {trade_id} not found. Total p2p_trades in DB: {count}")
+            # List all trade_ids for debugging
+            all_trades = await db.p2p_trades.find({}, {"trade_id": 1, "_id": 0}).to_list(10)
+            logger.error(f"Available trade_ids: {[t.get('trade_id') for t in all_trades]}")
             raise HTTPException(status_code=404, detail="Trade not found")
         
         # Check if user is buyer or seller
