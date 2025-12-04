@@ -434,23 +434,58 @@ export default function P2POrderPage() {
                 {messages.length === 0 ? (
                   <div style={{ textAlign: 'center', color: '#8F9BB3', padding: '40px' }}>No messages yet</div>
                 ) : (
-                  messages.map((msg, idx) => (
-                    <div key={idx} style={{
-                      marginBottom: '12px',
-                      padding: '12px',
-                      background: msg.sender_id === currentUser.user_id ? 'rgba(0, 198, 255, 0.1)' : 'rgba(143, 155, 179, 0.1)',
-                      borderRadius: '8px',
-                      textAlign: msg.sender_id === currentUser.user_id ? 'right' : 'left'
-                    }}>
-                      <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '4px' }}>
-                        {msg.sender_id === currentUser.user_id ? 'You' : counterparty}
+                  messages.map((msg, idx) => {
+                    const isSystem = msg.sender_id === 'SYSTEM';
+                    const isCurrentUser = msg.sender_id === currentUser.user_id;
+                    
+                    return (
+                      <div key={idx} style={{
+                        marginBottom: '12px',
+                        padding: '12px',
+                        background: isSystem 
+                          ? 'rgba(255, 165, 0, 0.15)'
+                          : isCurrentUser 
+                            ? 'rgba(0, 198, 255, 0.1)' 
+                            : 'rgba(143, 155, 179, 0.1)',
+                        border: isSystem ? '1px solid rgba(255, 165, 0, 0.3)' : 'none',
+                        borderRadius: '8px',
+                        textAlign: isSystem ? 'center' : isCurrentUser ? 'right' : 'left'
+                      }}>
+                        <div style={{ 
+                          fontSize: '11px', 
+                          color: isSystem ? '#FFA500' : '#8F9BB3', 
+                          marginBottom: '4px',
+                          fontWeight: isSystem ? '700' : '600'
+                        }}>
+                          {isSystem ? '🤖 SYSTEM' : isCurrentUser ? 'You' : counterparty}
+                          {msg.timestamp && (
+                            <span style={{ marginLeft: '8px', fontSize: '10px', opacity: 0.7 }}>
+                              {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ 
+                          color: isSystem ? '#FFA500' : '#FFFFFF',
+                          fontWeight: isSystem ? '600' : '400'
+                        }}>
+                          {msg.message}
+                        </div>
+                        {msg.attachment && (
+                          <img 
+                            src={msg.attachment} 
+                            alt="proof" 
+                            style={{ 
+                              maxWidth: '200px', 
+                              marginTop: '8px', 
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => window.open(msg.attachment, '_blank')}
+                          />
+                        )}
                       </div>
-                      <div style={{ color: '#FFFFFF' }}>{msg.message}</div>
-                      {msg.attachment && (
-                        <img src={msg.attachment} alt="proof" style={{ maxWidth: '200px', marginTop: '8px', borderRadius: '4px' }} />
-                      )}
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 
