@@ -114,6 +114,7 @@ const PriceAlerts = lazy(() => import("@/pages/PriceAlerts"));
 const UIShowcase = lazy(() => import("@/pages/UIShowcase"));
 import ChatWidget from "@/components/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
+import TestModeBanner from "@/components/TestModeBanner";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
