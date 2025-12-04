@@ -164,10 +164,10 @@ class ReferralAnalytics:
         now = datetime.now(timezone.utc)
         
         periods = {
-            "today": now.replace(hour=0, minute=0, second=0, microsecond=0),
-            "week": now - timedelta(days=7),
-            "month": now - timedelta(days=30),
-            "year": now - timedelta(days=365)
+            "today": now.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc),
+            "week": (now - timedelta(days=7)).replace(tzinfo=timezone.utc),
+            "month": (now - timedelta(days=30)).replace(tzinfo=timezone.utc),
+            "year": (now - timedelta(days=365)).replace(tzinfo=timezone.utc)
         }
         
         # Get all commissions for this user
