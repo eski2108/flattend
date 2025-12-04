@@ -18665,50 +18665,39 @@ async def get_unified_balances(user_id: str):
         total_gbp = 0.0
         enriched_balances = []
         
+        # 🔒 LOCKED: Calculate values using UNIFIED GBP pricing
         for balance in balances:
             currency = balance['currency']
             total = balance['total_balance']
             available = balance['available_balance']
             locked = balance['locked_balance']
             
-            # Get price in USD
-            if currency == 'GBP':
-                # For GBP, 1 GBP = 1 GBP
-                price_usd = 1.27  # GBP to USD
-                price_gbp = 1.0   # GBP to GBP is always 1
-            elif currency in ['USD', 'EUR']:
-                price_usd = prices.get(currency, 1.0)
-                price_gbp = price_usd * usd_to_gbp
-            else:
-                # For crypto, get USD price and convert to GBP
-                price_usd = prices.get(currency, 0)
-                price_gbp = price_usd * usd_to_gbp
-            
-            usd_value = total * price_usd
+            # Get GBP price directly (no USD conversion!)
+            price_gbp = prices_gbp.get(currency, 0)
             gbp_value = total * price_gbp
-            total_usd += usd_value
+            total_gbp += gbp_value
             
             enriched_balances.append({
                 "currency": currency,
                 "available_balance": available,
                 "locked_balance": locked,
                 "total_balance": total,
-                "usd_price": price_usd,
-                "usd_value": usd_value,
+                "usd_price": 0,  # Deprecated field, keeping for backwards compatibility
+                "usd_value": 0,  # Deprecated field, keeping for backwards compatibility
                 "price_gbp": price_gbp,
                 "gbp_value": gbp_value
             })
         
-        # Sort by USD value descending
-        enriched_balances.sort(key=lambda x: x['usd_value'], reverse=True)
+        # Sort by GBP value descending
+        enriched_balances.sort(key=lambda x: x['gbp_value'], reverse=True)
         
-        logger.info(f"✅ Fetched unified balances for {user_id}: {len(enriched_balances)} currencies, ${total_usd:.2f} total")
+        logger.info(f"✅ Fetched unified balances for {user_id}: {len(enriched_balances)} currencies, £{total_gbp:.2f} total GBP")
         
         return {
             "success": True,
             "user_id": user_id,
             "balances": enriched_balances,
-            "total_usd": round(total_usd, 2),
+            "total_usd": round(total_gbp, 2),  # Field name kept for compatibility, but contains GBP value
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
         
