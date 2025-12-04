@@ -117,6 +117,7 @@ class ReferralAnalytics:
                 "commissions": commissions,
                 "recent_referrals": recent_referrals,
                 "leaderboard": leaderboard,
+                "tier_breakdown": tier_breakdown,
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
             
