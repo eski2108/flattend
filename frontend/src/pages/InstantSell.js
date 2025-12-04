@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoAlertCircle, IoTrendingDown } from 'react-icons/io5';
+import { TrendingDown, AlertCircle } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -147,7 +147,7 @@ export default function InstantSell() {
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           {/* Header */}
           <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-            <IoTrendingDown size={48} color="#EF4444" style={{ margin: '0 auto 16px' }} />
+            <TrendingDown size={48} color="#EF4444" style={{ margin: '0 auto 16px' }} />
             <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px' }}>Instant Sell</h1>
             <p style={{ fontSize: '15px', color: '#A3AEC2' }}>Sell your crypto instantly to CoinHubX. Fast, secure, and guaranteed execution.</p>
           </div>
@@ -278,7 +278,7 @@ export default function InstantSell() {
             display: 'flex',
             gap: '12px'
           }}>
-            <IoAlertCircle size={20} color="#FBBF24" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <AlertCircle size={20} color="#FBBF24" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '14px', fontWeight: '600', color: '#FBBF24', marginBottom: '4px' }}>Instant Settlement</div>
               <div style={{ fontSize: '13px', color: '#FDE68A', lineHeight: '1.5' }}>
