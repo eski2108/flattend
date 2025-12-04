@@ -235,22 +235,102 @@ function P2PMarketplace() {
     }
   };
 
-  const handleBuyOffer = (offer) => {
+  const handleBuyOffer = async (offer) => {
     try {
       console.log('🔥 handleBuyOffer called!', offer);
       
-      // Store offer details for purchase flow
-      localStorage.setItem('pending_offer', JSON.stringify(offer));
+      const userData = localStorage.getItem('cryptobank_user');
+      if (!userData) {
+        toast.error('Please login to continue');
+        navigate('/login');
+        return;
+      }
       
-      // Navigate to order preview - use setTimeout to ensure it executes
-      setTimeout(() => {
-        navigate('/order-preview', { state: { offer: offer }, replace: false });
-      }, 0);
+      const user = JSON.parse(userData);
+      setProcessing(true);
       
-      console.log('✅ Navigate queued');
+      // STEP 1: Generate Admin Liquidity Quote
+      const tradeType = activeTab === 'buy' ? 'buy' : 'sell';
+      const cryptoAmount = parseFloat(offer.crypto_amount || offer.amount || 0);
+      
+      if (!cryptoAmount || cryptoAmount <= 0) {
+        toast.error('Invalid crypto amount');
+        setProcessing(false);
+        return;
+      }
+      
+      const quoteResponse = await axios.post(`${API}/api/admin-liquidity/quote`, {
+        user_id: user.user_id,
+        type: tradeType,
+        crypto: selectedCrypto,
+        amount: cryptoAmount
+      });
+      
+      if (quoteResponse.data.success) {
+        const quote = quoteResponse.data.quote;
+        setCurrentQuote({
+          ...quote,
+          offer: offer,
+          cryptoAmount: cryptoAmount,
+          currency: selectedCrypto,
+          tradeType: tradeType
+        });
+        setShowQuoteModal(true);
+        
+        // Start countdown timer
+        const expiresAt = new Date(quote.expires_at);
+        const updateTimer = setInterval(() => {
+          const now = new Date();
+          const remaining = Math.floor((expiresAt - now) / 1000);
+          if (remaining <= 0) {
+            clearInterval(updateTimer);
+            setShowQuoteModal(false);
+            toast.error('Quote expired. Please try again.');
+          } else {
+            setCountdown(remaining);
+          }
+        }, 1000);
+      } else {
+        toast.error(quoteResponse.data.message || 'Failed to get quote');
+      }
     } catch (error) {
       console.error('❌ Error in handleBuyOffer:', error);
-      toast.error('Failed to process offer');
+      toast.error(error.response?.data?.message || 'Failed to get quote');
+    } finally {
+      setProcessing(false);
+    }
+  };
+  
+  const confirmQuote = async () => {
+    if (!currentQuote) return;
+    
+    setProcessing(true);
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      const user = JSON.parse(userData);
+      
+      // STEP 2: Execute with locked price
+      const response = await axios.post(`${API}/api/admin-liquidity/execute`, {
+        user_id: user.user_id,
+        quote_id: currentQuote.quote_id
+      });
+      
+      if (response.data.success) {
+        toast.success(`✅ ${currentQuote.tradeType === 'buy' ? 'Bought' : 'Sold'} ${currentQuote.cryptoAmount} ${currentQuote.currency}!`);
+        setShowQuoteModal(false);
+        
+        // Refresh offers
+        setTimeout(() => {
+          fetchOffers();
+        }, 1000);
+      } else {
+        toast.error(response.data.message || 'Trade failed');
+      }
+    } catch (error) {
+      console.error('❌ Error executing trade:', error);
+      toast.error(error.response?.data?.message || 'Trade failed');
+    } finally {
+      setProcessing(false);
     }
   };
 
