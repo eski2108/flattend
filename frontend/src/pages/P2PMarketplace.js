@@ -82,6 +82,17 @@ function P2PMarketplace() {
     fetchMarketplaceFilters();
     loadFavorites();
     
+    // Load saved filters from localStorage
+    const savedFilters = localStorage.getItem('p2p_saved_filters');
+    if (savedFilters) {
+      try {
+        const parsedFilters = JSON.parse(savedFilters);
+        setFilters(parsedFilters);
+      } catch (error) {
+        console.error('Error loading saved filters:', error);
+      }
+    }
+    
     // Handle window resize for responsive layout
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
