@@ -18764,16 +18764,24 @@ async def get_unified_balances(user_id: str):
             "total_usd": 0.0
         }
 
+# 🔒 LOCKED: Portfolio/Wallet Value Calculation - DO NOT MODIFY
+# This endpoint MUST match the Dashboard calculation exactly
+# Both pages MUST show the SAME total value in GBP
+# Uses unified pricing system via fetch_live_prices() - returns GBP prices
+# Source: db.wallets collection (same as Dashboard)
 @api_router.get("/wallets/portfolio/{user_id}")
 async def get_portfolio_with_allocations(user_id: str):
     """
     Get portfolio breakdown with percentages for allocations page
-    Calculates: total value, per-coin percentages, top coins + others
+    Calculates: total value in GBP, per-coin percentages, top coins + others
+    
+    🔒 CRITICAL: This endpoint MUST return the SAME total value as /api/portfolio/summary
+    Uses unified GBP pricing via fetch_live_prices()
     """
     try:
         wallet_service = get_wallet_service()
         
-        # Get all balances
+        # 🔒 LOCKED: Get all balances from db.wallets (same source as Dashboard)
         balances = await wallet_service.get_all_balances(user_id)
         
         if not balances:
@@ -18786,57 +18794,37 @@ async def get_portfolio_with_allocations(user_id: str):
                 "others_percentage": 0.0
             }
         
-        # Get prices (same as above endpoint)
-        import requests
-        coin_ids = {
-            'BTC': 'bitcoin', 'ETH': 'ethereum', 'USDT': 'tether',
-            'USDC': 'usd-coin', 'BNB': 'binancecoin', 'SOL': 'solana',
-            'XRP': 'ripple', 'ADA': 'cardano', 'DOGE': 'dogecoin',
-            'TRX': 'tron', 'DOT': 'polkadot', 'MATIC': 'matic-network',
-            'LTC': 'litecoin', 'SHIB': 'shiba-inu', 'AVAX': 'avalanche-2',
-            'LINK': 'chainlink', 'BCH': 'bitcoin-cash', 'XLM': 'stellar',
-            'ATOM': 'cosmos', 'UNI': 'uniswap'
-        }
-        
+        # 🔒 LOCKED: Get GBP prices using unified pricing system
+        # This is the SAME price source used by Dashboard
+        all_prices = await fetch_live_prices()
         prices = {}
-        try:
-            coin_ids_list = ','.join([coin_ids.get(b['currency'], b['currency'].lower()) for b in balances])
-            response = requests.get(
-                f"https://api.coingecko.com/api/v3/simple/price?ids={coin_ids_list}&vs_currencies=usd",
-                timeout=10
-            )
-            if response.status_code == 200:
-                price_data = response.json()
-                for currency in [b['currency'] for b in balances]:
-                    coin_id = coin_ids.get(currency, currency.lower())
-                    if coin_id in price_data:
-                        prices[currency] = price_data[coin_id].get('usd', 0)
-            prices['USDT'] = prices.get('USDT', 1.0)
-            prices['USDC'] = prices.get('USDC', 1.0)
-        except:
-            prices = {'USDT': 1.0, 'USDC': 1.0}
+        for symbol, data in all_prices.items():
+            # Use GBP prices, not USD
+            prices[symbol] = data.get("gbp", 0)
         
-        # Calculate values and percentages
+        # 🔒 LOCKED: Fiat currencies = 1 in their own currency, then converted to GBP
+        # GBP to GBP = 1 (no conversion needed)
+        # USD/EUR converted via live rates
+        prices['GBP'] = 1.0  # GBP is our base currency
+        prices['USD'] = all_prices.get('USD', {}).get('gbp', 0.79)  # USD to GBP
+        prices['EUR'] = all_prices.get('EUR', {}).get('gbp', 0.86)  # EUR to GBP
+        
+        # 🔒 LOCKED: Calculate values in GBP
         total_value = 0.0
         allocations = []
-        
-        # Add GBP price (fiat currency, approximately 1.27 USD)
-        prices['GBP'] = prices.get('GBP', 1.27)
-        prices['EUR'] = prices.get('EUR', 1.09)
-        prices['USD'] = prices.get('USD', 1.0)
         
         for balance in balances:
             currency = balance['currency']
             total = balance['total_balance']
             price = prices.get(currency, 0)
-            value = total * price
+            value = total * price  # This is now in GBP
             total_value += value
             
             allocations.append({
                 "currency": currency,
                 "balance": total,
-                "price": price,
-                "value": value
+                "price": price,  # GBP price
+                "value": value   # GBP value
             })
         
         # Calculate percentages
@@ -18860,7 +18848,7 @@ async def get_portfolio_with_allocations(user_id: str):
         result = {
             "success": True,
             "user_id": user_id,
-            "total_value_usd": round(total_value, 2),
+            "total_value_usd": round(total_value, 2),  # Actually GBP but keeping field name for compatibility
             "allocations": allocations,
             "top_allocations": top_allocations,
             "others": {
@@ -18871,18 +18859,21 @@ async def get_portfolio_with_allocations(user_id: str):
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
         
-        logger.info(f"✅ Portfolio calculated for {user_id}: ${total_value:.2f}, {len(allocations)} assets")
+        logger.info(f"✅ Portfolio calculated for {user_id}: £{total_value:.2f} GBP, {len(allocations)} assets")
         
         return result
         
     except Exception as e:
         logger.error(f"❌ Error calculating portfolio for {user_id}: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         return {
             "success": False,
             "message": str(e),
             "total_value_usd": 0.0,
             "allocations": []
         }
+# 🔒 END LOCKED SECTION - Portfolio/Wallet Value Calculation
 
 @api_router.get("/wallets/transactions/{user_id}")
 async def get_wallet_transactions(user_id: str, limit: int = 50):
