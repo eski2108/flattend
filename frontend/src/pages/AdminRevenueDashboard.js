@@ -41,7 +41,8 @@ const AdminRevenueDashboard = () => {
   };
 
   const formatPercentage = (value) => {
-    return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+    if (!value && value !== 0) return '0.00%';
+    return `${value >= 0 ? '+' : ''}${Number(value).toFixed(2)}%`;
   };
 
   if (loading) {
