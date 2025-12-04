@@ -425,3 +425,181 @@ class ReferralAnalytics:
         random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
         
         return f"{clean}{random_part}"
+    
+    async def _get_commissions_list(self, user_id: str) -> List[Dict]:
+        """
+        Get ALL commissions earned by this referrer.
+        For Earnings Tab display.
+        """
+        try:
+            commissions = await self.db.referral_commissions.find(
+                {"referrer_user_id": user_id}
+            ).sort("created_at", -1).to_list(1000)
+            
+            result = []
+            for c in commissions:
+                # Get referred user info
+                referred_user = await self.db.user_accounts.find_one(
+                    {"user_id": c.get("referred_user_id")},
+                    {"full_name": 1, "email": 1, "_id": 0}
+                )
+                
+                result.append({
+                    "commission_id": c.get("commission_id"),
+                    "commission_amount": float(c.get("commission_amount", 0)),
+                    "currency": c.get("currency", "GBP"),
+                    "fee_type": c.get("fee_type", "unknown"),
+                    "fee_amount": float(c.get("fee_amount", 0)),
+                    "commission_rate": float(c.get("commission_rate", 20)),
+                    "referred_user": referred_user.get("full_name", "Unknown User") if referred_user else "Unknown User",
+                    "referred_user_email": self._mask_email(referred_user.get("email", "")) if referred_user else "",
+                    "trade_id": c.get("related_transaction_id"),
+                    "created_at": c.get("created_at").isoformat() if isinstance(c.get("created_at"), datetime) else c.get("created_at", ""),
+                    "status": c.get("status", "completed")
+                })
+            
+            logger.info(f"Found {len(result)} commissions for {user_id}")
+            return result
+        except Exception as e:
+            logger.error(f"Error getting commissions list: {str(e)}")
+            return []
+    
+    async def _get_recent_referrals(self, user_id: str) -> List[Dict]:
+        """
+        Get ALL users referred by this user.
+        For Activity Tab display.
+        """
+        try:
+            # Find all users who were referred by this user
+            referred_users = await self.db.users.find(
+                {"referred_by": user_id}
+            ).sort("created_at", -1).to_list(1000)
+            
+            result = []
+            for user in referred_users:
+                user_id_ref = user.get("user_id")
+                
+                # Get account info
+                account = await self.db.user_accounts.find_one(
+                    {"user_id": user_id_ref},
+                    {"full_name": 1, "email": 1, "_id": 0}
+                )
+                
+                # Get last activity (last commission or trade)
+                last_commission = await self.db.referral_commissions.find_one(
+                    {"referred_user_id": user_id_ref},
+                    sort=[("created_at", -1)]
+                )
+                
+                # Determine status
+                created_at = user.get("created_at")
+                if isinstance(created_at, str):
+                    created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                
+                # Active if traded in last 30 days
+                is_active = False
+                if last_commission:
+                    last_activity = last_commission.get("created_at")
+                    if isinstance(last_activity, datetime):
+                        days_since = (datetime.now(timezone.utc) - last_activity).days
+                        is_active = days_since <= 30
+                
+                result.append({
+                    "user_id": user_id_ref,
+                    "referred_username": account.get("full_name", user.get("username", "Unknown")) if account else user.get("username", "Unknown"),
+                    "email_masked": self._mask_email(account.get("email", "")) if account else self._mask_email(user.get("email", "")),
+                    "referred_at": created_at.isoformat() if isinstance(created_at, datetime) else created_at,
+                    "last_activity": last_commission.get("created_at").isoformat() if last_commission and isinstance(last_commission.get("created_at"), datetime) else None,
+                    "status": "active" if is_active else "inactive",
+                    "total_earned_from_user": await self._calculate_earned_from_user(user_id, user_id_ref)
+                })
+            
+            logger.info(f"Found {len(result)} referred users for {user_id}")
+            return result
+        except Exception as e:
+            logger.error(f"Error getting recent referrals: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return []
+    
+    async def _calculate_earned_from_user(self, referrer_id: str, referred_user_id: str) -> float:
+        """Calculate total earned from a specific referred user"""
+        try:
+            pipeline = [
+                {
+                    "$match": {
+                        "referrer_user_id": referrer_id,
+                        "referred_user_id": referred_user_id,
+                        "status": "completed"
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": null,
+                        "total": {"$sum": "$commission_amount"}
+                    }
+                }
+            ]
+            
+            result = await self.db.referral_commissions.aggregate(pipeline).to_list(1)
+            return float(result[0]["total"]) if result else 0.0
+        except:
+            return 0.0
+    
+    async def _get_leaderboard(self) -> List[Dict]:
+        """
+        Get global referral leaderboard.
+        For Leaderboard Tab display.
+        """
+        try:
+            # Aggregate earnings by referrer
+            pipeline = [
+                {"$match": {"status": "completed"}},
+                {
+                    "$group": {
+                        "_id": "$referrer_user_id",
+                        "total_earnings": {"$sum": "$commission_amount"},
+                        "referral_count": {"$sum": 1}
+                    }
+                },
+                {"$sort": {"total_earnings": -1}},
+                {"$limit": 100}
+            ]
+            
+            result = await self.db.referral_commissions.aggregate(pipeline).to_list(100)
+            
+            leaderboard = []
+            for idx, item in enumerate(result):
+                referrer_id = item["_id"]
+                
+                # Get user info
+                user = await self.db.user_accounts.find_one(
+                    {"user_id": referrer_id},
+                    {"full_name": 1, "username": 1, "_id": 0}
+                )
+                
+                if not user:
+                    user = await self.db.users.find_one(
+                        {"user_id": referrer_id},
+                        {"username": 1, "email": 1, "_id": 0}
+                    )
+                
+                username = "Anonymous"
+                if user:
+                    username = user.get("full_name") or user.get("username") or user.get("email", "Anonymous").split("@")[0]
+                
+                leaderboard.append({
+                    "rank": idx + 1,
+                    "user_id": referrer_id,
+                    "username": username,
+                    "total_earnings": float(item["total_earnings"]),
+                    "referral_count": item["referral_count"]
+                })
+            
+            logger.info(f"Generated leaderboard with {len(leaderboard)} entries")
+            return leaderboard
+        except Exception as e:
+            logger.error(f"Error generating leaderboard: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return []
