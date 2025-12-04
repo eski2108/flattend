@@ -920,31 +920,50 @@ function P2PMarketplace() {
                     </div>
                   </div>
 
-                  {/* Action Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleBuyOffer(offer);
-                    }}
-                    style={{
-                      padding: '0.75rem 1.5rem',
-                      background: activeTab === 'buy' ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'linear-gradient(135deg, #EF4444, #DC2626)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: '#fff',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      boxShadow: activeTab === 'buy' 
-                        ? '0 0 15px rgba(34, 197, 94, 0.4)'
-                        : '0 0 15px rgba(239, 68, 68, 0.4)',
-                      flexShrink: 0,
-                      minWidth: '120px'
-                    }}
-                  >
-                    {activeTab === 'buy' ? 'Buy' : 'Sell'} {selectedCrypto}
-                  </button>
+                  {/* Action Button with Auto-Match Info */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleBuyOffer(offer);
+                      }}
+                      disabled={processing}
+                      style={{
+                        padding: '0.75rem 1.5rem',
+                        background: processing 
+                          ? 'rgba(143, 155, 179, 0.3)'
+                          : activeTab === 'buy' 
+                            ? 'linear-gradient(135deg, #22C55E, #16A34A)' 
+                            : 'linear-gradient(135deg, #EF4444, #DC2626)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        cursor: processing ? 'not-allowed' : 'pointer',
+                        whiteSpace: 'nowrap',
+                        boxShadow: processing 
+                          ? 'none'
+                          : activeTab === 'buy' 
+                            ? '0 0 15px rgba(34, 197, 94, 0.4)'
+                            : '0 0 15px rgba(239, 68, 68, 0.4)',
+                        flexShrink: 0,
+                        minWidth: '120px',
+                        opacity: processing ? 0.6 : 1
+                      }}
+                    >
+                      {processing ? 'Matching...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
+                    </button>
+                    <div style={{
+                      fontSize: '10px',
+                      color: '#8F9BB3',
+                      textAlign: 'right',
+                      maxWidth: '180px',
+                      lineHeight: '1.2'
+                    }}>
+                      Auto-matched by price & reputation
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
