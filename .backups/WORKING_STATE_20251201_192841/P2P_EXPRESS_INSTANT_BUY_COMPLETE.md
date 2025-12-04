@@ -487,7 +487,7 @@ const cryptoAmount = netAmount / baseRate;
 - ✅ Frontend hot-reloaded
 
 **Page Accessible:**
-- ✅ https://p2pcryptomarket.preview.emergentagent.com/p2p-express
+- ✅ https://p2p-trading-hub.preview.emergentagent.com/p2p-express
 
 **API Endpoint:**
 - ✅ POST `/api/p2p/express/create`

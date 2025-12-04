@@ -17,7 +17,7 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-BACKEND_URL = "https://p2pcryptomarket.preview.emergentagent.com/api"
+BACKEND_URL = "https://p2p-trading-hub.preview.emergentagent.com/api"
 
 async def direct_dispute_test():
     """Create a dispute directly and verify email"""

@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://p2pcryptomarket.preview.emergentagent.com/p2p-express
+https://p2p-trading-hub.preview.emergentagent.com/p2p-express
 
 ---
 
