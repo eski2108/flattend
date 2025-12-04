@@ -273,6 +273,11 @@ export default function AdminDisputeDetail() {
                           <span className="text-xs md:text-sm font-semibold text-white capitalize">
                             {msg.sender_type}
                           </span>
+                          {msg.recipient && msg.recipient !== 'all' && (
+                            <span className="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded">
+                              To: {msg.recipient}
+                            </span>
+                          )}
                           <span className="text-xs text-gray-400">
                             {new Date(msg.timestamp).toLocaleString()}
                           </span>
@@ -284,22 +289,42 @@ export default function AdminDisputeDetail() {
                 </div>
 
                 {/* Admin Message Input */}
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={adminMessage}
-                    onChange={(e) => setAdminMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && sendAdminMessage()}
-                    placeholder="Message both parties..."
-                    className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white text-sm focus:border-purple-500 focus:outline-none"
-                  />
-                  <button
-                    onClick={sendAdminMessage}
-                    disabled={!adminMessage.trim()}
-                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-3 py-2 md:px-6 md:py-3 rounded-lg transition-colors font-semibold text-sm md:text-base whitespace-nowrap flex-shrink-0"
-                  >
-                    Send
-                  </button>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={adminMessage}
+                      onChange={(e) => setAdminMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && sendAdminMessage('all')}
+                      placeholder="Message both parties..."
+                      className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 md:px-4 md:py-3 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    />
+                    <button
+                      onClick={() => sendAdminMessage('all')}
+                      disabled={!adminMessage.trim()}
+                      className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-3 py-2 md:px-6 md:py-3 rounded-lg transition-colors font-semibold text-sm md:text-base whitespace-nowrap flex-shrink-0"
+                    >
+                      Send to All
+                    </button>
+                  </div>
+                  
+                  {/* Individual messaging buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => sendAdminMessage('buyer')}
+                      disabled={!adminMessage.trim()}
+                      className="flex-1 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white px-3 py-2 rounded-lg transition-colors text-xs md:text-sm font-semibold"
+                    >
+                      Send to Buyer Only
+                    </button>
+                    <button
+                      onClick={() => sendAdminMessage('seller')}
+                      disabled={!adminMessage.trim()}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-3 py-2 rounded-lg transition-colors text-xs md:text-sm font-semibold"
+                    >
+                      Send to Seller Only
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
