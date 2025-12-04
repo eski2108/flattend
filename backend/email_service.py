@@ -7,8 +7,11 @@ from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
-# Admin email for notifications
-ADMIN_EMAIL = "info@coinhubx.net"
+# 🔒 LOCKED: Admin email configuration - DO NOT MODIFY
+# Email is now loaded from database admin_settings collection
+# Default fallback if database unavailable
+ADMIN_EMAIL_FALLBACK = "info@coinhubx.net"
+# 🔒 END LOCKED SECTION
 
 class EmailService:
     def __init__(self, api_key: Optional[str] = None, sender_email: Optional[str] = None):
