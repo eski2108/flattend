@@ -880,6 +880,7 @@ class RegisterRequest(BaseModel):
     google_id: Optional[str] = None
     email_verified: Optional[bool] = False
     referral_code: Optional[str] = None  # Referral code from URL
+    referral_tier: Optional[str] = "standard"  # Tier: standard or golden
 
 class LoginRequest(BaseModel):
     email: str
