@@ -22497,6 +22497,32 @@ async def release_p2p_crypto(request: Request):
         # Post system message
         await post_system_message(trade_id, f"✅ Seller has released {crypto_amount} {crypto_currency}. Trade completed successfully!")
         
+        # Send notification to buyer
+        await notify_p2p_crypto_released(
+            db=db,
+            trade_id=trade_id,
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            crypto_amount=crypto_amount,
+            crypto=crypto_currency
+        )
+        
+        # Send email to buyer
+        buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
+        seller = await db.users.find_one({"user_id": trade["seller_id"]})
+        if buyer and buyer.get("email"):
+            email_html = p2p_crypto_released_email(
+                trade_id=trade_id,
+                crypto_amount=crypto_amount,
+                crypto=crypto_currency,
+                seller_username=seller.get("username", "Seller") if seller else "Seller"
+            )
+            await email_service.send_email(
+                to_email=buyer["email"],
+                subject=f"✅ Crypto Released – P2P Order #{trade_id[:8]} Completed",
+                html_content=email_html
+            )
+        
         logger.info(f"✅ Trade {trade_id} completed - {crypto_amount} {crypto_currency} released to buyer")
         
         return {
