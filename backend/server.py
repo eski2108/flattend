@@ -3077,11 +3077,28 @@ async def create_trade(request: CreateTradeRequest):
     }
 
 @api_router.get("/p2p/trade/{trade_id}")
-async def get_trade_details(trade_id: str):
+async def get_trade_details(trade_id: str, user_id: Optional[str] = Query(None)):
     """Get trade details with escrow status"""
     trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
     if not trade:
         raise HTTPException(status_code=404, detail="Trade not found")
+    
+    # **BLOCKING CHECK**: Verify users haven't blocked each other
+    if user_id:
+        buyer_id = trade["buyer_id"]
+        seller_id = trade["seller_id"]
+        counterparty_id = seller_id if user_id == buyer_id else buyer_id
+        
+        # Check if current user blocked counterparty
+        user_blocks_doc = await db.user_blocks.find_one({"user_id": user_id})
+        user_blocked = user_blocks_doc.get("blocked_users", []) if user_blocks_doc else []
+        
+        # Check if counterparty blocked current user
+        counterparty_blocks_doc = await db.user_blocks.find_one({"user_id": counterparty_id})
+        counterparty_blocked = counterparty_blocks_doc.get("blocked_users", []) if counterparty_blocks_doc else []
+        
+        if counterparty_id in user_blocked or user_id in counterparty_blocked:
+            raise HTTPException(status_code=403, detail="Cannot access trade with blocked user")
     
     # Get seller info
     seller_response = await get_seller_profile(trade["seller_id"])
