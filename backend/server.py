@@ -12983,6 +12983,34 @@ async def apply_referral_code(request: ApplyReferralCodeRequest, req: Request):
     }
 
 @api_router.get("/referrals/dashboard")
+@api_router.get("/referral/links/{user_id}")
+async def get_referral_links(user_id: str):
+    """Get both Standard (20%) and Golden (50%) referral links"""
+    try:
+        from referral_commission_calculator import ReferralCommissionCalculator
+        calculator = ReferralCommissionCalculator(db)
+        links = await calculator.get_referral_links(user_id)
+        
+        return {
+            "success": True,
+            "standard": {
+                "link": links["standard_link"],
+                "rate": "20%",
+                "duration": "Lifetime",
+                "description": "20% commission on all fees, forever"
+            },
+            "golden": {
+                "link": links["golden_link"],
+                "rate": "50%",
+                "duration": "100 days",
+                "description": "50% commission on all fees for first 100 days per referral"
+            },
+            "referral_code": links["referral_code"]
+        }
+    except Exception as e:
+        logger.error(f"Error getting referral links: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/referral/dashboard/comprehensive/{user_id}")
 async def get_comprehensive_referral_dashboard(user_id: str):
     """
