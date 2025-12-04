@@ -185,32 +185,28 @@ export default function AdminDisputeDetail() {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-4 md:space-y-6">
               {/* Trade Info */}
-              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <IoDocument className="w-6 h-6 text-cyan-400" />
+              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold text-white mb-3 md:mb-4 flex items-center gap-2">
+                  <IoDocument className="w-5 h-5 md:w-6 md:h-6 text-cyan-400" />
                   Trade Information
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-gray-400 text-sm">Order ID</p>
-                    <p className="text-white font-mono text-sm">{dispute.trade_id}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                  <div className="bg-slate-900/50 p-3 rounded-lg">
+                    <p className="text-gray-400 text-xs mb-1">Order ID</p>
+                    <p className="text-white font-mono text-xs break-all">{dispute.trade_id || 'N/A'}</p>
                   </div>
-                  <div>
-                    <p className="text-gray-400 text-sm">Amount</p>
-                    <p className="text-white font-semibold">{dispute.amount} {dispute.currency}</p>
+                  <div className="bg-slate-900/50 p-3 rounded-lg">
+                    <p className="text-gray-400 text-xs mb-1">Fiat Amount</p>
+                    <p className="text-white font-semibold text-sm">{dispute.fiat_amount || dispute.amount || '0'} {dispute.fiat_currency || dispute.currency || 'GBP'}</p>
                   </div>
-                  {trade && (
-                    <>
-                      <div>
-                        <p className="text-gray-400 text-sm">Crypto in Escrow</p>
-                        <p className="text-orange-400 font-semibold">{trade.crypto_amount} {trade.crypto_currency}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-sm">Trade Status</p>
-                        <p className="text-white capitalize">{trade.status?.replace(/_/g, ' ')}</p>
-                      </div>
-                    </>
-                  )}
+                  <div className="bg-orange-500/10 border border-orange-500/30 p-3 rounded-lg">
+                    <p className="text-gray-400 text-xs mb-1">Crypto in Escrow</p>
+                    <p className="text-orange-400 font-semibold text-sm">{dispute.amount || trade?.crypto_amount || '0'} {dispute.currency || trade?.crypto_currency || 'BTC'}</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded-lg">
+                    <p className="text-gray-400 text-xs mb-1">Trade Status</p>
+                    <p className="text-white capitalize text-sm">{(trade?.status || dispute.trade_status || 'pending')?.replace(/_/g, ' ')}</p>
+                  </div>
                 </div>
               </div>
 
