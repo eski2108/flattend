@@ -648,36 +648,57 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             </div>
 
             {/* Deposit/Withdraw/Swap Buttons */}
-            <div style={{ marginBottom: '18px' }}>
-              <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Actions</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+            <div style={{ 
+              marginBottom: '32px',
+              paddingBottom: '20px',
+              borderBottom: '1px solid rgba(0, 198, 255, 0.1)'
+            }}>
+              <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px', fontWeight: '600' }}>Actions</div>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr 1fr', 
+                gap: '12px',
+                marginBottom: '8px'
+              }}>
                 <CHXButton
-                  onClick={onDeposit}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeposit();
+                  }}
                   coinColor={coin.color}
                   variant="primary"
                   size="small"
                   fullWidth
                   icon={<ArrowDownLeft size={16} />}
+                  style={{ minHeight: '48px', padding: '12px 8px' }}
                 >
                   Deposit
                 </CHXButton>
                 <CHXButton
-                  onClick={onWithdraw}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onWithdraw();
+                  }}
                   coinColor={coin.color}
                   variant="secondary"
                   size="small"
                   fullWidth
                   icon={<ArrowUpRight size={16} />}
+                  style={{ minHeight: '48px', padding: '12px 8px' }}
                 >
                   Withdraw
                 </CHXButton>
                 <CHXButton
-                  onClick={onSwap}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSwap();
+                  }}
                   coinColor={coin.color}
                   variant="secondary"
                   size="small"
                   fullWidth
                   icon={<Repeat size={16} />}
+                  style={{ minHeight: '48px', padding: '12px 8px' }}
                 >
                   Swap
                 </CHXButton>
@@ -686,8 +707,8 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
 
             {/* Quick Buy Buttons */}
             {coin.has_liquidity && (
-              <div>
-                <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', fontWeight: '600' }}>Quick Buy</div>
+              <div style={{ paddingTop: '8px' }}>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px', fontWeight: '600' }}>Quick Buy</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                   {amounts.map(amt => {
                     const cryptoAmount = coin.price_gbp ? (amt / coin.price_gbp).toFixed(6) : '0';
