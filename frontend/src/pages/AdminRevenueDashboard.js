@@ -258,7 +258,7 @@ const AdminRevenueDashboard = () => {
               Recent Fee Transactions
             </h2>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {revenueData?.recent_transactions?.slice(0, 10).map((tx, idx) => (
+              {revenueData?.recent_transactions && revenueData.recent_transactions.length > 0 ? revenueData.recent_transactions.slice(0, 10).map((tx, idx) => (
                 <div key={idx} className="p-3 bg-gray-800/30 rounded-lg border border-gray-700/50">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-cyan-400 font-medium text-sm">{tx.fee_type}</span>
