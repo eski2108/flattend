@@ -600,8 +600,9 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
 
       {/* Expanded Content */}
       <div style={{
-        maxHeight: expanded ? '600px' : '0',
-        overflow: 'hidden',
+        maxHeight: expanded ? '800px' : '0',
+        overflowY: expanded ? 'auto' : 'hidden',
+        overflowX: 'hidden',
         transition: 'max-height 0.18s ease-in-out, opacity 0.18s ease-in-out',
         opacity: expanded ? 1 : 0,
         pointerEvents: expanded ? 'auto' : 'none',
