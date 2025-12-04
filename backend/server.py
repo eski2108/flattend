@@ -25810,6 +25810,303 @@ async def _update_stats_after_trade(trade_id: str):
     except Exception as e:
         logger.error(f"Error updating stats after trade: {str(e)}")
 
+
+# =============================================================================
+# P2P TRADE MANAGEMENT (MARK PAID, RELEASE, DISPUTE, CANCEL)
+# =============================================================================
+
+@api_router.post("/p2p/trade/mark-paid")
+async def mark_trade_as_paid(request: dict):
+    """Buyer marks payment as made"""
+    try:
+        trade_id = request.get("trade_id")
+        user_id = request.get("user_id")
+        
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify buyer
+        if trade.get("buyer_id") != user_id:
+            raise HTTPException(status_code=403, detail="Only buyer can mark as paid")
+        
+        # Check status
+        if trade.get("status") != "pending_payment":
+            raise HTTPException(status_code=400, detail="Trade not in pending_payment state")
+        
+        # Update status
+        await db.p2p_trades.update_one(
+            {"trade_id": trade_id},
+            {
+                "$set": {
+                    "status": "payment_made",
+                    "payment_marked_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        logger.info(f"✅ Trade {trade_id} marked as paid by buyer {user_id}")
+        
+        # TODO: Send notification to seller
+        
+        return {
+            "success": True,
+            "message": "Payment marked. Seller will be notified."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error marking trade as paid: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/trade/release")
+async def release_crypto_to_buyer(request: dict):
+    """Seller releases crypto from escrow to buyer"""
+    try:
+        trade_id = request.get("trade_id")
+        user_id = request.get("user_id")
+        
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify seller
+        if trade.get("seller_id") != user_id:
+            raise HTTPException(status_code=403, detail="Only seller can release")
+        
+        # Check status
+        if trade.get("status") != "payment_made":
+            raise HTTPException(status_code=400, detail="Payment not marked yet")
+        
+        # Release crypto from escrow to buyer
+        buyer_id = trade.get("buyer_id")
+        crypto = trade.get("crypto_currency")
+        amount = trade.get("crypto_amount")
+        
+        # Credit buyer
+        await db.internal_balances.update_one(
+            {"user_id": buyer_id, "currency": crypto},
+            {"$inc": {"balance": amount}},
+            upsert=True
+        )
+        
+        # Update trade status
+        await db.p2p_trades.update_one(
+            {"trade_id": trade_id},
+            {
+                "$set": {
+                    "status": "completed",
+                    "completed_at": datetime.now(timezone.utc).isoformat(),
+                    "escrow_locked": False
+                }
+            }
+        )
+        
+        logger.info(f"✅ Trade {trade_id} completed. {amount} {crypto} released to {buyer_id}")
+        
+        # Update stats
+        await _update_stats_after_trade(trade_id)
+        
+        return {
+            "success": True,
+            "message": "Crypto released successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error releasing crypto: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/trade/dispute")
+async def open_trade_dispute(request: dict):
+    """Open a dispute for a trade"""
+    try:
+        trade_id = request.get("trade_id")
+        user_id = request.get("user_id")
+        reason = request.get("reason", "")
+        
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify user is buyer or seller
+        if trade.get("buyer_id") != user_id and trade.get("seller_id") != user_id:
+            raise HTTPException(status_code=403, detail="Not your trade")
+        
+        # Check if already disputed
+        if trade.get("status") == "disputed":
+            raise HTTPException(status_code=400, detail="Already disputed")
+        
+        # Create dispute
+        dispute_id = f"dispute_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+        dispute = {
+            "dispute_id": dispute_id,
+            "trade_id": trade_id,
+            "opened_by": user_id,
+            "reason": reason,
+            "status": "open",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.p2p_disputes.insert_one(dispute)
+        
+        # Update trade status
+        await db.p2p_trades.update_one(
+            {"trade_id": trade_id},
+            {"$set": {"status": "disputed", "disputed_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        logger.info(f"⚠️ Dispute {dispute_id} opened for trade {trade_id} by {user_id}")
+        
+        return {
+            "success": True,
+            "dispute_id": dispute_id,
+            "message": "Dispute opened. Admin will review."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error opening dispute: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/trade/cancel")
+async def cancel_trade(request: dict):
+    """Cancel a trade (buyer only, before marking as paid)"""
+    try:
+        trade_id = request.get("trade_id")
+        user_id = request.get("user_id")
+        
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify buyer
+        if trade.get("buyer_id") != user_id:
+            raise HTTPException(status_code=403, detail="Only buyer can cancel")
+        
+        # Check status
+        if trade.get("status") != "pending_payment":
+            raise HTTPException(status_code=400, detail="Cannot cancel after marking as paid")
+        
+        # Release crypto back to seller listing
+        listing_id = trade.get("listing_id")
+        crypto_amount = trade.get("crypto_amount")
+        
+        if listing_id:
+            await db.p2p_listings.update_one(
+                {"listing_id": listing_id},
+                {"$inc": {"amount_available": crypto_amount}}
+            )
+        
+        # Update trade status
+        await db.p2p_trades.update_one(
+            {"trade_id": trade_id},
+            {
+                "$set": {
+                    "status": "cancelled",
+                    "cancelled_at": datetime.now(timezone.utc).isoformat(),
+                    "cancelled_by": user_id,
+                    "escrow_locked": False
+                }
+            }
+        )
+        
+        logger.info(f"❌ Trade {trade_id} cancelled by buyer {user_id}")
+        
+        return {
+            "success": True,
+            "message": "Trade cancelled"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling trade: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/trade/message")
+async def send_trade_message(request: dict):
+    """Send a message in trade chat"""
+    try:
+        trade_id = request.get("trade_id")
+        sender_id = request.get("sender_id")
+        message = request.get("message", "")
+        
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify sender is buyer or seller
+        if trade.get("buyer_id") != sender_id and trade.get("seller_id") != sender_id:
+            raise HTTPException(status_code=403, detail="Not your trade")
+        
+        # Create message
+        msg = {
+            "message_id": f"msg_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+            "trade_id": trade_id,
+            "sender_id": sender_id,
+            "message": message,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.p2p_trade_messages.insert_one(msg)
+        
+        return {
+            "success": True,
+            "message_id": msg["message_id"]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending message: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/p2p/trade/{trade_id}")
+async def get_trade_details(trade_id: str, user_id: str):
+    """Get trade details with messages"""
+    try:
+        # Get trade
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        # Verify user access
+        if trade.get("buyer_id") != user_id and trade.get("seller_id") != user_id:
+            raise HTTPException(status_code=403, detail="Not your trade")
+        
+        # Get seller payment details if user is buyer
+        if trade.get("buyer_id") == user_id:
+            seller_id = trade.get("seller_id")
+            seller = await db.user_accounts.find_one({"user_id": seller_id}, {"_id": 0, "payment_details": 1})
+            if seller and seller.get("payment_details"):
+                trade["seller_payment_details"] = seller["payment_details"]
+        
+        # Get messages
+        messages = await db.p2p_trade_messages.find(
+            {"trade_id": trade_id},
+            {"_id": 0}
+        ).sort("timestamp", 1).to_list(1000)
+        
+        return {
+            "success": True,
+            "trade": trade,
+            "messages": messages
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting trade: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # =============================================================================
 # ADMIN LIQUIDITY QUOTE SYSTEM (PRICE LOCK & PROFIT PROTECTION)
 # =============================================================================
