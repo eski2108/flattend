@@ -271,7 +271,11 @@ const AdminRevenueDashboard = () => {
                     )}
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">No recent transactions available</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
