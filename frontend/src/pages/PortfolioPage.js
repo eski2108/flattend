@@ -31,8 +31,8 @@ export default function PortfolioPage() {
       const user = JSON.parse(userData);
       const userId = user.user_id;
 
-      // Use unified wallet portfolio endpoint
-      const response = await axios.get(`${API}/api/wallets/portfolio/${userId}`);
+      // Use unified wallet portfolio endpoint (with cache busting to prevent stale data)
+      const response = await axios.get(`${API}/api/wallets/portfolio/${userId}?_t=${Date.now()}`);
       if (response.data.success) {
         // Transform the backend response to match frontend expectations
         const transformedAllocations = response.data.allocations.map(alloc => ({
