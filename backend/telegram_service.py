@@ -172,7 +172,7 @@ class TelegramService:
     
     async def notify_referral_signup(self, referrer_user_id: str, new_user_email: str):
         """Notify referrer of new signup"""
-        referrer = await self.user_service.get_user_by_id( referrer_user_id})
+        referrer = await self.user_service.get_user_by_id(referrer_user_id)
         
         if referrer and referrer.get('telegram_chat_id'):
             message = (
@@ -186,7 +186,7 @@ class TelegramService:
     
     async def notify_referral_commission(self, referrer_user_id: str, commission_data: Dict):
         """Notify referrer of commission earned"""
-        referrer = await self.user_service.get_user_by_id( referrer_user_id})
+        referrer = await self.user_service.get_user_by_id(referrer_user_id)
         
         if referrer and referrer.get('telegram_chat_id'):
             tier_emoji = "🥇" if commission_data.get('tier_used') == 'golden' else "⭐"
