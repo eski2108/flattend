@@ -33,10 +33,11 @@ const AdminRevenueDashboard = () => {
   };
 
   const formatCurrency = (amount, currency = 'GBP') => {
+    if (!amount && amount !== 0) return currency === 'GBP' ? '£0.00' : '0.00000000 ' + currency;
     if (currency === 'GBP') {
-      return `£${amount.toFixed(2)}`;
+      return `£${Number(amount).toFixed(2)}`;
     }
-    return `${amount.toFixed(8)} ${currency}`;
+    return `${Number(amount).toFixed(8)} ${currency}`;
   };
 
   const formatPercentage = (value) => {
