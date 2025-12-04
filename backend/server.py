@@ -1908,6 +1908,24 @@ async def get_enhanced_offers(
     # Get offers
     offers = await db.enhanced_sell_orders.find(query, {"_id": 0}).to_list(1000)
     
+    # **BLOCKING FILTER**: Remove blocked users' offers
+    if user_id:
+        try:
+            blocked_doc = await db.user_blocks.find_one({"user_id": user_id})
+            blocked_users = blocked_doc.get("blocked_users", []) if blocked_doc else []
+            
+            # Also get users who have blocked this user (mutual block check)
+            blockers = await db.user_blocks.find({"blocked_users": user_id}, {"_id": 0, "user_id": 1}).to_list(1000)
+            blocked_by = [b["user_id"] for b in blockers]
+            
+            # Filter out both blocked users and users who blocked current user
+            all_blocked = set(blocked_users + blocked_by)
+            offers = [offer for offer in offers if offer.get("seller_id") not in all_blocked]
+            
+            logger.info(f"🚫 Filtered {len(all_blocked)} blocked users from offers for user {user_id}")
+        except Exception as e:
+            logger.error(f"Error filtering blocked users: {str(e)}")
+    
     # Filter for favorites only if requested
     if favorites_only and user_id:
         favorites_response = await get_favorite_sellers(user_id)
