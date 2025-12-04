@@ -24903,3 +24903,338 @@ async def save_admin_settings(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 # 🔒 END LOCKED SECTION
 
+
+# =============================================================================
+# 🔒 LOCKED: MERCHANT PROFILE & RANKING SYSTEM - DO NOT MODIFY
+# =============================================================================
+
+from merchant_service import MerchantService
+
+merchant_service = MerchantService(db)
+
+@api_router.get("/merchant/profile/{user_id}")
+async def get_merchant_profile(user_id: str):
+    """Get complete merchant profile with stats, rank, and verifications"""
+    try:
+        profile = await merchant_service.get_merchant_profile(user_id)
+        if not profile:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        
+        return {
+            "success": True,
+            "profile": profile
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting merchant profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/merchant/stats/{user_id}")
+async def get_merchant_stats(user_id: str):
+    """Get merchant statistics"""
+    try:
+        stats = await db.merchant_stats.find_one({"user_id": user_id}, {"_id": 0})
+        if not stats:
+            # Initialize if doesn't exist
+            stats = await merchant_service.initialize_merchant_stats(user_id)
+        
+        return {
+            "success": True,
+            "stats": stats
+        }
+    except Exception as e:
+        logger.error(f"Error getting merchant stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/merchant/deposit")
+async def create_merchant_deposit(request: dict):
+    """Create merchant security deposit"""
+    try:
+        user_id = request.get("user_id")
+        amount = request.get("amount")
+        currency = request.get("currency", "USDT")
+        
+        if not all([user_id, amount]):
+            raise HTTPException(status_code=400, detail="user_id and amount required")
+        
+        if currency not in ["USDT", "USDC"]:
+            raise HTTPException(status_code=400, detail="Currency must be USDT or USDC")
+        
+        # Deactivate old deposits
+        await db.merchant_deposits.update_many(
+            {"user_id": user_id, "status": "active"},
+            {"$set": {"status": "inactive", "deactivated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        # Create new deposit
+        deposit = {
+            "deposit_id": f"dep_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+            "user_id": user_id,
+            "amount": float(amount),
+            "currency": currency,
+            "status": "active",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.merchant_deposits.insert_one(deposit)
+        
+        # Recalculate merchant rank
+        await merchant_service.calculate_merchant_rank(user_id)
+        
+        logger.info(f"✅ Merchant deposit created: {user_id} - {amount} {currency}")
+        
+        return {
+            "success": True,
+            "deposit": deposit,
+            "message": "Deposit created successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating merchant deposit: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/merchant/verification/address")
+async def submit_address_verification(request: dict):
+    """Submit address verification"""
+    try:
+        user_id = request.get("user_id")
+        full_name = request.get("full_name")
+        street_address = request.get("street_address")
+        postcode = request.get("postcode")
+        country = request.get("country")
+        document_url = request.get("document_url")  # Already uploaded to storage
+        
+        if not all([user_id, full_name, street_address, postcode, country]):
+            raise HTTPException(status_code=400, detail="All address fields required")
+        
+        verification = {
+            "verification_id": f"addr_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+            "user_id": user_id,
+            "type": "address",
+            "full_name": full_name,
+            "street_address": street_address,
+            "postcode": postcode,
+            "country": country,
+            "document_url": document_url,
+            "status": "pending",
+            "submitted_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.address_verifications.insert_one(verification)
+        
+        # Update user verifications status
+        await db.user_verifications.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "address_verification_status": "pending",
+                    "address_verified": False
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info(f"✅ Address verification submitted for {user_id}")
+        
+        return {
+            "success": True,
+            "verification": verification,
+            "message": "Address verification submitted for review"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error submitting address verification: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/verification/address/{verification_id}/approve")
+async def approve_address_verification(verification_id: str):
+    """Admin: Approve address verification"""
+    try:
+        verification = await db.address_verifications.find_one({"verification_id": verification_id})
+        if not verification:
+            raise HTTPException(status_code=404, detail="Verification not found")
+        
+        await db.address_verifications.update_one(
+            {"verification_id": verification_id},
+            {
+                "$set": {
+                    "status": "approved",
+                    "approved_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        await db.user_verifications.update_one(
+            {"user_id": verification["user_id"]},
+            {
+                "$set": {
+                    "address_verified": True,
+                    "address_verification_status": "approved"
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info(f"✅ Address verification approved: {verification_id}")
+        
+        return {
+            "success": True,
+            "message": "Address verification approved"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving verification: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Auto-Match System
+@api_router.post("/p2p/auto-match")
+async def auto_match_trade(request: dict):
+    """Auto-match buyer with best seller or vice versa"""
+    try:
+        user_id = request.get("user_id")
+        trade_type = request.get("type")  # "buy" or "sell"
+        crypto = request.get("crypto", "BTC")
+        amount = request.get("amount")
+        payment_method = request.get("payment_method")
+        
+        if not all([user_id, trade_type, amount]):
+            raise HTTPException(status_code=400, detail="user_id, type, and amount required")
+        
+        if trade_type == "buy":
+            # Find best seller
+            pipeline = [
+                {
+                    "$match": {
+                        "crypto": crypto,
+                        "status": "active",
+                        "amount_available": {"$gte": float(amount)},
+                        "seller_uid": {"$ne": user_id}
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "merchant_stats",
+                        "localField": "seller_uid",
+                        "foreignField": "user_id",
+                        "as": "seller_stats"
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "merchant_ranks",
+                        "localField": "seller_uid",
+                        "foreignField": "user_id",
+                        "as": "seller_rank"
+                    }
+                },
+                {
+                    "$addFields": {
+                        "completion_rate": {"$arrayElemAt": ["$seller_stats.thirty_day_completion_rate", 0]},
+                        "release_time": {"$arrayElemAt": ["$seller_stats.average_release_time_seconds", 0]},
+                        "rank": {"$arrayElemAt": ["$seller_rank.rank", 0]},
+                        "rank_score": {
+                            "$switch": {
+                                "branches": [
+                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "platinum"]}, "then": 4},
+                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "gold"]}, "then": 3},
+                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "silver"]}, "then": 2},
+                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "bronze"]}, "then": 1}
+                                ],
+                                "default": 0
+                            }
+                        }
+                    }
+                },
+                {
+                    "$sort": {
+                        "price_fixed": 1,  # Best price first
+                        "completion_rate": -1,
+                        "release_time": 1,
+                        "rank_score": -1,
+                        "amount_available": -1
+                    }
+                },
+                {"$limit": 1}
+            ]
+            
+            results = await db.p2p_listings.aggregate(pipeline).to_list(1)
+            
+            if not results:
+                raise HTTPException(status_code=404, detail="No sellers available")
+            
+            best_match = results[0]
+            
+            # Create order immediately
+            trade_id = f"trade_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            
+            trade = {
+                "trade_id": trade_id,
+                "listing_id": best_match.get("listing_id"),
+                "buyer_id": user_id,
+                "seller_id": best_match.get("seller_uid"),
+                "crypto": crypto,
+                "crypto_amount": float(amount),
+                "crypto_currency": crypto,
+                "fiat_amount": float(amount) * best_match.get("price_fixed", 0),
+                "fiat_currency": "GBP",
+                "status": "pending_payment",
+                "created_at": datetime.now(timezone.utc),
+                "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30),
+                "payment_methods": best_match.get("payment_methods", []),
+                "escrow_locked": True
+            }
+            
+            await db.p2p_trades.insert_one(trade)
+            
+            # Lock listing amount
+            await db.p2p_listings.update_one(
+                {"listing_id": best_match.get("listing_id")},
+                {"$inc": {"amount_available": -float(amount)}}
+            )
+            
+            logger.info(f"✅ Auto-matched buyer {user_id} with seller {best_match.get('seller_uid')}")
+            
+            return {
+                "success": True,
+                "trade_id": trade_id,
+                "match": {
+                    "seller_id": best_match.get("seller_uid"),
+                    "price": best_match.get("price_fixed"),
+                    "rank": best_match.get("rank"),
+                    "completion_rate": best_match.get("completion_rate")
+                },
+                "message": "Matched with best seller"
+            }
+        
+        elif trade_type == "sell":
+            # Similar logic for selling - match with best buyer
+            # For now, create a listing that buyers can match with
+            raise HTTPException(status_code=501, detail="Sell matching coming soon")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in auto-match: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Hook into existing trade completion to update stats
+async def _update_stats_after_trade(trade_id: str):
+    """Call this after trade completes"""
+    try:
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
+        if trade and trade.get("status") == "completed":
+            await merchant_service.update_stats_on_trade_complete(
+                trade_id=trade_id,
+                buyer_id=trade.get("buyer_id"),
+                seller_id=trade.get("seller_id")
+            )
+    except Exception as e:
+        logger.error(f"Error updating stats after trade: {str(e)}")
+
+# 🔒 END LOCKED SECTION
+# =============================================================================
+
