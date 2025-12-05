@@ -436,6 +436,8 @@ const AdminLiquidityManagement = () => {
                   </table>
                 </div>
               </PremiumCard>
+                </details>
+              </>
             )}
           </div>
 
