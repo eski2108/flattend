@@ -183,7 +183,7 @@ export default function LandingPage() {
                 Log In
               </Button>
               <Button
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/register')}
                 className="connect-wallet-btn"
                 data-testid="register-btn"
               >
