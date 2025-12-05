@@ -24,6 +24,8 @@ import SpotTrading from "@/pages/SpotTrading";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import AllocationsPageDirect from "@/pages/AllocationsPage";
+import TermsOfService from "@/pages/TermsOfService";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
 // Lazy load non-critical pages for better performance
 const Transactions = lazy(() => import("@/pages/Transactions"));
