@@ -18,7 +18,7 @@ const AdminRevenueDashboard = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${BACKEND_URL}/admin/revenue/dashboard?timeframe=${timeframe}`);
+      const response = await axios.get(`${BACKEND_URL}/api/admin/revenue/dashboard?timeframe=${timeframe}`);
       if (response.data.success) {
         setRevenueData(response.data);
       } else {
