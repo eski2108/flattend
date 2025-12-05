@@ -6,7 +6,8 @@ import os
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, status, Query, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, Query, UploadFile, File, Form
+from fastapi import status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from starlette.middleware.cors import CORSMiddleware
@@ -726,7 +727,7 @@ class AddWalletAddressRequest(BaseModel):
     currency: str  # BTC, ETH, USDT, etc.
     address: str
 
-class WithdrawalRequest(BaseModel):
+class WithdrawalRequest2(BaseModel):
     user_id: str
     currency: str
     amount: float
@@ -790,7 +791,7 @@ class TwoFactorAuth(BaseModel):
 class ConnectWalletRequest(BaseModel):
     wallet_address: str
 
-class DepositRequest(BaseModel):
+class DepositRequest2(BaseModel):
     wallet_address: str
     amount: float
 
@@ -6931,7 +6932,7 @@ async def register_user(request: RegisterRequest, req: Request):
         
         if all([account_sid, auth_token, verify_service_sid]):
             client = Client(account_sid, auth_token)
-            verification = client.verify.v2.services(verify_service_sid).verifications.create(
+            _verification = client.verify.v2.services(verify_service_sid).verifications.create(
                 to=request.phone_number,
                 channel='sms'
             )
@@ -23687,7 +23688,7 @@ async def update_monetization_settings(updates: Dict):
         updates["updated_by"] = updates.get("admin_id", "admin")
         
         # Update or create settings
-        result = await db.monetization_settings.update_one(
+        _result = await db.monetization_settings.update_one(
             {"setting_id": "default_monetization"},
             {"$set": updates},
             upsert=True
@@ -24783,7 +24784,7 @@ async def get_security_logs(
     """Get security logs for admin dashboard"""
     try:
         from security_logger import SecurityLogger
-        security_logger = SecurityLogger(db)
+        _security_logger = SecurityLogger(db)
         
         # Build query filter
         query = {}
@@ -24978,7 +24979,7 @@ async def get_complete_revenue(period: str = "all"):
         total = sum(breakdown.values())
         
         # Calculate period-specific totals
-        now_iso = now.isoformat()
+        _now_iso = now.isoformat()
         today_start = (now - timedelta(days=1)).isoformat()
         week_start = (now - timedelta(days=7)).isoformat()
         month_start = (now - timedelta(days=30)).isoformat()
@@ -25806,7 +25807,7 @@ async def purchase_vip_tier(request: dict):
     """
     try:
         user_id = request.get("user_id")
-        payment_method = request.get("payment_method", "wallet_balance")
+        _payment_method = request.get("payment_method", "wallet_balance")
         
         if not user_id:
             raise HTTPException(status_code=400, detail="Missing user_id")
@@ -25831,7 +25832,7 @@ async def purchase_vip_tier(request: dict):
         from wallet_service import get_wallet_service
         wallet_service = get_wallet_service()
         
-        debit_result = await wallet_service.debit(
+        _debit_result = await wallet_service.debit(
             user_id=user_id,
             currency="GBP",
             amount=vip_cost,
@@ -26355,7 +26356,7 @@ async def update_admin_liquidity(request: dict):
             }
         
         # Update the balance
-        result = await db.admin_liquidity_wallets.update_one(
+        _result = await db.admin_liquidity_wallets.update_one(
             {"currency": currency},
             {
                 "$set": {
