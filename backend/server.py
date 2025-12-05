@@ -6485,8 +6485,8 @@ async def google_auth():
     
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-        # Get current domain from environment variable set during fork
-        base_url = os.environ.get('FRONTEND_URL', 'https://p2p-market-1.preview.emergentagent.com')
+        # Use the backend URL which is the same as frontend URL in this setup
+        base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://p2p-market-1.preview.emergentagent.com')
         redirect_uri = f"{base_url}/auth/google/callback"
         
         if not google_client_id:
