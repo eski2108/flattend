@@ -15293,13 +15293,7 @@ async def get_admin_external_wallets():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-        
-        return {
-            "success": True,
-            "message": f"{currency} withdrawal address saved"
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Unreachable code removed - duplicate return with undefined 'currency'
 
 
 @api_router.get("/admin/fee-settings")
