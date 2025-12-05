@@ -568,24 +568,77 @@ After payment is confirmed, funds will be credited to your Spot Wallet automatic
             </PremiumCard>
           </div>
 
-          {/* All Coin Tiles - Always Visible */}
+          {/* All Coin Tiles - Dynamic Grid */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">All Savings Assets</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {SUPPORTED_COINS.map((coin) => (
-                <CoinTile
-                  key={coin.code}
-                  coin={coin}
-                  savingsBalance={savingsBalances[coin.code] || 0}
-                  spotBalance={spotBalances[coin.code] || 0}
-                  gbpValue={(savingsBalances[coin.code] || 0) * (prices[coin.code] || 0)}
-                  priceHistory={priceHistories[coin.code] || []}
-                  onDeposit={openDepositModal}
-                  onWithdraw={openWithdrawModal}
-                  onNowPaymentsDeposit={handleNowPaymentsDeposit}
-                />
-              ))}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">All Savings Assets ({supportedCoins.length})</h2>
+              {supportedCoins.length > coinsPerPage && (
+                <div className="text-sm text-gray-400">
+                  Page {currentPage} of {Math.ceil(supportedCoins.length / coinsPerPage)}
+                </div>
+              )}
             </div>
+            
+            {/* Dynamic Responsive Grid */}
+            <div 
+              className="grid gap-6 mb-6"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))'
+              }}
+            >
+              {supportedCoins
+                .slice((currentPage - 1) * coinsPerPage, currentPage * coinsPerPage)
+                .map((coin) => (
+                  <CoinTile
+                    key={coin.code}
+                    coin={coin}
+                    savingsBalance={savingsBalances[coin.code] || 0}
+                    spotBalance={spotBalances[coin.code] || 0}
+                    gbpValue={(savingsBalances[coin.code] || 0) * (prices[coin.code] || 0)}
+                    priceHistory={priceHistories[coin.code] || []}
+                    onDeposit={openDepositModal}
+                    onWithdraw={openWithdrawModal}
+                    onNowPaymentsDeposit={handleNowPaymentsDeposit}
+                  />
+                ))}
+            </div>
+
+            {/* Pagination */}
+            {supportedCoins.length > coinsPerPage && (
+              <div className="flex justify-center items-center space-x-4">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                
+                <div className="flex space-x-2">
+                  {Array.from({ length: Math.ceil(supportedCoins.length / coinsPerPage) }, (_, i) => i + 1).map(pageNum => (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-10 h-10 rounded-lg font-semibold transition-all ${
+                        currentPage === pageNum
+                          ? 'bg-cyan-500 text-white'
+                          : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(Math.ceil(supportedCoins.length / coinsPerPage), p + 1))}
+                  disabled={currentPage === Math.ceil(supportedCoins.length / coinsPerPage)}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Savings History */}
