@@ -11909,11 +11909,7 @@ async def get_boost_status(ad_id: str):
         "cost": offer.get("boost_cost")
     }
 
-    return {
-        "success": True,
-        "swaps": swaps,
-        "count": len(swaps)
-    }
+    # Unreachable code removed - duplicate return with undefined 'swaps' variable
 
 
 
