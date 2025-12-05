@@ -25137,12 +25137,32 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
             start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
         
         # Get ALL fee transactions with details
+        # Handle both string timestamps and datetime objects
         fee_transactions = await db.transaction_history.find(
             {
-                "timestamp": {"$gte": start_date.isoformat()},
                 "fee_amount": {"$exists": True, "$gt": 0}
             }
         ).to_list(10000)
+        
+        # Filter by timeframe in Python (more reliable)
+        filtered_transactions = []
+        for tx in fee_transactions:
+            tx_timestamp = tx.get("timestamp")
+            if tx_timestamp:
+                if isinstance(tx_timestamp, str):
+                    try:
+                        tx_date = datetime.fromisoformat(tx_timestamp.replace('Z', '+00:00'))
+                    except:
+                        tx_date = datetime.now(timezone.utc)
+                else:
+                    tx_date = tx_timestamp
+                
+                if tx_date >= start_date:
+                    filtered_transactions.append(tx)
+            else:
+                filtered_transactions.append(tx)  # Include if no timestamp
+        
+        fee_transactions = filtered_transactions
         
         # Aggregate by fee type
         by_fee_type = {}
