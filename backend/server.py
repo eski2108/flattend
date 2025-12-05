@@ -6086,15 +6086,8 @@ async def get_notifications(wallet_address: str):
         "notifications": notifications
     }
 
-# DUPLICATE: @api_router.post("/notifications/{notification_id}/read")
-# DUPLICATE: async def mark_notification_read(notification_id: str):
-    """Mark notification as read"""
-    await db.notifications.update_one(
-        {"notification_id": notification_id},
-        {"$set": {"read": True}}
-    )
-    
-    return {"success": True}
+# DUPLICATE COMMENTED: This function was a duplicate
+# The active version is defined elsewhere in the file
 
 @api_router.get("/auth/verify-email")
 async def verify_email(token: str):
