@@ -18258,50 +18258,8 @@ async def create_system_message(trade_id: str, event_type: str, additional_info:
     await db.trade_chat_messages.insert_one(message)
     return message
 
-# DUPLICATE: @api_router.post("/trade/chat/send")
-# DUPLICATE: async def send_trade_message(request: SendMessageRequest):
-    """Send a message in a trade chat"""
-    try:
-        # Verify trade exists
-        trade = await db.trades.find_one({"trade_id": request.trade_id}, {"_id": 0})
-        if not trade:
-            raise HTTPException(status_code=404, detail="Trade not found")
-        
-        # Verify user is part of the trade
-        if request.user_id not in [trade.get("buyer_id"), trade.get("seller_id")]:
-            raise HTTPException(status_code=403, detail="You are not part of this trade")
-        
-        # Determine sender type
-        sender_type = "buyer" if request.user_id == trade.get("buyer_id") else "seller"
-        
-        # Create message
-        message = {
-            "message_id": str(uuid.uuid4()),
-            "trade_id": request.trade_id,
-            "sender_id": request.user_id,
-            "sender_type": sender_type,
-            "message_type": "image" if request.image_data else "text",
-            "content": request.message,
-            "image_data": request.image_data,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "is_read": False
-        }
-        
-        await db.trade_chat_messages.insert_one(message)
-        
-        # Update trade's last_message_at
-        await db.trades.update_one(
-            {"trade_id": request.trade_id},
-            {"$set": {"last_message_at": datetime.now(timezone.utc).isoformat()}}
-        )
-        
-        return {
-            "success": True,
-            "message": "Message sent",
-            "message_id": message["message_id"]
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# DUPLICATE COMMENTED: This function was a duplicate
+# The active version is defined elsewhere in the file
 
 @api_router.get("/trade/chat/{trade_id}")
 async def get_trade_chat_messages(trade_id: str, user_id: str):
