@@ -14721,75 +14721,8 @@ async def get_pending_kyc():
     
     return {"submissions": kyc_submissions}
 
-# DUPLICATE: @api_router.post("/admin/kyc/review")
-# DUPLICATE: async def review_kyc(request: dict):
-    """Admin: Approve or reject KYC"""
-    verification_id = request.get("verification_id")
-    approved = request.get("approved", False)
-    admin_notes = request.get("notes", "")
-    admin_user_id = request.get("admin_user_id", "admin")
-    tier = request.get("tier", 1)
-    
-    kyc_record = await db.kyc_verifications.find_one(
-        {"verification_id": verification_id},
-        {"_id": 0}
-    )
-    if not kyc_record:
-        raise HTTPException(status_code=404, detail="KYC verification not found")
-    
-    if approved:
-        # Approve KYC
-        daily_limits = {1: 500.0, 2: 5000.0, 3: float('inf')}
-        monthly_limits = {1: 10000.0, 2: 50000.0, 3: float('inf')}
-        
-        await db.kyc_verifications.update_one(
-            {"verification_id": verification_id},
-            {"$set": {
-                "status": "approved",
-                "tier": tier,
-                "daily_limit": daily_limits.get(tier, 500.0),
-                "monthly_limit": monthly_limits.get(tier, 10000.0),
-                "reviewed_at": datetime.now(timezone.utc).isoformat(),
-                "reviewed_by": admin_user_id,
-                "admin_notes": admin_notes
-            }}
-        )
-        
-        # Update user account
-        await db.user_accounts.update_one(
-            {"user_id": kyc_record["user_id"]},
-            {"$set": {
-                "kyc_verified": True,
-                "kyc_status": "approved",
-                "kyc_tier": tier,
-                "kyc_verified_at": datetime.now(timezone.utc).isoformat()
-            }}
-        )
-        
-        message = f"KYC approved for user {kyc_record['user_id']} with Tier {tier}"
-    else:
-        # Reject KYC
-        await db.kyc_verifications.update_one(
-            {"verification_id": verification_id},
-            {"$set": {
-                "status": "rejected",
-                "reviewed_at": datetime.now(timezone.utc).isoformat(),
-                "reviewed_by": admin_user_id,
-                "admin_notes": admin_notes
-            }}
-        )
-        
-        await db.user_accounts.update_one(
-            {"user_id": kyc_record["user_id"]},
-            {"$set": {
-                "kyc_verified": False,
-                "kyc_status": "rejected"
-            }}
-        )
-        
-        message = f"KYC rejected for user {kyc_record['user_id']}"
-    
-    return {"success": True, "message": message}
+# DUPLICATE COMMENTED: This admin KYC review function was a duplicate
+# The active version is defined elsewhere in the file
 
 # ============================================================================
 # SUPPORT CHAT ENDPOINTS
