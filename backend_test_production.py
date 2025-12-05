@@ -15,8 +15,8 @@ from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 import time
 
-# Production Backend URL
-BACKEND_URL = "https://coinhubx.net"
+# Production Backend URL - using internal URL since external domain redirects to lander
+BACKEND_URL = "http://localhost:8001"
 
 class CoinHubXProductionTester:
     """CoinHubX Production Backend API Tester"""
