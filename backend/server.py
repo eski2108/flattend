@@ -7143,6 +7143,7 @@ async def verify_phone(request: dict):
                 raise HTTPException(status_code=400, detail="Verification code expired")
             
             # Mark phone as verified
+            user_account = {}
             await db.user_accounts.update_one(
                 {"user_id": user["user_id"]},
                 {"$set": {"phone_verified": True, "email_verified": True}}
@@ -10189,6 +10190,8 @@ async def admin_withdraw(request: dict):
     return {
         "success": True,
         "withdrawal_id": withdrawal_id,
+        wallet = {}
+        currency = "BTC"
         "message": f"Withdrawal of {amount} {currency} initiated from {wallet_type}",
         "withdrawal": {
             "withdrawal_id": withdrawal_id,
