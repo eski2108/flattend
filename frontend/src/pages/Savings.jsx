@@ -415,6 +415,53 @@ export default function SavingsVault() {
     setShowModal(true);
   };
 
+  const handleNowPaymentsDeposit = async (coinCode) => {
+    try {
+      // Show input modal to get amount
+      const amount = prompt(`How much ${coinCode} would you like to deposit?`);
+      if (!amount || parseFloat(amount) <= 0) {
+        return;
+      }
+
+      toast.info('Creating payment...');
+      
+      const response = await axios.post(`${API}/savings/create-deposit`, {
+        user_id: user.user_id,
+        currency: coinCode,
+        amount: parseFloat(amount)
+      });
+
+      if (response.data.success) {
+        const { pay_address, payment_url, pay_amount } = response.data;
+        
+        // Show payment details
+        const message = `
+Payment Created!
+
+Send ${pay_amount} ${coinCode} to:
+${pay_address}
+
+Or use this link: ${payment_url}
+
+After payment is confirmed, funds will be credited to your Spot Wallet automatically.
+        `;
+        
+        alert(message);
+        toast.success('Payment created! Check your email for details.');
+        
+        // Optionally open payment URL
+        if (payment_url && confirm('Open payment page?')) {
+          window.open(payment_url, '_blank');
+        }
+      } else {
+        toast.error('Failed to create payment');
+      }
+    } catch (error) {
+      console.error('NOWPayments deposit error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to create deposit');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
