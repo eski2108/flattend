@@ -112,16 +112,10 @@ export default function Register() {
         animation: 'float 25s ease-in-out infinite reverse'
       }} />
 
-      {/* Register Card */}
+      {/* Register Form */}
       <div style={{
         width: '100%',
         maxWidth: '460px',
-        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.98) 0%, rgba(5, 16, 24, 0.98) 100%)',
-        border: '1px solid rgba(0, 240, 255, 0.3)',
-        borderRadius: '32px',
-        padding: '48px 36px 36px 36px',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 100px rgba(0, 240, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(20px)',
         position: 'relative',
         zIndex: 1
       }}>
