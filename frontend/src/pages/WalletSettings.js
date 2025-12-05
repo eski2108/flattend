@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { IoAdd, IoCheckmark, IoCopy, IoCreate } from 'react-icons/io5';
+import { IoAdd, IoCheckmark, IoCopy, IoCreate, IoTrash as Trash2 } from 'react-icons/io5';
 import axios from 'axios';
 import Layout from '@/components/Layout';
 
