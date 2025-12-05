@@ -32,7 +32,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://cryptolaunch-9.preview.emergentagent.com/api"
+BASE_URL = "https://cryptovault-29.preview.emergentagent.com/api"
 
 # Test User for debugging
 DEBUG_USER = {

@@ -33,7 +33,7 @@ Testing all features requested in the review:
 21. Real prices from CoinGecko (no placeholders)
 22. All systems integrated and working
 
-**Backend URL:** https://cryptolaunch-9.preview.emergentagent.com/api
+**Backend URL:** https://cryptovault-29.preview.emergentagent.com/api
 """
 
 import requests
@@ -43,7 +43,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://cryptolaunch-9.preview.emergentagent.com/api"
+BASE_URL = "https://cryptovault-29.preview.emergentagent.com/api"
 
 # Test Users for comprehensive testing
 TEST_TRADER = {

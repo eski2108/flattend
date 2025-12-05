@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { IoBarChart, IoFlash, IoPulse, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptolaunch-9.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptovault-29.preview.emergentagent.com';
 
 export default function P2PTradingExchange() {
   const navigate = useNavigate();

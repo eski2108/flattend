@@ -25,7 +25,7 @@ Tests the complete integration of P2P escrow balance system with Express Mode an
 6. Express Mode Scoring with Balance
 7. Multiple Simultaneous Locks
 
-**Backend URL:** https://cryptolaunch-9.preview.emergentagent.com/api
+**Backend URL:** https://cryptovault-29.preview.emergentagent.com/api
 """
 
 import requests
@@ -35,7 +35,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://cryptolaunch-9.preview.emergentagent.com/api"
+BASE_URL = "https://cryptovault-29.preview.emergentagent.com/api"
 
 # Test Users (as specified in review request)
 TEST_USERS = {
