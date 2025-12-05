@@ -553,8 +553,10 @@ After payment is confirmed, funds will be credited to your Spot Wallet automatic
                   savingsBalance={savingsBalances[coin.code] || 0}
                   spotBalance={spotBalances[coin.code] || 0}
                   gbpValue={(savingsBalances[coin.code] || 0) * (prices[coin.code] || 0)}
+                  priceHistory={priceHistories[coin.code] || []}
                   onDeposit={openDepositModal}
                   onWithdraw={openWithdrawModal}
+                  onNowPaymentsDeposit={handleNowPaymentsDeposit}
                 />
               ))}
             </div>
