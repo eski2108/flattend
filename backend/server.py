@@ -25119,6 +25119,79 @@ async def get_referral_analytics():
         logger.error(f"Error getting referral analytics: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/admin/revenue/dashboard")
+async def get_admin_revenue_dashboard(timeframe: str = "all"):
+    """Get revenue dashboard with time-based breakdown - Last week, last month, today"""
+    try:
+        from datetime import datetime, timedelta, timezone
+        
+        # Calculate date range
+        now = datetime.now(timezone.utc)
+        if timeframe == "today":
+            start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        elif timeframe == "week":
+            start_date = now - timedelta(days=7)
+        elif timeframe == "month":
+            start_date = now - timedelta(days=30)
+        else:  # all
+            start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        
+        # Get all revenue data
+        match_filter = {"timestamp": {"$gte": start_date.isoformat()}}
+        
+        # P2P Revenue
+        p2p_revenue = await db.p2p_trades.aggregate([
+            {"$match": {**match_filter, "status": "completed"}},
+            {"$group": {
+                "_id": None,
+                "total": {"$sum": "$platform_fee"},
+                "count": {"$sum": 1}
+            }}
+        ]).to_list(1)
+        
+        # Swap fees
+        swap_revenue = await db.swap_transactions.aggregate([
+            {"$match": {**match_filter, "status": "completed"}},
+            {"$group": {
+                "_id": None,
+                "total": {"$sum": "$fee_amount"},
+                "count": {"$sum": 1}
+            }}
+        ]).to_list(1)
+        
+        # Transaction fees
+        tx_revenue = await db.transaction_history.aggregate([
+            {"$match": {**match_filter, "fee_amount": {"$gt": 0}}},
+            {"$group": {
+                "_id": None,
+                "total": {"$sum": "$fee_amount"},
+                "count": {"$sum": 1}
+            }}
+        ]).to_list(1)
+        
+        # Calculate totals
+        p2p_total = p2p_revenue[0]["total"] if p2p_revenue else 0
+        swap_total = swap_revenue[0]["total"] if swap_revenue else 0
+        tx_total = tx_revenue[0]["total"] if tx_revenue else 0
+        
+        total_revenue_gbp = (p2p_total + swap_total + tx_total) * 0.79  # Assume crypto, convert to GBP
+        
+        return {
+            "success": True,
+            "timeframe": timeframe,
+            "total_revenue_gbp": total_revenue_gbp,
+            "p2p_revenue": p2p_total,
+            "swap_revenue": swap_total,
+            "transaction_revenue": tx_total,
+            "p2p_count": p2p_revenue[0]["count"] if p2p_revenue else 0,
+            "swap_count": swap_revenue[0]["count"] if swap_revenue else 0,
+            "transaction_count": tx_revenue[0]["count"] if tx_revenue else 0
+        }
+        
+    except Exception as e:
+        logger.error(f"Revenue dashboard error: {e}")
+        return {"success": False, "error": str(e)}
+
 @api_router.get("/admin/revenue/summary")
 async def get_admin_revenue_summary():
     """Get comprehensive revenue breakdown - all fees and profits collected"""
