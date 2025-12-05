@@ -255,7 +255,7 @@ class CoinHubXComprehensiveTester:
                          performance_ms=response_time)
     
     async def test_p2p_create_offer(self):
-        """Test creating P2P offer"""
+        """Test creating P2P sell order"""
         # Need authenticated user
         user = await self.create_test_user()
         if not user:
@@ -263,30 +263,32 @@ class CoinHubXComprehensiveTester:
             return None
         
         offer_data = {
-            "type": "sell",
-            "cryptocurrency": "BTC",
-            "amount": 0.1,
+            "seller_id": user["user_id"],
+            "crypto_currency": "BTC",
+            "crypto_amount": 0.1,
+            "fiat_currency": "GBP",
             "price_per_unit": 45000,
             "payment_methods": ["bank_transfer"],
-            "min_order": 0.01,
-            "max_order": 0.1
+            "min_purchase": 0.01,
+            "max_purchase": 0.1,
+            "seller_requirements": []
         }
         
         headers = {"Authorization": f"Bearer {user['token']}"}
         success, response, status, response_time = await self.make_request(
-            "POST", "/p2p/offers", json=offer_data, headers=headers
+            "POST", "/p2p/create-sell-order", json=offer_data, headers=headers
         )
         
         if success and isinstance(response, dict) and response.get("success"):
-            offer_id = response.get("offer_id")
+            order_id = response.get("order_id")
             self.log_test("P2P Create Offer", True, 
-                         f"P2P offer created successfully: {offer_id}", 
-                         {"offer_id": offer_id, "type": offer_data["type"]},
+                         f"P2P sell order created successfully: {order_id}", 
+                         {"order_id": order_id, "crypto_currency": offer_data["crypto_currency"]},
                          performance_ms=response_time)
-            return {"offer_id": offer_id, "user": user}
+            return {"order_id": order_id, "user": user}
         else:
             self.log_test("P2P Create Offer", False, 
-                         f"Failed to create P2P offer with status {status}", response,
+                         f"Failed to create P2P sell order with status {status}", response,
                          performance_ms=response_time)
             return None
     
