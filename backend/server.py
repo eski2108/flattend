@@ -24593,33 +24593,9 @@ async def get_complete_revenue(period: str = "all"):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.get("/admin/revenue/dashboard")
-async def get_admin_revenue_dashboard(timeframe: str = "all"):
-    """
-    Comprehensive Admin Revenue Dashboard
-    Aggregates all fee revenue, referral commissions, and provides complete breakdown
-    """
-    try:
-        from datetime import timedelta
-        
-        now = datetime.now(timezone.utc)
-        
-        # Calculate time range
-        if timeframe == "today":
-            start_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        elif timeframe == "week":
-            start_time = now - timedelta(days=7)
-        elif timeframe == "month":
-            start_time = now - timedelta(days=30)
-        else:  # all
-            start_time = datetime(2020, 1, 1, tzinfo=timezone.utc)
-        
-        start_time_iso = start_time.isoformat()
-        
-        # Get all fee transactions
-        fee_txns = await db.fee_transactions.find({
-            "timestamp": {"$gte": start_time_iso}
-        }).to_list(100000)
+# DEPRECATED - Replaced with working version below
+# @api_router.get("/admin/revenue/dashboard")
+# OLD VERSION - BROKEN - Looking for non-existent fee_transactions collection
         
         # Initialize aggregators
         total_revenue = 0
