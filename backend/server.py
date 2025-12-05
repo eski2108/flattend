@@ -22998,22 +22998,7 @@ async def update_admin_chat_settings(request: Request):
         logger.error(f"Failed to update chat settings: {str(e)}")
         return {"success": False, "error": str(e)}
 
-
-        
-        result = await add_platform_funds(
-            db,
-# DUPLICATE:             amount=float(amount),
-            currency=currency.upper(),
-            method="manual",
-            admin_user_id=admin_user_id,
-            notes=notes
-        )
-        
-        return result
-        
-    except Exception as e:
-        logger.error(f"❌ Failed to top up platform wallet: {str(e)}")
-        return {"success": False, "error": str(e)}
+    # Unreachable code removed - dead code with undefined variables (amount, currency, admin_user_id, notes)
 
 
 # ===================================
