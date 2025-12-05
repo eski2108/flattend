@@ -5101,14 +5101,7 @@ async def get_all_trader_balances(limit: int = 100):
         "note": "This shows all trader balances held in P2P escrow system"
     }
 
-
-    
-    return {
-        "success": True,
-        "balances": balance_dict,
-        "total_usd_estimate": round(total_usd_estimate, 2),
-        "note": "These are internal DB balances, not on-chain wallets"
-    }
+    # Unreachable code removed (duplicate return statement with undefined variables)
 
 
 # ============================================================================
