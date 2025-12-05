@@ -7162,6 +7162,9 @@ async def login_user(login_req: LoginRequest, request: Request):
         )
     
     logger.info(f"=== LOGIN ATTEMPT: {login_req.email} ===")
+    logger.info(f"🔍 DEBUG: Received email: '{login_req.email}' (length: {len(login_req.email)})")
+    logger.info(f"🔍 DEBUG: Received password: '{login_req.password}' (length: {len(login_req.password)})")
+    logger.info(f"🔍 DEBUG: Email bytes: {login_req.email.encode()}")
     
     # Find user
     user = await db.user_accounts.find_one({"email": login_req.email}, {"_id": 0})
