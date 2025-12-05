@@ -388,7 +388,7 @@ export default function SavingsVault() {
       
       for (const coin of coinsList) {
         try {
-          const priceHistRes = await axios.get(`${API}/savings/price-history/${coin.code}`);
+          const priceHistRes = await axios.get(`${API}/api/savings/price-history/${coin.code}`);
           if (priceHistRes.data.success && priceHistRes.data.prices.length > 0) {
             historyMap[coin.code] = priceHistRes.data.prices;
           }
