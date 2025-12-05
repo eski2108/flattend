@@ -1956,8 +1956,9 @@ async def get_enhanced_offers(
             try:
                 seller_response = await get_seller_profile(offer["seller_id"])
                 offer["seller_info"] = seller_response["seller"]
-            except:
+            except Exception as e:
                 # Fallback if seller profile doesn't exist
+                logger.warning(f"Could not load seller profile: {e}")
                 offer["seller_info"] = {
                     "username": f"User{offer['seller_id'][:8]}",
                     "is_verified": False,
