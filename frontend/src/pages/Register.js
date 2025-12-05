@@ -122,16 +122,16 @@ export default function Register() {
         {/* CHX Logo */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <img 
-            src="/chx-logo-transparent.png" 
+            src="/logo1-transparent.png" 
             alt="CoinHubX Logo" 
             style={{
-              width: '120px',
               height: '120px',
+              width: 'auto',
               objectFit: 'contain',
+              imageRendering: 'crisp-edges',
               marginBottom: '24px',
               margin: '0 auto 24px auto',
-              display: 'block',
-              filter: 'drop-shadow(0 8px 24px rgba(0, 240, 255, 0.4))'
+              display: 'block'
             }}
           />
           <h1 style={{
