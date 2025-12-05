@@ -14,6 +14,22 @@ export default function LiveChatWidget() {
   const [chatId, setChatId] = useState(null);
   const messagesEndRef = useRef(null);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const loadChat = async (userId) => {
+    try {
+      const response = await axios.get(`${API}/support/chat/${userId}`);
+      if (response.data.success && response.data.messages) {
+        setMessages(response.data.messages);
+        setChatId(response.data.chat_id);
+      }
+    } catch (error) {
+      console.error('Failed to load chat:', error);
+    }
+  };
+
   useEffect(() => {
     // Get user data
     const user = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
@@ -38,22 +54,6 @@ export default function LiveChatWidget() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const loadChat = async (userId) => {
-    try {
-      const response = await axios.get(`${API}/support/chat/${userId}`);
-      if (response.data.success && response.data.messages) {
-        setMessages(response.data.messages);
-        setChatId(response.data.chat_id);
-      }
-    } catch (error) {
-      console.error('Failed to load chat:', error);
-    }
-  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
