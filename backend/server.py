@@ -7183,10 +7183,12 @@ async def login_user(login_req: LoginRequest, request: Request):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     logger.info(f"User found: {login_req.email}")
+    logger.info(f"🔍 DEBUG: User data - user_id: {user.get('user_id')}, role: {user.get('role')}")
     
     # Verify password - handle both old SHA256 and new bcrypt hashes
     from security import password_hasher
     stored_hash = user["password_hash"]
+    logger.info(f"🔍 DEBUG: Stored hash: {stored_hash[:20]}... (length: {len(stored_hash)})")
     
     password_valid = False
     
