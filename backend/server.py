@@ -7184,15 +7184,14 @@ async def verify_phone(request: dict):
     
     return {
         "success": True,
-        "message": "Account created! Please check your email to verify your account.",
+        "message": "Registration successful! You can now login.",
         "user": {
             "user_id": user_account.user_id,
             "email": user_account.email,
             "full_name": user_account.full_name,
             "wallet_address": user_account.wallet_address,
             "email_verified": True
-        },
-        "message": "Registration successful - you can now login"
+        }
     }
 
 @api_router.post("/auth/login")
