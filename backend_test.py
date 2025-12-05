@@ -873,7 +873,7 @@ class CoinHubXComprehensiveTester:
             print()
         
         # Performance issues
-        slow_tests = [r for r in self.test_results if r.get("performance_ms", 0) > 2000]
+        slow_tests = [r for r in self.test_results if r.get("performance_ms") and r.get("performance_ms") > 2000]
         if slow_tests:
             print("🐌 PERFORMANCE ISSUES:")
             for slow in slow_tests:
