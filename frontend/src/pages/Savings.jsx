@@ -353,7 +353,7 @@ export default function SavingsVault() {
       setLoading(true);
 
       // Load savings balances
-      const savingsRes = await axios.get(`${API}/api/savings/balances/${userId}`);
+      const savingsRes = await axios.get(`${API}/savings/balances/${userId}`);
       if (savingsRes.data.success) {
         setSavingsData(savingsRes.data.balances);
         setTotalSavingsGBP(savingsRes.data.total_value_gbp || 0);
