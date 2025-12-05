@@ -248,7 +248,7 @@ function PremiumAuth() {
             Coin Hub X
           </h1>
           <p style={{ color: '#888', fontSize: '14px' }}>
-            {step === 'signin' && 'Welcome back'}
+            {step === 'signin' && 'Create your account or sign in'}
             {step === 'phone' && 'Verify your phone'}
             {step === 'otp' && 'Enter verification code'}
             {step === 'profile' && 'Complete your profile'}
