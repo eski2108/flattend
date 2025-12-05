@@ -12405,6 +12405,8 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
     tx_dict['gross_amount'] = float(request.amount)
     await db.crypto_transactions.insert_one(tx_dict)
     
+    withdrawal_id = transaction.transaction_id  # Store for later reference
+    
     # AUTOMATED: Create fee transaction to admin wallet
     fee_transaction = CryptoTransaction(
         user_id=PLATFORM_CONFIG["admin_wallet_id"],
