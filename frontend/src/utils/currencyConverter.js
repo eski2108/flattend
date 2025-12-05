@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // Cache for prices to avoid excessive API calls
 let priceCache = {};

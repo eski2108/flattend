@@ -8,7 +8,7 @@ const AdminRevenueDashboard = () => {
   const [timeframe, setTimeframe] = useState('all'); // all, today, week, month
   const [error, setError] = useState('');
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     fetchRevenueData();
