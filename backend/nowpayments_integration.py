@@ -436,6 +436,73 @@ class NOWPaymentsService:
         except Exception as e:
             logger.error(f"❌ Error checking payment confirmation: {str(e)}")
             return False
+    
+    def get_account_balances(self) -> Dict:
+        """
+        Get all cryptocurrency balances from NOWPayments account
+        This shows the REAL liquidity available for the platform
+        
+        Returns:
+            {
+                "success": True/False,
+                "balances": [
+                    {"currency": "BTC", "balance": 0.5, "pending": 0.1},
+                    {"currency": "ETH", "balance": 10.0, "pending": 0.5},
+                    ...
+                ]
+            }
+        """
+        try:
+            logger.info("🔍 Fetching NOWPayments account balances...")
+            
+            # NOWPayments balance endpoint
+            response = requests.get(
+                f"{self.BASE_URL}/balance",
+                headers=self.headers,
+                timeout=15
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            # Format the response
+            balances = []
+            if isinstance(data, dict) and 'balances' in data:
+                for currency, balance_data in data['balances'].items():
+                    balances.append({
+                        "currency": currency.upper(),
+                        "balance": float(balance_data.get('balance', 0)),
+                        "pending": float(balance_data.get('pending', 0))
+                    })
+            elif isinstance(data, list):
+                # Sometimes API returns array format
+                for item in data:
+                    balances.append({
+                        "currency": item.get('currency', '').upper(),
+                        "balance": float(item.get('balance', 0)),
+                        "pending": float(item.get('pending', 0))
+                    })
+            
+            logger.info(f"✅ Retrieved balances for {len(balances)} currencies")
+            
+            return {
+                "success": True,
+                "balances": balances
+            }
+            
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"❌ NOWPayments API error: {e.response.status_code} - {e.response.text}")
+            return {
+                "success": False,
+                "error": f"API error: {e.response.status_code}",
+                "balances": []
+            }
+        except Exception as e:
+            logger.error(f"❌ Failed to fetch NOWPayments balances: {str(e)}")
+            return {
+                "success": False,
+                "error": str(e),
+                "balances": []
+            }
 
 
 # Global instance
