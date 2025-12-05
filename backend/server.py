@@ -20258,19 +20258,8 @@ async def get_user_sell_offers(user_id: str):
     }
 
 # DUPLICATE: @api_router.get("/sell-offers/marketplace")
-# DUPLICATE: async def get_marketplace_offers(
-    crypto_asset: Optional[str] = None,
-    fiat_currency: Optional[str] = None,
-    payment_method: Optional[str] = None,
-    fast_payment_only: Optional[bool] = None,
-    min_price: Optional[float] = None,
-    max_price: Optional[float] = None,
-    min_amount: Optional[float] = None,
-    max_amount: Optional[float] = None,
-    search_seller: Optional[str] = None,
-    sort_by: Optional[str] = "best_price"  # best_price, rating, fast_payment_first
-):
-    """Get published sell offers for marketplace (buyer view) with advanced filters"""
+# DUPLICATE: async def get_marketplace_offers(...):
+    # """Get published sell offers for marketplace (buyer view) with advanced filters"""
     query = {"is_published": True}
     
     # Basic filters
