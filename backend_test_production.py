@@ -325,14 +325,18 @@ class CoinHubXProductionTester:
         
         # Test user registration and login flow
         reg_success, user_data = await self.test_user_registration()
+        user_id = None
         if reg_success:
             login_success, token = await self.test_user_login(user_data)
             
             if login_success and token:
+                # Extract user_id from login response or use email as fallback
+                user_id = user_data.get("email", "test_user")
+                
                 # Test authenticated endpoints
-                await self.test_wallet_balances(token)
-                await self.test_instant_buy_flow(token)
-                await self.test_referral_system(token)
+                await self.test_wallet_balances(token, user_id)
+                await self.test_instant_buy_flow(token, user_id)
+                await self.test_referral_system(token, user_id)
         
         # Test admin functionality
         admin_success = await self.test_admin_login()
