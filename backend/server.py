@@ -18957,31 +18957,8 @@ async def get_portfolio_with_allocations(user_id: str):
         }
 # 🔒 END LOCKED SECTION - Portfolio/Wallet Value Calculation
 
-# DUPLICATE: @api_router.get("/wallets/transactions/{user_id}")
-# DUPLICATE: async def get_wallet_transactions(user_id: str, limit: int = 50):
-    """
-    Get transaction history for user from wallet_transactions collection
-    """
-    try:
-        transactions = await db.wallet_transactions.find(
-            {"user_id": user_id},
-            {"_id": 0}
-        ).sort("timestamp", -1).limit(limit).to_list(limit)
-        
-        return {
-            "success": True,
-            "user_id": user_id,
-            "transactions": transactions,
-            "count": len(transactions)
-        }
-        
-    except Exception as e:
-        logger.error(f"❌ Error fetching transactions for {user_id}: {str(e)}")
-        return {
-            "success": False,
-            "message": str(e),
-            "transactions": []
-        }
+# DUPLICATE COMMENTED: This function was a duplicate
+# The active version is defined elsewhere in the file
 
 @api_router.get("/portfolio/history")
 async def get_portfolio_history(
