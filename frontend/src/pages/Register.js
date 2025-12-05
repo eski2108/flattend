@@ -53,7 +53,7 @@ export default function Register() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API}/api/auth/register`, {
+      const response = await axios.post(`${API}/auth/register`, {
         full_name: formData.full_name,
         email: formData.email,
         phone_number: formData.country_code + formData.phone_number,
