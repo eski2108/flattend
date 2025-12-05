@@ -95,8 +95,6 @@ const DepositInstructions = lazy(() => import("@/pages/DepositInstructions"));
 const WithdrawalRequest = lazy(() => import("@/pages/WithdrawalRequest"));
 const KYCVerification = lazy(() => import("@/pages/KYCVerification"));
 const AdminCMS = lazy(() => import("@/pages/AdminCMSNew"));
-const TermsOfService = lazy(() => import("@/pages/TermsOfService"));
-const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const FAQ = lazy(() => import("@/pages/FAQ"));
 const HelpCenter = lazy(() => import("@/pages/HelpCenter"));
 const Staking = lazy(() => import("@/pages/Staking"));
