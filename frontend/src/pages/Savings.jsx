@@ -118,15 +118,14 @@ const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, priceHistory, o
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => onDeposit(coin.code)}
-          disabled={spotBalance === 0}
-          className="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={() => spotBalance > 0 ? onDeposit(coin.code) : onNowPaymentsDeposit(coin.code)}
+          className="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg"
           style={{
-            boxShadow: spotBalance > 0 ? '0 0 20px rgba(0, 234, 255, 0.4)' : 'none'
+            boxShadow: '0 0 20px rgba(0, 234, 255, 0.4)'
           }}
         >
           <BiArrowToTop size={20} />
-          <span>Add</span>
+          <span>{spotBalance > 0 ? 'Add' : 'Deposit'}</span>
         </button>
         
         <button
