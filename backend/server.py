@@ -2907,7 +2907,7 @@ async def get_user_seller_link(user_id: str):
 
 
 @api_router.get("/p2p/seller/{user_id}")
-async def get_seller_profile(user_id: str):
+async def get_seller_profile_duplicate1(user_id: str):
     """Get seller profile with stats"""
     # Get user account
     user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
@@ -6087,7 +6087,7 @@ async def get_notifications(wallet_address: str):
     }
 
 @api_router.post("/notifications/{notification_id}/read")
-async def mark_notification_read(notification_id: str):
+async def mark_notification_read_duplicate1(notification_id: str):
     """Mark notification as read"""
     await db.notifications.update_one(
         {"notification_id": notification_id},
@@ -8807,7 +8807,7 @@ async def get_seller_status(user_id: str):
     }
 
 @api_router.get("/p2p/seller-status/{user_id}")
-async def get_seller_status(user_id: str):
+async def get_seller_status_duplicate1(user_id: str):
     """Check if user is a seller"""
     user = await db.users.find_one({"user_id": user_id})
     if not user:
@@ -14466,7 +14466,7 @@ async def create_withdrawal_request_new(request: WithdrawalRequestNew):
     return result
 
 @api_router.post("/wallet/request-withdrawal")
-async def request_withdrawal(request: WithdrawalRequest):
+async def request_withdrawal_duplicate1(request: WithdrawalRequest):
     """User requests withdrawal (requires admin approval)"""
     # Get user
     user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
@@ -16310,7 +16310,7 @@ async def get_monetization_breakdown(period: str = Query("day", regex="^(day|wee
 # ============================================================================
 
 @api_router.get("/supported/currencies")
-async def get_supported_currencies():
+async def get_supported_currencies_duplicate1():
     """Get all supported fiat currencies"""
     return {
         "success": True,
@@ -16797,7 +16797,7 @@ async def assign_golden_tier(request: dict):
         return {"success": False, "message": str(e)}
 
 @api_router.get("/user/referral-dashboard/{user_id}")
-async def get_referral_dashboard(user_id: str):
+async def get_referral_dashboard_duplicate1(user_id: str):
     """Get complete referral dashboard data"""
     try:
         # Get user account
@@ -17634,7 +17634,7 @@ async def update_cms_platform_settings(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/settings/fees")
-async def get_fee_settings():
+async def get_fee_settings_duplicate1():
     """Get wallet fee settings"""
     try:
         settings = await db.platform_settings.find_one({}, {"_id": 0})
@@ -18234,7 +18234,7 @@ async def upload_dispute_evidence(dispute_id: str, request: dict):
 
 
 @api_router.get("/p2p/disputes/{dispute_id}")
-async def get_dispute(dispute_id: str, user_id: str = Query(None)):
+async def get_dispute_duplicate1(dispute_id: str, user_id: str = Query(None)):
     """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
@@ -18306,7 +18306,7 @@ async def get_user_disputes(user_id: str):
 
 
 @api_router.get("/admin/disputes/all")
-async def get_all_disputes(status: Optional[str] = None):
+async def get_all_disputes_duplicate1(status: Optional[str] = None):
     """Admin: Get all disputes"""
     try:
         query = {}
@@ -18539,7 +18539,7 @@ async def create_system_message(trade_id: str, event_type: str, additional_info:
     return message
 
 @api_router.post("/trade/chat/send")
-async def send_trade_message(request: SendMessageRequest):
+async def send_trade_message_duplicate1(request: SendMessageRequest):
     """Send a message in a trade chat"""
     try:
         # Verify trade exists
@@ -19284,7 +19284,7 @@ async def get_portfolio_with_allocations(user_id: str):
 # 🔒 END LOCKED SECTION - Portfolio/Wallet Value Calculation
 
 @api_router.get("/wallets/transactions/{user_id}")
-async def get_wallet_transactions(user_id: str, limit: int = 50):
+async def get_wallet_transactions_duplicate1(user_id: str, limit: int = 50):
     """
     Get transaction history for user from wallet_transactions collection
     """
@@ -19692,7 +19692,7 @@ async def admin_process_payout(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/payouts/pending")
-async def get_pending_payouts():
+async def get_pending_payouts_duplicate1():
     """Get all pending payout requests for admin review"""
     try:
         payouts = await db.payouts.find(
@@ -19997,7 +19997,7 @@ async def get_live_prices():
     }
 
 @api_router.post("/prices/convert")
-async def convert_currency(request: dict):
+async def convert_currency_duplicate1(request: dict):
     """Convert between crypto and fiat currencies in real-time"""
     from_type = request.get("from_type")  # 'crypto' or 'fiat'
     to_type = request.get("to_type")      # 'crypto' or 'fiat'
@@ -20234,7 +20234,7 @@ async def get_user_sell_offers(user_id: str):
     }
 
 @api_router.get("/sell-offers/marketplace")
-async def get_marketplace_offers(
+async def get_marketplace_offers_duplicate1(
     crypto_asset: Optional[str] = None,
     fiat_currency: Optional[str] = None,
     payment_method: Optional[str] = None,
@@ -20631,7 +20631,7 @@ async def admin_update_category(category_id: str, request: dict):
 # ==================== NOTIFICATION SYSTEM ====================
 
 @api_router.get("/notifications")
-async def get_notifications(
+async def get_notifications_duplicate1(
     request: Request,
     unread_only: bool = Query(default=False),
     limit: int = Query(default=50, le=100),
@@ -21378,7 +21378,7 @@ async def verify_telegram_link_code(request: dict):
     }
 
 @api_router.get("/telegram/link-status")
-async def get_telegram_link_status(user_id: str):
+async def get_telegram_link_status_duplicate1(user_id: str):
     """Check if user has Telegram linked"""
     telegram_link = await db.telegram_links.find_one({"user_id": user_id, "linked": True})
     
@@ -25447,7 +25447,7 @@ async def get_portfolio_holdings(user_id: str):
 
 
 @api_router.get("/nowpayments/currencies")
-async def get_nowpayments_currencies():
+async def get_nowpayments_currencies_duplicate1():
     """Get full list of available currencies from NOWPayments"""
     try:
         import httpx
@@ -25493,7 +25493,7 @@ async def get_nowpayments_currencies():
 # ============================================
 
 @api_router.get("/admin/customer-analytics")
-async def get_customer_analytics():
+async def get_customer_analytics_duplicate1():
     """Get customer analytics for business dashboard"""
     try:
         now = datetime.now(timezone.utc)
@@ -25800,7 +25800,7 @@ async def calculate_and_apply_fee(
 #
 # ⚠️  WARNING: DO NOT ADD ANY @api_router ENDPOINTS BELOW THIS LINE
 @api_router.post("/user/purchase-vip-tier")
-async def purchase_vip_tier(request: dict):
+async def purchase_vip_tier_duplicate1(request: dict):
     """
     Purchase VIP referral tier for £150 (one-time payment)
     Upgrades user from standard (20%) to VIP (20% lifetime)
@@ -26302,7 +26302,7 @@ async def simulate_crypto_deposit(request: dict):
         }
 
 @api_router.get("/admin/pending-deposits")
-async def get_pending_deposits():
+async def get_pending_deposits_duplicate1():
     """Get all pending deposits"""
     try:
         from blockchain_simulator import BlockchainSimulator
@@ -26487,7 +26487,7 @@ async def toggle_real_liquidity_sync(request: dict):
         }
 
 @api_router.get("/admin/liquidity-status")
-async def get_liquidity_status():
+async def get_liquidity_status_duplicate1():
     """Get current liquidity status for all currencies"""
     try:
         from liquidity_checker import LiquidityChecker
@@ -27085,7 +27085,7 @@ async def _update_stats_after_trade(trade_id: str):
 # =============================================================================
 
 @api_router.post("/p2p/trade/mark-paid")
-async def mark_trade_as_paid(request: dict):
+async def mark_trade_as_paid_duplicate1(request: dict):
     """Buyer marks payment as made"""
     try:
         trade_id = request.get("trade_id")
@@ -27245,7 +27245,7 @@ async def open_trade_dispute(request: dict):
 
 
 @api_router.post("/p2p/trade/cancel")
-async def cancel_trade(request: dict):
+async def cancel_trade_duplicate1(request: dict):
     """Cancel a trade (buyer only, before marking as paid)"""
     try:
         trade_id = request.get("trade_id")
@@ -27301,7 +27301,7 @@ async def cancel_trade(request: dict):
 
 
 @api_router.post("/p2p/trade/message")
-async def send_trade_message(request: dict):
+async def send_trade_message_duplicate2(request: dict):
     """Send a message in trade chat"""
     try:
         trade_id = request.get("trade_id")
@@ -27340,7 +27340,7 @@ async def send_trade_message(request: dict):
 
 
 @api_router.get("/p2p/trade/{trade_id}")
-async def get_trade_details(trade_id: str, user_id: str):
+async def get_trade_details_duplicate1(trade_id: str, user_id: str):
     """Get trade details with messages"""
     try:
         # Get trade
