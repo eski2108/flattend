@@ -550,7 +550,7 @@ After payment is confirmed, funds will be credited to your Spot Wallet automatic
                 </div>
                 <div>
                   <div className="text-sm text-gray-400">Total Assets</div>
-                  <div className="text-2xl font-bold text-white">{SUPPORTED_COINS.length}</div>
+                  <div className="text-2xl font-bold text-white">{supportedCoins.length}</div>
                 </div>
               </div>
             </PremiumCard>
