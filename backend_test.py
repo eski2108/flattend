@@ -27,14 +27,19 @@ import asyncio
 import aiohttp
 import json
 import sys
+import uuid
+import random
+import string
 from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import time
+import hashlib
+import bcrypt
 
 # Backend URL from frontend .env
 BACKEND_URL = "https://tradefix-preview.preview.emergentagent.com"
 
-class P2PLeaderboardTester:
+class CoinHubXComprehensiveTester:
     """Comprehensive P2P Leaderboard API tester"""
     
     def __init__(self):
