@@ -280,17 +280,17 @@ class CoinHubXProductionTester:
         
         return liquidity_success
     
-    async def test_referral_system(self, token: str):
+    async def test_referral_system(self, token: str, user_id: str):
         """Test referral system functionality"""
         headers = {"Authorization": f"Bearer {token}"}
         
-        success, data, status, perf = await self.make_request("GET", "/referral/stats", headers=headers)
+        success, data, status, perf = await self.make_request("GET", f"/referral/stats/{user_id}", headers=headers)
         
-        referral_success = success and "referral_stats" in data
+        referral_success = success and data.get("success", False)
         self.log_test(
             "Referral System",
             referral_success,
-            f"Status: {status}, Referral stats available: {referral_success}",
+            f"Status: {status}, Referral success: {data.get('success', False)}",
             data if not referral_success else None,
             perf
         )
