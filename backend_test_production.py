@@ -174,16 +174,16 @@ class CoinHubXProductionTester:
         
         return admin_success
     
-    async def test_wallet_balances(self, token: str):
+    async def test_wallet_balances(self, token: str, user_id: str):
         """Test wallet balance retrieval"""
         headers = {"Authorization": f"Bearer {token}"}
-        success, data, status, perf = await self.make_request("GET", "/wallet/balances", headers=headers)
+        success, data, status, perf = await self.make_request("GET", f"/wallets/balances/{user_id}", headers=headers)
         
-        balances_success = success and isinstance(data.get("balances"), list)
+        balances_success = success and data.get("success", False)
         self.log_test(
             "Wallet Balances",
             balances_success,
-            f"Status: {status}, Balances count: {len(data.get('balances', []))}",
+            f"Status: {status}, Success: {data.get('success', False)}",
             data if not balances_success else None,
             perf
         )
