@@ -46,7 +46,8 @@ const AdminLiquidityManagement = () => {
       
       if (balancesRes.data.success) {
         setNowpaymentsBalances(balancesRes.data.balances);
-        setTotalValueGBP(balancesRes.data.total_value_gbp || 0);
+        // Use platform liquidity (not total NOWPayments balance)
+        setTotalValueGBP(balancesRes.data.summary?.total_platform_liquidity_gbp || 0);
       }
       
       if (revenueRes.data.success) {
