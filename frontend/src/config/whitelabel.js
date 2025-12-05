@@ -84,7 +84,7 @@ export const WHITELABEL_CONFIG = {
   // DOMAIN & URLS
   // ========================================
   domain: process.env.REACT_APP_DOMAIN || 'coinhubx.com',
-  backendUrl: process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001',
+  backendUrl: process.env.REACT_APP_BACKEND_URL,
   websiteUrl: process.env.REACT_APP_WEBSITE_URL || 'https://coinhubx.com',
   
   // ========================================

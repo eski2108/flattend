@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import * as LightweightCharts from 'lightweight-charts';
 import { Activity, ChevronDown, DollarSign, IoChevronDown, IoFlash, IoPulse, IoTime as Clock, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTrading() {
   const navigate = useNavigate();

@@ -10,7 +10,7 @@ const SupportChatWidget = () => {
   const [chatId, setChatId] = useState(null);
   const messagesEndRef = useRef(null);
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const scrollToBottom = () => {
