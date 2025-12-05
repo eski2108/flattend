@@ -37,10 +37,10 @@ const AdminLiquidityManagement = () => {
       setLoading(true);
       
       // Fetch NOWPayments balances
-      const balancesPromise = axios.get(`${API}/admin/nowpayments/balances`);
+      const balancesPromise = axios.get(`${API}/api/admin/nowpayments/balances`);
       
       // Fetch revenue data
-      const revenuePromise = axios.get(`${API}/admin/revenue/summary`);
+      const revenuePromise = axios.get(`${API}/api/admin/revenue/summary`);
       
       const [balancesRes, revenueRes] = await Promise.all([balancesPromise, revenuePromise]);
       
