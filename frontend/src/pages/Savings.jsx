@@ -68,10 +68,14 @@ const AnimatedCounter = ({ value, prefix = '£', decimals = 2 }) => {
 
 // Coin Tile Component - Always shows, even with 0 balance
 const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, priceHistory, onDeposit, onWithdraw, onNowPaymentsDeposit }) => {
-  // Use real price history if available, otherwise generate placeholder
+  // Use real price history if available, otherwise use memoized placeholder
+  const [placeholderData] = useState(() => 
+    Array.from({ length: 20 }, () => Math.random() * 100 + 50)
+  );
+  
   const sparklineData = priceHistory && priceHistory.length > 0 
     ? priceHistory 
-    : Array.from({ length: 20 }, () => Math.random() * 100 + 50);
+    : placeholderData;
 
   return (
     <PremiumCard className="p-6 transition-all duration-300 hover:scale-[1.02]">
