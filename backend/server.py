@@ -2905,8 +2905,8 @@ async def get_user_seller_link(user_id: str):
         raise HTTPException(status_code=500, detail="Failed to get seller link")
 
 
-@api_router.get("/p2p/seller/{user_id}")
-async def get_seller_profile(user_id: str):
+# DUPLICATE: @api_router.get("/p2p/seller/{user_id}")
+# DUPLICATE: async def get_seller_profile(user_id: str):
     """Get seller profile with stats"""
     # Get user account
     user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
@@ -6085,8 +6085,8 @@ async def get_notifications(wallet_address: str):
         "notifications": notifications
     }
 
-@api_router.post("/notifications/{notification_id}/read")
-async def mark_notification_read(notification_id: str):
+# DUPLICATE: @api_router.post("/notifications/{notification_id}/read")
+# DUPLICATE: async def mark_notification_read(notification_id: str):
     """Mark notification as read"""
     await db.notifications.update_one(
         {"notification_id": notification_id},
@@ -8805,8 +8805,8 @@ async def get_seller_status(user_id: str):
         "stats": stats
     }
 
-@api_router.get("/p2p/seller-status/{user_id}")
-async def get_seller_status(user_id: str):
+# DUPLICATE: @api_router.get("/p2p/seller-status/{user_id}")
+# DUPLICATE: async def get_seller_status(user_id: str):
     """Check if user is a seller"""
     user = await db.users.find_one({"user_id": user_id})
     if not user:
@@ -14464,8 +14464,8 @@ async def create_withdrawal_request_new(request: WithdrawalRequestNew):
     
     return result
 
-@api_router.post("/wallet/request-withdrawal")
-async def request_withdrawal(request: WithdrawalRequest):
+# DUPLICATE: @api_router.post("/wallet/request-withdrawal")
+# DUPLICATE: async def request_withdrawal(request: WithdrawalRequest):
     """User requests withdrawal (requires admin approval)"""
     # Get user
     user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
@@ -14601,8 +14601,8 @@ async def approve_deposit(request: AdminDepositApproval):
     
     return {"success": True, "message": message}
 
-@api_router.get("/admin/withdrawals/pending")
-async def get_pending_withdrawals():
+# DUPLICATE: @api_router.get("/admin/withdrawals/pending")
+# DUPLICATE: async def get_pending_withdrawals():
     """Admin: Get all pending withdrawals"""
     withdrawals = await db.withdrawal_requests.find(
         {"status": "pending"},
@@ -14682,8 +14682,8 @@ class KYCSubmission(BaseModel):
     selfie: str  # Base64 encoded image
     proof_of_address: Optional[str] = None  # Base64 encoded image
 
-@api_router.post("/kyc/submit")
-async def submit_kyc(request: KYCSubmission):
+# DUPLICATE: @api_router.post("/kyc/submit")
+# DUPLICATE: async def submit_kyc(request: KYCSubmission):
     """User submits KYC verification"""
     # Check if user exists
     user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
@@ -14749,8 +14749,8 @@ async def submit_kyc(request: KYCSubmission):
         "message": "KYC submitted successfully. Your documents will be reviewed within 24-48 hours."
     }
 
-@api_router.get("/kyc/status/{user_id}")
-async def get_kyc_status(user_id: str):
+# DUPLICATE: @api_router.get("/kyc/status/{user_id}")
+# DUPLICATE: async def get_kyc_status(user_id: str):
     """Get user's KYC status"""
     user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
@@ -14780,8 +14780,8 @@ async def get_pending_kyc():
     
     return {"submissions": kyc_submissions}
 
-@api_router.post("/admin/kyc/review")
-async def review_kyc(request: dict):
+# DUPLICATE: @api_router.post("/admin/kyc/review")
+# DUPLICATE: async def review_kyc(request: dict):
     """Admin: Approve or reject KYC"""
     verification_id = request.get("verification_id")
     approved = request.get("approved", False)
@@ -16308,8 +16308,8 @@ async def get_monetization_breakdown(period: str = Query("day", regex="^(day|wee
 # SUPPORTED CURRENCIES, CRYPTOS & PAYMENT METHODS
 # ============================================================================
 
-@api_router.get("/supported/currencies")
-async def get_supported_currencies():
+# DUPLICATE: @api_router.get("/supported/currencies")
+# DUPLICATE: async def get_supported_currencies():
     """Get all supported fiat currencies"""
     return {
         "success": True,
@@ -16795,8 +16795,8 @@ async def assign_golden_tier(request: dict):
         logger.error(f"Error assigning golden: {e}")
         return {"success": False, "message": str(e)}
 
-@api_router.get("/user/referral-dashboard/{user_id}")
-async def get_referral_dashboard(user_id: str):
+# DUPLICATE: @api_router.get("/user/referral-dashboard/{user_id}")
+# DUPLICATE: async def get_referral_dashboard(user_id: str):
     """Get complete referral dashboard data"""
     try:
         # Get user account
@@ -17632,8 +17632,8 @@ async def update_cms_platform_settings(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/cms/settings/fees")
-async def get_fee_settings():
+# DUPLICATE: @api_router.get("/cms/settings/fees")
+# DUPLICATE: async def get_fee_settings():
     """Get wallet fee settings"""
     try:
         settings = await db.platform_settings.find_one({}, {"_id": 0})
@@ -18232,8 +18232,8 @@ async def upload_dispute_evidence(dispute_id: str, request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.get("/p2p/disputes/{dispute_id}")
-async def get_dispute(dispute_id: str, user_id: str = Query(None)):
+# DUPLICATE: @api_router.get("/p2p/disputes/{dispute_id}")
+# DUPLICATE: async def get_dispute(dispute_id: str, user_id: str = Query(None)):
     """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
@@ -18304,8 +18304,8 @@ async def get_user_disputes(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.get("/admin/disputes/all")
-async def get_all_disputes(status: Optional[str] = None):
+# DUPLICATE: @api_router.get("/admin/disputes/all")
+# DUPLICATE: async def get_all_disputes(status: Optional[str] = None):
     """Admin: Get all disputes"""
     try:
         query = {}
@@ -18537,8 +18537,8 @@ async def create_system_message(trade_id: str, event_type: str, additional_info:
     await db.trade_chat_messages.insert_one(message)
     return message
 
-@api_router.post("/trade/chat/send")
-async def send_trade_message(request: SendMessageRequest):
+# DUPLICATE: @api_router.post("/trade/chat/send")
+# DUPLICATE: async def send_trade_message(request: SendMessageRequest):
     """Send a message in a trade chat"""
     try:
         # Verify trade exists
@@ -19282,8 +19282,8 @@ async def get_portfolio_with_allocations(user_id: str):
         }
 # 🔒 END LOCKED SECTION - Portfolio/Wallet Value Calculation
 
-@api_router.get("/wallets/transactions/{user_id}")
-async def get_wallet_transactions(user_id: str, limit: int = 50):
+# DUPLICATE: @api_router.get("/wallets/transactions/{user_id}")
+# DUPLICATE: async def get_wallet_transactions(user_id: str, limit: int = 50):
     """
     Get transaction history for user from wallet_transactions collection
     """
@@ -19690,8 +19690,8 @@ async def admin_process_payout(request: dict):
         logger.error(f"Payout processing error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/admin/payouts/pending")
-async def get_pending_payouts():
+# DUPLICATE: @api_router.get("/admin/payouts/pending")
+# DUPLICATE: async def get_pending_payouts():
     """Get all pending payout requests for admin review"""
     try:
         payouts = await db.payouts.find(
@@ -19995,8 +19995,8 @@ async def get_live_prices():
         "last_update": prices['last_update']
     }
 
-@api_router.post("/prices/convert")
-async def convert_currency(request: dict):
+# DUPLICATE: @api_router.post("/prices/convert")
+# DUPLICATE: async def convert_currency(request: dict):
     """Convert between crypto and fiat currencies in real-time"""
     from_type = request.get("from_type")  # 'crypto' or 'fiat'
     to_type = request.get("to_type")      # 'crypto' or 'fiat'
@@ -20232,8 +20232,8 @@ async def get_user_sell_offers(user_id: str):
         "offers": offers
     }
 
-@api_router.get("/sell-offers/marketplace")
-async def get_marketplace_offers(
+# DUPLICATE: @api_router.get("/sell-offers/marketplace")
+# DUPLICATE: async def get_marketplace_offers(
     crypto_asset: Optional[str] = None,
     fiat_currency: Optional[str] = None,
     payment_method: Optional[str] = None,
@@ -20629,8 +20629,8 @@ async def admin_update_category(category_id: str, request: dict):
 
 # ==================== NOTIFICATION SYSTEM ====================
 
-@api_router.get("/notifications")
-async def get_notifications(
+# DUPLICATE: @api_router.get("/notifications")
+# DUPLICATE: async def get_notifications(
     request: Request,
     unread_only: bool = Query(default=False),
     limit: int = Query(default=50, le=100),
@@ -21607,7 +21607,7 @@ async def price_alert_checker():
             prices = {}
             for coin in ["BTC", "ETH", "USDT", "BNB", "SOL", "XRP", "LTC"]:
                 try:
-                    price_data = await get_price_in_gbp(coin)
+# DUPLICATE:                     price_data = await get_price_in_gbp(coin)
                     if price_data:
                         prices[coin] = price_data["price"]
                 except Exception:
@@ -22054,7 +22054,7 @@ async def escalate_chat_to_live_agent(request: Request):
                 ])
                 
                 notification_sent = await send_email(
-                    to_email=admin_email,
+# DUPLICATE:                     to_email=admin_email,
                     subject=f"🔴 LIVE CHAT REQUEST from {user_email}",
                     html_content=f"""
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -23138,7 +23138,7 @@ async def admin_resolve_p2p_dispute(trade_id: str, request: Request):
         
         # Update dispute
         await db.p2p_disputes.update_one(
-            {"dispute_id": dispute["dispute_id"]},
+# DUPLICATE:             {"dispute_id": dispute["dispute_id"]},
             {
                 "$set": {
                     "status": "resolved",
@@ -23613,7 +23613,7 @@ async def update_admin_chat_settings(request: Request):
         
         result = await add_platform_funds(
             db,
-            amount=float(amount),
+# DUPLICATE:             amount=float(amount),
             currency=currency.upper(),
             method="manual",
             admin_user_id=admin_user_id,
@@ -24783,7 +24783,7 @@ async def get_security_logs(
     """Get security logs for admin dashboard"""
     try:
         from security_logger import SecurityLogger
-        security_logger = SecurityLogger(db)
+# DUPLICATE:         security_logger = SecurityLogger(db)
         
         # Build query filter
         query = {}
@@ -25222,7 +25222,7 @@ async def get_portfolio_summary(user_id: str):
         for saving in savings_balances:
             coin = saving.get("currency")
             amount = Decimal(str(saving.get("amount", 0)))
-            price = Decimal(str(prices.get(coin, 0)))
+# DUPLICATE:             price = Decimal(str(prices.get(coin, 0)))
             current_value += amount * price
         
         # Calculate P/L for different time periods using REAL transaction history
@@ -27083,8 +27083,8 @@ async def _update_stats_after_trade(trade_id: str):
 # P2P TRADE MANAGEMENT (MARK PAID, RELEASE, DISPUTE, CANCEL)
 # =============================================================================
 
-@api_router.post("/p2p/trade/mark-paid")
-async def mark_trade_as_paid(request: dict):
+# DUPLICATE: @api_router.post("/p2p/trade/mark-paid")
+# DUPLICATE: async def mark_trade_as_paid(request: dict):
     """Buyer marks payment as made"""
     try:
         trade_id = request.get("trade_id")
@@ -27243,8 +27243,8 @@ async def open_trade_dispute(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.post("/p2p/trade/cancel")
-async def cancel_trade(request: dict):
+# DUPLICATE: @api_router.post("/p2p/trade/cancel")
+# DUPLICATE: async def cancel_trade(request: dict):
     """Cancel a trade (buyer only, before marking as paid)"""
     try:
         trade_id = request.get("trade_id")
@@ -27299,8 +27299,8 @@ async def cancel_trade(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.post("/p2p/trade/message")
-async def send_trade_message(request: dict):
+# DUPLICATE: @api_router.post("/p2p/trade/message")
+# DUPLICATE: async def send_trade_message(request: dict):
     """Send a message in trade chat"""
     try:
         trade_id = request.get("trade_id")
@@ -27338,8 +27338,8 @@ async def send_trade_message(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.get("/p2p/trade/{trade_id}")
-async def get_trade_details(trade_id: str, user_id: str):
+# DUPLICATE: @api_router.get("/p2p/trade/{trade_id}")
+# DUPLICATE: async def get_trade_details(trade_id: str, user_id: str):
     """Get trade details with messages"""
     try:
         # Get trade
