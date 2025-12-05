@@ -324,7 +324,6 @@ PLATFORM_CONFIG = {
     
     # DISPUTE
     "dispute_fee_fixed_gbp": 2.0,
-    "dispute_fee_percent": 1.0,
     
     # INTERNAL TRANSFERS
     "vault_transfer_fee_percent": 0.5,
