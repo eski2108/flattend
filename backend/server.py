@@ -7131,63 +7131,7 @@ async def verify_phone(request: dict):
         logger.error(f"❌ Phone verification error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Unreachable code below - removed (was outside any function context and used undefined variables)
-        
-        # Send email via SendGrid
-        from sendgrid import SendGridAPIClient
-        from sendgrid.helpers.mail import Mail
-        
-        message = Mail(
-            from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.com'),
-            to_emails=user_account.email,
-            subject='Please verify your Coin Hub X account',
-            html_content=f'''
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    <div style="background: #ffffff; padding: 40px; border-radius: 10px; border: 1px solid #e0e0e0;">
-                        <h1 style="color: #1a1a1a; font-size: 28px; margin: 0 0 20px 0;">Verify Your Email</h1>
-                        <p style="color: #333; font-size: 16px; margin-bottom: 10px;">Hello {user_account.full_name},</p>
-                        <p style="color: #555; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                            Thank you for registering with Coin Hub X. To complete your registration and access your account, please verify your email address by clicking the button below.
-                        </p>
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="{verification_link}" style="display: inline-block; background: #0066cc; color: #ffffff; padding: 14px 35px; text-decoration: none; border-radius: 5px; font-weight: 600; font-size: 16px;">
-                                Verify Email Address
-                            </a>
-                        </div>
-                        <p style="color: #777; font-size: 14px; line-height: 1.5; margin-top: 25px;">
-                            Or copy and paste this link into your browser:<br>
-                            <a href="{verification_link}" style="color: #0066cc; word-break: break-all;">{verification_link}</a>
-                        </p>
-                        <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
-                        <p style="color: #999; font-size: 13px; margin: 0;">
-                            If you did not create this account, please disregard this email. This verification link will expire in 24 hours.
-                        </p>
-                        <p style="color: #999; font-size: 13px; margin-top: 15px;">
-                            © {datetime.now(timezone.utc).year} Coin Hub X. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            '''
-        )
-        
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-        logger.info(f"Verification email sent to {user_account.email}, status: {response.status_code}")
-        
-    except Exception as e:
-        logger.error(f"Failed to send verification email: {str(e)}")
-    
-    return {
-        "success": True,
-        "message": "Registration successful! You can now login.",
-        "user": {
-            "user_id": user_account.user_id,
-            "email": user_account.email,
-            "full_name": user_account.full_name,
-            "wallet_address": user_account.wallet_address,
-            "email_verified": True
-        }
-    }
+    # Unreachable code removed - was dead code with undefined variables
 
 @api_router.post("/auth/login")
 async def login_user(login_req: LoginRequest, request: Request):
