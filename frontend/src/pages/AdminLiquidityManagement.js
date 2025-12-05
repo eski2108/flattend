@@ -160,28 +160,63 @@ const AdminLiquidityManagement = () => {
             </div>
           </PremiumCard>
 
+          {/* Combined Overview Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Revenue Card */}
+            <PremiumCard className="p-6 bg-green-500/10 border-green-400/30">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <IoCash size={24} className="text-green-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wider font-semibold">Platform Revenue</div>
+                    <div className="text-3xl font-bold text-green-400">
+                      £{totalRevenueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-gray-400">Total Fees Earned</div>
+                  <div className="text-sm text-green-300 mt-1">All Time</div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-400">
+                From P2P trades, swaps, instant buy, and transaction fees
+              </div>
+            </PremiumCard>
+
+            {/* Liquidity Card */}
+            <PremiumCard className="p-6 bg-cyan-500/10 border-cyan-400/30">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                    <IoWallet size={24} className="text-cyan-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wider font-semibold">Available Liquidity</div>
+                    <div className="text-3xl font-bold text-cyan-400">
+                      £{totalValueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-gray-400">NOWPayments Balance</div>
+                  <div className="text-sm text-cyan-300 mt-1">{nowpaymentsBalances.length} Assets</div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-400">
+                Real crypto holdings in your NOWPayments wallet
+              </div>
+            </PremiumCard>
+          </div>
+
           {/* Revenue Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
               <IoCash size={32} className="mr-3 text-green-400" />
-              Platform Revenue & Fees Collected
+              Revenue Breakdown by Currency
             </h2>
-            
-            {/* Total Revenue Card */}
-            <PremiumCard className="p-6 mb-6 bg-green-500/10 border-green-400/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Total Fees Collected</div>
-                  <div className="text-5xl font-bold text-green-400">
-                    £{totalRevenueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
-                  <div className="text-sm text-gray-400 mt-2">From P2P, Swaps, Instant Buy, and all transactions</div>
-                </div>
-                <div className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <IoTrendingUp size={48} className="text-green-400" />
-                </div>
-              </div>
-            </PremiumCard>
             
             {!revenueData || revenueData.length === 0 ? (
               <PremiumCard className="p-8">
