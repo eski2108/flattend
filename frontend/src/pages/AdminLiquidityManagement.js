@@ -373,8 +373,7 @@ const AdminLiquidityManagement = () => {
                   <summary className="cursor-pointer text-cyan-400 hover:text-cyan-300 mb-4 text-sm font-semibold">
                     Show detailed table view
                   </summary>
-              <PremiumCard className="overflow-hidden">(
-              <PremiumCard className="overflow-hidden">
+                  <PremiumCard className="overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-white/5">
