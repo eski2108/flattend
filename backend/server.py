@@ -6,7 +6,7 @@ import os
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, Query, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, status, Query, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from starlette.middleware.cors import CORSMiddleware
@@ -1764,7 +1764,6 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     
     # 🔒 LOCKED: Update merchant stats after successful trade
     try:
-                order_id = order.get("order_id", "")
         await _update_stats_after_trade(order_id)
     except Exception as e:
         logger.error(f"Failed to update stats: {str(e)}")
@@ -2907,7 +2906,7 @@ async def get_user_seller_link(user_id: str):
 
 
 @api_router.get("/p2p/seller/{user_id}")
-async def get_seller_profile_v2(user_id: str):
+async def get_seller_profile(user_id: str):
     """Get seller profile with stats"""
     # Get user account
     user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
@@ -3059,10 +3058,8 @@ async def create_trade(request: CreateTradeRequest):
     
     return result
     
-            trade = await db.p2p_trades.find_one({"trade_id": trade_id}) or {}
     # Create system message for trade opened
     await create_system_message(trade.trade_id, "trade_opened")
-             sell_order = await db.p2p_offers.find_one({"offer_id": trade.get("offer_id")}) or {}
     
     # Update sell order remaining amount
     new_crypto_amount = sell_order["crypto_amount"] - request.crypto_amount
@@ -4723,7 +4720,6 @@ async def transfer_to_savings_OLD(request: dict):
                             "updated_at": datetime.now(timezone.utc).isoformat()
                         }
                     }
-                        spot_balance = user_balance.get("spot_balance", 0)
                 )
             
             # Add to wallet
@@ -5097,8 +5093,6 @@ async def get_all_trader_balances(limit: int = 100):
         "note": "This shows all trader balances held in P2P escrow system"
     }
 
-         balance_dict = {}
-        total_usd_estimate = 0
 
     
     return {
@@ -6092,7 +6086,7 @@ async def get_notifications(wallet_address: str):
     }
 
 @api_router.post("/notifications/{notification_id}/read")
-async def mark_notification_read_v2(notification_id: str):
+async def mark_notification_read(notification_id: str):
     """Mark notification as read"""
     await db.notifications.update_one(
         {"notification_id": notification_id},
@@ -6937,7 +6931,7 @@ async def register_user(request: RegisterRequest, req: Request):
         
         if all([account_sid, auth_token, verify_service_sid]):
             client = Client(account_sid, auth_token)
-            _verification = client.verify.v2.services(verify_service_sid).verifications.create(
+            verification = client.verify.v2.services(verify_service_sid).verifications.create(
                 to=request.phone_number,
                 channel='sms'
             )
@@ -7138,7 +7132,6 @@ async def verify_phone(request: dict):
                 "message": "Phone verified successfully"
             }
             
-            verification_token = verification.get("token", "")
     except Exception as e:
         logger.error(f"❌ Phone verification error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
@@ -7146,7 +7139,6 @@ async def verify_phone(request: dict):
     try:
         verification_link = f"{os.environ.get('BACKEND_URL')}/api/auth/verify-email?token={verification_token}"
         
-                user_account = await db.users.find_one({"user_id": user_id})
         # Send email via SendGrid
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
@@ -8611,7 +8603,7 @@ async def resolve_dispute_final(request: dict):
     
     # Determine losing party (who pays the fee)
     losing_party = trade["seller_id"] if resolution == "release_to_buyer" else trade["buyer_id"]
-    _winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
+    winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
     
     # ============================================================
     # REFERRAL COMMISSION PROCESSING (P2P DISPUTE FEE)
@@ -8814,7 +8806,7 @@ async def get_seller_status(user_id: str):
     }
 
 @api_router.get("/p2p/seller-status/{user_id}")
-async def get_seller_status_v2(user_id: str):
+async def get_seller_status(user_id: str):
     """Check if user is a seller"""
     user = await db.users.find_one({"user_id": user_id})
     if not user:
@@ -9396,8 +9388,8 @@ async def open_trading_position(request: dict):
             return {"success": False, "message": "User not found"}
         
         # Parse pair
-        _base = pair[:3]
-        _quote = pair[3:] if len(pair) > 3 else "USD"
+        base = pair[:3]
+        quote = pair[3:] if len(pair) > 3 else "USD"
         
         # Calculate required margin
         position_value = amount * entry_price
@@ -9732,7 +9724,7 @@ async def place_trading_order(request: dict):
         # Parse pair to get base and quote currencies (e.g., BTC/USD)
         # Assuming format like "BTCUSD" -> base="BTC", quote="USD"
         base = pair[:3]  # First 3 chars
-        _quote = pair[3:]  # Remaining chars (USD in this case, but we use GBP)
+        quote = pair[3:]  # Remaining chars (USD in this case, but we use GBP)
         
         # Calculate total in quote currency (convert USD to GBP - simplified 1:1 for now)
         total_amount = amount * price
@@ -10192,8 +10184,6 @@ async def get_admin_withdrawals():
     ).sort("created_at", -1).to_list(100)
     
     return {
-                currency = request.get("currency", "BTC")
-        wallet = await get_user_wallet(user_id, currency)
         "success": True,
         "withdrawals": withdrawals,
         "count": len(withdrawals)
@@ -11462,7 +11452,7 @@ async def express_buy_execute(request: dict):
         
         # Then apply the VISIBLE express buy fee on top
         # This is the 1% fee that users see as "Express Fee"
-        _price_with_fee = spread_adjusted_price_gbp * (1 + express_fee_percent / 100)
+        price_with_fee = spread_adjusted_price_gbp * (1 + express_fee_percent / 100)
         
         # Recalculate based on the spread-adjusted price
         # The crypto_amount was calculated from original price, now we adjust fiat
@@ -11982,7 +11972,6 @@ async def get_boost_status(ad_id: str):
     
     return {
         "success": True,
-                swaps = await db.swaps.find({"user_id": user_id}).to_list(100)
         "is_boosted": is_boosted,
         "boost_end_date": boost_end_date.isoformat() if boost_end_date else None,
         "duration_type": offer.get("boost_duration_type"),
@@ -12507,7 +12496,6 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
     fee_dict['source_user_id'] = request.user_id
     fee_dict['fee_type'] = 'withdrawal_fee'
     await db.crypto_transactions.insert_one(fee_dict)
-             withdrawal_id = withdrawal.get("withdrawal_id", "")
     
     # Process referral commission
     try:
@@ -14346,7 +14334,7 @@ async def add_wallet_address(request: AddWalletAddressRequest):
         raise HTTPException(status_code=400, detail="Invalid wallet address")
     
     # Update or create wallet addresses
-    _result = await db.user_wallet_addresses.update_one(
+    result = await db.user_wallet_addresses.update_one(
         {"user_id": request.user_id},
         {
             "$set": {
@@ -14477,7 +14465,7 @@ async def create_withdrawal_request_new(request: WithdrawalRequestNew):
     return result
 
 @api_router.post("/wallet/request-withdrawal")
-async def request_withdrawal_v2(request: WithdrawalRequest):
+async def request_withdrawal(request: WithdrawalRequest):
     """User requests withdrawal (requires admin approval)"""
     # Get user
     user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
@@ -15520,7 +15508,6 @@ async def get_admin_external_wallets():
         
         wallets = config.get("admin_external_wallets", {}) if config else {}
         
-                currency = request.get("currency", "BTC")
         return {
             "success": True,
             "wallets": wallets
@@ -16322,7 +16309,7 @@ async def get_monetization_breakdown(period: str = Query("day", regex="^(day|wee
 # ============================================================================
 
 @api_router.get("/supported/currencies")
-async def get_supported_currencies_v2():
+async def get_supported_currencies():
     """Get all supported fiat currencies"""
     return {
         "success": True,
@@ -16809,7 +16796,7 @@ async def assign_golden_tier(request: dict):
         return {"success": False, "message": str(e)}
 
 @api_router.get("/user/referral-dashboard/{user_id}")
-async def get_referral_dashboard_v2(user_id: str):
+async def get_referral_dashboard(user_id: str):
     """Get complete referral dashboard data"""
     try:
         # Get user account
@@ -16938,10 +16925,10 @@ async def execute_trade_new(request: dict):
         
         # Parse pair to get base and quote (e.g., BTCUSD -> BTC, USD)
         base = pair[:3]
-        _quote = pair[3:]
+        quote = pair[3:]
         
         # Convert quote to GBP (we use GBP internally)
-        _actual_quote = "GBP"
+        actual_quote = "GBP"
         
         # Get live market price
         all_prices = await fetch_live_prices()
@@ -17646,7 +17633,7 @@ async def update_cms_platform_settings(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/settings/fees")
-async def get_fee_settings_v2():
+async def get_fee_settings():
     """Get wallet fee settings"""
     try:
         settings = await db.platform_settings.find_one({}, {"_id": 0})
@@ -17880,7 +17867,6 @@ async def update_display_settings(request: dict):
             "success": True,
             "message": "Display settings updated successfully",
             "display": settings["display_settings"]
-                currency = request.get("currency"); amount = request.get("amount", 0); address = request.get("address", "")
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -18247,7 +18233,7 @@ async def upload_dispute_evidence(dispute_id: str, request: dict):
 
 
 @api_router.get("/p2p/disputes/{dispute_id}")
-async def get_dispute_v2(dispute_id: str, user_id: str = Query(None)):
+async def get_dispute(dispute_id: str, user_id: str = Query(None)):
     """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
@@ -18319,7 +18305,7 @@ async def get_user_disputes(user_id: str):
 
 
 @api_router.get("/admin/disputes/all")
-async def get_all_disputes_v2(status: Optional[str] = None):
+async def get_all_disputes(status: Optional[str] = None):
     """Admin: Get all disputes"""
     try:
         query = {}
@@ -18552,7 +18538,7 @@ async def create_system_message(trade_id: str, event_type: str, additional_info:
     return message
 
 @api_router.post("/trade/chat/send")
-async def send_trade_message_v2(request: SendMessageRequest):
+async def send_trade_message(request: SendMessageRequest):
     """Send a message in a trade chat"""
     try:
         # Verify trade exists
@@ -19297,7 +19283,7 @@ async def get_portfolio_with_allocations(user_id: str):
 # 🔒 END LOCKED SECTION - Portfolio/Wallet Value Calculation
 
 @api_router.get("/wallets/transactions/{user_id}")
-async def get_wallet_transactions_v2(user_id: str, limit: int = 50):
+async def get_wallet_transactions(user_id: str, limit: int = 50):
     """
     Get transaction history for user from wallet_transactions collection
     """
@@ -19401,7 +19387,7 @@ async def get_portfolio_history(
         # Work backwards through transactions to reconstruct historical balances
         # Then generate data points at regular intervals
         history_data = []
-        _interval_ms = config["interval_hours"] * 3600 * 1000
+        interval_ms = config["interval_hours"] * 3600 * 1000
         
         for i in range(config["points"]):
             point_time_dt = start_time + timedelta(hours=i * config["interval_hours"])
@@ -19705,7 +19691,7 @@ async def admin_process_payout(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/payouts/pending")
-async def get_pending_payouts_v2():
+async def get_pending_payouts():
     """Get all pending payout requests for admin review"""
     try:
         payouts = await db.payouts.find(
@@ -20010,7 +19996,7 @@ async def get_live_prices():
     }
 
 @api_router.post("/prices/convert")
-async def convert_currency_v2(request: dict):
+async def convert_currency(request: dict):
     """Convert between crypto and fiat currencies in real-time"""
     from_type = request.get("from_type")  # 'crypto' or 'fiat'
     to_type = request.get("to_type")      # 'crypto' or 'fiat'
@@ -20247,7 +20233,7 @@ async def get_user_sell_offers(user_id: str):
     }
 
 @api_router.get("/sell-offers/marketplace")
-async def get_marketplace_offers_v2(
+async def get_marketplace_offers(
     crypto_asset: Optional[str] = None,
     fiat_currency: Optional[str] = None,
     payment_method: Optional[str] = None,
@@ -20644,7 +20630,7 @@ async def admin_update_category(category_id: str, request: dict):
 # ==================== NOTIFICATION SYSTEM ====================
 
 @api_router.get("/notifications")
-async def get_notifications_v2(
+async def get_notifications(
     request: Request,
     unread_only: bool = Query(default=False),
     limit: int = Query(default=50, le=100),
@@ -21391,7 +21377,7 @@ async def verify_telegram_link_code(request: dict):
     }
 
 @api_router.get("/telegram/link-status")
-async def get_telegram_link_status_v2(user_id: str):
+async def get_telegram_link_status(user_id: str):
     """Check if user has Telegram linked"""
     telegram_link = await db.telegram_links.find_one({"user_id": user_id, "linked": True})
     
@@ -21609,7 +21595,6 @@ async def cleanup_expired_boosts_loop():
 
 
 # Background task to check price alerts
-        # get_price_in_gbp is defined above
 async def price_alert_checker():
     """
     Background task that runs every 5 minutes to check price alerts
@@ -23615,7 +23600,6 @@ async def update_admin_chat_settings(request: Request):
             upsert=True
         )
         
-                amount = request.get("amount", 0); currency = request.get("currency", "BTC"); admin_user_id = request.get("admin_user_id", ""); notes = request.get("notes", "")
         return {
             "success": True,
             "message": "Settings updated"
@@ -23703,7 +23687,7 @@ async def update_monetization_settings(updates: Dict):
         updates["updated_by"] = updates.get("admin_id", "admin")
         
         # Update or create settings
-        _result = await db.monetization_settings.update_one(
+        result = await db.monetization_settings.update_one(
             {"setting_id": "default_monetization"},
             {"$set": updates},
             upsert=True
@@ -24799,7 +24783,7 @@ async def get_security_logs(
     """Get security logs for admin dashboard"""
     try:
         from security_logger import SecurityLogger
-        _security_logger = SecurityLogger(db)
+        security_logger = SecurityLogger(db)
         
         # Build query filter
         query = {}
@@ -24994,7 +24978,7 @@ async def get_complete_revenue(period: str = "all"):
         total = sum(breakdown.values())
         
         # Calculate period-specific totals
-        _now_iso = now.isoformat()
+        now_iso = now.isoformat()
         today_start = (now - timedelta(days=1)).isoformat()
         week_start = (now - timedelta(days=7)).isoformat()
         month_start = (now - timedelta(days=30)).isoformat()
@@ -25462,7 +25446,7 @@ async def get_portfolio_holdings(user_id: str):
 
 
 @api_router.get("/nowpayments/currencies")
-async def get_nowpayments_currencies_v2():
+async def get_nowpayments_currencies():
     """Get full list of available currencies from NOWPayments"""
     try:
         import httpx
@@ -25508,7 +25492,7 @@ async def get_nowpayments_currencies_v2():
 # ============================================
 
 @api_router.get("/admin/customer-analytics")
-async def get_customer_analytics_v2():
+async def get_customer_analytics():
     """Get customer analytics for business dashboard"""
     try:
         now = datetime.now(timezone.utc)
@@ -25815,14 +25799,14 @@ async def calculate_and_apply_fee(
 #
 # ⚠️  WARNING: DO NOT ADD ANY @api_router ENDPOINTS BELOW THIS LINE
 @api_router.post("/user/purchase-vip-tier")
-async def purchase_vip_tier_v2(request: dict):
+async def purchase_vip_tier(request: dict):
     """
     Purchase VIP referral tier for £150 (one-time payment)
     Upgrades user from standard (20%) to VIP (20% lifetime)
     """
     try:
         user_id = request.get("user_id")
-        _payment_method = request.get("payment_method", "wallet_balance")
+        payment_method = request.get("payment_method", "wallet_balance")
         
         if not user_id:
             raise HTTPException(status_code=400, detail="Missing user_id")
@@ -25847,7 +25831,7 @@ async def purchase_vip_tier_v2(request: dict):
         from wallet_service import get_wallet_service
         wallet_service = get_wallet_service()
         
-        _debit_result = await wallet_service.debit(
+        debit_result = await wallet_service.debit(
             user_id=user_id,
             currency="GBP",
             amount=vip_cost,
@@ -26317,7 +26301,7 @@ async def simulate_crypto_deposit(request: dict):
         }
 
 @api_router.get("/admin/pending-deposits")
-async def get_pending_deposits_v2():
+async def get_pending_deposits():
     """Get all pending deposits"""
     try:
         from blockchain_simulator import BlockchainSimulator
@@ -26371,7 +26355,7 @@ async def update_admin_liquidity(request: dict):
             }
         
         # Update the balance
-        _result = await db.admin_liquidity_wallets.update_one(
+        result = await db.admin_liquidity_wallets.update_one(
             {"currency": currency},
             {
                 "$set": {
@@ -26502,7 +26486,7 @@ async def toggle_real_liquidity_sync(request: dict):
         }
 
 @api_router.get("/admin/liquidity-status")
-async def get_liquidity_status_v2():
+async def get_liquidity_status():
     """Get current liquidity status for all currencies"""
     try:
         from liquidity_checker import LiquidityChecker
@@ -26857,7 +26841,7 @@ async def auto_match_trade(request: dict):
         trade_type = request.get("type")  # "buy" or "sell"
         crypto = request.get("crypto", "BTC")
         amount = request.get("amount")
-        _payment_method = request.get("payment_method")
+        payment_method = request.get("payment_method")
         fiat_currency = request.get("fiat_currency", "GBP")
         
         if not all([user_id, trade_type, amount]):
@@ -27100,7 +27084,7 @@ async def _update_stats_after_trade(trade_id: str):
 # =============================================================================
 
 @api_router.post("/p2p/trade/mark-paid")
-async def mark_trade_as_paid_v2(request: dict):
+async def mark_trade_as_paid(request: dict):
     """Buyer marks payment as made"""
     try:
         trade_id = request.get("trade_id")
@@ -27260,7 +27244,7 @@ async def open_trade_dispute(request: dict):
 
 
 @api_router.post("/p2p/trade/cancel")
-async def cancel_trade_v2(request: dict):
+async def cancel_trade(request: dict):
     """Cancel a trade (buyer only, before marking as paid)"""
     try:
         trade_id = request.get("trade_id")
@@ -27316,7 +27300,7 @@ async def cancel_trade_v2(request: dict):
 
 
 @api_router.post("/p2p/trade/message")
-async def send_trade_message_v3(request: dict):
+async def send_trade_message(request: dict):
     """Send a message in trade chat"""
     try:
         trade_id = request.get("trade_id")
@@ -27355,7 +27339,7 @@ async def send_trade_message_v3(request: dict):
 
 
 @api_router.get("/p2p/trade/{trade_id}")
-async def get_trade_details_v2(trade_id: str, user_id: str):
+async def get_trade_details(trade_id: str, user_id: str):
     """Get trade details with messages"""
     try:
         # Get trade
@@ -27590,7 +27574,6 @@ app.include_router(api_router)
 async def get_test_mode():
     """Check if test mode is enabled"""
     test_mode = os.environ.get("TEST_MODE", "false").lower() == "true"
-            disabled = False
     return {
         "test_mode": test_mode,
         "environment": os.environ.get("ENVIRONMENT", "production")
