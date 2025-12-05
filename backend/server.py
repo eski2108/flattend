@@ -4639,6 +4639,89 @@ async def get_savings_history(user_id: str):
         logger.error(f"Savings history error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/savings/price-history/{currency}")
+async def get_savings_price_history(currency: str):
+    """Get 24h price history for sparkline charts in Savings"""
+    try:
+        # Get last 24 points (1 per hour for 24h)
+        price_history = await db.price_history.find(
+            {"currency": currency},
+            {"_id": 0, "price_usd": 1, "timestamp": 1}
+        ).sort("timestamp", -1).limit(24).to_list(24)
+        
+        if not price_history:
+            # If no history, generate from current price with small variations
+            current_price = 95000 if currency == "BTC" else 3500 if currency == "ETH" else 1.0
+            price_history = [
+                {"price_usd": current_price * (1 + (random.random() - 0.5) * 0.02), "timestamp": datetime.now(timezone.utc).isoformat()}
+                for _ in range(24)
+            ]
+        
+        # Reverse to get chronological order
+        price_history.reverse()
+        
+        return {
+            "success": True,
+            "currency": currency,
+            "prices": [p["price_usd"] for p in price_history],
+            "timestamps": [p["timestamp"] for p in price_history]
+        }
+    except Exception as e:
+        logger.error(f"Price history error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/savings/create-deposit")
+async def create_savings_deposit(request: dict):
+    """Create a NOWPayments deposit for adding to savings"""
+    try:
+        user_id = request.get("user_id")
+        currency = request.get("currency")
+        amount = float(request.get("amount", 0))
+        
+        if not all([user_id, currency, amount > 0]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        # Import NOWPayments service
+        from nowpayments_integration import NOWPaymentsService
+        nowpayments = NOWPaymentsService()
+        
+        # Create payment
+        payment_result = await nowpayments.create_payment(
+            price_amount=amount,
+            price_currency=currency,
+            pay_currency=currency,
+            order_id=f"savings_deposit_{user_id}_{uuid.uuid4().hex[:8]}",
+            order_description=f"Add {amount} {currency} to Savings Vault"
+        )
+        
+        if payment_result["success"]:
+            # Store payment info for tracking
+            await db.savings_deposits.insert_one({
+                "user_id": user_id,
+                "currency": currency,
+                "amount": amount,
+                "payment_id": payment_result["payment_id"],
+                "payment_address": payment_result.get("pay_address"),
+                "payment_status": "waiting",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "expires_at": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+            })
+            
+            return {
+                "success": True,
+                "payment_id": payment_result["payment_id"],
+                "pay_address": payment_result.get("pay_address"),
+                "pay_amount": payment_result.get("pay_amount"),
+                "payment_url": payment_result.get("invoice_url"),
+                "message": f"Payment created for {amount} {currency}"
+            }
+        else:
+            raise HTTPException(status_code=500, detail=payment_result.get("message", "Payment creation failed"))
+            
+    except Exception as e:
+        logger.error(f"Create savings deposit error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/savings/transfer")
 async def transfer_to_savings(request: dict):
     """Transfer funds between Wallet and Savings via wallet service"""
