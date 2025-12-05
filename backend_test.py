@@ -141,23 +141,101 @@ class CoinHubXComprehensiveTester:
         
         return None
     
-    async def test_leaderboard_default_query(self):
-        """Test GET /api/p2p/leaderboard with default parameters"""
-        success, data, status = await self.make_request("GET", "/p2p/leaderboard")
+    # ==================== HEALTH & CONNECTIVITY TESTS ====================
+    
+    async def test_backend_health(self):
+        """Test backend health and connectivity"""
+        success, data, status, response_time = await self.make_request("GET", "/health")
         
         if success and isinstance(data, dict):
-            expected_fields = ["success", "timeframe", "total_traders", "leaderboard", "updated_at"]
-            has_all_fields = all(field in data for field in expected_fields)
-            
-            if has_all_fields and data.get("success") and data.get("timeframe") == "7d":
-                self.log_test("Leaderboard Default Query", True, 
-                             f"Returned {data.get('total_traders', 0)} traders with 7d timeframe")
-            else:
-                self.log_test("Leaderboard Default Query", False, 
-                             f"Missing fields or incorrect data structure", data)
+            self.log_test("Backend Health Check", True, 
+                         f"Backend is healthy and responsive", data, 
+                         performance_ms=response_time)
         else:
-            self.log_test("Leaderboard Default Query", False, 
-                         f"Request failed with status {status}", data)
+            self.log_test("Backend Health Check", False, 
+                         f"Backend health check failed with status {status}", data,
+                         performance_ms=response_time)
+    
+    # ==================== AUTHENTICATION TESTS ====================
+    
+    async def test_user_registration(self):
+        """Test user registration endpoint"""
+        user_data = self.generate_test_user_data()
+        
+        success, response, status, response_time = await self.make_request(
+            "POST", "/auth/register", json=user_data
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            self.log_test("User Registration", True, 
+                         f"User registered successfully: {user_data['email']}", 
+                         response, performance_ms=response_time)
+            return user_data
+        else:
+            self.log_test("User Registration", False, 
+                         f"Registration failed with status {status}", response,
+                         performance_ms=response_time)
+            return None
+    
+    async def test_user_login(self):
+        """Test user login endpoint"""
+        # First create a user
+        user_data = await self.create_test_user()
+        if not user_data:
+            self.log_test("User Login", False, "Could not create test user for login test")
+            return None
+        
+        # Test login
+        success, response, status, response_time = await self.make_request(
+            "POST", "/auth/login", 
+            json={"email": user_data["email"], "password": user_data["password"]}
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            token = response.get("token")
+            user_info = response.get("user", {})
+            
+            self.log_test("User Login", True, 
+                         f"Login successful for {user_data['email']}, token received", 
+                         {"user_id": user_info.get("user_id"), "has_token": bool(token)},
+                         performance_ms=response_time)
+            return {"token": token, "user": user_info}
+        else:
+            self.log_test("User Login", False, 
+                         f"Login failed with status {status}", response,
+                         performance_ms=response_time)
+            return None
+    
+    async def test_invalid_login(self):
+        """Test login with invalid credentials"""
+        success, response, status, response_time = await self.make_request(
+            "POST", "/auth/login", 
+            json={"email": "invalid@test.com", "password": "wrongpassword"}
+        )
+        
+        # Should fail with 401 or 400
+        if status in [400, 401] and not success:
+            self.log_test("Invalid Login Rejection", True, 
+                         f"Correctly rejected invalid credentials with status {status}",
+                         performance_ms=response_time)
+        else:
+            self.log_test("Invalid Login Rejection", False, 
+                         f"Should reject invalid credentials, got status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_google_oauth_endpoint(self):
+        """Test Google OAuth endpoint availability"""
+        success, response, status, response_time = await self.make_request("GET", "/auth/google")
+        
+        # Should redirect or return OAuth URL
+        if status in [200, 302, 307] or (isinstance(response, dict) and "url" in response):
+            self.log_test("Google OAuth Endpoint", True, 
+                         f"OAuth endpoint available with status {status}",
+                         performance_ms=response_time)
+        else:
+            self.log_test("Google OAuth Endpoint", False, 
+                         f"OAuth endpoint failed with status {status}", response,
+                         performance_ms=response_time)
     
     async def test_leaderboard_timeframes(self):
         """Test different timeframes: 24h, 7d, 30d, all"""
