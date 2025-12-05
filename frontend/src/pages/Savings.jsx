@@ -110,6 +110,11 @@ const AnimatedCounter = ({ value, prefix = '£', decimals = 2 }) => {
 const CoinTile = ({ coin, balance, gbpValue, onDeposit, onWithdraw }) => {
   const config = COIN_CONFIG[coin] || COIN_CONFIG.BTC;
   const [expanded, setExpanded] = useState(false);
+  
+  // Generate sparkline data once on mount
+  const [sparklineData] = useState(() => 
+    Array.from({ length: 20 }, () => Math.random() * 100 + 50)
+  );
 
   return (
     <div className="relative group">
@@ -147,7 +152,7 @@ const CoinTile = ({ coin, balance, gbpValue, onDeposit, onWithdraw }) => {
 
         {/* Mini Sparkline */}
         <div className="mb-4" style={{ opacity: 0.6 }}>
-          <Sparklines data={Array.from({ length: 20 }, () => Math.random() * 100 + 50)} height={40}>
+          <Sparklines data={sparklineData} height={40}>
             <SparklinesLine color={config.color} style={{ strokeWidth: 2, fill: 'none' }} />
           </Sparklines>
         </div>
