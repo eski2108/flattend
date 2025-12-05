@@ -415,8 +415,8 @@ export default function Register() {
                 style={{
                   flex: 1,
                   padding: '13px 16px',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(0, 240, 255, 0.4)',
+                  background: 'rgba(10, 25, 41, 0.8)',
+                  border: '1px solid rgba(0, 240, 255, 0.3)',
                   borderRadius: '12px',
                   color: '#FFFFFF',
                   fontSize: '15px',
