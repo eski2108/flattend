@@ -26752,12 +26752,12 @@ async def set_test_mode(request: Request):
         
         # In production, you would update a config file or database
         # For now, we log the change
-        logger.info(f"Test mode {enabled if enabled else disabled} by admin")
+        logger.info(f"Test mode {'enabled' if enabled else 'disabled'} by admin")
         
         return {
             "success": True,
             "test_mode": enabled,
-            "message": f"Test mode {enabled if enabled else disabled}"
+            "message": f"Test mode {'enabled' if enabled else 'disabled'}"
         }
     except Exception as e:
         logger.error(f"Error setting test mode: {str(e)}")
