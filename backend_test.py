@@ -59,12 +59,17 @@ class CoinHubXComprehensiveTester:
         if self.session:
             await self.session.close()
     
-    def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
-        """Log test result"""
+    def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None, 
+                 db_state: Dict = None, performance_ms: float = None):
+        """Log test result with enhanced details"""
         status = "✅ PASS" if success else "❌ FAIL"
         print(f"{status} {test_name}")
         if details:
             print(f"    {details}")
+        if performance_ms:
+            print(f"    Performance: {performance_ms:.0f}ms")
+        if db_state:
+            print(f"    DB State: {db_state}")
         if response_data and not success:
             print(f"    Response: {json.dumps(response_data, indent=2)}")
         
@@ -72,22 +77,69 @@ class CoinHubXComprehensiveTester:
             "test": test_name,
             "success": success,
             "details": details,
-            "response": response_data
+            "response": response_data,
+            "db_state": db_state,
+            "performance_ms": performance_ms,
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })
     
-    async def make_request(self, method: str, endpoint: str, **kwargs) -> tuple:
-        """Make HTTP request and return (success, response_data, status_code)"""
+    async def make_request(self, method: str, endpoint: str, headers: Dict = None, **kwargs) -> tuple:
+        """Make HTTP request and return (success, response_data, status_code, response_time_ms)"""
+        start_time = time.time()
         try:
             url = f"{self.base_url}{endpoint}"
-            async with self.session.request(method, url, **kwargs) as response:
+            request_headers = headers or {}
+            
+            async with self.session.request(method, url, headers=request_headers, **kwargs) as response:
                 try:
                     data = await response.json()
                 except:
                     data = await response.text()
                 
-                return response.status == 200, data, response.status
+                response_time = (time.time() - start_time) * 1000
+                return response.status in [200, 201], data, response.status, response_time
         except Exception as e:
-            return False, {"error": str(e)}, 0
+            response_time = (time.time() - start_time) * 1000
+            return False, {"error": str(e)}, 0, response_time
+    
+    def generate_test_user_data(self) -> Dict:
+        """Generate random test user data"""
+        random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        return {
+            "email": f"test_{random_id}@coinhubx.test",
+            "password": "TestPass123!",
+            "full_name": f"Test User {random_id.upper()}",
+            "phone_number": f"+44770{random.randint(1000000, 9999999)}",
+            "referral_code": None
+        }
+    
+    async def create_test_user(self) -> Optional[Dict]:
+        """Create a test user and return user data with token"""
+        user_data = self.generate_test_user_data()
+        
+        success, response, status, response_time = await self.make_request(
+            "POST", "/auth/register", json=user_data
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            # Try to login to get token
+            login_success, login_response, login_status, _ = await self.make_request(
+                "POST", "/auth/login", 
+                json={"email": user_data["email"], "password": user_data["password"]}
+            )
+            
+            if login_success and isinstance(login_response, dict) and login_response.get("success"):
+                user_info = {
+                    **user_data,
+                    "user_id": login_response.get("user", {}).get("user_id"),
+                    "token": login_response.get("token"),
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+                self.test_users.append(user_info)
+                self.user_tokens[user_info["user_id"]] = user_info["token"]
+                return user_info
+        
+        return None
     
     async def test_leaderboard_default_query(self):
         """Test GET /api/p2p/leaderboard with default parameters"""
