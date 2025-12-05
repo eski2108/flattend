@@ -25145,7 +25145,7 @@ async def get_admin_revenue_summary():
 
 @api_router.get("/admin/nowpayments/balances")
 async def get_nowpayments_balances():
-    """Get real cryptocurrency balances from NOWPayments account - Admin liquidity"""
+    """Get real cryptocurrency balances from NOWPayments account - Admin liquidity with user balance deduction"""
     try:
         from nowpayments_integration import get_nowpayments_service
         
@@ -25159,41 +25159,83 @@ async def get_nowpayments_balances():
                 "balances": []
             }
         
-        # Enrich with GBP values
+        # Get user balances from database
+        user_balances_pipeline = [
+            {
+                "$group": {
+                    "_id": "$currency",
+                    "total_spot": {"$sum": "$spot_balance"},
+                    "total_savings": {"$sum": "$savings_balance"}
+                }
+            }
+        ]
+        
+        user_balance_results = await db.internal_balances.aggregate(user_balances_pipeline).to_list(100)
+        
+        # Create user balance lookup
+        user_balances_by_currency = {}
+        for result in user_balance_results:
+            currency = result["_id"]
+            total_user_balance = result["total_spot"] + result["total_savings"]
+            user_balances_by_currency[currency] = total_user_balance
+        
+        # Enrich with GBP values and calculate available liquidity
         crypto_prices_gbp = {
             "BTC": 75000, "ETH": 2765, "USDT": 0.79, "XRP": 0.46,
             "LTC": 83, "ADA": 0.33, "DOT": 6.16, "DOGE": 0.067,
-            "BNB": 490, "SOL": 166, "MATIC": 0.75, "AVAX": 33
+            "BNB": 490, "SOL": 166, "MATIC": 0.75, "AVAX": 33, "GBP": 1.0
         }
         
         enriched_balances = []
-        total_gbp = 0
+        total_nowpayments_gbp = 0
+        total_user_funds_gbp = 0
+        total_platform_liquidity_gbp = 0
         
         for balance in balances_data["balances"]:
             currency = balance["currency"]
-            amount = balance["balance"]
+            nowpayments_balance = balance["balance"]
             pending = balance["pending"]
             
+            # Get user balance for this currency
+            user_balance = user_balances_by_currency.get(currency, 0)
+            
+            # Calculate platform's available liquidity
+            platform_liquidity = nowpayments_balance - user_balance
+            
             price_gbp = crypto_prices_gbp.get(currency, 0)
-            value_gbp = amount * price_gbp
+            nowpayments_value_gbp = nowpayments_balance * price_gbp
+            user_funds_gbp = user_balance * price_gbp
+            platform_liquidity_gbp = platform_liquidity * price_gbp
             pending_gbp = pending * price_gbp
-            total_gbp += value_gbp
+            
+            total_nowpayments_gbp += nowpayments_value_gbp
+            total_user_funds_gbp += user_funds_gbp
+            total_platform_liquidity_gbp += platform_liquidity_gbp
             
             enriched_balances.append({
                 "currency": currency,
-                "balance": amount,
+                "nowpayments_balance": nowpayments_balance,
+                "user_balance": user_balance,
+                "platform_liquidity": platform_liquidity,
                 "pending": pending,
                 "price_gbp": price_gbp,
-                "value_gbp": value_gbp,
+                "nowpayments_value_gbp": nowpayments_value_gbp,
+                "user_funds_gbp": user_funds_gbp,
+                "platform_liquidity_gbp": platform_liquidity_gbp,
                 "pending_gbp": pending_gbp
             })
         
-        # Sort by GBP value (highest first)
-        enriched_balances.sort(key=lambda x: x["value_gbp"], reverse=True)
+        # Sort by platform liquidity GBP value (highest first)
+        enriched_balances.sort(key=lambda x: x["platform_liquidity_gbp"], reverse=True)
         
         return {
             "success": True,
             "balances": enriched_balances,
+            "summary": {
+                "total_nowpayments_gbp": total_nowpayments_gbp,
+                "total_user_funds_gbp": total_user_funds_gbp,
+                "total_platform_liquidity_gbp": total_platform_liquidity_gbp
+            },
             "total_value_gbp": total_gbp,
             "message": "NOWPayments balances retrieved successfully"
         }
