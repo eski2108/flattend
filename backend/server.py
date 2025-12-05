@@ -4029,7 +4029,7 @@ async def create_p2p_express_order(order_data: Dict):
         # INSTANT DELIVERY - Admin liquidity
         seller_id = "admin_liquidity"
         delivery_source = "admin_liquidity"
-        http_status = "completed"
+        # http_status = "completed"  # Unused variable removed
         payment_method = "platform_direct"
         
         # 1. DEBIT GBP from user wallet
