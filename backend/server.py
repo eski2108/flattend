@@ -14517,14 +14517,18 @@ async def request_withdrawal(request: WithdrawalRequest):
     }
 
 @api_router.get("/wallet/withdrawals/{user_id}")
-async def get_user_withdrawals(user_id: str):
+async def get_user_withdrawals_v2(user_id: str):
     """Get user's withdrawal history"""
     withdrawals = await db.withdrawal_requests.find(
         {"user_id": user_id},
         {"_id": 0}
     ).sort("created_at", -1).to_list(length=100)
     
-    return {"withdrawals": withdrawals}
+    return {
+        "success": True,
+        "withdrawals": withdrawals,
+        "total_count": len(withdrawals)
+    }
 
 @api_router.get("/wallet/deposits/{user_id}")
 async def get_user_deposits(user_id: str):
