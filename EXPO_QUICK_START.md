@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://p2p-market-1.preview.emergentagent.com/api
+https://tradefix-preview.preview.emergentagent.com/api
 ```
 
 This means:

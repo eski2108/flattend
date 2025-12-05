@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://p2p-market-1.preview.emergentagent.com
+**URL:** https://tradefix-preview.preview.emergentagent.com
 
 **Services Status:**
 ```bash

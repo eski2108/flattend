@@ -8,7 +8,7 @@ import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoAlertCircle as AlertCircle, IoArrowDown as ArrowDownUp, IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoChevronDown, IoFlash, IoInformationCircle, IoRefresh as RefreshCw, IoSettings, IoShield, IoTime, IoTrendingUp } from 'react-icons/io5';
 import { notifyWalletBalanceUpdated } from '@/utils/walletEvents';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-market-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradefix-preview.preview.emergentagent.com';
 
 const COIN_LOGOS = {
   'BTC': '🟠',
