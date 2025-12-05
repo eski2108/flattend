@@ -1,0 +1,206 @@
+{
+  "test_summary": {
+    "success_rate": 92.85714285714286,
+    "total_tests": 14,
+    "passed_tests": 13,
+    "failed_tests": 1,
+    "overall_success": true
+  },
+  "detailed_results": [
+    {
+      "test": "Backend Health Check",
+      "success": true,
+      "details": "Backend is healthy and responsive",
+      "response": {
+        "status": "healthy",
+        "service": "coinhubx-backend",
+        "timestamp": "2025-12-05T07:54:19.892211+00:00"
+      },
+      "performance_ms": 73.2111930847168,
+      "timestamp": "2025-12-05T07:54:19.895797+00:00"
+    },
+    {
+      "test": "User Registration",
+      "success": true,
+      "details": "User registered successfully: test_bsuvxldx@coinhubx.test",
+      "response": {
+        "success": true,
+        "message": "Registration successful! Please verify your phone number with the SMS code sent.",
+        "user_id": "2f938f48-2db3-49cc-b5d9-c41f3b1e8636",
+        "email": "test_bsuvxldx@coinhubx.test",
+        "phone_verification_required": true
+      },
+      "performance_ms": 989.7866249084473,
+      "timestamp": "2025-12-05T07:54:20.885665+00:00"
+    },
+    {
+      "test": "User Login (Provided Credentials)",
+      "success": true,
+      "details": "Login successful for gads21083@gmail.com, token received",
+      "response": {
+        "user_id": "80a4a694-a6a4-4f84-94a3-1e5cad51eaf3",
+        "has_token": true
+      },
+      "performance_ms": 235.50748825073242,
+      "timestamp": "2025-12-05T07:54:21.121234+00:00"
+    },
+    {
+      "test": "P2P Marketplace Offers",
+      "success": true,
+      "details": "Retrieved 0 P2P offers",
+      "response": {
+        "total_offers": 0
+      },
+      "performance_ms": 10.946989059448242,
+      "timestamp": "2025-12-05T07:54:21.132233+00:00"
+    },
+    {
+      "test": "P2P Available Coins",
+      "success": true,
+      "details": "Retrieved 28 available coins",
+      "response": {
+        "available_coins": 28
+      },
+      "performance_ms": 10.609865188598633,
+      "timestamp": "2025-12-05T07:54:21.142884+00:00"
+    },
+    {
+      "test": "P2P Statistics",
+      "success": true,
+      "details": "P2P stats retrieved successfully",
+      "response": {
+        "total_volume": 0,
+        "active_trades": 1,
+        "total_users": 86,
+        "avg_completion": "N/A"
+      },
+      "performance_ms": 15.928030014038086,
+      "timestamp": "2025-12-05T07:54:21.158850+00:00"
+    },
+    {
+      "test": "User Login (Provided Credentials)",
+      "success": true,
+      "details": "Login successful for gads21083@gmail.com, token received",
+      "response": {
+        "user_id": "80a4a694-a6a4-4f84-94a3-1e5cad51eaf3",
+        "has_token": true
+      },
+      "performance_ms": 232.52463340759277,
+      "timestamp": "2025-12-05T07:54:21.391432+00:00"
+    },
+    {
+      "test": "Wallet Balances",
+      "success": true,
+      "details": "Wallet balances retrieved for user 80a4a694-a6a4-4f84-94a3-1e5cad51eaf3",
+      "response": [
+        {
+          "currency": "BTC",
+          "available_balance": 0.05332721125,
+          "locked_balance": 0.0001,
+          "total_balance": 0.05329448718137703,
+          "usd_price": 0,
+          "usd_value": 0,
+          "price_gbp": 69045,
+          "gbp_value": 3679.717867438177
+        },
+        {
+          "currency": "ETH",
+          "available_balance": 1.499489202313377,
+          "locked_balance": 0.0,
+          "total_balance": 1.499489202313377,
+          "usd_price": 0,
+          "usd_value": 0,
+          "price_gbp": 2294,
+          "gbp_value": 3439.828230106887
+        },
+        {
+          "currency": "GBP",
+          "available_balance": 1897.62489392,
+          "locked_balance": 0.0,
+          "total_balance": 1913.0447104179125,
+          "usd_price": 0,
+          "usd_value": 0,
+          "price_gbp": 1.0,
+          "gbp_value": 1913.0447104179125
+        },
+        {
+          "currency": "USDT",
+          "available_balance": 1000.0,
+          "locked_balance": 0.0,
+          "total_balance": 1000.0,
+          "usd_price": 0,
+          "usd_value": 0,
+          "price_gbp": 0.75,
+          "gbp_value": 750.0
+        }
+      ],
+      "performance_ms": 8.968114852905273,
+      "timestamp": "2025-12-05T07:54:21.400442+00:00"
+    },
+    {
+      "test": "User Login (Provided Credentials)",
+      "success": true,
+      "details": "Login successful for gads21083@gmail.com, token received",
+      "response": {
+        "user_id": "80a4a694-a6a4-4f84-94a3-1e5cad51eaf3",
+        "has_token": true
+      },
+      "performance_ms": 272.12071418762207,
+      "timestamp": "2025-12-05T07:54:21.672615+00:00"
+    },
+    {
+      "test": "Wallet Portfolio",
+      "success": true,
+      "details": "Portfolio data retrieved for user 80a4a694-a6a4-4f84-94a3-1e5cad51eaf3",
+      "response": {},
+      "performance_ms": 8.743524551391602,
+      "timestamp": "2025-12-05T07:54:21.681396+00:00"
+    },
+    {
+      "test": "User Login (Provided Credentials)",
+      "success": true,
+      "details": "Login successful for gads21083@gmail.com, token received",
+      "response": {
+        "user_id": "80a4a694-a6a4-4f84-94a3-1e5cad51eaf3",
+        "has_token": true
+      },
+      "performance_ms": 233.4907054901123,
+      "timestamp": "2025-12-05T07:54:21.914937+00:00"
+    },
+    {
+      "test": "Wallet Transactions",
+      "success": true,
+      "details": "Retrieved 25 transactions",
+      "response": {
+        "transaction_count": 25
+      },
+      "performance_ms": 9.433746337890625,
+      "timestamp": "2025-12-05T07:54:21.924419+00:00"
+    },
+    {
+      "test": "Admin Liquidity Quote",
+      "success": false,
+      "details": "Failed to get admin liquidity quote with status 400",
+      "response": {
+        "detail": "Missing required fields: user_id, type, crypto, amount"
+      },
+      "performance_ms": 8.367538452148438,
+      "timestamp": "2025-12-05T07:54:21.932858+00:00"
+    },
+    {
+      "test": "Crypto Market Sell Orders",
+      "success": true,
+      "details": "Retrieved 2 sell orders",
+      "response": {
+        "total_orders": 2
+      },
+      "performance_ms": 49.88431930541992,
+      "timestamp": "2025-12-05T07:54:21.982786+00:00"
+    }
+  ],
+  "test_metadata": {
+    "backend_url": "https://tradefix-preview.preview.emergentagent.com/api",
+    "test_timestamp": "2025-12-05T07:54:21.982935+00:00",
+    "test_type": "corrected_backend_test"
+  }
+}
