@@ -371,19 +371,19 @@ class CoinHubXComprehensiveTester:
     async def test_instant_buy_quotes(self):
         """Test instant buy quote generation"""
         quote_data = {
-            "cryptocurrency": "BTC",
-            "amount": 0.01,
-            "type": "buy"
+            "crypto_currency": "BTC",
+            "crypto_amount": 0.01,
+            "fiat_currency": "GBP"
         }
         
         success, response, status, response_time = await self.make_request(
-            "POST", "/instant/quote", json=quote_data
+            "POST", "/instant-buy/quote", json=quote_data
         )
         
         if success and isinstance(response, dict) and response.get("success"):
             quote = response.get("quote", {})
             self.log_test("Instant Buy Quote", True, 
-                         f"Quote generated: £{quote.get('total_gbp', 0):.2f} for {quote_data['amount']} BTC", 
+                         f"Quote generated: £{quote.get('total_fiat', 0):.2f} for {quote_data['crypto_amount']} BTC", 
                          quote, performance_ms=response_time)
         else:
             self.log_test("Instant Buy Quote", False, 
