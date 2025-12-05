@@ -41,6 +41,7 @@ class NOWPaymentsService:
     """
     
     BASE_URL = "https://api.nowpayments.io/v1"
+    PAYOUT_BASE_URL = "https://api.nowpayments.io/v1/payout"
     
     def __init__(self):
         # Load from environment - never hardcode
