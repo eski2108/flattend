@@ -361,7 +361,7 @@ export default function SavingsVault() {
       }
 
       // Load spot wallet balances
-      const walletRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
+      const walletRes = await axios.get(`${API}/wallets/balances/${userId}`);
       if (walletRes.data.balances) {
         const spotMap = {};
         walletRes.data.balances.forEach(b => {
