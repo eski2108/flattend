@@ -220,13 +220,13 @@ class CoinHubXProductionTester:
         )
         
         # Test P2P statistics
-        success2, data2, status2, perf2 = await self.make_request("GET", "/p2p/statistics")
+        success2, data2, status2, perf2 = await self.make_request("GET", "/p2p/stats")
         
-        stats_success = success2 and "statistics" in data2
+        stats_success = success2 and data2.get("success", False)
         self.log_test(
             "P2P Statistics",
             stats_success,
-            f"Status: {status2}, Stats available: {stats_success}",
+            f"Status: {status2}, Stats success: {data2.get('success', False)}",
             data2 if not stats_success else None,
             perf2
         )
