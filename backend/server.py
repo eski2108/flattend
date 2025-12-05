@@ -25119,6 +25119,164 @@ async def get_referral_analytics():
         logger.error(f"Error getting referral analytics: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/admin/revenue/summary")
+async def get_admin_revenue_summary():
+    """Get comprehensive revenue breakdown - all fees and profits collected"""
+    try:
+        # Get all platform fees from transactions
+        fees_pipeline = [
+            {
+                "$match": {
+                    "fee_amount": {"$exists": True, "$gt": 0}
+                }
+            },
+            {
+                "$group": {
+                    "_id": {
+                        "currency": "$currency",
+                        "fee_type": "$transaction_type"
+                    },
+                    "total_fees": {"$sum": "$fee_amount"},
+                    "count": {"$sum": 1}
+                }
+            }
+        ]
+        
+        fees_data = await db.transaction_history.aggregate(fees_pipeline).to_list(100)
+        
+        # Get P2P commissions
+        p2p_pipeline = [
+            {
+                "$match": {
+                    "status": "completed",
+                    "platform_fee": {"$exists": True, "$gt": 0}
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$crypto_currency",
+                    "total_fees": {"$sum": "$platform_fee"},
+                    "count": {"$sum": 1}
+                }
+            }
+        ]
+        
+        p2p_fees = await db.p2p_trades.aggregate(p2p_pipeline).to_list(100)
+        
+        # Get swap fees
+        swap_pipeline = [
+            {
+                "$match": {
+                    "status": "completed",
+                    "fee_amount": {"$exists": True, "$gt": 0}
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$from_currency",
+                    "total_fees": {"$sum": "$fee_amount"},
+                    "count": {"$sum": 1}
+                }
+            }
+        ]
+        
+        swap_fees = await db.swap_transactions.aggregate(swap_pipeline).to_list(100)
+        
+        # Calculate totals by currency
+        revenue_by_currency = {}
+        
+        # Add transaction fees
+        for fee in fees_data:
+            currency = fee["_id"]["currency"]
+            if currency not in revenue_by_currency:
+                revenue_by_currency[currency] = {
+                    "currency": currency,
+                    "transaction_fees": 0,
+                    "p2p_fees": 0,
+                    "swap_fees": 0,
+                    "total_fees": 0,
+                    "transaction_count": 0
+                }
+            revenue_by_currency[currency]["transaction_fees"] += fee["total_fees"]
+            revenue_by_currency[currency]["transaction_count"] += fee["count"]
+        
+        # Add P2P fees
+        for fee in p2p_fees:
+            currency = fee["_id"]
+            if currency not in revenue_by_currency:
+                revenue_by_currency[currency] = {
+                    "currency": currency,
+                    "transaction_fees": 0,
+                    "p2p_fees": 0,
+                    "swap_fees": 0,
+                    "total_fees": 0,
+                    "transaction_count": 0
+                }
+            revenue_by_currency[currency]["p2p_fees"] += fee["total_fees"]
+            revenue_by_currency[currency]["transaction_count"] += fee["count"]
+        
+        # Add swap fees
+        for fee in swap_fees:
+            currency = fee["_id"]
+            if currency not in revenue_by_currency:
+                revenue_by_currency[currency] = {
+                    "currency": currency,
+                    "transaction_fees": 0,
+                    "p2p_fees": 0,
+                    "swap_fees": 0,
+                    "total_fees": 0,
+                    "transaction_count": 0
+                }
+            revenue_by_currency[currency]["swap_fees"] += fee["total_fees"]
+            revenue_by_currency[currency]["transaction_count"] += fee["count"]
+        
+        # Calculate totals
+        for currency_data in revenue_by_currency.values():
+            currency_data["total_fees"] = (
+                currency_data["transaction_fees"] + 
+                currency_data["p2p_fees"] + 
+                currency_data["swap_fees"]
+            )
+        
+        # Convert to list and add GBP values
+        crypto_prices_gbp = {
+            "BTC": 75000, "ETH": 2765, "USDT": 0.79, "XRP": 0.46,
+            "LTC": 83, "ADA": 0.33, "DOT": 6.16, "DOGE": 0.067,
+            "BNB": 490, "SOL": 166, "MATIC": 0.75, "AVAX": 33, "GBP": 1.0
+        }
+        
+        revenue_list = []
+        total_revenue_gbp = 0
+        
+        for currency_data in revenue_by_currency.values():
+            price = crypto_prices_gbp.get(currency_data["currency"], 0)
+            value_gbp = currency_data["total_fees"] * price
+            total_revenue_gbp += value_gbp
+            
+            revenue_list.append({
+                **currency_data,
+                "price_gbp": price,
+                "value_gbp": value_gbp
+            })
+        
+        # Sort by value
+        revenue_list.sort(key=lambda x: x["value_gbp"], reverse=True)
+        
+        return {
+            "success": True,
+            "revenue": revenue_list,
+            "total_revenue_gbp": total_revenue_gbp,
+            "message": "Revenue summary retrieved successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Admin revenue summary error: {e}")
+        return {
+            "success": False,
+            "message": str(e),
+            "revenue": []
+        }
+
 @api_router.get("/admin/nowpayments/balances")
 async def get_nowpayments_balances():
     """Get real cryptocurrency balances from NOWPayments account - Admin liquidity"""
