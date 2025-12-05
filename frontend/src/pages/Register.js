@@ -129,7 +129,9 @@ export default function Register() {
               height: '120px',
               objectFit: 'contain',
               marginBottom: '24px',
-              filter: 'drop-shadow(0 8px 24px rgba(0, 240, 255, 0.4))'
+              filter: 'drop-shadow(0 8px 24px rgba(0, 240, 255, 0.4))',
+              background: 'transparent',
+              mixBlendMode: 'screen'
             }}
           />
           <h1 style={{
