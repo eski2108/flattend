@@ -20538,47 +20538,8 @@ async def admin_update_category(category_id: str, request: dict):
 
 # ==================== NOTIFICATION SYSTEM ====================
 
-# DUPLICATE: @api_router.get("/notifications")
-# DUPLICATE: async def get_notifications(
-    request: Request,
-    unread_only: bool = Query(default=False),
-    limit: int = Query(default=50, le=100),
-    offset: int = Query(default=0)
-):
-    """Get notifications for the logged-in user"""
-    try:
-        # Get user from auth token
-        auth_header = request.headers.get('authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        token = auth_header.split(' ')[1]
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            user_id = payload.get('user_id')
-        except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="Token expired")
-        except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        
-        if not user_id:
-            raise HTTPException(status_code=401, detail="User ID not found in token")
-        
-        # Get notifications
-        notifications = await get_user_notifications(db, user_id, unread_only, limit, offset)
-        unread_count = await get_unread_count(db, user_id)
-        
-        return {
-            "success": True,
-            "notifications": notifications,
-            "unread_count": unread_count,
-            "total": len(notifications)
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Failed to get notifications: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+# DUPLICATE COMMENTED: This function definition was a duplicate
+# The active version is defined earlier in the file
 
 
 @api_router.post("/notifications/mark-read")
