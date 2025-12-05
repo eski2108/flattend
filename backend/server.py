@@ -26289,50 +26289,8 @@ async def _update_stats_after_trade(trade_id: str):
 # P2P TRADE MANAGEMENT (MARK PAID, RELEASE, DISPUTE, CANCEL)
 # =============================================================================
 
-# DUPLICATE: @api_router.post("/p2p/trade/mark-paid")
-# DUPLICATE: async def mark_trade_as_paid(request: dict):
-    """Buyer marks payment as made"""
-    try:
-        trade_id = request.get("trade_id")
-        user_id = request.get("user_id")
-        
-        # Get trade
-        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
-        if not trade:
-            raise HTTPException(status_code=404, detail="Trade not found")
-        
-        # Verify buyer
-        if trade.get("buyer_id") != user_id:
-            raise HTTPException(status_code=403, detail="Only buyer can mark as paid")
-        
-        # Check status
-        if trade.get("status") != "pending_payment":
-            raise HTTPException(status_code=400, detail="Trade not in pending_payment state")
-        
-        # Update status
-        await db.p2p_trades.update_one(
-            {"trade_id": trade_id},
-            {
-                "$set": {
-                    "status": "payment_made",
-                    "payment_marked_at": datetime.now(timezone.utc).isoformat()
-                }
-            }
-        )
-        
-        logger.info(f"✅ Trade {trade_id} marked as paid by buyer {user_id}")
-        
-        # TODO: Send notification to seller
-        
-        return {
-            "success": True,
-            "message": "Payment marked. Seller will be notified."
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error marking trade as paid: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+# DUPLICATE COMMENTED: This function was a duplicate
+# The active version is defined elsewhere in the file
 
 
 @api_router.post("/p2p/trade/release")
