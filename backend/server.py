@@ -2787,7 +2787,7 @@ async def get_marketplace_available_coins():
             "coins_data": coins_data,
             "count": len(coins_data)
         }
-    except Exception as e:
+    except Exception:
         # Fallback - return default coins
         return {
             "success": True,
@@ -4239,7 +4239,7 @@ async def create_p2p_express_order(order_data: Dict):
         if has_admin_liquidity:
             msg = f"Express order completed! {order_data['crypto_amount']:.8f} {order_data['crypto']} credited instantly."
         else:
-            msg = f"Express order created! Matched with seller. Delivery in 2-5 minutes."
+            msg = "Express order created! Matched with seller. Delivery in 2-5 minutes."
         
         await create_p2p_notification(
             user_id=order_data["user_id"],
@@ -6498,7 +6498,7 @@ async def google_auth():
             logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
             return {"success": False, "error": "Google OAuth not configured"}
         
-        logger.info(f"🔵 Google OAuth initiated")
+        logger.info("🔵 Google OAuth initiated")
         logger.info(f"   Client ID: {google_client_id[:20]}...")
         logger.info(f"   Redirect URI: {redirect_uri}")
         
@@ -6560,7 +6560,7 @@ async def google_callback(code: str = None, error: str = None):
     }
     
     try:
-        logger.info(f"   Exchanging code for token...")
+        logger.info("   Exchanging code for token...")
         async with httpx.AsyncClient(timeout=30.0) as client:
             token_response = await client.post(token_url, data=token_data)
             tokens = token_response.json()
@@ -6576,7 +6576,7 @@ async def google_callback(code: str = None, error: str = None):
                 logger.error("❌ No access token received from Google")
                 return RedirectResponse(url=f"{frontend_url}/login?error=no_access_token", status_code=302)
             
-            logger.info(f"   Token received, fetching user info...")
+            logger.info("   Token received, fetching user info...")
             user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
             headers = {'Authorization': f'Bearer {access_token}'}
             
@@ -6591,7 +6591,7 @@ async def google_callback(code: str = None, error: str = None):
             
             if existing_user:
                 # User exists - generate token and redirect to login callback page
-                logger.info(f"   Existing user found, generating JWT...")
+                logger.info("   Existing user found, generating JWT...")
                 token_payload = {
                     "user_id": existing_user["user_id"],
                     "email": existing_user["email"],
@@ -6613,7 +6613,7 @@ async def google_callback(code: str = None, error: str = None):
                 return RedirectResponse(url=redirect_url, status_code=302)
             else:
                 # New user - redirect to phone verification with Google data
-                logger.info(f"   New user, redirecting to phone verification...")
+                logger.info("   New user, redirecting to phone verification...")
                 import base64
                 google_data_to_encode = {
                     "email": user_email,
@@ -6623,7 +6623,7 @@ async def google_callback(code: str = None, error: str = None):
                 }
                 user_data_encoded = base64.b64encode(json.dumps(google_data_to_encode).encode()).decode()
                 redirect_url = f"{frontend_url}/register?google_data={user_data_encoded}&require_phone=true"
-                logger.info(f"✅ Redirecting new Google user to registration with phone verification")
+                logger.info("✅ Redirecting new Google user to registration with phone verification")
                 return RedirectResponse(url=redirect_url, status_code=302)
     
     except Exception as e:
@@ -8101,7 +8101,7 @@ async def get_crypto_prices():
                 },
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
-    except Exception as e:
+    except Exception:
         # Fallback prices if API fails
         return {
             "success": True,
@@ -8744,7 +8744,7 @@ async def admin_search_users(q: str = ""):
             "success": True,
             "users": users
         }
-    except Exception as e:
+    except Exception:
         return {
             "success": True,
             "users": []
@@ -8766,7 +8766,7 @@ async def admin_search_trades(q: str = "", status: str = ""):
             "success": True,
             "trades": trades
         }
-    except Exception as e:
+    except Exception:
         return {
             "success": True,
             "trades": []
@@ -9416,7 +9416,7 @@ async def open_trading_position(request: dict):
         new_balance = gbp_balance - required_margin
         await db.wallets.update_one(
             {"user_id": user_id},
-            {"$set": {f"balances.GBP.balance": new_balance, "updated_at": datetime.now(timezone.utc)}}
+            {"$set": {"balances.GBP.balance": new_balance, "updated_at": datetime.now(timezone.utc)}}
         )
         
         # Create position
@@ -9464,7 +9464,7 @@ async def open_trading_position(request: dict):
                 # Add commission to referrer
                 await db.wallets.update_one(
                     {"user_id": referrer_id},
-                    {"$inc": {f"balances.GBP.balance": commission}}
+                    {"$inc": {"balances.GBP.balance": commission}}
                 )
                 
                 # Log commission
@@ -9541,7 +9541,7 @@ async def close_trading_position(request: dict):
         
         await db.wallets.update_one(
             {"user_id": user_id},
-            {"$inc": {f"balances.GBP.balance": total_return}, "$set": {"updated_at": datetime.now(timezone.utc)}}
+            {"$inc": {"balances.GBP.balance": total_return}, "$set": {"updated_at": datetime.now(timezone.utc)}}
         )
         
         # Update position
@@ -12905,7 +12905,7 @@ from referral_system import (
     load_referral_config_from_db,
     update_referral_config_in_db
 )
-from fastapi import Cookie, Response
+from fastapi import Cookie
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 import httpx
 
@@ -13521,7 +13521,7 @@ async def check_and_award_referral_bonus(user_id: str, top_up_amount: float, cur
         )
         
         if not deduction_result.get("success"):
-            logger.error(f"❌ PLATFORM WALLET INSUFFICIENT FUNDS - Cannot pay £20 bonus!")
+            logger.error("❌ PLATFORM WALLET INSUFFICIENT FUNDS - Cannot pay £20 bonus!")
             # Send alert to admin
             await send_email(
                 to_email="info@coinhubx.net",
@@ -13601,7 +13601,7 @@ async def check_and_award_referral_bonus(user_id: str, top_up_amount: float, cur
             db,
             user_id=relationship["referrer_user_id"],
             notification_type='referral_bonus',
-            title=f'🎉 £20 Referral Bonus Earned!',
+            title='🎉 £20 Referral Bonus Earned!',
             message=f'{referred_name} topped up £{top_up_amount:.2f}. You earned your £20 referral bonus!',
             link='/referral-dashboard',
             metadata={
@@ -19746,7 +19746,7 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
     
     if is_ios:
         # For iOS users, return HTML page with App Store link or PWA instructions
-        return HTMLResponse(content=f"""
+        return HTMLResponse(content="""
         <!DOCTYPE html>
         <html>
         <head>
@@ -19754,7 +19754,7 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Coin Hub X - iOS App</title>
             <style>
-                body {{
+                body {
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
                     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
                     color: #fff;
@@ -19765,30 +19765,30 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                }}
-                .container {{
+                }
+                .container {
                     max-width: 500px;
                     background: rgba(30, 41, 59, 0.8);
                     padding: 2rem;
                     border-radius: 16px;
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                }}
-                h1 {{
+                }
+                h1 {
                     color: #06b6d4;
                     font-size: 2rem;
                     margin-bottom: 1rem;
-                }}
-                .icon {{
+                }
+                .icon {
                     font-size: 4rem;
                     margin-bottom: 1rem;
-                }}
-                p {{
+                }
+                p {
                     font-size: 1.1rem;
                     line-height: 1.6;
                     margin-bottom: 1.5rem;
                     color: #cbd5e1;
-                }}
-                .btn {{
+                }
+                .btn {
                     background: linear-gradient(135deg, #06b6d4, #0891b2);
                     color: white;
                     padding: 1rem 2rem;
@@ -19798,15 +19798,15 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     font-weight: 600;
                     margin: 0.5rem;
                     box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
-                }}
-                .btn:hover {{
+                }
+                .btn:hover {
                     transform: translateY(-2px);
                     box-shadow: 0 6px 25px rgba(6, 182, 212, 0.5);
-                }}
-                .secondary {{
+                }
+                .secondary {
                     background: linear-gradient(135deg, #8b5cf6, #7c3aed);
                     box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-                }}
+                }
             </style>
         </head>
         <body>
@@ -19817,9 +19817,9 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                 <p style="font-size: 0.95rem; color: #94a3b8;">iOS native app coming soon to the App Store.</p>
                 <a href="/" class="btn">Open Web App</a>
                 <a href="/" class="btn secondary" onclick="event.preventDefault(); 
-                    if(navigator.share) {{
-                        navigator.share({{title: 'Coin Hub X', text: 'Trade crypto safely', url: window.location.origin}})
-                    }}">
+                    if(navigator.share) {
+                        navigator.share({title: 'Coin Hub X', text: 'Trade crypto safely', url: window.location.origin})
+                    }">
                     Share App
                 </a>
             </div>
@@ -19832,7 +19832,7 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
     
     if not apk_path.exists():
         # If APK doesn't exist yet, return premium info page
-        return HTMLResponse(content=f"""
+        return HTMLResponse(content="""
         <!DOCTYPE html>
         <html>
         <head>
@@ -19842,7 +19842,7 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
             <style>
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700;900&display=swap');
                 
-                body {{
+                body {
                     font-family: 'Inter', sans-serif;
                     background: linear-gradient(135deg, #0A1929 0%, #051018 100%);
                     color: #fff;
@@ -19853,8 +19853,8 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     align-items: center;
                     justify-content: center;
                     margin: 0;
-                }}
-                .container {{
+                }
+                .container {
                     max-width: 600px;
                     background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(123, 44, 255, 0.05) 100%);
                     backdrop-filter: blur(20px);
@@ -19863,13 +19863,13 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     border-radius: 24px;
                     border: 1px solid rgba(0, 240, 255, 0.3);
                     box-shadow: 0 0 40px rgba(0, 240, 255, 0.2), 0 0 80px rgba(123, 44, 255, 0.1);
-                }}
-                .icon {{
+                }
+                .icon {
                     font-size: 5rem;
                     margin-bottom: 1.5rem;
                     filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.6));
-                }}
-                h1 {{
+                }
+                h1 {
                     font-family: 'Space Grotesk', sans-serif;
                     font-size: 2.5rem;
                     font-weight: 900;
@@ -19879,14 +19879,14 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     background-clip: text;
                     margin-bottom: 1rem;
                     filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.4));
-                }}
-                p {{
+                }
+                p {
                     font-size: 1.2rem;
                     line-height: 1.6;
                     color: rgba(255, 255, 255, 0.85);
                     margin-bottom: 2rem;
-                }}
-                .btn {{
+                }
+                .btn {
                     background: linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%);
                     color: white;
                     padding: 1.2rem 2.5rem;
@@ -19899,25 +19899,25 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     border: 1px solid rgba(0, 240, 255, 0.3);
                     box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
                     transition: all 0.3s ease;
-                }}
-                .btn:hover {{
+                }
+                .btn:hover {
                     transform: translateY(-3px) scale(1.02);
                     box-shadow: 0 0 40px rgba(0, 240, 255, 0.6), 0 0 80px rgba(123, 44, 255, 0.4);
-                }}
-                .secondary {{
+                }
+                .secondary {
                     background: rgba(0, 240, 255, 0.1);
                     border: 1px solid rgba(0, 240, 255, 0.4);
                     color: #00F0FF;
-                }}
-                .feature {{
+                }
+                .feature {
                     display: inline-flex;
                     align-items: center;
                     gap: 0.5rem;
                     margin: 0.5rem 1rem;
                     font-size: 0.95rem;
                     color: rgba(255, 255, 255, 0.8);
-                }}
-                .feature-icon {{
+                }
+                .feature-icon {
                     width: 20px;
                     height: 20px;
                     border-radius: 50%;
@@ -19926,7 +19926,7 @@ async def download_mobile_app(request: Request, user_agent: str = Header(None)):
                     align-items: center;
                     justify-content: center;
                     font-size: 12px;
-                }}
+                }
             </style>
         </head>
         <body>
@@ -22095,7 +22095,7 @@ async def escalate_chat_to_live_agent(request: Request):
                 )
                 
                 if sms_sent:
-                    logger.info(f"✅ SMS notification sent to 07808184311")
+                    logger.info("✅ SMS notification sent to 07808184311")
                     
             except Exception as sms_error:
                 logger.error(f"Failed to send SMS notification: {str(sms_error)}")
