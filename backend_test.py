@@ -324,18 +324,22 @@ class CoinHubXComprehensiveTester:
             self.log_test("P2P Order Flow", False, "Could not create offer for order flow test")
             return
         
-        offer_id = offer_response.get("offer_id")
+        order_id = offer_response.get("order_id")
         
-        # Create order (buyer)
-        order_data = {
-            "offer_id": offer_id,
-            "amount": 0.05,
-            "payment_method": "bank_transfer"
+        # Create trade (buyer)
+        trade_data = {
+            "sell_order_id": order_id,
+            "buyer_id": buyer["user_id"],
+            "crypto_amount": 0.05,
+            "payment_method": "bank_transfer",
+            "buyer_wallet_address": "test_wallet_address",
+            "buyer_wallet_network": "bitcoin",
+            "is_express": False
         }
         
         buyer_headers = {"Authorization": f"Bearer {buyer['token']}"}
         success, order_response, status, response_time = await self.make_request(
-            "POST", "/p2p/orders", json=order_data, headers=buyer_headers
+            "POST", "/p2p/create-trade", json=trade_data, headers=buyer_headers
         )
         
         if success and isinstance(order_response, dict) and order_response.get("success"):
