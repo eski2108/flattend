@@ -17647,62 +17647,7 @@ async def update_display_settings(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
-        admin_wallet_id = PLATFORM_CONFIG["admin_wallet_id"]
-        
-        # Check admin balance
-        admin_balance = await db.crypto_balances.find_one({
-            "user_id": admin_wallet_id,
-            "currency": currency
-        })
-        
-        if not admin_balance or admin_balance["balance"] < amount:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Insufficient platform balance. Available: {admin_balance['balance'] if admin_balance else 0} {currency}"
-            )
-        
-        # Create withdrawal transaction
-        withdrawal_tx = CryptoTransaction(
-            user_id=admin_wallet_id,
-            currency=currency,
-            transaction_type="admin_withdrawal",
-            amount=amount,
-            status="completed",
-            reference=address,
-            notes=f"Platform earnings withdrawal to admin wallet: {address}",
-            completed_at=datetime.now(timezone.utc)
-        )
-        
-        tx_dict = withdrawal_tx.model_dump()
-        tx_dict['created_at'] = tx_dict['created_at'].isoformat()
-        tx_dict['completed_at'] = tx_dict['completed_at'].isoformat()
-        tx_dict['withdrawal_address'] = address
-        await db.crypto_transactions.insert_one(tx_dict)
-        
-        # Deduct from admin balance
-        await db.crypto_balances.update_one(
-            {"user_id": admin_wallet_id, "currency": currency},
-            {
-                "$inc": {"balance": -amount},
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            }
-        )
-        
-        return {
-            "success": True,
-            "message": "Withdrawal initiated",
-            "transaction_id": withdrawal_tx.transaction_id,
-            "amount": amount,
-            "currency": currency,
-            "address": address
-        }
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        logger.error(f"Error withdrawing earnings: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+    # Unreachable code removed - was dead code with undefined variables (currency, amount, address)
 
 @api_router.get("/admin/fee-statistics")
 async def get_fee_statistics():
