@@ -343,27 +343,27 @@ class CoinHubXComprehensiveTester:
         )
         
         if success and isinstance(order_response, dict) and order_response.get("success"):
-            order_id = order_response.get("order_id")
-            self.log_test("P2P Order Creation", True, 
-                         f"P2P order created: {order_id}", 
-                         {"order_id": order_id, "amount": order_data["amount"]},
+            trade_id = order_response.get("trade_id")
+            self.log_test("P2P Trade Creation", True, 
+                         f"P2P trade created: {trade_id}", 
+                         {"trade_id": trade_id, "amount": trade_data["crypto_amount"]},
                          performance_ms=response_time)
             
-            # Test order status
+            # Test trade status
             success, status_response, status_code, _ = await self.make_request(
-                "GET", f"/p2p/orders/{order_id}", headers=buyer_headers
+                "GET", f"/p2p/trade/{trade_id}", headers=buyer_headers
             )
             
             if success:
-                self.log_test("P2P Order Status Check", True, 
-                             f"Order status retrieved successfully", 
-                             status_response.get("order", {}))
+                self.log_test("P2P Trade Status Check", True, 
+                             f"Trade status retrieved successfully", 
+                             status_response.get("trade", {}))
             else:
-                self.log_test("P2P Order Status Check", False, 
-                             f"Failed to get order status with code {status_code}")
+                self.log_test("P2P Trade Status Check", False, 
+                             f"Failed to get trade status with code {status_code}")
         else:
-            self.log_test("P2P Order Creation", False, 
-                         f"Failed to create P2P order with status {status}", order_response,
+            self.log_test("P2P Trade Creation", False, 
+                         f"Failed to create P2P trade with status {status}", order_response,
                          performance_ms=response_time)
     
     # ==================== INSTANT BUY/SELL TESTS ====================
