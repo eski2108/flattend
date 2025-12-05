@@ -4570,33 +4570,37 @@ async def get_savings_balances(user_id: str):
             return {
                 "success": True,
                 "balances": [],
-                "total_value_usd": 0.0
+                "total_value_usd": 0.0,
+                "total_value_gbp": 0.0
             }
         
         # Calculate total value
-        crypto_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0, "BNB": 600, "SOL": 200}
+        crypto_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0, "BNB": 600, "SOL": 200, "XRP": 0.5, "LTC": 100, "ADA": 0.4, "DOT": 7.5, "DOGE": 0.08}
         total_usd = 0.0
+        gbp_rate = 0.79  # USD to GBP conversion
         
         for saving in savings:
             currency = saving.get("currency")
-            # Handle both "amount" and "balance" field names for backwards compatibility
-            amount = saving.get("amount", saving.get("balance", 0.0))
-            saving["amount"] = amount  # Ensure frontend gets "amount" field
+            # Handle both "amount", "balance", and "savings_balance" field names
+            amount = saving.get("savings_balance", saving.get("amount", saving.get("balance", 0.0)))
+            saving["savings_balance"] = amount  # Standardize field name
             price = crypto_prices.get(currency, 0)
             saving["current_price"] = price
-            saving["current_value_usd"] = amount * price
+            saving["value_usd"] = amount * price
+            saving["value_gbp"] = amount * price * gbp_rate
             
             # Calculate P/L
             avg_buy_price = saving.get("avg_buy_price", price)
             saving["unrealized_pl_usd"] = (price - avg_buy_price) * amount
             saving["unrealized_pl_percent"] = ((price - avg_buy_price) / avg_buy_price * 100) if avg_buy_price > 0 else 0
             
-            total_usd += saving["current_value_usd"]
+            total_usd += saving["value_usd"]
         
         return {
             "success": True,
             "balances": savings,
-            "total_value_usd": round(total_usd, 2)
+            "total_value_usd": round(total_usd, 2),
+            "total_value_gbp": round(total_usd * gbp_rate, 2)
         }
         
     except Exception as e:
