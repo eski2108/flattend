@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
+BASE_URL = "https://codehealer-31.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

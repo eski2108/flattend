@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
+BASE_URL = "https://codehealer-31.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)
