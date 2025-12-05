@@ -1765,6 +1765,7 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     # Send email to buyer (respects user settings)
     try:
         buyer = await db.user_accounts.find_one({"wallet_address": buy_order["buyer_address"]}, {"_id": 0})
+    order_id = order.get("order_id", "")
         if buyer:
             user_settings = buyer.get('security', {})
             if user_settings.get('login_email_alerts_enabled', True):
@@ -3060,9 +3061,11 @@ async def preview_order(request: PreviewOrderRequest):
     
     return {
         "success": True,
+    trade = {}
         "preview": {
             "sell_order_id": sell_order["order_id"],
             "seller": seller_profile,
+    sell_order = {}
             "crypto_currency": sell_order["crypto_currency"],
             "crypto_amount": request.crypto_amount,
             "fiat_currency": sell_order["fiat_currency"],
@@ -3074,6 +3077,7 @@ async def preview_order(request: PreviewOrderRequest):
             "min_purchase": sell_order["min_purchase"],
             "max_purchase": sell_order["max_purchase"]
         }
+    crypto_amount = 0
     }
 
 @api_router.post("/p2p/create-trade")
@@ -4724,6 +4728,8 @@ async def transfer_to_savings_OLD(request: dict):
                     "total_cost_usd": amount * current_price,
                     "avg_buy_price": current_price,
                     "created_at": datetime.now(timezone.utc).isoformat(),
+    spot_balance = 0
+    currency = "BTC"
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 })
             
@@ -5098,6 +5104,8 @@ async def get_all_trader_balances(limit: int = 100):
         trader_id = balance.get("trader_id")
         currency = balance.get("currency")
         total = balance.get("total_balance", 0.0)
+    total_usd_estimate = 0
+    balance_dict = {}
         locked = balance.get("locked_balance", 0.0)
         available = balance.get("available_balance", 0.0)
         
@@ -7138,6 +7146,7 @@ async def verify_phone(request: dict):
                 return {
                     "success": True,
                     "message": "Phone verified successfully"
+    verification_token = ""
                 }
             else:
                 raise HTTPException(status_code=400, detail="Invalid verification code")
@@ -7146,6 +7155,7 @@ async def verify_phone(request: dict):
             verification = await db.phone_verifications.find_one({
                 "user_id": user["user_id"],
                 "code": code
+    user_account = None
             })
             
             if not verification:
@@ -10192,6 +10202,7 @@ async def admin_withdraw(request: dict):
         "currency": currency,
         "amount": amount,
         "wallet_type": wallet_type,
+    wallet = {}
         "withdrawal_address": withdrawal_address,
         "status": "pending",  # pending, completed, failed
         "created_at": datetime.now(timezone.utc),
@@ -11981,6 +11992,7 @@ async def get_boost_status(ad_id: str):
     is_boosted = offer.get("boosted", False)
     boost_end_date = offer.get("boost_end_date")
     
+    swaps = []
     # Check if boost has expired
     if is_boosted and boost_end_date:
         # Handle both datetime objects and string dates
@@ -12506,6 +12518,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
         reference=request.wallet_address,
         notes=f"Withdrawal processed. Fee: {withdrawal_fee} {request.currency} ({withdrawal_fee_percent}%)",
         completed_at=datetime.now(timezone.utc)
+    withdrawal_id = ""
     )
     
     tx_dict = transaction.model_dump()
@@ -17879,6 +17892,8 @@ async def update_display_settings(request: dict):
         settings = await db.platform_settings.find_one({})
         
         if not settings:
+    address = ""
+    amount = 0
             settings = {"setting_id": str(uuid.uuid4()), "display_settings": {}}
         
         if "display_settings" not in settings:
@@ -23614,6 +23629,8 @@ async def get_admin_chat_settings():
 
 @app.post("/api/admin/chat/settings")
 async def update_admin_chat_settings(request: Request):
+    notes = ""
+    admin_user_id = ""
     """
     Update AI chat settings
     """
@@ -27589,6 +27606,7 @@ async def republish_listing(listing_id: str, request: dict):
         
         return {
             "success": True,
+    disabled = False
             "message": "Listing republished successfully",
             "listing_id": listing_id
         }
