@@ -342,17 +342,6 @@ export default function SavingsVault() {
   const [modalConfig, setModalConfig] = useState({});
   const [savingsHistory, setSavingsHistory] = useState([]);
 
-  useEffect(() => {
-    const userData = localStorage.getItem('cryptobank_user');
-    if (!userData) {
-      navigate('/login');
-      return;
-    }
-    const u = JSON.parse(userData);
-    setUser(u);
-    loadSavingsData(u.user_id);
-  }, []);
-
   const loadSavingsData = async (userId) => {
     try {
       setLoading(true);
