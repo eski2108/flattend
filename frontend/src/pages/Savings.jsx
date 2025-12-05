@@ -293,9 +293,10 @@ export default function SavingsVault() {
   const [modalConfig, setModalConfig] = useState({});
   const [savingsHistory, setSavingsHistory] = useState([]);
   const [prices, setPrices] = useState({});
+  const [priceHistories, setPriceHistories] = useState({});
 
   const loadData = React.useCallback(async (userId) => {
-    try {
+    try:
       setLoading(true);
 
       // Load savings balances
