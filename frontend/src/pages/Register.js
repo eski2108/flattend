@@ -65,7 +65,7 @@ export default function Register() {
   };
 
   const handleGoogleSignup = () => {
-    window.location.href = `${AUTH_URL}/google-auth?app=coinhubx&redirect_url=${encodeURIComponent(window.location.origin + '/register')}`;
+    window.location.href = `${API}/api/auth/google`;
   };
 
   return (
