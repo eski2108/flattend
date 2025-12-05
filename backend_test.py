@@ -666,9 +666,9 @@ class CoinHubXComprehensiveTester:
     async def test_unauthorized_access(self):
         """Test unauthorized access to protected endpoints"""
         protected_endpoints = [
-            ("GET", "/wallet/balance"),
-            ("GET", "/p2p/orders"),
-            ("POST", "/p2p/offers"),
+            ("GET", "/wallets/test-user-id"),
+            ("GET", "/p2p/trade/test-trade-id"),
+            ("POST", "/p2p/create-sell-order"),
             ("GET", "/admin/dashboard/stats"),
         ]
         
