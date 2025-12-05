@@ -170,14 +170,14 @@ export default function Register() {
           }}
           onMouseEnter={(e) => {
             if (!loading) {
-              e.target.style.background = 'rgba(255, 255, 255, 0.12)';
-              e.target.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+              e.target.style.background = 'rgba(10, 25, 41, 0.95)';
+              e.target.style.borderColor = 'rgba(0, 240, 255, 0.5)';
               e.target.style.transform = 'translateY(-1px)';
             }
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = 'rgba(255, 255, 255, 0.08)';
-            e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            e.target.style.background = 'rgba(10, 25, 41, 0.8)';
+            e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
             e.target.style.transform = 'translateY(0)';
           }}
         >
