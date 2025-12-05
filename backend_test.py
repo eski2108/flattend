@@ -302,20 +302,22 @@ class CoinHubXComprehensiveTester:
             self.log_test("P2P Order Flow", False, "Could not create test users")
             return
         
-        # Create offer
+        # Create sell order
         offer_data = {
-            "type": "sell",
-            "cryptocurrency": "BTC", 
-            "amount": 0.1,
+            "seller_id": seller["user_id"],
+            "crypto_currency": "BTC", 
+            "crypto_amount": 0.1,
+            "fiat_currency": "GBP",
             "price_per_unit": 45000,
             "payment_methods": ["bank_transfer"],
-            "min_order": 0.01,
-            "max_order": 0.1
+            "min_purchase": 0.01,
+            "max_purchase": 0.1,
+            "seller_requirements": []
         }
         
         headers = {"Authorization": f"Bearer {seller['token']}"}
         success, offer_response, status, _ = await self.make_request(
-            "POST", "/p2p/offers", json=offer_data, headers=headers
+            "POST", "/p2p/create-sell-order", json=offer_data, headers=headers
         )
         
         if not success:
