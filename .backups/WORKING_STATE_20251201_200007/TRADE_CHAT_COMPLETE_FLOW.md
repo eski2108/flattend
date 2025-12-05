@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://codehealer-31.preview.emergentagent.com
+**Test it now at:** https://cryptolaunch-9.preview.emergentagent.com

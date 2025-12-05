@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptolaunch-9.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

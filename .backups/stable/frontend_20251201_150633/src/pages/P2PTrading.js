@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import BoostOfferModal from '@/components/BoostOfferModal';
 import { IoAdd as Plus, IoDocument as FileText, IoFilter, IoFlash, IoSave as Save, IoSearch, IoShield, IoStar, IoTime, IoTrendingDown as TrendingDown, IoTrendingUp as TrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptolaunch-9.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {

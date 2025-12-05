@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { IoAlertCircle as AlertCircle, IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoChevronDown, IoFlash, IoInformationCircle, IoRefresh as RefreshCw, IoSettings, IoShield, IoTime, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptolaunch-9.preview.emergentagent.com';
 
 const COIN_LOGOS = {
   'BTC': '🟠',

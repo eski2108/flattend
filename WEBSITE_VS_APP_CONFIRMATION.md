@@ -17,7 +17,7 @@
 **Technology:** React Web App  
 **Location:** `/app/frontend/`  
 **Type:** Standard website accessible via browser  
-**Current URL:** https://codehealer-31.preview.emergentagent.com  
+**Current URL:** https://cryptolaunch-9.preview.emergentagent.com  
 
 **Key Evidence:**
 - Uses `index.html` (line 1: `<!doctype html>`)
@@ -166,7 +166,7 @@ https://www.yourdomain.com ✅
 
 ### 3. Accessible via Browser
 ```
-Current URL: https://codehealer-31.preview.emergentagent.com
+Current URL: https://cryptolaunch-9.preview.emergentagent.com
 Works in: Chrome, Firefox, Safari, Edge
 No installation required
 ```

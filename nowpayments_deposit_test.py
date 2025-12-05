@@ -27,7 +27,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://codehealer-31.preview.emergentagent.com/api"
+BASE_URL = "https://cryptolaunch-9.preview.emergentagent.com/api"
 
 # Test User from review request
 TEST_USER = {

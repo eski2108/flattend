@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://codehealer-31.preview.emergentagent.com/api
+https://cryptolaunch-9.preview.emergentagent.com/api
 ```
 
 This means:
