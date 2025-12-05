@@ -25121,7 +25121,7 @@ async def get_referral_analytics():
 
 @api_router.get("/admin/revenue/dashboard")
 async def get_admin_revenue_dashboard(timeframe: str = "all"):
-    """Get revenue dashboard with time-based breakdown - Last week, last month, today"""
+    """Get comprehensive revenue dashboard - matches frontend expectations exactly"""
     try:
         from datetime import datetime, timedelta, timezone
         
@@ -25136,56 +25136,107 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         else:  # all
             start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
         
-        # Get all revenue data
-        match_filter = {"timestamp": {"$gte": start_date.isoformat()}}
+        # Get ALL fee transactions with details
+        fee_transactions = await db.transaction_history.find(
+            {
+                "timestamp": {"$gte": start_date.isoformat()},
+                "fee_amount": {"$exists": True, "$gt": 0}
+            }
+        ).to_list(10000)
         
-        # P2P Revenue
-        p2p_revenue = await db.p2p_trades.aggregate([
-            {"$match": {**match_filter, "status": "completed"}},
-            {"$group": {
-                "_id": None,
-                "total": {"$sum": "$platform_fee"},
-                "count": {"$sum": 1}
-            }}
-        ]).to_list(1)
+        # Aggregate by fee type
+        by_fee_type = {}
+        by_currency = {}
+        total_revenue_crypto = 0
+        total_referral_paid_crypto = 0
+        recent_transactions = []
         
-        # Swap fees
-        swap_revenue = await db.swap_transactions.aggregate([
-            {"$match": {**match_filter, "status": "completed"}},
-            {"$group": {
-                "_id": None,
-                "total": {"$sum": "$fee_amount"},
-                "count": {"$sum": 1}
-            }}
-        ]).to_list(1)
+        crypto_prices_gbp = {
+            "BTC": 75000, "ETH": 2765, "USDT": 0.79, "XRP": 0.46,
+            "LTC": 83, "ADA": 0.33, "DOT": 6.16, "DOGE": 0.067,
+            "BNB": 490, "SOL": 166, "MATIC": 0.75, "AVAX": 33, "GBP": 1.0
+        }
         
-        # Transaction fees
-        tx_revenue = await db.transaction_history.aggregate([
-            {"$match": {**match_filter, "fee_amount": {"$gt": 0}}},
-            {"$group": {
-                "_id": None,
-                "total": {"$sum": "$fee_amount"},
-                "count": {"$sum": 1}
-            }}
-        ]).to_list(1)
+        for tx in fee_transactions:
+            fee_type = tx.get("transaction_type", "Unknown")
+            currency = tx.get("currency", "GBP")
+            admin_fee = tx.get("fee_amount", 0)
+            referrer_commission = tx.get("referrer_commission", 0)
+            
+            price_gbp = crypto_prices_gbp.get(currency, 1)
+            admin_fee_gbp = admin_fee * price_gbp
+            referrer_gbp = referrer_commission * price_gbp
+            
+            # By fee type
+            if fee_type not in by_fee_type:
+                by_fee_type[fee_type] = {"total_revenue": 0, "count": 0}
+            by_fee_type[fee_type]["total_revenue"] += admin_fee_gbp
+            by_fee_type[fee_type]["count"] += 1
+            
+            # By currency
+            if currency not in by_currency:
+                by_currency[currency] = {
+                    "total_revenue": 0,
+                    "net_revenue": 0,
+                    "referral_paid": 0,
+                    "count": 0
+                }
+            by_currency[currency]["total_revenue"] += admin_fee
+            by_currency[currency]["net_revenue"] += (admin_fee - referrer_commission)
+            by_currency[currency]["referral_paid"] += referrer_commission
+            by_currency[currency]["count"] += 1
+            
+            total_revenue_crypto += admin_fee_gbp
+            total_referral_paid_crypto += referrer_gbp
+            
+            # Recent transactions (last 10)
+            if len(recent_transactions) < 10:
+                recent_transactions.append({
+                    "fee_type": fee_type,
+                    "currency": currency,
+                    "admin_fee": admin_fee,
+                    "referrer_commission": referrer_commission,
+                    "timestamp": tx.get("timestamp")
+                })
         
-        # Calculate totals
-        p2p_total = p2p_revenue[0]["total"] if p2p_revenue else 0
-        swap_total = swap_revenue[0]["total"] if swap_revenue else 0
-        tx_total = tx_revenue[0]["total"] if tx_revenue else 0
+        # Format by_fee_type for frontend
+        by_fee_type_list = []
+        for fee_type, data in by_fee_type.items():
+            percentage = (data["total_revenue"] / total_revenue_crypto * 100) if total_revenue_crypto > 0 else 0
+            by_fee_type_list.append({
+                "fee_type": fee_type,
+                "total_revenue": data["total_revenue"],
+                "transaction_count": data["count"],
+                "percentage": percentage
+            })
+        by_fee_type_list.sort(key=lambda x: x["total_revenue"], reverse=True)
         
-        total_revenue_gbp = (p2p_total + swap_total + tx_total) * 0.79  # Assume crypto, convert to GBP
+        # Format by_currency for frontend
+        by_currency_list = []
+        for currency, data in by_currency.items():
+            price_gbp = crypto_prices_gbp.get(currency, 1)
+            percentage = (data["total_revenue"] * price_gbp / total_revenue_crypto * 100) if total_revenue_crypto > 0 else 0
+            by_currency_list.append({
+                "currency": currency,
+                "total_revenue": data["total_revenue"],
+                "net_revenue": data["net_revenue"],
+                "referral_paid": data["referral_paid"],
+                "percentage": percentage
+            })
+        by_currency_list.sort(key=lambda x: x["total_revenue"], reverse=True)
         
         return {
             "success": True,
-            "timeframe": timeframe,
-            "total_revenue_gbp": total_revenue_gbp,
-            "p2p_revenue": p2p_total,
-            "swap_revenue": swap_total,
-            "transaction_revenue": tx_total,
-            "p2p_count": p2p_revenue[0]["count"] if p2p_revenue else 0,
-            "swap_count": swap_revenue[0]["count"] if swap_revenue else 0,
-            "transaction_count": tx_revenue[0]["count"] if tx_revenue else 0
+            "summary": {
+                "total_revenue_gbp": total_revenue_crypto,
+                "net_revenue_gbp": total_revenue_crypto - total_referral_paid_crypto,
+                "referral_commissions_paid_gbp": total_referral_paid_crypto,
+                "total_transactions": len(fee_transactions)
+            },
+            "by_fee_type": by_fee_type_list,
+            "by_currency": by_currency_list,
+            "recent_transactions": recent_transactions,
+            "last_updated": datetime.now(timezone.utc).isoformat()
         }
         
     except Exception as e:
