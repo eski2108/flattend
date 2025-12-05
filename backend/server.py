@@ -25194,51 +25194,7 @@ async def get_nowpayments_currencies():
 # BUSINESS DASHBOARD ENDPOINTS
 # ============================================
 
-@api_router.get("/admin/customer-analytics")
-async def get_customer_analytics():
-    """Get customer analytics for business dashboard"""
-    try:
-        now = datetime.now(timezone.utc)
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        week_start = now - timedelta(days=7)
-        month_start = now - timedelta(days=30)
-        
-        # New users today
-        new_today = await db.user_accounts.count_documents({
-            "created_at": {"$gte": today_start.isoformat()}
-        })
-        
-        # New users this week
-        new_week = await db.user_accounts.count_documents({
-            "created_at": {"$gte": week_start.isoformat()}
-        })
-        
-        # New users this month
-        new_month = await db.user_accounts.count_documents({
-            "created_at": {"$gte": month_start.isoformat()}
-        })
-        
-        # Total users
-        total_users = await db.user_accounts.count_documents({})
-        
-        # Active users in last 24h (users who made a transaction)
-        active_24h = await db.transactions.distinct("user_id", {
-            "created_at": {"$gte": (now - timedelta(hours=24)).isoformat()}
-        })
-        
-        return {
-            "success": True,
-            "analytics": {
-                "newToday": new_today,
-                "newWeek": new_week,
-                "newMonth": new_month,
-                "totalUsers": total_users,
-                "activeUsers24h": len(active_24h)
-            }
-        }
-    except Exception as e:
-        logger.error(f"Error getting customer analytics: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+# DUPLICATE REMOVED: get_customer_analytics is already defined at line 7981
 
 @api_router.get("/admin/referral-analytics")
 async def get_referral_analytics():
