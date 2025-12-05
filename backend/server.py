@@ -30,6 +30,11 @@ from background_tasks import task_queue, send_email_background, update_prices_ba
 # Redis Caching Service for Performance
 from cache_service import cache, PRICE_CACHE_TTL, price_cache_key
 
+# JWT Configuration
+JWT_SECRET = os.getenv('JWT_SECRET', 'cryptolend-secret-key-change-in-production-2025')
+ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
+
 # Custom JSON encoder to handle MongoDB ObjectId
 def convert_objectid(obj):
     """Convert MongoDB ObjectId to string for JSON serialization"""
