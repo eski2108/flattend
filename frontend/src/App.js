@@ -195,7 +195,7 @@ function App() {
             <Route path="/p2p/order/:tradeId" element={<P2POrderPage />} />
             <Route path="/fees" element={<Fees />} />
             <Route path="/payment-methods" element={<PaymentMethods />} />
-            <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
             <Route path="/savings" element={<SavingsPage />} />
             {/* Portfolio route removed - Dashboard page serves as Portfolio Overview */}
             <Route path="/portfolio" element={<PortfolioPage />} />
