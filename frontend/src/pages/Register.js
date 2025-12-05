@@ -125,29 +125,39 @@ export default function Register() {
         position: 'relative',
         zIndex: 1
       }}>
-        {/* CHX Shield Logo */}
+        {/* CHX Logo */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{
-            width: '100px',
-            height: '100px',
+            width: '120px',
+            height: '120px',
             margin: '0 auto 24px',
-            background: 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
+            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(155, 77, 255, 0.1) 100%)',
             borderRadius: '24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 12px 40px rgba(0, 240, 255, 0.5), 0 0 60px rgba(155, 77, 255, 0.3)',
+            boxShadow: '0 12px 40px rgba(0, 240, 255, 0.3), 0 0 60px rgba(155, 77, 255, 0.2)',
             animation: 'glow 3s ease-in-out infinite',
-            position: 'relative'
+            position: 'relative',
+            border: '1px solid rgba(0, 240, 255, 0.3)'
           }}>
-            <IoShield size={56} color="#FFF" style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }} />
+            <img 
+              src="/chx-logo-transparent.png" 
+              alt="CoinHubX Logo" 
+              style={{
+                width: '90px',
+                height: '90px',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 4px 12px rgba(0, 240, 255, 0.4))'
+              }}
+            />
             <div style={{
               position: 'absolute',
               inset: '-2px',
               background: 'linear-gradient(135deg, #00F0FF, #9B4DFF)',
               borderRadius: '24px',
-              opacity: 0.3,
-              filter: 'blur(8px)',
+              opacity: 0.2,
+              filter: 'blur(12px)',
               zIndex: -1
             }} />
           </div>
