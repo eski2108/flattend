@@ -216,6 +216,7 @@ function App() {
             <Route path="/settings/blocked" element={<BlockedUsers />} />
             <Route path="/admin-liquidity" element={<AdminLiquidity />} />
             <Route path="/admin/liquidity-manager" element={<AdminLiquidityManager />} />
+            <Route path="/admin/liquidity" element={<AdminLiquidityManagement />} />
             <Route path="/manager-settings" element={<ManagerSettings />} />
             <Route path="/p2p/merchant" element={<MerchantCenter />} />
             <Route path="/p2p/create-ad" element={<CreateAd />} />
