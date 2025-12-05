@@ -20,7 +20,7 @@ Pre-launch audit with UNDENIABLE PROOF for every feature.
 - Measure response times and performance
 - Provide UNDENIABLE PROOF with detailed logs
 
-**Backend URL:** https://codehealer-31.preview.emergentagent.com/api
+**Backend URL:** https://cryptolaunch-9.preview.emergentagent.com/api
 """
 
 import asyncio
@@ -37,7 +37,7 @@ import hashlib
 import bcrypt
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://codehealer-31.preview.emergentagent.com"
+BACKEND_URL = "https://cryptolaunch-9.preview.emergentagent.com"
 
 class CoinHubXComprehensiveTester:
     """Comprehensive CoinHubX Backend API Tester"""

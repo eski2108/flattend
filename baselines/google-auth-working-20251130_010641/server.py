@@ -2715,7 +2715,7 @@ async def get_user_seller_link(user_id: str):
             raise HTTPException(status_code=404, detail="User not found")
         
         # Generate seller link
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://codehealer-31.preview.emergentagent.com")
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://cryptolaunch-9.preview.emergentagent.com")
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         return {
@@ -5431,7 +5431,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the production URL
-        redirect_uri = "https://codehealer-31.preview.emergentagent.com/api/auth/google/callback"
+        redirect_uri = "https://cryptolaunch-9.preview.emergentagent.com/api/auth/google/callback"
         
         if not google_client_id:
             logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
@@ -5469,7 +5469,7 @@ async def google_callback(code: str = None, error: str = None):
     from fastapi.responses import RedirectResponse
     from urllib.parse import quote
     
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://codehealer-31.preview.emergentagent.com')
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://cryptolaunch-9.preview.emergentagent.com')
     
     logger.info(f"🔵 Google callback received - code: {'present' if code else 'missing'}, error: {error or 'none'}")
     
@@ -5484,7 +5484,7 @@ async def google_callback(code: str = None, error: str = None):
     
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-    redirect_uri = "https://codehealer-31.preview.emergentagent.com/api/auth/google/callback"
+    redirect_uri = "https://cryptolaunch-9.preview.emergentagent.com/api/auth/google/callback"
     
     logger.info(f"   Using redirect_uri: {redirect_uri}")
     
@@ -5644,7 +5644,7 @@ async def complete_google_signup(request: dict):
     <html>
     <head>
         <title>Email Verified - Coin Hub X</title>
-        <meta http-equiv="refresh" content="3;url=https://codehealer-31.preview.emergentagent.com/login">
+        <meta http-equiv="refresh" content="3;url=https://cryptolaunch-9.preview.emergentagent.com/login">
         <style>
             body { 
                 font-family: Arial, sans-serif; 
@@ -5688,7 +5688,7 @@ async def complete_google_signup(request: dict):
             <h1>Email Verified Successfully!</h1>
             <p>Your account has been activated. You can now log in and start trading.</p>
             <p style="font-size: 14px; color: #ccc;">Redirecting to login page in 3 seconds...</p>
-            <a href="https://codehealer-31.preview.emergentagent.com/login">Go to Login</a>
+            <a href="https://cryptolaunch-9.preview.emergentagent.com/login">Go to Login</a>
         </div>
     </body>
     </html>
@@ -6192,7 +6192,7 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
         
-        reset_link = f"https://codehealer-31.preview.emergentagent.com/reset-password?token={reset_token}"
+        reset_link = f"https://cryptolaunch-9.preview.emergentagent.com/reset-password?token={reset_token}"
         
         message = Mail(
             from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -6618,7 +6618,7 @@ async def send_broadcast_message(request: dict):
                                 <div style="color: #fff; font-size: 16px; line-height: 1.6; text-align: left;">
                                     {message_content.replace(chr(10), '<br>')}
                                 </div>
-                                <a href="https://codehealer-31.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
+                                <a href="https://cryptolaunch-9.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
                                     View on Platform
                                 </a>
                             </div>
@@ -10091,7 +10091,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
             
-            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://codehealer-31.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
+            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://cryptolaunch-9.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
             
             message = Mail(
                 from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -18957,7 +18957,7 @@ async def get_my_seller_link(request: Request):
             return {"success": False, "error": "User not found"}
         
         # Create seller link with current domain
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://codehealer-31.preview.emergentagent.com")
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://cryptolaunch-9.preview.emergentagent.com")
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         # Get username/email for display

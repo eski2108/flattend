@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://codehealer-31.preview.emergentagent.com/api/admin/fees/test
+$ curl https://cryptolaunch-9.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://codehealer-31.preview.emergentagent.com/api/admin/fees/all
+$ curl https://cryptolaunch-9.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {
