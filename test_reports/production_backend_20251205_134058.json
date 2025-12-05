@@ -1,0 +1,109 @@
+{
+  "summary": {
+    "total_tests": 11,
+    "passed_tests": 5,
+    "success_rate": "45.5%",
+    "backend_url": "http://localhost:8001",
+    "timestamp": "2025-12-05T13:40:58.990360+00:00"
+  },
+  "test_results": [
+    {
+      "test_name": "Domain Consistency",
+      "success": false,
+      "details": "Backend URL: http://localhost:8001, Expected: https://coinhubx.net",
+      "response_data": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-05T13:40:57.925458+00:00"
+    },
+    {
+      "test_name": "Health Check",
+      "success": true,
+      "details": "Status: 200, Service: coinhubx-backend",
+      "response_data": null,
+      "performance_ms": 4.71949577331543,
+      "timestamp": "2025-12-05T13:40:57.930288+00:00"
+    },
+    {
+      "test_name": "User Registration",
+      "success": true,
+      "details": "Status: 200, User: test_ym5ee0y9@coinhubx.net",
+      "response_data": null,
+      "performance_ms": 423.5563278198242,
+      "timestamp": "2025-12-05T13:40:58.394249+00:00"
+    },
+    {
+      "test_name": "User Login",
+      "success": true,
+      "details": "Status: 200, Token received: True",
+      "response_data": null,
+      "performance_ms": 253.94487380981445,
+      "timestamp": "2025-12-05T13:40:58.688342+00:00"
+    },
+    {
+      "test_name": "Wallet Balances",
+      "success": false,
+      "details": "Status: 404, Balances count: 0",
+      "response_data": {
+        "detail": "Not Found"
+      },
+      "performance_ms": 2.7964115142822266,
+      "timestamp": "2025-12-05T13:40:58.731317+00:00"
+    },
+    {
+      "test_name": "Instant Buy Quote",
+      "success": false,
+      "details": "Status: 404, Quote available: False",
+      "response_data": {
+        "detail": "Not Found"
+      },
+      "performance_ms": 2.665281295776367,
+      "timestamp": "2025-12-05T13:40:58.774296+00:00"
+    },
+    {
+      "test_name": "Referral System",
+      "success": false,
+      "details": "Status: 404, Referral stats available: False",
+      "response_data": {
+        "detail": "Not Found"
+      },
+      "performance_ms": 2.7055740356445312,
+      "timestamp": "2025-12-05T13:40:58.817264+00:00"
+    },
+    {
+      "test_name": "Admin Login",
+      "success": false,
+      "details": "Status: 401, Admin access: False",
+      "response_data": {
+        "detail": "Invalid credentials"
+      },
+      "performance_ms": 3.7250518798828125,
+      "timestamp": "2025-12-05T13:40:58.861308+00:00"
+    },
+    {
+      "test_name": "Live Prices",
+      "success": true,
+      "details": "Status: 200, Price count: 9",
+      "response_data": null,
+      "performance_ms": 1.9421577453613281,
+      "timestamp": "2025-12-05T13:40:58.904302+00:00"
+    },
+    {
+      "test_name": "P2P Marketplace Offers",
+      "success": true,
+      "details": "Status: 200, Offers count: 0",
+      "response_data": null,
+      "performance_ms": 2.395153045654297,
+      "timestamp": "2025-12-05T13:40:58.947179+00:00"
+    },
+    {
+      "test_name": "P2P Statistics",
+      "success": false,
+      "details": "Status: 404, Stats available: False",
+      "response_data": {
+        "detail": "Not Found"
+      },
+      "performance_ms": 2.4793148040771484,
+      "timestamp": "2025-12-05T13:40:58.990174+00:00"
+    }
+  ]
+}
