@@ -296,7 +296,7 @@ export default function SavingsVault() {
   const [priceHistories, setPriceHistories] = useState({});
 
   const loadData = React.useCallback(async (userId) => {
-    try:
+    try {
       setLoading(true);
 
       // Load savings balances
