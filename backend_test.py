@@ -511,8 +511,8 @@ class CoinHubXComprehensiveTester:
         
         headers = {"Authorization": f"Bearer {user['token']}"}
         success, response, status, response_time = await self.make_request(
-            "POST", "/wallet/deposit/address", 
-            json={"cryptocurrency": "BTC"}, 
+            "POST", "/wallets/deposit-address", 
+            json={"user_id": user["user_id"], "currency": "BTC"}, 
             headers=headers
         )
         
