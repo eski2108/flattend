@@ -118,11 +118,11 @@ const AdminLiquidityManagement = () => {
           <PremiumCard className="p-8 mb-8" glow>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Total Liquidity</div>
+                <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Platform Liquidity</div>
                 <div className="text-5xl font-bold text-cyan-400 mb-2">
                   £{totalValueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
-                <div className="text-sm text-gray-400">Available in NOWPayments</div>
+                <div className="text-sm text-gray-400">Your Available Funds</div>
               </div>
               
               <div className="text-center">
