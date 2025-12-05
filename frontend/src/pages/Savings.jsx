@@ -9,17 +9,24 @@ import { Sparklines, SparklinesLine } from 'react-sparklines';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// All supported coins configuration
-const SUPPORTED_COINS = [
-  { code: 'BTC', name: 'Bitcoin', icon: '₿', color: '#F7931A', gradient: 'from-orange-500 to-yellow-600' },
-  { code: 'ETH', name: 'Ethereum', icon: 'Ξ', color: '#627EEA', gradient: 'from-indigo-500 to-purple-600' },
-  { code: 'USDT', name: 'Tether', icon: '₮', color: '#26A17B', gradient: 'from-green-500 to-emerald-600' },
-  { code: 'XRP', name: 'Ripple', icon: 'X', color: '#00AAE4', gradient: 'from-cyan-500 to-blue-600' },
-  { code: 'LTC', name: 'Litecoin', icon: 'Ł', color: '#345D9D', gradient: 'from-blue-500 to-indigo-600' },
-  { code: 'ADA', name: 'Cardano', icon: '₳', color: '#0033AD', gradient: 'from-blue-600 to-indigo-700' },
-  { code: 'DOT', name: 'Polkadot', icon: '●', color: '#E6007A', gradient: 'from-pink-500 to-rose-600' },
-  { code: 'DOGE', name: 'Dogecoin', icon: 'Ð', color: '#C2A633', gradient: 'from-yellow-500 to-amber-600' }
-];
+// Coin metadata for styling - fallback if backend doesn't provide
+const COIN_STYLES = {
+  'BTC': { icon: '₿', color: '#F7931A', gradient: 'from-orange-500 to-yellow-600' },
+  'ETH': { icon: 'Ξ', color: '#627EEA', gradient: 'from-indigo-500 to-purple-600' },
+  'USDT': { icon: '₮', color: '#26A17B', gradient: 'from-green-500 to-emerald-600' },
+  'XRP': { icon: 'X', color: '#00AAE4', gradient: 'from-cyan-500 to-blue-600' },
+  'LTC': { icon: 'Ł', color: '#345D9D', gradient: 'from-blue-500 to-indigo-600' },
+  'ADA': { icon: '₳', color: '#0033AD', gradient: 'from-blue-600 to-indigo-700' },
+  'DOT': { icon: '●', color: '#E6007A', gradient: 'from-pink-500 to-rose-600' },
+  'DOGE': { icon: 'Ð', color: '#C2A633', gradient: 'from-yellow-500 to-amber-600' },
+  'BNB': { icon: 'B', color: '#F3BA2F', gradient: 'from-yellow-400 to-orange-500' },
+  'SOL': { icon: 'S', color: '#14F195', gradient: 'from-purple-500 to-green-400' },
+  'MATIC': { icon: 'M', color: '#8247E5', gradient: 'from-purple-600 to-indigo-600' },
+  'AVAX': { icon: 'A', color: '#E84142', gradient: 'from-red-500 to-pink-600' }
+};
+
+// Default style for unknown coins
+const DEFAULT_STYLE = { icon: '◆', color: '#00E5FF', gradient: 'from-cyan-500 to-blue-500' };
 
 // Premium Card Component
 const PremiumCard = ({ children, className = '', glow = false }) => (
