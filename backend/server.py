@@ -4726,7 +4726,11 @@ async def transfer_to_savings_OLD(request: dict):
                     }
                 )
             
-            # Add to wallet
+            # Add to wallet - check if spot balance exists
+            spot_balance = await db.internal_balances.find_one(
+                {"user_id": user_id, "currency": currency},
+                {"_id": 0}
+            )
             if spot_balance:
                 await db.internal_balances.update_one(
                     {"user_id": user_id, "currency": currency},
