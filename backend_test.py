@@ -730,58 +730,176 @@ class CoinHubXComprehensiveTester:
     # ==================== MAIN TEST RUNNER ====================
     
     async def run_all_tests(self):
-        """Run all P2P leaderboard tests"""
-        print("🎯 P2P LEADERBOARD API COMPREHENSIVE TESTING")
-        print("=" * 60)
+        """Run comprehensive CoinHubX backend tests"""
+        print("🚀 COINHUBX COMPREHENSIVE BACKEND API TESTING")
+        print("=" * 80)
         print(f"Backend URL: {self.base_url}")
         print(f"Test Time: {datetime.now(timezone.utc).isoformat()}")
+        print(f"Testing Environment: Production-like with real database")
+        print("=" * 80)
         print()
         
-        # Test GET /api/p2p/leaderboard endpoint
-        print("📊 Testing GET /api/p2p/leaderboard")
-        await self.test_leaderboard_default_query()
-        await self.test_leaderboard_timeframes()
-        await self.test_leaderboard_limits()
-        await self.test_leaderboard_invalid_timeframe()
-        await self.test_leaderboard_invalid_limits()
-        await self.test_leaderboard_response_structure()
-        
+        # 1. Health & Connectivity
+        print("🏥 HEALTH & CONNECTIVITY TESTS")
+        print("-" * 40)
+        await self.test_backend_health()
         print()
         
-        # Test GET /api/p2p/leaderboard/user/{user_id} endpoint
-        print("👤 Testing GET /api/p2p/leaderboard/user/{user_id}")
-        await self.test_user_rank_valid_user()
-        await self.test_user_rank_invalid_user()
-        await self.test_user_rank_timeframes()
-        
+        # 2. Authentication System
+        print("🔐 AUTHENTICATION SYSTEM TESTS")
+        print("-" * 40)
+        await self.test_user_registration()
+        await self.test_user_login()
+        await self.test_invalid_login()
+        await self.test_google_oauth_endpoint()
         print()
         
-        # Test performance
-        print("⚡ Testing Performance")
+        # 3. P2P Marketplace
+        print("🤝 P2P MARKETPLACE TESTS")
+        print("-" * 40)
+        await self.test_p2p_marketplace_listings()
+        await self.test_p2p_create_offer()
+        await self.test_p2p_order_flow()
+        print()
+        
+        # 4. Instant Buy/Sell
+        print("⚡ INSTANT BUY/SELL TESTS")
+        print("-" * 40)
+        await self.test_instant_buy_quotes()
+        await self.test_instant_sell_quotes()
+        await self.test_instant_buy_execution()
+        print()
+        
+        # 5. Wallet Management
+        print("💰 WALLET MANAGEMENT TESTS")
+        print("-" * 40)
+        await self.test_wallet_balance()
+        await self.test_wallet_transaction_history()
+        await self.test_deposit_address_generation()
+        print()
+        
+        # 6. Admin Dashboard
+        print("👑 ADMIN DASHBOARD TESTS")
+        print("-" * 40)
+        await self.test_admin_login()
+        await self.test_admin_dashboard_stats()
+        await self.test_admin_liquidity_management()
+        print()
+        
+        # 7. Security Features
+        print("🛡️ SECURITY TESTS")
+        print("-" * 40)
+        await self.test_rate_limiting()
+        await self.test_input_validation()
+        await self.test_unauthorized_access()
+        print()
+        
+        # 8. Performance Tests
+        print("🏃 PERFORMANCE TESTS")
+        print("-" * 40)
         await self.test_response_times()
-        
         print()
         
-        # Summary
+        # Generate comprehensive summary
+        return self.generate_test_summary()
+    
+    def generate_test_summary(self):
+        """Generate comprehensive test summary with categorized results"""
         total_tests = len(self.test_results)
         passed_tests = sum(1 for result in self.test_results if result["success"])
         failed_tests = total_tests - passed_tests
         success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
         
-        print("=" * 60)
-        print("📋 TEST SUMMARY")
-        print(f"Total Tests: {total_tests}")
-        print(f"Passed: {passed_tests}")
-        print(f"Failed: {failed_tests}")
-        print(f"Success Rate: {success_rate:.1f}%")
+        # Categorize results
+        categories = {
+            "Authentication": [],
+            "P2P": [],
+            "Instant Trading": [],
+            "Wallet": [],
+            "Admin": [],
+            "Security": [],
+            "Performance": [],
+            "Health": []
+        }
         
-        if failed_tests > 0:
-            print("\n❌ FAILED TESTS:")
-            for result in self.test_results:
-                if not result["success"]:
-                    print(f"  - {result['test']}: {result['details']}")
+        for result in self.test_results:
+            test_name = result["test"]
+            if any(keyword in test_name.lower() for keyword in ["login", "register", "auth", "oauth"]):
+                categories["Authentication"].append(result)
+            elif any(keyword in test_name.lower() for keyword in ["p2p", "marketplace", "offer", "order"]):
+                categories["P2P"].append(result)
+            elif any(keyword in test_name.lower() for keyword in ["instant", "buy", "sell", "quote"]):
+                categories["Instant Trading"].append(result)
+            elif any(keyword in test_name.lower() for keyword in ["wallet", "balance", "transaction", "deposit"]):
+                categories["Wallet"].append(result)
+            elif any(keyword in test_name.lower() for keyword in ["admin", "dashboard", "liquidity"]):
+                categories["Admin"].append(result)
+            elif any(keyword in test_name.lower() for keyword in ["security", "rate", "validation", "unauthorized"]):
+                categories["Security"].append(result)
+            elif any(keyword in test_name.lower() for keyword in ["performance", "response", "time"]):
+                categories["Performance"].append(result)
+            else:
+                categories["Health"].append(result)
         
-        return success_rate >= 80  # Consider 80%+ success rate as overall success
+        print("=" * 80)
+        print("📊 COMPREHENSIVE TEST SUMMARY")
+        print("=" * 80)
+        print(f"🎯 Overall Results: {passed_tests}/{total_tests} tests passed ({success_rate:.1f}%)")
+        print(f"⏱️  Test Duration: {datetime.now(timezone.utc).isoformat()}")
+        print(f"👥 Test Users Created: {len(self.test_users)}")
+        print()
+        
+        # Category breakdown
+        for category, results in categories.items():
+            if results:
+                category_passed = sum(1 for r in results if r["success"])
+                category_total = len(results)
+                category_rate = (category_passed / category_total * 100) if category_total > 0 else 0
+                status_icon = "✅" if category_rate >= 80 else "⚠️" if category_rate >= 50 else "❌"
+                
+                print(f"{status_icon} {category}: {category_passed}/{category_total} ({category_rate:.0f}%)")
+        
+        print()
+        
+        # Critical failures
+        critical_failures = [r for r in self.test_results if not r["success"] and 
+                           any(keyword in r["test"].lower() for keyword in 
+                               ["login", "register", "health", "admin", "security"])]
+        
+        if critical_failures:
+            print("🚨 CRITICAL FAILURES:")
+            for failure in critical_failures:
+                print(f"   ❌ {failure['test']}: {failure['details']}")
+            print()
+        
+        # Performance issues
+        slow_tests = [r for r in self.test_results if r.get("performance_ms", 0) > 2000]
+        if slow_tests:
+            print("🐌 PERFORMANCE ISSUES:")
+            for slow in slow_tests:
+                print(f"   ⚠️ {slow['test']}: {slow['performance_ms']:.0f}ms")
+            print()
+        
+        # Database state summary
+        db_operations = [r for r in self.test_results if r.get("db_state")]
+        if db_operations:
+            print(f"💾 Database Operations: {len(db_operations)} tests involved DB state changes")
+            print()
+        
+        print("=" * 80)
+        
+        return {
+            "success_rate": success_rate,
+            "total_tests": total_tests,
+            "passed_tests": passed_tests,
+            "failed_tests": failed_tests,
+            "categories": {cat: {"passed": sum(1 for r in results if r["success"]), 
+                                "total": len(results)} for cat, results in categories.items() if results},
+            "critical_failures": len(critical_failures),
+            "performance_issues": len(slow_tests),
+            "test_users_created": len(self.test_users),
+            "overall_success": success_rate >= 70 and len(critical_failures) == 0
+        }
 
 async def main():
     """Main test runner"""
