@@ -216,7 +216,7 @@ export default function PriceAlerts() {
                   }}
                   title={alert.enabled ? 'Disable alert' : 'Enable alert'}
                 >
-                  {alert.enabled ? <IoNotifications size={20} /> : <BellOff size={20} />}
+                  {alert.enabled ? <IoNotifications size={20} /> : <IoNotificationsOff size={20} />}
                 </button>
 
                 <button
