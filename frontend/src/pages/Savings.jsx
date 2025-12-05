@@ -377,7 +377,7 @@ export default function SavingsVault() {
       }
 
       // Load savings history
-      const historyRes = await axios.get(`${API}/savings/history/${userId}`);
+      const historyRes = await axios.get(`${API}/api/savings/history/${userId}`);
       if (historyRes.data.success) {
         setSavingsHistory(historyRes.data.history || []);
       }
