@@ -333,24 +333,14 @@ export default function SavingsVault() {
       if (walletRes.data.balances) {
         const spotMap = {};
         const priceMap = {};
-        const coinsList = [];
         
         walletRes.data.balances.forEach(b => {
           spotMap[b.currency] = b.available_balance || 0;
           priceMap[b.currency] = b.price_gbp || 0;
-          
-          // Build supported coins list from wallet data
-          const style = COIN_STYLES[b.currency] || DEFAULT_STYLE;
-          coinsList.push({
-            code: b.currency,
-            name: b.currency_name || b.currency,
-            ...style
-          });
         });
         
         setSpotBalances(spotMap);
         setPrices(priceMap);
-        setSupportedCoins(coinsList);
       }
 
       // Load savings history
