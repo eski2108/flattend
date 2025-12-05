@@ -183,7 +183,7 @@ const AdminLiquidityManagement = () => {
               </div>
             </PremiumCard>
             
-            {revenueData.length === 0 ? (
+            {!revenueData || revenueData.length === 0 ? (
               <PremiumCard className="p-8">
                 <div className="text-center">
                   <p className="text-gray-400">No revenue data yet. Fees will appear here as users make transactions.</p>
