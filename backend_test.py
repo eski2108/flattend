@@ -1,28 +1,24 @@
 #!/usr/bin/env python3
 """
-P2P Leaderboard API Testing Suite
-Tests the newly created P2P Leaderboard endpoints as requested in review.
+CoinHubX Comprehensive Backend API Testing Suite
+Pre-launch audit with UNDENIABLE PROOF for every feature.
 
-**ENDPOINTS TO TEST:**
-1. GET /api/p2p/leaderboard
-   - Default query (7d timeframe, 50 limit)
-   - Different timeframes: "24h", "7d", "30d", "all"
-   - Different limits: 10, 50, 100
-   - Invalid timeframe (should fail validation)
-   - Invalid limit (0, negative, >100)
+**CRITICAL FEATURES TO TEST:**
+1. Authentication System (Login/Register/2FA/Google OAuth)
+2. P2P Marketplace & Order Flow (Create, Pay, Release, Feedback)
+3. Instant Buy/Sell with Admin Liquidity
+4. Wallet Management (Deposit, Withdraw, Balance Updates)
+5. Admin Dashboard Functionality
+6. Security Features (Rate Limiting, Validation, Hashing)
+7. Notifications System
+8. Database Operations & Integrity
 
-2. GET /api/p2p/leaderboard/user/{user_id}
-   - Valid user_id with completed trades
-   - Valid user_id but no trades (should return not in rankings)
-   - Different timeframes: "7d", "30d", "all"
-   - Invalid/non-existent user_id
-
-**Context:**
-- Just created 30 completed P2P trades with 3 test users
-- All trades in past 30 days
-- Database: coin_hub_x
-- Collection: p2p_trades
-- Backend running on port 8001
+**TESTING APPROACH:**
+- Test ALL endpoints with real data
+- Verify database state before/after operations
+- Check error handling and validation
+- Measure response times and performance
+- Provide UNDENIABLE PROOF with detailed logs
 
 **Backend URL:** https://tradefix-preview.preview.emergentagent.com/api
 """
