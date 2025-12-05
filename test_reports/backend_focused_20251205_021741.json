@@ -1,0 +1,114 @@
+{
+  "test_summary": {
+    "success_rate": 80.0,
+    "total_tests": 10,
+    "passed_tests": 8,
+    "failed_tests": 2,
+    "test_users_created": 1,
+    "overall_success": true
+  },
+  "detailed_results": [
+    {
+      "test": "Backend Health Check",
+      "success": true,
+      "details": "Backend is healthy: coinhubx-backend",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:38.839235+00:00"
+    },
+    {
+      "test": "User Registration",
+      "success": false,
+      "details": "Registration failed with status 429",
+      "response": {
+        "detail": "Too many registration attempts. Please try again in 1 hour."
+      },
+      "timestamp": "2025-12-05T02:17:38.844580+00:00"
+    },
+    {
+      "test": "User Registration",
+      "success": true,
+      "details": "User registered: test_gzktfbdq@coinhubx.test",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:40.406983+00:00"
+    },
+    {
+      "test": "User Login",
+      "success": true,
+      "details": "Login successful, token received",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:40.639894+00:00"
+    },
+    {
+      "test": "P2P Offers Listing",
+      "success": true,
+      "details": "Retrieved 7 P2P offers",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:40.654340+00:00"
+    },
+    {
+      "test": "Admin Liquidity Quote",
+      "success": true,
+      "details": "Quote generated: \u00a3494.14 for 0.01 BTC",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:40.940138+00:00"
+    },
+    {
+      "test": "Wallet Balance Endpoint",
+      "success": true,
+      "details": "Wallet balance endpoint accessible",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:40.946151+00:00"
+    },
+    {
+      "test": "Google OAuth Endpoint",
+      "success": true,
+      "details": "OAuth endpoint available with status 200",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:41.139185+00:00"
+    },
+    {
+      "test": "Admin Login Endpoint",
+      "success": false,
+      "details": "Admin login failed with status 422",
+      "response": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "admin_code"
+            ],
+            "msg": "Field required",
+            "input": {
+              "email": "admin@coinhubx.net",
+              "password": "AdminPass123!"
+            },
+            "url": "https://errors.pydantic.dev/2.12/v/missing"
+          }
+        ]
+      },
+      "timestamp": "2025-12-05T02:17:41.144640+00:00"
+    },
+    {
+      "test": "Input Validation",
+      "success": true,
+      "details": "Invalid input properly rejected with status 422",
+      "response": null,
+      "timestamp": "2025-12-05T02:17:41.150820+00:00"
+    }
+  ],
+  "test_users": [
+    {
+      "email": "test_gzktfbdq@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User GZKTFBDQ",
+      "phone_number": "+447704811072",
+      "referral_code": null
+    }
+  ],
+  "test_metadata": {
+    "backend_url": "https://tradefix-preview.preview.emergentagent.com/api",
+    "test_timestamp": "2025-12-05T02:17:41.150985+00:00",
+    "test_type": "focused_backend_test"
+  }
+}
