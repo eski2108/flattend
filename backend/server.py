@@ -12884,7 +12884,7 @@ async def get_balance_summary_with_pending(user_id: str):
 @api_router.get("/crypto-bank/onboarding/{user_id}")
 async def get_onboarding_status(user_id: str):
     """Get onboarding status for a user"""
-    http_status = await db.onboarding_status.find_one({"user_id": user_id}, {"_id": 0})
+    status = await db.onboarding_status.find_one({"user_id": user_id}, {"_id": 0})
     
     if not status:
         # Create initial status
