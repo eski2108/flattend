@@ -30,7 +30,7 @@ export default function ChatWidget() {
       // Reset unread when opening
       setUnreadCount(0);
     }
-  }, [isOpen]);
+  }, [isOpen, unreadCount]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
