@@ -4607,6 +4607,38 @@ async def get_savings_balances(user_id: str):
         logger.error(f"Savings balances error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/savings/history/{user_id}")
+async def get_savings_history(user_id: str):
+    """Get user's savings transaction history"""
+    try:
+        # Get savings transactions from transaction history
+        transactions = await db.transaction_history.find(
+            {
+                "user_id": user_id,
+                "transaction_type": {"$in": ["savings_deposit", "savings_withdraw"]}
+            },
+            {"_id": 0}
+        ).sort("timestamp", -1).limit(50).to_list(50)
+        
+        # Enrich with GBP values
+        crypto_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0, "BNB": 600, "SOL": 200, "XRP": 0.5, "LTC": 100, "ADA": 0.4, "DOT": 7.5, "DOGE": 0.08}
+        gbp_rate = 0.79
+        
+        for tx in transactions:
+            currency = tx.get("currency", "BTC")
+            amount = tx.get("amount", 0)
+            price = crypto_prices.get(currency, 0)
+            tx["gbp_value"] = amount * price * gbp_rate
+            tx["direction"] = "to_savings" if tx.get("transaction_type") == "savings_deposit" else "to_spot"
+        
+        return {
+            "success": True,
+            "history": transactions
+        }
+    except Exception as e:
+        logger.error(f"Savings history error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/savings/transfer")
 async def transfer_to_savings(request: dict):
     """Transfer funds between Wallet and Savings via wallet service"""
@@ -4623,9 +4655,31 @@ async def transfer_to_savings(request: dict):
     
     if direction == "to_savings":
         result = await transfer_to_savings_with_wallet(db, wallet_service, user_id, currency, amount)
+        
+        # Log transaction for history
+        await db.transaction_history.insert_one({
+            "user_id": user_id,
+            "currency": currency,
+            "amount": amount,
+            "transaction_type": "savings_deposit",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "status": "completed"
+        })
+        
         return result
     elif direction == "to_spot":
         result = await transfer_from_savings_with_wallet(db, wallet_service, user_id, currency, amount)
+        
+        # Log transaction for history
+        await db.transaction_history.insert_one({
+            "user_id": user_id,
+            "currency": currency,
+            "amount": amount,
+            "transaction_type": "savings_withdraw",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "status": "completed"
+        })
+        
         return result
     else:
         raise HTTPException(status_code=400, detail="Invalid direction")
