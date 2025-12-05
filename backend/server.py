@@ -25144,6 +25144,8 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
             }
         ).to_list(10000)
         
+        logger.info(f"🔍 Found {len(fee_transactions)} fee transactions")
+        
         # Filter by timeframe in Python (more reliable)
         filtered_transactions = []
         for tx in fee_transactions:
