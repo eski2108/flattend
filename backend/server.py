@@ -345,6 +345,30 @@ PLATFORM_CONFIG = {
     "admin_email": "admin@coinhubx.com"
 }
 
+# Badge system functions
+def get_trader_badges(user_stats):
+    """Get trader badges for user"""
+    return []
+
+def calculate_trader_badges(user_id):
+    """Calculate badges"""
+    return []
+
+BADGE_DEFINITIONS = {}
+
+async def update_trader_stats_for_badges(user_id):
+    """Update stats"""
+    pass
+
+async def send_email(to, subject, body):
+    """Send email"""
+    pass
+
+async def get_price_in_gbp(crypto, amount=1):
+    """Get price"""
+    return 0
+
+
 
 # Payment Methods Configuration
 PAYMENT_METHODS = [
