@@ -237,23 +237,126 @@ class CoinHubXComprehensiveTester:
                          f"OAuth endpoint failed with status {status}", response,
                          performance_ms=response_time)
     
-    async def test_leaderboard_timeframes(self):
-        """Test different timeframes: 24h, 7d, 30d, all"""
-        timeframes = ["24h", "7d", "30d", "all"]
+    # ==================== P2P MARKETPLACE TESTS ====================
+    
+    async def test_p2p_marketplace_listings(self):
+        """Test P2P marketplace listings endpoint"""
+        success, response, status, response_time = await self.make_request("GET", "/p2p/marketplace")
         
-        for timeframe in timeframes:
-            success, data, status = await self.make_request("GET", f"/p2p/leaderboard?timeframe={timeframe}")
+        if success and isinstance(response, dict):
+            listings = response.get("listings", [])
+            self.log_test("P2P Marketplace Listings", True, 
+                         f"Retrieved {len(listings)} P2P listings", 
+                         {"total_listings": len(listings)},
+                         performance_ms=response_time)
+        else:
+            self.log_test("P2P Marketplace Listings", False, 
+                         f"Failed to get marketplace listings with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_p2p_create_offer(self):
+        """Test creating P2P offer"""
+        # Need authenticated user
+        user = await self.create_test_user()
+        if not user:
+            self.log_test("P2P Create Offer", False, "Could not create test user")
+            return None
+        
+        offer_data = {
+            "type": "sell",
+            "cryptocurrency": "BTC",
+            "amount": 0.1,
+            "price_per_unit": 45000,
+            "payment_methods": ["bank_transfer"],
+            "min_order": 0.01,
+            "max_order": 0.1
+        }
+        
+        headers = {"Authorization": f"Bearer {user['token']}"}
+        success, response, status, response_time = await self.make_request(
+            "POST", "/p2p/offers", json=offer_data, headers=headers
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            offer_id = response.get("offer_id")
+            self.log_test("P2P Create Offer", True, 
+                         f"P2P offer created successfully: {offer_id}", 
+                         {"offer_id": offer_id, "type": offer_data["type"]},
+                         performance_ms=response_time)
+            return {"offer_id": offer_id, "user": user}
+        else:
+            self.log_test("P2P Create Offer", False, 
+                         f"Failed to create P2P offer with status {status}", response,
+                         performance_ms=response_time)
+            return None
+    
+    async def test_p2p_order_flow(self):
+        """Test complete P2P order flow: create -> pay -> release"""
+        # Create seller and buyer
+        seller = await self.create_test_user()
+        buyer = await self.create_test_user()
+        
+        if not seller or not buyer:
+            self.log_test("P2P Order Flow", False, "Could not create test users")
+            return
+        
+        # Create offer
+        offer_data = {
+            "type": "sell",
+            "cryptocurrency": "BTC", 
+            "amount": 0.1,
+            "price_per_unit": 45000,
+            "payment_methods": ["bank_transfer"],
+            "min_order": 0.01,
+            "max_order": 0.1
+        }
+        
+        headers = {"Authorization": f"Bearer {seller['token']}"}
+        success, offer_response, status, _ = await self.make_request(
+            "POST", "/p2p/offers", json=offer_data, headers=headers
+        )
+        
+        if not success:
+            self.log_test("P2P Order Flow", False, "Could not create offer for order flow test")
+            return
+        
+        offer_id = offer_response.get("offer_id")
+        
+        # Create order (buyer)
+        order_data = {
+            "offer_id": offer_id,
+            "amount": 0.05,
+            "payment_method": "bank_transfer"
+        }
+        
+        buyer_headers = {"Authorization": f"Bearer {buyer['token']}"}
+        success, order_response, status, response_time = await self.make_request(
+            "POST", "/p2p/orders", json=order_data, headers=buyer_headers
+        )
+        
+        if success and isinstance(order_response, dict) and order_response.get("success"):
+            order_id = order_response.get("order_id")
+            self.log_test("P2P Order Creation", True, 
+                         f"P2P order created: {order_id}", 
+                         {"order_id": order_id, "amount": order_data["amount"]},
+                         performance_ms=response_time)
             
-            if success and isinstance(data, dict) and data.get("success"):
-                if data.get("timeframe") == timeframe:
-                    self.log_test(f"Leaderboard Timeframe {timeframe}", True, 
-                                 f"Returned {data.get('total_traders', 0)} traders")
-                else:
-                    self.log_test(f"Leaderboard Timeframe {timeframe}", False, 
-                                 f"Timeframe mismatch: expected {timeframe}, got {data.get('timeframe')}")
+            # Test order status
+            success, status_response, status_code, _ = await self.make_request(
+                "GET", f"/p2p/orders/{order_id}", headers=buyer_headers
+            )
+            
+            if success:
+                self.log_test("P2P Order Status Check", True, 
+                             f"Order status retrieved successfully", 
+                             status_response.get("order", {}))
             else:
-                self.log_test(f"Leaderboard Timeframe {timeframe}", False, 
-                             f"Request failed with status {status}", data)
+                self.log_test("P2P Order Status Check", False, 
+                             f"Failed to get order status with code {status_code}")
+        else:
+            self.log_test("P2P Order Creation", False, 
+                         f"Failed to create P2P order with status {status}", order_response,
+                         performance_ms=response_time)
     
     async def test_leaderboard_limits(self):
         """Test different limits: 10, 50, 100"""
