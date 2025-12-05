@@ -488,7 +488,7 @@ class CoinHubXComprehensiveTester:
         
         headers = {"Authorization": f"Bearer {user['token']}"}
         success, response, status, response_time = await self.make_request(
-            "GET", "/wallet/transactions", headers=headers
+            "GET", f"/transactions/{user['user_id']}", headers=headers
         )
         
         if success and isinstance(response, dict) and response.get("success"):
