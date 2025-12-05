@@ -20259,25 +20259,8 @@ async def get_user_sell_offers(user_id: str):
 
 # DUPLICATE: @api_router.get("/sell-offers/marketplace")
 # DUPLICATE: async def get_marketplace_offers(...):
-    # """Get published sell offers for marketplace (buyer view) with advanced filters"""
-    query = {"is_published": True}
-    
-    # Basic filters
-    if crypto_asset:
-        query["crypto_asset"] = crypto_asset
-    if fiat_currency:
-        query["fiat_currency"] = fiat_currency
-    if fast_payment_only:
-        query["is_fast_payment"] = True
-    
-    # Price range filters (will apply after fetching due to dynamic pricing)
-    # Min/max amount filters
-    if min_amount:
-        query["min_order_fiat"] = {"$lte": min_amount}
-    if max_amount:
-        query["max_order_fiat"] = {"$gte": max_amount}
-    
-    offers = await db.sell_offers.find(query, {"_id": 0}).to_list(100)
+#     """Get published sell offers for marketplace (buyer view) with advanced filters"""
+#     pass
     
     # Enrich with seller info and payment method details
     enriched_offers = []
