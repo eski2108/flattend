@@ -155,10 +155,11 @@ class CoinHubXProductionTester:
         """Test admin login with provided credentials"""
         admin_data = {
             "email": "admin@coinhubx.net",
-            "password": "Admin@2025!Change"
+            "password": "Admin@2025!Change",
+            "admin_code": "CRYPTOLEND_ADMIN_2025"
         }
         
-        success, data, status, perf = await self.make_request("POST", "/auth/login", admin_data)
+        success, data, status, perf = await self.make_request("POST", "/admin/login", admin_data)
         
         admin_success = success and data.get("success", False)
         if admin_success and "token" in data:
