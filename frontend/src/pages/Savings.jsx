@@ -386,7 +386,7 @@ export default function SavingsVault() {
 
   const handleTransfer = async (coin, amount, direction) => {
     try {
-      const response = await axios.post(`${API}/api/savings/transfer`, {
+      const response = await axios.post(`${API}/savings/transfer`, {
         user_id: user.user_id,
         currency: coin,
         amount: amount,
