@@ -902,13 +902,34 @@ class CoinHubXComprehensiveTester:
         }
 
 async def main():
-    """Main test runner"""
+    """Main test runner for CoinHubX comprehensive backend testing"""
     try:
-        async with P2PLeaderboardTester() as tester:
-            success = await tester.run_all_tests()
-            return 0 if success else 1
+        async with CoinHubXComprehensiveTester() as tester:
+            summary = await tester.run_all_tests()
+            
+            # Save detailed results to JSON file
+            results_file = f"/app/test_reports/backend_comprehensive_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            
+            with open(results_file, 'w') as f:
+                json.dump({
+                    "test_summary": summary,
+                    "detailed_results": tester.test_results,
+                    "test_users": tester.test_users,
+                    "test_metadata": {
+                        "backend_url": tester.base_url,
+                        "test_timestamp": datetime.now(timezone.utc).isoformat(),
+                        "test_type": "comprehensive_backend_audit"
+                    }
+                }, f, indent=2, default=str)
+            
+            print(f"📄 Detailed results saved to: {results_file}")
+            
+            return 0 if summary["overall_success"] else 1
+            
     except Exception as e:
         print(f"❌ Test runner failed: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return 1
 
 if __name__ == "__main__":
