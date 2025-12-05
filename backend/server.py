@@ -2228,7 +2228,7 @@ async def get_seller_profile(seller_id: str):
                     diff_minutes = (completed - marked).total_seconds() / 60
                     if diff_minutes > 0:
                         release_times.append(diff_minutes)
-                except:
+                except Exception:
                     pass
         
         avg_release_time = sum(release_times) / len(release_times) if release_times else 15
@@ -5558,7 +5558,7 @@ async def get_wallet_transactions(user_id: str, currency: str = None, limit: int
                 try:
                     parsed_date = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
                     timestamp_str = parsed_date.isoformat()
-                except:
+                except Exception:
                     timestamp_str = datetime.utcnow().isoformat()
             else:
                 timestamp_str = datetime.utcnow().isoformat()
@@ -8929,7 +8929,7 @@ async def get_all_ads(ad_type: str = "sell", crypto: str = "", fiat: str = ""):
             if isinstance(boost_end_date, str):
                 try:
                     boost_end_date = datetime.fromisoformat(boost_end_date.replace('Z', '+00:00'))
-                except:
+                except Exception:
                     continue
             # Ensure timezone awareness
             if boost_end_date.tzinfo is None:
@@ -11362,7 +11362,7 @@ async def express_buy_execute(request: dict):
                     fx_rates = live_prices['fx_rates']
                     gbp_rate = fx_rates.get('GBP', 0.79)
                     crypto_price_gbp = crypto_price_usd * gbp_rate
-            except:
+            except Exception:
                 pass
         
         if crypto_price_gbp == 0:
@@ -11949,7 +11949,7 @@ async def get_boost_status(ad_id: str):
         if isinstance(boost_end_date, str):
             try:
                 boost_end_date = datetime.fromisoformat(boost_end_date.replace('Z', '+00:00'))
-            except:
+            except Exception:
                 boost_end_date = None
         
         if boost_end_date:
@@ -15723,7 +15723,7 @@ async def get_admin_wallet_balance():
                 live_price = await get_live_price(bal["currency"], "usd")
                 if live_price > 0:
                     total_usd += bal["balance"] * live_price
-            except:
+            except Exception:
                 # Fallback to 0 if price fetch fails
                 pass
         
@@ -16327,7 +16327,7 @@ async def get_supported_cryptocurrencies():
             try:
                 price = await get_live_price(crypto, "usd")
                 live_prices[crypto] = price
-            except:
+            except Exception:
                 live_prices[crypto] = 0
     except Exception as e:
         logger.error(f"Failed to fetch live prices: {e}")
@@ -21559,7 +21559,7 @@ async def cleanup_expired_boosts_loop():
                 if isinstance(boost_end_date, str):
                     try:
                         boost_end_date = datetime.fromisoformat(boost_end_date.replace('Z', '+00:00'))
-                    except:
+                    except Exception:
                         continue
                 
                 # Ensure timezone awareness
@@ -21610,7 +21610,7 @@ async def price_alert_checker():
                     price_data = await get_price_in_gbp(coin)
                     if price_data:
                         prices[coin] = price_data["price"]
-                except:
+                except Exception:
                     pass
             
             if prices:
@@ -21714,7 +21714,7 @@ async def express_countdown_checker_loop():
                                     notification_type="express_rematched",
                                     message="Previous seller was slow. Rematched with faster seller."
                                 )
-                            except:
+                            except Exception:
                                 pass
                         else:
                             admin_liq = await db.admin_liquidity.find_one({
@@ -21756,7 +21756,7 @@ async def express_countdown_checker_loop():
                                             notification_type="express_completed_fallback",
                                             message="Order completed via platform liquidity. Crypto credited."
                                         )
-                                    except:
+                                    except Exception:
                                         pass
                                 except Exception as e:
                                     logger.error(f"Fallback liquidity failed: {e}")
@@ -21780,7 +21780,7 @@ async def express_countdown_checker_loop():
                                         notification_type="express_cancelled",
                                         message="Express order cancelled due to seller delays. Refund initiated."
                                     )
-                                except:
+                                except Exception:
                                     pass
                 except Exception as trade_error:
                     logger.error(f"Error processing expired trade: {trade_error}")
