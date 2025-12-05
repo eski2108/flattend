@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { IoWallet, IoRefresh, IoCheckmarkCircle, IoClose, IoTrendingUp, IoCash } from 'react-icons/io5';
+import { IoWallet, IoRefresh, IoCheckmarkCircle, IoClose, IoTrendingUp, IoCash, IoArrowForward } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
