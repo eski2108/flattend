@@ -81,6 +81,16 @@ const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, priceHistory, o
     ? priceHistory 
     : placeholderData;
 
+  // Calculate 24h price change percentage
+  const priceChange = React.useMemo(() => {
+    if (!priceHistory || priceHistory.length < 2) return 0;
+    const oldest = priceHistory[0];
+    const newest = priceHistory[priceHistory.length - 1];
+    return ((newest - oldest) / oldest) * 100;
+  }, [priceHistory]);
+
+  const isPositive = priceChange >= 0;
+
   return (
     <PremiumCard className="p-6 transition-all duration-300 hover:scale-[1.02]">
       {/* Coin Header */}
@@ -110,11 +120,19 @@ const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, priceHistory, o
         </div>
       </div>
 
-      {/* Mini Sparkline - Real Data */}
-      <div className="mb-4" style={{ opacity: 0.6, height: '40px' }}>
-        <Sparklines data={sparklineData} height={40}>
-          <SparklinesLine color={coin.color} style={{ strokeWidth: 2, fill: 'none' }} />
-        </Sparklines>
+      {/* Mini Sparkline with 24h Change */}
+      <div className="mb-4 relative">
+        <div style={{ opacity: 0.6, height: '40px' }}>
+          <Sparklines data={sparklineData} height={40}>
+            <SparklinesLine color={coin.color} style={{ strokeWidth: 2, fill: 'none' }} />
+          </Sparklines>
+        </div>
+        {/* 24h Change Badge */}
+        <div className="absolute top-0 right-0 px-3 py-1 rounded-lg bg-black/60 backdrop-blur-sm">
+          <span className={`text-sm font-bold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+            {isPositive ? '+' : ''}{priceChange.toFixed(2)}%
+          </span>
+        </div>
       </div>
 
       {/* Spot Wallet Balance Info */}
