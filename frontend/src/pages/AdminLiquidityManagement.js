@@ -2,102 +2,70 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { IoWallet, IoRefresh, IoCheckmarkCircle, IoClose, IoTrendingUp, IoCash } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-const AdminLiquidityManagement = () => {
-  const [liquidity, setLiquidity] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCoin, setSelectedCoin] = useState(null);
-  const [amount, setAmount] = useState('');
-  const [action, setAction] = useState('add'); // 'add' or 'remove'
-  const [processing, setProcessing] = useState(false);
+// Premium Card Component
+const PremiumCard = ({ children, className = '', glow = false }) => (
+  <div 
+    className={`rounded-2xl border border-cyan-400/25 bg-[#030A14]/80 backdrop-blur-sm ${className}`}
+    style={{
+      boxShadow: glow 
+        ? '0 0 30px rgba(0, 234, 255, 0.2), inset 0 0 30px rgba(0, 234, 255, 0.05)'
+        : '0 0 20px rgba(0, 234, 255, 0.1), inset 0 0 20px rgba(0, 234, 255, 0.03)'
+    }}
+  >
+    {children}
+  </div>
+);
 
-  const SUPPORTED_COINS = [
-    { symbol: 'GBP', name: 'British Pound', icon: '💷', decimals: 2 },
-    { symbol: 'BTC', name: 'Bitcoin', icon: '₿', decimals: 8 },
-    { symbol: 'ETH', name: 'Ethereum', icon: 'Ξ', decimals: 8 },
-    { symbol: 'USDT', name: 'Tether', icon: '₮', decimals: 2 },
-    { symbol: 'BNB', name: 'Binance Coin', icon: '🔶', decimals: 8 },
-    { symbol: 'SOL', name: 'Solana', icon: '◎', decimals: 8 },
-    { symbol: 'XRP', name: 'Ripple', icon: '✕', decimals: 6 },
-    { symbol: 'LTC', name: 'Litecoin', icon: 'Ł', decimals: 8 }
-  ];
+const AdminLiquidityManagement = () => {
+  const [nowpaymentsBalances, setNowpaymentsBalances] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [totalValueGBP, setTotalValueGBP] = useState(0);
 
   useEffect(() => {
-    fetchLiquidity();
+    fetchNOWPaymentsBalances();
   }, []);
 
-  const fetchLiquidity = async () => {
+  const fetchNOWPaymentsBalances = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/api/admin/liquidity/status`);
+      const response = await axios.get(`${API}/admin/nowpayments/balances`);
       
       if (response.data.success) {
-        // Merge with supported coins to show all
-        const liquidityMap = {};
-        response.data.liquidity.forEach(liq => {
-          liquidityMap[liq.currency] = liq;
-        });
-
-        const allCoins = SUPPORTED_COINS.map(coin => ({
-          ...coin,
-          balance: liquidityMap[coin.symbol]?.balance || 0,
-          available: liquidityMap[coin.symbol]?.available || 0,
-          reserved: liquidityMap[coin.symbol]?.reserved || 0
-        }));
-
-        setLiquidity(allCoins);
+        setNowpaymentsBalances(response.data.balances);
+        setTotalValueGBP(response.data.total_value_gbp || 0);
+        toast.success('NOWPayments balances loaded');
+      } else {
+        toast.error(response.data.message || 'Failed to load balances');
       }
     } catch (error) {
-      console.error('Error fetching liquidity:', error);
-      toast.error('Failed to load liquidity data');
+      console.error('Error fetching NOWPayments balances:', error);
+      toast.error('Failed to connect to NOWPayments');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateLiquidity = async () => {
-    if (!selectedCoin || !amount || parseFloat(amount) <= 0) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-
-    try {
-      setProcessing(true);
-      
-      const response = await axios.post(`${API}/api/admin/liquidity/update`, {
-        currency: selectedCoin.symbol,
-        amount: parseFloat(amount),
-        action: action // 'add' or 'remove'
-      });
-
-      if (response.data.success) {
-        toast.success(`Successfully ${action === 'add' ? 'added' : 'removed'} ${amount} ${selectedCoin.symbol}`);
-        setAmount('');
-        setSelectedCoin(null);
-        await fetchLiquidity();
-      } else {
-        toast.error(response.data.message || 'Failed to update liquidity');
-      }
-    } catch (error) {
-      console.error('Error updating liquidity:', error);
-      toast.error(error.response?.data?.detail || 'Failed to update liquidity');
-    } finally {
-      setProcessing(false);
-    }
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchNOWPaymentsBalances();
+    setRefreshing(false);
   };
 
   if (loading) {
     return (
       <Layout>
-        <div style={{
-          padding: '40px',
-          color: '#fff',
-          textAlign: 'center',
-          fontSize: '18px'
-        }}>
-          Loading liquidity data...
+        <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)' }}>
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-400 text-lg">Loading NOWPayments Liquidity...</p>
+            </div>
+          </div>
         </div>
       </Layout>
     );
@@ -105,407 +73,189 @@ const AdminLiquidityManagement = () => {
 
   return (
     <Layout>
-      <div style={{
-        padding: '40px',
-        maxWidth: '1400px',
-        margin: '0 auto'
-      }}>
-        {/* Header */}
-        <div style={{ marginBottom: '40px' }}>
-          <h1 style={{
-            fontSize: '36px',
-            fontWeight: '700',
-            marginBottom: '10px',
-            background: 'linear-gradient(135deg, #00F0FF, #7B2CFF)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-            💰 Liquidity Management
-          </h1>
-          <p style={{
-            color: '#8F9BB3',
-            fontSize: '16px'
-          }}>
-            Manage platform liquidity for instant buy/sell operations
-          </p>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 1fr',
-          gap: '30px'
-        }}>
-          {/* Liquidity Table */}
-          <div style={{
-            background: 'rgba(13, 23, 38, 0.6)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(0, 240, 255, 0.2)',
-            padding: '30px',
-            boxShadow: '0 8px 32px rgba(0, 240, 255, 0.1)'
-          }}>
-            <h2 style={{
-              fontSize: '20px',
-              fontWeight: '600',
-              color: '#fff',
-              marginBottom: '20px'
-            }}>
-              Current Liquidity
-            </h2>
-
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{
-                width: '100%',
-                borderCollapse: 'collapse'
-              }}>
-                <thead>
-                  <tr style={{
-                    borderBottom: '2px solid rgba(0, 240, 255, 0.3)'
-                  }}>
-                    <th style={{
-                      textAlign: 'left',
-                      padding: '15px',
-                      color: '#00F0FF',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase'
-                    }}>Currency</th>
-                    <th style={{
-                      textAlign: 'right',
-                      padding: '15px',
-                      color: '#00F0FF',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase'
-                    }}>Balance</th>
-                    <th style={{
-                      textAlign: 'right',
-                      padding: '15px',
-                      color: '#00F0FF',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase'
-                    }}>Available</th>
-                    <th style={{
-                      textAlign: 'right',
-                      padding: '15px',
-                      color: '#00F0FF',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase'
-                    }}>Reserved</th>
-                    <th style={{
-                      textAlign: 'center',
-                      padding: '15px',
-                      color: '#00F0FF',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase'
-                    }}>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {liquidity.map((coin, index) => (
-                    <tr key={coin.symbol} style={{
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 240, 255, 0.05)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <td style={{
-                        padding: '15px',
-                        color: '#fff'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ fontSize: '24px' }}>{coin.icon}</span>
-                          <div>
-                            <div style={{ fontWeight: '600', fontSize: '16px' }}>{coin.symbol}</div>
-                            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{coin.name}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{
-                        padding: '15px',
-                        textAlign: 'right',
-                        color: '#fff',
-                        fontSize: '16px',
-                        fontWeight: '500'
-                      }}>
-                        {coin.balance.toFixed(coin.decimals)}
-                      </td>
-                      <td style={{
-                        padding: '15px',
-                        textAlign: 'right',
-                        color: '#22C55E',
-                        fontSize: '16px',
-                        fontWeight: '500'
-                      }}>
-                        {coin.available.toFixed(coin.decimals)}
-                      </td>
-                      <td style={{
-                        padding: '15px',
-                        textAlign: 'right',
-                        color: '#FFA500',
-                        fontSize: '16px',
-                        fontWeight: '500'
-                      }}>
-                        {coin.reserved.toFixed(coin.decimals)}
-                      </td>
-                      <td style={{
-                        padding: '15px',
-                        textAlign: 'center'
-                      }}>
-                        <button
-                          onClick={() => setSelectedCoin(coin)}
-                          style={{
-                            background: 'linear-gradient(135deg, #00F0FF, #7B2CFF)',
-                            color: '#fff',
-                            border: 'none',
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease'
-                          }}
-                          onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                          onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}  
-                        >
-                          Manage
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+      <div 
+        className="min-h-screen pb-20 px-4 py-8"
+        style={{ background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)' }}
+      >
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-5xl font-bold text-white mb-3" style={{ textShadow: '0 0 30px rgba(0, 234, 255, 0.5)' }}>
+                Admin Liquidity Management
+              </h1>
+              <p className="text-gray-400 text-lg">Real-time cryptocurrency balances from NOWPayments</p>
             </div>
+            
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all disabled:opacity-50"
+              style={{
+                boxShadow: '0 0 20px rgba(0, 234, 255, 0.4)'
+              }}
+            >
+              <IoRefresh size={20} className={refreshing ? 'animate-spin' : ''} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
           </div>
 
-          {/* Add/Remove Panel */}
-          <div style={{
-            background: 'rgba(13, 23, 38, 0.6)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(0, 240, 255, 0.2)',
-            padding: '30px',
-            boxShadow: '0 8px 32px rgba(0, 240, 255, 0.1)',
-            height: 'fit-content'
-          }}>
-            <h2 style={{
-              fontSize: '20px',
-              fontWeight: '600',
-              color: '#fff',
-              marginBottom: '20px'
-            }}>
-              Update Liquidity
-            </h2>
+          {/* Total Balance Card */}
+          <PremiumCard className="p-8 mb-8" glow>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Total Liquidity</div>
+                <div className="text-5xl font-bold text-cyan-400 mb-2">
+                  £{totalValueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div className="text-sm text-gray-400">Available in NOWPayments</div>
+              </div>
+              
+              <div className="text-center">
+                <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Total Assets</div>
+                <div className="text-5xl font-bold text-white mb-2">
+                  {nowpaymentsBalances.length}
+                </div>
+                <div className="text-sm text-gray-400">Cryptocurrencies</div>
+              </div>
+              
+              <div className="text-center">
+                <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Status</div>
+                <div className="flex items-center justify-center space-x-2 mt-3">
+                  <IoCheckmarkCircle size={32} className="text-green-500" />
+                  <span className="text-2xl font-bold text-green-500">Connected</span>
+                </div>
+                <div className="text-sm text-gray-400">Live Data</div>
+              </div>
+            </div>
+          </PremiumCard>
 
-            {selectedCoin ? (
+          {/* Info Banner */}
+          <PremiumCard className="p-6 mb-8 bg-blue-500/10 border-blue-400/30">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <IoWallet size={24} className="text-blue-400" />
+              </div>
               <div>
-                <div style={{
-                  background: 'rgba(0, 240, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  marginBottom: '20px',
-                  border: '1px solid rgba(0, 240, 255, 0.3)'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '32px' }}>{selectedCoin.icon}</span>
-                    <div>
-                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#fff' }}>
-                        {selectedCoin.symbol}
-                      </div>
-                      <div style={{ fontSize: '14px', color: '#8F9BB3' }}>
-                        {selectedCoin.name}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '10px',
-                    marginTop: '15px'
-                  }}>
-                    <div>
-                      <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '5px' }}>Balance</div>
-                      <div style={{ fontSize: '18px', fontWeight: '600', color: '#fff' }}>
-                        {selectedCoin.balance.toFixed(selectedCoin.decimals)}
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '5px' }}>Available</div>
-                      <div style={{ fontSize: '18px', fontWeight: '600', color: '#22C55E' }}>
-                        {selectedCoin.available.toFixed(selectedCoin.decimals)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Selector */}
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#8F9BB3',
-                    marginBottom: '10px'
-                  }}>
-                    Action
-                  </label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button
-                      onClick={() => setAction('add')}
-                      style={{
-                        flex: 1,
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: action === 'add' ? '2px solid #22C55E' : '1px solid rgba(255,255,255,0.1)',
-                        background: action === 'add' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.05)',
-                        color: action === 'add' ? '#22C55E' : '#8F9BB3',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      ➕ Add
-                    </button>
-                    <button
-                      onClick={() => setAction('remove')}
-                      style={{
-                        flex: 1,
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: action === 'remove' ? '2px solid #EF4444' : '1px solid rgba(255,255,255,0.1)',
-                        background: action === 'remove' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.05)',
-                        color: action === 'remove' ? '#EF4444' : '#8F9BB3',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      ➖ Remove
-                    </button>
-                  </div>
-                </div>
-
-                {/* Amount Input */}
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#8F9BB3',
-                    marginBottom: '10px'
-                  }}>
-                    Amount
-                  </label>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder={`Enter amount in ${selectedCoin.symbol}`}
-                    step={selectedCoin.decimals === 8 ? '0.00000001' : '0.01'}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(0, 240, 255, 0.3)',
-                      background: 'rgba(255,255,255,0.05)',
-                      color: '#fff',
-                      fontSize: '16px',
-                      outline: 'none'
-                    }}
-                  />
-                </div>
-
-                {/* Action Buttons */}
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    onClick={() => {
-                      setSelectedCoin(null);
-                      setAmount('');
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '14px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      background: 'rgba(255,255,255,0.05)',
-                      color: '#8F9BB3',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleUpdateLiquidity}
-                    disabled={processing || !amount || parseFloat(amount) <= 0}
-                    style={{
-                      flex: 1,
-                      padding: '14px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      background: processing ? 'rgba(255,255,255,0.1)' : 
-                        (action === 'add' ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'linear-gradient(135deg, #EF4444, #DC2626)'),
-                      color: '#fff',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: processing ? 'not-allowed' : 'pointer',
-                      opacity: processing || !amount || parseFloat(amount) <= 0 ? 0.5 : 1
-                    }}
-                  >
-                    {processing ? 'Processing...' : `${action === 'add' ? 'Add' : 'Remove'} ${selectedCoin.symbol}`}
-                  </button>
-                </div>
+                <h3 className="text-lg font-bold text-white mb-2">How it works</h3>
+                <p className="text-gray-300">
+                  These are your <strong>real cryptocurrency holdings</strong> in your NOWPayments account. 
+                  When you deposit crypto to your NOWPayments wallet addresses, the balances update here automatically. 
+                  This liquidity is used to cover user withdrawals, Instant Buy orders, and platform operations.
+                </p>
               </div>
+            </div>
+          </PremiumCard>
+
+          {/* Balances Table */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Cryptocurrency Balances</h2>
+            
+            {nowpaymentsBalances.length === 0 ? (
+              <PremiumCard className="p-12">
+                <div className="text-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mx-auto mb-6">
+                    <IoWallet size={48} className="text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3">No Balances Found</h3>
+                  <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                    Your NOWPayments account doesn't have any cryptocurrency balances yet. 
+                    Deposit crypto to your NOWPayments wallet addresses to see them here.
+                  </p>
+                </div>
+              </PremiumCard>
             ) : (
-              <div style={{
-                textAlign: 'center',
-                padding: '40px 20px',
-                color: '#8F9BB3'
-              }}>
-                <div style={{ fontSize: '48px', marginBottom: '15px' }}>💰</div>
-                <div style={{ fontSize: '16px' }}>Select a currency to manage liquidity</div>
-              </div>
+              <PremiumCard className="overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-white/5">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Cryptocurrency</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Available Balance</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Pending</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Price (GBP)</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Total Value (GBP)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {nowpaymentsBalances.map((balance, index) => (
+                        <tr key={index} className="border-t border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold">
+                                {balance.currency.substring(0, 1)}
+                              </div>
+                              <div>
+                                <div className="text-lg font-bold text-white">{balance.currency}</div>
+                                <div className="text-sm text-gray-400">Cryptocurrency</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-xl font-bold text-white">
+                              {balance.balance.toFixed(8)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-lg font-semibold text-yellow-400">
+                              {balance.pending > 0 ? balance.pending.toFixed(8) : '-'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-lg font-semibold text-gray-300">
+                              £{balance.price_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-xl font-bold text-cyan-400">
+                              £{balance.value_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot className="bg-white/5">
+                      <tr>
+                        <td colSpan="4" className="px-6 py-4 text-right text-lg font-bold text-gray-300">
+                          Total Liquidity:
+                        </td>
+                        <td className="px-6 py-4 text-right text-2xl font-bold text-cyan-400">
+                          £{totalValueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </PremiumCard>
             )}
           </div>
-        </div>
 
-        {/* Info Box */}
-        <div style={{
-          marginTop: '30px',
-          background: 'rgba(0, 240, 255, 0.05)',
-          border: '1px solid rgba(0, 240, 255, 0.2)',
-          borderRadius: '12px',
-          padding: '20px'
-        }}>
-          <h3 style={{
-            fontSize: '16px',
-            fontWeight: '600',
-            color: '#00F0FF',
-            marginBottom: '10px'
-          }}>
-            ℹ️ Important Information
-          </h3>
-          <ul style={{
-            color: '#8F9BB3',
-            fontSize: '14px',
-            lineHeight: '1.8',
-            paddingLeft: '20px'
-          }}>
-            <li><strong>Balance:</strong> Total liquidity available in admin wallet</li>
-            <li><strong>Available:</strong> Liquidity available for instant buy/sell operations</li>
-            <li><strong>Reserved:</strong> Liquidity currently locked in pending transactions</li>
-            <li><strong>Add:</strong> Increases liquidity (use when you deposit funds to platform)</li>
-            <li><strong>Remove:</strong> Decreases liquidity (use when withdrawing platform funds)</li>
-            <li><strong>⚠️ Warning:</strong> Ensure you have actual funds before adding liquidity</li>
-          </ul>
+          {/* Instructions */}
+          <PremiumCard className="p-6">
+            <h3 className="text-xl font-bold text-white mb-4">How to Add Liquidity</h3>
+            <ol className="space-y-3 text-gray-300">
+              <li className="flex items-start space-x-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">1</span>
+                <span>Log in to your NOWPayments account at <a href="https://nowpayments.io" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">nowpayments.io</a></span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">2</span>
+                <span>Navigate to your wallet section and find the deposit addresses for each cryptocurrency</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">3</span>
+                <span>Send crypto from your personal wallet or exchange to the NOWPayments deposit address</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">4</span>
+                <span>Wait for blockchain confirmations (usually 10-30 minutes)</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">5</span>
+                <span>Click the <strong>"Refresh"</strong> button above to see your updated balances</span>
+              </li>
+            </ol>
+          </PremiumCard>
         </div>
       </div>
     </Layout>
