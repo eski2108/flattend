@@ -334,6 +334,20 @@ export default function SavingsVault() {
         setSavingsHistory(historyRes.data.history || []);
       }
 
+      // Load 24h price history for all coins
+      const historyMap = {};
+      for (const coin of SUPPORTED_COINS) {
+        try {
+          const priceHistRes = await axios.get(`${API}/savings/price-history/${coin.code}`);
+          if (priceHistRes.data.success) {
+            historyMap[coin.code] = priceHistRes.data.prices;
+          }
+        } catch (err) {
+          console.error(`Failed to load price history for ${coin.code}:`, err);
+        }
+      }
+      setPriceHistories(historyMap);
+
       setLoading(false);
     } catch (error) {
       console.error('Error loading savings:', error);
