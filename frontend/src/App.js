@@ -234,7 +234,9 @@ function App() {
             <Route path="/admin/users" element={<AdminUsersManagement />} />
             <Route path="/admin/security-logs" element={<AdminSecurityLogs />} />
             <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/staking" element={<Staking />} />
