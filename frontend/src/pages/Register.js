@@ -142,11 +142,11 @@ export default function Register() {
             border: '1px solid rgba(0, 240, 255, 0.3)'
           }}>
             <img 
-              src="/chx-logo-transparent.png" 
+              src="/chx-logo-actual.jpeg" 
               alt="CoinHubX Logo" 
               style={{
-                width: '90px',
-                height: '90px',
+                width: '100px',
+                height: '100px',
                 objectFit: 'contain',
                 filter: 'drop-shadow(0 4px 12px rgba(0, 240, 255, 0.4))'
               }}
