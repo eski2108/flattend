@@ -1788,7 +1788,7 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     
     # 🔒 LOCKED: Update merchant stats after successful trade
     try:
-        await _update_stats_after_trade(order_id)
+        await _update_stats_after_trade(request.order_id)
     except Exception as e:
         logger.error(f"Failed to update stats: {str(e)}")
     # 🔒 END LOCKED SECTION
