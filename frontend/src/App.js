@@ -161,7 +161,7 @@ function App() {
             <Route path="/auth/verify-phone" element={<PremiumAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/markets" element={<Markets />} />
             <Route path="/create-offer" element={<CreateOffer />} />
             <Route path="/buy-crypto" element={<BuyCrypto />} />
