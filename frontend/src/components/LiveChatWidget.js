@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IoChatbubbles, IoClose, IoContract as Minimize, IoSend } from 'react-icons/io5';
+import { IoChatbubbles, IoClose, IoContract as Minimize, IoContract as Minimize2, IoSend } from 'react-icons/io5';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
