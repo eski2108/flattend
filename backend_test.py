@@ -40,12 +40,16 @@ import bcrypt
 BACKEND_URL = "https://tradefix-preview.preview.emergentagent.com"
 
 class CoinHubXComprehensiveTester:
-    """Comprehensive P2P Leaderboard API tester"""
+    """Comprehensive CoinHubX Backend API Tester"""
     
     def __init__(self):
         self.base_url = f"{BACKEND_URL}/api"
         self.session = None
         self.test_results = []
+        self.test_users = []  # Store created test users
+        self.test_trades = []  # Store created test trades
+        self.admin_token = None
+        self.user_tokens = {}  # Store user tokens for authenticated requests
         
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
