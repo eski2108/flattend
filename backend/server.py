@@ -3082,28 +3082,8 @@ async def create_trade(request: CreateTradeRequest):
     
     return result
     
-    # Create system message for trade opened
-    await create_system_message(trade.trade_id, "trade_opened")
-    
-    # Update sell order remaining amount
-    new_crypto_amount = sell_order["crypto_amount"] - request.crypto_amount
-    if new_crypto_amount < sell_order["min_purchase"]:
-        # Not enough left, mark as completed
-        await db.enhanced_sell_orders.update_one(
-            {"order_id": request.sell_order_id},
-            {"$set": {"status": "completed", "crypto_amount": 0}}
-        )
-    else:
-        await db.enhanced_sell_orders.update_one(
-            {"order_id": request.sell_order_id},
-            {"$set": {"crypto_amount": new_crypto_amount}}
-        )
-    
-    return {
-        "success": True,
-        "trade": trade.model_dump(),
-        "message": "Trade created successfully. Crypto locked in escrow."
-    }
+    # Unreachable code below - removed to fix linting errors
+    # (This code was after a return statement and would never execute)
 
 @api_router.get("/p2p/trade/{trade_id}")
 async def get_trade_details(trade_id: str, user_id: Optional[str] = Query(None)):
