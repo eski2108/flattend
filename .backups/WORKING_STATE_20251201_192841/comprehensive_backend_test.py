@@ -16,7 +16,7 @@ Tests EVERYTHING as requested in the review to ensure it works properly before u
 - Test amounts: £150, £100, $500 etc
 - Test crypto: BTC, ETH, USDT
 
-**Backend URL:** https://tradefix-preview.preview.emergentagent.com/api
+**Backend URL:** https://codehealer-31.preview.emergentagent.com/api
 """
 
 import requests
@@ -26,7 +26,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
+BASE_URL = "https://codehealer-31.preview.emergentagent.com/api"
 
 # Test Users for comprehensive testing
 COMPREHENSIVE_USER = {

@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://tradefix-preview.preview.emergentagent.com
+**URL:** https://codehealer-31.preview.emergentagent.com
 
 **Services Status:**
 ```bash

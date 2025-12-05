@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://tradefix-preview.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://codehealer-31.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

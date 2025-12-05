@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { Check, IoCheckmark, IoClose, IoFlash, IoStar, IoTrendingUp, Star } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://tradefix-preview.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
 
 const BOOST_PRICING = [
   {

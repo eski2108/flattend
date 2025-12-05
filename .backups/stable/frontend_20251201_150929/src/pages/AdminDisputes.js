@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { IoChatbubbles as MessageCircle, IoCheckmark as Check, IoCheckmarkCircle, IoDocument as FileText, IoEye, IoTime as Clock } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://tradefix-preview.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
 
 function AdminDisputes() {
   const navigate = useNavigate();

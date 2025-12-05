@@ -3,7 +3,7 @@
 SIMPLIFIED P2P BUYER FLOW TEST - Using Legacy System
 Test Scenario: Complete buyer journey using working legacy P2P endpoints
 
-Backend URL: https://tradefix-preview.preview.emergentagent.com/api
+Backend URL: https://codehealer-31.preview.emergentagent.com/api
 """
 
 import requests
@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import uuid
 
 # Configuration
-BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
+BASE_URL = "https://codehealer-31.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class SimplifiedP2PBuyerFlowTester:

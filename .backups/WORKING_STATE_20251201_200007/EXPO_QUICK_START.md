@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://tradefix-preview.preview.emergentagent.com/api
+https://codehealer-31.preview.emergentagent.com/api
 ```
 
 This means:

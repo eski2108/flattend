@@ -25,7 +25,7 @@ Test that login now returns JWT token as specifically requested in review.
 - Token is properly formatted
 - User can now maintain sessions
 
-Backend URL: https://tradefix-preview.preview.emergentagent.com/api
+Backend URL: https://codehealer-31.preview.emergentagent.com/api
 """
 
 import requests
@@ -35,7 +35,7 @@ import base64
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
+BASE_URL = "https://codehealer-31.preview.emergentagent.com/api"
 
 # Test credentials as specified in review
 TEST_EMAIL = "urgent_login_test@test.com"

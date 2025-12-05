@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { IoAlertCircle, IoCheckmark as Check, IoCheckmarkCircle, IoCloudDownload, IoCopy, IoKey, IoMail as Mail, IoPhonePortrait, IoShield } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://tradefix-preview.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://codehealer-31.preview.emergentagent.com';
 
 export default function TwoFactorSetup() {
   const navigate = useNavigate();
