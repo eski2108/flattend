@@ -120,41 +120,18 @@ export default function Register() {
         zIndex: 1
       }}>
         {/* CHX Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{
-            width: '120px',
-            height: '120px',
-            margin: '0 auto 24px',
-            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(155, 77, 255, 0.1) 100%)',
-            borderRadius: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 12px 40px rgba(0, 240, 255, 0.3), 0 0 60px rgba(155, 77, 255, 0.2)',
-            animation: 'glow 3s ease-in-out infinite',
-            position: 'relative',
-            border: '1px solid rgba(0, 240, 255, 0.3)'
-          }}>
-            <img 
-              src="/chx-logo-actual.jpeg" 
-              alt="CoinHubX Logo" 
-              style={{
-                width: '100px',
-                height: '100px',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 4px 12px rgba(0, 240, 255, 0.4))'
-              }}
-            />
-            <div style={{
-              position: 'absolute',
-              inset: '-2px',
-              background: 'linear-gradient(135deg, #00F0FF, #9B4DFF)',
-              borderRadius: '24px',
-              opacity: 0.2,
-              filter: 'blur(12px)',
-              zIndex: -1
-            }} />
-          </div>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <img 
+            src="/chx-logo-actual.jpeg" 
+            alt="CoinHubX Logo" 
+            style={{
+              width: '120px',
+              height: '120px',
+              objectFit: 'contain',
+              marginBottom: '24px',
+              filter: 'drop-shadow(0 8px 24px rgba(0, 240, 255, 0.4))'
+            }}
+          />
           <h1 style={{
             fontSize: '36px',
             fontWeight: '800',
