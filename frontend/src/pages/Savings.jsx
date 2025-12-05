@@ -227,9 +227,22 @@ const TransferModal = ({ isOpen, onClose, coin, direction, spotBalance, savingsB
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div 
-              className={`w-12 h-12 rounded-full bg-gradient-to-br ${coinData.gradient} flex items-center justify-center text-xl font-bold text-white`}
+              className={`w-14 h-14 rounded-full bg-gradient-to-br ${coinData.gradient} flex items-center justify-center text-2xl font-black text-white shadow-2xl relative overflow-hidden`}
+              style={{
+                boxShadow: `0 8px 24px ${coinData.color}50, inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 3px 6px rgba(255,255,255,0.3)`,
+                textShadow: '0 2px 6px rgba(0,0,0,0.5)',
+                fontFamily: '"SF Pro Display", -apple-system, system-ui, sans-serif'
+              }}
             >
-              {coinData.icon}
+              {/* Glossy overlay */}
+              <div 
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%)',
+                  pointerEvents: 'none'
+                }}
+              />
+              <span style={{ position: 'relative', zIndex: 1 }}>{coinData.icon}</span>
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">
