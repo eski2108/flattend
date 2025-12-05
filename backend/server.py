@@ -10126,13 +10126,7 @@ async def get_admin_withdrawals():
         "count": len(withdrawals)
     }
 
-    return {
-        "success": True,
-        "currency": currency,
-        "balance": wallet.get("balance", 0),
-        "available": wallet.get("available", 0),
-        "reserved": wallet.get("reserved", 0)
-    }
+    # Unreachable code removed - duplicate return with undefined variables
 
 # ===========================
 # EXPRESS BUY ENDPOINTS (WITH ADMIN LIQUIDITY)
