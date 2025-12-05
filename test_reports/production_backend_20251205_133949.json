@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "total_tests": 7,
+    "passed_tests": 2,
+    "success_rate": "28.6%",
+    "backend_url": "https://coinhubx.net",
+    "timestamp": "2025-12-05T13:39:49.021955+00:00"
+  },
+  "test_results": [
+    {
+      "test_name": "Domain Consistency",
+      "success": true,
+      "details": "Backend URL: https://coinhubx.net, Expected: https://coinhubx.net",
+      "response_data": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-05T13:39:48.642327+00:00"
+    },
+    {
+      "test_name": "Health Check",
+      "success": true,
+      "details": "Status: 200, Service: unknown",
+      "response_data": null,
+      "performance_ms": 209.05756950378418,
+      "timestamp": "2025-12-05T13:39:48.851515+00:00"
+    },
+    {
+      "test_name": "User Registration",
+      "success": false,
+      "details": "Status: 405, User: test_azri4pj5@coinhubx.net",
+      "response_data": {
+        "text": ""
+      },
+      "performance_ms": 33.683061599731445,
+      "timestamp": "2025-12-05T13:39:48.885369+00:00"
+    },
+    {
+      "test_name": "Admin Login",
+      "success": false,
+      "details": "Status: 405, Admin access: False",
+      "response_data": {
+        "text": ""
+      },
+      "performance_ms": 33.86402130126953,
+      "timestamp": "2025-12-05T13:39:48.919364+00:00"
+    },
+    {
+      "test_name": "Live Prices",
+      "success": false,
+      "details": "Status: 200, Price count: 0",
+      "response_data": {
+        "text": "<!DOCTYPE html><html><head><script>window.onload=function(){window.location.href=\"/lander\"}</script></head></html>"
+      },
+      "performance_ms": 34.155845642089844,
+      "timestamp": "2025-12-05T13:39:48.953663+00:00"
+    },
+    {
+      "test_name": "P2P Marketplace Offers",
+      "success": false,
+      "details": "Status: 200, Offers count: 0",
+      "response_data": {
+        "text": "<!DOCTYPE html><html><head><script>window.onload=function(){window.location.href=\"/lander\"}</script></head></html>"
+      },
+      "performance_ms": 33.831119537353516,
+      "timestamp": "2025-12-05T13:39:48.987635+00:00"
+    },
+    {
+      "test_name": "P2P Statistics",
+      "success": false,
+      "details": "Status: 200, Stats available: False",
+      "response_data": {
+        "text": "<!DOCTYPE html><html><head><script>window.onload=function(){window.location.href=\"/lander\"}</script></head></html>"
+      },
+      "performance_ms": 33.81776809692383,
+      "timestamp": "2025-12-05T13:39:49.021604+00:00"
+    }
+  ]
+}
