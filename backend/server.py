@@ -14605,10 +14605,10 @@ async def approve_deposit(request: AdminDepositApproval):
         except Exception as e:
             logger.error(f"Error checking referral bonus: {str(e)}")
         
-        http_status = "approved"
+        # http_status = "approved"  # Unused variable removed
         message = f"Deposit of {deposit['amount']} {deposit['currency']} approved and credited"
     else:
-        http_status = "rejected"
+        # http_status = "rejected"  # Unused variable removed
         message = "Deposit rejected"
     
     # Update deposit status
