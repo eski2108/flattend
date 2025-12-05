@@ -421,13 +421,13 @@ class CoinHubXComprehensiveTester:
         
         # First get a quote
         quote_data = {
-            "cryptocurrency": "BTC",
-            "amount": 0.001,  # Small amount for testing
-            "type": "buy"
+            "crypto_currency": "BTC",
+            "crypto_amount": 0.001,  # Small amount for testing
+            "fiat_currency": "GBP"
         }
         
         success, quote_response, status, _ = await self.make_request(
-            "POST", "/instant/quote", json=quote_data
+            "POST", "/instant-buy/quote", json=quote_data
         )
         
         if not success:
@@ -439,8 +439,8 @@ class CoinHubXComprehensiveTester:
         # Execute the buy
         headers = {"Authorization": f"Bearer {user['token']}"}
         success, response, status, response_time = await self.make_request(
-            "POST", "/instant/buy", 
-            json={"quote_id": quote_id, "payment_method": "card"}, 
+            "POST", "/instant-buy/execute", 
+            json={"quote_id": quote_id, "buyer_id": user["user_id"]}, 
             headers=headers
         )
         
