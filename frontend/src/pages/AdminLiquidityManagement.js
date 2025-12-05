@@ -344,8 +344,18 @@ const AdminLiquidityManagement = () => {
                       
                       <div className="space-y-3">
                         <div>
-                          <div className="text-xs text-gray-400 mb-1">Available Balance</div>
-                          <div className="text-2xl font-bold text-white">{balance.balance.toFixed(8)}</div>
+                          <div className="text-xs text-gray-400 mb-1">Total in NOWPayments</div>
+                          <div className="text-xl font-bold text-white">{balance.nowpayments_balance?.toFixed(8) || balance.balance?.toFixed(8)}</div>
+                        </div>
+                        
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">User Funds (Owed)</div>
+                          <div className="text-xl font-semibold text-orange-400">{balance.user_balance?.toFixed(8) || '0.00000000'}</div>
+                        </div>
+                        
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">Your Available Liquidity</div>
+                          <div className="text-2xl font-bold text-green-400">{balance.platform_liquidity?.toFixed(8) || balance.balance?.toFixed(8)}</div>
                         </div>
                         
                         {balance.pending > 0 && (
@@ -356,9 +366,9 @@ const AdminLiquidityManagement = () => {
                         )}
                         
                         <div className="pt-3 border-t border-white/10">
-                          <div className="text-xs text-gray-400 mb-1">Total Value</div>
+                          <div className="text-xs text-gray-400 mb-1">Platform Liquidity Value</div>
                           <div className="text-2xl font-bold text-cyan-400">
-                            £{balance.value_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            £{(balance.platform_liquidity_gbp || balance.value_gbp).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
                             @ £{balance.price_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2 })} per {balance.currency}
