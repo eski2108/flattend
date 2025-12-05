@@ -12842,7 +12842,7 @@ async def get_balance_summary_with_pending(user_id: str):
             currency = tx.get("currency", "")
             amount = float(tx.get("amount", 0))
             tx_type = tx.get("transaction_type", "")
-            http_status = tx.get("status", "")
+            # http_status = tx.get("status", "")  # Unused variable removed
             
             if currency not in pending_by_currency:
                 pending_by_currency[currency] = {"incoming": 0, "outgoing": 0}
