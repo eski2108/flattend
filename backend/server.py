@@ -726,7 +726,7 @@ class AddWalletAddressRequest(BaseModel):
     currency: str  # BTC, ETH, USDT, etc.
     address: str
 
-class WithdrawalRequest(BaseModel):
+# class WithdrawalRequest(BaseModel):
     user_id: str
     currency: str
     amount: float
@@ -790,7 +790,7 @@ class TwoFactorAuth(BaseModel):
 class ConnectWalletRequest(BaseModel):
     wallet_address: str
 
-class DepositRequest(BaseModel):
+# class DepositRequest(BaseModel):
     wallet_address: str
     amount: float
 
@@ -6931,7 +6931,7 @@ async def register_user(request: RegisterRequest, req: Request):
         
         if all([account_sid, auth_token, verify_service_sid]):
             client = Client(account_sid, auth_token)
-            verification = client.verify.v2.services(verify_service_sid).verifications.create(
+            _verification = client.verify.v2.services(verify_service_sid).verifications.create(
                 to=request.phone_number,
                 channel='sms'
             )
@@ -8603,7 +8603,7 @@ async def resolve_dispute_final(request: dict):
     
     # Determine losing party (who pays the fee)
     losing_party = trade["seller_id"] if resolution == "release_to_buyer" else trade["buyer_id"]
-    winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
+    _winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
     
     # ============================================================
     # REFERRAL COMMISSION PROCESSING (P2P DISPUTE FEE)
@@ -9388,8 +9388,8 @@ async def open_trading_position(request: dict):
             return {"success": False, "message": "User not found"}
         
         # Parse pair
-        base = pair[:3]
-        quote = pair[3:] if len(pair) > 3 else "USD"
+        _base = pair[:3]
+        _quote = pair[3:] if len(pair) > 3 else "USD"
         
         # Calculate required margin
         position_value = amount * entry_price
@@ -9724,7 +9724,7 @@ async def place_trading_order(request: dict):
         # Parse pair to get base and quote currencies (e.g., BTC/USD)
         # Assuming format like "BTCUSD" -> base="BTC", quote="USD"
         base = pair[:3]  # First 3 chars
-        quote = pair[3:]  # Remaining chars (USD in this case, but we use GBP)
+        _quote = pair[3:]  # Remaining chars (USD in this case, but we use GBP)
         
         # Calculate total in quote currency (convert USD to GBP - simplified 1:1 for now)
         total_amount = amount * price
@@ -11452,7 +11452,7 @@ async def express_buy_execute(request: dict):
         
         # Then apply the VISIBLE express buy fee on top
         # This is the 1% fee that users see as "Express Fee"
-        price_with_fee = spread_adjusted_price_gbp * (1 + express_fee_percent / 100)
+        _price_with_fee = spread_adjusted_price_gbp * (1 + express_fee_percent / 100)
         
         # Recalculate based on the spread-adjusted price
         # The crypto_amount was calculated from original price, now we adjust fiat
@@ -14334,7 +14334,7 @@ async def add_wallet_address(request: AddWalletAddressRequest):
         raise HTTPException(status_code=400, detail="Invalid wallet address")
     
     # Update or create wallet addresses
-    result = await db.user_wallet_addresses.update_one(
+    _result = await db.user_wallet_addresses.update_one(
         {"user_id": request.user_id},
         {
             "$set": {
@@ -16925,10 +16925,10 @@ async def execute_trade_new(request: dict):
         
         # Parse pair to get base and quote (e.g., BTCUSD -> BTC, USD)
         base = pair[:3]
-        quote = pair[3:]
+        _quote = pair[3:]
         
         # Convert quote to GBP (we use GBP internally)
-        actual_quote = "GBP"
+        _actual_quote = "GBP"
         
         # Get live market price
         all_prices = await fetch_live_prices()
@@ -19387,7 +19387,7 @@ async def get_portfolio_history(
         # Work backwards through transactions to reconstruct historical balances
         # Then generate data points at regular intervals
         history_data = []
-        interval_ms = config["interval_hours"] * 3600 * 1000
+        _interval_ms = config["interval_hours"] * 3600 * 1000
         
         for i in range(config["points"]):
             point_time_dt = start_time + timedelta(hours=i * config["interval_hours"])
@@ -20092,7 +20092,7 @@ async def convert_currency(request: dict):
 # ============================================================================
 
 from payment_methods import (
-    PaymentMethod,
+#     PaymentMethod,
     SellOffer,
     PAYMENT_METHOD_TYPES
 )
@@ -26841,7 +26841,7 @@ async def auto_match_trade(request: dict):
         trade_type = request.get("type")  # "buy" or "sell"
         crypto = request.get("crypto", "BTC")
         amount = request.get("amount")
-        payment_method = request.get("payment_method")
+        _payment_method = request.get("payment_method")
         fiat_currency = request.get("fiat_currency", "GBP")
         
         if not all([user_id, trade_type, amount]):
