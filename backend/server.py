@@ -4005,7 +4005,7 @@ async def create_p2p_express_order(order_data: Dict):
         # INSTANT DELIVERY - Admin liquidity
         seller_id = "admin_liquidity"
         delivery_source = "admin_liquidity"
-        status = "completed"
+        http_status = "completed"
         payment_method = "platform_direct"
         
         # 1. DEBIT GBP from user wallet
@@ -4151,7 +4151,7 @@ async def create_p2p_express_order(order_data: Dict):
             delivery_source = "fallback"
             payment_method = "Bank Transfer"
         
-        status = "pending_payment"
+        http_status = "pending_payment"
         estimated_delivery = "2-5 minutes"
         countdown_expires_at = (datetime.now(timezone.utc) + timedelta(seconds=EXPRESS_RELEASE_TIMEOUT)).isoformat()
     
@@ -11094,7 +11094,7 @@ async def toggle_trading_pair(request: dict):
                 }
             )
         
-        status = "enabled" if enabled else "disabled"
+        http_status = "enabled" if enabled else "disabled"
         return {
             "success": True,
             "message": f"Trading for {currency} has been {status}"
@@ -12817,7 +12817,7 @@ async def get_balance_summary_with_pending(user_id: str):
             currency = tx.get("currency", "")
             amount = float(tx.get("amount", 0))
             tx_type = tx.get("transaction_type", "")
-            status = tx.get("status", "")
+            http_status = tx.get("status", "")
             
             if currency not in pending_by_currency:
                 pending_by_currency[currency] = {"incoming": 0, "outgoing": 0}
@@ -12859,7 +12859,7 @@ async def get_balance_summary_with_pending(user_id: str):
 @api_router.get("/crypto-bank/onboarding/{user_id}")
 async def get_onboarding_status(user_id: str):
     """Get onboarding status for a user"""
-    status = await db.onboarding_status.find_one({"user_id": user_id}, {"_id": 0})
+    http_status = await db.onboarding_status.find_one({"user_id": user_id}, {"_id": 0})
     
     if not status:
         # Create initial status
@@ -14580,10 +14580,10 @@ async def approve_deposit(request: AdminDepositApproval):
         except Exception as e:
             logger.error(f"Error checking referral bonus: {str(e)}")
         
-        status = "approved"
+        http_status = "approved"
         message = f"Deposit of {deposit['amount']} {deposit['currency']} approved and credited"
     else:
-        status = "rejected"
+        http_status = "rejected"
         message = "Deposit rejected"
     
     # Update deposit status
@@ -14622,7 +14622,7 @@ async def approve_withdrawal(request: AdminWithdrawalApproval):
         raise HTTPException(status_code=404, detail="Withdrawal not found")
     
     if request.approved:
-        status = "completed"
+        http_status = "completed"
         message = f"Withdrawal of {withdrawal['amount']} {withdrawal['currency']} approved"
         
         # Update with tx_hash if provided
@@ -14643,7 +14643,7 @@ async def approve_withdrawal(request: AdminWithdrawalApproval):
             {"$inc": {balance_key: total_refund}}
         )
         
-        status = "rejected"
+        http_status = "rejected"
         message = "Withdrawal rejected and refunded"
         update_data = {
             "status": status,
