@@ -342,7 +342,7 @@ export default function SavingsVault() {
   const [modalConfig, setModalConfig] = useState({});
   const [savingsHistory, setSavingsHistory] = useState([]);
 
-  const loadSavingsData = async (userId) => {
+  const loadSavingsData = React.useCallback(async (userId) => {
     try {
       setLoading(true);
 
@@ -376,7 +376,18 @@ export default function SavingsVault() {
       toast.error('Failed to load savings data');
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('cryptobank_user');
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    const u = JSON.parse(userData);
+    setUser(u);
+    loadSavingsData(u.user_id);
+  }, [navigate, loadSavingsData]);
 
   const handleTransfer = async (coin, amount, direction) => {
     try {
