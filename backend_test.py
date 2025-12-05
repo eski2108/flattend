@@ -241,10 +241,10 @@ class CoinHubXComprehensiveTester:
     
     async def test_p2p_marketplace_listings(self):
         """Test P2P marketplace listings endpoint"""
-        success, response, status, response_time = await self.make_request("GET", "/p2p/marketplace")
+        success, response, status, response_time = await self.make_request("GET", "/p2p/sell-orders")
         
         if success and isinstance(response, dict):
-            listings = response.get("listings", [])
+            listings = response.get("sell_orders", [])
             self.log_test("P2P Marketplace Listings", True, 
                          f"Retrieved {len(listings)} P2P listings", 
                          {"total_listings": len(listings)},
