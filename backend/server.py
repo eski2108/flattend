@@ -7113,7 +7113,6 @@ async def verify_phone(request: dict):
                 raise HTTPException(status_code=400, detail="Verification code expired")
             
             # Mark phone as verified
-            user_account = {}
             await db.user_accounts.update_one(
                 {"user_id": user["user_id"]},
                 {"$set": {"phone_verified": True, "email_verified": True}}
