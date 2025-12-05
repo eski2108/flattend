@@ -390,13 +390,10 @@ function InstantBuy() {
 
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Locked Price
+                  Price Per {currentQuote.coin.symbol}
                 </div>
                 <div style={{ fontSize: '20px', fontWeight: '700', color: '#22C55E' }}>
                   £{currentQuote.locked_price.toLocaleString()}
-                </div>
-                <div style={{ fontSize: '12px', color: '#8F9BB3', marginTop: '4px' }}>
-                  Market: £{currentQuote.market_price_at_quote.toLocaleString()} ({currentQuote.spread_percent}% spread)
                 </div>
               </div>
 
