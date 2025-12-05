@@ -160,9 +160,105 @@ const AdminLiquidityManagement = () => {
             </div>
           </PremiumCard>
 
+          {/* Revenue Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+              <IoCash size={32} className="mr-3 text-green-400" />
+              Platform Revenue & Fees Collected
+            </h2>
+            
+            {/* Total Revenue Card */}
+            <PremiumCard className="p-6 mb-6 bg-green-500/10 border-green-400/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Total Fees Collected</div>
+                  <div className="text-5xl font-bold text-green-400">
+                    £{totalRevenueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  <div className="text-sm text-gray-400 mt-2">From P2P, Swaps, Instant Buy, and all transactions</div>
+                </div>
+                <div className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <IoTrendingUp size={48} className="text-green-400" />
+                </div>
+              </div>
+            </PremiumCard>
+            
+            {revenueData.length === 0 ? (
+              <PremiumCard className="p-8">
+                <div className="text-center">
+                  <p className="text-gray-400">No revenue data yet. Fees will appear here as users make transactions.</p>
+                </div>
+              </PremiumCard>
+            ) : (
+              <PremiumCard className="overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-white/5">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Currency</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Transaction Fees</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">P2P Commissions</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Swap Fees</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Total Fees</th>
+                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Value (GBP)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {revenueData.map((revenue, index) => (
+                        <tr key={index} className="border-t border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="text-lg font-bold text-white">{revenue.currency}</div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-base text-gray-300">
+                              {revenue.transaction_fees.toFixed(8)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-base text-gray-300">
+                              {revenue.p2p_fees.toFixed(8)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-base text-gray-300">
+                              {revenue.swap_fees.toFixed(8)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-lg font-bold text-white">
+                              {revenue.total_fees.toFixed(8)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="text-xl font-bold text-green-400">
+                              £{revenue.value_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot className="bg-green-500/10">
+                      <tr>
+                        <td colSpan="5" className="px-6 py-4 text-right text-lg font-bold text-gray-300">
+                          Total Revenue:
+                        </td>
+                        <td className="px-6 py-4 text-right text-2xl font-bold text-green-400">
+                          £{totalRevenueGBP.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </PremiumCard>
+            )}
+          </div>
+
           {/* Balances Table */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Cryptocurrency Balances</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+              <IoWallet size={32} className="mr-3 text-cyan-400" />
+              NOWPayments Cryptocurrency Balances
+            </h2>
             
             {nowpaymentsBalances.length === 0 ? (
               <PremiumCard className="p-12">
