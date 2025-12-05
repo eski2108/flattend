@@ -14668,7 +14668,7 @@ async def approve_withdrawal(request: AdminWithdrawalApproval):
             {"$inc": {balance_key: total_refund}}
         )
         
-        http_status = "rejected"
+        # http_status = "rejected"  # Unused variable removed
         message = "Withdrawal rejected and refunded"
         update_data = {
             "status": status,
