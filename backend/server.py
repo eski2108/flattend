@@ -4704,52 +4704,34 @@ def get_coin_gradient(currency: str) -> str:
 
 @api_router.get("/savings/price-history/{currency}")
 async def get_savings_price_history(currency: str):
-    """Get 24h price history for sparkline charts - REAL DATA from Portfolio source"""
+    """Get 24h price history for sparkline charts - REAL DATA from price_history collection"""
     try:
-        # Use the SAME price data source as Portfolio page
-        from pricing_service import get_unified_price
-        
         # Get last 24 hourly data points from price_history collection
         price_history = await db.price_history.find(
             {"currency": currency},
             {"_id": 0, "price_gbp": 1, "price_usd": 1, "timestamp": 1}
-        ).sort("timestamp", -1).limit(24).to_list(24)
+        ).sort("timestamp", 1).limit(24).to_list(24)  # Sort ascending (oldest first)
         
         if not price_history or len(price_history) < 2:
-            # If no historical data, get current price and simulate 24h with small variance
-            current_price_data = await get_unified_price(currency)
-            current_price = current_price_data.get("price_gbp", 0)
-            
-            if current_price > 0:
-                # Generate realistic 24h simulation based on current price
-                price_history = []
-                for i in range(24):
-                    variance = (random.random() - 0.5) * 0.04  # ±2% variance per hour
-                    simulated_price = current_price * (1 + variance)
-                    price_history.append({
-                        "price_gbp": simulated_price,
-                        "timestamp": (datetime.now(timezone.utc) - timedelta(hours=23-i)).isoformat()
-                    })
-            else:
-                return {
-                    "success": False,
-                    "currency": currency,
-                    "prices": [],
-                    "message": "No price data available"
-                }
+            return {
+                "success": False,
+                "currency": currency,
+                "prices": [],
+                "message": "No price data available"
+            }
         
-        # Reverse to get chronological order (oldest to newest)
-        price_history.reverse()
+        # Extract prices (already in chronological order)
+        prices = [p.get("price_gbp", p.get("price_usd", 0)) for p in price_history]
+        timestamps = [p["timestamp"] for p in price_history]
         
         return {
             "success": True,
             "currency": currency,
-            "prices": [p.get("price_gbp", p.get("price_usd", 0)) for p in price_history],
-            "timestamps": [p["timestamp"] for p in price_history]
+            "prices": prices,
+            "timestamps": timestamps
         }
     except Exception as e:
         logger.error(f"Price history error for {currency}: {e}")
-        # Return empty data instead of failing
         return {
             "success": False,
             "currency": currency,
