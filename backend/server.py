@@ -7131,8 +7131,7 @@ async def verify_phone(request: dict):
         logger.error(f"❌ Phone verification error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
 
-    try:
-        verification_link = f"{os.environ.get('BACKEND_URL')}/api/auth/verify-email?token={verification_token}"
+    # Unreachable code below - removed (was outside any function context and used undefined variables)
         
         # Send email via SendGrid
         from sendgrid import SendGridAPIClient
