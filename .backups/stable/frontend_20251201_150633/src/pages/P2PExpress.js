@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2p-market-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradefix-preview.preview.emergentagent.com';
 
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',

@@ -31,7 +31,7 @@ This test executes the COMPLETE P2P release flow with 1% fee collection as reque
 16. Query GET /api/admin/internal-balances to verify 0.005 BTC was added to admin internal balance
 17. Verify platform fee transaction was created in crypto_transactions collection
 
-**Backend URL:** https://p2p-market-1.preview.emergentagent.com/api
+**Backend URL:** https://tradefix-preview.preview.emergentagent.com/api
 """
 
 import requests
@@ -41,7 +41,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
+BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
 
 # Test Users for P2P Escrow Flow
 BUYER_USER = {

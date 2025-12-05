@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://p2p-market-1.preview.emergentagent.com/api"
+BASE_URL = "https://tradefix-preview.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class CompleteMessagingFlowTest:

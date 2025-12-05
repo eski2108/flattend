@@ -227,7 +227,7 @@ export default function Layout({ children }) {
                     if (isIOS) {
                       alert('📱 Install on iPhone:\n\n1. Tap Share button (bottom)\n2. Tap "Add to Home Screen"\n3. Tap "Add"\n\n✨ Instant access from your home screen!');
                     } else {
-                      window.open('https://p2p-market-1.preview.emergentagent.com', '_blank');
+                      window.open('https://tradefix-preview.preview.emergentagent.com', '_blank');
                     }
                   }}
                   style={{

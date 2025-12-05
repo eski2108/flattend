@@ -111,7 +111,7 @@ BTC: 0.12382175857852622
 
 ### API Endpoint Test
 ```bash
-$ curl https://p2p-market-1.preview.emergentagent.com/api/portfolio/summary/USER_ID
+$ curl https://tradefix-preview.preview.emergentagent.com/api/portfolio/summary/USER_ID
 
 {
   "success": true,
