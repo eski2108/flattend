@@ -20998,7 +20998,7 @@ async def price_alert_checker():
             prices = {}
             for coin in ["BTC", "ETH", "USDT", "BNB", "SOL", "XRP", "LTC"]:
                 try:
-# DUPLICATE:                     price_data = await get_price_in_gbp(coin)
+                    price_data = await get_price_in_gbp(coin)
                     if price_data:
                         prices[coin] = price_data["price"]
                 except Exception:
