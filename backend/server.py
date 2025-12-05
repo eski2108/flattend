@@ -14647,7 +14647,7 @@ async def approve_withdrawal(request: AdminWithdrawalApproval):
         raise HTTPException(status_code=404, detail="Withdrawal not found")
     
     if request.approved:
-        http_status = "completed"
+        # http_status = "completed"  # Unused variable removed
         message = f"Withdrawal of {withdrawal['amount']} {withdrawal['currency']} approved"
         
         # Update with tx_hash if provided
