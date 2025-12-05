@@ -25119,6 +25119,69 @@ async def get_referral_analytics():
         logger.error(f"Error getting referral analytics: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/admin/nowpayments/balances")
+async def get_nowpayments_balances():
+    """Get real cryptocurrency balances from NOWPayments account - Admin liquidity"""
+    try:
+        from nowpayments_integration import get_nowpayments_service
+        
+        nowpayments = get_nowpayments_service()
+        balances_data = nowpayments.get_account_balances()
+        
+        if not balances_data["success"]:
+            return {
+                "success": False,
+                "message": balances_data.get("error", "Failed to fetch balances"),
+                "balances": []
+            }
+        
+        # Enrich with GBP values
+        crypto_prices_gbp = {
+            "BTC": 75000, "ETH": 2765, "USDT": 0.79, "XRP": 0.46,
+            "LTC": 83, "ADA": 0.33, "DOT": 6.16, "DOGE": 0.067,
+            "BNB": 490, "SOL": 166, "MATIC": 0.75, "AVAX": 33
+        }
+        
+        enriched_balances = []
+        total_gbp = 0
+        
+        for balance in balances_data["balances"]:
+            currency = balance["currency"]
+            amount = balance["balance"]
+            pending = balance["pending"]
+            
+            price_gbp = crypto_prices_gbp.get(currency, 0)
+            value_gbp = amount * price_gbp
+            pending_gbp = pending * price_gbp
+            total_gbp += value_gbp
+            
+            enriched_balances.append({
+                "currency": currency,
+                "balance": amount,
+                "pending": pending,
+                "price_gbp": price_gbp,
+                "value_gbp": value_gbp,
+                "pending_gbp": pending_gbp
+            })
+        
+        # Sort by GBP value (highest first)
+        enriched_balances.sort(key=lambda x: x["value_gbp"], reverse=True)
+        
+        return {
+            "success": True,
+            "balances": enriched_balances,
+            "total_value_gbp": total_gbp,
+            "message": "NOWPayments balances retrieved successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Admin NOWPayments balances error: {e}")
+        return {
+            "success": False,
+            "message": str(e),
+            "balances": []
+        }
+
 @api_router.get("/admin/liquidity/status")
 async def get_liquidity_status():
     """Get current liquidity status"""
