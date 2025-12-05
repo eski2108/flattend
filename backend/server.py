@@ -11119,7 +11119,7 @@ async def toggle_trading_pair(request: dict):
                 }
             )
         
-        http_status = "enabled" if enabled else "disabled"
+        # http_status = "enabled" if enabled else "disabled"  # Unused variable removed
         return {
             "success": True,
             "message": f"Trading for {currency} has been {status}"
