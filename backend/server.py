@@ -6,8 +6,7 @@ import os
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, Query, UploadFile, File, Form
-from fastapi import status
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, status, Query, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from starlette.middleware.cors import CORSMiddleware
@@ -281,43 +280,6 @@ async def verify_admin(authorization: str = Header(None)):
     return True
 
 # Platform Configuration
-
-# Helper functions for badges and utilities
-def get_trader_badges(user_stats):
-    """Get trader badges based on user statistics"""
-    badges = []
-    if user_stats.get('total_trades', 0) >= 100:
-        badges.append('veteran_trader')
-    if user_stats.get('rating', 0) >= 4.5:
-        badges.append('trusted_merchant')
-    return badges
-
-def calculate_trader_badges(user_id):
-    """Calculate badges for a user"""
-    return []
-
-BADGE_DEFINITIONS = {
-    'veteran_trader': {'name': 'Veteran Trader', 'requirement': '100+ trades'},
-    'trusted_merchant': {'name': 'Trusted Merchant', 'requirement': '4.5+ rating'}
-}
-
-async def update_trader_stats_for_badges(user_id):
-    """Update trader statistics for badge calculation"""
-    pass
-
-async def send_email(to_email, subject, body, html=None):
-    """Send email notification"""
-    pass
-
-async def get_price_in_gbp(crypto, amount=1.0):
-    """Get cryptocurrency price in GBP"""
-    try:
-        prices = await get_live_crypto_price(crypto, "GBP")
-        return prices.get("price", 0) * amount
-    except Exception:
-        return 0
-
-
 PLATFORM_CONFIG = {
     "lender_interest_rate": 5.0,  # Lenders earn 5%
     "borrower_interest_rate": 12.0,  # Borrowers pay 12%
@@ -764,7 +726,7 @@ class AddWalletAddressRequest(BaseModel):
     currency: str  # BTC, ETH, USDT, etc.
     address: str
 
-class WithdrawalRequest2(BaseModel):
+class WithdrawalRequest(BaseModel):
     user_id: str
     currency: str
     amount: float
@@ -828,7 +790,7 @@ class TwoFactorAuth(BaseModel):
 class ConnectWalletRequest(BaseModel):
     wallet_address: str
 
-class DepositRequest2(BaseModel):
+class DepositRequest(BaseModel):
     wallet_address: str
     amount: float
 
@@ -1765,7 +1727,6 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     # Send email to buyer (respects user settings)
     try:
         buyer = await db.user_accounts.find_one({"wallet_address": buy_order["buyer_address"]}, {"_id": 0})
-    order_id = order.get("order_id", "")
         if buyer:
             user_settings = buyer.get('security', {})
             if user_settings.get('login_email_alerts_enabled', True):
@@ -2229,7 +2190,6 @@ async def get_marketplace_filters():
             "active_payment_methods": sorted(list(active_payment_methods))
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2300,7 +2260,6 @@ async def get_seller_profile(seller_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2334,7 +2293,6 @@ async def add_favorite_seller(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2361,7 +2319,6 @@ async def remove_favorite_seller(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2382,7 +2339,6 @@ async def get_favorite_sellers(user_id: str):
             "count": len(seller_ids)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2427,7 +2383,6 @@ async def create_admin_liquidity_offer(
             "offer_id": admin_offer["offer_id"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2605,7 +2560,6 @@ async def populate_test_offers():
             "total_offers": len(all_offers)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2651,7 +2605,6 @@ async def get_all_coins_cms():
             "count": len(coins)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2687,7 +2640,6 @@ async def toggle_coin_status(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2736,7 +2688,6 @@ async def update_coin_config(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2783,7 +2734,6 @@ async def add_new_coin(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2806,7 +2756,6 @@ async def get_enabled_coins():
             "count": len(coins)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2908,7 +2857,6 @@ async def get_coins_metadata():
             "count": len(coins_metadata)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2958,7 +2906,7 @@ async def get_user_seller_link(user_id: str):
 
 
 @api_router.get("/p2p/seller/{user_id}")
-async def get_seller_profile_duplicate1(user_id: str):
+async def get_seller_profile(user_id: str):
     """Get seller profile with stats"""
     # Get user account
     user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
@@ -3074,11 +3022,9 @@ async def preview_order(request: PreviewOrderRequest):
     
     return {
         "success": True,
-    trade = {}
         "preview": {
             "sell_order_id": sell_order["order_id"],
             "seller": seller_profile,
-    sell_order = {}
             "crypto_currency": sell_order["crypto_currency"],
             "crypto_amount": request.crypto_amount,
             "fiat_currency": sell_order["fiat_currency"],
@@ -3090,7 +3036,6 @@ async def preview_order(request: PreviewOrderRequest):
             "min_purchase": sell_order["min_purchase"],
             "max_purchase": sell_order["max_purchase"]
         }
-    crypto_amount = 0
     }
 
 @api_router.post("/p2p/create-trade")
@@ -4741,8 +4686,6 @@ async def transfer_to_savings_OLD(request: dict):
                     "total_cost_usd": amount * current_price,
                     "avg_buy_price": current_price,
                     "created_at": datetime.now(timezone.utc).isoformat(),
-    spot_balance = 0
-    currency = "BTC"
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 })
             
@@ -5117,8 +5060,6 @@ async def get_all_trader_balances(limit: int = 100):
         trader_id = balance.get("trader_id")
         currency = balance.get("currency")
         total = balance.get("total_balance", 0.0)
-    total_usd_estimate = 0
-    balance_dict = {}
         locked = balance.get("locked_balance", 0.0)
         available = balance.get("available_balance", 0.0)
         
@@ -6145,7 +6086,7 @@ async def get_notifications(wallet_address: str):
     }
 
 @api_router.post("/notifications/{notification_id}/read")
-async def mark_notification_read_duplicate1(notification_id: str):
+async def mark_notification_read(notification_id: str):
     """Mark notification as read"""
     await db.notifications.update_one(
         {"notification_id": notification_id},
@@ -6990,7 +6931,7 @@ async def register_user(request: RegisterRequest, req: Request):
         
         if all([account_sid, auth_token, verify_service_sid]):
             client = Client(account_sid, auth_token)
-            _verification = client.verify.v2.services(verify_service_sid).verifications.create(
+            verification = client.verify.v2.services(verify_service_sid).verifications.create(
                 to=request.phone_number,
                 channel='sms'
             )
@@ -7159,7 +7100,6 @@ async def verify_phone(request: dict):
                 return {
                     "success": True,
                     "message": "Phone verified successfully"
-    verification_token = ""
                 }
             else:
                 raise HTTPException(status_code=400, detail="Invalid verification code")
@@ -7168,7 +7108,6 @@ async def verify_phone(request: dict):
             verification = await db.phone_verifications.find_one({
                 "user_id": user["user_id"],
                 "code": code
-    user_account = None
             })
             
             if not verification:
@@ -8867,7 +8806,7 @@ async def get_seller_status(user_id: str):
     }
 
 @api_router.get("/p2p/seller-status/{user_id}")
-async def get_seller_status_duplicate1(user_id: str):
+async def get_seller_status(user_id: str):
     """Check if user is a seller"""
     user = await db.users.find_one({"user_id": user_id})
     if not user:
@@ -9125,7 +9064,6 @@ async def get_swap_available_coins():
             "count": len(coins_list)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/swap/preview")
@@ -9685,7 +9623,6 @@ async def get_user_positions(user_id: str):
             "count": len(positions)
         }
     except Exception as e:
-        # Exception handled
         return {"success": False, "message": str(e)}
 
 
@@ -9704,7 +9641,6 @@ async def get_trade_history(user_id: str, limit: int = 50):
             "count": len(history)
         }
     except Exception as e:
-        # Exception handled
         return {"success": False, "message": str(e)}
 
 
@@ -10033,7 +9969,6 @@ async def get_trading_liquidity_balances():
             "total_coins": len(wallets)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -10135,7 +10070,6 @@ async def get_admin_liquidity_history():
             "count": len(history)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -10220,7 +10154,6 @@ async def admin_withdraw(request: dict):
         "currency": currency,
         "amount": amount,
         "wallet_type": wallet_type,
-    wallet = {}
         "withdrawal_address": withdrawal_address,
         "status": "pending",  # pending, completed, failed
         "created_at": datetime.now(timezone.utc),
@@ -10723,7 +10656,6 @@ async def execute_trading_transaction(request: dict):
             }
         
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
  
  
@@ -10791,7 +10723,6 @@ async def get_trading_pairs():
             "count": len(pairs_with_status)
         }
     except Exception as e:
-        # Exception handled
         log_error(f"Error in get_trading_pairs: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -10882,7 +10813,6 @@ async def get_admin_trading_liquidity():
             "count": len(liquidity_data)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -10937,7 +10867,6 @@ async def add_trading_liquidity(request: dict):
             "message": f"Successfully added {amount} {currency} to trading liquidity"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -10991,7 +10920,6 @@ async def remove_trading_liquidity(request: dict):
             "message": f"Successfully removed {amount} {currency} from trading liquidity"
         }
     except Exception as e:
-        # Exception handled
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=str(e))
@@ -11130,7 +11058,6 @@ async def get_p2p_express_statistics():
             }
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -11173,7 +11100,6 @@ async def toggle_trading_pair(request: dict):
             "message": f"Trading for {currency} has been {status}"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -11274,7 +11200,6 @@ async def get_express_buy_supported_coins():
             "coins": coins
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -12018,7 +11943,6 @@ async def get_boost_status(ad_id: str):
     is_boosted = offer.get("boosted", False)
     boost_end_date = offer.get("boost_end_date")
     
-    swaps = []
     # Check if boost has expired
     if is_boosted and boost_end_date:
         # Handle both datetime objects and string dates
@@ -12544,7 +12468,6 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
         reference=request.wallet_address,
         notes=f"Withdrawal processed. Fee: {withdrawal_fee} {request.currency} ({withdrawal_fee_percent}%)",
         completed_at=datetime.now(timezone.utc)
-    withdrawal_id = ""
     )
     
     tx_dict = transaction.model_dump()
@@ -12866,7 +12789,6 @@ async def get_categorized_transactions(user_id: str, limit: int = 50):
             }
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/crypto-bank/balance-summary/{user_id}")
@@ -12930,7 +12852,6 @@ async def get_balance_summary_with_pending(user_id: str):
             "balances": summary
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -14292,7 +14213,6 @@ async def get_fee_configuration():
             "fees": fee_config
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -14350,7 +14270,6 @@ async def update_fee_configuration(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -14387,7 +14306,6 @@ async def get_fee_revenue_stats():
             "revenue_stats": stats
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -14547,7 +14465,7 @@ async def create_withdrawal_request_new(request: WithdrawalRequestNew):
     return result
 
 @api_router.post("/wallet/request-withdrawal")
-async def request_withdrawal_duplicate1(request: WithdrawalRequest):
+async def request_withdrawal(request: WithdrawalRequest):
     """User requests withdrawal (requires admin approval)"""
     # Get user
     user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
@@ -15461,7 +15379,6 @@ async def resolve_support_chat(request: dict):
             "message": "Support chat resolved successfully"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 # Admin Earnings Management Endpoints
@@ -15581,7 +15498,6 @@ async def save_admin_external_wallet(request: dict):
             "wallets": wallets
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/external-wallets")
@@ -15597,7 +15513,6 @@ async def get_admin_external_wallets():
             "wallets": wallets
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
         
@@ -15606,7 +15521,6 @@ async def get_admin_external_wallets():
             "message": f"{currency} withdrawal address saved"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -15626,7 +15540,6 @@ async def get_fee_settings():
             }
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/admin/update-fee")
@@ -15683,7 +15596,6 @@ async def update_platform_fee(request: dict):
     except ValueError:
         raise HTTPException(status_code=400, detail="Value must be a number")
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/admin/wallet/payout")
@@ -16026,7 +15938,6 @@ async def get_revenue_summary(period: str = Query("day", regex="^(day|week|month
         }
         
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -16125,7 +16036,6 @@ async def get_revenue_transactions(
         }
         
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -16389,7 +16299,6 @@ async def get_monetization_breakdown(period: str = Query("day", regex="^(day|wee
         }
         
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -16400,7 +16309,7 @@ async def get_monetization_breakdown(period: str = Query("day", regex="^(day|wee
 # ============================================================================
 
 @api_router.get("/supported/currencies")
-async def get_supported_currencies_duplicate1():
+async def get_supported_currencies():
     """Get all supported fiat currencies"""
     return {
         "success": True,
@@ -16488,7 +16397,6 @@ async def add_user_crypto_wallet(request: dict):
             "wallet": wallet_data
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/crypto-wallet/list/{user_id}")
@@ -16507,7 +16415,6 @@ async def get_user_crypto_wallets(user_id: str, currency: str = None):
             "count": len(wallets)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/crypto-wallet/set-default")
@@ -16539,7 +16446,6 @@ async def set_default_wallet(request: dict):
             "message": "Default wallet updated"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/crypto-wallet/remove/{wallet_id}")
@@ -16587,7 +16493,6 @@ async def get_all_transactions():
             "total_count": len(crypto_txns) + len(trades)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/wallet-balances")
@@ -16610,7 +16515,6 @@ async def get_admin_wallet_balances():
             "referral_wallet_balances": balances
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/admin/platform-settings")
@@ -16687,7 +16591,6 @@ async def update_platform_settings(request: dict):
             "updated_settings": settings_to_update
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/platform-settings")
@@ -16738,7 +16641,6 @@ async def get_platform_settings():
             "settings": settings
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/kyc-submissions")
@@ -16753,7 +16655,6 @@ async def get_kyc_submissions():
             "total": len(submissions)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -16895,7 +16796,7 @@ async def assign_golden_tier(request: dict):
         return {"success": False, "message": str(e)}
 
 @api_router.get("/user/referral-dashboard/{user_id}")
-async def get_referral_dashboard_duplicate1(user_id: str):
+async def get_referral_dashboard(user_id: str):
     """Get complete referral dashboard data"""
     try:
         # Get user account
@@ -17218,7 +17119,6 @@ async def get_crypto_market_prices():
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/crypto-market/update-prices")
@@ -17231,7 +17131,6 @@ async def update_crypto_market_prices(request: dict):
             "note": "This endpoint is deprecated as the system now uses real-time price data"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -17250,7 +17149,6 @@ async def get_cms_sellers():
             "total": len(sellers)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/cms/marketplace/sellers")
@@ -17276,7 +17174,6 @@ async def create_cms_seller(request: dict):
             "seller": seller_data
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/marketplace/sellers/{seller_id}")
@@ -17308,7 +17205,6 @@ async def update_cms_seller(seller_id: str, request: dict):
             "message": "Seller updated successfully"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/cms/marketplace/sellers/{seller_id}")
@@ -17323,7 +17219,6 @@ async def delete_cms_seller(seller_id: str):
             "message": "Seller and all their offers deleted"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/marketplace/offers")
@@ -17337,7 +17232,6 @@ async def get_cms_offers():
             "total": len(offers)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/cms/marketplace/offers")
@@ -17386,7 +17280,6 @@ async def create_cms_offer(request: dict):
             "market_price": get_crypto_price_in_fiat(crypto, fiat) if price_type == "market_based" else None
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/marketplace/offers/{offer_id}")
@@ -17415,7 +17308,6 @@ async def update_cms_offer(offer_id: str, request: dict):
             "message": "Offer updated successfully"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/cms/marketplace/offers/{offer_id}")
@@ -17429,7 +17321,6 @@ async def delete_cms_offer(offer_id: str):
             "message": "Offer deleted successfully"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/marketplace/list")
@@ -17529,7 +17420,6 @@ async def get_marketplace_list(
             "visibility": visibility
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/cms/marketplace/seed-default-sellers")
@@ -17615,7 +17505,6 @@ async def seed_default_sellers():
             "offers_created": len(seller_ids)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -17673,7 +17562,6 @@ async def get_cms_platform_settings():
             "settings": settings
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/settings/platform")
@@ -17742,11 +17630,10 @@ async def update_cms_platform_settings(request: dict):
             "settings": current
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/settings/fees")
-async def get_fee_settings_duplicate1():
+async def get_fee_settings():
     """Get wallet fee settings"""
     try:
         settings = await db.platform_settings.find_one({}, {"_id": 0})
@@ -17766,7 +17653,6 @@ async def get_fee_settings_duplicate1():
             "fees": settings["wallet_fees"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/settings/fees")
@@ -17803,7 +17689,6 @@ async def update_fee_settings(request: dict):
             "fees": settings["wallet_fees"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/settings/seller-limits")
@@ -17829,7 +17714,6 @@ async def get_seller_limits():
             "limits": settings["seller_limits"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/settings/seller-limits")
@@ -17865,7 +17749,6 @@ async def update_seller_limits(request: dict):
             "limits": settings["seller_limits"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/settings/marketplace-visibility")
@@ -17892,7 +17775,6 @@ async def get_marketplace_visibility():
             "visibility": settings["marketplace_visibility"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/settings/marketplace-visibility")
@@ -17925,7 +17807,6 @@ async def update_marketplace_visibility(request: dict):
             "visibility": settings["marketplace_visibility"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/cms/settings/display")
@@ -17951,7 +17832,6 @@ async def get_display_settings():
             "display": settings["display_settings"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/cms/settings/display")
@@ -17961,8 +17841,6 @@ async def update_display_settings(request: dict):
         settings = await db.platform_settings.find_one({})
         
         if not settings:
-    address = ""
-    amount = 0
             settings = {"setting_id": str(uuid.uuid4()), "display_settings": {}}
         
         if "display_settings" not in settings:
@@ -17991,7 +17869,6 @@ async def update_display_settings(request: dict):
             "display": settings["display_settings"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -18249,7 +18126,6 @@ async def create_dispute(request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -18298,7 +18174,6 @@ async def add_dispute_message(dispute_id: str, request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -18358,7 +18233,7 @@ async def upload_dispute_evidence(dispute_id: str, request: dict):
 
 
 @api_router.get("/p2p/disputes/{dispute_id}")
-async def get_dispute_duplicate1(dispute_id: str, user_id: str = Query(None)):
+async def get_dispute(dispute_id: str, user_id: str = Query(None)):
     """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
@@ -18426,12 +18301,11 @@ async def get_user_disputes(user_id: str):
             "count": len(disputes)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @api_router.get("/admin/disputes/all")
-async def get_all_disputes_duplicate1(status: Optional[str] = None):
+async def get_all_disputes(status: Optional[str] = None):
     """Admin: Get all disputes"""
     try:
         query = {}
@@ -18453,7 +18327,6 @@ async def get_all_disputes_duplicate1(status: Optional[str] = None):
             "count": len(disputes)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -18591,7 +18464,6 @@ async def resolve_dispute(dispute_id: str, request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -18627,7 +18499,6 @@ async def add_admin_note(dispute_id: str, request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -18667,7 +18538,7 @@ async def create_system_message(trade_id: str, event_type: str, additional_info:
     return message
 
 @api_router.post("/trade/chat/send")
-async def send_trade_message_duplicate1(request: SendMessageRequest):
+async def send_trade_message(request: SendMessageRequest):
     """Send a message in a trade chat"""
     try:
         # Verify trade exists
@@ -18709,7 +18580,6 @@ async def send_trade_message_duplicate1(request: SendMessageRequest):
             "message_id": message["message_id"]
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/trade/chat/{trade_id}")
@@ -18758,7 +18628,6 @@ async def get_trade_chat_messages(trade_id: str, user_id: str):
             }
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/trade/chat/mark-read")
@@ -18780,7 +18649,6 @@ async def mark_messages_as_read(request: MarkMessagesReadRequest):
             "messages_marked": result.modified_count
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/trade/chat/unread-count/{trade_id}")
@@ -18798,7 +18666,6 @@ async def get_unread_message_count(trade_id: str, user_id: str):
             "unread_count": count
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/trade/chat/admin/send")
@@ -18833,7 +18700,6 @@ async def admin_send_message(trade_id: str, message: str, admin_token: str = Hea
             "message": "Admin message sent"
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/trade-chats")
@@ -18925,7 +18791,6 @@ try:
                 "count": len(currencies)
             }
         except Exception as e:
-            # Exception handled
             return {
                 "success": False,
                 "message": str(e)
@@ -19418,7 +19283,7 @@ async def get_portfolio_with_allocations(user_id: str):
 # 🔒 END LOCKED SECTION - Portfolio/Wallet Value Calculation
 
 @api_router.get("/wallets/transactions/{user_id}")
-async def get_wallet_transactions_duplicate1(user_id: str, limit: int = 50):
+async def get_wallet_transactions(user_id: str, limit: int = 50):
     """
     Get transaction history for user from wallet_transactions collection
     """
@@ -19826,7 +19691,7 @@ async def admin_process_payout(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/admin/payouts/pending")
-async def get_pending_payouts_duplicate1():
+async def get_pending_payouts():
     """Get all pending payout requests for admin review"""
     try:
         payouts = await db.payouts.find(
@@ -19840,7 +19705,6 @@ async def get_pending_payouts_duplicate1():
             "count": len(payouts)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 # ===========================
@@ -19869,7 +19733,6 @@ async def upload_apk(file: UploadFile = File(...)):
             "path": str(apk_path)
         }
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/download-app")
@@ -20133,7 +19996,7 @@ async def get_live_prices():
     }
 
 @api_router.post("/prices/convert")
-async def convert_currency_duplicate1(request: dict):
+async def convert_currency(request: dict):
     """Convert between crypto and fiat currencies in real-time"""
     from_type = request.get("from_type")  # 'crypto' or 'fiat'
     to_type = request.get("to_type")      # 'crypto' or 'fiat'
@@ -20370,7 +20233,7 @@ async def get_user_sell_offers(user_id: str):
     }
 
 @api_router.get("/sell-offers/marketplace")
-async def get_marketplace_offers_duplicate1(
+async def get_marketplace_offers(
     crypto_asset: Optional[str] = None,
     fiat_currency: Optional[str] = None,
     payment_method: Optional[str] = None,
@@ -20548,7 +20411,6 @@ async def get_faq_categories():
         
         return {"success": True, "categories": categories}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/faq/items")
@@ -20588,7 +20450,6 @@ async def get_faq_items(category: Optional[str] = None, search: Optional[str] = 
         
         return {"success": True, "items": items, "count": len(items)}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/faq/item/{faq_id}")
@@ -20612,7 +20473,6 @@ async def get_faq_item(faq_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/faq/item/{faq_id}/feedback")
@@ -20641,7 +20501,6 @@ async def submit_faq_feedback(faq_id: str, request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== ADMIN FAQ MANAGEMENT ENDPOINTS ====================
@@ -20653,7 +20512,6 @@ async def admin_get_all_faqs():
         items = await db.faq_items.find({}, {"_id": 0}).sort([("category", 1), ("order", 1)]).to_list(1000)
         return {"success": True, "items": items, "count": len(items)}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/admin/faq/item")
@@ -20678,7 +20536,6 @@ async def admin_create_faq(request: dict):
         
         return {"success": True, "faq_id": faq_item["faq_id"], "message": "FAQ created successfully"}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/admin/faq/item/{faq_id}")
@@ -20707,7 +20564,6 @@ async def admin_update_faq(faq_id: str, request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/admin/faq/item/{faq_id}")
@@ -20723,7 +20579,6 @@ async def admin_delete_faq(faq_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/admin/faq/category")
@@ -20743,7 +20598,6 @@ async def admin_create_category(request: dict):
         
         return {"success": True, "category_id": category["category_id"], "message": "Category created successfully"}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/admin/faq/category/{category_id}")
@@ -20770,14 +20624,13 @@ async def admin_update_category(category_id: str, request: dict):
     except HTTPException:
         raise
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # ==================== NOTIFICATION SYSTEM ====================
 
 @api_router.get("/notifications")
-async def get_notifications_duplicate1(
+async def get_notifications(
     request: Request,
     unread_only: bool = Query(default=False),
     limit: int = Query(default=50, le=100),
@@ -21524,7 +21377,7 @@ async def verify_telegram_link_code(request: dict):
     }
 
 @api_router.get("/telegram/link-status")
-async def get_telegram_link_status_duplicate1(user_id: str):
+async def get_telegram_link_status(user_id: str):
     """Check if user has Telegram linked"""
     telegram_link = await db.telegram_links.find_one({"user_id": user_id, "linked": True})
     
@@ -23367,7 +23220,6 @@ async def add_favourite_merchant(request: Request):
         
         return {"success": True, "message": "Merchant added to favourites"}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -23386,7 +23238,6 @@ async def remove_favourite_merchant(request: Request):
         
         return {"success": True, "message": "Merchant removed from favourites"}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -23399,7 +23250,6 @@ async def get_favourite_merchants(user_id: str):
         
         return {"success": True, "favourites": favourites}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -23422,7 +23272,6 @@ async def block_user(request: Request):
         
         return {"success": True, "message": "User blocked"}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -23441,7 +23290,6 @@ async def unblock_user(request: Request):
         
         return {"success": True, "message": "User unblocked"}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -23454,7 +23302,6 @@ async def get_blocked_users(user_id: str):
         
         return {"success": True, "blocked": blocked}
     except Exception as e:
-        # Exception handled
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -23729,8 +23576,6 @@ async def get_admin_chat_settings():
 
 @app.post("/api/admin/chat/settings")
 async def update_admin_chat_settings(request: Request):
-    notes = ""
-    admin_user_id = ""
     """
     Update AI chat settings
     """
@@ -23842,7 +23687,7 @@ async def update_monetization_settings(updates: Dict):
         updates["updated_by"] = updates.get("admin_id", "admin")
         
         # Update or create settings
-        _result = await db.monetization_settings.update_one(
+        result = await db.monetization_settings.update_one(
             {"setting_id": "default_monetization"},
             {"$set": updates},
             upsert=True
@@ -24938,7 +24783,7 @@ async def get_security_logs(
     """Get security logs for admin dashboard"""
     try:
         from security_logger import SecurityLogger
-        _security_logger = SecurityLogger(db)
+        security_logger = SecurityLogger(db)
         
         # Build query filter
         query = {}
@@ -25133,7 +24978,7 @@ async def get_complete_revenue(period: str = "all"):
         total = sum(breakdown.values())
         
         # Calculate period-specific totals
-        _now_iso = now.isoformat()
+        now_iso = now.isoformat()
         today_start = (now - timedelta(days=1)).isoformat()
         week_start = (now - timedelta(days=7)).isoformat()
         month_start = (now - timedelta(days=30)).isoformat()
@@ -25601,7 +25446,7 @@ async def get_portfolio_holdings(user_id: str):
 
 
 @api_router.get("/nowpayments/currencies")
-async def get_nowpayments_currencies_duplicate1():
+async def get_nowpayments_currencies():
     """Get full list of available currencies from NOWPayments"""
     try:
         import httpx
@@ -25647,7 +25492,7 @@ async def get_nowpayments_currencies_duplicate1():
 # ============================================
 
 @api_router.get("/admin/customer-analytics")
-async def get_customer_analytics_duplicate1():
+async def get_customer_analytics():
     """Get customer analytics for business dashboard"""
     try:
         now = datetime.now(timezone.utc)
@@ -25954,14 +25799,14 @@ async def calculate_and_apply_fee(
 #
 # ⚠️  WARNING: DO NOT ADD ANY @api_router ENDPOINTS BELOW THIS LINE
 @api_router.post("/user/purchase-vip-tier")
-async def purchase_vip_tier_duplicate1(request: dict):
+async def purchase_vip_tier(request: dict):
     """
     Purchase VIP referral tier for £150 (one-time payment)
     Upgrades user from standard (20%) to VIP (20% lifetime)
     """
     try:
         user_id = request.get("user_id")
-        _payment_method = request.get("payment_method", "wallet_balance")
+        payment_method = request.get("payment_method", "wallet_balance")
         
         if not user_id:
             raise HTTPException(status_code=400, detail="Missing user_id")
@@ -25986,7 +25831,7 @@ async def purchase_vip_tier_duplicate1(request: dict):
         from wallet_service import get_wallet_service
         wallet_service = get_wallet_service()
         
-        _debit_result = await wallet_service.debit(
+        debit_result = await wallet_service.debit(
             user_id=user_id,
             currency="GBP",
             amount=vip_cost,
@@ -26456,7 +26301,7 @@ async def simulate_crypto_deposit(request: dict):
         }
 
 @api_router.get("/admin/pending-deposits")
-async def get_pending_deposits_duplicate1():
+async def get_pending_deposits():
     """Get all pending deposits"""
     try:
         from blockchain_simulator import BlockchainSimulator
@@ -26510,7 +26355,7 @@ async def update_admin_liquidity(request: dict):
             }
         
         # Update the balance
-        _result = await db.admin_liquidity_wallets.update_one(
+        result = await db.admin_liquidity_wallets.update_one(
             {"currency": currency},
             {
                 "$set": {
@@ -26641,7 +26486,7 @@ async def toggle_real_liquidity_sync(request: dict):
         }
 
 @api_router.get("/admin/liquidity-status")
-async def get_liquidity_status_duplicate1():
+async def get_liquidity_status():
     """Get current liquidity status for all currencies"""
     try:
         from liquidity_checker import LiquidityChecker
@@ -27239,7 +27084,7 @@ async def _update_stats_after_trade(trade_id: str):
 # =============================================================================
 
 @api_router.post("/p2p/trade/mark-paid")
-async def mark_trade_as_paid_duplicate1(request: dict):
+async def mark_trade_as_paid(request: dict):
     """Buyer marks payment as made"""
     try:
         trade_id = request.get("trade_id")
@@ -27399,7 +27244,7 @@ async def open_trade_dispute(request: dict):
 
 
 @api_router.post("/p2p/trade/cancel")
-async def cancel_trade_duplicate1(request: dict):
+async def cancel_trade(request: dict):
     """Cancel a trade (buyer only, before marking as paid)"""
     try:
         trade_id = request.get("trade_id")
@@ -27455,7 +27300,7 @@ async def cancel_trade_duplicate1(request: dict):
 
 
 @api_router.post("/p2p/trade/message")
-async def send_trade_message_duplicate2(request: dict):
+async def send_trade_message(request: dict):
     """Send a message in trade chat"""
     try:
         trade_id = request.get("trade_id")
@@ -27494,7 +27339,7 @@ async def send_trade_message_duplicate2(request: dict):
 
 
 @api_router.get("/p2p/trade/{trade_id}")
-async def get_trade_details_duplicate1(trade_id: str, user_id: str):
+async def get_trade_details(trade_id: str, user_id: str):
     """Get trade details with messages"""
     try:
         # Get trade
@@ -27706,7 +27551,6 @@ async def republish_listing(listing_id: str, request: dict):
         
         return {
             "success": True,
-    disabled = False
             "message": "Listing republished successfully",
             "listing_id": listing_id
         }
