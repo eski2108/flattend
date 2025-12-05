@@ -288,12 +288,18 @@ const AdminLiquidityManagement = () => {
             )}
           </div>
 
-          {/* Balances Table */}
+          {/* Balances Section */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
-              <IoWallet size={32} className="mr-3 text-cyan-400" />
-              NOWPayments Cryptocurrency Balances
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white flex items-center">
+                <IoWallet size={32} className="mr-3 text-cyan-400" />
+                NOWPayments Live Balances
+              </h2>
+              <div className="flex items-center space-x-2 text-sm">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="text-gray-400">Live from NOWPayments API</span>
+              </div>
+            </div>
             
             {nowpaymentsBalances.length === 0 ? (
               <PremiumCard className="p-12">
@@ -301,14 +307,73 @@ const AdminLiquidityManagement = () => {
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mx-auto mb-6">
                     <IoWallet size={48} className="text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">No Balances Found</h3>
+                  <h3 className="text-2xl font-bold text-white mb-3">No Liquidity Yet</h3>
                   <p className="text-gray-400 mb-6 max-w-md mx-auto">
-                    Your NOWPayments account doesn't have any cryptocurrency balances yet. 
-                    Deposit crypto to your NOWPayments wallet addresses to see them here.
+                    Your NOWPayments account is connected but has no crypto balances. 
+                    Deposit crypto to your NOWPayments wallet addresses to add platform liquidity.
                   </p>
+                  <a 
+                    href="https://nowpayments.io" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all"
+                  >
+                    <span>Go to NOWPayments</span>
+                    <IoArrowForward size={20} />
+                  </a>
                 </div>
               </PremiumCard>
             ) : (
+              <>
+                {/* Card View */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                  {nowpaymentsBalances.map((balance, index) => (
+                    <PremiumCard key={index} className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl">
+                            {balance.currency.substring(0, 1)}
+                          </div>
+                          <div>
+                            <div className="text-xl font-bold text-white">{balance.currency}</div>
+                            <div className="text-sm text-gray-400">Cryptocurrency</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">Available Balance</div>
+                          <div className="text-2xl font-bold text-white">{balance.balance.toFixed(8)}</div>
+                        </div>
+                        
+                        {balance.pending > 0 && (
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">Pending</div>
+                            <div className="text-lg font-semibold text-yellow-400">{balance.pending.toFixed(8)}</div>
+                          </div>
+                        )}
+                        
+                        <div className="pt-3 border-t border-white/10">
+                          <div className="text-xs text-gray-400 mb-1">Total Value</div>
+                          <div className="text-2xl font-bold text-cyan-400">
+                            £{balance.value_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            @ £{balance.price_gbp.toLocaleString('en-GB', { minimumFractionDigits: 2 })} per {balance.currency}
+                          </div>
+                        </div>
+                      </div>
+                    </PremiumCard>
+                  ))}
+                </div>
+                
+                {/* Detailed Table */}
+                <details className="group">
+                  <summary className="cursor-pointer text-cyan-400 hover:text-cyan-300 mb-4 text-sm font-semibold">
+                    Show detailed table view
+                  </summary>
+              <PremiumCard className="overflow-hidden">(
               <PremiumCard className="overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
