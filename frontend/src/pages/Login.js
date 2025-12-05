@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoShield } from 'react-icons/io5';
+import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoShield, IoCheckmarkCircle } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
-import CHXButton from '@/components/CHXButton';
 
 import API_BASE_URL from '@/config/api';
 const API = API_BASE_URL;
@@ -130,159 +129,345 @@ export default function Login() {
     }
   };
 
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #05121F 0%, #0A1F2E 50%, #051018 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Animated Background Elements */}
+  // 2FA Modal View
+  if (show2FA) {
+    return (
       <div style={{
-        position: 'absolute',
-        top: '10%',
-        left: '10%',
-        width: '400px',
-        height: '400px',
-        background: 'radial-gradient(circle, rgba(0, 198, 255, 0.15) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 8s ease-in-out infinite'
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '10%',
-        right: '10%',
-        width: '350px',
-        height: '350px',
-        background: 'radial-gradient(circle, rgba(123, 44, 255, 0.15) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 10s ease-in-out infinite reverse'
-      }} />
-
-      {/* Login Card */}
-      <div style={{
-        width: '100%',
-        maxWidth: '480px',
-        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.95) 0%, rgba(5, 16, 24, 0.95) 100%)',
-        backdropFilter: 'blur(30px)',
-        WebkitBackdropFilter: 'blur(30px)',
-        border: '1px solid rgba(0, 229, 255, 0.3)',
-        borderRadius: '28px',
-        padding: '40px 44px',
-        boxShadow: '0 0 50px rgba(0, 229, 255, 0.25), 0 25px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px',
         position: 'relative',
-        zIndex: 1,
         overflow: 'hidden'
       }}>
-        {/* Top Glow Decoration */}
+        {/* Animated Background */}
         <div style={{
           position: 'absolute',
-          top: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '80%',
-          height: '3px',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.8) 50%, transparent 100%)',
-          boxShadow: '0 0 20px rgba(0, 229, 255, 0.6)',
-          borderRadius: '0 0 50% 50%'
+          top: '-50%',
+          right: '-20%',
+          width: '800px',
+          height: '800px',
+          background: 'radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          animation: 'float 20s ease-in-out infinite'
         }} />
-        {/* Logo & Header */}
-        <div style={{ textAlign: 'center', marginBottom: '32px', marginTop: '28px' }}>
-          {/* Main Logo with Premium Glow */}
-          <div 
-            onClick={() => navigate('/')} 
-            style={{ 
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '24px',
-              cursor: 'pointer',
-              position: 'relative',
-              padding: '10px'
-            }}
-          >
-            {/* Glow Effect Circle Behind Logo */}
-            <div style={{
-              position: 'absolute',
-              width: '180px',
-              height: '180px',
-              background: 'radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 198, 255, 0.1) 40%, transparent 70%)',
-              borderRadius: '50%',
-              filter: 'blur(30px)',
-              animation: 'pulse 3s ease-in-out infinite',
-              zIndex: 0
-            }} />
-            
+        
+        <div style={{
+          position: 'absolute',
+          bottom: '-30%',
+          left: '-10%',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(155, 77, 255, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          animation: 'float 25s ease-in-out infinite reverse'
+        }} />
+
+        <div style={{
+          width: '100%',
+          maxWidth: '460px',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <img 
               src="/logo1-transparent.png" 
-              alt="Coin Hub X" 
-              style={{ 
-                height: '95px', 
+              alt="CoinHubX Logo" 
+              style={{
+                height: '120px',
                 width: 'auto',
-                filter: 'drop-shadow(0 0 35px rgba(0, 229, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.6)) drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5))',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                position: 'relative',
-                zIndex: 1
-              }} 
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.08) translateY(-5px)';
-                e.target.style.filter = 'drop-shadow(0 0 50px rgba(0, 229, 255, 1)) drop-shadow(0 0 100px rgba(0, 198, 255, 0.8)) drop-shadow(0 15px 50px rgba(0, 0, 0, 0.6))';
+                objectFit: 'contain',
+                imageRendering: 'crisp-edges',
+                marginBottom: '24px',
+                margin: '0 auto 24px auto',
+                display: 'block'
               }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1) translateY(0)';
-                e.target.style.filter = 'drop-shadow(0 0 35px rgba(0, 229, 255, 0.9)) drop-shadow(0 0 70px rgba(0, 198, 255, 0.6)) drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5))';
+            />
+            <h1 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              marginBottom: '10px',
+              letterSpacing: '-1px',
+              textShadow: '0 0 40px rgba(0, 240, 255, 0.3)'
+            }}>Two-Factor Authentication</h1>
+            <p style={{ color: '#B8C5D6', fontSize: '15px', fontWeight: '500' }}>Enter the 6-digit code from your authenticator app</p>
+          </div>
+
+          <div style={{ marginBottom: '18px' }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: '#FFFFFF',
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              <IoShield size={16} color="#00F0FF" />
+              Verification Code
+            </label>
+            <input
+              type="text"
+              value={twoFactorCode}
+              onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="123456"
+              maxLength={6}
+              style={{
+                width: '100%',
+                padding: '13px 16px',
+                background: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(0, 240, 255, 0.4)',
+                borderRadius: '12px',
+                color: '#FFFFFF',
+                fontSize: '18px',
+                letterSpacing: '4px',
+                textAlign: 'center',
+                outline: 'none',
+                transition: 'all 0.3s',
+                boxSizing: 'border-box',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
             />
           </div>
-          
-          {/* Welcome Text with Enhanced Styling */}
-          <h1 style={{ 
-            fontSize: '36px',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 40%, #00C6FF 70%, #0080FF 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            marginBottom: '0px',
-            letterSpacing: '0.8px',
-            lineHeight: '1.2',
-            textShadow: '0 0 40px rgba(0, 229, 255, 0.3)'
-          }}>
-            Welcome Back
-          </h1>
-          <p style={{ 
-            color: '#A3AEC2',
-            fontSize: '14px',
-            fontWeight: '500',
-            marginBottom: '26px',
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-            opacity: 0.9
-          }}>
-            Premium Crypto Exchange Platform
-          </p>
+
+          <button
+            onClick={handleVerify2FA}
+            disabled={loading || twoFactorCode.length !== 6}
+            style={{
+              width: '100%',
+              padding: '15px',
+              background: loading || twoFactorCode.length !== 6 ? 'rgba(143, 155, 179, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
+              border: 'none',
+              borderRadius: '14px',
+              color: '#FFFFFF',
+              fontSize: '16px',
+              fontWeight: '800',
+              cursor: loading || twoFactorCode.length !== 6 ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s',
+              boxShadow: loading || twoFactorCode.length !== 6 ? 'none' : '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)',
+              marginBottom: '18px',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase'
+            }}
+            onMouseEnter={(e) => {
+              if (!loading && twoFactorCode.length === 6) {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 32px rgba(0, 240, 255, 0.6), 0 0 60px rgba(155, 77, 255, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)';
+            }}
+          >
+            {loading ? 'Verifying...' : 'Verify & Login'}
+          </button>
+
+          <button
+            onClick={() => setShow2FA(false)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              background: 'transparent',
+              border: '1px solid rgba(0, 240, 255, 0.3)',
+              borderRadius: '12px',
+              color: '#00F0FF',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s'
+            }}
+          >
+            Back to Login
+          </button>
         </div>
 
-        {/* Login Form */}
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '40px 20px',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Animated Background */}
+      <div style={{
+        position: 'absolute',
+        top: '-50%',
+        right: '-20%',
+        width: '800px',
+        height: '800px',
+        background: 'radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%)',
+        borderRadius: '50%',
+        filter: 'blur(60px)',
+        animation: 'float 20s ease-in-out infinite'
+      }} />
+      
+      <div style={{
+        position: 'absolute',
+        bottom: '-30%',
+        left: '-10%',
+        width: '600px',
+        height: '600px',
+        background: 'radial-gradient(circle, rgba(155, 77, 255, 0.15) 0%, transparent 70%)',
+        borderRadius: '50%',
+        filter: 'blur(60px)',
+        animation: 'float 25s ease-in-out infinite reverse'
+      }} />
+
+      {/* Login Form */}
+      <div style={{
+        width: '100%',
+        maxWidth: '460px',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        {/* CHX Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <img 
+            src="/logo1-transparent.png" 
+            alt="CoinHubX Logo" 
+            style={{
+              height: '120px',
+              width: 'auto',
+              objectFit: 'contain',
+              imageRendering: 'crisp-edges',
+              marginBottom: '24px',
+              margin: '0 auto 24px auto',
+              display: 'block'
+            }}
+          />
+          <h1 style={{
+            fontSize: '36px',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '10px',
+            letterSpacing: '-1px',
+            textShadow: '0 0 40px rgba(0, 240, 255, 0.3)'
+          }}>Welcome Back</h1>
+          <p style={{ color: '#B8C5D6', fontSize: '15px', fontWeight: '500' }}>Sign in to continue trading</p>
+        </div>
+
+        {/* Google Sign In */}
+        <button
+          onClick={handleGoogleSignIn}
+          type="button"
+          disabled={loading}
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            background: 'rgba(10, 25, 41, 0.8)',
+            border: '1px solid rgba(0, 240, 255, 0.3)',
+            borderRadius: '14px',
+            color: '#FFFFFF',
+            fontSize: '15px',
+            fontWeight: '600',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            transition: 'all 0.3s',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          }}
+          onMouseEnter={(e) => {
+            if (!loading) {
+              e.target.style.background = 'rgba(10, 25, 41, 0.95)';
+              e.target.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+              e.target.style.transform = 'translateY(-1px)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'rgba(10, 25, 41, 0.8)';
+            e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+            e.target.style.transform = 'translateY(0)';
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        {/* OR Divider */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          marginBottom: '24px'
+        }}>
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent)',
+            boxShadow: '0 0 8px rgba(0, 240, 255, 0.3)'
+          }} />
+          <span style={{
+            color: '#00F0FF',
+            fontSize: '13px',
+            fontWeight: '700',
+            textShadow: '0 0 10px rgba(0, 240, 255, 0.5)'
+          }}>OR</span>
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent)',
+            boxShadow: '0 0 8px rgba(0, 240, 255, 0.3)'
+          }} />
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
-          {/* Email Field */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ 
+          {/* Email */}
+          <div style={{ marginBottom: '18px' }}>
+            <label style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
+              gap: '8px',
               color: '#FFFFFF',
-              fontSize: '15px',
-              fontWeight: '600',
-              marginBottom: '10px',
-              letterSpacing: '0.2px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoMail size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-2px)' }} />
+              <IoMail size={16} color="#00F0FF" />
               Email Address
             </label>
             <input
@@ -290,83 +475,78 @@ export default function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="you@example.com"
               required
               disabled={loading}
+              placeholder="you@example.com"
               style={{
                 width: '100%',
-                padding: '18px 20px',
+                padding: '13px 16px',
                 background: 'rgba(0, 0, 0, 0.4)',
-                border: '1px solid rgba(0, 229, 255, 0.25)',
-                borderRadius: '14px',
+                border: '1px solid rgba(0, 240, 255, 0.4)',
+                borderRadius: '12px',
                 color: '#FFFFFF',
-                fontSize: '16px',
+                fontSize: '15px',
                 outline: 'none',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: '500',
-                boxSizing: 'border-box'
+                transition: 'all 0.3s',
+                boxSizing: 'border-box',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-                e.target.style.boxShadow = '0 0 25px rgba(0, 229, 255, 0.2), inset 0 0 20px rgba(0, 229, 255, 0.05)';
-                e.target.style.background = 'rgba(0, 0, 0, 0.5)';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(0, 229, 255, 0.25)';
-                e.target.style.boxShadow = 'none';
-                e.target.style.background = 'rgba(0, 0, 0, 0.4)';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
             />
           </div>
 
-          {/* Password Field */}
-          <div style={{ marginBottom: '17px' }}>
-            <label style={{ 
+          {/* Password */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
+              gap: '8px',
               color: '#FFFFFF',
-              fontSize: '15px',
-              fontWeight: '600',
-              marginBottom: '10px',
-              letterSpacing: '0.2px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoLockClosed size={18} color="#00E5FF" strokeWidth={2.8} style={{ filter: 'brightness(1.15)', transform: 'translateY(-4px)' }} />
+              <IoLockClosed size={16} color="#00F0FF" />
               Password
             </label>
             <div style={{ position: 'relative' }}>
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="••••••••"
                 required
                 disabled={loading}
+                placeholder="Enter your password"
                 style={{
                   width: '100%',
-                  padding: '18px 55px 18px 20px',
+                  padding: '13px 50px 13px 16px',
                   background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(0, 229, 255, 0.25)',
-                  borderRadius: '14px',
+                  border: '1px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '12px',
                   color: '#FFFFFF',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   outline: 'none',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: '500',
-                  boxSizing: 'border-box'
+                  transition: 'all 0.3s',
+                  boxSizing: 'border-box',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-                  e.target.style.boxShadow = '0 0 25px rgba(0, 229, 255, 0.2), inset 0 0 20px rgba(0, 229, 255, 0.05)';
-                  e.target.style.background = 'rgba(0, 0, 0, 0.5)';
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                  e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(0, 229, 255, 0.25)';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.background = 'rgba(0, 0, 0, 0.4)';
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                  e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
                 }}
               />
               <button
@@ -374,275 +554,122 @@ export default function Login() {
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
                   position: 'absolute',
-                  right: '16px',
+                  right: '14px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  background: 'rgba(0, 229, 255, 0.1)',
-                  border: '1px solid rgba(0, 229, 255, 0.3)',
-                  borderRadius: '8px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#00F0FF',
                   cursor: 'pointer',
-                  color: '#00E5FF',
-                  padding: '8px',
+                  padding: '4px',
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.3s ease',
-                  width: '36px',
-                  height: '36px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(0, 229, 255, 0.2)';
-                  e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.5)';
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 229, 255, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(0, 229, 255, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.3)';
-                  e.currentTarget.style.boxShadow = 'none';
+                  alignItems: 'center'
                 }}
               >
-                {showPassword ? <IoEyeOff size={18} strokeWidth={2.5} /> : <IoEye size={18} strokeWidth={2.5} />}
+                {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
               </button>
             </div>
           </div>
 
           {/* Forgot Password Link */}
-          {!show2FA && (
-            <div style={{ textAlign: 'right', marginBottom: '20px', marginTop: '7px' }}>
-              <Link 
-                to="/forgot-password" 
-                style={{ 
-                  color: '#00C6FF', 
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease',
-                  textShadow: '0 0 10px rgba(0, 198, 255, 0.3)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.color = '#00E5FF';
-                  e.target.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = '#00C6FF';
-                  e.target.style.textShadow = '0 0 10px rgba(0, 198, 255, 0.3)';
-                }}
-              >
-                Forgot Password?
-              </Link>
-            </div>
-          )}
-
-          {/* 2FA Code Input - Shown after successful password verification */}
-          {show2FA && (
-            <div style={{ marginBottom: '20px', marginTop: '20px' }}>
-              <div style={{
-                background: 'rgba(0, 229, 255, 0.05)',
-                border: '1px solid rgba(0, 229, 255, 0.3)',
-                borderRadius: '12px',
-                padding: '20px',
-                marginBottom: '20px'
-              }}>
-                <label style={{ 
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  color: '#00E5FF',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  marginBottom: '12px',
-                  letterSpacing: '0.2px'
-                }}>
-                  <IoShield size={18} strokeWidth={2.8} style={{ filter: 'brightness(1.15)' }} />
-                  Two-Factor Authentication
-                </label>
-                <p style={{ 
-                  color: '#A3AEC2', 
-                  fontSize: '13px', 
-                  marginBottom: '16px',
-                  lineHeight: '1.5'
-                }}>
-                  Enter the 6-digit code from your authenticator app
-                </p>
-                <input
-                  type="text"
-                  value={twoFactorCode}
-                  onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="000000"
-                  maxLength="6"
-                  autoFocus
-                  style={{
-                    width: '100%',
-                    padding: '18px 20px',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(0, 229, 255, 0.25)',
-                    borderRadius: '14px',
-                    color: '#FFFFFF',
-                    fontSize: '24px',
-                    fontWeight: '600',
-                    textAlign: 'center',
-                    letterSpacing: '8px',
-                    outline: 'none',
-                    transition: 'all 0.3s ease',
-                    fontFamily: 'monospace',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-                    e.target.style.boxShadow = '0 0 25px rgba(0, 229, 255, 0.2)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(0, 229, 255, 0.25)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Login Button */}
-          {!show2FA ? (
-            <CHXButton
-              type="submit"
-              disabled={loading}
-              coinColor="#00C6FF"
-              variant="primary"
-              size="large"
-              fullWidth
-            >
-              {loading ? 'Logging in...' : 'Log In'}
-            </CHXButton>
-          ) : (
-            <CHXButton
-              type="button"
-              onClick={handleVerify2FA}
-              disabled={loading || twoFactorCode.length !== 6}
-              coinColor="#00C6FF"
-              variant="primary"
-              size="large"
-              fullWidth
-            >
-              {loading ? 'Verifying...' : 'Verify Code'}
-            </CHXButton>
-          )}
-        </form>
-
-        {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '30px 0 24px 0' }}>
-          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.3) 50%, transparent 100%)' }} />
-          <span style={{ 
-            color: '#00E5FF', 
-            fontSize: '13px', 
-            fontWeight: '700', 
-            textTransform: 'uppercase', 
-            letterSpacing: '1.5px',
-            padding: '0 8px',
-            textShadow: '0 0 15px rgba(0, 229, 255, 0.5)'
-          }}>OR</span>
-          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 229, 255, 0.3) 50%, transparent 100%)' }} />
-        </div>
-
-        {/* Google Sign In Button */}
-        <button
-          onClick={handleGoogleSignIn}
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '16px 24px',
-            background: 'linear-gradient(135deg, #0A1929 0%, #0D2137 100%)',
-            border: '1px solid rgba(0, 229, 255, 0.3)',
-            borderRadius: '14px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '14px',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 0 20px rgba(0, 229, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '16px',
-            fontWeight: '600',
-            color: '#FFFFFF',
-            opacity: loading ? 0.6 : 1,
-            boxSizing: 'border-box'
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #0D2137 0%, #0A1929 100%)';
-              e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 229, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #0A1929 0%, #0D2137 100%)';
-              e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.3)';
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
-          }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          <span style={{ letterSpacing: '0.3px' }}>Continue with Google</span>
-        </button>
-
-        {/* Sign Up Link */}
-        <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: '#8F9BB3', fontSize: '15px', marginBottom: 0 }}>
-            Don't have an account?{' '}
-            <Link 
-              to="/register" 
-              style={{ 
-                color: '#00C6FF',
-                fontWeight: '700',
+          <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+            <Link
+              to="/forgot-password"
+              style={{
+                color: '#00F0FF',
+                fontSize: '13px',
+                fontWeight: '600',
                 textDecoration: 'none',
-                transition: 'all 0.3s ease',
-                textShadow: '0 0 10px rgba(0, 198, 255, 0.3)'
+                transition: 'all 0.3s',
+                textShadow: '0 0 10px rgba(0, 240, 255, 0.3)'
               }}
               onMouseEnter={(e) => {
-                e.target.style.color = '#00E5FF';
-                e.target.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.6)';
+                e.target.style.color = '#9B4DFF';
+                e.target.style.textShadow = '0 0 10px rgba(155, 77, 255, 0.5)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = '#00C6FF';
-                e.target.style.textShadow = '0 0 10px rgba(0, 198, 255, 0.3)';
+                e.target.style.color = '#00F0FF';
+                e.target.style.textShadow = '0 0 10px rgba(0, 240, 255, 0.3)';
               }}
             >
-              Sign Up
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '15px',
+              background: loading ? 'rgba(143, 155, 179, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
+              border: 'none',
+              borderRadius: '14px',
+              color: '#FFFFFF',
+              fontSize: '16px',
+              fontWeight: '800',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s',
+              boxShadow: loading ? 'none' : '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)',
+              marginBottom: '18px',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase'
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 32px rgba(0, 240, 255, 0.6), 0 0 60px rgba(155, 77, 255, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)';
+            }}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </button>
+
+          {/* Register Link */}
+          <p style={{
+            textAlign: 'center',
+            color: '#8F9BB3',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            Don't have an account?{' '}
+            <Link
+              to="/register"
+              style={{
+                color: '#00F0FF',
+                fontWeight: '700',
+                textDecoration: 'none',
+                transition: 'all 0.3s',
+                textShadow: '0 0 10px rgba(0, 240, 255, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#9B4DFF';
+                e.target.style.textShadow = '0 0 10px rgba(155, 77, 255, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#00F0FF';
+                e.target.style.textShadow = '0 0 10px rgba(0, 240, 255, 0.3)';
+              }}
+            >
+              Create Account
             </Link>
           </p>
-        </div>
+        </form>
       </div>
 
       <style>{`
         @keyframes float {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(20px, 20px); }
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
         }
-        
-        @keyframes pulse {
-          0%, 100% { 
-            transform: scale(1);
-            opacity: 0.6;
-          }
-          50% { 
-            transform: scale(1.1);
-            opacity: 0.8;
-          }
-        }
-        
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus {
-          -webkit-text-fill-color: #FFFFFF !important;
-          -webkit-box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.4) inset !important;
-          transition: background-color 5000s ease-in-out 0s;
+        input::placeholder {
+          color: rgba(184, 197, 214, 0.6) !important;
+          font-weight: 500;
         }
       `}</style>
     </div>
