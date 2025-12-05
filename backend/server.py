@@ -1764,6 +1764,7 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     
     # 🔒 LOCKED: Update merchant stats after successful trade
     try:
+                order_id = order.get("order_id", "")
         await _update_stats_after_trade(order_id)
     except Exception as e:
         logger.error(f"Failed to update stats: {str(e)}")
@@ -3058,8 +3059,10 @@ async def create_trade(request: CreateTradeRequest):
     
     return result
     
+            trade = await db.p2p_trades.find_one({"trade_id": trade_id}) or {}
     # Create system message for trade opened
     await create_system_message(trade.trade_id, "trade_opened")
+             sell_order = await db.p2p_offers.find_one({"offer_id": trade.get("offer_id")}) or {}
     
     # Update sell order remaining amount
     new_crypto_amount = sell_order["crypto_amount"] - request.crypto_amount
@@ -4720,6 +4723,7 @@ async def transfer_to_savings_OLD(request: dict):
                             "updated_at": datetime.now(timezone.utc).isoformat()
                         }
                     }
+                        spot_balance = user_balance.get("spot_balance", 0)
                 )
             
             # Add to wallet
@@ -5093,6 +5097,8 @@ async def get_all_trader_balances(limit: int = 100):
         "note": "This shows all trader balances held in P2P escrow system"
     }
 
+         balance_dict = {}
+        total_usd_estimate = 0
 
     
     return {
@@ -7132,6 +7138,7 @@ async def verify_phone(request: dict):
                 "message": "Phone verified successfully"
             }
             
+            verification_token = verification.get("token", "")
     except Exception as e:
         logger.error(f"❌ Phone verification error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
@@ -7139,6 +7146,7 @@ async def verify_phone(request: dict):
     try:
         verification_link = f"{os.environ.get('BACKEND_URL')}/api/auth/verify-email?token={verification_token}"
         
+                user_account = await db.users.find_one({"user_id": user_id})
         # Send email via SendGrid
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
@@ -10184,6 +10192,8 @@ async def get_admin_withdrawals():
     ).sort("created_at", -1).to_list(100)
     
     return {
+                currency = request.get("currency", "BTC")
+        wallet = await get_user_wallet(user_id, currency)
         "success": True,
         "withdrawals": withdrawals,
         "count": len(withdrawals)
@@ -11972,6 +11982,7 @@ async def get_boost_status(ad_id: str):
     
     return {
         "success": True,
+                swaps = await db.swaps.find({"user_id": user_id}).to_list(100)
         "is_boosted": is_boosted,
         "boost_end_date": boost_end_date.isoformat() if boost_end_date else None,
         "duration_type": offer.get("boost_duration_type"),
@@ -12496,6 +12507,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
     fee_dict['source_user_id'] = request.user_id
     fee_dict['fee_type'] = 'withdrawal_fee'
     await db.crypto_transactions.insert_one(fee_dict)
+             withdrawal_id = withdrawal.get("withdrawal_id", "")
     
     # Process referral commission
     try:
@@ -15508,6 +15520,7 @@ async def get_admin_external_wallets():
         
         wallets = config.get("admin_external_wallets", {}) if config else {}
         
+                currency = request.get("currency", "BTC")
         return {
             "success": True,
             "wallets": wallets
@@ -17867,6 +17880,7 @@ async def update_display_settings(request: dict):
             "success": True,
             "message": "Display settings updated successfully",
             "display": settings["display_settings"]
+                currency = request.get("currency"); amount = request.get("amount", 0); address = request.get("address", "")
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -21595,6 +21609,7 @@ async def cleanup_expired_boosts_loop():
 
 
 # Background task to check price alerts
+        # get_price_in_gbp is defined above
 async def price_alert_checker():
     """
     Background task that runs every 5 minutes to check price alerts
@@ -23600,6 +23615,7 @@ async def update_admin_chat_settings(request: Request):
             upsert=True
         )
         
+                amount = request.get("amount", 0); currency = request.get("currency", "BTC"); admin_user_id = request.get("admin_user_id", ""); notes = request.get("notes", "")
         return {
             "success": True,
             "message": "Settings updated"
@@ -27574,6 +27590,7 @@ app.include_router(api_router)
 async def get_test_mode():
     """Check if test mode is enabled"""
     test_mode = os.environ.get("TEST_MODE", "false").lower() == "true"
+            disabled = False
     return {
         "test_mode": test_mode,
         "environment": os.environ.get("ENVIRONMENT", "production")
