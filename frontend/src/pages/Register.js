@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoPersonOutline, IoPhonePortrait, IoShield } from 'react-icons/io5';
+import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoPersonOutline, IoChevronDown, IoShield, IoCheckmarkCircle } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
 import API_BASE_URL from '@/config/api';
 
 const API = API_BASE_URL;
-const AUTH_URL = 'https://auth.emergentagent.com';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -19,11 +18,20 @@ export default function Register() {
     phone_number: '',
     password: '',
     confirmPassword: '',
-    referral_code: referralCode
+    referral_code: referralCode,
+    country_code: '+44'
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+
+  const countries = [
+    { code: '+44', flag: '🇬🇧', name: 'UK' },
+    { code: '+1', flag: '🇺🇸', name: 'US' },
+    { code: '+91', flag: '🇮🇳', name: 'India' },
+    { code: '+234', flag: '🇳🇬', name: 'Nigeria' },
+  ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,7 +56,7 @@ export default function Register() {
       const response = await axios.post(`${API}/api/auth/register`, {
         full_name: formData.full_name,
         email: formData.email,
-        phone_number: formData.phone_number,
+        phone_number: formData.country_code + formData.phone_number,
         password: formData.password,
         referral_code: formData.referral_code || undefined
       });
@@ -75,11 +83,11 @@ export default function Register() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px',
+      padding: '40px 20px',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Animated Background Elements */}
+      {/* Animated Background */}
       <div style={{
         position: 'absolute',
         top: '-50%',
@@ -107,41 +115,53 @@ export default function Register() {
       {/* Register Card */}
       <div style={{
         width: '100%',
-        maxWidth: '480px',
-        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.95) 0%, rgba(5, 16, 24, 0.95) 100%)',
-        border: '1px solid rgba(0, 198, 255, 0.3)',
-        borderRadius: '24px',
-        padding: '40px',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 100px rgba(0, 198, 255, 0.1)',
+        maxWidth: '460px',
+        background: 'linear-gradient(135deg, rgba(10, 25, 41, 0.98) 0%, rgba(5, 16, 24, 0.98) 100%)',
+        border: '1px solid rgba(0, 240, 255, 0.3)',
+        borderRadius: '32px',
+        padding: '48px 36px 36px 36px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 100px rgba(0, 240, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(20px)',
         position: 'relative',
         zIndex: 1
       }}>
-        {/* Logo & Title */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        {/* CHX Shield Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{
-            width: '80px',
-            height: '80px',
-            margin: '0 auto 20px',
-            background: 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
-            borderRadius: '20px',
+            width: '100px',
+            height: '100px',
+            margin: '0 auto 24px',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
+            borderRadius: '24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 8px 32px rgba(0, 240, 255, 0.4)'
+            boxShadow: '0 12px 40px rgba(0, 240, 255, 0.5), 0 0 60px rgba(155, 77, 255, 0.3)',
+            animation: 'glow 3s ease-in-out infinite',
+            position: 'relative'
           }}>
-            <IoShield size={40} color="#FFF" />
+            <IoShield size={56} color="#FFF" style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }} />
+            <div style={{
+              position: 'absolute',
+              inset: '-2px',
+              background: 'linear-gradient(135deg, #00F0FF, #9B4DFF)',
+              borderRadius: '24px',
+              opacity: 0.3,
+              filter: 'blur(8px)',
+              zIndex: -1
+            }} />
           </div>
           <h1 style={{
-            fontSize: '32px',
-            fontWeight: '700',
-            background: 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
+            fontSize: '36px',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            marginBottom: '8px',
-            letterSpacing: '-0.5px'
+            marginBottom: '10px',
+            letterSpacing: '-1px',
+            textShadow: '0 0 40px rgba(0, 240, 255, 0.3)'
           }}>Create Account</h1>
-          <p style={{ color: '#8F9BB3', fontSize: '14px' }}>Join CoinHubX and start trading crypto</p>
+          <p style={{ color: '#B8C5D6', fontSize: '15px', fontWeight: '500' }}>Join CoinHubX and start trading crypto</p>
         </div>
 
         {/* Google Sign Up */}
@@ -151,10 +171,10 @@ export default function Register() {
           disabled={loading}
           style={{
             width: '100%',
-            padding: '14px',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '12px',
+            padding: '12px 16px',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '14px',
             color: '#FFFFFF',
             fontSize: '15px',
             fontWeight: '600',
@@ -163,21 +183,24 @@ export default function Register() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '12px',
-            transition: 'all 0.3s'
+            gap: '10px',
+            transition: 'all 0.3s',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
           }}
           onMouseEnter={(e) => {
             if (!loading) {
-              e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-              e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              e.target.style.background = 'rgba(255, 255, 255, 0.12)';
+              e.target.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+              e.target.style.transform = 'translateY(-1px)';
             }
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = 'rgba(255, 255, 255, 0.05)';
-            e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+            e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            e.target.style.transform = 'translateY(0)';
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 48 48">
+          <svg width="18" height="18" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
             <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
@@ -186,31 +209,49 @@ export default function Register() {
           Continue with Google
         </button>
 
+        {/* OR Divider with Neon Glow */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '16px',
           marginBottom: '24px'
         }}>
-          <div style={{ flex: 1, height: '1px', background: 'rgba(143, 155, 179, 0.2)' }} />
-          <span style={{ color: '#8F9BB3', fontSize: '13px', fontWeight: '500' }}>OR</span>
-          <div style={{ flex: 1, height: '1px', background: 'rgba(143, 155, 179, 0.2)' }} />
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent)',
+            boxShadow: '0 0 8px rgba(0, 240, 255, 0.3)'
+          }} />
+          <span style={{
+            color: '#00F0FF',
+            fontSize: '13px',
+            fontWeight: '700',
+            textShadow: '0 0 10px rgba(0, 240, 255, 0.5)'
+          }}>OR</span>
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent)',
+            boxShadow: '0 0 8px rgba(0, 240, 255, 0.3)'
+          }} />
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
           {/* Full Name */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '18px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '10px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoPersonOutline size={18} />
+              <IoPersonOutline size={16} color="#00F0FF" />
               Full Name
             </label>
             <input
@@ -223,39 +264,42 @@ export default function Register() {
               placeholder="John Doe"
               style={{
                 width: '100%',
-                padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(0, 198, 255, 0.3)',
+                padding: '13px 16px',
+                background: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(0, 240, 255, 0.4)',
                 borderRadius: '12px',
                 color: '#FFFFFF',
                 fontSize: '15px',
                 outline: 'none',
                 transition: 'all 0.3s',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.6)';
-                e.target.style.boxShadow = '0 0 20px rgba(0, 198, 255, 0.2)';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.3)';
-                e.target.style.boxShadow = 'none';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
             />
           </div>
 
           {/* Email */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '18px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '10px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoMail size={18} />
+              <IoMail size={16} color="#00F0FF" />
               Email Address
             </label>
             <input
@@ -268,84 +312,163 @@ export default function Register() {
               placeholder="you@example.com"
               style={{
                 width: '100%',
-                padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(0, 198, 255, 0.3)',
+                padding: '13px 16px',
+                background: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(0, 240, 255, 0.4)',
                 borderRadius: '12px',
                 color: '#FFFFFF',
                 fontSize: '15px',
                 outline: 'none',
                 transition: 'all 0.3s',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.6)';
-                e.target.style.boxShadow = '0 0 20px rgba(0, 198, 255, 0.2)';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.3)';
-                e.target.style.boxShadow = 'none';
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
               }}
             />
           </div>
 
-          {/* Phone */}
-          <div style={{ marginBottom: '20px' }}>
+          {/* Phone with Country Selector */}
+          <div style={{ marginBottom: '18px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '10px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoPhonePortrait size={18} />
-              Phone Number
+              📱 Phone Number
             </label>
-            <input
-              type="tel"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleChange}
-              required
-              disabled={loading}
-              placeholder="+44 7700 900000"
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(0, 198, 255, 0.3)',
-                borderRadius: '12px',
-                color: '#FFFFFF',
-                fontSize: '15px',
-                outline: 'none',
-                transition: 'all 0.3s',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.6)';
-                e.target.style.boxShadow = '0 0 20px rgba(0, 198, 255, 0.2)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(0, 198, 255, 0.3)';
-                e.target.style.boxShadow = 'none';
-              }}
-            />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                  style={{
+                    padding: '13px 12px',
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    border: '1px solid rgba(0, 240, 255, 0.4)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    minWidth: '90px',
+                    boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
+                  }}
+                >
+                  <span style={{ fontSize: '18px' }}>{countries.find(c => c.code === formData.country_code)?.flag}</span>
+                  <span style={{ fontSize: '14px', fontWeight: '600' }}>{formData.country_code}</span>
+                  <IoChevronDown size={14} />
+                </button>
+                {showCountryDropdown && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    marginTop: '4px',
+                    background: 'rgba(10, 25, 41, 0.98)',
+                    border: '1px solid rgba(0, 240, 255, 0.4)',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    zIndex: 100,
+                    minWidth: '140px',
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
+                  }}>
+                    {countries.map(country => (
+                      <button
+                        key={country.code}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, country_code: country.code });
+                          setShowCountryDropdown(false);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          background: 'transparent',
+                          border: 'none',
+                          color: '#FFFFFF',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = 'rgba(0, 240, 255, 0.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = 'transparent';
+                        }}
+                      >
+                        <span style={{ fontSize: '18px' }}>{country.flag}</span>
+                        <span style={{ fontWeight: '600' }}>{country.code}</span>
+                        <span style={{ color: '#8F9BB3', fontSize: '12px' }}>{country.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <input
+                type="tel"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                required
+                disabled={loading}
+                placeholder="7700 900000"
+                style={{
+                  flex: 1,
+                  padding: '13px 16px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '12px',
+                  color: '#FFFFFF',
+                  fontSize: '15px',
+                  outline: 'none',
+                  transition: 'all 0.3s',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                  e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                  e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
+                }}
+              />
+            </div>
           </div>
 
           {/* Password */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '18px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '10px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoLockClosed size={18} />
+              <IoLockClosed size={16} color="#00F0FF" />
               Password
             </label>
             <div style={{ position: 'relative' }}>
@@ -356,26 +479,27 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 disabled={loading}
-                placeholder="Minimum 8 characters"
+                placeholder="Minimum 8 characters • Mix letters & numbers"
                 style={{
                   width: '100%',
-                  padding: '14px 50px 14px 16px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(0, 198, 255, 0.3)',
+                  padding: '13px 50px 13px 16px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(0, 240, 255, 0.4)',
                   borderRadius: '12px',
                   color: '#FFFFFF',
                   fontSize: '15px',
                   outline: 'none',
                   transition: 'all 0.3s',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(0, 198, 255, 0.6)';
-                  e.target.style.boxShadow = '0 0 20px rgba(0, 198, 255, 0.2)';
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                  e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(0, 198, 255, 0.3)';
-                  e.target.style.boxShadow = 'none';
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                  e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
                 }}
               />
               <button
@@ -388,7 +512,7 @@ export default function Register() {
                   transform: 'translateY(-50%)',
                   background: 'transparent',
                   border: 'none',
-                  color: '#8F9BB3',
+                  color: '#00F0FF',
                   cursor: 'pointer',
                   padding: '4px',
                   display: 'flex',
@@ -401,17 +525,19 @@ export default function Register() {
           </div>
 
           {/* Confirm Password */}
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '10px'
+              fontSize: '13px',
+              fontWeight: '700',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
             }}>
-              <IoLockClosed size={18} />
+              <IoCheckmarkCircle size={16} color="#00F0FF" />
               Confirm Password
             </label>
             <div style={{ position: 'relative' }}>
@@ -422,26 +548,27 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 disabled={loading}
-                placeholder="Re-enter your password"
+                placeholder="Re-enter password to confirm"
                 style={{
                   width: '100%',
-                  padding: '14px 50px 14px 16px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(0, 198, 255, 0.3)',
+                  padding: '13px 50px 13px 16px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: `1px solid ${formData.confirmPassword && formData.password !== formData.confirmPassword ? 'rgba(239, 68, 68, 0.6)' : 'rgba(0, 240, 255, 0.4)'}`,
                   borderRadius: '12px',
                   color: '#FFFFFF',
                   fontSize: '15px',
                   outline: 'none',
                   transition: 'all 0.3s',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(0, 198, 255, 0.6)';
-                  e.target.style.boxShadow = '0 0 20px rgba(0, 198, 255, 0.2)';
+                  e.target.style.borderColor = formData.confirmPassword && formData.password !== formData.confirmPassword ? 'rgba(239, 68, 68, 0.8)' : 'rgba(0, 240, 255, 0.8)';
+                  e.target.style.boxShadow = `0 0 20px ${formData.confirmPassword && formData.password !== formData.confirmPassword ? 'rgba(239, 68, 68, 0.3)' : 'rgba(0, 240, 255, 0.3)'}, inset 0 2px 4px rgba(0, 0, 0, 0.2)`;
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(0, 198, 255, 0.3)';
-                  e.target.style.boxShadow = 'none';
+                  e.target.style.borderColor = formData.confirmPassword && formData.password !== formData.confirmPassword ? 'rgba(239, 68, 68, 0.6)' : 'rgba(0, 240, 255, 0.4)';
+                  e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
                 }}
               />
               <button
@@ -454,7 +581,7 @@ export default function Register() {
                   transform: 'translateY(-50%)',
                   background: 'transparent',
                   border: 'none',
-                  color: '#8F9BB3',
+                  color: '#00F0FF',
                   cursor: 'pointer',
                   padding: '4px',
                   display: 'flex',
@@ -464,22 +591,25 @@ export default function Register() {
                 {showConfirmPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
               </button>
             </div>
+            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+              <p style={{ color: '#EF4444', fontSize: '12px', marginTop: '6px', fontWeight: '500' }}>⚠️ Passwords do not match</p>
+            )}
           </div>
 
-          {/* Referral Code (Optional) */}
+          {/* Referral Code */}
           {formData.referral_code && (
             <div style={{
-              marginBottom: '24px',
-              padding: '12px 16px',
-              background: 'rgba(34, 197, 94, 0.1)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
+              marginBottom: '20px',
+              padding: '10px 14px',
+              background: 'rgba(34, 197, 94, 0.12)',
+              border: '1px solid rgba(34, 197, 94, 0.4)',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px'
             }}>
-              <span style={{ color: '#22C55E', fontSize: '14px', fontWeight: '600' }}>
-                🎁 Referral Code Applied: {formData.referral_code}
+              <span style={{ color: '#22C55E', fontSize: '13px', fontWeight: '700' }}>
+                🎁 Referral: {formData.referral_code}
               </span>
             </div>
           )}
@@ -490,27 +620,29 @@ export default function Register() {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '16px',
-              background: loading ? 'rgba(143, 155, 179, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
+              padding: '15px',
+              background: loading ? 'rgba(143, 155, 179, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 50%, #9B4DFF 100%)',
               border: 'none',
-              borderRadius: '12px',
+              borderRadius: '14px',
               color: '#FFFFFF',
               fontSize: '16px',
-              fontWeight: '700',
+              fontWeight: '800',
               cursor: loading ? 'not-allowed' : 'pointer',
               transition: 'all 0.3s',
-              boxShadow: loading ? 'none' : '0 4px 20px rgba(0, 240, 255, 0.4)',
-              marginBottom: '20px'
+              boxShadow: loading ? 'none' : '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)',
+              marginBottom: '18px',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase'
             }}
             onMouseEnter={(e) => {
               if (!loading) {
                 e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 30px rgba(0, 240, 255, 0.6)';
+                e.target.style.boxShadow = '0 8px 32px rgba(0, 240, 255, 0.6), 0 0 60px rgba(155, 77, 255, 0.4)';
               }
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 4px 20px rgba(0, 240, 255, 0.4)';
+              e.target.style.boxShadow = '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)';
             }}
           >
             {loading ? 'Creating Account...' : 'Create Account'}
@@ -520,22 +652,26 @@ export default function Register() {
           <p style={{
             textAlign: 'center',
             color: '#8F9BB3',
-            fontSize: '14px'
+            fontSize: '14px',
+            fontWeight: '500'
           }}>
             Already have an account?{' '}
             <Link
               to="/login"
               style={{
                 color: '#00F0FF',
-                fontWeight: '600',
+                fontWeight: '700',
                 textDecoration: 'none',
-                transition: 'all 0.3s'
+                transition: 'all 0.3s',
+                textShadow: '0 0 10px rgba(0, 240, 255, 0.3)'
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#9B4DFF';
+                e.target.style.textShadow = '0 0 10px rgba(155, 77, 255, 0.5)';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#00F0FF';
+                e.target.style.textShadow = '0 0 10px rgba(0, 240, 255, 0.3)';
               }}
             >
               Login
@@ -548,6 +684,14 @@ export default function Register() {
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 12px 40px rgba(0, 240, 255, 0.5), 0 0 60px rgba(155, 77, 255, 0.3); }
+          50% { box-shadow: 0 12px 40px rgba(0, 240, 255, 0.7), 0 0 80px rgba(155, 77, 255, 0.5); }
+        }
+        input::placeholder {
+          color: rgba(184, 197, 214, 0.6) !important;
+          font-weight: 500;
         }
       `}</style>
     </div>
