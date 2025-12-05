@@ -25903,7 +25903,7 @@ async def update_admin_liquidity(request: dict):
             }
         
         # Update the balance
-        result = await db.admin_liquidity_wallets.update_one(
+        await db.admin_liquidity_wallets.update_one(
             {"currency": currency},
             {
                 "$set": {
