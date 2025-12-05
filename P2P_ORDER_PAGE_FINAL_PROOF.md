@@ -20,7 +20,7 @@ async def get_p2p_trade_details(trade_id: str, user_id: str = Query(...)):
 
 **Test Result**:
 ```bash
-curl "https://cryptolaunch-9.preview.emergentagent.com/api/p2p/trade/cab8b21a-e9c0-4a7c-af68-61391e6a520f?user_id=test_buyer_123"
+curl "https://cryptovault-29.preview.emergentagent.com/api/p2p/trade/cab8b21a-e9c0-4a7c-af68-61391e6a520f?user_id=test_buyer_123"
 # Returns: {"success": true, "trade": {...}, "messages": [...]}
 ```
 
@@ -723,7 +723,7 @@ setTimeout(() => {
 
 **Manual P2P Flow**: User can also manually navigate to any order via:
 ```
-https://cryptolaunch-9.preview.emergentagent.com/p2p/order/{trade_id}
+https://cryptovault-29.preview.emergentagent.com/p2p/order/{trade_id}
 ```
 
 **Features**:

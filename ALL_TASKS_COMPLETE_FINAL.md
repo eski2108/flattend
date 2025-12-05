@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://cryptolaunch-9.preview.emergentagent.com
+**URL:** https://cryptovault-29.preview.emergentagent.com
 
 **Services Status:**
 ```bash
