@@ -20257,14 +20257,8 @@ async def get_user_sell_offers(user_id: str):
         "offers": offers
     }
 
-# DUPLICATE: @api_router.get("/sell-offers/marketplace")
-# DUPLICATE: async def get_marketplace_offers(...):
-#     """Get published sell offers for marketplace (buyer view) with advanced filters"""
-#     pass
-    
-    # Enrich with seller info and payment method details
-    enriched_offers = []
-    for offer in offers:
+# DUPLICATE: This entire function was a duplicate and has been removed
+# The working implementation is defined earlier in the file
         # Get seller info
         seller = await db.user_accounts.find_one(
             {"user_id": offer["seller_id"]},
