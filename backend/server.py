@@ -24593,8 +24593,8 @@ async def get_complete_revenue(period: str = "all"):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-    
-    🔒 CRITICAL: This endpoint MUST return the SAME total value as /api/wallets/portfolio
+    """
+    CRITICAL: This endpoint MUST return the SAME total value as /api/wallets/portfolio
     Uses unified GBP pricing via fetch_live_prices()
     """
     try:
