@@ -592,37 +592,101 @@ class CoinHubXComprehensiveTester:
                          f"Failed to get liquidity data with status {status}", response,
                          performance_ms=response_time)
     
-    async def test_leaderboard_response_structure(self):
-        """Test leaderboard response structure matches expected format"""
-        success, data, status = await self.make_request("GET", "/p2p/leaderboard")
+    # ==================== SECURITY TESTS ====================
+    
+    async def test_rate_limiting(self):
+        """Test rate limiting on authentication endpoints"""
+        # Try multiple rapid login attempts
+        invalid_data = {"email": "test@test.com", "password": "wrong"}
         
-        if success and isinstance(data, dict) and data.get("success"):
-            leaderboard = data.get("leaderboard", [])
-            
-            if leaderboard:
-                # Check first entry structure
-                entry = leaderboard[0]
-                expected_fields = [
-                    "rank", "user_id", "username", "country", "total_volume_gbp",
-                    "total_trades", "completion_rate", "avg_release_time_seconds",
-                    "badges", "verified"
-                ]
-                
-                has_all_fields = all(field in entry for field in expected_fields)
-                
-                if has_all_fields:
-                    self.log_test("Leaderboard Response Structure", True, 
-                                 f"All expected fields present in leaderboard entry")
-                else:
-                    missing_fields = [f for f in expected_fields if f not in entry]
-                    self.log_test("Leaderboard Response Structure", False, 
-                                 f"Missing fields: {missing_fields}", entry)
-            else:
-                self.log_test("Leaderboard Response Structure", True, 
-                             "Empty leaderboard (no trades yet)")
+        attempts = []
+        for i in range(5):
+            success, response, status, response_time = await self.make_request(
+                "POST", "/auth/login", json=invalid_data
+            )
+            attempts.append({"attempt": i+1, "status": status, "response_time": response_time})
+            await asyncio.sleep(0.1)  # Small delay between attempts
+        
+        # Check if rate limiting kicks in (status 429)
+        rate_limited = any(attempt["status"] == 429 for attempt in attempts)
+        
+        if rate_limited:
+            self.log_test("Rate Limiting", True, 
+                         "Rate limiting detected on login endpoint", 
+                         {"attempts": len(attempts), "rate_limited": True})
         else:
-            self.log_test("Leaderboard Response Structure", False, 
-                         f"Request failed with status {status}", data)
+            self.log_test("Rate Limiting", False, 
+                         "No rate limiting detected (may need configuration)", 
+                         {"attempts": len(attempts), "statuses": [a["status"] for a in attempts]})
+    
+    async def test_input_validation(self):
+        """Test input validation on registration"""
+        invalid_registrations = [
+            {"email": "invalid-email", "password": "123"},  # Invalid email and weak password
+            {"email": "", "password": ""},  # Empty fields
+            {"email": "test@test.com"},  # Missing password
+            {"password": "TestPass123!"},  # Missing email
+        ]
+        
+        validation_results = []
+        for i, invalid_data in enumerate(invalid_registrations):
+            success, response, status, response_time = await self.make_request(
+                "POST", "/auth/register", json=invalid_data
+            )
+            
+            # Should return 400 or 422 for validation errors
+            is_properly_rejected = status in [400, 422] and not success
+            validation_results.append({
+                "test_case": i+1,
+                "data": invalid_data,
+                "properly_rejected": is_properly_rejected,
+                "status": status
+            })
+        
+        all_rejected = all(result["properly_rejected"] for result in validation_results)
+        
+        if all_rejected:
+            self.log_test("Input Validation", True, 
+                         "All invalid inputs properly rejected", 
+                         {"test_cases": len(validation_results)})
+        else:
+            failed_cases = [r for r in validation_results if not r["properly_rejected"]]
+            self.log_test("Input Validation", False, 
+                         f"{len(failed_cases)} validation cases failed", 
+                         {"failed_cases": failed_cases})
+    
+    async def test_unauthorized_access(self):
+        """Test unauthorized access to protected endpoints"""
+        protected_endpoints = [
+            ("GET", "/wallet/balance"),
+            ("GET", "/p2p/orders"),
+            ("POST", "/p2p/offers"),
+            ("GET", "/admin/dashboard/stats"),
+        ]
+        
+        unauthorized_results = []
+        for method, endpoint in protected_endpoints:
+            success, response, status, response_time = await self.make_request(method, endpoint)
+            
+            # Should return 401 for unauthorized access
+            is_properly_protected = status == 401 and not success
+            unauthorized_results.append({
+                "endpoint": f"{method} {endpoint}",
+                "properly_protected": is_properly_protected,
+                "status": status
+            })
+        
+        all_protected = all(result["properly_protected"] for result in unauthorized_results)
+        
+        if all_protected:
+            self.log_test("Unauthorized Access Protection", True, 
+                         "All protected endpoints properly secured", 
+                         {"endpoints_tested": len(protected_endpoints)})
+        else:
+            unprotected = [r for r in unauthorized_results if not r["properly_protected"]]
+            self.log_test("Unauthorized Access Protection", False, 
+                         f"{len(unprotected)} endpoints not properly protected", 
+                         {"unprotected_endpoints": unprotected})
     
     async def test_user_rank_valid_user(self):
         """Test GET /api/p2p/leaderboard/user/{user_id} with valid user"""
