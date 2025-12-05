@@ -19674,14 +19674,8 @@ async def get_live_prices():
         "last_update": prices['last_update']
     }
 
-# DUPLICATE: @api_router.post("/prices/convert")
-# DUPLICATE: async def convert_currency(request: dict):
-    """Convert between crypto and fiat currencies in real-time"""
-    from_type = request.get("from_type")  # 'crypto' or 'fiat'
-    to_type = request.get("to_type")      # 'crypto' or 'fiat'
-    from_currency = request.get("from_currency")
-    to_currency = request.get("to_currency")
-    amount = request.get("amount", 0)
+# DUPLICATE COMMENTED: This function was a duplicate
+# The active version is defined elsewhere in the file
     
     if not all([from_type, to_type, from_currency, to_currency]):
         raise HTTPException(status_code=400, detail="Missing required fields")
