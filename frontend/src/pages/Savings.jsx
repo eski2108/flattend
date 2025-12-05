@@ -340,13 +340,13 @@ export default function SavingsVault() {
       setLoading(true);
 
       // Load ALL supported coins from backend (unlimited, dynamic)
-      const coinsRes = await axios.get(`${API}/savings/supported-coins`);
+      const coinsRes = await axios.get(`${API}/api/savings/supported-coins`);
       if (coinsRes.data.success) {
         setSupportedCoins(coinsRes.data.coins);
       }
 
       // Load savings balances
-      const savingsRes = await axios.get(`${API}/savings/balances/${userId}`);
+      const savingsRes = await axios.get(`${API}/api/savings/balances/${userId}`);
       if (savingsRes.data.success) {
         const savingsMap = {};
         let totalGBP = 0;
