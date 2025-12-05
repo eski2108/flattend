@@ -22,12 +22,14 @@ const PremiumCard = ({ children, className = '', glow = false }) => (
 
 const AdminLiquidityManagement = () => {
   const [nowpaymentsBalances, setNowpaymentsBalances] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [totalRevenueGBP, setTotalRevenueGBP] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [totalValueGBP, setTotalValueGBP] = useState(0);
 
   useEffect(() => {
-    fetchNOWPaymentsBalances();
+    fetchAllData();
   }, []);
 
   const fetchNOWPaymentsBalances = async () => {
