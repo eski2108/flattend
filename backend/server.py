@@ -2089,7 +2089,7 @@ async def get_p2p_stats():
                     minutes = (completed_time - paid_time).total_seconds() / 60
                     total_minutes += minutes
                     count += 1
-                except:
+                except Exception:
                     pass
             avg_completion = f"{int(total_minutes / count)} min" if count > 0 else "N/A"
         else:
