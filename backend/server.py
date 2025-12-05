@@ -7208,7 +7208,9 @@ async def login_user(login_req: LoginRequest, request: Request):
             logger.info(f"Migrated password hash for {login_req.email} from SHA256 to bcrypt")
     else:
         # New bcrypt hash
+        logger.info(f"🔍 DEBUG: Verifying with bcrypt - password: '{login_req.password}', hash: {stored_hash[:30]}...")
         password_valid = password_hasher.verify_password(login_req.password, stored_hash)
+        logger.info(f"🔍 DEBUG: Bcrypt verification result: {password_valid}")
     
     if not password_valid:
         logger.error(f"PASSWORD MISMATCH for {login_req.email}")
