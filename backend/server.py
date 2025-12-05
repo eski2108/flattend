@@ -4175,7 +4175,7 @@ async def create_p2p_express_order(order_data: Dict):
             delivery_source = "fallback"
             payment_method = "Bank Transfer"
         
-        http_status = "pending_payment"
+        # http_status = "pending_payment"  # Unused variable removed
         estimated_delivery = "2-5 minutes"
         countdown_expires_at = (datetime.now(timezone.utc) + timedelta(seconds=EXPRESS_RELEASE_TIMEOUT)).isoformat()
     
