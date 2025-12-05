@@ -634,7 +634,7 @@ export default function SavingsVault() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">APY Rewards Coming Soon</h3>
               <p className="text-gray-400">
-                We're working on implementing automatic daily APY rewards. For now, enjoy secure storage in your Savings Vault.
+                We&apos;re working on implementing automatic daily APY rewards. For now, enjoy secure storage in your Savings Vault.
               </p>
             </div>
           </PremiumCard>
