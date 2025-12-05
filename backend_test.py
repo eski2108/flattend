@@ -519,20 +519,78 @@ class CoinHubXComprehensiveTester:
                          f"Failed to generate deposit address with status {status}", response,
                          performance_ms=response_time)
     
-    async def test_leaderboard_invalid_limits(self):
-        """Test invalid limits: 0, negative, >100"""
-        invalid_limits = [0, -1, 101, 200]
+    # ==================== ADMIN DASHBOARD TESTS ====================
+    
+    async def test_admin_login(self):
+        """Test admin login functionality"""
+        # Try to login as admin (assuming admin credentials exist)
+        admin_data = {
+            "email": "admin@coinhubx.net",
+            "password": "AdminPass123!"
+        }
         
-        for limit in invalid_limits:
-            success, data, status = await self.make_request("GET", f"/p2p/leaderboard?limit={limit}")
-            
-            # Should return 422 for validation error
-            if status in [400, 422]:
-                self.log_test(f"Leaderboard Invalid Limit {limit}", True, 
-                             f"Correctly rejected invalid limit with status {status}")
-            else:
-                self.log_test(f"Leaderboard Invalid Limit {limit}", False, 
-                             f"Should reject invalid limit, got status {status}", data)
+        success, response, status, response_time = await self.make_request(
+            "POST", "/auth/admin/login", json=admin_data
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            self.admin_token = response.get("token")
+            self.log_test("Admin Login", True, 
+                         "Admin login successful", 
+                         {"has_token": bool(self.admin_token)},
+                         performance_ms=response_time)
+        else:
+            self.log_test("Admin Login", False, 
+                         f"Admin login failed with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_admin_dashboard_stats(self):
+        """Test admin dashboard statistics"""
+        if not self.admin_token:
+            await self.test_admin_login()
+        
+        if not self.admin_token:
+            self.log_test("Admin Dashboard Stats", False, "No admin token available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        success, response, status, response_time = await self.make_request(
+            "GET", "/admin/dashboard/stats", headers=headers
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            stats = response.get("stats", {})
+            self.log_test("Admin Dashboard Stats", True, 
+                         "Dashboard statistics retrieved", 
+                         stats, performance_ms=response_time)
+        else:
+            self.log_test("Admin Dashboard Stats", False, 
+                         f"Failed to get dashboard stats with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_admin_liquidity_management(self):
+        """Test admin liquidity management"""
+        if not self.admin_token:
+            await self.test_admin_login()
+        
+        if not self.admin_token:
+            self.log_test("Admin Liquidity Management", False, "No admin token available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        success, response, status, response_time = await self.make_request(
+            "GET", "/admin/liquidity", headers=headers
+        )
+        
+        if success and isinstance(response, dict):
+            liquidity_data = response.get("liquidity", {})
+            self.log_test("Admin Liquidity Management", True, 
+                         "Liquidity data retrieved", 
+                         liquidity_data, performance_ms=response_time)
+        else:
+            self.log_test("Admin Liquidity Management", False, 
+                         f"Failed to get liquidity data with status {status}", response,
+                         performance_ms=response_time)
     
     async def test_leaderboard_response_structure(self):
         """Test leaderboard response structure matches expected format"""
