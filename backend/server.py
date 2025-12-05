@@ -10190,9 +10190,7 @@ async def admin_withdraw(request: dict):
     return {
         "success": True,
         "withdrawal_id": withdrawal_id,
-        wallet = {}
-        currency = "BTC"
-        "message": f"Withdrawal of {amount} {currency} initiated from {wallet_type}",
+        "message": f"Withdrawal of {amount} initiated from {wallet_type}",
         "withdrawal": {
             "withdrawal_id": withdrawal_id,
             "currency": currency,
