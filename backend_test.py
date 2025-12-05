@@ -688,38 +688,44 @@ class CoinHubXComprehensiveTester:
                          f"{len(unprotected)} endpoints not properly protected", 
                          {"unprotected_endpoints": unprotected})
     
-    async def test_user_rank_valid_user(self):
-        """Test GET /api/p2p/leaderboard/user/{user_id} with valid user"""
-        # First get leaderboard to find a valid user_id
-        success, data, status = await self.make_request("GET", "/p2p/leaderboard")
+    # ==================== PERFORMANCE TESTS ====================
+    
+    async def test_response_times(self):
+        """Test API response times are acceptable"""
+        endpoints_to_test = [
+            ("GET", "/health"),
+            ("GET", "/p2p/marketplace"),
+            ("POST", "/instant/quote", {"cryptocurrency": "BTC", "amount": 0.01, "type": "buy"}),
+        ]
         
-        if success and isinstance(data, dict) and data.get("success"):
-            leaderboard = data.get("leaderboard", [])
+        performance_results = []
+        for method, endpoint, *args in endpoints_to_test:
+            json_data = args[0] if args else None
             
-            if leaderboard:
-                # Test with first user in leaderboard
-                user_id = leaderboard[0]["user_id"]
-                success, user_data, status = await self.make_request("GET", f"/p2p/leaderboard/user/{user_id}")
-                
-                if success and isinstance(user_data, dict) and user_data.get("success"):
-                    expected_fields = ["rank", "total_traders", "stats"]
-                    has_all_fields = all(field in user_data for field in expected_fields)
-                    
-                    if has_all_fields:
-                        self.log_test("User Rank Valid User", True, 
-                                     f"User rank {user_data.get('rank')} of {user_data.get('total_traders')}")
-                    else:
-                        self.log_test("User Rank Valid User", False, 
-                                     "Missing expected fields in user rank response", user_data)
-                else:
-                    self.log_test("User Rank Valid User", False, 
-                                 f"User rank request failed with status {status}", user_data)
-            else:
-                self.log_test("User Rank Valid User", True, 
-                             "No users in leaderboard to test with")
+            success, response, status, response_time = await self.make_request(
+                method, endpoint, json=json_data
+            )
+            
+            is_fast_enough = response_time < 2000  # 2 seconds threshold
+            performance_results.append({
+                "endpoint": f"{method} {endpoint}",
+                "response_time_ms": response_time,
+                "fast_enough": is_fast_enough,
+                "success": success
+            })
+        
+        all_fast = all(result["fast_enough"] for result in performance_results)
+        avg_response_time = sum(r["response_time_ms"] for r in performance_results) / len(performance_results)
+        
+        if all_fast:
+            self.log_test("API Response Times", True, 
+                         f"All endpoints respond within 2s (avg: {avg_response_time:.0f}ms)", 
+                         {"average_ms": avg_response_time, "endpoints_tested": len(endpoints_to_test)})
         else:
-            self.log_test("User Rank Valid User", False, 
-                         "Could not get leaderboard to find valid user_id")
+            slow_endpoints = [r for r in performance_results if not r["fast_enough"]]
+            self.log_test("API Response Times", False, 
+                         f"{len(slow_endpoints)} endpoints too slow", 
+                         {"slow_endpoints": slow_endpoints, "average_ms": avg_response_time})
     
     async def test_user_rank_invalid_user(self):
         """Test user rank with non-existent user_id"""
