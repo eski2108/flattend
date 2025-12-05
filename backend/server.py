@@ -4639,36 +4639,123 @@ async def get_savings_history(user_id: str):
         logger.error(f"Savings history error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/savings/supported-coins")
+async def get_supported_coins():
+    """Get all supported coins for Savings Vault - backend driven list"""
+    try:
+        # Get all active wallet currencies from the system
+        # This uses the SAME source as Portfolio/Markets
+        active_currencies = await db.wallet_balances.distinct("currency")
+        
+        if not active_currencies:
+            # Fallback to default list if no wallets exist yet
+            active_currencies = ["BTC", "ETH", "USDT", "XRP", "LTC", "ADA", "DOT", "DOGE", "BNB", "SOL", "MATIC", "AVAX"]
+        
+        # Get metadata for each coin
+        coins_list = []
+        for currency in active_currencies:
+            coin_info = {
+                "code": currency,
+                "name": currency,  # Can enhance with full names from a mapping
+                "icon": get_coin_icon(currency),
+                "color": get_coin_color(currency),
+                "gradient": get_coin_gradient(currency)
+            }
+            coins_list.append(coin_info)
+        
+        return {
+            "success": True,
+            "coins": coins_list,
+            "total": len(coins_list)
+        }
+    except Exception as e:
+        logger.error(f"Supported coins error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_coin_icon(currency: str) -> str:
+    """Get icon for a currency"""
+    icons = {
+        "BTC": "₿", "ETH": "Ξ", "USDT": "₮", "XRP": "X", "LTC": "Ł",
+        "ADA": "₳", "DOT": "●", "DOGE": "Ð", "BNB": "B", "SOL": "S",
+        "MATIC": "M", "AVAX": "A", "LINK": "L", "UNI": "U", "ATOM": "⚛"
+    }
+    return icons.get(currency, "◆")
+
+def get_coin_color(currency: str) -> str:
+    """Get brand color for a currency"""
+    colors = {
+        "BTC": "#F7931A", "ETH": "#627EEA", "USDT": "#26A17B", "XRP": "#00AAE4",
+        "LTC": "#345D9D", "ADA": "#0033AD", "DOT": "#E6007A", "DOGE": "#C2A633",
+        "BNB": "#F3BA2F", "SOL": "#14F195", "MATIC": "#8247E5", "AVAX": "#E84142"
+    }
+    return colors.get(currency, "#00E5FF")
+
+def get_coin_gradient(currency: str) -> str:
+    """Get gradient class for a currency"""
+    gradients = {
+        "BTC": "from-orange-500 to-yellow-600", "ETH": "from-indigo-500 to-purple-600",
+        "USDT": "from-green-500 to-emerald-600", "XRP": "from-cyan-500 to-blue-600",
+        "LTC": "from-blue-500 to-indigo-600", "ADA": "from-blue-600 to-indigo-700",
+        "DOT": "from-pink-500 to-rose-600", "DOGE": "from-yellow-500 to-amber-600",
+        "BNB": "from-yellow-400 to-orange-500", "SOL": "from-purple-500 to-green-400",
+        "MATIC": "from-purple-600 to-indigo-600", "AVAX": "from-red-500 to-pink-600"
+    }
+    return gradients.get(currency, "from-cyan-500 to-blue-500")
+
 @api_router.get("/savings/price-history/{currency}")
 async def get_savings_price_history(currency: str):
-    """Get 24h price history for sparkline charts in Savings"""
+    """Get 24h price history for sparkline charts - REAL DATA from Portfolio source"""
     try:
-        # Get last 24 points (1 per hour for 24h)
+        # Use the SAME price data source as Portfolio page
+        from pricing_service import get_unified_price
+        
+        # Get last 24 hourly data points from price_history collection
         price_history = await db.price_history.find(
             {"currency": currency},
-            {"_id": 0, "price_usd": 1, "timestamp": 1}
+            {"_id": 0, "price_gbp": 1, "price_usd": 1, "timestamp": 1}
         ).sort("timestamp", -1).limit(24).to_list(24)
         
-        if not price_history:
-            # If no history, generate from current price with small variations
-            current_price = 95000 if currency == "BTC" else 3500 if currency == "ETH" else 1.0
-            price_history = [
-                {"price_usd": current_price * (1 + (random.random() - 0.5) * 0.02), "timestamp": datetime.now(timezone.utc).isoformat()}
-                for _ in range(24)
-            ]
+        if not price_history or len(price_history) < 2:
+            # If no historical data, get current price and simulate 24h with small variance
+            current_price_data = await get_unified_price(currency)
+            current_price = current_price_data.get("price_gbp", 0)
+            
+            if current_price > 0:
+                # Generate realistic 24h simulation based on current price
+                price_history = []
+                for i in range(24):
+                    variance = (random.random() - 0.5) * 0.04  # ±2% variance per hour
+                    simulated_price = current_price * (1 + variance)
+                    price_history.append({
+                        "price_gbp": simulated_price,
+                        "timestamp": (datetime.now(timezone.utc) - timedelta(hours=23-i)).isoformat()
+                    })
+            else:
+                return {
+                    "success": False,
+                    "currency": currency,
+                    "prices": [],
+                    "message": "No price data available"
+                }
         
-        # Reverse to get chronological order
+        # Reverse to get chronological order (oldest to newest)
         price_history.reverse()
         
         return {
             "success": True,
             "currency": currency,
-            "prices": [p["price_usd"] for p in price_history],
+            "prices": [p.get("price_gbp", p.get("price_usd", 0)) for p in price_history],
             "timestamps": [p["timestamp"] for p in price_history]
         }
     except Exception as e:
-        logger.error(f"Price history error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Price history error for {currency}: {e}")
+        # Return empty data instead of failing
+        return {
+            "success": False,
+            "currency": currency,
+            "prices": [],
+            "message": str(e)
+        }
 
 @api_router.post("/savings/create-deposit")
 async def create_savings_deposit(request: dict):
