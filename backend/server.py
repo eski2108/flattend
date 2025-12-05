@@ -24679,7 +24679,7 @@ async def get_complete_revenue(period: str = "all"):
         total = sum(breakdown.values())
         
         # Calculate period-specific totals
-        now_iso = now.isoformat()
+        # now_iso = now.isoformat()  # Unused variable removed
         today_start = (now - timedelta(days=1)).isoformat()
         week_start = (now - timedelta(days=7)).isoformat()
         month_start = (now - timedelta(days=30)).isoformat()
