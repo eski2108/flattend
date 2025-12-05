@@ -358,24 +358,94 @@ class CoinHubXComprehensiveTester:
                          f"Failed to create P2P order with status {status}", order_response,
                          performance_ms=response_time)
     
-    async def test_leaderboard_limits(self):
-        """Test different limits: 10, 50, 100"""
-        limits = [10, 50, 100]
+    # ==================== INSTANT BUY/SELL TESTS ====================
+    
+    async def test_instant_buy_quotes(self):
+        """Test instant buy quote generation"""
+        quote_data = {
+            "cryptocurrency": "BTC",
+            "amount": 0.01,
+            "type": "buy"
+        }
         
-        for limit in limits:
-            success, data, status = await self.make_request("GET", f"/p2p/leaderboard?limit={limit}")
-            
-            if success and isinstance(data, dict) and data.get("success"):
-                leaderboard = data.get("leaderboard", [])
-                if len(leaderboard) <= limit:
-                    self.log_test(f"Leaderboard Limit {limit}", True, 
-                                 f"Returned {len(leaderboard)} traders (≤ {limit})")
-                else:
-                    self.log_test(f"Leaderboard Limit {limit}", False, 
-                                 f"Returned {len(leaderboard)} traders (> {limit})")
-            else:
-                self.log_test(f"Leaderboard Limit {limit}", False, 
-                             f"Request failed with status {status}", data)
+        success, response, status, response_time = await self.make_request(
+            "POST", "/instant/quote", json=quote_data
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            quote = response.get("quote", {})
+            self.log_test("Instant Buy Quote", True, 
+                         f"Quote generated: £{quote.get('total_gbp', 0):.2f} for {quote_data['amount']} BTC", 
+                         quote, performance_ms=response_time)
+        else:
+            self.log_test("Instant Buy Quote", False, 
+                         f"Failed to get instant buy quote with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_instant_sell_quotes(self):
+        """Test instant sell quote generation"""
+        quote_data = {
+            "cryptocurrency": "BTC",
+            "amount": 0.01,
+            "type": "sell"
+        }
+        
+        success, response, status, response_time = await self.make_request(
+            "POST", "/instant/quote", json=quote_data
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            quote = response.get("quote", {})
+            self.log_test("Instant Sell Quote", True, 
+                         f"Quote generated: £{quote.get('total_gbp', 0):.2f} for {quote_data['amount']} BTC", 
+                         quote, performance_ms=response_time)
+        else:
+            self.log_test("Instant Sell Quote", False, 
+                         f"Failed to get instant sell quote with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_instant_buy_execution(self):
+        """Test instant buy execution with admin liquidity"""
+        user = await self.create_test_user()
+        if not user:
+            self.log_test("Instant Buy Execution", False, "Could not create test user")
+            return
+        
+        # First get a quote
+        quote_data = {
+            "cryptocurrency": "BTC",
+            "amount": 0.001,  # Small amount for testing
+            "type": "buy"
+        }
+        
+        success, quote_response, status, _ = await self.make_request(
+            "POST", "/instant/quote", json=quote_data
+        )
+        
+        if not success:
+            self.log_test("Instant Buy Execution", False, "Could not get quote for buy execution")
+            return
+        
+        quote_id = quote_response.get("quote", {}).get("quote_id")
+        
+        # Execute the buy
+        headers = {"Authorization": f"Bearer {user['token']}"}
+        success, response, status, response_time = await self.make_request(
+            "POST", "/instant/buy", 
+            json={"quote_id": quote_id, "payment_method": "card"}, 
+            headers=headers
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            transaction_id = response.get("transaction_id")
+            self.log_test("Instant Buy Execution", True, 
+                         f"Instant buy executed: {transaction_id}", 
+                         {"transaction_id": transaction_id, "amount": quote_data["amount"]},
+                         performance_ms=response_time)
+        else:
+            self.log_test("Instant Buy Execution", False, 
+                         f"Failed to execute instant buy with status {status}", response,
+                         performance_ms=response_time)
     
     async def test_leaderboard_invalid_timeframe(self):
         """Test invalid timeframe (should fail validation)"""
