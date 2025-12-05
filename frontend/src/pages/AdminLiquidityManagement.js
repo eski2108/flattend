@@ -32,21 +32,32 @@ const AdminLiquidityManagement = () => {
     fetchAllData();
   }, []);
 
-  const fetchNOWPaymentsBalances = async () => {
+  const fetchAllData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/admin/nowpayments/balances`);
       
-      if (response.data.success) {
-        setNowpaymentsBalances(response.data.balances);
-        setTotalValueGBP(response.data.total_value_gbp || 0);
-        toast.success('NOWPayments balances loaded');
-      } else {
-        toast.error(response.data.message || 'Failed to load balances');
+      // Fetch NOWPayments balances
+      const balancesPromise = axios.get(`${API}/admin/nowpayments/balances`);
+      
+      // Fetch revenue data
+      const revenuePromise = axios.get(`${API}/admin/revenue/summary`);
+      
+      const [balancesRes, revenueRes] = await Promise.all([balancesPromise, revenuePromise]);
+      
+      if (balancesRes.data.success) {
+        setNowpaymentsBalances(balancesRes.data.balances);
+        setTotalValueGBP(balancesRes.data.total_value_gbp || 0);
       }
+      
+      if (revenueRes.data.success) {
+        setRevenueData(revenueRes.data.revenue);
+        setTotalRevenueGBP(revenueRes.data.total_revenue_gbp || 0);
+      }
+      
+      toast.success('Data loaded successfully');
     } catch (error) {
-      console.error('Error fetching NOWPayments balances:', error);
-      toast.error('Failed to connect to NOWPayments');
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
@@ -54,7 +65,7 @@ const AdminLiquidityManagement = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchNOWPaymentsBalances();
+    await fetchAllData();
     setRefreshing(false);
   };
 
