@@ -26035,22 +26035,7 @@ async def toggle_real_liquidity_sync(request: dict):
             "message": str(e)
         }
 
-@api_router.get("/admin/liquidity-status")
-async def get_liquidity_status():
-    """Get current liquidity status for all currencies"""
-    try:
-        from liquidity_checker import LiquidityChecker
-        
-        checker = LiquidityChecker(db)
-        result = await checker.get_liquidity_status()
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting liquidity status: {str(e)}")
-        return {
-            "success": False,
-            "message": str(e)
-        }
+# DUPLICATE REMOVED: get_liquidity_status is already defined at line 25235
 
 @api_router.get("/admin/liquidity-blocks")
 async def get_recent_liquidity_blocks(limit: int = 50):
