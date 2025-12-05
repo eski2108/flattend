@@ -26868,8 +26868,10 @@ async def auto_match_trade(request: dict):
                         "crypto": crypto,
                         "status": "active",
                         "amount_available": {"$gte": float(amount)},
-                        "seller_uid": {"$ne": user_id},
-                        "seller_uid": {"$nin": blocked_users}  # Exclude blocked users
+                        "$and": [
+                            {"seller_uid": {"$ne": user_id}},
+                            {"seller_uid": {"$nin": blocked_users}}  # Exclude blocked users
+                        ]
                     }
                 },
                 {
