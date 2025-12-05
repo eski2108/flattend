@@ -23388,7 +23388,7 @@ async def update_monetization_settings(updates: Dict):
         updates["updated_by"] = updates.get("admin_id", "admin")
         
         # Update or create settings
-        result = await db.monetization_settings.update_one(
+        await db.monetization_settings.update_one(
             {"setting_id": "default_monetization"},
             {"$set": updates},
             upsert=True
