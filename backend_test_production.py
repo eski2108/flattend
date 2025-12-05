@@ -233,24 +233,25 @@ class CoinHubXProductionTester:
         
         return p2p_success and stats_success
     
-    async def test_instant_buy_flow(self, token: str):
+    async def test_instant_buy_flow(self, token: str, user_id: str):
         """Test instant buy functionality"""
         headers = {"Authorization": f"Bearer {token}"}
         
-        # Test instant buy quote
+        # Test instant buy quote using admin liquidity
         quote_data = {
+            "user_id": user_id,
             "crypto": "BTC",
             "amount": 0.001,
-            "fiat_currency": "GBP"
+            "type": "buy"
         }
         
-        success, data, status, perf = await self.make_request("POST", "/instant-buy/quote", quote_data, headers=headers)
+        success, data, status, perf = await self.make_request("POST", "/admin-liquidity/quote", quote_data, headers=headers)
         
-        quote_success = success and "quote" in data
+        quote_success = success and data.get("success", False)
         self.log_test(
             "Instant Buy Quote",
             quote_success,
-            f"Status: {status}, Quote available: {quote_success}",
+            f"Status: {status}, Quote success: {data.get('success', False)}",
             data if not quote_success else None,
             perf
         )
