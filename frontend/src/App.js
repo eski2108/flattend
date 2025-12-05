@@ -116,6 +116,7 @@ const UIShowcase = lazy(() => import("@/pages/UIShowcase"));
 import ChatWidget from "@/components/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 import TestModeBanner from "@/components/TestModeBanner";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
