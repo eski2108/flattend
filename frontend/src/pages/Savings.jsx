@@ -305,6 +305,9 @@ export default function SavingsVault() {
   const [savingsHistory, setSavingsHistory] = useState([]);
   const [prices, setPrices] = useState({});
   const [priceHistories, setPriceHistories] = useState({});
+  const [supportedCoins, setSupportedCoins] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const coinsPerPage = 12;
 
   const loadData = React.useCallback(async (userId) => {
     try {
