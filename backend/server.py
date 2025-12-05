@@ -21095,23 +21095,7 @@ async def verify_telegram_link_code(request: dict):
         "telegram_username": telegram_link.get("telegram_username")
     }
 
-@api_router.get("/telegram/link-status")
-async def get_telegram_link_status(user_id: str):
-    """Check if user has Telegram linked"""
-    telegram_link = await db.telegram_links.find_one({"user_id": user_id, "linked": True})
-    
-    if telegram_link:
-        return {
-            "success": True,
-            "linked": True,
-            "telegram_username": telegram_link.get("telegram_username"),
-            "linked_at": telegram_link.get("linked_at")
-        }
-    else:
-        return {
-            "success": True,
-            "linked": False
-        }
+# DUPLICATE REMOVED: get_telegram_link_status is already defined at line 14886
 
 @api_router.post("/telegram/unlink")
 async def unlink_telegram(request: dict):
