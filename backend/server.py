@@ -6485,8 +6485,9 @@ async def google_auth():
     
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-        # Use the production URL
-        redirect_uri = "https://p2p-market-1.preview.emergentagent.com/api/auth/google/callback"
+        # Get current domain from environment variable set during fork
+        base_url = os.environ.get('FRONTEND_URL', 'https://p2p-market-1.preview.emergentagent.com')
+        redirect_uri = f"{base_url}/auth/google/callback"
         
         if not google_client_id:
             logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
