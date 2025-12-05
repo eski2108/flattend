@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"user_id":{"$numberInt":"1"}},"name":"user_id_1"},{"v":{"$numberInt":"2"},"key":{"currency":{"$numberInt":"1"}},"name":"currency_1"}],"uuid":"a2a6563bf7564c88902ecced86d9595c","collectionName":"internal_balances","type":"collection"}
