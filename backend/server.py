@@ -21747,8 +21747,6 @@ async def escalate_chat_to_live_agent(request: Request):
             
             # Send notification email to admin
             try:
-                admin_email = "info@coinhubx.net"  # Company email
-                
                 # Get chat history for context
                 chat_messages = await get_chat_history(db, session_id, limit=10)
                 chat_transcript = "\n\n".join([
@@ -21757,7 +21755,7 @@ async def escalate_chat_to_live_agent(request: Request):
                 ])
                 
                 notification_sent = await send_email(
-# DUPLICATE:                     to_email=admin_email,
+                    to_email="info@coinhubx.net",
                     subject=f"🔴 LIVE CHAT REQUEST from {user_email}",
                     html_content=f"""
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
