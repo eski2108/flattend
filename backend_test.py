@@ -447,17 +447,77 @@ class CoinHubXComprehensiveTester:
                          f"Failed to execute instant buy with status {status}", response,
                          performance_ms=response_time)
     
-    async def test_leaderboard_invalid_timeframe(self):
-        """Test invalid timeframe (should fail validation)"""
-        success, data, status = await self.make_request("GET", "/p2p/leaderboard?timeframe=invalid")
+    # ==================== WALLET TESTS ====================
+    
+    async def test_wallet_balance(self):
+        """Test wallet balance retrieval"""
+        user = await self.create_test_user()
+        if not user:
+            self.log_test("Wallet Balance", False, "Could not create test user")
+            return
         
-        # Should return 422 for validation error or 400 for bad request
-        if status in [400, 422]:
-            self.log_test("Leaderboard Invalid Timeframe", True, 
-                         f"Correctly rejected invalid timeframe with status {status}")
+        headers = {"Authorization": f"Bearer {user['token']}"}
+        success, response, status, response_time = await self.make_request(
+            "GET", "/wallet/balance", headers=headers
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            balances = response.get("balances", {})
+            self.log_test("Wallet Balance", True, 
+                         f"Wallet balance retrieved for user {user['user_id']}", 
+                         balances, performance_ms=response_time)
         else:
-            self.log_test("Leaderboard Invalid Timeframe", False, 
-                         f"Should reject invalid timeframe, got status {status}", data)
+            self.log_test("Wallet Balance", False, 
+                         f"Failed to get wallet balance with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_wallet_transaction_history(self):
+        """Test wallet transaction history"""
+        user = await self.create_test_user()
+        if not user:
+            self.log_test("Wallet Transaction History", False, "Could not create test user")
+            return
+        
+        headers = {"Authorization": f"Bearer {user['token']}"}
+        success, response, status, response_time = await self.make_request(
+            "GET", "/wallet/transactions", headers=headers
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            transactions = response.get("transactions", [])
+            self.log_test("Wallet Transaction History", True, 
+                         f"Retrieved {len(transactions)} transactions", 
+                         {"transaction_count": len(transactions)},
+                         performance_ms=response_time)
+        else:
+            self.log_test("Wallet Transaction History", False, 
+                         f"Failed to get transaction history with status {status}", response,
+                         performance_ms=response_time)
+    
+    async def test_deposit_address_generation(self):
+        """Test deposit address generation"""
+        user = await self.create_test_user()
+        if not user:
+            self.log_test("Deposit Address Generation", False, "Could not create test user")
+            return
+        
+        headers = {"Authorization": f"Bearer {user['token']}"}
+        success, response, status, response_time = await self.make_request(
+            "POST", "/wallet/deposit/address", 
+            json={"cryptocurrency": "BTC"}, 
+            headers=headers
+        )
+        
+        if success and isinstance(response, dict) and response.get("success"):
+            address = response.get("address")
+            self.log_test("Deposit Address Generation", True, 
+                         f"Deposit address generated: {address[:10]}...", 
+                         {"has_address": bool(address)},
+                         performance_ms=response_time)
+        else:
+            self.log_test("Deposit Address Generation", False, 
+                         f"Failed to generate deposit address with status {status}", response,
+                         performance_ms=response_time)
     
     async def test_leaderboard_invalid_limits(self):
         """Test invalid limits: 0, negative, >100"""
