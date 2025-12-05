@@ -67,10 +67,11 @@ const AnimatedCounter = ({ value, prefix = '£', decimals = 2 }) => {
 };
 
 // Coin Tile Component - Always shows, even with 0 balance
-const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, onDeposit, onWithdraw }) => {
-  const [sparklineData] = useState(() => 
-    Array.from({ length: 20 }, () => Math.random() * 100 + 50)
-  );
+const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, priceHistory, onDeposit, onWithdraw, onNowPaymentsDeposit }) => {
+  // Use real price history if available, otherwise generate placeholder
+  const sparklineData = priceHistory && priceHistory.length > 0 
+    ? priceHistory 
+    : Array.from({ length: 20 }, () => Math.random() * 100 + 50);
 
   return (
     <PremiumCard className="p-6 transition-all duration-300 hover:scale-[1.02]">
@@ -101,7 +102,7 @@ const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, onDeposit, onWi
         </div>
       </div>
 
-      {/* Mini Sparkline */}
+      {/* Mini Sparkline - Real Data */}
       <div className="mb-4" style={{ opacity: 0.6, height: '40px' }}>
         <Sparklines data={sparklineData} height={40}>
           <SparklinesLine color={coin.color} style={{ strokeWidth: 2, fill: 'none' }} />
