@@ -27216,3 +27216,412 @@ async def set_test_mode(request: Request):
         logger.error(f"Error setting test mode: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ==========================================
+# SETTINGS & USER PREFERENCES ENDPOINTS
+# ==========================================
+
+@api_router.post("/user/email/change-request")
+async def request_email_change(request: dict):
+    """Request email change with password verification"""
+    try:
+        user_id = request.get("user_id")
+        new_email = request.get("new_email")
+        current_password = request.get("current_password")
+        
+        if not all([user_id, new_email, current_password]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        # Get user
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Verify password
+        if not bcrypt.checkpw(current_password.encode('utf-8'), user["password"].encode('utf-8')):
+            raise HTTPException(status_code=401, detail="Incorrect password")
+        
+        # Check if email already in use
+        existing = await db.user_accounts.find_one({"email": new_email})
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already in use")
+        
+        # Generate verification token
+        verification_token = str(uuid.uuid4())
+        
+        # Store pending email change
+        await db.pending_email_changes.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "user_id": user_id,
+                    "new_email": new_email,
+                    "verification_token": verification_token,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "expires_at": (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        # In production, send verification email here
+        logger.info(f"Email change requested for {user_id} to {new_email}")
+        
+        return {
+            "success": True,
+            "message": "Verification email sent",
+            "verification_token": verification_token  # Remove in production
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Email change request error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/user/security/change-password")
+async def change_password(request: dict):
+    """Change user password"""
+    try:
+        user_id = request.get("user_id")
+        current_password = request.get("current_password")
+        new_password = request.get("new_password")
+        
+        if not all([user_id, current_password, new_password]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        # Get user
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Verify current password
+        if not bcrypt.checkpw(current_password.encode('utf-8'), user["password"].encode('utf-8')):
+            raise HTTPException(status_code=401, detail="Incorrect current password")
+        
+        # Hash new password
+        new_password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Update password
+        await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {"$set": {"password": new_password_hash}}
+        )
+        
+        logger.info(f"Password changed for user {user_id}")
+        
+        return {"success": True, "message": "Password changed successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Password change error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/2fa/status")
+async def get_2fa_status(user_id: str):
+    """Check if 2FA is enabled"""
+    try:
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {
+            "success": True,
+            "enabled": user.get("two_factor_enabled", False)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/user/2fa/setup")
+async def setup_2fa(request: dict):
+    """Initialize 2FA setup - generate secret"""
+    try:
+        import pyotp
+        
+        user_id = request.get("user_id")
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Generate secret
+        secret = pyotp.random_base32()
+        
+        # Store temporary secret
+        await db.temp_2fa_secrets.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "user_id": user_id,
+                    "secret": secret,
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        return {
+            "success": True,
+            "secret": secret
+        }
+    except Exception as e:
+        logger.error(f"2FA setup error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/user/2fa/enable")
+async def enable_2fa(request: dict):
+    """Enable 2FA after verifying code"""
+    try:
+        import pyotp
+        
+        user_id = request.get("user_id")
+        code = request.get("code")
+        
+        # Get temporary secret
+        temp_secret = await db.temp_2fa_secrets.find_one({"user_id": user_id})
+        if not temp_secret:
+            raise HTTPException(status_code=400, detail="No 2FA setup in progress")
+        
+        # Verify code
+        totp = pyotp.TOTP(temp_secret["secret"])
+        if not totp.verify(code):
+            raise HTTPException(status_code=400, detail="Invalid verification code")
+        
+        # Generate backup codes
+        backup_codes = [str(uuid.uuid4())[:8].upper() for _ in range(8)]
+        
+        # Enable 2FA
+        await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "two_factor_enabled": True,
+                    "two_factor_secret": temp_secret["secret"],
+                    "backup_codes": backup_codes
+                }
+            }
+        )
+        
+        # Clean up temp secret
+        await db.temp_2fa_secrets.delete_one({"user_id": user_id})
+        
+        return {
+            "success": True,
+            "backup_codes": backup_codes
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"2FA enable error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/user/2fa/disable")
+async def disable_2fa(request: dict):
+    """Disable 2FA with password and code verification"""
+    try:
+        import pyotp
+        
+        user_id = request.get("user_id")
+        password = request.get("password")
+        code = request.get("code")
+        
+        # Get user
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Verify password
+        if not bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
+            raise HTTPException(status_code=401, detail="Incorrect password")
+        
+        # Verify 2FA code
+        if user.get("two_factor_enabled"):
+            totp = pyotp.TOTP(user.get("two_factor_secret", ""))
+            if not totp.verify(code):
+                raise HTTPException(status_code=400, detail="Invalid 2FA code")
+        
+        # Disable 2FA
+        await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {"two_factor_enabled": False},
+                "$unset": {"two_factor_secret": "", "backup_codes": ""}
+            }
+        )
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"2FA disable error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/notifications/preferences")
+async def get_notification_preferences(user_id: str):
+    """Get user notification preferences"""
+    try:
+        prefs = await db.notification_preferences.find_one({"user_id": user_id})
+        if not prefs:
+            # Default preferences
+            default_prefs = {
+                "security_alerts": True,
+                "transaction_alerts": True,
+                "system_announcements": True,
+                "marketing": False,
+                "p2p_updates": True,
+                "price_alerts": True
+            }
+            return {"success": True, "preferences": default_prefs}
+        
+        return {"success": True, "preferences": prefs.get("preferences", {})}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/user/notifications/preferences")
+async def update_notification_preferences(request: dict):
+    """Update user notification preferences"""
+    try:
+        user_id = request.get("user_id")
+        preferences = request.get("preferences")
+        
+        await db.notification_preferences.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "user_id": user_id,
+                    "preferences": preferences,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/user/language")
+async def update_language(request: dict):
+    """Update user language preference"""
+    try:
+        user_id = request.get("user_id")
+        language = request.get("language")
+        
+        await db.user_accounts.update_one(
+            {"user_id": user_id},
+            {"$set": {"language": language}}
+        )
+        
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/payment-methods")
+async def get_payment_methods(user_id: str):
+    """Get all payment methods for a user"""
+    try:
+        methods = await db.payment_methods.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).to_list(100)
+        
+        # Check if methods are used in active P2P offers
+        for method in methods:
+            active_offers = await db.p2p_offers.count_documents({
+                "user_id": user_id,
+                "payment_methods": method["method_type"],
+                "status": "active"
+            })
+            method["in_use"] = active_offers > 0
+        
+        return {"success": True, "methods": methods}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/user/payment-methods")
+async def add_payment_method(request: dict):
+    """Add a new payment method"""
+    try:
+        user_id = request.get("user_id")
+        method_data = {
+            "method_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "method_label": request.get("method_label"),
+            "method_type": request.get("method_type"),
+            "details": request.get("details"),
+            "is_primary": request.get("is_primary", False),
+            "is_verified": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # If this is set as primary, unset other primary methods
+        if method_data["is_primary"]:
+            await db.payment_methods.update_many(
+                {"user_id": user_id},
+                {"$set": {"is_primary": False}}
+            )
+        
+        await db.payment_methods.insert_one(method_data)
+        
+        return {"success": True, "method_id": method_data["method_id"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/user/payment-methods/{method_id}")
+async def update_payment_method(method_id: str, request: dict):
+    """Update a payment method"""
+    try:
+        user_id = request.get("user_id")
+        
+        update_data = {
+            "method_label": request.get("method_label"),
+            "details": request.get("details"),
+            "is_primary": request.get("is_primary", False),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # If this is set as primary, unset other primary methods
+        if update_data["is_primary"]:
+            await db.payment_methods.update_many(
+                {"user_id": user_id, "method_id": {"$ne": method_id}},
+                {"$set": {"is_primary": False}}
+            )
+        
+        result = await db.payment_methods.update_one(
+            {"method_id": method_id, "user_id": user_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Payment method not found")
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/user/payment-methods/{method_id}")
+async def delete_payment_method(method_id: str, user_id: str):
+    """Delete a payment method"""
+    try:
+        # Check if used in active P2P offers
+        method = await db.payment_methods.find_one({"method_id": method_id, "user_id": user_id})
+        if not method:
+            raise HTTPException(status_code=404, detail="Payment method not found")
+        
+        active_offers = await db.p2p_offers.count_documents({
+            "user_id": user_id,
+            "payment_methods": method["method_type"],
+            "status": "active"
+        })
+        
+        if active_offers > 0:
+            raise HTTPException(status_code=400, detail="Cannot delete: method is used in active P2P offers")
+        
+        await db.payment_methods.delete_one({"method_id": method_id, "user_id": user_id})
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
