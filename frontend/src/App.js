@@ -4,7 +4,7 @@ import "@/styles/responsive.css";
 import "@/styles/premium-ui.css";
 import "@/styles/global-design-system.css";
 import "@/styles/global-interactions.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
