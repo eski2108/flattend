@@ -10871,7 +10871,7 @@ async def get_trading_pairs():
             "count": len(pairs_with_status)
         }
     except Exception as e:
-        log_error(f"Error in get_trading_pairs: {str(e)}")
+        log_error("get_trading_pairs", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
