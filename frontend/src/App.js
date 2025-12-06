@@ -22,7 +22,7 @@ import SpotTradingFresh from "@/pages/SpotTradingFresh";
 
 // Auth pages - load immediately (user needs these first)
 import CleanLogin from "@/pages/CleanLogin";
-import CleanRegister from "@/pages/CleanRegister";
+import RegisterPageRebuild from "@/pages/RegisterPageRebuild";
 import AllocationsPageDirect from "@/pages/AllocationsPage";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
