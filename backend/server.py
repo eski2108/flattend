@@ -10844,11 +10844,14 @@ async def get_trading_pairs(request: Request):
         
         # Dynamically generate trading pairs from enabled coins
         pairs_with_status = []
+        print(f"🔍 Starting pair generation for {len(trading_coins)} coins...")
         for coin in trading_coins:
             base = coin["symbol"]
+            print(f"🔍 Processing coin: {base}")
             
             # Skip if this coin is a quote currency (don't create GBP/GBP or USDT/USDT)
             if base in fiat_currencies:
+                print(f"⏭️ Skipping {base} (is a quote currency)")
                 log_info(f"⏭️ Skipping {base} (is a quote currency)")
                 continue
             
