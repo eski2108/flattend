@@ -268,7 +268,7 @@ function App() {
           </Suspense>
           {/* AI Chat Widget - Shows on ALL pages */}
           <ChatWidget />
-        </BrowserRouter>
+        </HashRouter>
       </div>
     </WalletProvider>
     </CurrencyProvider>
