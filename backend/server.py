@@ -6344,6 +6344,16 @@ async def admin_resolve_dispute(request: AdminResolveDisputeRequest):
         "message": f"Dispute resolved. Crypto {request.resolution.replace('_', ' ')}."
     }
 
+@api_router.get("/notifications")
+async def get_notifications_list(limit: int = 10):
+    """Get recent notifications - for dashboard"""
+    # Return empty for now - can be populated later
+    return {
+        "success": True,
+        "notifications": [],
+        "count": 0
+    }
+
 @api_router.get("/notifications/{wallet_address}")
 async def get_notifications(wallet_address: str):
     """Get user notifications"""
