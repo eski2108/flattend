@@ -21,8 +21,8 @@ import SpotTradingFresh from "@/pages/SpotTradingFresh";
 // Support Chat Widget removed
 
 // Auth pages - load immediately (user needs these first)
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
+import CleanLogin from "@/pages/CleanLogin";
+import CleanRegister from "@/pages/CleanRegister";
 import AllocationsPageDirect from "@/pages/AllocationsPage";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
