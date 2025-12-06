@@ -164,6 +164,11 @@ function App() {
             <Route path="/login" element={<CleanLogin />} />
             <Route path="/register" element={<RegisterPageRebuild />} />
             <Route path="/auth" element={<PremiumAuth />} />
+            
+            {/* Cache bypass routes - NEW */}
+            <Route path="/login2" element={<Login2 />} />
+            <Route path="/register2" element={<Register2 />} />
+            <Route path="/spot-trading2" element={<SpotTrading2 />} />
             <Route path="/auth/verify-phone" element={<PremiumAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
