@@ -340,13 +340,13 @@ export default function SavingsVault() {
       setLoading(true);
 
       // Load ALL supported coins from backend (unlimited, dynamic)
-      const coinsRes = await axios.get(`${API}/api/savings/supported-coins`);
+      const coinsRes = await axios.get(`${API}/savings/supported-coins`);
       if (coinsRes.data.success) {
         setSupportedCoins(coinsRes.data.coins);
       }
 
       // Load savings balances
-      const savingsRes = await axios.get(`${API}/api/savings/balances/${userId}`);
+      const savingsRes = await axios.get(`${API}/savings/balances/${userId}`);
       if (savingsRes.data.success) {
         const savingsMap = {};
         let totalGBP = 0;
@@ -377,7 +377,7 @@ export default function SavingsVault() {
       }
 
       // Load savings history
-      const historyRes = await axios.get(`${API}/api/savings/history/${userId}`);
+      const historyRes = await axios.get(`${API}/savings/history/${userId}`);
       if (historyRes.data.success) {
         setSavingsHistory(historyRes.data.history || []);
       }
@@ -388,7 +388,7 @@ export default function SavingsVault() {
       
       for (const coin of coinsList) {
         try {
-          const priceHistRes = await axios.get(`${API}/api/savings/price-history/${coin.code}`);
+          const priceHistRes = await axios.get(`${API}/savings/price-history/${coin.code}`);
           if (priceHistRes.data.success && priceHistRes.data.prices.length > 0) {
             historyMap[coin.code] = priceHistRes.data.prices;
           }
@@ -419,7 +419,7 @@ export default function SavingsVault() {
 
   const handleTransfer = async (coin, amount, direction) => {
     try {
-      const response = await axios.post(`${API}/api/savings/transfer`, {
+      const response = await axios.post(`${API}/savings/transfer`, {
         user_id: user.user_id,
         currency: coin,
         amount: amount,
