@@ -249,7 +249,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
 
               {paymentMethods.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                  <IoCreditCard size={64} color="#888" style={{ marginBottom: '16px' }} />
+                  <IoCard size={64} color="#888" style={{ marginBottom: '16px' }} />
                   <p style={{ color: '#888', fontSize: '16px', marginBottom: '24px' }}>
                     No payment methods added yet
                   </p>
