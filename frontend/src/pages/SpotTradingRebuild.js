@@ -57,9 +57,8 @@ export default function SpotTradingRebuild() {
   const fetchTradingPairs = async () => {
     try {
       console.log('🚀 FETCHING TRADING PAIRS FROM:', `${API}/trading/pairs`);
-      // FORCE CACHE BYPASS with unique timestamp + random
-      const cacheBuster = `_cacheBust=${Date.now()}_${Math.random().toString(36).substring(7)}`;
-      const response = await axios.get(`${API}/trading/pairs?${cacheBuster}`);
+      // USE FRESH ENDPOINT THAT'S NEVER BEEN CACHED
+      const response = await axios.get(`${API}/pairs/trading?t=${Date.now()}`);
       console.log('📊 TRADING PAIRS RESPONSE:', response.data);
       
       if (response.data.success && response.data.pairs) {
