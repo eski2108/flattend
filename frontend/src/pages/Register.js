@@ -697,6 +697,158 @@ export default function Register() {
             </Link>
           </p>
         </form>
+        ) : (
+          /* Verification Code Form */
+          <form onSubmit={handleVerifyCode}>
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '24px'
+            }}>
+              <IoShield size={60} color="#00F0FF" style={{ 
+                marginBottom: '16px',
+                filter: 'drop-shadow(0 0 20px rgba(0, 240, 255, 0.6))'
+              }} />
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#FFFFFF',
+                marginBottom: '8px'
+              }}>Verify Your Phone</h2>
+              <p style={{ 
+                color: '#B8C5D6', 
+                fontSize: '14px',
+                lineHeight: '1.6'
+              }}>
+                We've sent a verification code to your phone.<br/>
+                Please enter it below to complete registration.
+              </p>
+            </div>
+
+            {/* Verification Code Input */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#FFFFFF',
+                fontSize: '13px',
+                fontWeight: '700',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                <IoCheckmarkCircle size={16} color="#00F0FF" />
+                Verification Code
+              </label>
+              <input
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                required
+                disabled={loading}
+                placeholder="Enter 6-digit code"
+                maxLength="6"
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '2px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '12px',
+                  color: '#FFFFFF',
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  letterSpacing: '8px',
+                  outline: 'none',
+                  transition: 'all 0.3s',
+                  boxSizing: 'border-box',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+                  e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                  e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2)';
+                }}
+              />
+            </div>
+
+            {/* Verify Button */}
+            <button
+              type="submit"
+              disabled={loading || verificationCode.length < 4}
+              style={{
+                width: '100%',
+                padding: '15px',
+                background: loading || verificationCode.length < 4 
+                  ? 'rgba(0, 240, 255, 0.3)' 
+                  : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
+                border: 'none',
+                borderRadius: '14px',
+                color: '#FFFFFF',
+                fontSize: '16px',
+                fontWeight: '800',
+                cursor: loading || verificationCode.length < 4 ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: loading || verificationCode.length < 4 
+                  ? 'none' 
+                  : '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)',
+                marginBottom: '18px',
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading && verificationCode.length >= 4) {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 8px 32px rgba(0, 240, 255, 0.6), 0 0 60px rgba(155, 77, 255, 0.4)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 6px 24px rgba(0, 240, 255, 0.5), 0 0 40px rgba(155, 77, 255, 0.3)';
+              }}
+            >
+              {loading ? 'Verifying...' : 'Verify & Complete Registration'}
+            </button>
+
+            {/* Back Link */}
+            <p style={{
+              textAlign: 'center',
+              color: '#8F9BB3',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}>
+              Didn't receive the code?{' '}
+              <button
+                type="button"
+                onClick={() => setVerificationStep(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#00F0FF',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  transition: 'all 0.3s',
+                  textShadow: '0 0 10px rgba(0, 240, 255, 0.3)',
+                  padding: 0
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = '#9B4DFF';
+                  e.target.style.textShadow = '0 0 10px rgba(155, 77, 255, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = '#00F0FF';
+                  e.target.style.textShadow = '0 0 10px rgba(0, 240, 255, 0.3)';
+                }}
+              >
+                Try again
+              </button>
+            </p>
+          </form>
+        )}
       </div>
 
       <style>{`
