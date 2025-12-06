@@ -1,0 +1,73 @@
+{
+  "timestamp": "20251206_084517",
+  "base_url": "https://tradepanel-12.preview.emergentagent.com",
+  "tests_run": 4,
+  "tests_passed": 3,
+  "success_rate": "75.0%",
+  "results": [
+    {
+      "test": "Health Check",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Status: healthy",
+      "response_data": {
+        "status": "healthy",
+        "service": "coinhubx-backend",
+        "timestamp": "2025-12-06T08:45:14.545928+00:00"
+      }
+    },
+    {
+      "test": "Trading Pairs API",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Found 24 trading pairs",
+      "response_data": {
+        "pair_count": 24,
+        "sample_pairs": [
+          {
+            "symbol": "ADA/GBP",
+            "base": "ADA",
+            "quote": "GBP",
+            "available_liquidity": 100000.0,
+            "is_tradable": true,
+            "status": "active"
+          },
+          {
+            "symbol": "ADA/USDT",
+            "base": "ADA",
+            "quote": "USDT",
+            "available_liquidity": 100000.0,
+            "is_tradable": true,
+            "status": "active"
+          },
+          {
+            "symbol": "BCH/GBP",
+            "base": "BCH",
+            "quote": "GBP",
+            "available_liquidity": 100.0,
+            "is_tradable": true,
+            "status": "active"
+          }
+        ]
+      }
+    },
+    {
+      "test": "User Login",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Login successful for admin@coinhubx.net",
+      "response_data": {
+        "user_id": "e7cb77aa-02bf-4a43-84e0-c9daf78792d3"
+      }
+    },
+    {
+      "test": "Wallet Balances",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "Status code: 404",
+      "response_data": {
+        "raw_response": "{\"detail\":\"Not Found\"}"
+      }
+    }
+  ]
+}
