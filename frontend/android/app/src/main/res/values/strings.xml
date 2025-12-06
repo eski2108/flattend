@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">CoinHubX</string>
-    <string name="title_activity_main">CoinHubX</string>
-    <string name="package_name">com.coinhubx.app</string>
-    <string name="custom_url_scheme">com.coinhubx.app</string>
-</resources>
