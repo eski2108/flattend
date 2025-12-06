@@ -7,7 +7,7 @@ import CHXButton from '@/components/CHXButton';
 import { IoTrendingUp, IoTrendingDown, IoFlash, IoCheckmarkCircle } from 'react-icons/io5';
 import { HiChartBar, HiClock, HiCurrencyDollar } from 'react-icons/hi';
 
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://coinhubx.net/api';
 
 export default function SpotTradingRebuild() {
   const navigate = useNavigate();
