@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 """
-CoinHubX Comprehensive Backend API Testing Suite
-Pre-launch audit with UNDENIABLE PROOF for every feature.
+Spot Trading Backend API Testing Suite
+Focus on testing the Spot Trading page functionality after rebuild.
 
 **CRITICAL FEATURES TO TEST:**
-1. Authentication System (Login/Register/2FA/Google OAuth)
-2. P2P Marketplace & Order Flow (Create, Pay, Release, Feedback)
-3. Instant Buy/Sell with Admin Liquidity
-4. Wallet Management (Deposit, Withdraw, Balance Updates)
-5. Admin Dashboard Functionality
-6. Security Features (Rate Limiting, Validation, Hashing)
-7. Notifications System
-8. Database Operations & Integrity
+1. Trading Pairs API (/api/trading/pairs) - Should return 24+ pairs
+2. User Authentication (Login with admin@coinhubx.net / 1231123)
+3. Wallet Balances API
+4. Trading Order Submission
+5. Order Book Data (simulated)
+6. Recent Trades Data (simulated)
 
 **TESTING APPROACH:**
-- Test ALL endpoints with real data
-- Verify database state before/after operations
-- Check error handling and validation
-- Measure response times and performance
-- Provide UNDENIABLE PROOF with detailed logs
+- Test core spot trading functionality
+- Verify trading pairs are loaded correctly
+- Check user authentication works
+- Test order submission flow
+- Provide clear pass/fail results
 
 **Backend URL:** https://tradepanel-12.preview.emergentagent.com/api
 """
