@@ -26,9 +26,29 @@
         <script>
             console.log('🚀 COINHUBX LOADING - Clean build timestamp:', Date.now());
             
-            // Simple cache bust - add timestamp to all resources  
+            // BLOCK EMERGENT SCRIPTS
+            const originalAppendChild = Node.prototype.appendChild;
+            const originalInsertBefore = Node.prototype.insertBefore;
+            
+            Node.prototype.appendChild = function(child) {
+                if (child.tagName === 'SCRIPT' && child.src && child.src.includes('emergent')) {
+                    console.log('⚡ BLOCKED EMERGENT SCRIPT:', child.src);
+                    return child;
+                }
+                return originalAppendChild.call(this, child);
+            };
+            
+            Node.prototype.insertBefore = function(child, before) {
+                if (child.tagName === 'SCRIPT' && child.src && child.src.includes('emergent')) {
+                    console.log('⚡ BLOCKED EMERGENT SCRIPT:', child.src);
+                    return child;
+                }
+                return originalInsertBefore.call(this, child, before);
+            };
+            
+            // Simple cache bust
             window.addEventListener('load', function() {
-                console.log('📦 Page loaded successfully');
+                console.log('📦 Clean page loaded successfully');
             });
         </script>
     </head>
