@@ -11,6 +11,7 @@ import { HiChartBar, HiClock, HiCurrencyDollar } from 'react-icons/hi';
 const API_BASE = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function SpotTradingFresh() {
+  console.log('🚀 SpotTradingFresh component loaded!');
   const navigate = useNavigate();
   
   // Core State
