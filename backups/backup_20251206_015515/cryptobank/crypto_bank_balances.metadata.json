@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"043895790db448ad897f0be5e68d0bb5","collectionName":"crypto_bank_balances","type":"collection"}
