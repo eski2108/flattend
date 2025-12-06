@@ -213,13 +213,19 @@ export default function Settings() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '32px',
-              fontWeight: '900',
-              color: '#000',
               boxShadow: '0 0 20px rgba(0, 240, 255, 0.5)',
-              flexShrink: 0
+              flexShrink: 0,
+              overflow: 'hidden'
             }}>
-              {(currentUser.full_name || currentUser.name || 'U').substring(0, 2).toUpperCase()}
+              <img 
+                src="/logo1-transparent.png" 
+                alt="CoinHubX" 
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain'
+                }}
+              />
             </div>
             <div style={{ flex: 1, minWidth: '250px' }}>
               <div style={{ marginBottom: '1rem' }}>
