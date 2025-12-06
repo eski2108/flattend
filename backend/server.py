@@ -10884,6 +10884,8 @@ async def execute_trading_transaction(request: dict):
 @api_router.get("/trading/pairs-live")
 @api_router.get("/trading/pairs-fresh-1765047505")
 @api_router.get("/trading/pairs-now")
+@api_router.get("/trading/pairs-active")
+@api_router.get("/pairs/trading")
 async def get_trading_pairs(request: Request, response: Response):
     """
     Get all available trading pairs with their liquidity status (FULLY DYNAMIC)
