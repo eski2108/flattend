@@ -4,7 +4,6 @@ import axios from 'axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-const API = 'https://coinhubx.net/api';
 import { 
   IoWallet, 
   IoTrendingUp, 
@@ -20,7 +19,7 @@ import {
   IoSwapHorizontal
 } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const API = 'https://coinhubx.net/api';
 
 // Coin names mapping
 const COIN_NAMES = {
