@@ -7,8 +7,8 @@ import CHXButton from '@/components/CHXButton';
 import { IoTrendingUp, IoTrendingDown, IoFlash, IoCheckmarkCircle } from 'react-icons/io5';
 import { HiChartBar, HiClock, HiCurrencyDollar } from 'react-icons/hi';
 
-// FRESH API CONFIGURATION - USE ENVIRONMENT VARIABLE
-const API_BASE = process.env.REACT_APP_BACKEND_URL + '/api';
+// HARDCODED API URL - BYPASS ALL CACHE/ENV ISSUES
+const API_BASE = 'https://coinhubx.net/api';
 
 export default function SpotTradingFresh() {
   console.log('🚀 SpotTradingFresh component loaded!');
