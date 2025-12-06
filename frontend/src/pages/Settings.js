@@ -660,9 +660,55 @@ export default function Settings() {
 
         {/* App Version */}
         <div style={{ textAlign: 'center', marginTop: '2rem', color: '#666', fontSize: '13px' }}>
-          Coin Hub IoClose as X v2.0.0
+          CoinHubX v2.0.0
         </div>
       </div>
+
+      {/* Settings Modals */}
+      {activeModal === 'profile' && (
+        <ProfileSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+          onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+        />
+      )}
+      {activeModal === 'email' && (
+        <EmailSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'security' && (
+        <SecuritySettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === '2fa' && (
+        <TwoFactorSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+          onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+        />
+      )}
+      {activeModal === 'notifications' && (
+        <NotificationSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'language' && (
+        <LanguageSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'payment' && (
+        <PaymentMethodsManager
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
     </div>
   );
 }
