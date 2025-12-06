@@ -4,9 +4,9 @@ import axios from 'axios';
 import { DollarSign, IoCash, IoTrendingDown, IoTrendingUp, PieChart } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 
-const API = API_BASE_URL;
+// API already defined
 
 export default function PortfolioPage() {
   const navigate = useNavigate();

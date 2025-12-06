@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Download, Filter, IoCheckmark as Check, IoCheckmarkCircle, IoClose as X, IoCloseCircle, IoCloudDownload, IoFilter, IoSearch, IoShield, IoWarning, Search } from 'react-icons/io5';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 
-const API = API_BASE_URL;
+// API already defined
 
 export default function AdminSecurityLogs() {
   const [logs, setLogs] = useState([]);

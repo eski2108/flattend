@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 
-const API = API_BASE_URL;
+// API already defined
 
 function PremiumAuth() {
   const navigate = useNavigate();

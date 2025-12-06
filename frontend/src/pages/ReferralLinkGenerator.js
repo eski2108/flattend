@@ -4,9 +4,9 @@ import axios from 'axios';
 import { IoCash, IoCheckmark, IoCopy, IoGift as Gift, IoOpenOutline, IoPeople, IoShareSocial as Share2, IoTrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 
-const API = API_BASE_URL;
+// API already defined
 
 export default function ReferralLinkGenerator() {
   const navigate = useNavigate();

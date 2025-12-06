@@ -31,7 +31,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 
 ChartJS.register(
   CategoryScale,
@@ -44,7 +44,7 @@ ChartJS.register(
   Filler
 );
 
-const API = API_BASE_URL;
+// API already defined
 
 export default function ReferralDashboardComprehensive() {
   const navigate = useNavigate();

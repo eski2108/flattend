@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { IoAlertCircle as AlertCircle, IoBriefcase as Briefcase, IoCard as CreditCard, IoCash as DollarSign, IoCheckmark, IoCopy, IoFlash as Zap, IoPeople as Users, IoShield as Shield, IoTrendingUp as TrendingUp } from 'react-icons/io5';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 import { toast } from 'react-hot-toast';
 
-const API = API_BASE_URL;
+// API already defined
 
 export default function ReferralsPageNew() {
   const navigate = useNavigate();

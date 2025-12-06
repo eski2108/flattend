@@ -5,8 +5,8 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
 
-import API_BASE_URL from '@/config/api';
-const API = API_BASE_URL;
+const API = 'https://coinhubx.net/api';
+// API already defined
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
