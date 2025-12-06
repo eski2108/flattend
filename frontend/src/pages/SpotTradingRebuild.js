@@ -56,9 +56,9 @@ export default function SpotTradingRebuild() {
   // Fetch trading pairs
   const fetchTradingPairs = async () => {
     try {
-      console.log('🚀 FETCHING TRADING PAIRS FROM:', `${API}/trading/pairs`);
+      console.log('🚀 FETCHING TRADING PAIRS FROM:', `${API}/api/pairs/trading`);
       // USE FRESH ENDPOINT THAT'S NEVER BEEN CACHED
-      const response = await axios.get(`${API}/pairs/trading?t=${Date.now()}`);
+      const response = await axios.get(`${API}/api/pairs/trading?t=${Date.now()}`);
       console.log('📊 TRADING PAIRS RESPONSE:', response.data);
       
       if (response.data.success && response.data.pairs) {
