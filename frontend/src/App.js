@@ -162,7 +162,7 @@ function App() {
             <Route path="/security" element={<Security />} />
             <Route path="/2fa-setup" element={<TwoFactorSetup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<PremiumAuth />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/auth" element={<PremiumAuth />} />
             
             {/* Cache bypass routes - NEW */}
