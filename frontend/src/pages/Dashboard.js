@@ -60,7 +60,7 @@ export default function Dashboard() {
   const loadData = async (userId) => {
     try {
       // Cache-busting: Add timestamp + headers to prevent stale data
-      const res = await axios.get(`${API}/api/portfolio/summary/${userId}?_t=${Date.now()}`, {
+      const res = await axios.get(`${API}/api/user/${userId}/portfolio?_t=${Date.now()}`, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
