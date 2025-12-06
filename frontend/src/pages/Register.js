@@ -63,11 +63,45 @@ export default function Register() {
       });
       
       if (response.data.success) {
-        toast.success('✅ Account created successfully! Please login.');
-        setTimeout(() => navigate('/login'), 1500);
+        if (response.data.phone_verification_required) {
+          // Show verification step
+          setUserEmail(formData.email);
+          setVerificationStep(true);
+          toast.success('📱 SMS sent! Please enter the verification code.');
+        } else {
+          toast.success('✅ Account created successfully! Please login.');
+          setTimeout(() => navigate('/login'), 1500);
+        }
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    
+    if (!verificationCode || verificationCode.length < 4) {
+      toast.error('Please enter a valid verification code');
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      const response = await axios.post(`${API}/auth/verify-phone`, {
+        email: userEmail,
+        code: verificationCode
+      });
+      
+      if (response.data.success) {
+        toast.success('✅ Phone verified! You can now login.');
+        setTimeout(() => navigate('/login'), 1500);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Verification failed. Please try again.');
     } finally {
       setLoading(false);
     }
