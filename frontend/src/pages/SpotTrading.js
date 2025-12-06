@@ -60,7 +60,7 @@ export default function SpotTrading() {
 
   const fetchTradingPairs = async () => {
     try {
-      const response = await axios.get(`${API}/api/trading/pairs`);
+      const response = await axios.get(`${API}/trading/pairs`);
       if (response.data.success) {
         // Filter only tradable pairs
         const tradablePairs = response.data.pairs.filter(p => p.is_tradable);
@@ -84,7 +84,7 @@ export default function SpotTrading() {
 
   const fetchUserBalances = async () => {
     try {
-      const response = await axios.get(`${API}/api/wallet/balances`, {
+      const response = await axios.get(`${API}/wallet/balances`, {
         params: { user_id: user.user_id }
       });
       if (response.data.success) {
@@ -104,7 +104,7 @@ export default function SpotTrading() {
       if (!selectedPair) return;
       const [base, quote] = selectedPair.split('/');
 
-      const response = await axios.get(`${API}/api/prices/live`);
+      const response = await axios.get(`${API}/prices/live`);
       if (response.data.success && response.data.prices) {
         const priceData = response.data.prices[base];
         if (priceData) {
@@ -139,7 +139,7 @@ export default function SpotTrading() {
       if (!selectedPair) return;
       const [base, quote] = selectedPair.split('/');
 
-      const response = await axios.get(`${API}/api/admin/liquidity-status`, {
+      const response = await axios.get(`${API}/admin/liquidity-status`, {
         params: { currency: base }
       });
       if (response.data.success) {
@@ -218,7 +218,7 @@ export default function SpotTrading() {
 
       console.log('🔥 EXECUTING TRADE VIA /api/trading/execute-v2:', payload);
 
-      const response = await axios.post(`${API}/api/trading/execute-v2`, payload);
+      const response = await axios.post(`${API}/trading/execute-v2`, payload);
 
       if (response.data.success) {
         toast.success(`${orderType.toUpperCase()} order executed successfully!`);
