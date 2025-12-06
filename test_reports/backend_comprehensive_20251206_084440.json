@@ -1,0 +1,400 @@
+{
+  "test_summary": {
+    "success_rate": 30.434782608695656,
+    "total_tests": 23,
+    "passed_tests": 7,
+    "failed_tests": 16,
+    "categories": {
+      "Authentication": {
+        "passed": 3,
+        "total": 7
+      },
+      "P2P": {
+        "passed": 0,
+        "total": 3
+      },
+      "Instant Trading": {
+        "passed": 0,
+        "total": 3
+      },
+      "Wallet": {
+        "passed": 0,
+        "total": 3
+      },
+      "Admin": {
+        "passed": 0,
+        "total": 2
+      },
+      "Security": {
+        "passed": 1,
+        "total": 2
+      },
+      "Performance": {
+        "passed": 1,
+        "total": 1
+      },
+      "Health": {
+        "passed": 2,
+        "total": 2
+      }
+    },
+    "critical_failures": 5,
+    "performance_issues": 1,
+    "test_users_created": 7,
+    "overall_success": false
+  },
+  "detailed_results": [
+    {
+      "test": "Backend Health Check",
+      "success": true,
+      "details": "Backend is healthy and responsive",
+      "response": {
+        "status": "healthy",
+        "service": "coinhubx-backend",
+        "timestamp": "2025-12-06T08:44:11.190500+00:00"
+      },
+      "db_state": null,
+      "performance_ms": 82.01098442077637,
+      "timestamp": "2025-12-06T08:44:11.193135+00:00"
+    },
+    {
+      "test": "User Registration",
+      "success": true,
+      "details": "User registered successfully: test_xnx7a2te@coinhubx.test",
+      "response": {
+        "success": true,
+        "message": "Registration successful! Please verify your phone number with the SMS code sent.",
+        "user_id": "6a52d48f-f911-4f7e-85d2-9e960af30492",
+        "email": "test_xnx7a2te@coinhubx.test",
+        "phone_verification_required": true
+      },
+      "db_state": null,
+      "performance_ms": 2199.7268199920654,
+      "timestamp": "2025-12-06T08:44:13.392944+00:00"
+    },
+    {
+      "test": "User Login",
+      "success": true,
+      "details": "Login successful for test_jszlh2ez@coinhubx.test, token received",
+      "response": {
+        "user_id": "20ac5ae7-0a74-4474-b680-eba921913dd7",
+        "has_token": true
+      },
+      "db_state": null,
+      "performance_ms": 991.7037487030029,
+      "timestamp": "2025-12-06T08:44:18.066161+00:00"
+    },
+    {
+      "test": "Invalid Login Rejection",
+      "success": true,
+      "details": "Correctly rejected invalid credentials with status 401",
+      "response": null,
+      "db_state": null,
+      "performance_ms": 267.15660095214844,
+      "timestamp": "2025-12-06T08:44:18.333378+00:00"
+    },
+    {
+      "test": "Google OAuth Endpoint",
+      "success": true,
+      "details": "OAuth endpoint available with status 200",
+      "response": null,
+      "db_state": null,
+      "performance_ms": 234.13658142089844,
+      "timestamp": "2025-12-06T08:44:18.567791+00:00"
+    },
+    {
+      "test": "P2P Marketplace Listings",
+      "success": false,
+      "details": "Failed to get marketplace listings with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 8.994817733764648,
+      "timestamp": "2025-12-06T08:44:18.577203+00:00"
+    },
+    {
+      "test": "P2P Create Offer",
+      "success": false,
+      "details": "Failed to create P2P sell order with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 8.699655532836914,
+      "timestamp": "2025-12-06T08:44:22.210570+00:00"
+    },
+    {
+      "test": "P2P Order Flow",
+      "success": false,
+      "details": "Could not create offer for order flow test",
+      "response": null,
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:28.930964+00:00"
+    },
+    {
+      "test": "Instant Buy Quote",
+      "success": false,
+      "details": "Failed to get instant buy quote with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 8.357763290405273,
+      "timestamp": "2025-12-06T08:44:28.939387+00:00"
+    },
+    {
+      "test": "Instant Sell Quote",
+      "success": false,
+      "details": "Failed to get instant sell quote with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 7.1735382080078125,
+      "timestamp": "2025-12-06T08:44:28.946602+00:00"
+    },
+    {
+      "test": "Instant Buy Execution",
+      "success": false,
+      "details": "Could not get quote for buy execution",
+      "response": null,
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:32.012763+00:00"
+    },
+    {
+      "test": "Wallet Balance",
+      "success": false,
+      "details": "Failed to get wallet balance with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 50.86946487426758,
+      "timestamp": "2025-12-06T08:44:35.773690+00:00"
+    },
+    {
+      "test": "Wallet Transaction History",
+      "success": false,
+      "details": "Could not create test user",
+      "response": null,
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:35.821951+00:00"
+    },
+    {
+      "test": "Deposit Address Generation",
+      "success": false,
+      "details": "Failed to generate deposit address with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 7.684230804443359,
+      "timestamp": "2025-12-06T08:44:38.617371+00:00"
+    },
+    {
+      "test": "Admin Login",
+      "success": false,
+      "details": "Admin login failed with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 48.654794692993164,
+      "timestamp": "2025-12-06T08:44:38.666106+00:00"
+    },
+    {
+      "test": "Admin Login",
+      "success": false,
+      "details": "Admin login failed with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 8.774518966674805,
+      "timestamp": "2025-12-06T08:44:38.674952+00:00"
+    },
+    {
+      "test": "Admin Dashboard Stats",
+      "success": false,
+      "details": "No admin token available",
+      "response": null,
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:38.674968+00:00"
+    },
+    {
+      "test": "Admin Login",
+      "success": false,
+      "details": "Admin login failed with status 404",
+      "response": {
+        "detail": "Not Found"
+      },
+      "db_state": null,
+      "performance_ms": 50.07052421569824,
+      "timestamp": "2025-12-06T08:44:38.725108+00:00"
+    },
+    {
+      "test": "Admin Liquidity Management",
+      "success": false,
+      "details": "No admin token available",
+      "response": null,
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:38.725125+00:00"
+    },
+    {
+      "test": "Rate Limiting",
+      "success": false,
+      "details": "No rate limiting detected (may need configuration)",
+      "response": {
+        "attempts": 5,
+        "statuses": [
+          401,
+          401,
+          401,
+          401,
+          401
+        ]
+      },
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:40.356189+00:00"
+    },
+    {
+      "test": "Input Validation",
+      "success": true,
+      "details": "All invalid inputs properly rejected",
+      "response": {
+        "test_cases": 4
+      },
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:40.467031+00:00"
+    },
+    {
+      "test": "Unauthorized Access Protection",
+      "success": false,
+      "details": "4 endpoints not properly protected",
+      "response": {
+        "unprotected_endpoints": [
+          {
+            "endpoint": "GET /wallets/test-user-id",
+            "properly_protected": false,
+            "status": 404
+          },
+          {
+            "endpoint": "GET /p2p/trade/test-trade-id",
+            "properly_protected": false,
+            "status": 422
+          },
+          {
+            "endpoint": "POST /p2p/create-sell-order",
+            "properly_protected": false,
+            "status": 404
+          },
+          {
+            "endpoint": "GET /admin/dashboard/stats",
+            "properly_protected": false,
+            "status": 404
+          }
+        ]
+      },
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:40.580438+00:00"
+    },
+    {
+      "test": "API Response Times",
+      "success": true,
+      "details": "All endpoints respond within 2s (avg: 21ms)",
+      "response": {
+        "average_ms": 21.394968032836914,
+        "endpoints_tested": 3
+      },
+      "db_state": null,
+      "performance_ms": null,
+      "timestamp": "2025-12-06T08:44:40.644723+00:00"
+    }
+  ],
+  "test_users": [
+    {
+      "email": "test_jszlh2ez@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User JSZLH2EZ",
+      "phone_number": "+447701518656",
+      "referral_code": null,
+      "user_id": "20ac5ae7-0a74-4474-b680-eba921913dd7",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMjBhYzVhZTctMGE3NC00NDc0LWI2ODAtZWJhOTIxOTEzZGQ3IiwiZW1haWwiOiJ0ZXN0X2pzemxoMmV6QGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0NTZ9.EQeo73a1Jvvs6pHsTmtGyhTFqGocOyHSO1v0XGkgvqU",
+      "created_at": "2025-12-06T08:44:17.074397+00:00"
+    },
+    {
+      "email": "test_je3hgneo@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User JE3HGNEO",
+      "phone_number": "+447704319522",
+      "referral_code": null,
+      "user_id": "9654bdb4-8567-462d-a340-618b95437359",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOTY1NGJkYjQtODU2Ny00NjJkLWEzNDAtNjE4Yjk1NDM3MzU5IiwiZW1haWwiOiJ0ZXN0X2plM2hnbmVvQGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0NjF9.5W4YS7O05NAOc-j0-Z6hrXrsrbx7gd-LhxinZgKTzy0",
+      "created_at": "2025-12-06T08:44:22.201783+00:00"
+    },
+    {
+      "email": "test_14922juu@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User 14922JUU",
+      "phone_number": "+447706632523",
+      "referral_code": null,
+      "user_id": "46a34bf7-d3c2-4f43-a5b6-95a969843868",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDZhMzRiZjctZDNjMi00ZjQzLWE1YjYtOTVhOTY5ODQzODY4IiwiZW1haWwiOiJ0ZXN0XzE0OTIyanV1QGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0NjV9.V9GqEAki-t07BV3JeHy0LQDOiPX6kkPRQekXlzZIx64",
+      "created_at": "2025-12-06T08:44:25.861446+00:00"
+    },
+    {
+      "email": "test_nnmk1cdx@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User NNMK1CDX",
+      "phone_number": "+447706951377",
+      "referral_code": null,
+      "user_id": "04b727ab-7e7c-4296-a194-30940825ddc8",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDRiNzI3YWItN2U3Yy00Mjk2LWExOTQtMzA5NDA4MjVkZGM4IiwiZW1haWwiOiJ0ZXN0X25ubWsxY2R4QGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0Njh9.XJqCFLzx8iY-Zi8OofGpcxg6mHo8_F9FzsYsDQO0HeM",
+      "created_at": "2025-12-06T08:44:28.881070+00:00"
+    },
+    {
+      "email": "test_gnpd6l22@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User GNPD6L22",
+      "phone_number": "+447703271065",
+      "referral_code": null,
+      "user_id": "a3b050ac-f7f3-4dda-b912-e61bcfbbe5ab",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTNiMDUwYWMtZjdmMy00ZGRhLWI5MTItZTYxYmNmYmJlNWFiIiwiZW1haWwiOiJ0ZXN0X2ducGQ2bDIyQGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0NzF9.mopYUkZjsJ1_6SR3ESO8BZMD23gZ-5d3eROAtUQ8Z3Q",
+      "created_at": "2025-12-06T08:44:32.004417+00:00"
+    },
+    {
+      "email": "test_exr01bl8@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User EXR01BL8",
+      "phone_number": "+447704942459",
+      "referral_code": null,
+      "user_id": "946b0f86-cb37-4914-86e2-08a1096cc7bd",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOTQ2YjBmODYtY2IzNy00OTE0LTg2ZTItMDhhMTA5NmNjN2JkIiwiZW1haWwiOiJ0ZXN0X2V4cjAxYmw4QGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0NzV9.ICFjEMolhMWtxdOKsnRAhOKmrl5PzCup3P05RTtf35U",
+      "created_at": "2025-12-06T08:44:35.722717+00:00"
+    },
+    {
+      "email": "test_pyssfbdm@coinhubx.test",
+      "password": "TestPass123!",
+      "full_name": "Test User PYSSFBDM",
+      "phone_number": "+447702714904",
+      "referral_code": null,
+      "user_id": "7293c473-9291-405c-b830-6d7674d85b6f",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzI5M2M0NzMtOTI5MS00MDVjLWI4MzAtNmQ3Njc0ZDg1YjZmIiwiZW1haWwiOiJ0ZXN0X3B5c3NmYmRtQGNvaW5odWJ4LnRlc3QiLCJleHAiOjE3NjU2MTU0Nzh9.f99Xv0N99rA0X3iO89GBCbxMXcp7exj_NXCr-Y9Iv9Y",
+      "created_at": "2025-12-06T08:44:38.609620+00:00"
+    }
+  ],
+  "test_metadata": {
+    "backend_url": "https://tradepanel-12.preview.emergentagent.com/api",
+    "test_timestamp": "2025-12-06T08:44:40.645045+00:00",
+    "test_type": "comprehensive_backend_audit"
+  }
+}
