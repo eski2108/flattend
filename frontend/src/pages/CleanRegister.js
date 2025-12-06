@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoMail, IoLockClosed, IoEye, IoEyeOff, IoPerson, IoPhone, IoCheckmarkCircle, IoShieldCheckmark } from 'react-icons/io5';
+import { IoMail, IoLockClosed, IoEye, IoEyeOff, IoPerson, IoCall, IoCheckmarkCircle, IoShieldCheckmark } from 'react-icons/io5';
 import CHXButton from '@/components/CHXButton';
 
 // CLEAN API CONFIGURATION
