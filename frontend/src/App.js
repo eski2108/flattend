@@ -140,7 +140,7 @@ function App() {
           <div className="App">
             <TestModeBanner />
             <Toaster position="top-right" richColors />
-            <BrowserRouter>
+            <HashRouter>
           <Suspense fallback={
             <div style={{ 
               minHeight: '100vh', 
