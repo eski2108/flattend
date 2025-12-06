@@ -1,349 +1,161 @@
 <analysis>**original_problem_statement:**
-The user's initial request was to fix 116 remaining code quality issues in the monolithic  file. During the session, this evolved into a full-scale production readiness and deployment preparation task.
-
-The final user request is a 10-point plan to be completed in one go:
-1.  Replace all test URLs with the production domain ().
-2.  Clean the entire database of all test data (users, trades, balances, etc.).
-3.  Build a complete admin liquidity management panel.
-4.  Confirm all fee and referral flows are working correctly.
-5.  Fix the Login and Register page visuals to match perfectly.
-6.  Hard-test every major feature in a production-like mode.
-7.  Confirm all external services (NOWPayments, email, Google OAuth, Telegram) are correctly configured for production.
-8.  Enable full production security features (rate limiting, CORS, etc.).
-9.  Clean up all remaining console errors and warnings.
-10. Provide a final, comprehensive report with proof for each item.
-
-A subsequent critical issue arose: the user is unable to log into the admin account after the database cleanup and password changes.
+The user initially wanted to fix a revenue discrepancy on the admin dashboard. This has since expanded into a series of critical bug fixes, primarily centered around a non-functional frontend. The main goals are to fix the blank Spot Trading page, the broken registration flow, and a partially-fixed Forgot Password feature. The core obstacle is an aggressive, external CDN/platform caching layer that serves old, broken JavaScript files and injects a conflicting external script (), rendering most fixes invisible. The user's latest directive is to bypass this cache by duplicating the main pages (, , ) into new files and routes (, , etc.).
 
 **User's preferred language**: English
 
 **what currently exists?**
-- A full-stack application with a React frontend and a FastAPI backend.
-- All 115+ original backend linting errors in  have been fixed.
-- The database has been wiped clean of all test data, leaving only a single admin account ().
-- All hardcoded URLs have been removed; the application is configured via  files to use  for the frontend and  for the backend.
-- A new liquidity management page has been created at  and added to the admin routes.
-- The fee display has been removed from the frontend Instant Buy page as requested.
-- Numerous proof-of-work and summary documents have been created in the  directory.
+A full-stack crypto exchange platform with a React frontend and a FastAPI backend. The backend is now stable and correctly connected to the user's production MongoDB Atlas cluster, with APIs for trading pairs, login, and registration confirmed to be working. The frontend is in a broken state due to an unresolved, aggressive caching issue. The platform is injecting an external script () that overrides the application's configuration, causing API calls to point to old, incorrect URLs. The agent has just begun the user-directed strategy of duplicating core pages to create fresh components and routes in an attempt to bypass this caching layer.
 
 **Last working item**:
-- **Last item agent was working**: Debugging a critical admin login failure. The user is unable to log in with the correct credentials, receiving an Invalid credentials error.
-- **Status**: BLOCKED
-- **Agent Testing Done**: Y. The agent confirmed the admin user exists, reset the password multiple times (final password is ), and created a script to verify that the password hash stored in the database is correct for the given password. The hash verification **passed**, but the  endpoint still fails.
-- **Which testing method agent to use?**: both. The next step requires a deeper investigation.
-  1.  **Backend**: Add enhanced logging to the  endpoint in  to inspect the exact request payload being received.
-  2.  **Frontend Testing Agent**: Use the agent to perform a login from the browser and capture the network request to ensure it is being sent correctly.
-- **User Testing Done**: Y (User discovered the bug).
+- **Last item agent was working**: Following the user's explicit instruction to duplicate the , , and  pages to bypass the aggressive caching. The goal is to create new files (, , ) and new routes (, , ) to force the CDN/browser to load fresh, uncorrupted code bundles. The agent had started this task by viewing the original  and  files.
+- **Status**: IN PROGRESS
+- **Agent Testing Done**: N
+- **Which testing method agent to use?**: Frontend testing agent. After creating the new files and routes, the agent must log in and navigate to  to verify that the trading pairs load and the interface is fully functional. It should also test  and .
+- **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
-- **Issue 1: Admin Login is Broken (P0 - BLOCKER)**
-  - **Description**: The primary  account cannot log in. This prevents any further testing or use of the platform.
-  - **Attempted fixes**:
-    - Confirmed services are running.
-    - Confirmed admin user exists in the database.
-    - Reset password multiple times using a script that leverages the project's  hashing mechanism. The latest password is .
-    - Wrote a script to directly test the password against the stored hash, which returned , indicating the hash and password are a valid pair.
-    - Restarted all services.
-  - **Next debug checklist**:
-    1.  View  and add detailed logging inside the  function (around line 7180) to print the full  object received.
-    2.  Restart the backend (backend: stopped
-backend: started).
-    3.  Attempt a login again using  or the frontend.
-    4.  Check the backend logs (==> /var/log/supervisor/backend.err.log <==
-2025-12-05 13:58:43,327 - backup_system - INFO - Starting database backup: backup_20251205_135843
-2025-12-05 13:58:43,854 - backup_system - INFO - ✅ Backup successful: backup_20251205_135843 (0.01 MB)
-2025-12-05 13:58:43,854 - backup_system - INFO - Removing old backup: backup_20251205_103534
-2025-12-05 13:58:43,858 - backup_system - INFO - ✅ Automated backup completed: backup_20251205_135843
-INFO:     Application startup complete.
-2025-12-05 13:58:43,858 - subscription_renewal - INFO - Processing 0 subscription renewals
-2025-12-05 14:02:29,423 - server - INFO - 💾 Cached live prices for 30 seconds
-2025-12-05 14:02:30,879 - server - INFO - === LOGIN ATTEMPT: admin@coinhubx.net ===
-2025-12-05 14:02:30,880 - server - INFO - User not found: admin@coinhubx.net
-2025-12-05 14:02:30,882 - security_logger - INFO - Security log created for admin@coinhubx.net: success=False
-2025-12-05 14:03:43,328 - server - INFO - ✅ Updated 0 admin liquidity offers with live prices
-2025-12-05 14:04:43,454 - httpx - INFO - HTTP Request: GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin,binancecoin,solana,ripple,cardano,dogecoin,polkadot,matic-network,chainlink,litecoin,bitcoin-cash,uniswap,avalanche-2,cosmos,tron,shiba-inu,dai&vs_currencies=usd,gbp&include_24hr_change=true "HTTP/1.1 200 OK"
-2025-12-05 14:04:43,455 - live_pricing - INFO - ✅ Fetched live prices for 20 coins from CoinGecko
-2025-12-05 14:08:43,329 - server - INFO - ✅ Updated 0 admin liquidity offers with live prices
-2025-12-05 14:10:43,603 - httpx - INFO - HTTP Request: GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin,binancecoin,solana,ripple,cardano,dogecoin,polkadot,matic-network,chainlink,litecoin,bitcoin-cash,uniswap,avalanche-2,cosmos,tron,shiba-inu,dai&vs_currencies=usd,gbp&include_24hr_change=true "HTTP/1.1 200 OK"
-2025-12-05 14:10:43,604 - live_pricing - INFO - ✅ Fetched live prices for 20 coins from CoinGecko
-2025-12-05 14:13:43,331 - server - INFO - ✅ Updated 0 admin liquidity offers with live prices
-2025-12-05 14:16:43,754 - httpx - INFO - HTTP Request: GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin,binancecoin,solana,ripple,cardano,dogecoin,polkadot,matic-network,chainlink,litecoin,bitcoin-cash,uniswap,avalanche-2,cosmos,tron,shiba-inu,dai&vs_currencies=usd,gbp&include_24hr_change=true "HTTP/1.1 200 OK"
-2025-12-05 14:16:43,754 - live_pricing - INFO - ✅ Fetched live prices for 20 coins from CoinGecko
-2025-12-05 14:18:43,332 - server - INFO - ✅ Updated 0 admin liquidity offers with live prices
-2025-12-05 14:22:43,896 - httpx - INFO - HTTP Request: GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin,binancecoin,solana,ripple,cardano,dogecoin,polkadot,matic-network,chainlink,litecoin,bitcoin-cash,uniswap,avalanche-2,cosmos,tron,shiba-inu,dai&vs_currencies=usd,gbp&include_24hr_change=true "HTTP/1.1 200 OK"
-2025-12-05 14:22:43,897 - live_pricing - INFO - ✅ Fetched live prices for 20 coins from CoinGecko
-2025-12-05 14:23:43,334 - server - INFO - ✅ Updated 0 admin liquidity offers with live prices
-INFO:     Will watch for changes in these directories: ['/app/backend']
-INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     Started reloader process [29] using WatchFiles
-2025-12-05 14:26:04,234 - cache_service - WARNING - ⚠️  Redis not available: Error 99 connecting to localhost:6379. Cannot assign requested address.. Running without cache.
-2025-12-05 14:26:04,386 - email_service - WARNING - SendGrid API key not configured. Email notifications disabled.
-2025-12-05 14:26:04,557 - telegram_service - WARNING - ⚠️ Telegram notifications disabled - missing BOT_TOKEN or CHAT_ID
-2025-12-05 14:26:05,111 - coin_hub_x - INFO - 🚀 RUNNING IN PRODUCTION MODE
-2025-12-05 14:26:05,114 - wallet_service - INFO - ✅ Wallet Service initialized
-2025-12-05 14:26:05,114 - wallet_service - INFO - 🚀 Global Wallet Service initialized
-2025-12-05 14:26:05,114 - referral_engine - INFO - 🎁 Referral Engine initialized
-2025-12-05 14:26:05,114 - coin_hub_x - INFO - ✅ Central Wallet Service initialized
-2025-12-05 14:26:05,116 - p2p_notification_service - INFO - P2P Notification Service initialized
-2025-12-05 14:26:05,116 - coin_hub_x - INFO - ✅ P2P Notification Service initialized
-INFO:     Started server process [69]
-INFO:     Waiting for application startup.
-2025-12-05 14:26:05,496 - background_tasks - INFO - 🚀 Background task queue started
-2025-12-05 14:26:05,496 - coin_hub_x - INFO - ℹ️ 🚀 Production background task queue initialized
-2025-12-05 14:26:05,496 - server - INFO - ✅ Price alert checker started
-2025-12-05 14:26:05,496 - live_pricing - INFO - ✅ Live price updater started
-2025-12-05 14:26:05,496 - server - INFO - ✅ Live price updater started
-2025-12-05 14:26:05,496 - subscription_renewal - INFO - Subscription renewal worker started
-2025-12-05 14:26:05,496 - server - INFO - ✅ Subscription renewal worker started
-2025-12-05 14:26:05,496 - server - INFO - ✅ Admin liquidity price updater started
-2025-12-05 14:26:05,496 - server - INFO - ✅ P2P boost cleanup task started
-2025-12-05 14:26:05,498 - backup_system - INFO - Backup system initialized. Backup directory: /app/backups
-2025-12-05 14:26:05,498 - server - INFO - ✅ Automated database backup system started
-2025-12-05 14:26:05,498 - server - INFO - ✅ Express countdown checker started
-2025-12-05 14:26:05,498 - server - INFO - 🚀 Starting P2P Boost Cleanup Service...
-2025-12-05 14:26:05,499 - backup_system - INFO - Backup system initialized. Backup directory: /app/backups
-2025-12-05 14:26:05,500 - backup_system - INFO - 🚀 Starting automated backup system (every 24 hours)
-2025-12-05 14:26:05,500 - backup_system - INFO - Starting database backup: backup_20251205_142605
-2025-12-05 14:26:05,626 - backup_system - INFO - ✅ Backup successful: backup_20251205_142605 (0.01 MB)
-2025-12-05 14:26:05,626 - backup_system - INFO - Removing old backup: backup_20251205_105558
-2025-12-05 14:26:05,638 - backup_system - INFO - ✅ Automated backup completed: backup_20251205_142605
-INFO:     Application startup complete.
-2025-12-05 14:26:05,638 - subscription_renewal - INFO - Processing 0 subscription renewals
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [69]
-INFO:     Stopping reloader process [29]
-INFO:     Will watch for changes in these directories: ['/app/backend']
-INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     Started reloader process [208] using WatchFiles
-2025-12-05 14:26:26,713 - cache_service - WARNING - ⚠️  Redis not available: Error 99 connecting to localhost:6379. Cannot assign requested address.. Running without cache.
-2025-12-05 14:26:26,719 - email_service - WARNING - SendGrid API key not configured. Email notifications disabled.
-2025-12-05 14:26:26,752 - telegram_service - WARNING - ⚠️ Telegram notifications disabled - missing BOT_TOKEN or CHAT_ID
-2025-12-05 14:26:26,847 - coin_hub_x - INFO - 🚀 RUNNING IN PRODUCTION MODE
-2025-12-05 14:26:26,848 - wallet_service - INFO - ✅ Wallet Service initialized
-2025-12-05 14:26:26,848 - wallet_service - INFO - 🚀 Global Wallet Service initialized
-2025-12-05 14:26:26,848 - referral_engine - INFO - 🎁 Referral Engine initialized
-2025-12-05 14:26:26,848 - coin_hub_x - INFO - ✅ Central Wallet Service initialized
-2025-12-05 14:26:26,848 - p2p_notification_service - INFO - P2P Notification Service initialized
-2025-12-05 14:26:26,848 - coin_hub_x - INFO - ✅ P2P Notification Service initialized
-INFO:     Started server process [211]
-INFO:     Waiting for application startup.
-2025-12-05 14:26:27,054 - background_tasks - INFO - 🚀 Background task queue started
-2025-12-05 14:26:27,054 - coin_hub_x - INFO - ℹ️ 🚀 Production background task queue initialized
-2025-12-05 14:26:27,054 - server - INFO - ✅ Price alert checker started
-2025-12-05 14:26:27,054 - live_pricing - INFO - ✅ Live price updater started
-2025-12-05 14:26:27,054 - server - INFO - ✅ Live price updater started
-2025-12-05 14:26:27,054 - subscription_renewal - INFO - Subscription renewal worker started
-2025-12-05 14:26:27,054 - server - INFO - ✅ Subscription renewal worker started
-2025-12-05 14:26:27,054 - server - INFO - ✅ Admin liquidity price updater started
-2025-12-05 14:26:27,054 - server - INFO - ✅ P2P boost cleanup task started
-2025-12-05 14:26:27,055 - backup_system - INFO - Backup system initialized. Backup directory: /app/backups
-2025-12-05 14:26:27,055 - server - INFO - ✅ Automated database backup system started
-2025-12-05 14:26:27,055 - server - INFO - ✅ Express countdown checker started
-2025-12-05 14:26:27,056 - server - INFO - 🚀 Starting P2P Boost Cleanup Service...
-2025-12-05 14:26:27,057 - backup_system - INFO - Backup system initialized. Backup directory: /app/backups
-2025-12-05 14:26:27,057 - backup_system - INFO - 🚀 Starting automated backup system (every 24 hours)
-2025-12-05 14:26:27,057 - backup_system - INFO - Starting database backup: backup_20251205_142627
-2025-12-05 14:26:27,075 - backup_system - INFO - ✅ Backup successful: backup_20251205_142627 (0.01 MB)
-2025-12-05 14:26:27,075 - backup_system - INFO - Removing old backup: backup_20251205_120653
-2025-12-05 14:26:27,086 - backup_system - INFO - ✅ Automated backup completed: backup_20251205_142627
-INFO:     Application startup complete.
-2025-12-05 14:26:27,086 - subscription_renewal - INFO - Processing 0 subscription renewals
-
-==> /var/log/supervisor/backend.out.log <==
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     127.0.0.1:58678 - "GET /api/admin/fee-settings HTTP/1.1" 500 Internal Server Error
-INFO:     127.0.0.1:58692 - "GET /api/health HTTP/1.1" 200 OK
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     10.64.130.218:44608 - "GET /api/system/test-mode HTTP/1.1" 200 OK
-INFO:     10.64.130.218:44610 - "GET /api/platform/stats HTTP/1.1" 200 OK
-INFO:     10.64.130.202:49788 - "GET /api/currencies/list HTTP/1.1" 200 OK
-INFO:     10.64.130.218:44610 - "GET /api/system/test-mode HTTP/1.1" 200 OK
-INFO:     10.64.130.202:49788 - "GET /api/currencies/list HTTP/1.1" 200 OK
-INFO:     10.64.130.203:57252 - "GET /api/platform/stats HTTP/1.1" 200 OK
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     127.0.0.1:57058 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     10.64.131.25:60782 - "GET /api/system/test-mode HTTP/1.1" 200 OK
-INFO:     10.64.128.151:49402 - "GET /api/currencies/list HTTP/1.1" 200 OK
-INFO:     10.64.131.50:53788 - "GET /api/platform/stats HTTP/1.1" 200 OK
-INFO:     10.64.128.151:49402 - "GET /api/currencies/list HTTP/1.1" 200 OK
-INFO:     10.64.128.139:42442 - "GET /api/system/test-mode HTTP/1.1" 200 OK
-INFO:     10.64.131.24:44278 - "GET /api/platform/stats HTTP/1.1" 200 OK
-INFO:     10.64.131.24:54880 - "GET /api/system/test-mode HTTP/1.1" 200 OK
-INFO:     10.64.131.25:52012 - "GET /api/currencies/list HTTP/1.1" 200 OK
-INFO:     10.64.128.151:41938 - "GET /api/platform/stats HTTP/1.1" 200 OK
-INFO:     10.64.131.24:54880 - "GET /api/system/test-mode HTTP/1.1" 200 OK
-INFO:     10.64.131.25:52012 - "GET /api/currencies/list HTTP/1.1" 200 OK
-INFO:     10.64.128.139:46230 - "GET /api/platform/stats HTTP/1.1" 200 OK
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     127.0.0.1:45622 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42568 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42568 - "POST /api/auth/register HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42568 - "POST /api/auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42568 - "GET /api/wallet/balances HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:42568 - "POST /api/instant-buy/quote HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:42568 - "GET /api/referral/stats HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:42568 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:42568 - "GET /api/prices/live HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42568 - "GET /api/p2p/offers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42568 - "GET /api/p2p/statistics HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:46538 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46538 - "POST /api/auth/register HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46538 - "POST /api/auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46538 - "GET /api/wallets/balances/test_x1cqeear%40coinhubx.net HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46538 - "POST /api/admin-liquidity/quote HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:46538 - "GET /api/referral/stats/test_x1cqeear%40coinhubx.net HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:46538 - "POST /api/admin/login HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:46538 - "GET /api/prices/live HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46538 - "GET /api/p2p/offers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46538 - "GET /api/p2p/stats HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33482 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:36762 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:54018 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:54540 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:46028 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:36652 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     127.0.0.1:48342 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:36678 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     127.0.0.1:49830 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:48540 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:56220 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered
-INFO:     127.0.0.1:51604 - "GET /api/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51614 - "GET /api/prices/live HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51628 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
-✅ NOWPayments integration endpoints registered successfully
-✅ Unified wallet endpoints registered) to see the exact payload. The issue might be in how the frontend sends the data or how the backend parses it (e.g., whitespace, JSON structure).
-    5.  Use the frontend testing agent to simulate a login and inspect the browser's network request payload.
-  - **Why fix this issue and what will be achieved with the fix?**: This is a critical blocker. Fixing it will restore access to the application and allow for the completion of the user's 10-point deployment plan.
+- **Issue 1: Aggressive CDN/Platform Caching Overrides Frontend Build (P0 - CRITICAL)**
+  - **Description**: The hosting platform (user mentioned 123.reg) is serving old, cached JavaScript files (e.g., ) instead of the newly built ones. It also injects an external script () that hardcodes an old backend URL (), breaking all API calls. This is the root cause of almost all visible frontend bugs.
+  - **Attempted fixes**: Rebuilding components, adding cache-busting headers, removing the script from , using a service worker, and creating cache-bypass URLs. All have failed because the injection/caching happens at a level outside the agent's direct control. The current strategy is to duplicate pages.
+  - **Next debug checklist**: Complete the page duplication task as requested by the user.
   - **Status**: IN PROGRESS
+  - **Is recurring issue?**: Y
+  - **Should Test frontend/backend/both after fix?**: frontend
+
+- **Issue 2: Spot Trading Page is Blank/Non-Functional (P0 - CRITICAL)**
+  - **Description**: Caused by Issue #1. The  page loads the basic structure but fails to fetch and display the trading pairs from the backend, leaving the main grid empty. The backend API () is confirmed to be working correctly.
+  - **Next debug checklist**: Test the new  route after the duplication task is complete.
+  - **Status**: IN PROGRESS
+  - **Is recurring issue?**: Y
+  - **Should Test frontend/backend/both after fix?**: frontend
+  - **Blocked on other issue**: Issue 1
+
+- **Issue 3: Register Page Loads Old Cached Version (P1 - HIGH)**
+  - **Description**: Caused by Issue #1. The  route serves an old, stylistically incorrect version of the component, ignoring the rebuilt versions.
+  - **Next debug checklist**: Test the new  route after the duplication task is complete.
+  - **Status**: IN PROGRESS
+  - **Is recurring issue?**: Y
+  - **Should Test frontend/backend/both after fix?**: frontend
+  - **Blocked on other issue**: Issue 1
+
+- **Issue 4: Forgot Password Flow Not Fully Tested (P2 - MEDIUM)**
+  - **Description**: The agent fixed the backend to send a password reset email with the correct  link. However, the end-to-end flow (receiving the email, clicking the link, and successfully resetting the password on the frontend) has not been verified.
+  - **Next debug checklist**:
+    1. Trigger the forgot password email for .
+    2. Since the agent cannot access emails, assume the link is received and attempt to navigate to a hypothetical reset page to test the token validation endpoint.
+    3. Test the  endpoint.
+  - **Status**: NOT STARTED
   - **Is recurring issue?**: N
   - **Should Test frontend/backend/both after fix?**: both
-  - **Blocked on other issue**: None.
 
 **In progress Task List**:
-- **Task 1: Complete and Verify Production Readiness (P1)**
-  - **Description**: This is the overarching 10-point task from the user. It is paused until the login issue (Issue 1) is resolved.
-  - **Where to resume**: After fixing the login, the next step is to hard-test all major features as outlined in the user's request (point #6). This includes the new liquidity management panel.
-  - **What will be achieved with this?**: The platform will be fully prepared for production deployment.
-  - **Status**: BLOCKED
-  - **Should Test frontend/backend/both after fix?**: both
-  - **Blocked on something**: **Issue 1: Admin Login is Broken**
+- **Task 1: Duplicate Core Pages to Bypass Cache (P0)**
+  - **Where to resume**: The agent has already viewed  and . The next steps are:
+    1.  Create  by copying the content of .
+    2.  View  (or ).
+    3.  Create  by copying its content.
+    4.  Modify  to add the new routes: , , and .
+    5.  Rebuild the frontend (yarn run v1.22.22
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.).
+    6.  Restart the frontend service (frontend: ERROR (not running)
+frontend: started).
+  - **What will be achieved with this?**: This will generate completely new component files and routes, which should force the CDN to serve the fresh build and bypass the stuck cache, finally making the pages functional.
+  - **Status**: IN PROGRESS
+  - **Should Test frontend/backend/both after fix?**: frontend
 
 **Upcoming and Future Tasks**
-- **Upcoming Tasks**:
-    - **(P1) Full End-to-End Feature Testing**: Once login is fixed, systematically test: Authentication, Dashboard, Wallet, Deposits/Withdrawals, Swaps, Instant Buy, P2P Marketplace, Express Buy, Referral System, and the new Liquidity Management Panel.
-    - **(P1) External Services Integration Test**: Verify that NowPayments webhooks, email sending (SendGrid), and Google OAuth redirects work correctly with the  production URL.
-    - **(P2) Frontend Linting Cleanup**: Address the ~286 remaining non-breaking linting warnings in the frontend codebase to improve code quality.
+- **(P0) Full End-to-End Testing**: Once the duplicated pages (, ) are confirmed to be working, perform a full user flow test: Register, Login, view Trading Page, Logout.
+- **(P1) Replace Original Routes**: If the duplicated pages work, replace the original components/routes (, , ) with the new, working versions.
+- **(P2) Code Cleanup**: Delete all the temporary and duplicated component files (, , ) after the main routes are fixed.
+- **(P3) Fix SPA Direct URL Access**: Address the issue where accessing any route other than  directly results in a 404 error. This requires a server-side configuration change to redirect all traffic to .
 
 **Completed work in this session**
-- **Backend Code Quality**: Fixed all 115+ linting and syntax errors in .
-- **Database Cleanup**: Created and executed a script () to remove all test data (users, trades, wallets, etc.), leaving the system in a clean state for production.
-- **Production URL Configuration**: Replaced all hardcoded Emergent test URLs with the production domain () using environment variables in both  and .
-- **Feature Implementation**:
-  - Created a new Admin Liquidity Management panel at .
-  - Removed the fee breakdown from the Instant Buy UI as requested.
-- **Verification and Documentation**:
-  - Audited and created multiple proof documents for fee and referral logic.
-  - Created a deployment checklist and summary documents for the user.
-
-**Earlier issues found/mentioned but not fixed**
-- **Issue 1: Frontend Linting Warnings**
-   - **Debug checklist**: Run  in the  directory to see the list of ~286 warnings. Many can be fixed with .
-   - **Why to solve this issue and what will be achieved with this?**: Improves code quality, maintainability, and adherence to React best practices.
-   - **Should Test frontend/backend/both after fix**: frontend
-   - **Is recurring issue?**: N
+- **MongoDB Atlas Connection Fixed**: Re-established a stable connection to the user's production Atlas cluster, including guiding the user to whitelist IPs and configuring the backend to use the correct connection string and database ().
+- **Backend API Functionality Restored**: Fixed the  endpoint, which now correctly queries the Atlas DB and returns 24 trading pairs.
+- **Forgot Password API Fixed**: Corrected the hardcoded reset link in the backend email template in  to use .
+- **Initial Data Migration to Atlas**: Created an admin user and copied essential data (liquidity wallets, platform settings) from the local DB to the user's production Atlas DB.
+- **Identified Caching as Root Cause**: Through extensive debugging, conclusively determined that an external caching layer and script injection () are the source of all frontend issues.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Production Readiness**: The focus shifted from bug fixing to preparing the application for a live environment. This involved database cleaning, URL externalization, and creating deployment documentation.
-- **Environment Variable Management**: The application was successfully refactored to rely on  files for backend URLs, allowing for an easy switch between test and production environments.
-- **Scripted Maintenance**: Reusable Python scripts were created for critical, repeatable tasks like database cleaning () and password resetting, which is a robust practice.
-- **Authentication Debugging**: A deep dive into the authentication flow, involving direct hash verification against the database, was performed.
+- **Aggressive Platform Caching**: The core problem. An external CDN/hosting layer is serving stale JS files and ignoring new builds.
+- **External Script Injection**: The platform automatically injects , which overrides the app's configuration (e.g., ).
+- **Component Duplication Strategy**: The current user-directed strategy to bypass caching by creating entirely new files and routes.
+- **Backend-DB Stability**: The backend (FastAPI) and database (MongoDB Atlas) are stable and functioning correctly. The issue is purely on the frontend delivery side.
+
+**key DB schema**
+- **users**: Stores user account information.
+- **admin_liquidity_wallets**: Stores available funds for trading pairs.
+- **platform_settings**: Contains configuration for tradable coins.
 
 **All files of reference**
-- : The main backend file. The login endpoint () is the current focus of debugging.
-- : Contains the  function used by the login endpoint.
-- : The user-facing login page.
-- : One of the final reports for the user, summarizing the deployment readiness.
+- : To be modified to add new routes.
+- : Source for .
+- : Source for .
+- : Source for .
+- : Contains the fixed forgot password logic.
+
+**Areas that need refactoring**
+- The  directory is filled with numerous temporary, rebuilt, and now duplicated components. After the caching issue is resolved, a major cleanup is required to remove unused files and consolidate the working components into the primary routes.
+
+**key api endpoints**
+- : (Working) Returns all available trading pairs.
+- : (Working) Authenticates users.
+- : (Working) Creates new users.
+- : (Backend Fixed) Sends a password reset link.
 
 **Critical Info for New Agent**
-- **THE LOGIN IS BROKEN**: This is the only priority. The user cannot log in as  with password .
-- **THE HASH IS CORRECT**: You do not need to re-verify the password hashing logic. A script already confirmed that  returns . The problem lies somewhere in the request/response flow of the  endpoint.
-- **NEXT STEP**: Your immediate task is to add detailed logging to the  function in  to see the exact request body it receives from the frontend. This will likely reveal a mismatch in the data format.
-- **USER IS READY TO DEPLOY**: The user is at the final stage and is very impatient. Resolve the login issue swiftly and then proceed with the final verification steps of their 10-point plan.
+- **The user is extremely frustrated.** The core problem is **NOT** the application code itself, but an **aggressive external caching/script injection layer** that the agent cannot directly control.
+- **DO NOT deviate from the current plan.** The user has explicitly commanded the duplication of pages (, , etc.) with new routes. All other attempts to fix the cache have failed and will likely anger the user. You must complete this task first.
+- The backend API is working. You can trust that if an API call fails from the frontend, the issue is almost certainly the cached, incorrect backend URL being used by the old JavaScript.
+- Test all new functionality on the new routes (e.g., ), not the original ones.
+
+**documents created in this job**
+- /app/SPOT_TRADING_FIX_REPORT.md
+- /app/MONGODB_ATLAS_SETUP_GUIDE.md
+- /app/test_atlas_connection.py
+- /app/frontend/public/force-refresh-sw.js (later removed)
+- /app/frontend/build/test.html (later removed)
+- /app/frontend/build/standalone-trading.html (later removed)
+- Multiple clean/rebuilt/fresh component files that were part of failed attempts.
 
 **Last 10 User Messages and any pending user messages**
-1.  **User**: Provides the production domain: . (Status: **Completed**, agent configured the app).
-2.  **User**: Asks what a backend API is. (Status: **Completed**, agent explained).
-3.  **User**: Asks about deployment. (Status: **Completed**, agent is preparing for it).
-4.  **User**: Gets angry about being asked for a domain before he has deployed. (Status: **Resolved**, agent apologized and explained).
-5.  **User**: Demands a 10-point plan for full production deployment. (Status: **In Progress**).
-6.  **User**: Reports that they cannot log in. (Status: **This is the current BLOCKER**).
-7.  **User**: just change the password to... 1231123. (Status: **Completed**, but did not fix the issue).
-8.  **User**: Asks agent to call a Deployer Agent and run a health check. (Status: **Started**, but interrupted by login issue).
+1.  **User**: Fix the blank screen. (Status: **In Progress**)
+2.  **User**: Told agent to remake Spot Trading from scratch. (Status: **Attempted**, but failed due to cache).
+3.  **User**: Told agent to remove all external Emergent scripts and rebuild Login, Register, and Spot Trading pages. (Status: **Attempted**, but failed due to cache).
+4.  **User**: Kash is not gonna do nothing man. - Rejected the idea of waiting for manual cache clearing. (Status: **Addressed**, agent is trying to force a fix).
+5.  **User**: Its still a blank screeen are u mad. (Status: **Addressed**, agent acknowledged the failure and started a new debug path).
+6.  **User**: Demanded Spot Trading and Forgot Password be fixed immediately. (Status: **Partially Addressed** - Forgot Password backend is fixed, Spot Trading is not).
+7.  **User**: Requested a complete rebuild of Register and Spot Trading pages from scratch to generate a new bundle and bypass the cache. (Status: **Attempted**, but failed due to cache).
+8.  **User**: Sent messages to be relayed to a support person about clearing the cache. (Status: **Addressed**, agent explained it can't contact external support).
+9.  **User**: Stop building workarounds. - Demanded the agent remove the injected  script directly. (Status: **Attempted**, but the injection is external and cannot be removed from the code).
+10. **User**: Explicitly instructed the agent to **duplicate** , , and  pages into new files and routes (, , etc.) without touching the original files. (Status: **IN PROGRESS**, this is the current active task).
 
 **Project Health Check:**
-- **Broken**: Core authentication for the admin user is non-functional, making the entire platform unusable.
+- **Broken**:
+  - : UI structure loads but the trading pair grid is empty.
+  - : Loads an old, cached version of the page.
+- **At Risk**:
+  - The entire frontend is at risk. Any new build or fix is not visible to the user due to the aggressive, external caching and script injection problem.
+- **Mocked**: None.
 
 **3rd Party Integrations**
-- **Google OAuth**: Configured but needs production testing.
-- **NOWPayments**: Configured but needs production testing.
-- **SendGrid**: For emails; needs production testing.
-- **Telegram**: A bot was mentioned in original requirements but its status is unknown.
+- **MongoDB Atlas**: Production database. Connection is stable. Uses User-provided key.
+- **NOWPayments**: For crypto deposits. Requires User API Key.
+- **Google OAuth**: For user login. Requires User API Key.
+- **Tawk.to**: Live chat widget. Causes some console noise but is non-critical.
 
 **Testing status**
-- **Testing agent used after significant changes**: YES, but results were inconclusive as they were run against a non-live domain.
-- **Troubleshoot agent used after agent stuck in loop**: NO
-- **Test files created**: 
-- **Known regressions**: Admin login functionality is broken.
+- **Testing agent used after significant changes**: YES (screenshot tool was used extensively).
+- **Test files created**: Many temporary test files and reports were created and then discarded as strategies changed.
+- **Known regressions**: None, as the new code is never successfully loaded by the browser.
 
 **Credentials to test flow:**
+- **URL**:  (or  once created)
 - **Email**: 
 - **Password**: 
-- **Login URL**: 
 
 **What agent forgot to execute**
-- The agent has not fully tested the  panel to ensure it correctly updates backend balances.
-- The agent started a health check for a deployer agent but did not complete it.
-- The primary unexecuted task is resolving the critical login failure.</analysis>
+- The agent has been stuck in a loop reacting to the caching problem. While it correctly identified the external nature of the issue, it has not yet completed the user's latest, most direct instruction: to duplicate the pages. The current task must be finished before anything else.</analysis>
