@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://spottrading-fix.preview.emergentagent.com
+**URL:** https://signupverify.preview.emergentagent.com
 
 **Services Status:**
 ```bash

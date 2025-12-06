@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://spottrading-fix.preview.emergentagent.com/p2p-express
+https://signupverify.preview.emergentagent.com/p2p-express
 
 ---
 

@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://spottrading-fix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://signupverify.preview.emergentagent.com';
 
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',

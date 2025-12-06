@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://spottrading-fix.preview.emergentagent.com/api"
+BACKEND_URL = "https://signupverify.preview.emergentagent.com/api"
 
 # Test users as specified in review request
 SELLER_EMAIL = "p2p_seller_final@test.com"

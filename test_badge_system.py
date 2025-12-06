@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
+BASE_URL = "https://signupverify.preview.emergentagent.com/api"
 
 print("🏆 PHASE 2: TRADER BADGE SYSTEM TESTING")
 print("=" * 70)

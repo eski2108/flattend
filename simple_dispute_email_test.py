@@ -15,7 +15,7 @@ import asyncio
 import os
 
 # Configuration
-BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
+BASE_URL = "https://signupverify.preview.emergentagent.com/api"
 MONGO_URL = "mongodb://localhost:27017"
 DB_NAME = "coinhubx"
 
@@ -112,7 +112,7 @@ class SimpleDisputeEmailTester:
                         self.log_test("Dispute Creation", True, f"Dispute ID: {self.dispute_id}")
                         
                         # Show expected URL format (UPDATED - NO QUERY PARAMS)
-                        expected_url = f"https://spottrading-fix.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
+                        expected_url = f"https://signupverify.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
                         print(f"   📧 Expected Email Button URL: {expected_url}")
                         print(f"   ✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
                         
@@ -144,7 +144,7 @@ class SimpleDisputeEmailTester:
         print(f"   ✉️  Email Recipient: info@coinhubx.net")
         print(f"   📧 Subject: 🚨 URGENT: P2P Trade Dispute - {self.trade_id}")
         print(f"   🆔 Dispute ID: {self.dispute_id}")
-        print(f"   🔗 Clickable Button URL: https://spottrading-fix.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
+        print(f"   🔗 Clickable Button URL: https://signupverify.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
         print(f"   ✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
         print(f"")
         print(f"   ✅ The email should contain:")
@@ -193,7 +193,7 @@ class SimpleDisputeEmailTester:
             print(f"✅ Dispute ID: {self.dispute_id}")
             print(f"✅ Trade ID: {self.trade_id}")
             print(f"✅ Email should be sent to: info@coinhubx.net")
-            print(f"✅ Clickable URL: https://spottrading-fix.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
+            print(f"✅ Clickable URL: https://signupverify.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
             print(f"✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
             print(f"\n🔍 CHECK BACKEND LOGS:")
             print(f"   Look for: '✅ Admin email alert sent for dispute {self.dispute_id}'")

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { IoAlertCircle, IoCheckmark as Check, IoCheckmarkCircle, IoClose, IoFlash, IoShield, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://spottrading-fix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://signupverify.preview.emergentagent.com';
 
 const EXPRESS_CRYPTOS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'LTC'];
 

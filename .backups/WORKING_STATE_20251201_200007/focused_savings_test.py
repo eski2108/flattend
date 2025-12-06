@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://spottrading-fix.preview.emergentagent.com/api"
+BACKEND_URL = "https://signupverify.preview.emergentagent.com/api"
 
 def test_with_actual_data():
     """Test with actual user data setup"""

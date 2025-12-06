@@ -2,7 +2,7 @@
 
 **Date:** November 30, 2025  
 **Status:** FULLY IMPLEMENTED  
-**Dashboard URL:** https://spottrading-fix.preview.emergentagent.com/admin/business
+**Dashboard URL:** https://signupverify.preview.emergentagent.com/admin/business
 
 ---
 
@@ -173,7 +173,7 @@
 ## 📈 HOW TO USE
 
 ### **Access Dashboard**
-1. Go to: https://spottrading-fix.preview.emergentagent.com/admin/login
+1. Go to: https://signupverify.preview.emergentagent.com/admin/login
 2. Login:
    - Email: `info@coinhubx.net`
    - Password: `Admin123!`

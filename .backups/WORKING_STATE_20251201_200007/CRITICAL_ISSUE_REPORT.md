@@ -6,7 +6,7 @@ The entire `lucide-react` icon library (v0.507.0 and v0.263.1) is **corrupted in
 ## Error Pattern
 ```
 parser Error
-at https://spottrading-fix.preview.emergentagent.com/static/js/[chunk].js
+at https://signupverify.preview.emergentagent.com/static/js/[chunk].js
 node_modules_lucide-react_dist_esm_icons_[icon-name]_js
 ```
 

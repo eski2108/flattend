@@ -6,7 +6,7 @@ import CHXButton from '@/components/CHXButton';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoAlertCircle as AlertCircle, IoArrowDown as ArrowDownUp, IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoChevronDown, IoFlash, IoInformationCircle, IoRefresh as RefreshCw, IoSettings, IoShield, IoTime, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://spottrading-fix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://signupverify.preview.emergentagent.com';
 
 const COIN_LOGOS = {
   'BTC': '🟠',

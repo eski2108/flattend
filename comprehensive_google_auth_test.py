@@ -13,7 +13,7 @@ from datetime import datetime
 import subprocess
 
 # Get backend URL from environment
-BACKEND_URL = "https://spottrading-fix.preview.emergentagent.com"
+BACKEND_URL = "https://signupverify.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 def log_test(message, status="INFO"):
