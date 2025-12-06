@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IoClose, IoCreditCard, IoAdd, IoTrash, IoCheckmarkCircle, IoWarning, IoPencil } from 'react-icons/io5';
+import { IoClose, IoCard, IoAdd, IoTrash, IoCheckmarkCircle, IoWarning, IoPencil } from 'react-icons/io5';
 import { toast } from 'sonner';
 import axios from 'axios';
 
