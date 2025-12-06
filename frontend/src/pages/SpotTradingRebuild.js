@@ -57,7 +57,9 @@ export default function SpotTradingRebuild() {
   const fetchTradingPairs = async () => {
     try {
       console.log('🚀 FETCHING TRADING PAIRS FROM:', `${API}/trading/pairs`);
-      const response = await axios.get(`${API}/trading/pairs-live?t=${Date.now()}`);
+      // FORCE BYPASS CLOUDFLARE CACHE - use timestamp
+      const cacheBuster = `?cb=${Date.now()}&r=${Math.random()}`;
+      const response = await axios.get(`${API}/trading/pairs-live${cacheBuster}`);
       console.log('📊 TRADING PAIRS RESPONSE:', response.data);
       
       if (response.data.success && response.data.pairs) {
