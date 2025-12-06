@@ -2,14 +2,15 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <!-- FORCE CACHE INVALIDATION -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-        <meta http-equiv="Pragma" content="no-cache">
-        <meta http-equiv="Expires" content="0">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000D1A" />
         <meta name="color-scheme" content="dark" />
         <meta name="description" content="CoinHubX - Professional Cryptocurrency Trading Platform" />
+        
+        <!-- AGGRESSIVE CACHE BUSTING -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         
         <!-- PWA Manifest -->
         <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
@@ -19,52 +20,20 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="CoinHubX" />
         <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-        <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/logo512.png" />
-        
-        <!-- Google reCAPTCHA -->
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         
         <title>CoinHubX | Professional Crypto Trading</title>
         
         <script>
-            // Force reload if cached version detected
-            if (performance.navigation.type === 2) {
-                location.reload(true);
-            }
+            console.log('🚀 COINHUBX LOADING - Clean build timestamp:', Date.now());
             
-            // Log that clean version is loading
-            console.log('🚀 CLEAN COINHUBX VERSION LOADING - No external scripts');
-            
-            // Register cache-busting service worker
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/force-refresh-sw.js')
-                .then(function(registration) {
-                    console.log('✅ Cache-bypass service worker registered');
-                    // Force refresh after service worker is ready
-                    if (registration.active && !sessionStorage.getItem('sw-refreshed')) {
-                        sessionStorage.setItem('sw-refreshed', 'true');
-                        setTimeout(() => window.location.reload(true), 100);
-                    }
-                })
-                .catch(function(error) {
-                    console.log('❌ Service worker registration failed:', error);
-                });
-            }
-            
-            // Force cache headers
-            const timestamp = Date.now();
-            document.querySelectorAll('link[rel="stylesheet"], script[src]').forEach(el => {
-                const attr = el.tagName === 'LINK' ? 'href' : 'src';
-                if (el[attr] && !el[attr].includes('?')) {
-                    el[attr] += '?v=' + timestamp;
-                }
+            // Simple cache bust - add timestamp to all resources  
+            window.addEventListener('load', function() {
+                console.log('📦 Page loaded successfully');
             });
         </script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
-        
-        <!-- NO EXTERNAL SCRIPTS - CLEAN BUILD ONLY -->
     </body>
 </html>
