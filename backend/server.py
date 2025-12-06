@@ -10809,11 +10809,15 @@ async def execute_trading_transaction(request: dict):
  
 
 @api_router.get("/trading/pairs")
-async def get_trading_pairs(request: Request):
+async def get_trading_pairs(request: Request, response: Response):
     """
     Get all available trading pairs with their liquidity status (FULLY DYNAMIC)
     Pairs are automatically generated from enabled coins in supported_coins collection
     """
+    # Force no caching
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     client_host = request.client.host if request.client else "unknown"
     print(f"🔥🔥🔥 GET_TRADING_PAIRS CALLED FROM: {client_host} 🔥🔥🔥")
     print(f"🔥 Headers: {dict(request.headers)}")
