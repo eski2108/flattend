@@ -218,7 +218,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
             alignItems: 'center',
             gap: '10px'
           }}>
-            <IoCreditCard size={28} color="#00F0FF" />
+            <IoCard size={28} color="#00F0FF" />
             Payment Methods
           </h2>
           <button onClick={onClose} style={{
