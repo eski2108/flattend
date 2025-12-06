@@ -255,6 +255,7 @@ export default function Register() {
         </div>
 
         {/* Form */}
+        {!verificationStep ? (
         <form onSubmit={handleSubmit}>
           {/* Full Name */}
           <div style={{ marginBottom: '18px' }}>
