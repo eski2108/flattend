@@ -21,7 +21,7 @@ import SpotTradingRebuild from "@/pages/SpotTradingRebuild";
 // Support Chat Widget removed
 
 // Auth pages - load immediately (user needs these first)
-import CleanLogin from "@/pages/CleanLogin";
+import Login from "@/pages/Login";
 import RegisterPageRebuild from "@/pages/RegisterPageRebuild";
 
 // Cache bypass duplicates - NEW ROUTES TO FORCE FRESH BUILDS
