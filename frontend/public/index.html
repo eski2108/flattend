@@ -34,6 +34,31 @@
             
             // Log that clean version is loading
             console.log('🚀 CLEAN COINHUBX VERSION LOADING - No external scripts');
+            
+            // Register cache-busting service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/force-refresh-sw.js')
+                .then(function(registration) {
+                    console.log('✅ Cache-bypass service worker registered');
+                    // Force refresh after service worker is ready
+                    if (registration.active && !sessionStorage.getItem('sw-refreshed')) {
+                        sessionStorage.setItem('sw-refreshed', 'true');
+                        setTimeout(() => window.location.reload(true), 100);
+                    }
+                })
+                .catch(function(error) {
+                    console.log('❌ Service worker registration failed:', error);
+                });
+            }
+            
+            // Force cache headers
+            const timestamp = Date.now();
+            document.querySelectorAll('link[rel="stylesheet"], script[src]').forEach(el => {
+                const attr = el.tagName === 'LINK' ? 'href' : 'src';
+                if (el[attr] && !el[attr].includes('?')) {
+                    el[attr] += '?v=' + timestamp;
+                }
+            });
         </script>
     </head>
     <body>
