@@ -4,7 +4,7 @@ import axios from 'axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-import API_BASE_URL from '@/config/api';
+const API = 'https://coinhubx.net/api';
 import { 
   IoWallet, 
   IoTrendingUp, 
