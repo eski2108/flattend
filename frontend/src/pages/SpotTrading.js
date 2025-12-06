@@ -65,25 +65,32 @@ export default function SpotTrading() {
 
   const fetchTradingPairs = async () => {
     try {
+      console.log('🚀🚀🚀 FETCHING TRADING PAIRS FROM:', `${API}/trading/pairs`);
       const response = await axios.get(`${API}/trading/pairs`);
-      if (response.data.success) {
-        // Filter only tradable pairs
-        const tradablePairs = response.data.pairs.filter(p => p.is_tradable);
+      console.log('📊📊📊 TRADING PAIRS RESPONSE:', response.data);
+      
+      if (response.data.success && response.data.pairs) {
+        const tradablePairs = response.data.pairs.filter(pair => pair.is_tradable);
+        console.log('✅✅✅ TRADABLE PAIRS COUNT:', tradablePairs.length);
         setTradingPairs(tradablePairs);
-        // Set first pair as default
+        
         if (tradablePairs.length > 0 && !selectedPair) {
-          // Check localStorage for last selected pair
-          const savedPair = localStorage.getItem('spotTradingPair');
-          if (savedPair && tradablePairs.find(p => p.symbol === savedPair)) {
-            setSelectedPair(savedPair);
-          } else {
-            setSelectedPair(tradablePairs[0].symbol);
-          }
+          const saved = localStorage.getItem('selectedTradingPair');
+          const defaultPair = saved ? 
+            tradablePairs.find(p => p.symbol === saved) || tradablePairs[0] : 
+            tradablePairs[0];
+          
+          setSelectedPair(defaultPair);
+          console.log('🎯🎯🎯 DEFAULT PAIR SELECTED:', defaultPair.symbol);
         }
+      } else {
+        console.error('❌❌❌ INVALID API RESPONSE:', response.data);
+        toast.error('Failed to load trading pairs');
       }
     } catch (error) {
-      console.error('Error fetching trading pairs:', error);
-      toast.error('Failed to load trading pairs');
+      console.error('💥💥💥 TRADING PAIRS ERROR:', error);
+      console.error('💥💥💥 ERROR DETAILS:', error.response?.data);
+      toast.error('Failed to connect to trading API');
     }
   };
 
