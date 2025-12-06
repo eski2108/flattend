@@ -475,7 +475,7 @@ export default function SavingsVault() {
 
       toast.info('Creating payment...');
       
-      const response = await axios.post(`${API}/api/savings/create-deposit`, {
+      const response = await axios.post(`${API}/savings/create-deposit`, {
         user_id: user.user_id,
         currency: coinCode,
         amount: parseFloat(amount)
