@@ -4967,6 +4967,67 @@ async def transfer_to_savings_OLD(request: dict):
 
 # ============= PORTFOLIO TRACKING SYSTEM =============
 
+@api_router.get("/portfolio/summary/{user_id}")
+async def get_portfolio_summary(user_id: str):
+    """Get portfolio summary for dashboard - REQUIRED BY FRONTEND"""
+    try:
+        # Get wallet balances
+        wallet_balances = await db.internal_balances.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).to_list(100)
+        
+        # Get live prices
+        prices_doc = await db.crypto_prices.find_one({}, {"_id": 0})
+        prices = prices_doc.get("prices", {}) if prices_doc else {}
+        
+        total_value_gbp = 0.0
+        total_assets = 0
+        available_balance = 0.0
+        locked_balance = 0.0
+        
+        for balance in wallet_balances:
+            currency = balance.get("currency")
+            available = balance.get("balance", 0)
+            locked = balance.get("locked", 0)
+            
+            if available > 0 or locked > 0:
+                total_assets += 1
+                
+                # Get price in GBP
+                price_gbp = 0
+                if currency == "GBP":
+                    price_gbp = 1
+                elif currency in prices:
+                    price_usd = prices[currency].get("price_usd", 0)
+                    price_gbp = price_usd * 0.79  # USD to GBP conversion
+                
+                available_balance += available * price_gbp
+                locked_balance += locked * price_gbp
+        
+        total_value = available_balance + locked_balance
+        
+        return {
+            "success": True,
+            "totalValue": round(total_value, 2),
+            "availableBalance": round(available_balance, 2),
+            "lockedBalance": round(locked_balance, 2),
+            "totalAssets": total_assets,
+            "change24h": 0.0  # TODO: Calculate from historical data
+        }
+        
+    except Exception as e:
+        logger.error(f"Portfolio summary error: {e}")
+        return {
+            "success": False,
+            "totalValue": 0,
+            "availableBalance": 0,
+            "lockedBalance": 0,
+            "totalAssets": 0,
+            "change24h": 0.0
+        }
+
+
 @api_router.get("/portfolio/stats/{user_id}")
 async def get_portfolio_stats(user_id: str):
     """Get complete portfolio statistics with P/L tracking"""
