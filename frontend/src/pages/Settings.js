@@ -160,24 +160,24 @@ export default function Settings() {
     {
       title: 'Account',
       items: [
-        { icon: User, label: 'Profile', description: 'Manage your account details', action: () => toast.info('Profile settings coming soon') },
-        { icon: IoMail, label: 'Email', description: currentUser.email, action: null },
-        { icon: Lock, label: 'Security', description: 'Change password and security settings', action: () => toast.info('Security settings coming soon') },
-        { icon: Shield, label: 'Two-Factor Authentication', description: 'Enable 2FA for enhanced security', action: () => navigate('/2fa-setup') }
+        { icon: User, label: 'Profile', description: 'Manage your account details', action: () => setActiveModal('profile') },
+        { icon: IoMail, label: 'Email', description: currentUser.email, action: () => setActiveModal('email') },
+        { icon: Lock, label: 'Security', description: 'Change password and security settings', action: () => setActiveModal('security') },
+        { icon: Shield, label: 'Two-Factor Authentication', description: 'Enable 2FA for enhanced security', action: () => setActiveModal('2fa') }
       ]
     },
     {
       title: 'Preferences',
       items: [
-        { icon: Bell, label: 'Notifications', description: 'Manage notification preferences', action: () => toast.info('Notification settings coming soon') },
-        { icon: Globe, label: 'Language', description: 'English', action: () => toast.info('Language settings coming soon') },
-        { icon: Smartphone, label: 'Mobile App', description: 'Download iOS or Android app', action: () => navigate('/#download-app') }
+        { icon: Bell, label: 'Notifications', description: 'Manage notification preferences', action: () => setActiveModal('notifications') },
+        { icon: Globe, label: 'Language', description: currentUser.language ? `${currentUser.language.toUpperCase()}` : 'English', action: () => setActiveModal('language') },
+        { icon: Smartphone, label: 'Mobile App', description: 'Download iOS or Android app', action: () => navigate('/mobile-app') }
       ]
     },
     {
       title: 'Payment',
       items: [
-        { icon: CreditCard, label: 'Payment Methods', description: 'Manage your payment methods', action: () => toast.info('Payment method settings coming soon') }
+        { icon: CreditCard, label: 'Payment Methods', description: 'Manage your payment methods for P2P', action: () => setActiveModal('payment') }
       ]
     }
   ];
