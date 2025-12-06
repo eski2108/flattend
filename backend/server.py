@@ -10809,12 +10809,16 @@ async def execute_trading_transaction(request: dict):
  
 
 @api_router.get("/trading/pairs")
-async def get_trading_pairs():
+async def get_trading_pairs(request: Request):
     """
     Get all available trading pairs with their liquidity status (FULLY DYNAMIC)
     Pairs are automatically generated from enabled coins in supported_coins collection
     """
-    print("🔥🔥🔥 GET_TRADING_PAIRS CALLED 🔥🔥🔥")
+    client_host = request.client.host if request.client else "unknown"
+    print(f"🔥🔥🔥 GET_TRADING_PAIRS CALLED FROM: {client_host} 🔥🔥🔥")
+    print(f"🔥 Headers: {dict(request.headers)}")
+    print(f"🔥 DB: {db.name}")
+    log_info(f"🔥🔥🔥 GET_TRADING_PAIRS CALLED FROM: {client_host}")
     try:
         # Get all enabled coins that support trading from CMS
         trading_coins = await db.supported_coins.find(
