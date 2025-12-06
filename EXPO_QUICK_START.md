@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://spottrading-fix.preview.emergentagent.com/api
+https://signupverify.preview.emergentagent.com/api
 ```
 
 This means:

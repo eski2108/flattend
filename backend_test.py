@@ -18,7 +18,7 @@ Focus on testing the Spot Trading page functionality after rebuild.
 - Test order submission flow
 - Provide clear pass/fail results
 
-**Backend URL:** https://spottrading-fix.preview.emergentagent.com/api
+**Backend URL:** https://signupverify.preview.emergentagent.com/api
 """
 
 import asyncio
@@ -35,7 +35,7 @@ import hashlib
 import bcrypt
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://spottrading-fix.preview.emergentagent.com"
+BACKEND_URL = "https://signupverify.preview.emergentagent.com"
 
 class CoinHubXComprehensiveTester:
     """Comprehensive CoinHubX Backend API Tester"""

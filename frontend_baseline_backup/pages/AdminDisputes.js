@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { AlertTriangle, CheckCircle, Clock, Eye, MessageCircle, FileText } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://spottrading-fix.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://signupverify.preview.emergentagent.com';
 
 function AdminDisputes() {
   const navigate = useNavigate();

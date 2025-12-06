@@ -6,14 +6,14 @@ echo "🔧 Removing hardcoded test URLs from frontend..."
 echo "============================================="
 
 # Replace all instances of the test URL fallback with proper error handling
-find /app/frontend/src -name "*.js" -type f -exec sed -i "s|process.env.REACT_APP_BACKEND_URL || 'https://spottrading-fix.preview.emergentagent.com'|process.env.REACT_APP_BACKEND_URL|g" {} \;
+find /app/frontend/src -name "*.js" -type f -exec sed -i "s|process.env.REACT_APP_BACKEND_URL || 'https://signupverify.preview.emergentagent.com'|process.env.REACT_APP_BACKEND_URL|g" {} \;
 
 echo "✅ Removed hardcoded fallback URLs from API calls"
 
 # Replace hardcoded links in Layout and Footer
-sed -i "s|window.open('https://spottrading-fix.preview.emergentagent.com', '_blank')|window.open(process.env.REACT_APP_FRONTEND_URL || window.location.origin, '_blank')|g" /app/frontend/src/components/Layout.js
-sed -i "s|window.open('https://spottrading-fix.preview.emergentagent.com', '_blank')|window.open(process.env.REACT_APP_FRONTEND_URL || window.location.origin, '_blank')|g" /app/frontend/src/components/Footer.js
-sed -i "s|window.open('https://spottrading-fix.preview.emergentagent.com', '_blank')|window.open(process.env.REACT_APP_FRONTEND_URL || window.location.origin, '_blank')|g" /app/frontend/src/pages/LandingPage_ORIGINAL.js 2>/dev/null
+sed -i "s|window.open('https://signupverify.preview.emergentagent.com', '_blank')|window.open(process.env.REACT_APP_FRONTEND_URL || window.location.origin, '_blank')|g" /app/frontend/src/components/Layout.js
+sed -i "s|window.open('https://signupverify.preview.emergentagent.com', '_blank')|window.open(process.env.REACT_APP_FRONTEND_URL || window.location.origin, '_blank')|g" /app/frontend/src/components/Footer.js
+sed -i "s|window.open('https://signupverify.preview.emergentagent.com', '_blank')|window.open(process.env.REACT_APP_FRONTEND_URL || window.location.origin, '_blank')|g" /app/frontend/src/pages/LandingPage_ORIGINAL.js 2>/dev/null
 
 echo "✅ Fixed hardcoded window.open URLs"
 

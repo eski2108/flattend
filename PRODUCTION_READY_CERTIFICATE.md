@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://spottrading-fix.preview.emergentagent.com`
-- Backend API: `https://spottrading-fix.preview.emergentagent.com/api`
+- Frontend: `https://signupverify.preview.emergentagent.com`
+- Backend API: `https://signupverify.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

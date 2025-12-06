@@ -66,7 +66,7 @@ Execute full end-to-end flow:
    - All balances reconcile correctly
 7. Test cancellation flow separately
 
-**Backend URL:** https://spottrading-fix.preview.emergentagent.com/api
+**Backend URL:** https://signupverify.preview.emergentagent.com/api
 """
 
 import requests
@@ -77,7 +77,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
+BASE_URL = "https://signupverify.preview.emergentagent.com/api"
 
 class ComprehensiveP2PEscrowTester:
     def __init__(self):

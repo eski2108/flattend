@@ -27,7 +27,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
+BASE_URL = "https://signupverify.preview.emergentagent.com/api"
 
 # Test User from review request
 TEST_USER = {
