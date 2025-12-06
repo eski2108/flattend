@@ -10875,11 +10875,16 @@ async def get_trading_pairs(request: Request):
         
         log_info(f"🎯 Total pairs generated: {len(pairs_with_status)}")
         
-        return {
+        import time
+        response_data = {
             "success": True,
             "pairs": pairs_with_status,
-            "count": len(pairs_with_status)
+            "count": len(pairs_with_status),
+            "debug_timestamp": int(time.time()),
+            "debug_backend": "COINHUBX_MAIN_BACKEND_v2"
         }
+        print(f"🔥 RETURNING RESPONSE WITH {len(pairs_with_status)} PAIRS")
+        return response_data
     except Exception as e:
         log_error("get_trading_pairs", e)
         raise HTTPException(status_code=500, detail=str(e))
