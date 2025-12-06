@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://cryptovault-29.preview.emergentagent.com/api"
+BACKEND_URL = "https://tradepanel-12.preview.emergentagent.com/api"
 
 class FocusedAdminFeeTest:
     def __init__(self):

@@ -35,7 +35,7 @@ sudo supervisorctl restart all
 ---
 
 ## Test Password Reset Flow:
-1. Visit: https://cryptovault-29.preview.emergentagent.com/forgot-password
+1. Visit: https://tradepanel-12.preview.emergentagent.com/forgot-password
 2. Enter email: admin@coinhubx.com
 3. Click "Send Reset Link"
 4. Check email for reset link

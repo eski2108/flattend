@@ -6,7 +6,7 @@ import Layout from '@/components/Layout';
 import DualCurrencyInput from '@/components/DualCurrencyInput';
 import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoTime, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptovault-29.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradepanel-12.preview.emergentagent.com';
 
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',

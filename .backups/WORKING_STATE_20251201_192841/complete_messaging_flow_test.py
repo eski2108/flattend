@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://cryptovault-29.preview.emergentagent.com/api"
+BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class CompleteMessagingFlowTest:

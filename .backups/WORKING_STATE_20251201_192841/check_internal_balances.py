@@ -6,7 +6,7 @@ Check internal balances collection directly
 import requests
 import json
 
-BACKEND_URL = "https://cryptovault-29.preview.emergentagent.com"
+BACKEND_URL = "https://tradepanel-12.preview.emergentagent.com"
 
 def check_collections():
     print("=== CHECKING INTERNAL BALANCE COLLECTIONS ===")

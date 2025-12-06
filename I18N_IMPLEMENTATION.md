@@ -247,7 +247,7 @@ app.add_middleware(
 Test login from mobile browser (not app):
 ```
 1. Open Chrome on mobile
-2. Go to: https://cryptovault-29.preview.emergentagent.com/login
+2. Go to: https://tradepanel-12.preview.emergentagent.com/login
 3. Enter: gads21083@gmail.com / 123456789
 4. Check if it works
 ```

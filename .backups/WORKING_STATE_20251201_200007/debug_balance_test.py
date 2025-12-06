@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://cryptovault-29.preview.emergentagent.com/api"
+BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()
