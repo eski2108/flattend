@@ -13,7 +13,7 @@ from decimal import Decimal
 import sys
 
 # Configuration
-BASE_URL = "https://cryptovault-29.preview.emergentagent.com/api"
+BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
 TEST_USER_A = {
     "email": "gads21083@gmail.com",
     "password": "123456789"

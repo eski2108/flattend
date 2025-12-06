@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { MessageCircle, Upload, CheckCircle, AlertTriangle, FileText, Image as ImageIcon, File, Send } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://cryptovault-29.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradepanel-12.preview.emergentagent.com';
 
 function DisputeCentre() {
   const { disputeId } = useParams();

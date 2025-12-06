@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://cryptovault-29.preview.emergentagent.com/p2p-express
+https://tradepanel-12.preview.emergentagent.com/p2p-express
 
 ---
 

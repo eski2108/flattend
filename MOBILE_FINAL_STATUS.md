@@ -41,7 +41,7 @@
 
 ### API Test:
 ```bash
-curl https://cryptovault-29.preview.emergentagent.com/api/user/referral-dashboard/9757bd8c-16f8-4efb-b075-0af4a432990a
+curl https://tradepanel-12.preview.emergentagent.com/api/user/referral-dashboard/9757bd8c-16f8-4efb-b075-0af4a432990a
 ```
 
 ### Response:
@@ -50,7 +50,7 @@ curl https://cryptovault-29.preview.emergentagent.com/api/user/referral-dashboar
   "success": true,
   "data": {
     "referral_code": "HZZCUVHF",
-    "referral_link": "https://cryptovault-29.preview.emergentagent.com/register?ref=HZZCUVHF",
+    "referral_link": "https://tradepanel-12.preview.emergentagent.com/register?ref=HZZCUVHF",
     "total_referrals": 0,
     "active_referrals": 0,
     "total_earnings": 0,

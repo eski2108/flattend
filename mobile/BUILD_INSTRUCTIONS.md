@@ -150,7 +150,7 @@ Once built, you can distribute the APK by:
 
 1. **Backend URL:** The app is configured to connect to:
    ```
-   https://cryptovault-29.preview.emergentagent.com/api
+   https://tradepanel-12.preview.emergentagent.com/api
    ```
 
 2. **Permissions:** The app requests:
