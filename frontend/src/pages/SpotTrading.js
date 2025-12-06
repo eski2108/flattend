@@ -6,6 +6,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { IoTrendingUp, IoTrendingDown, IoFlash, IoCheckmarkCircle } from 'react-icons/io5';
 
+// Force correct API URL regardless of environment
 const API = 'https://coinhubx.net/api';
 
 export default function SpotTrading() {
