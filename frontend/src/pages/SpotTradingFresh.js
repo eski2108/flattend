@@ -11,7 +11,7 @@ import { HiChartBar, HiClock, HiCurrencyDollar } from 'react-icons/hi';
 const API_BASE = 'https://coinhubx.net/api';
 
 export default function SpotTradingFresh() {
-  console.log('🚀 SpotTradingFresh component loaded!');
+  console.log('🚀 SpotTradingFresh component loaded! API_BASE:', API_BASE);
   const navigate = useNavigate();
   
   // Core State
