@@ -16,7 +16,7 @@ import './i18n'; // Multi-language support
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import WalletPage from "@/pages/WalletPage";
-import SpotTrading from "@/pages/SpotTrading";
+import SpotTradingFresh from "@/pages/SpotTradingFresh";
 // Support Chat Widget
 // Support Chat Widget removed
 
