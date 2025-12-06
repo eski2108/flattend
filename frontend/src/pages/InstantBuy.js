@@ -45,7 +45,7 @@ function InstantBuy() {
   const fetchCoins = async () => {
     try {
       const metadataResponse = await axios.get(`${API}/api/wallets/coin-metadata`);
-      const liquidityResponse = await axios.get(`${API}/api/instant-buy/available-coins`);
+      const liquidityResponse = await axios.get(`${API}/api/coins/available`);
       
       if (metadataResponse.data.success) {
         const allCoins = metadataResponse.data.coins;
