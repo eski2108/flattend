@@ -23,6 +23,7 @@ export default function Settings() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loginEmailAlerts, setLoginEmailAlerts] = useState(true);
   const [loadingSettings, setLoadingSettings] = useState(false);
+  const [activeModal, setActiveModal] = useState(null); // 'profile' | 'email' | 'security' | '2fa' | 'notifications' | 'language' | 'payment'
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
