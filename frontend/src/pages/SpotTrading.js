@@ -10,6 +10,10 @@ import { IoTrendingUp, IoTrendingDown, IoFlash, IoCheckmarkCircle } from 'react-
 const API = 'https://coinhubx.net/api';
 
 export default function SpotTrading() {
+  console.log('🔥🔥🔥 SPOT TRADING COMPONENT LOADING! 🔥🔥🔥');
+  console.log('🔥 API URL:', API);
+  console.log('🔥 Timestamp:', new Date().toISOString());
+  
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [tradingPairs, setTradingPairs] = useState([]);
