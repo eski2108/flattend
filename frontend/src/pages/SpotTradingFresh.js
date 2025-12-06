@@ -58,23 +58,36 @@ export default function SpotTradingFresh() {
   // Fetch trading pairs
   const fetchTradingPairs = async () => {
     try {
-      console.log('🔄 Fetching trading pairs from:', `${API_BASE}/trading/pairs`);
-      const response = await axios.get(`${API_BASE}/trading/pairs`);
-      console.log('📊 Trading pairs response:', response.data);
+      console.log('🔄 FETCHING TRADING PAIRS FROM:', `${API_BASE}/trading/pairs`);
+      
+      const response = await axios.get(`${API_BASE}/trading/pairs`, {
+        timeout: 10000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('📊 TRADING PAIRS API RESPONSE:', response);
+      console.log('📊 PAIRS DATA:', response.data);
       
       if (response.data.success && response.data.pairs) {
         const pairs = response.data.pairs;
+        console.log(`✅ LOADED ${pairs.length} TRADING PAIRS:`, pairs);
         setTradingPairs(pairs);
         
         // Set default pair if none selected
         if (pairs.length > 0 && !selectedPair) {
           const defaultPair = pairs.find(p => p.symbol === 'BTC/USDT') || pairs[0];
           setSelectedPair(defaultPair);
-          console.log('🎯 Default pair selected:', defaultPair.symbol);
+          console.log('🎯 DEFAULT PAIR SELECTED:', defaultPair.symbol);
         }
+      } else {
+        console.error('❌ API RESPONSE NOT SUCCESSFUL:', response.data);
+        toast.error('Failed to load trading pairs - invalid response');
       }
     } catch (error) {
-      console.error('❌ Error fetching trading pairs:', error);
+      console.error('💥 TRADING PAIRS API ERROR:', error);
+      console.error('💥 ERROR DETAILS:', error.response?.data || error.message);
       toast.error('Failed to load trading pairs');
     }
   };
