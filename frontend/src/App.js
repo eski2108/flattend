@@ -22,7 +22,7 @@ import SpotTradingRebuild from "@/pages/SpotTradingRebuild";
 
 // Auth pages - load immediately (user needs these first)
 import Login from "@/pages/Login";
-import RegisterPageRebuild from "@/pages/RegisterPageRebuild";
+import Register from "@/pages/Register";
 
 // Cache bypass duplicates - NEW ROUTES TO FORCE FRESH BUILDS
 import Login2 from "@/pages/Login2";
