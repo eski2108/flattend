@@ -157,7 +157,7 @@ function App() {
             <Route path="/security" element={<Security />} />
             <Route path="/2fa-setup" element={<TwoFactorSetup />} />
             <Route path="/login" element={<CleanLogin />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<CleanRegister />} />
             <Route path="/auth" element={<PremiumAuth />} />
             <Route path="/auth/verify-phone" element={<PremiumAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
