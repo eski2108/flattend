@@ -11170,6 +11170,7 @@ async def remove_trading_liquidity(request: dict):
 
 
 @api_router.get("/instant-buy/available-coins")
+@api_router.get("/coins/available")
 async def get_available_coins_for_instant_buy():
     """Get list of coins with available admin liquidity for Instant Buy/Sell"""
     try:
