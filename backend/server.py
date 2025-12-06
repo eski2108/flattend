@@ -4968,6 +4968,7 @@ async def transfer_to_savings_OLD(request: dict):
 # ============= PORTFOLIO TRACKING SYSTEM =============
 
 @api_router.get("/portfolio/summary/{user_id}")
+@api_router.get("/user/{user_id}/portfolio")
 async def get_portfolio_summary(user_id: str):
     """Get portfolio summary for dashboard - REQUIRED BY FRONTEND"""
     try:
