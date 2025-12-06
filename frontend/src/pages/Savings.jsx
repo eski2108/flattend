@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const API = 'https://coinhubx.net/api';
 
 // No hardcoded coins - all loaded from backend!
 
