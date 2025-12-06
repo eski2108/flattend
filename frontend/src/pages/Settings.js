@@ -7,6 +7,15 @@ import CurrencySelector from '@/components/CurrencySelector';
 import PriceAlerts from '@/components/PriceAlerts';
 import PremiumDownloadButtons from '@/components/PremiumDownloadButtons';
 
+// Settings Components
+import ProfileSettings from '@/components/settings/ProfileSettings';
+import EmailSettings from '@/components/settings/EmailSettings';
+import SecuritySettings from '@/components/settings/SecuritySettings';
+import TwoFactorSettings from '@/components/settings/TwoFactorSettings';
+import NotificationSettings from '@/components/settings/NotificationSettings';
+import LanguageSettings from '@/components/settings/LanguageSettings';
+import PaymentMethodsManager from '@/components/settings/PaymentMethodsManager';
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function Settings() {
