@@ -18,7 +18,7 @@ Tests all critical scenarios from the review request with proper test data setup
 6. Express Mode Scoring with Balance
 7. Multiple Simultaneous Locks
 
-**Backend URL:** https://tradepanel-12.preview.emergentagent.com/api
+**Backend URL:** https://spottrading-fix.preview.emergentagent.com/api
 """
 
 import requests
@@ -28,7 +28,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
+BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
 
 # Test Users (as specified in review request)
 TEST_TRADERS = {

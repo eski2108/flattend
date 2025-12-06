@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { IoChevronDown, IoFilter, IoFlash, IoSearch as Search, IoShield, IoStar, IoTime as Clock, IoTrendingUp as TrendingUp } from 'react-icons/io5';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://tradepanel-12.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://spottrading-fix.preview.emergentagent.com';
 
 function P2PMarketplace() {
   const navigate = useNavigate();

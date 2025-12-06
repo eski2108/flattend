@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
+BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
 
 # Test Users
 BUYER_USER = {

@@ -66,7 +66,7 @@ payload = {
     "pay_currency": "btc",
     "order_id": "test_order_12345",
     "order_description": "Test deposit",
-    "ipn_callback_url": "https://tradepanel-12.preview.emergentagent.com/api/nowpayments/ipn"
+    "ipn_callback_url": "https://spottrading-fix.preview.emergentagent.com/api/nowpayments/ipn"
 }
 
 print(f"Payload: {json.dumps(payload, indent=2)}")

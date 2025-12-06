@@ -21,7 +21,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://tradepanel-12.preview.emergentagent.com/api"
+BACKEND_URL = "https://spottrading-fix.preview.emergentagent.com/api"
 ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
 
 class AdminFeeSystemTester:

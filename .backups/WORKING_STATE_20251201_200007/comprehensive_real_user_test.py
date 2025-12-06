@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
+BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
 
 def create_and_verify_user(email, password, full_name):
     """Create a user and manually verify them for testing"""

@@ -11,7 +11,7 @@ from datetime import datetime
 from playwright.async_api import async_playwright
 import json
 
-SITE_URL = "https://tradepanel-12.preview.emergentagent.com"
+SITE_URL = "https://spottrading-fix.preview.emergentagent.com"
 TEST_USER = "gads21083@gmail.com"
 TEST_PASS = "123456789"
 

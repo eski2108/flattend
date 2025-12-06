@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
+BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
 
 class RobustBackendTester:
     def __init__(self):

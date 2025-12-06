@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradepanel-12.preview.emergentagent.com/api"
+BASE_URL = "https://spottrading-fix.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {
