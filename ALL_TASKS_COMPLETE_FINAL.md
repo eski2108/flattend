@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://tradepanel-12.preview.emergentagent.com
+**URL:** https://spottrading-fix.preview.emergentagent.com
 
 **Services Status:**
 ```bash
