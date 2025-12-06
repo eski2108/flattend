@@ -10824,15 +10824,18 @@ async def get_trading_pairs():
         
         print(f"🔍 Trading coins found: {len(trading_coins)}")
         log_info(f"🔍 Trading coins found: {len(trading_coins)}")
+        print(f"🔍 Trading coins: {[c['symbol'] for c in trading_coins]}")
         
         # Get platform settings to determine supported fiat currencies
         platform_settings = await db.platform_settings.find_one({}, {"_id": 0})
+        print(f"🔍 Platform settings: {platform_settings}")
         
         # Default fiat currencies (can be expanded via settings)
-        fiat_currencies = ["GBP"]
+        fiat_currencies = ["GBP", "USDT"]
         if platform_settings and "trading_fiat_currencies" in platform_settings:
             fiat_currencies = platform_settings["trading_fiat_currencies"]
         
+        print(f"🔍 Quote currencies: {fiat_currencies}")
         log_info(f"🔍 Quote currencies: {fiat_currencies}")
         
         # Dynamically generate trading pairs from enabled coins
