@@ -156,7 +156,7 @@ function App() {
             <Route path="/seller/:sellerId" element={<PublicSellerProfile />} />
             <Route path="/security" element={<Security />} />
             <Route path="/2fa-setup" element={<TwoFactorSetup />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<CleanLogin />} />
             <Route path="/register" element={<Register />} />
             <Route path="/auth" element={<PremiumAuth />} />
             <Route path="/auth/verify-phone" element={<PremiumAuth />} />
