@@ -23,6 +23,9 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   const countries = [
     { code: '+44', flag: '🇬🇧', name: 'UK' },
