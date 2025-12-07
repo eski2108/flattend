@@ -89,8 +89,11 @@ export default function SpotTradingPro() {
         const chart = createChart(chartContainerRef.current, {
           width: chartContainerRef.current.clientWidth,
           height: 500,
+          localization: {
+            locale: 'en-US',
+          },
           layout: {
-            background: { type: 'solid', color: '#0a0e1a' },
+            backgroundColor: '#0a0e1a',
             textColor: '#888',
           },
           grid: {
