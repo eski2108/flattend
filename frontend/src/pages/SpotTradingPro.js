@@ -292,7 +292,7 @@ export default function SpotTradingPro() {
         </div>
 
         {/* Trading Pairs Selection Buttons - Hidden on mobile with inline style */}
-        <div className="trading-pairs-selector" style={{ display: window.innerWidth > 1024 ? 'block' : 'none' }}>
+        <div className="trading-pairs-selector" style={{ display: isDesktop ? 'block' : 'none' }}>
           <div className="pairs-button-container">
             {tradingPairs.map(pair => (
               <button
