@@ -11006,6 +11006,197 @@ async def get_trading_pairs(request: Request, response: Response):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Spot Trading Order Endpoints
+class SpotTradeOrder(BaseModel):
+    user_id: str
+    pair: str  # e.g., "BTC/GBP"
+    base: str  # e.g., "BTC"
+    quote: str  # e.g., "GBP"
+    side: str  # "buy" or "sell"
+    order_type: str  # "market" or "limit"
+    amount: float
+    price: float
+    total: float
+
+
+@api_router.post("/trading/order/buy")
+async def place_spot_buy_order(order: SpotTradeOrder):
+    """
+    Place a BUY order on the spot trading page
+    Deducts quote currency (e.g., GBP) and adds base currency (e.g., BTC)
+    """
+    try:
+        log_info(f"📈 BUY ORDER: {order.user_id} buying {order.amount} {order.base} for {order.total} {order.quote}")
+        
+        # Get user balances
+        user_balance_doc = await db.user_balances.find_one({"user_id": order.user_id})
+        if not user_balance_doc:
+            # Initialize balance if doesn't exist
+            await db.user_balances.insert_one({
+                "user_id": order.user_id,
+                "balances": {},
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            user_balance_doc = await db.user_balances.find_one({"user_id": order.user_id})
+        
+        balances = user_balance_doc.get("balances", {})
+        
+        # Check if user has enough quote currency
+        quote_balance = balances.get(order.quote, {}).get("available", 0)
+        if quote_balance < order.total:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient {order.quote} balance. You have {quote_balance}, need {order.total}"
+            )
+        
+        # Calculate fee (0.5% trading fee)
+        fee = order.total * 0.005
+        total_with_fee = order.total + fee
+        
+        if quote_balance < total_with_fee:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient balance including fee. Need {total_with_fee} {order.quote}"
+            )
+        
+        # Deduct quote currency
+        balances[order.quote]["available"] = balances[order.quote].get("available", 0) - total_with_fee
+        
+        # Add base currency
+        if order.base not in balances:
+            balances[order.base] = {"available": 0, "locked": 0}
+        balances[order.base]["available"] = balances[order.base].get("available", 0) + order.amount
+        
+        # Update user balances
+        await db.user_balances.update_one(
+            {"user_id": order.user_id},
+            {"$set": {"balances": balances, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        # Record trade
+        trade_record = {
+            "trade_id": str(uuid.uuid4()),
+            "user_id": order.user_id,
+            "pair": order.pair,
+            "side": "buy",
+            "type": order.order_type,
+            "amount": order.amount,
+            "price": order.price,
+            "total": order.total,
+            "fee": fee,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.spot_trades.insert_one(trade_record)
+        
+        # Add fee to admin fee wallet
+        await db.internal_balances.update_one(
+            {"user_id": "admin_wallet", "currency": order.quote},
+            {"$inc": {"available": fee, "balance": fee}},
+            upsert=True
+        )
+        
+        log_info(f"✅ BUY ORDER COMPLETED: {order.amount} {order.base} for {order.total} {order.quote}")
+        
+        return {
+            "success": True,
+            "message": f"Successfully bought {order.amount} {order.base}",
+            "trade": trade_record,
+            "new_balance": {
+                order.base: balances[order.base]["available"],
+                order.quote: balances[order.quote]["available"]
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error("place_spot_buy_order", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/trading/order/sell")
+async def place_spot_sell_order(order: SpotTradeOrder):
+    """
+    Place a SELL order on the spot trading page
+    Deducts base currency (e.g., BTC) and adds quote currency (e.g., GBP)
+    """
+    try:
+        log_info(f"📉 SELL ORDER: {order.user_id} selling {order.amount} {order.base} for {order.total} {order.quote}")
+        
+        # Get user balances
+        user_balance_doc = await db.user_balances.find_one({"user_id": order.user_id})
+        if not user_balance_doc:
+            raise HTTPException(status_code=400, detail="No balance found. Please deposit first.")
+        
+        balances = user_balance_doc.get("balances", {})
+        
+        # Check if user has enough base currency
+        base_balance = balances.get(order.base, {}).get("available", 0)
+        if base_balance < order.amount:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient {order.base} balance. You have {base_balance}, need {order.amount}"
+            )
+        
+        # Calculate fee (0.5% trading fee)
+        fee = order.total * 0.005
+        total_after_fee = order.total - fee
+        
+        # Deduct base currency
+        balances[order.base]["available"] = balances[order.base].get("available", 0) - order.amount
+        
+        # Add quote currency (minus fee)
+        if order.quote not in balances:
+            balances[order.quote] = {"available": 0, "locked": 0}
+        balances[order.quote]["available"] = balances[order.quote].get("available", 0) + total_after_fee
+        
+        # Update user balances
+        await db.user_balances.update_one(
+            {"user_id": order.user_id},
+            {"$set": {"balances": balances, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        # Record trade
+        trade_record = {
+            "trade_id": str(uuid.uuid4()),
+            "user_id": order.user_id,
+            "pair": order.pair,
+            "side": "sell",
+            "type": order.order_type,
+            "amount": order.amount,
+            "price": order.price,
+            "total": order.total,
+            "fee": fee,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.spot_trades.insert_one(trade_record)
+        
+        # Add fee to admin fee wallet
+        await db.internal_balances.update_one(
+            {"user_id": "admin_wallet", "currency": order.quote},
+            {"$inc": {"available": fee, "balance": fee}},
+            upsert=True
+        )
+        
+        log_info(f"✅ SELL ORDER COMPLETED: {order.amount} {order.base} for {order.total} {order.quote}")
+        
+        return {
+            "success": True,
+            "message": f"Successfully sold {order.amount} {order.base}",
+            "trade": trade_record,
+            "new_balance": {
+                order.base: balances[order.base]["available"],
+                order.quote: balances[order.quote]["available"]
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error("place_spot_sell_order", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.get("/admin/proof-of-fees")
 async def admin_proof_of_fees():
     """
