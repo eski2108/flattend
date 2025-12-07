@@ -111,10 +111,6 @@ export default function SpotTradingPro() {
     const base = selectedPair.base;
     const tvSymbol = symbolMap[base] || 'BINANCE:BTCUSDT';
     
-    // Detect mobile
-    const isMobile = window.innerWidth <= 1024;
-    const chartHeight = isMobile ? 500 : 600;
-    
     const loadTradingView = () => {
       if (window.TradingView) {
         initWidget();
