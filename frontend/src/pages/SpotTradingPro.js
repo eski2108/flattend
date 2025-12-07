@@ -206,7 +206,7 @@ export default function SpotTradingPro() {
 
   return (
     <Layout>
-      <div style={{ background: '#0b0f19', minHeight: '100vh', padding: '0' }}>
+      <div style={{ background: '#0b0f19', minHeight: '100vh', padding: '0', overflow: 'hidden', width: '100%' }}>
         {/* Top Ticker */}
         <div style={{
           background: 'linear-gradient(90deg, rgba(0,225,255,0.1), rgba(0,193,118,0.1))',
