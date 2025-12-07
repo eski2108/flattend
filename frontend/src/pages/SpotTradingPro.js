@@ -624,7 +624,7 @@ export default function SpotTradingPro() {
               gap: 16px;
             }
             .pairs-list-panel {
-              display: none;
+              display: none !important;
             }
             .chart-panel {
               order: 1;
