@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import { IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
+import './SpotTradingPro.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
