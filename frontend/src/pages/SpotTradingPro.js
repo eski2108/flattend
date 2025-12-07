@@ -1,4 +1,3 @@
-// LATEST VERSION - TRADINGVIEW INTEGRATION - UPDATED 2024-12-07
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,7 +17,8 @@ export default function SpotTradingPro() {
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState('60');
   const [tradeAmount, setTradeAmount] = useState('');
-  const [tradeType, setTradeType] = useState('buy');
+  const [orderType, setOrderType] = useState('market');
+  const [tradeTab, setTradeTab] = useState('buy');
   
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
@@ -34,7 +34,7 @@ export default function SpotTradingPro() {
     { label: '15m', value: '15' },
     { label: '1h', value: '60' },
     { label: '4h', value: '240' },
-    { label: '1d', value: 'D' }
+    { label: '1D', value: 'D' }
   ];
 
   // Load user
@@ -85,7 +85,6 @@ export default function SpotTradingPro() {
   useEffect(() => {
     if (!selectedPair) return;
     
-    // Map our crypto symbols to TradingView symbols
     const symbolMap = {
       'BTC': 'BINANCE:BTCUSDT',
       'ETH': 'BINANCE:ETHUSDT',
@@ -111,9 +110,6 @@ export default function SpotTradingPro() {
     const base = selectedPair.base;
     const tvSymbol = symbolMap[base] || 'BINANCE:BTCUSDT';
     
-    console.log('🔵 Initializing TradingView widget for', tvSymbol);
-    
-    // Load TradingView script if not already loaded
     const loadTradingView = () => {
       if (window.TradingView) {
         initWidget();
@@ -127,7 +123,6 @@ export default function SpotTradingPro() {
     };
     
     const initWidget = () => {
-      // Clear previous widget
       const container = document.getElementById('tv_chart_container');
       if (container) {
         container.innerHTML = '';
@@ -144,7 +139,7 @@ export default function SpotTradingPro() {
             theme: 'dark',
             style: '1',
             locale: 'en',
-            toolbar_bg: '#0a0e1a',
+            toolbar_bg: '#020817',
             enable_publishing: false,
             allow_symbol_change: true,
             container_id: 'tv_chart_container',
@@ -156,17 +151,16 @@ export default function SpotTradingPro() {
             disabled_features: ['use_localstorage_for_settings'],
             enabled_features: ['study_templates'],
             overrides: {
-              'mainSeriesProperties.candleStyle.upColor': '#22C55E',
-              'mainSeriesProperties.candleStyle.downColor': '#EF4444',
-              'mainSeriesProperties.candleStyle.borderUpColor': '#22C55E',
-              'mainSeriesProperties.candleStyle.borderDownColor': '#EF4444',
-              'mainSeriesProperties.candleStyle.wickUpColor': '#22C55E',
-              'mainSeriesProperties.candleStyle.wickDownColor': '#EF4444',
+              'mainSeriesProperties.candleStyle.upColor': '#00C176',
+              'mainSeriesProperties.candleStyle.downColor': '#FF4976',
+              'mainSeriesProperties.candleStyle.borderUpColor': '#00C176',
+              'mainSeriesProperties.candleStyle.borderDownColor': '#FF4976',
+              'mainSeriesProperties.candleStyle.wickUpColor': '#00C176',
+              'mainSeriesProperties.candleStyle.wickDownColor': '#FF4976',
             }
           });
-          console.log('✅ TradingView widget initialized');
         } catch (error) {
-          console.error('❌ Error initializing TradingView widget:', error);
+          console.error('Error initializing TradingView:', error);
         }
       }
     };
@@ -180,47 +174,6 @@ export default function SpotTradingPro() {
     };
   }, [selectedPair, timeframe]);
 
-  const calculateMA = (data, period) => {
-    const maData = [];
-    for (let i = period - 1; i < data.length; i++) {
-      let sum = 0;
-      for (let j = 0; j < period; j++) {
-        sum += data[i - j].close;
-      }
-      maData.push({
-        time: data[i].time,
-        value: sum / period,
-      });
-    }
-    return maData;
-  };
-
-  const generateChartData = (basePrice) => {
-    const now = Math.floor(Date.now() / 1000);
-    const interval = 900; // 15 min
-    const candles = [];
-    const volumes = [];
-
-    for (let i = 100; i >= 0; i--) {
-      const time = now - (i * interval);
-      const randomChange = (Math.random() - 0.5) * 0.02;
-      const open = parseFloat((basePrice * (1 + randomChange)).toFixed(2));
-      const close = parseFloat((open * (1 + (Math.random() - 0.5) * 0.01)).toFixed(2));
-      const high = parseFloat((Math.max(open, close) * (1 + Math.random() * 0.005)).toFixed(2));
-      const low = parseFloat((Math.min(open, close) * (1 - Math.random() * 0.005)).toFixed(2));
-
-      candles.push({ time, open, high, low, close });
-      volumes.push({
-        time,
-        value: parseFloat((Math.random() * 100).toFixed(2)),
-        color: close >= open ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'
-      });
-    }
-
-    console.log('Generated chart data:', { candles: candles.length, sample: candles[0] });
-    return { candles, volumes };
-  };
-
   const handlePairSelect = (pair) => {
     setSelectedPair(pair);
     updateMarketStats(pair);
@@ -231,14 +184,14 @@ export default function SpotTradingPro() {
       toast.error('Please enter an amount');
       return;
     }
-    toast.success(`${tradeType.toUpperCase()} order placed for ${tradeAmount} ${selectedPair?.base}`);
+    toast.success(`${tradeTab.toUpperCase()} order placed for ${tradeAmount} ${selectedPair?.base}`);
   };
 
   if (loading) {
     return (
       <Layout>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-          <p style={{ color: '#00F0FF', fontSize: '18px' }}>Loading Trading Platform...</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', background: '#0b0f19' }}>
+          <p style={{ color: '#00E1FF', fontSize: '18px' }}>Loading Trading Platform...</p>
         </div>
       </Layout>
     );
@@ -246,27 +199,26 @@ export default function SpotTradingPro() {
 
   return (
     <Layout>
-      <div style={{ background: '#0a0e1a', minHeight: '100vh', padding: '1rem' }}>
+      <div style={{ background: '#0b0f19', minHeight: '100vh', padding: '0' }}>
         {/* Top Ticker */}
         <div style={{
-          background: 'linear-gradient(90deg, rgba(0,240,255,0.1), rgba(155,77,255,0.1))',
-          border: '1px solid rgba(0,240,255,0.2)',
-          borderRadius: '12px',
-          padding: '12px',
-          marginBottom: '1.5rem',
+          background: 'linear-gradient(90deg, rgba(0,225,255,0.1), rgba(0,193,118,0.1))',
+          borderBottom: '1px solid #1c1f26',
+          padding: '12px 0',
           overflow: 'hidden'
         }}>
           <div style={{
             display: 'flex',
-            gap: '2rem',
+            gap: '48px',
             animation: 'scroll 30s linear infinite',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            paddingLeft: '100%'
           }}>
-            {tradingPairs.map(pair => (
-              <div key={pair.symbol} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>{pair.base}</span>
-                <span style={{ color: '#00F0FF', fontWeight: '700' }}>£{pair.price?.toFixed(2) || '0.00'}</span>
-                <span style={{ color: pair.change_24h >= 0 ? '#22C55E' : '#EF4444', fontSize: '13px' }}>
+            {[...tradingPairs, ...tradingPairs].map((pair, idx) => (
+              <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ color: '#E5F2FF', fontWeight: '600', fontSize: '14px' }}>{pair.base}</span>
+                <span style={{ color: '#00E1FF', fontWeight: '700', fontSize: '14px' }}>£{pair.price?.toFixed(2) || '0.00'}</span>
+                <span style={{ color: pair.change_24h >= 0 ? '#00C176' : '#FF4976', fontSize: '13px', fontWeight: '500' }}>
                   {pair.change_24h >= 0 ? '+' : ''}{pair.change_24h}%
                 </span>
               </div>
@@ -274,118 +226,124 @@ export default function SpotTradingPro() {
           </div>
         </div>
 
-        {/* Header */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#FFFFFF', marginBottom: '0.5rem' }}>
-            ⚡ Spot Trading
-          </h1>
-          <p style={{ color: '#888', fontSize: '15px' }}>
-            Advanced trading with TradingView charts and real-time data
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        {/* Market Info Cards */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(4, 1fr)', 
+          gap: '16px', 
+          padding: '24px',
+          maxWidth: '1600px',
+          margin: '0 auto'
+        }}>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(0,240,255,0.1), rgba(0,150,255,0.1))',
-            border: '1px solid rgba(0,240,255,0.3)',
-            borderRadius: '12px',
-            padding: '16px'
+            background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(0,193,118,0.05))',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
+            padding: '20px'
           }}>
-            <p style={{ color: '#888', fontSize: '12px', marginBottom: '4px' }}>LAST PRICE</p>
-            <p style={{ color: '#00F0FF', fontSize: '24px', fontWeight: '800' }}>£{marketStats.lastPrice.toFixed(2)}</p>
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>LAST PRICE</p>
+            <p style={{ color: '#00E1FF', fontSize: '28px', fontWeight: '700' }}>£{marketStats.lastPrice.toFixed(2)}</p>
           </div>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(239,68,68,0.1), rgba(220,38,38,0.1))',
-            border: '1px solid rgba(239,68,68,0.3)',
-            borderRadius: '12px',
-            padding: '16px'
+            background: 'linear-gradient(135deg, rgba(255,73,118,0.05), rgba(220,38,38,0.05))',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
+            padding: '20px'
           }}>
-            <p style={{ color: '#888', fontSize: '12px', marginBottom: '4px' }}>HIGH/24H</p>
-            <p style={{ color: '#EF4444', fontSize: '24px', fontWeight: '800' }}>£{marketStats.high24h.toFixed(2)}</p>
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H HIGH</p>
+            <p style={{ color: '#FF4976', fontSize: '28px', fontWeight: '700' }}>£{marketStats.high24h.toFixed(2)}</p>
           </div>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(22,163,74,0.1))',
-            border: '1px solid rgba(34,197,94,0.3)',
-            borderRadius: '12px',
-            padding: '16px'
+            background: 'linear-gradient(135deg, rgba(0,193,118,0.05), rgba(22,163,74,0.05))',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
+            padding: '20px'
           }}>
-            <p style={{ color: '#888', fontSize: '12px', marginBottom: '4px' }}>LOW/24H</p>
-            <p style={{ color: '#22C55E', fontSize: '24px', fontWeight: '800' }}>£{marketStats.low24h.toFixed(2)}</p>
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H LOW</p>
+            <p style={{ color: '#00C176', fontSize: '28px', fontWeight: '700' }}>£{marketStats.low24h.toFixed(2)}</p>
           </div>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(155,77,255,0.1), rgba(139,92,246,0.1))',
-            border: '1px solid rgba(155,77,255,0.3)',
-            borderRadius: '12px',
-            padding: '16px'
+            background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(139,92,246,0.05))',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
+            padding: '20px'
           }}>
-            <p style={{ color: '#888', fontSize: '12px', marginBottom: '4px' }}>24H VOLUME</p>
-            <p style={{ color: '#9B4DFF', fontSize: '24px', fontWeight: '800' }}>{marketStats.volume24h.toFixed(2)}</p>
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H VOLUME</p>
+            <p style={{ color: '#E5F2FF', fontSize: '28px', fontWeight: '700' }}>{marketStats.volume24h.toFixed(2)}</p>
           </div>
         </div>
 
-        {/* Main Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr 300px', gap: '1.5rem' }}>
+        {/* Main 3-Column Grid */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '280px 1fr 360px', 
+          gap: '16px',
+          padding: '0 24px 24px',
+          maxWidth: '1600px',
+          margin: '0 auto'
+        }}>
           {/* Pairs List */}
           <div style={{
-            background: 'rgba(26, 31, 58, 0.6)',
-            border: '1px solid rgba(0,240,255,0.2)',
-            borderRadius: '12px',
-            padding: '16px',
+            background: '#020817',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
             height: '600px',
             overflowY: 'auto'
           }}>
-            <h3 style={{ color: '#FFFFFF', fontSize: '16px', fontWeight: '700', marginBottom: '12px' }}>Trading Pairs</h3>
+            <div style={{ padding: '16px', borderBottom: '1px solid #1c1f26' }}>
+              <h3 style={{ color: '#E5F2FF', fontSize: '16px', fontWeight: '700', margin: 0 }}>Trading Pairs</h3>
+            </div>
             {tradingPairs.map(pair => (
               <div
                 key={pair.symbol}
                 onClick={() => handlePairSelect(pair)}
                 style={{
-                  padding: '12px',
-                  borderRadius: '8px',
-                  marginBottom: '8px',
+                  padding: '16px',
                   cursor: 'pointer',
-                  background: selectedPair?.symbol === pair.symbol ? 'rgba(0,240,255,0.1)' : 'transparent',
-                  border: `1px solid ${selectedPair?.symbol === pair.symbol ? 'rgba(0,240,255,0.3)' : 'transparent'}`,
-                  transition: 'all 0.3s'
+                  background: selectedPair?.symbol === pair.symbol ? 'rgba(0,225,255,0.08)' : 'transparent',
+                  borderBottom: '1px solid #1c1f26',
+                  borderLeft: selectedPair?.symbol === pair.symbol ? '3px solid #00E1FF' : '3px solid transparent',
+                  transition: 'all 0.2s',
+                  ':hover': { background: 'rgba(0,225,255,0.05)' }
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#FFFFFF', fontWeight: '600' }}>{pair.symbol}</span>
-                  <span style={{ color: pair.change_24h >= 0 ? '#22C55E' : '#EF4444', fontSize: '13px' }}>
-                    {pair.change_24h >= 0 ? <IoTrendingUp size={14} /> : <IoTrendingDown size={14} />}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <span style={{ color: '#E5F2FF', fontWeight: '600', fontSize: '14px' }}>{pair.symbol}</span>
+                  <span style={{ color: pair.change_24h >= 0 ? '#00C176' : '#FF4976', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {pair.change_24h >= 0 ? <IoTrendingUp size={12} /> : <IoTrendingDown size={12} />}
                     {pair.change_24h}%
                   </span>
                 </div>
-                <div style={{ color: '#00F0FF', fontSize: '14px', marginTop: '4px' }}>£{pair.price?.toFixed(2) || '0.00'}</div>
+                <div style={{ color: '#00E1FF', fontSize: '14px', fontWeight: '600' }}>£{pair.price?.toFixed(2) || '0.00'}</div>
               </div>
             ))}
           </div>
 
           {/* Chart */}
           <div style={{
-            background: 'rgba(26, 31, 58, 0.6)',
-            border: '1px solid rgba(0,240,255,0.2)',
-            borderRadius: '12px',
+            background: '#020817',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
             padding: '16px'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ color: '#FFFFFF', fontSize: '18px', fontWeight: '700' }}>{selectedPair?.symbol || 'BTC/GBP'}</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ color: '#E5F2FF', fontSize: '18px', fontWeight: '700', margin: 0 }}>{selectedPair?.symbol || 'BTC/GBP'}</h3>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {timeframes.map(tf => (
                   <button
                     key={tf.value}
                     onClick={() => setTimeframe(tf.value)}
                     style={{
-                      padding: '6px 12px',
-                      background: timeframe === tf.value ? 'rgba(0,240,255,0.2)' : 'rgba(255,255,255,0.05)',
-                      border: `1px solid ${timeframe === tf.value ? '#00F0FF' : 'rgba(255,255,255,0.1)'}`,
+                      padding: '8px 16px',
+                      background: timeframe === tf.value ? 'rgba(0,225,255,0.15)' : 'transparent',
+                      border: `1px solid ${timeframe === tf.value ? '#00E1FF' : '#1c1f26'}`,
                       borderRadius: '6px',
-                      color: timeframe === tf.value ? '#00F0FF' : '#888',
-                      fontSize: '12px',
+                      color: timeframe === tf.value ? '#00E1FF' : '#9CA3AF',
+                      fontSize: '13px',
                       fontWeight: '600',
                       cursor: 'pointer',
-                      transition: 'all 0.3s'
+                      transition: 'all 0.2s',
+                      boxShadow: timeframe === tf.value ? '0 0 12px rgba(0,225,255,0.3)' : 'none'
                     }}
                   >
                     {tf.label}
@@ -398,96 +356,103 @@ export default function SpotTradingPro() {
               style={{ 
                 width: '100%', 
                 height: '600px',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 overflow: 'hidden'
               }} 
             />
           </div>
 
-          {/* Market Info */}
+          {/* Buy/Sell Panel */}
           <div style={{
-            background: 'rgba(26, 31, 58, 0.6)',
-            border: '1px solid rgba(0,240,255,0.2)',
-            borderRadius: '12px',
-            padding: '16px'
+            background: '#020817',
+            border: '1px solid #1c1f26',
+            borderRadius: '8px',
+            height: '600px',
+            display: 'flex',
+            flexDirection: 'column'
           }}>
-            <h3 style={{ color: '#FFFFFF', fontSize: '16px', fontWeight: '700', marginBottom: '16px' }}>Market Info</h3>
-            <div style={{ marginBottom: '24px' }}>
-              <p style={{ color: '#888', fontSize: '13px', marginBottom: '4px' }}>Pair</p>
-              <p style={{ color: '#FFFFFF', fontSize: '18px', fontWeight: '700' }}>{selectedPair?.symbol}</p>
-            </div>
-            <div style={{ marginBottom: '24px' }}>
-              <p style={{ color: '#888', fontSize: '13px', marginBottom: '4px' }}>Asset Class</p>
-              <p style={{ color: '#00F0FF', fontSize: '15px', fontWeight: '600' }}>Crypto</p>
-            </div>
-            <div style={{ marginBottom: '24px' }}>
-              <p style={{ color: '#888', fontSize: '13px', marginBottom: '4px' }}>Order Type</p>
-              <p style={{ color: '#FFFFFF', fontSize: '15px' }}>Spot</p>
-            </div>
-            <div style={{ marginBottom: '24px' }}>
-              <p style={{ color: '#888', fontSize: '13px', marginBottom: '4px' }}>Status</p>
-              <p style={{ color: '#22C55E', fontSize: '15px', fontWeight: '600' }}>• Active</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Trading Panel */}
-        <div style={{
-          marginTop: '1.5rem',
-          background: 'rgba(26, 31, 58, 0.6)',
-          border: '1px solid rgba(0,240,255,0.2)',
-          borderRadius: '12px',
-          padding: '24px'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-            {/* Buy Panel */}
-            <div>
-              <h3 style={{ color: '#22C55E', fontSize: '18px', fontWeight: '700', marginBottom: '16px' }}>BUY {selectedPair?.base}</h3>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ color: '#888', fontSize: '13px', display: 'block', marginBottom: '8px' }}>Amount</label>
-                <input
-                  type="number"
-                  value={tradeAmount}
-                  onChange={(e) => setTradeAmount(e.target.value)}
-                  placeholder="0.00"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(34,197,94,0.3)',
-                    borderRadius: '8px',
-                    color: '#FFFFFF',
-                    fontSize: '16px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
+            {/* Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid #1c1f26' }}>
               <button
-                onClick={() => { setTradeType('buy'); handlePlaceOrder(); }}
+                onClick={() => setTradeTab('buy')}
                 style={{
-                  width: '100%',
+                  flex: 1,
                   padding: '16px',
-                  background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+                  background: tradeTab === 'buy' ? 'rgba(0,193,118,0.1)' : 'transparent',
                   border: 'none',
-                  borderRadius: '12px',
-                  color: '#FFFFFF',
-                  fontSize: '18px',
-                  fontWeight: '800',
+                  borderBottom: tradeTab === 'buy' ? '2px solid #00C176' : '2px solid transparent',
+                  color: tradeTab === 'buy' ? '#00C176' : '#9CA3AF',
+                  fontSize: '14px',
+                  fontWeight: '700',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)',
-                  transition: 'all 0.3s'
+                  transition: 'all 0.2s'
                 }}
               >
-                BUY {selectedPair?.base}
+                BUY
+              </button>
+              <button
+                onClick={() => setTradeTab('sell')}
+                style={{
+                  flex: 1,
+                  padding: '16px',
+                  background: tradeTab === 'sell' ? 'rgba(255,73,118,0.1)' : 'transparent',
+                  border: 'none',
+                  borderBottom: tradeTab === 'sell' ? '2px solid #FF4976' : '2px solid transparent',
+                  color: tradeTab === 'sell' ? '#FF4976' : '#9CA3AF',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                SELL
               </button>
             </div>
 
-            {/* Sell Panel */}
-            <div>
-              <h3 style={{ color: '#EF4444', fontSize: '18px', fontWeight: '700', marginBottom: '16px' }}>SELL {selectedPair?.base}</h3>
+            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+              {/* Order Type Toggle */}
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  <button
+                    onClick={() => setOrderType('market')}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: orderType === 'market' ? 'rgba(0,225,255,0.1)' : 'transparent',
+                      border: `1px solid ${orderType === 'market' ? '#00E1FF' : '#1c1f26'}`,
+                      borderRadius: '6px',
+                      color: orderType === 'market' ? '#00E1FF' : '#9CA3AF',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    Market
+                  </button>
+                  <button
+                    onClick={() => setOrderType('limit')}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: orderType === 'limit' ? 'rgba(0,225,255,0.1)' : 'transparent',
+                      border: `1px solid ${orderType === 'limit' ? '#00E1FF' : '#1c1f26'}`,
+                      borderRadius: '6px',
+                      color: orderType === 'limit' ? '#00E1FF' : '#9CA3AF',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    Limit
+                  </button>
+                </div>
+              </div>
+
+              {/* Amount Input */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ color: '#888', fontSize: '13px', display: 'block', marginBottom: '8px' }}>Amount</label>
+                <label style={{ color: '#9CA3AF', fontSize: '13px', display: 'block', marginBottom: '8px', fontWeight: '500' }}>Amount</label>
                 <input
                   type="number"
                   value={tradeAmount}
@@ -495,34 +460,54 @@ export default function SpotTradingPro() {
                   placeholder="0.00"
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(239,68,68,0.3)',
-                    borderRadius: '8px',
-                    color: '#FFFFFF',
+                    padding: '14px',
+                    background: '#0b0f19',
+                    border: `1px solid ${tradeTab === 'buy' ? 'rgba(0,193,118,0.3)' : 'rgba(255,73,118,0.3)'}`,
+                    borderRadius: '6px',
+                    color: '#E5F2FF',
                     fontSize: '16px',
                     outline: 'none',
-                    boxSizing: 'border-box'
+                    boxSizing: 'border-box',
+                    transition: 'all 0.2s'
                   }}
                 />
               </div>
+
+              {/* Price Display */}
+              <div style={{ marginBottom: '24px', padding: '16px', background: '#0b0f19', borderRadius: '6px', border: '1px solid #1c1f26' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#9CA3AF', fontSize: '13px' }}>Price</span>
+                  <span style={{ color: '#E5F2FF', fontSize: '14px', fontWeight: '600' }}>£{marketStats.lastPrice.toFixed(2)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#9CA3AF', fontSize: '13px' }}>Total</span>
+                  <span style={{ color: '#00E1FF', fontSize: '14px', fontWeight: '600' }}>£{(parseFloat(tradeAmount || 0) * marketStats.lastPrice).toFixed(2)}</span>
+                </div>
+              </div>
+
+              {/* Action Button */}
               <button
-                onClick={() => { setTradeType('sell'); handlePlaceOrder(); }}
+                onClick={handlePlaceOrder}
                 style={{
                   width: '100%',
-                  padding: '16px',
-                  background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+                  padding: '18px',
+                  background: tradeTab === 'buy' 
+                    ? 'linear-gradient(135deg, #00C176, #00A85F)' 
+                    : 'linear-gradient(135deg, #FF4976, #E0215E)',
                   border: 'none',
-                  borderRadius: '12px',
+                  borderRadius: '8px',
                   color: '#FFFFFF',
-                  fontSize: '18px',
+                  fontSize: '16px',
                   fontWeight: '800',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(239, 68, 68, 0.4)',
-                  transition: 'all 0.3s'
+                  boxShadow: tradeTab === 'buy' 
+                    ? '0 4px 20px rgba(0, 193, 118, 0.4)' 
+                    : '0 4px 20px rgba(255, 73, 118, 0.4)',
+                  transition: 'all 0.3s',
+                  marginTop: 'auto'
                 }}
               >
-                SELL {selectedPair?.base}
+                {tradeTab === 'buy' ? 'BUY' : 'SELL'} {selectedPair?.base}
               </button>
             </div>
           </div>
