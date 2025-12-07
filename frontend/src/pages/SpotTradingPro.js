@@ -287,8 +287,10 @@ export default function SpotTradingPro() {
             background: '#020817',
             border: '1px solid #1c1f26',
             borderRadius: '8px',
-            height: '600px',
-            overflowY: 'auto'
+            height: window.innerWidth > 1024 ? '600px' : 'auto',
+            maxHeight: window.innerWidth > 1024 ? '600px' : '300px',
+            overflowY: 'auto',
+            display: window.innerWidth > 1024 ? 'block' : 'none'
           }}>
             <div style={{ padding: '16px', borderBottom: '1px solid #1c1f26' }}>
               <h3 style={{ color: '#E5F2FF', fontSize: '16px', fontWeight: '700', margin: 0 }}>Trading Pairs</h3>
