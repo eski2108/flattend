@@ -1,3 +1,28 @@
+/**
+ * 🔒 LOCKED FILE - DO NOT MODIFY WITHOUT EXPLICIT APPROVAL 🔒
+ * 
+ * File: Layout.js
+ * Purpose: Main layout wrapper with sidebar and mobile responsiveness
+ * Lock Date: December 7, 2024
+ * Version: v1.0-LOCKED-PERMANENT
+ * 
+ * PROTECTED ELEMENTS:
+ * - Line 104-110: Sidebar with mobile hide logic
+ * - Inline style with window.innerWidth check
+ * - Line 350: PriceTickerEnhanced conditional rendering
+ * 
+ * CRITICAL MOBILE FIX:
+ * The sidebar MUST be hidden on mobile (width <= 1024px) to prevent
+ * duplicate trading pair labels appearing on the right side of the screen.
+ * 
+ * NEVER MODIFY:
+ * - Sidebar hide logic: style={typeof window !== 'undefined' && window.innerWidth <= 1024 && !isMobileMenuOpen ? { display: 'none' } : {}}
+ * - Window width threshold (1024px)
+ * - Mobile menu toggle behavior
+ * 
+ * See /app/LOCKED_BUILD.md for complete documentation
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
