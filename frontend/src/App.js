@@ -18,6 +18,7 @@ import Dashboard from "@/pages/Dashboard";
 import WalletPage from "@/pages/WalletPage";
 import SpotTradingRebuild from "@/pages/SpotTradingRebuild";
 import SpotTrading from "@/pages/SpotTrading";
+import SpotTradingPro from "@/pages/SpotTradingPro";
 // Support Chat Widget
 // Support Chat Widget removed
 
