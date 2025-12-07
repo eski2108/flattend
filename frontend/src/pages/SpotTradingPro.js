@@ -75,104 +75,12 @@ export default function SpotTradingPro() {
     });
   };
 
-  // Initialize TradingView Chart
+  // Fetch chart data
   useEffect(() => {
-    if (!chartContainerRef.current || !selectedPair) {
-      console.log('⚠️ Chart container or pair not ready');
-      return;
-    }
-
-    console.log('🔵 Starting chart initialization for', selectedPair.symbol);
-    console.log('Container dimensions:', chartContainerRef.current.offsetWidth, 'x', chartContainerRef.current.offsetHeight);
-
-    let chart = null;
-    let resizeObserver = null;
-
-    const initChart = async () => {
+    if (!selectedPair) return;
+    
+    const fetchChartData = async () => {
       try {
-        // Clear existing chart
-        if (chartRef.current) {
-          console.log('Removing existing chart');
-          chartRef.current.remove();
-          chartRef.current = null;
-        }
-
-        // Get container dimensions
-        const containerWidth = chartContainerRef.current.offsetWidth || 800;
-        const containerHeight = 600;
-
-        console.log('Creating chart with dimensions:', containerWidth, 'x', containerHeight);
-
-        // Create chart with v4 API
-        chart = createChart(chartContainerRef.current, {
-          width: containerWidth,
-          height: containerHeight,
-          layout: {
-            background: '#ffffff',
-            textColor: '#000000',
-          },
-          grid: {
-            vertLines: {
-              color: 'rgba(42, 46, 57, 0.5)',
-            },
-            horzLines: {
-              color: 'rgba(42, 46, 57, 0.5)',
-            },
-          },
-          crosshair: {
-            mode: 0,
-          },
-          rightPriceScale: {
-            borderColor: 'rgba(197, 203, 206, 0.4)',
-            visible: true,
-            scaleMargins: {
-              top: 0.1,
-              bottom: 0.2,
-            },
-          },
-          timeScale: {
-            borderColor: 'rgba(197, 203, 206, 0.4)',
-            timeVisible: true,
-            secondsVisible: false,
-            visible: true,
-          },
-        });
-
-        console.log('✅ Chart object created');
-
-        // Add candlestick series with explicit visibility
-        const candlestickSeries = chart.addCandlestickSeries({
-          upColor: '#22C55E',
-          downColor: '#EF4444',
-          borderUpColor: '#22C55E',
-          borderDownColor: '#EF4444',
-          wickUpColor: '#22C55E',
-          wickDownColor: '#EF4444',
-          priceFormat: {
-            type: 'price',
-            precision: 2,
-            minMove: 0.01,
-          },
-        });
-
-        console.log('✅ Candlestick series added');
-
-        // Add volume series
-        const volumeSeries = chart.addHistogramSeries({
-          color: '#26a69a',
-          priceFormat: {
-            type: 'volume',
-          },
-          priceScaleId: '',
-          scaleMargins: {
-            top: 0.7,
-            bottom: 0,
-          },
-        });
-
-        console.log('✅ Volume series added');
-
-        // Fetch OHLCV data
         const pairSymbol = selectedPair.symbol.replace('/', '');
         console.log('📊 Fetching OHLCV for:', pairSymbol);
         
@@ -180,86 +88,25 @@ export default function SpotTradingPro() {
           params: { interval: timeframe, limit: 100 }
         });
         
-        if (response.data.success && response.data.data && response.data.data.length > 0) {
+        if (response.data.success && response.data.data) {
           const ohlcvData = response.data.data;
           console.log('📈 Received', ohlcvData.length, 'candles');
-          console.log('First candle:', ohlcvData[0]);
-          console.log('Last candle:', ohlcvData[ohlcvData.length - 1]);
           
-          // Set candlestick data
-          try {
-            candlestickSeries.setData(ohlcvData);
-            console.log('✅ Candlestick data set successfully');
-            console.log('Data sample:', ohlcvData.slice(0, 3));
-          } catch (err) {
-            console.error('❌ Error setting candlestick data:', err);
-            throw err;
-          }
+          // Convert to ApexCharts format
+          const formattedData = ohlcvData.map(d => ({
+            x: new Date(d.time * 1000),
+            y: [d.open, d.high, d.low, d.close]
+          }));
           
-          // Set volume data
-          try {
-            const volumeData = ohlcvData.map(d => ({
-              time: d.time,
-              value: d.volume,
-              color: d.close >= d.open ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)'
-            }));
-            volumeSeries.setData(volumeData);
-            console.log('✅ Volume data set successfully');
-          } catch (err) {
-            console.error('❌ Error setting volume data:', err);
-          }
-          
-          // Fit content and scroll to the end
-          chart.timeScale().fitContent();
-          chart.timeScale().scrollToPosition(0, false);
-          console.log('✅ Chart content fitted and scrolled');
-          
-          // Force a resize to ensure proper rendering
-          setTimeout(() => {
-            if (chart) {
-              chart.applyOptions({ 
-                width: chartContainerRef.current.offsetWidth,
-                height: 600 
-              });
-              chart.timeScale().fitContent();
-              console.log('✅ Chart resized and refitted');
-            }
-          }, 100);
-        } else {
-          console.error('❌ No valid OHLCV data received');
+          setChartData(formattedData);
+          console.log('✅ Chart data set');
         }
-
-        chartRef.current = chart;
-
-        // Handle resize
-        resizeObserver = new ResizeObserver(entries => {
-          if (chartRef.current && entries.length > 0) {
-            const { width } = entries[0].contentRect;
-            chartRef.current.applyOptions({ width: Math.max(width, 100) });
-          }
-        });
-
-        resizeObserver.observe(chartContainerRef.current);
-        console.log('✅ Chart fully initialized');
-
       } catch (error) {
-        console.error('❌ Chart initialization error:', error);
-        console.error('Error stack:', error.stack);
+        console.error('Error fetching chart data:', error);
       }
     };
-
-    initChart();
-
-    return () => {
-      console.log('🔴 Cleaning up chart');
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-      if (chart) {
-        chart.remove();
-      }
-      chartRef.current = null;
-    };
+    
+    fetchChartData();
   }, [selectedPair, timeframe]);
 
   const calculateMA = (data, period) => {
