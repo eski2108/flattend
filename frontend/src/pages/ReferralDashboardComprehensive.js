@@ -31,7 +31,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 ChartJS.register(
   CategoryScale,

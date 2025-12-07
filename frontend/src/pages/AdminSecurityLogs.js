@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Download, Filter, IoCheckmark as Check, IoCheckmarkCircle, IoClose as X, IoCloseCircle, IoCloudDownload, IoFilter, IoSearch, IoShield, IoWarning, Search } from 'react-icons/io5';
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // API already defined
 

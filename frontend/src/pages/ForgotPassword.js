@@ -5,7 +5,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
 
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 // API already defined
 
 export default function ForgotPassword() {

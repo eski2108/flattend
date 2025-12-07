@@ -5,10 +5,10 @@
  */
 
 // FORCE production URL
-const BACKEND_URL = 'https://coinhubx.net';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL.replace('/api', '');
 
 // Ensure it ALWAYS has /api at the end
-export const API_BASE_URL = 'https://coinhubx.net/api';
+export const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
 // For backward compatibility - some pages might use this
 export const BACKEND_URL_WITH_API = API_BASE_URL;

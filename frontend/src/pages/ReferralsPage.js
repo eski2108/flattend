@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { IoAlertCircle as AlertCircle, IoBriefcase as Briefcase, IoCard as CreditCard, IoCash, IoCheckmark, IoCopy, IoFlash, IoPeople, IoShield as Shield, IoTrendingUp } from 'react-icons/io5';
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 import { toast } from 'react-hot-toast';
 
 // API already defined

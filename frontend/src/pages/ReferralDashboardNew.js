@@ -19,7 +19,7 @@ import {
   IoPhonePortraitOutline
 } from 'react-icons/io5';
 import QRCode from 'qrcode';
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // API already defined
 

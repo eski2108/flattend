@@ -4,7 +4,7 @@ import axios from 'axios';
 import { IoCash, IoCheckmark, IoCopy, IoGift as Gift, IoOpenOutline, IoPeople, IoShareSocial as Share2, IoTrendingUp } from 'react-icons/io5';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // API already defined
 
