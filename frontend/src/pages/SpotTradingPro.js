@@ -313,36 +313,38 @@ export default function SpotTradingPro() {
 
         {/* Main 3-Column Grid */}
         <div className="spot-trading-grid">
-          {/* Pairs List - Hidden on mobile with inline style */}
-          <div className="pairs-list-panel" style={{ display: isDesktop ? 'block' : 'none' }}>
-            <div style={{ padding: '16px', borderBottom: '1px solid #1c1f26' }}>
-              <h3 style={{ color: '#E5F2FF', fontSize: '16px', fontWeight: '700', margin: 0 }}>Trading Pairs</h3>
-            </div>
-            {tradingPairs.map(pair => (
-              <div
-                key={pair.symbol}
-                onClick={() => handlePairSelect(pair)}
-                style={{
-                  padding: '16px',
-                  cursor: 'pointer',
-                  background: selectedPair?.symbol === pair.symbol ? 'rgba(0,225,255,0.08)' : 'transparent',
-                  borderBottom: '1px solid #1c1f26',
-                  borderLeft: selectedPair?.symbol === pair.symbol ? '3px solid #00E1FF' : '3px solid transparent',
-                  transition: 'all 0.2s',
-                  ':hover': { background: 'rgba(0,225,255,0.05)' }
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ color: '#E5F2FF', fontWeight: '600', fontSize: '14px' }}>{pair.symbol}</span>
-                  <span style={{ color: pair.change_24h >= 0 ? '#00C176' : '#FF4976', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {pair.change_24h >= 0 ? <IoTrendingUp size={12} /> : <IoTrendingDown size={12} />}
-                    {pair.change_24h}%
-                  </span>
-                </div>
-                <div style={{ color: '#00E1FF', fontSize: '14px', fontWeight: '600' }}>£{pair.price?.toFixed(2) || '0.00'}</div>
+          {/* Pairs List - Only render on desktop */}
+          {isDesktop && (
+            <div className="pairs-list-panel">
+              <div style={{ padding: '16px', borderBottom: '1px solid #1c1f26' }}>
+                <h3 style={{ color: '#E5F2FF', fontSize: '16px', fontWeight: '700', margin: 0 }}>Trading Pairs</h3>
               </div>
-            ))}
-          </div>
+              {tradingPairs.map(pair => (
+                <div
+                  key={pair.symbol}
+                  onClick={() => handlePairSelect(pair)}
+                  style={{
+                    padding: '16px',
+                    cursor: 'pointer',
+                    background: selectedPair?.symbol === pair.symbol ? 'rgba(0,225,255,0.08)' : 'transparent',
+                    borderBottom: '1px solid #1c1f26',
+                    borderLeft: selectedPair?.symbol === pair.symbol ? '3px solid #00E1FF' : '3px solid transparent',
+                    transition: 'all 0.2s',
+                    ':hover': { background: 'rgba(0,225,255,0.05)' }
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ color: '#E5F2FF', fontWeight: '600', fontSize: '14px' }}>{pair.symbol}</span>
+                    <span style={{ color: pair.change_24h >= 0 ? '#00C176' : '#FF4976', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {pair.change_24h >= 0 ? <IoTrendingUp size={12} /> : <IoTrendingDown size={12} />}
+                      {pair.change_24h}%
+                    </span>
+                  </div>
+                  <div style={{ color: '#00E1FF', fontSize: '14px', fontWeight: '600' }}>£{pair.price?.toFixed(2) || '0.00'}</div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Chart */}
           <div className="chart-panel">
