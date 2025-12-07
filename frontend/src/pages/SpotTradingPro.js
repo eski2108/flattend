@@ -1,3 +1,28 @@
+/**
+ * 🔒 LOCKED FILE - DO NOT MODIFY WITHOUT EXPLICIT APPROVAL 🔒
+ * 
+ * File: SpotTradingPro.js
+ * Purpose: Main spot trading page with TradingView chart integration
+ * Lock Date: December 7, 2024
+ * Version: v1.0-LOCKED-PERMANENT
+ * 
+ * PROTECTED ELEMENTS:
+ * - TradingView widget configuration (lines 96-185)
+ * - Trading order placement logic (lines 196-237)
+ * - Desktop 3-column layout (lines 331-550)
+ * - Mobile responsive design (CSS media queries)
+ * - Buy/Sell panel (lines 451-550)
+ * 
+ * NEVER MODIFY:
+ * - TradingView initialization parameters
+ * - Layout grid structure
+ * - API endpoint calls
+ * - Balance update triggers
+ * - Fee calculation references
+ * 
+ * See /app/LOCKED_BUILD.md for complete documentation
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
