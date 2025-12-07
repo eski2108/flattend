@@ -3,7 +3,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoPersonOutline, IoChevronDown, IoShield, IoCheckmarkCircle } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
-const API = process.env.REACT_APP_BACKEND_URL || 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function Register() {
   const navigate = useNavigate();
