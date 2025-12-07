@@ -20,6 +20,7 @@ export default function SpotTradingPro() {
   const [tradeAmount, setTradeAmount] = useState('');
   const [orderType, setOrderType] = useState('market');
   const [tradeTab, setTradeTab] = useState('buy');
+  const [isDesktop, setIsDesktop] = useState(true); // Default to desktop for SSR
   
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
