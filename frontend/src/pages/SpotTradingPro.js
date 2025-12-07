@@ -44,6 +44,13 @@ export default function SpotTradingPro() {
     if (userData) {
       setUser(JSON.parse(userData));
     }
+    
+    // Handle window resize for mobile detection
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Fetch trading pairs
