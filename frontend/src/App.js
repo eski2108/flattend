@@ -229,6 +229,7 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/blocked" element={<BlockedUsers />} />
             <Route path="/mobile-app" element={<MobileAppPage />} />
+            <Route path="/chart-test" element={<ChartTest />} />
             <Route path="/admin-liquidity" element={<AdminLiquidity />} />
             <Route path="/admin/liquidity-manager" element={<AdminLiquidityManager />} />
             <Route path="/admin/liquidity" element={<AdminLiquidityManagement />} />
