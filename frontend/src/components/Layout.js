@@ -346,9 +346,9 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        {/* Hide price ticker on trading page (it has its own ticker) - check both pathname and hash for routing */}
-        {!(['/trading', '/spot-trading'].includes(location.pathname) || 
-           ['#/trading', '#/spot-trading'].includes(window.location.hash)) && <PriceTickerEnhanced />}
+        {/* Hide price ticker on spot trading page (it has its own ticker) */}
+        {!(location.pathname === '/spot-trading' || location.pathname === '/trading' || 
+           location.hash === '#/spot-trading' || location.hash === '#/trading') && <PriceTickerEnhanced />}
         
         <PromoBanner />
         
