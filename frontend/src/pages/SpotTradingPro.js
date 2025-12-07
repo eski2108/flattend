@@ -45,6 +45,9 @@ export default function SpotTradingPro() {
       setUser(JSON.parse(userData));
     }
     
+    // Check if mobile on mount
+    setIsMobile(window.innerWidth <= 1024);
+    
     // Handle window resize for mobile detection
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1024);
