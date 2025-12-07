@@ -620,6 +620,7 @@ export default function SpotTradingPro() {
               display: flex;
               flex-direction: column;
               padding: 0 12px 12px !important;
+              gap: 16px;
             }
             .pairs-list-panel {
               display: none;
@@ -627,16 +628,20 @@ export default function SpotTradingPro() {
             .chart-panel {
               order: 1;
               padding: 12px !important;
-              min-height: 550px;
+              min-height: 520px;
+              width: 100%;
+              box-sizing: border-box;
             }
             .buysell-panel {
               order: 2;
               height: auto;
-              margin-top: 12px;
+              width: 100%;
+              box-sizing: border-box;
             }
             #tv_chart_container {
-              height: 450px !important;
-              min-height: 450px !important;
+              height: 500px !important;
+              min-height: 500px !important;
+              width: 100% !important;
             }
 
             /* Mobile Trading Pairs */
@@ -653,11 +658,31 @@ export default function SpotTradingPro() {
               -webkit-overflow-scrolling: touch;
             }
 
+            .pairs-button-container::-webkit-scrollbar {
+              height: 4px;
+            }
+
+            .pairs-button-container::-webkit-scrollbar-track {
+              background: #0b0f19;
+            }
+
+            .pairs-button-container::-webkit-scrollbar-thumb {
+              background: #1c1f26;
+              border-radius: 2px;
+            }
+
             .pair-button {
               min-width: 110px;
               height: 44px;
               flex-shrink: 0;
               scroll-snap-align: start;
+            }
+
+            /* Mobile Market Stats - 2 column grid */
+            .spot-trading-grid + div:first-of-type {
+              grid-template-columns: repeat(2, 1fr) !important;
+              padding: 16px 12px !important;
+              gap: 12px !important;
             }
           }
         `}</style>
