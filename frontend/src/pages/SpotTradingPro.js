@@ -39,12 +39,22 @@ export default function SpotTradingPro() {
     { label: '1D', value: 'D' }
   ];
 
-  // Load user
+  // Load user and detect screen size
   useEffect(() => {
     const userData = localStorage.getItem('user') || localStorage.getItem('cryptobank_user');
     if (userData) {
       setUser(JSON.parse(userData));
     }
+    
+    // Set initial screen size
+    setIsDesktop(window.innerWidth > 1024);
+    
+    // Handle window resize
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Fetch trading pairs
