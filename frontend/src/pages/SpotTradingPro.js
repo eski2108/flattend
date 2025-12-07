@@ -147,9 +147,7 @@ export default function SpotTradingPro() {
           const chartHeight = 600;
           
           tvWidgetRef.current = new window.TradingView.widget({
-            autosize: false,
-            width: chartWidth,
-            height: chartHeight,
+            autosize: true,
             symbol: tvSymbol,
             interval: timeframe,
             timezone: 'Etc/UTC',
