@@ -27215,6 +27215,72 @@ async def republish_listing(listing_id: str, request: dict):
 # 🔒 END LOCKED SECTION
 # =============================================================================
 
+@api_router.get("/trading/ohlcv/{pair}")
+async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
+    """
+    Get OHLCV (candlestick) data for a trading pair
+    pair format: BTCGBP, ETHGBP, ADAUSDT, etc.
+    interval: 1m, 5m, 15m, 1h, 4h, 1d
+    """
+    try:
+        # Parse pair (e.g., BTCGBP -> BTC/GBP)
+        if len(pair) >= 6:
+            base = pair[:3]
+            quote = pair[3:]
+        else:
+            raise HTTPException(status_code=400, detail="Invalid pair format")
+        
+        # Get current price
+        market_prices = await get_live_prices()
+        current_price = market_prices.get(base, 50000)
+        
+        # Generate OHLCV data (in production, get from database or exchange API)
+        now = int(time.time())
+        
+        # Interval in seconds
+        interval_seconds = {
+            "1m": 60,
+            "5m": 300,
+            "15m": 900,
+            "1h": 3600,
+            "4h": 14400,
+            "1d": 86400
+        }.get(interval, 900)
+        
+        candles = []
+        for i in range(limit, 0, -1):
+            timestamp = now - (i * interval_seconds)
+            
+            # Generate realistic price movement
+            variation = (random.random() - 0.5) * 0.02
+            open_price = current_price * (1 + variation)
+            close_variation = (random.random() - 0.5) * 0.01
+            close_price = open_price * (1 + close_variation)
+            
+            high_price = max(open_price, close_price) * (1 + random.random() * 0.005)
+            low_price = min(open_price, close_price) * (1 - random.random() * 0.005)
+            volume = random.uniform(10, 1000)
+            
+            candles.append({
+                "time": timestamp,
+                "open": round(open_price, 2),
+                "high": round(high_price, 2),
+                "low": round(low_price, 2),
+                "close": round(close_price, 2),
+                "volume": round(volume, 2)
+            })
+        
+        return {
+            "success": True,
+            "pair": pair,
+            "interval": interval,
+            "data": candles
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting OHLCV data: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the API router in the main FastAPI app
 # This registers ALL endpoints defined above with the /api prefix
 app.include_router(api_router)
