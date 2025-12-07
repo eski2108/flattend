@@ -249,6 +249,21 @@ export default function SpotTradingPro() {
     };
   }, [selectedPair, timeframe]);
 
+  const calculateMA = (data, period) => {
+    const maData = [];
+    for (let i = period - 1; i < data.length; i++) {
+      let sum = 0;
+      for (let j = 0; j < period; j++) {
+        sum += data[i - j].close;
+      }
+      maData.push({
+        time: data[i].time,
+        value: sum / period,
+      });
+    }
+    return maData;
+  };
+
   const generateChartData = (basePrice) => {
     const now = Math.floor(Date.now() / 1000);
     const interval = 900; // 15 min
