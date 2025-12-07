@@ -19,6 +19,7 @@ export default function SpotTradingPro() {
   const [tradeAmount, setTradeAmount] = useState('');
   const [orderType, setOrderType] = useState('market');
   const [tradeTab, setTradeTab] = useState('buy');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
