@@ -243,7 +243,8 @@ export default function SpotTradingPro() {
               </div>
             ))}
           </div>
-        </div>
+          </div>
+        )}
 
         {/* Market Info Cards - Only render on desktop */}
         {isDesktop && (
