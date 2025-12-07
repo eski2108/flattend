@@ -675,6 +675,32 @@ export default function SpotTradingPro() {
             /* Mobile Market Info Cards - 2 columns */
             div[style*="grid-template-columns: repeat(4, 1fr)"] {
               grid-template-columns: repeat(2, 1fr) !important;
+              padding: 16px 12px !important;
+              gap: 12px !important;
+            }
+            
+            /* Ensure mobile viewport doesn't have horizontal scroll */
+            body {
+              overflow-x: hidden !important;
+            }
+            
+            /* Mobile-specific adjustments for market cards */
+            .market-card {
+              padding: 16px !important;
+            }
+            
+            /* Ensure trading view chart is responsive */
+            .chart-panel iframe {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+          }
+          
+          /* Tablet responsiveness */
+          @media screen and (max-width: 1200px) and (min-width: 1025px) {
+            .spot-trading-grid {
+              grid-template-columns: 240px 1fr 320px !important;
+              gap: 12px !important;
             }
           }
         `}</style>
