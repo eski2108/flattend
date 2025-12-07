@@ -1,770 +1,1228 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-import CHXButton from '@/components/CHXButton';
-import { IoTrendingUp, IoTrendingDown, IoFlash, IoCheckmarkCircle } from 'react-icons/io5';
+import * as LightweightCharts from 'lightweight-charts';
+import { IoCash as DollarSign, IoChevronDown, IoClose as X, IoFlash, IoMenu, IoPulse, IoTime as Clock, IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
 
-// Force correct API URL regardless of environment
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
+
+// Responsive Styles
+const styles = {
+  container: {
+    padding: '1rem',
+    background: '#0a0e1a',
+    minHeight: '100vh'
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1rem',
+    flexWrap: 'wrap',
+    gap: '1rem'
+  },
+  statsRow: {
+    display: 'flex',
+    gap: '1.5rem',
+    flexWrap: 'wrap'
+  },
+  mainGrid: {
+    display: 'grid',
+    gridTemplateColumns: '280px 1fr 380px',
+    gap: '1.5rem',
+    minHeight: '600px'
+  },
+  // Mobile responsive breakpoints
+  '@media (max-width: 1200px)': {
+    mainGrid: {
+      gridTemplateColumns: '1fr',
+      gap: '1rem'
+    }
+  },
+  '@media (max-width: 768px)': {
+    container: {
+      padding: '0.75rem'
+    },
+    statsRow: {
+      gap: '0.75rem',
+      fontSize: '0.875rem'
+    }
+  }
+};
 
 export default function SpotTrading() {
-  console.log('🔥🔥🔥 SPOT TRADING COMPONENT LOADING! 🔥🔥🔥');
-  console.log('🔥 API URL:', API);
-  console.log('🔥 Timestamp:', new Date().toISOString());
-  
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [tradingPairs, setTradingPairs] = useState([]);
-  const [selectedPair, setSelectedPair] = useState(null);
+  const chartContainerRef = useRef(null);
+  const chartRef = useRef(null);
+  const candlestickSeriesRef = useRef(null);
+
+  // State
+  const [selectedPair, setSelectedPair] = useState('BTC/GBP');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [timeframe, setTimeframe] = useState('15m');
   const [orderType, setOrderType] = useState('buy');
   const [amount, setAmount] = useState('');
-  const [inputMode, setInputMode] = useState('fiat'); // 'fiat' or 'crypto'
+  const [balances, setBalances] = useState({ BTC: 0.5, ETH: 2.5, USDT: 1000, BNB: 5, SOL: 10, LTC: 15, GBP: 5000 });
+  const [orderBook, setOrderBook] = useState({ bids: [], asks: [] });
+  const [recentTrades, setRecentTrades] = useState([]);
+  const [userTrades, setUserTrades] = useState([]);
+  const [showQuickBuyModal, setShowQuickBuyModal] = useState(false);
+  const [candlestickData, setCandlestickData] = useState([]);
+  const [availablePairs, setAvailablePairs] = useState([]);
+  const [pairLiquidity, setPairLiquidity] = useState({});
+  const [showOrderBook, setShowOrderBook] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [marketStats, setMarketStats] = useState({
-    lastPrice: 0,
-    change24h: 0,
-    high24h: 0,
-    low24h: 0
+    lastPrice: 47500,
+    change24h: 2.34,
+    high24h: 48200,
+    low24h: 46800,
+    volume24h: 1234.56
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [lastOrderDetails, setLastOrderDetails] = useState(null);
-  const [availableLiquidity, setAvailableLiquidity] = useState(0);
-  const [userBalances, setUserBalances] = useState({});
 
-  // Auth check
-  useEffect(() => {
-    const userData = localStorage.getItem('cryptobank_user');
-    if (!userData) {
-      navigate('/auth');
-      return;
-    }
-    setUser(JSON.parse(userData));
-  }, [navigate]);
+  const tradingPairs = [
+    { symbol: 'BTC/GBP', base: 'BTC', quote: 'GBP', icon: '₿', basePrice: 47500 },
+    { symbol: 'ETH/GBP', base: 'ETH', quote: 'GBP', icon: '⟠', basePrice: 2500 },
+    { symbol: 'USDT/GBP', base: 'USDT', quote: 'GBP', icon: '₮', basePrice: 0.79 },
+    { symbol: 'BNB/GBP', base: 'BNB', quote: 'GBP', icon: '◆', basePrice: 380 },
+    { symbol: 'SOL/GBP', base: 'SOL', quote: 'GBP', icon: '◎', basePrice: 120 },
+    { symbol: 'LTC/GBP', base: 'LTC', quote: 'GBP', icon: 'Ł', basePrice: 85 }
+  ];
 
-  // Fetch trading pairs dynamically from backend
-  useEffect(() => {
-    if (user) {
-      fetchTradingPairs();
-      fetchUserBalances();
-    }
-  }, [user]);
+  const timeframes = ['1m', '5m', '15m', '1h', '4h', '1d'];
 
-  // Update market stats when pair changes
+  // Check if mobile
   useEffect(() => {
-    if (selectedPair) {
-      localStorage.setItem('spotTradingPair', selectedPair);
-      fetchMarketStats();
-      fetchLiquidity();
-      loadTradingViewChart();
-      const interval = setInterval(fetchMarketStats, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [selectedPair]);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 1200);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Fetch available trading pairs and liquidity status
+  useEffect(() => {
+    fetchTradingPairs();
+  }, []);
 
   const fetchTradingPairs = async () => {
     try {
-      console.log('🚀🚀🚀 FETCHING TRADING PAIRS FROM:', `${API}/trading/pairs`);
-      const response = await axios.get(`${API}/trading/pairs`);
-      console.log('📊📊📊 TRADING PAIRS RESPONSE:', response.data);
-      
-      if (response.data.success && response.data.pairs) {
-        const tradablePairs = response.data.pairs.filter(pair => pair.is_tradable);
-        console.log('✅✅✅ TRADABLE PAIRS COUNT:', tradablePairs.length);
-        setTradingPairs(tradablePairs);
+      const response = await axios.get(`${API}/api/trading/pairs`);
+      if (response.data.success) {
+        setAvailablePairs(response.data.pairs);
         
-        if (tradablePairs.length > 0 && !selectedPair) {
-          const saved = localStorage.getItem('selectedTradingPair');
-          const defaultPair = saved ? 
-            tradablePairs.find(p => p.symbol === saved) || tradablePairs[0] : 
-            tradablePairs[0];
-          
-          setSelectedPair(defaultPair);
-          console.log('🎯🎯🎯 DEFAULT PAIR SELECTED:', defaultPair.symbol);
-        }
-      } else {
-        console.error('❌❌❌ INVALID API RESPONSE:', response.data);
-        toast.error('Failed to load trading pairs');
-      }
-    } catch (error) {
-      console.error('💥💥💥 TRADING PAIRS ERROR:', error);
-      console.error('💥💥💥 ERROR DETAILS:', error.response?.data);
-      toast.error('Failed to connect to trading API');
-    }
-  };
-
-  const fetchUserBalances = async () => {
-    try {
-      const response = await axios.get(`${API}/wallet/balances`, {
-        params: { user_id: user.user_id }
-      });
-      if (response.data.success) {
-        const balances = {};
-        response.data.balances.forEach(b => {
-          balances[b.currency] = b.available;
+        // Create liquidity map
+        const liquidityMap = {};
+        response.data.pairs.forEach(pair => {
+          liquidityMap[pair.symbol] = {
+            available: pair.available_liquidity,
+            is_tradable: pair.is_tradable,
+            status: pair.status
+          };
         });
-        setUserBalances(balances);
+        setPairLiquidity(liquidityMap);
       }
     } catch (error) {
-      console.error('Error fetching balances:', error);
+      console.error('Error fetching trading pairs:', error);
     }
   };
 
-  const fetchMarketStats = async () => {
+  // Initialize TradingView Lightweight Chart
+  useEffect(() => {
+    if (!chartContainerRef.current) return;
+
+    // Clear any existing chart safely
     try {
-      if (!selectedPair) return;
-      const [base, quote] = selectedPair.split('/');
-
-      const response = await axios.get(`${API}/prices/live`);
-      if (response.data.success && response.data.prices) {
-        const priceData = response.data.prices[base];
-        if (priceData) {
-          // Get price in the quote currency
-          let livePrice = 0;
-          if (quote === 'GBP') {
-            livePrice = priceData.price_gbp || (priceData.price_usd * 0.79); // USD to GBP approx
-          } else if (quote === 'USDT') {
-            livePrice = priceData.price_usd || 0; // USDT ~ USD
-          } else {
-            livePrice = priceData.price_usd || 0;
-          }
-
-          const change24h = priceData.change_24h || 0;
-          const changeMultiplier = Math.abs(change24h) / 100;
-
-          setMarketStats({
-            lastPrice: livePrice,
-            change24h: change24h,
-            high24h: livePrice * (1 + changeMultiplier),
-            low24h: livePrice * (1 - changeMultiplier)
-          });
-        }
+      if (chartRef.current) {
+        chartRef.current.remove();
+        chartRef.current = null;
       }
-    } catch (error) {
-      console.error('Error fetching market stats:', error);
-    }
-  };
-
-  const fetchLiquidity = async () => {
-    try {
-      if (!selectedPair) return;
-      const [base, quote] = selectedPair.split('/');
-
-      const response = await axios.get(`${API}/admin/liquidity-status`, {
-        params: { currency: base }
-      });
-      if (response.data.success) {
-        setAvailableLiquidity(response.data.available || 0);
-      }
-    } catch (error) {
-      console.error('Error fetching liquidity:', error);
-    }
-  };
-
-  const calculateAmount = () => {
-    if (!amount || !marketStats.lastPrice) return { crypto: 0, fiat: 0 };
-
-    // Apply spread: +0.5% on BUY, -0.5% on SELL
-    const spread = orderType === 'buy' ? 1.005 : 0.995;
-    const priceWithSpread = marketStats.lastPrice * spread;
-
-    if (inputMode === 'fiat') {
-      // User entered fiat -> calculate crypto
-      const cryptoAmount = parseFloat(amount) / priceWithSpread;
-      return {
-        crypto: cryptoAmount,
-        fiat: parseFloat(amount)
-      };
-    } else {
-      // User entered crypto -> calculate fiat
-      const fiatAmount = parseFloat(amount) * priceWithSpread;
-      return {
-        crypto: parseFloat(amount),
-        fiat: fiatAmount
-      };
-    }
-  };
-
-  const handleExecuteTrade = async () => {
-    if (!selectedPair || !amount || !user) {
-      toast.error('Please select a pair and enter amount');
-      return;
+    } catch (e) {
+      console.log('Chart cleanup error:', e);
     }
 
-    const [base, quote] = selectedPair.split('/');
-    const calculated = calculateAmount();
+    // Get container width
+    const containerWidth = chartContainerRef.current.clientWidth;
+    const chartHeight = isMobile ? 300 : 400;
 
-    // Validate balances
-    if (orderType === 'buy') {
-      const requiredFiat = calculated.fiat;
-      const userFiatBalance = userBalances[quote] || 0;
-      if (userFiatBalance < requiredFiat) {
-        toast.error(`Insufficient ${quote} balance. Need ${requiredFiat.toFixed(2)}, have ${userFiatBalance.toFixed(2)}`);
-        return;
-      }
-    } else {
-      const requiredCrypto = calculated.crypto;
-      const userCryptoBalance = userBalances[base] || 0;
-      if (userCryptoBalance < requiredCrypto) {
-        toast.error(`Insufficient ${base} balance. Need ${requiredCrypto.toFixed(8)}, have ${userCryptoBalance.toFixed(8)}`);
-        return;
-      }
-    }
+    // Create chart (v5 API) with locale override to prevent en-US@posix errors
+    const chart = LightweightCharts.createChart(chartContainerRef.current, {
+      width: containerWidth,
+      height: chartHeight,
+      layout: {
+        background: { color: 'transparent' },
+        textColor: '#888',
+      },
+      grid: {
+        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+      },
+      crosshair: {
+        mode: 0,
+        vertLine: {
+          color: '#00F0FF',
+          width: 1,
+          style: 2,
+          labelBackgroundColor: '#00F0FF',
+        },
+        horzLine: {
+          color: '#00F0FF',
+          width: 1,
+          style: 2,
+          labelBackgroundColor: '#00F0FF',
+        },
+      },
+      rightPriceScale: {
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+      },
+      timeScale: {
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      localization: {
+        locale: 'en-US',
+        dateFormat: 'yyyy-MM-dd',
+      },
+    });
 
-    setIsLoading(true);
+    // Add candlestick series (v5 API)
+    const candlestickSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
+      upColor: '#22C55E',
+      downColor: '#EF4444',
+      borderUpColor: '#22C55E',
+      borderDownColor: '#EF4444',
+      wickUpColor: '#22C55E',
+      wickDownColor: '#EF4444',
+    });
 
-    try {
-      // Use the LOCKED trading engine endpoint
-      const payload = {
-        user_id: user.user_id,
-        pair: selectedPair,
-        type: orderType
-      };
+    // Add volume series (v5 API)
+    const volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, {
+      color: '#26a69a',
+      priceFormat: {
+        type: 'volume',
+      },
+      priceScaleId: '',
+    });
 
-      if (orderType === 'buy') {
-        payload.gbp_amount = calculated.fiat; // Or quote amount
-      } else {
-        payload.crypto_amount = calculated.crypto;
-      }
+    // Generate sample data
+    const data = generateCandlestickData();
+    candlestickSeries.setData(data.candles);
+    volumeSeries.setData(data.volumes);
 
-      console.log('🔥 EXECUTING TRADE VIA /api/trading/execute-v2:', payload);
+    chartRef.current = chart;
+    candlestickSeriesRef.current = candlestickSeries;
 
-      const response = await axios.post(`${API}/trading/execute-v2`, payload);
-
-      if (response.data.success) {
-        toast.success(`${orderType.toUpperCase()} order executed successfully!`);
-        setOrderSuccess(true);
-        setLastOrderDetails(response.data);
-        setAmount('');
-
-        // Refresh balances and liquidity
-        await fetchUserBalances();
-        await fetchLiquidity();
-
-        console.log('✅ TRADE SUCCESS:', response.data);
-      } else {
-        toast.error(response.data.message || 'Trade failed');
-        console.error('❌ TRADE FAILED:', response.data);
-      }
-    } catch (error) {
-      console.error('Trade execution error:', error);
-      toast.error(error.response?.data?.message || 'Failed to execute trade');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadTradingViewChart = () => {
-    const container = document.getElementById('tradingview-chart');
-    if (!container || !selectedPair) return;
-
-    container.innerHTML = '';
-
-    // Convert pair format for TradingView (e.g., BTC/GBP -> BTCGBP)
-    const tvSymbol = selectedPair.replace('/', '');
-
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.async = true;
-    script.onload = () => {
-      if (window.TradingView) {
-        new window.TradingView.widget({
-          autosize: true,
-          symbol: tvSymbol,
-          interval: '15',
-          timezone: 'Etc/UTC',
-          theme: 'dark',
-          style: '1',
-          locale: 'en',
-          toolbar_bg: '#0a0b1a',
-          enable_publishing: false,
-          container_id: 'tradingview-chart'
+    // Handle window resize
+    const handleResize = () => {
+      if (chartContainerRef.current && chartRef.current) {
+        const newWidth = chartContainerRef.current.clientWidth;
+        const newHeight = window.innerWidth <= 1200 ? 300 : 400;
+        chartRef.current.applyOptions({
+          width: newWidth,
+          height: newHeight
         });
       }
     };
-    document.head.appendChild(script);
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      try {
+        if (chartRef.current) {
+          chartRef.current.remove();
+          chartRef.current = null;
+        }
+      } catch (e) {
+        console.log('Chart cleanup error:', e);
+      }
+    };
+  }, [selectedPair, timeframe, tradingPairs, isMobile]);
+
+  // Generate candlestick data
+  const generateCandlestickData = () => {
+    try {
+      const pairData = tradingPairs.find(p => p.symbol === selectedPair);
+      const basePrice = pairData?.basePrice || 47500;
+      
+      const now = Math.floor(Date.now() / 1000); // Current time in seconds
+      const candles = [];
+      const volumes = [];
+      
+      // Generate data based on timeframe
+      const intervals = {
+        '1m': 60,
+        '5m': 300,
+        '15m': 900,
+        '1h': 3600,
+        '4h': 14400,
+        '1d': 86400
+      };
+      
+      const interval = intervals[timeframe] || 900;
+      const numCandles = 100;
+      
+      for (let i = numCandles; i >= 0; i--) {
+        const time = now - (i * interval);
+        const randomChange = (Math.random() - 0.5) * 0.02; // +/- 2%
+        const open = basePrice * (1 + randomChange);
+        const close = open * (1 + (Math.random() - 0.5) * 0.01);
+        const high = Math.max(open, close) * (1 + Math.random() * 0.005);
+        const low = Math.min(open, close) * (1 - Math.random() * 0.005);
+        
+        candles.push({
+          time: time,
+          open: parseFloat(open.toFixed(2)),
+          high: parseFloat(high.toFixed(2)),
+          low: parseFloat(low.toFixed(2)),
+          close: parseFloat(close.toFixed(2))
+        });
+        
+        volumes.push({
+          time: time,
+          value: parseFloat((Math.random() * 100).toFixed(2)),
+          color: close >= open ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'
+        });
+      }
+      
+      return { candles, volumes };
+    } catch (e) {
+      console.error('Error generating chart data:', e);
+      return { candles: [], volumes: [] };
+    }
   };
 
-  const toggleInputMode = () => {
-    setInputMode(inputMode === 'fiat' ? 'crypto' : 'fiat');
-    setAmount('');
+  // Update chart when pair changes
+  useEffect(() => {
+    const pairData = tradingPairs.find(p => p.symbol === selectedPair);
+    if (pairData) {
+      const prices = {
+        'BTC/GBP': 47500,
+        'ETH/GBP': 2500,
+        'USDT/GBP': 0.79,
+        'BNB/GBP': 380,
+        'SOL/GBP': 120,
+        'LTC/GBP': 85
+      };
+      
+      setMarketStats({
+        lastPrice: prices[selectedPair],
+        change24h: (Math.random() - 0.5) * 10,
+        high24h: prices[selectedPair] * 1.02,
+        low24h: prices[selectedPair] * 0.98,
+        volume24h: Math.random() * 10000
+      });
+
+      generateOrderBook(prices[selectedPair]);
+      generateRecentTrades(prices[selectedPair]);
+    }
+  }, [selectedPair]);
+
+  // Generate simulated order book
+  const generateOrderBook = (price) => {
+    const bids = [];
+    const asks = [];
+
+    for (let i = 0; i < 15; i++) {
+      bids.push({
+        price: (price - i * (price * 0.0001)).toFixed(2),
+        amount: (Math.random() * 2).toFixed(4),
+        total: ((price - i * (price * 0.0001)) * (Math.random() * 2)).toFixed(2)
+      });
+
+      asks.push({
+        price: (price + i * (price * 0.0001)).toFixed(2),
+        amount: (Math.random() * 2).toFixed(4),
+        total: ((price + i * (price * 0.0001)) * (Math.random() * 2)).toFixed(2)
+      });
+    }
+
+    setOrderBook({ bids, asks });
   };
 
-  const calculated = calculateAmount();
-  const [base, quote] = selectedPair ? selectedPair.split('/') : ['', ''];
-  const userFiatBalance = userBalances[quote] || 0;
-  const userCryptoBalance = userBalances[base] || 0;
+  // Generate simulated recent trades
+  const generateRecentTrades = (price) => {
+    const trades = [];
+    let time = Date.now();
+
+    for (let i = 0; i < 20; i++) {
+      const tradeDate = new Date(time - i * 10000);
+      const hours = tradeDate.getHours().toString().padStart(2, '0');
+      const minutes = tradeDate.getMinutes().toString().padStart(2, '0');
+      const seconds = tradeDate.getSeconds().toString().padStart(2, '0');
+      
+      trades.push({
+        price: (price + (Math.random() - 0.5) * (price * 0.001)).toFixed(2),
+        amount: (Math.random() * 0.5).toFixed(4),
+        time: `${hours}:${minutes}:${seconds}`,
+        type: Math.random() > 0.5 ? 'buy' : 'sell'
+      });
+    }
+
+    setRecentTrades(trades);
+  };
+
+  // Execute trade
+  const handleTrade = async (fromModal = false) => {
+    // If not from modal, show modal first (prevent instant execution)
+    if (!fromModal) {
+      if (!amount || parseFloat(amount) <= 0) {
+        toast.error('Please enter an amount');
+        return;
+      }
+      setShowQuickBuyModal(true);
+      return;
+    }
+
+    // Only execute after user confirms in modal
+    if (!amount || parseFloat(amount) <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+
+    try {
+      const pairData = tradingPairs.find(p => p.symbol === selectedPair);
+      const baseAmount = parseFloat(amount);
+      
+      // Get user_id from localStorage
+      const userData = localStorage.getItem('user');
+      const user = userData ? JSON.parse(userData) : null;
+      const user_id = user?.user_id || 'demo_user';
+
+      // Call backend API to execute trade with full protection
+      const response = await axios.post(`${API}/api/trading/execute`, {
+        user_id: user_id,
+        pair: selectedPair,
+        type: orderType,
+        amount: baseAmount,
+        price: marketStats.lastPrice
+      });
+
+      if (!response.data.success) {
+        toast.error(response.data.message || 'Trade failed');
+        setShowQuickBuyModal(false);
+        return;
+      }
+
+      const transaction = response.data.transaction;
+      
+      // Create trade record
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const day = now.getDate().toString().padStart(2, '0');
+      const month = (now.getMonth() + 1).toString().padStart(2, '0');
+      const year = now.getFullYear();
+      
+      const newTrade = {
+        id: Date.now(),
+        pair: selectedPair,
+        type: orderType,
+        price: transaction.price,
+        amount: transaction.amount,
+        total: transaction.total,
+        fee: transaction.fee,
+        time: `${hours}:${minutes}:${seconds}`,
+        date: `${day}/${month}/${year}`
+      };
+
+      setUserTrades(prev => [newTrade, ...prev]);
+
+      // Update balances (simplified - in production this would come from backend)
+      if (orderType === 'buy') {
+        setBalances(prev => ({
+          ...prev,
+          [pairData.base]: prev[pairData.base] + baseAmount,
+          [pairData.quote]: prev[pairData.quote] - transaction.final_amount
+        }));
+      } else {
+        const receiveAmount = transaction.total - transaction.fee;
+        setBalances(prev => ({
+          ...prev,
+          [pairData.base]: prev[pairData.base] - baseAmount,
+          [pairData.quote]: prev[pairData.quote] + receiveAmount
+        }));
+      }
+
+      toast.success(`✅ ${orderType === 'buy' ? 'Bought' : 'Sold'} ${amount} ${pairData.base} at £${transaction.price.toLocaleString()}`);
+      setAmount('');
+      setShowQuickBuyModal(false);
+
+    } catch (error) {
+      console.error('Trade error:', error);
+      toast.error('Failed to execute trade');
+    }
+  };
+
+  const selectedPairData = tradingPairs.find(p => p.symbol === selectedPair);
+
+  // Order Book Component
+  const OrderBookSection = () => (
+    <div style={{
+      background: 'rgba(26, 31, 58, 0.9)',
+      border: '1px solid rgba(0, 240, 255, 0.3)',
+      borderRadius: '12px',
+      padding: isMobile ? '1rem' : '1.25rem',
+      overflow: 'hidden',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+      width: '100%'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: '700', color: '#fff', margin: 0 }}>
+          Order Book
+        </h3>
+        {isMobile && (
+          <button
+            onClick={() => setShowOrderBook(!showOrderBook)}
+            style={{
+              padding: '0.25rem 0.5rem',
+              background: 'rgba(0, 240, 255, 0.2)',
+              border: '1px solid rgba(0, 240, 255, 0.4)',
+              borderRadius: '6px',
+              color: '#00F0FF',
+              fontSize: '0.75rem',
+              cursor: 'pointer'
+            }}
+          >
+            {showOrderBook ? 'Hide' : 'Show'}
+          </button>
+        )}
+      </div>
+      
+      {(!isMobile || showOrderBook) && (
+        <>
+          {/* Asks (Sell Orders) - RED */}
+          <div style={{ marginBottom: '0.5rem' }}>
+            {orderBook.asks.slice(0, isMobile ? 5 : 10).reverse().map((ask, idx) => {
+              const depth = parseFloat(ask.amount) * 10; // Simulated depth percentage
+              return (
+                <div key={idx} style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  fontSize: isMobile ? '0.7rem' : '0.75rem',
+                  padding: '0.35rem 0.5rem',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                  {/* Depth shading */}
+                  <div style={{ 
+                    background: `linear-gradient(to left, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) ${depth}%, transparent ${depth}%)`, 
+                    position: 'absolute', 
+                    top: 0, 
+                    left: 0, 
+                    right: 0, 
+                    bottom: 0 
+                  }} />
+                  <span style={{ 
+                    color: '#EF4444', 
+                    position: 'relative', 
+                    fontWeight: '600',
+                    fontFamily: 'monospace'
+                  }}>
+                    {ask.price}
+                  </span>
+                  <span style={{ 
+                    color: 'rgba(255,255,255,0.7)', 
+                    textAlign: 'right', 
+                    position: 'relative',
+                    fontFamily: 'monospace'
+                  }}>
+                    {ask.amount}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Current Price - HIGHLIGHTED */}
+          <div style={{
+            padding: isMobile ? '0.5rem' : '0.75rem',
+            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15))',
+            border: '2px solid rgba(0, 240, 255, 0.4)',
+            borderRadius: '8px',
+            textAlign: 'center',
+            margin: '0.75rem 0',
+            fontSize: isMobile ? '1rem' : '1.125rem',
+            fontWeight: '800',
+            color: '#00F0FF',
+            boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)',
+            letterSpacing: '0.5px'
+          }}>
+            £{marketStats.lastPrice.toLocaleString()}
+          </div>
+
+          {/* Bids (Buy Orders) - GREEN */}
+          <div>
+            {orderBook.bids.slice(0, isMobile ? 5 : 10).map((bid, idx) => {
+              const depth = parseFloat(bid.amount) * 10; // Simulated depth percentage
+              return (
+                <div key={idx} style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  fontSize: isMobile ? '0.7rem' : '0.75rem',
+                  padding: '0.35rem 0.5rem',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                  {/* Depth shading */}
+                  <div style={{ 
+                    background: `linear-gradient(to left, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) ${depth}%, transparent ${depth}%)`, 
+                    position: 'absolute', 
+                    top: 0, 
+                    left: 0, 
+                    right: 0, 
+                    bottom: 0 
+                  }} />
+                  <span style={{ 
+                    color: '#22C55E', 
+                    position: 'relative', 
+                    fontWeight: '600',
+                    fontFamily: 'monospace'
+                  }}>
+                    {bid.price}
+                  </span>
+                  <span style={{ 
+                    color: 'rgba(255,255,255,0.7)', 
+                    textAlign: 'right', 
+                    position: 'relative',
+                    fontFamily: 'monospace'
+                  }}>
+                    {bid.amount}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  // Trading Panel Component
+  const TradingPanel = () => (
+    <div style={{
+      background: 'rgba(26, 31, 58, 0.8)',
+      border: '1px solid rgba(0, 240, 255, 0.2)',
+      borderRadius: '12px',
+      padding: isMobile ? '1rem' : '1.5rem',
+      width: '100%'
+    }}>
+      <h3 style={{ fontSize: isMobile ? '1rem' : '1.125rem', fontWeight: '700', color: '#fff', marginBottom: '1.5rem' }}>
+        Spot Trading
+      </h3>
+
+      {/* Balances */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>Available:</span>
+          <span style={{ fontSize: isMobile ? '0.8125rem' : '0.875rem', fontWeight: '600', color: '#fff' }}>
+            {balances[selectedPairData?.base] || 0} {selectedPairData?.base}
+          </span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>Available:</span>
+          <span style={{ fontSize: isMobile ? '0.8125rem' : '0.875rem', fontWeight: '600', color: '#fff' }}>
+            £{(balances[selectedPairData?.quote] || 0).toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Buy/Sell Toggle */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '0.5rem',
+        marginBottom: '1.5rem'
+      }}>
+        <button
+          onClick={() => setOrderType('buy')}
+          style={{
+            padding: isMobile ? '0.65rem' : '0.75rem',
+            background: orderType === 'buy'
+              ? 'linear-gradient(135deg, #22C55E, #16A34A)'
+              : 'rgba(0, 0, 0, 0.3)',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: isMobile ? '0.875rem' : '1rem',
+            fontWeight: '700',
+            cursor: 'pointer'
+          }}
+        >
+          BUY
+        </button>
+        <button
+          onClick={() => setOrderType('sell')}
+          style={{
+            padding: isMobile ? '0.65rem' : '0.75rem',
+            background: orderType === 'sell'
+              ? 'linear-gradient(135deg, #EF4444, #DC2626)'
+              : 'rgba(0, 0, 0, 0.3)',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: isMobile ? '0.875rem' : '1rem',
+            fontWeight: '700',
+            cursor: 'pointer'
+          }}
+        >
+          SELL
+        </button>
+      </div>
+
+      {/* Amount Input */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{
+          display: 'block',
+          fontSize: '0.75rem',
+          color: 'rgba(255,255,255,0.7)',
+          marginBottom: '0.5rem',
+          fontWeight: '600'
+        }}>
+          Amount ({selectedPairData?.base})
+        </label>
+        <input
+          type="number"
+          placeholder="0.00"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          style={{
+            width: '100%',
+            padding: isMobile ? '0.65rem' : '0.75rem',
+            background: 'rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(0, 240, 255, 0.3)',
+            borderRadius: '6px',
+            color: '#fff',
+            fontSize: isMobile ? '0.875rem' : '1rem',
+            outline: 'none',
+            boxSizing: 'border-box'
+          }}
+        />
+      </div>
+
+      {/* Quick Percentage Buttons */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        {['25%', '50%', '75%', '100%'].map(pct => (
+          <button
+            key={pct}
+            onClick={() => {
+              const percentage = parseInt(pct) / 100;
+              if (orderType === 'buy') {
+                const availableFiat = balances[selectedPairData?.quote] || 0;
+                setAmount(((availableFiat * percentage) / marketStats.lastPrice).toFixed(6));
+              } else {
+                const availableCrypto = balances[selectedPairData?.base] || 0;
+                setAmount((availableCrypto * percentage).toFixed(6));
+              }
+            }}
+            style={{
+              padding: isMobile ? '0.4rem' : '0.5rem',
+              background: 'rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '4px',
+              color: 'rgba(255,255,255,0.7)',
+              fontSize: isMobile ? '0.7rem' : '0.75rem',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            {pct}
+          </button>
+        ))}
+      </div>
+
+      {/* Total Cost */}
+      {amount && parseFloat(amount) > 0 && (
+        <div style={{
+          padding: '0.75rem',
+          background: 'rgba(0, 240, 255, 0.05)',
+          border: '1px solid rgba(0, 240, 255, 0.2)',
+          borderRadius: '6px',
+          marginBottom: '1.5rem'
+        }}>
+          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.25rem' }}>
+            Total
+          </div>
+          <div style={{ fontSize: isMobile ? '1.125rem' : '1.25rem', fontWeight: '700', color: '#00F0FF' }}>
+            £{(parseFloat(amount) * marketStats.lastPrice).toFixed(2)}
+          </div>
+        </div>
+      )}
+
+      {/* Info Note */}
+      <div style={{
+        padding: '0.75rem',
+        background: 'rgba(34, 197, 94, 0.05)',
+        border: '1px solid rgba(34, 197, 94, 0.2)',
+        borderRadius: '6px',
+        marginBottom: '1.5rem'
+      }}>
+        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.4' }}>
+          Order executes at current market price
+        </div>
+      </div>
+
+      {/* Liquidity Warning */}
+      {pairLiquidity[selectedPair] && !pairLiquidity[selectedPair].is_tradable && (
+        <div style={{
+          padding: '0.75rem',
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '6px',
+          marginBottom: '1rem'
+        }}>
+          <div style={{ fontSize: '0.7rem', color: '#EF4444', lineHeight: '1.4', fontWeight: '700' }}>
+            ⚠️ Trading unavailable for this pair due to insufficient platform liquidity
+          </div>
+        </div>
+      )}
+
+      {/* Execute Button */}
+      <button
+        onClick={handleTrade}
+        disabled={!amount || parseFloat(amount) <= 0 || (pairLiquidity[selectedPair] && !pairLiquidity[selectedPair].is_tradable)}
+        style={{
+          width: '100%',
+          padding: isMobile ? '0.875rem' : '1rem',
+          background: orderType === 'buy'
+            ? 'linear-gradient(135deg, #22C55E, #16A34A)'
+            : 'linear-gradient(135deg, #EF4444, #DC2626)',
+          border: 'none',
+          borderRadius: '12px',
+          color: '#fff',
+          fontSize: isMobile ? '1rem' : '1.125rem',
+          fontWeight: '700',
+          cursor: 'pointer',
+          opacity: (!amount || parseFloat(amount) <= 0 || (pairLiquidity[selectedPair] && !pairLiquidity[selectedPair].is_tradable)) ? 0.5 : 1,
+          touchAction: 'manipulation'
+        }}
+      >
+        {pairLiquidity[selectedPair] && !pairLiquidity[selectedPair].is_tradable 
+          ? '⏸ Trading Paused' 
+          : `${orderType === 'buy' ? 'BUY' : 'SELL'} ${selectedPairData?.base}`
+        }
+      </button>
+
+      {/* User Trades History */}
+      {userTrades.length > 0 && (
+        <div style={{ marginTop: '1.5rem' }}>
+          <h4 style={{ fontSize: '0.875rem', fontWeight: '700', color: '#fff', marginBottom: '0.75rem' }}>
+            Your Recent Trades
+          </h4>
+          <div style={{ maxHeight: '150px', overflow: 'auto' }}>
+            {userTrades.map((trade) => (
+              <div key={trade.id} style={{
+                padding: '0.5rem',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '6px',
+                marginBottom: '0.5rem',
+                fontSize: '0.75rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                  <span style={{ color: trade.type === 'buy' ? '#22C55E' : '#EF4444', fontWeight: '600' }}>
+                    {trade.type.toUpperCase()}
+                  </span>
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>{trade.time}</span>
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.9)' }}>
+                  {trade.amount} {selectedPairData?.base} @ £{trade.price}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <Layout>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { box-shadow: 0 4px 14px rgba(0, 240, 255, 0.4), 0 0 20px rgba(168, 85, 247, 0.3); }
-          50% { box-shadow: 0 4px 18px rgba(0, 240, 255, 0.6), 0 0 30px rgba(168, 85, 247, 0.5); }
-        }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        @keyframes ripple {
-          0% { transform: scale(0.8); opacity: 1; }
-          100% { transform: scale(2); opacity: 0; }
-        }
-        .trading-pair-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-          gap: 10px;
-          width: 100%;
-        }
-        .trading-pair-grid button {
-          width: 100%;
-          box-sizing: border-box;
-          position: relative;
-          overflow: hidden;
-        }
-        .trading-pair-grid button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-          background-size: 200% 100%;
-          animation: shimmer 2s infinite;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-        .trading-pair-grid button:hover::before {
-          opacity: 1;
-        }
-        .trading-pair-grid button.active {
-          animation: pulse 2s infinite;
-        }
-        .trading-pair-grid button::after {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 0;
-          height: 0;
-          border-radius: 50%;
-          background: rgba(0, 240, 255, 0.4);
-          transform: translate(-50%, -50%);
-          transition: width 0.6s, height 0.6s;
-        }
-        .trading-pair-grid button:active::after {
-          width: 300px;
-          height: 300px;
-          opacity: 0;
-        }
-        @media (min-width: 1200px) {
-          .trading-pair-grid {
-            grid-template-columns: repeat(4, 1fr);
-          }
-        }
-        @media (min-width: 768px) and (max-width: 1199px) {
-          .trading-pair-grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
-        @media (min-width: 480px) and (max-width: 767px) {
-          .trading-pair-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (max-width: 479px) {
-          .trading-pair-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        html {
-          scroll-behavior: smooth;
-        }
-      `}</style>
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0a0b1a 0%, #1a1f3a 50%, #0a0b1a 100%)',
-        padding: '1rem',
-        paddingTop: '80px',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.03), transparent 50%), radial-gradient(circle at 80% 50%, rgba(168, 85, 247, 0.03), transparent 50%)',
-          transform: 'translateZ(0)',
-          willChange: 'transform',
-          zIndex: 0
-        }}></div>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          {/* Header */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h1 style={{
-              fontSize: '34px',
-              fontWeight: '900',
-              background: 'linear-gradient(135deg, #00F0FF, #FFD700)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '0.5rem',
-              position: 'relative',
-              paddingBottom: '1rem'
-            }}>
-              ⚡ Spot Trading
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '1px',
-                background: 'linear-gradient(90deg, #00F0FF, #FFD700, #A855F7)',
-                borderRadius: '1px'
-              }}></div>
-            </h1>
-            <div style={{ 
-              color: '#888', 
-              fontSize: '14px',
-              position: 'relative',
-              paddingBottom: '0.5rem'
-            }}>
-              Trade crypto with locked pricing engine
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: '100px',
-                height: '1px',
-                background: '#00F0FF',
-                boxShadow: '0 0 10px rgba(0, 240, 255, 0.6)'
-              }}></div>
-            </div>
-          </div>
-
-          {/* Pair selector */}
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(15, 23, 42, 0.95))',
-            borderRadius: '12px',
-            padding: '1.5rem 1rem 1rem',
-            marginBottom: '1.5rem',
-            border: '1px solid rgba(0, 240, 255, 0.3)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 240, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
-            position: 'relative'
-          }}>
-            <div style={{ 
-              fontSize: '11px', 
-              color: '#00F0FF', 
-              marginBottom: '16px', 
-              fontWeight: '800',
-              letterSpacing: '1px',
-              textTransform: 'uppercase'
-            }}>SELECT TRADING PAIR</div>
-            <div className="trading-pair-grid">
-              {tradingPairs.map(pair => (
-                <button
-                  key={pair.symbol}
-                  onClick={() => setSelectedPair(pair.symbol)}
-                  className={selectedPair === pair.symbol ? 'active' : ''}
-                  style={{
-                    padding: '13px 16px',
-                    background: selectedPair === pair.symbol
-                      ? 'linear-gradient(135deg, #00F0FF 0%, #7B2CFF 50%, #A855F7 100%)'
-                      : 'rgba(10, 15, 30, 0.85)',
-                    border: selectedPair === pair.symbol 
-                      ? '1px solid rgba(0, 240, 255, 0.6)' 
-                      : '1px solid rgba(0, 240, 255, 0.25)',
-                    borderRadius: '10px',
-                    color: selectedPair === pair.symbol ? '#000' : '#fff',
-                    fontSize: window.innerWidth >= 1200 ? '15px' : '14px',
-                    fontWeight: '800',
-                    cursor: pair.is_tradable ? 'pointer' : 'not-allowed',
-                    opacity: pair.is_tradable ? 1 : 0.5,
-                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                    boxShadow: selectedPair === pair.symbol 
-                      ? '0 4px 14px rgba(0, 240, 255, 0.4), 0 0 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                      : '0 2px 8px rgba(0, 0, 0, 0.3)',
-                    height: '48px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    whiteSpace: 'nowrap',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (pair.is_tradable) {
-                      e.target.style.transform = 'translateY(-2px) scale(1.02)';
-                      e.target.style.boxShadow = selectedPair === pair.symbol
-                        ? '0 6px 18px rgba(0, 240, 255, 0.5), 0 0 30px rgba(168, 85, 247, 0.4)'
-                        : '0 4px 16px rgba(0, 240, 255, 0.3)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0) scale(1)';
-                    e.target.style.boxShadow = selectedPair === pair.symbol
-                      ? '0 4px 14px rgba(0, 240, 255, 0.4), 0 0 20px rgba(168, 85, 247, 0.3)'
-                      : '0 2px 8px rgba(0, 0, 0, 0.3)';
-                  }}
-                  onTouchStart={(e) => {
-                    if (pair.is_tradable) {
-                      e.target.style.transform = 'scale(0.95)';
-                    }
-                  }}
-                  onTouchEnd={(e) => {
-                    e.target.style.transform = 'scale(1)';
-                  }}
-                  disabled={!pair.is_tradable}
-                >
-                  {pair.symbol}
-                  {!pair.is_tradable && ' 🔒'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Main trading area */}
-          {selectedPair && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '1.5rem' }}>
-              {/* Chart */}
-              <div style={{
+      <div style={styles.container}>
+        {/* Header with Pair Selector and Stats */}
+        <div style={styles.header}>
+          {/* Pair Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem', flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative' }}>
+              <button style={{
+                padding: isMobile ? '0.6rem 1rem' : '0.75rem 1.5rem',
                 background: 'rgba(26, 31, 58, 0.8)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                border: '1px solid rgba(0, 240, 255, 0.2)',
-                minHeight: '500px'
+                border: '2px solid rgba(0, 240, 255, 0.3)',
+                borderRadius: '8px',
+                color: '#fff',
+                fontSize: isMobile ? '1rem' : '1.125rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
               }}>
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '24px', fontWeight: '900', color: '#00F0FF' }}>
-                    {selectedPair}
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '8px' }}>
-                    <div style={{ fontSize: '28px', fontWeight: '900', color: '#fff' }}>
-                      {quote === 'GBP' ? '£' : '$'}{marketStats.lastPrice.toFixed(2)}
-                    </div>
-                    <div style={{
-                      color: marketStats.change24h >= 0 ? '#00FF88' : '#FF4444',
-                      fontSize: '14px',
-                      fontWeight: '700'
-                    }}>
-                      {marketStats.change24h >= 0 ? '↑' : '↓'} {Math.abs(marketStats.change24h).toFixed(2)}%
-                    </div>
-                  </div>
+                <span>{selectedPairData?.icon}</span>
+                <span>{selectedPair}</span>
+                <IoChevronDown size={18} />
+              </button>
+            </div>
+
+            {/* 24h Stats */}
+            <div style={styles.statsRow}>
+              <div>
+                <div style={{ fontSize: isMobile ? '0.65rem' : '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Last Price</div>
+                <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: '700', color: '#00F0FF' }}>
+                  £{marketStats.lastPrice.toLocaleString()}
                 </div>
-                <div 
-                  id="tradingview-chart" 
-                  style={{ 
-                    height: '400px', 
-                    width: '100%',
-                    border: '1px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '12px',
-                    boxShadow: '0 0 20px rgba(0, 240, 255, 0.15)',
-                    overflow: 'hidden'
-                  }}
-                ></div>
               </div>
+              {!isMobile && (
+                <>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>24h Change</div>
+                    <div style={{ 
+                      fontSize: '1rem', 
+                      fontWeight: '700', 
+                      color: marketStats.change24h >= 0 ? '#22C55E' : '#EF4444',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      {marketStats.change24h >= 0 ? <IoTrendingUp size={16} /> : <IoTrendingDown size={16} />}
+                      {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>24h High</div>
+                    <div style={{ fontSize: '1rem', fontWeight: '600', color: '#fff' }}>
+                      £{marketStats.high24h.toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>24h Low</div>
+                    <div style={{ fontSize: '1rem', fontWeight: '600', color: '#fff' }}>
+                      £{marketStats.low24h.toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>24h Volume</div>
+                    <div style={{ fontSize: '1rem', fontWeight: '600', color: '#fff' }}>
+                      {marketStats.volume24h.toFixed(2)} {selectedPairData?.base}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
 
-              {/* Trading panel */}
-              <div style={{
-                background: 'rgba(26, 31, 58, 0.8)',
-                borderRadius: '16px',
-                padding: '1.5rem',
-                border: '1px solid rgba(0, 240, 255, 0.2)'
-              }}>
-                {/* Buy/Sell tabs */}
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '1.5rem' }}>
-                  <button
-                    onClick={() => setOrderType('buy')}
-                    style={{
-                      flex: 1,
-                      padding: '12px',
-                      background: orderType === 'buy' ? '#00FF88' : 'rgba(0, 0, 0, 0.3)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: orderType === 'buy' ? '#000' : '#fff',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    BUY
-                  </button>
-                  <button
-                    onClick={() => setOrderType('sell')}
-                    style={{
-                      flex: 1,
-                      padding: '12px',
-                      background: orderType === 'sell' ? '#FF4444' : 'rgba(0, 0, 0, 0.3)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: orderType === 'sell' ? '#fff' : '#fff',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    SELL
-                  </button>
-                </div>
+          {/* Live Indicator */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.5rem 1rem',
+            background: 'rgba(34, 197, 94, 0.1)',
+            borderRadius: '8px'
+          }}>
+            <IoPulse size={16} color="#22C55E" />
+            <span style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#22C55E', fontWeight: '600' }}>
+              LIVE MARKET
+            </span>
+          </div>
+        </div>
 
-                {/* Balances */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  marginBottom: '1.5rem',
-                  fontSize: '12px'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <span style={{ color: '#888' }}>Available {quote}:</span>
-                    <span style={{ color: '#00F0FF', fontWeight: '700' }}>{userFiatBalance.toFixed(2)}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#888' }}>Available {base}:</span>
-                    <span style={{ color: '#00F0FF', fontWeight: '700' }}>{userCryptoBalance.toFixed(8)}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                    <span style={{ color: '#888' }}>Platform Liquidity:</span>
-                    <span style={{ color: availableLiquidity > 0 ? '#00FF88' : '#FF4444', fontWeight: '700' }}>
-                      {availableLiquidity.toFixed(8)} {base}
-                    </span>
-                  </div>
-                </div>
+        {/* Main Trading Layout - RESPONSIVE */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '280px 1fr 380px',
+          gap: isMobile ? '1rem' : '1.5rem',
+          minHeight: isMobile ? 'auto' : '600px'
+        }}>
+          {/* Order Book - First on mobile */}
+          {isMobile && <OrderBookSection />}
 
-                {/* Amount input */}
-                <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px', fontWeight: '700' }}>
-                    {inputMode === 'fiat' ? `AMOUNT (${quote})` : `AMOUNT (${base})`}
-                  </div>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder={inputMode === 'fiat' ? `Enter ${quote} amount` : `Enter ${base} amount`}
-                    style={{
-                      width: '100%',
-                      padding: '14px',
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(0, 240, 255, 0.3)',
-                      borderRadius: '8px',
-                      color: '#fff',
-                      fontSize: '16px',
-                      fontWeight: '700'
-                    }}
-                  />
+          {/* Left: Order Book - Desktop only in original position */}
+          {!isMobile && <OrderBookSection />}
+
+          {/* Center: Chart and Trades */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Chart */}
+            <div style={{
+              background: 'rgba(26, 31, 58, 0.8)',
+              border: '1px solid rgba(0, 240, 255, 0.2)',
+              borderRadius: '12px',
+              padding: isMobile ? '0.75rem' : '1rem'
+            }}>
+              {/* Timeframe Selector */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                {timeframes.map(tf => (
                   <button
-                    onClick={toggleInputMode}
+                    key={tf}
+                    onClick={() => setTimeframe(tf)}
                     style={{
-                      marginTop: '8px',
-                      padding: '8px 12px',
-                      background: 'rgba(0, 240, 255, 0.1)',
-                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      padding: isMobile ? '0.4rem 0.75rem' : '0.5rem 1rem',
+                      background: timeframe === tf ? 'rgba(0, 240, 255, 0.2)' : 'transparent',
+                      border: timeframe === tf ? '1px solid #00F0FF' : '1px solid rgba(255,255,255,0.1)',
                       borderRadius: '6px',
-                      color: '#00F0FF',
-                      fontSize: '11px',
+                      color: timeframe === tf ? '#00F0FF' : 'rgba(255,255,255,0.6)',
+                      fontSize: isMobile ? '0.7rem' : '0.75rem',
                       fontWeight: '600',
                       cursor: 'pointer'
                     }}
                   >
-                    Switch to {inputMode === 'fiat' ? 'Crypto' : 'Fiat'} Input
+                    {tf}
                   </button>
+                ))}
+              </div>
+
+              {/* Chart Container */}
+              <div ref={chartContainerRef} style={{ 
+                width: '100%', 
+                height: isMobile ? '300px' : '400px',
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '8px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Simulated Chart Lines */}
+                <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <polyline
+                    points="0,200 50,180 100,190 150,160 200,140 250,170 300,150 350,130 400,160 450,140 500,120 550,110 600,130 650,100 700,90 750,110 800,80"
+                    fill="none"
+                    stroke="#22C55E"
+                    strokeWidth="2"
+                    opacity="0.7"
+                  />
+                </svg>
+                <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+                  <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', color: '#00F0FF', fontWeight: '700', marginBottom: '0.5rem' }}>
+                    £{marketStats.lastPrice.toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: isMobile ? '0.8rem' : '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
+                    Live Price Chart • {timeframe} timeframe
+                  </div>
                 </div>
-
-                {/* Calculation preview */}
-                {amount && (
-                  <div style={{
-                    background: 'rgba(0, 240, 255, 0.05)',
-                    border: '1px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    marginBottom: '1rem',
-                    fontSize: '12px'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span style={{ color: '#888' }}>You {orderType === 'buy' ? 'get' : 'pay'}:</span>
-                      <span style={{ color: '#fff', fontWeight: '700' }}>
-                        {orderType === 'buy' ? calculated.crypto.toFixed(8) : calculated.fiat.toFixed(2)}
-                        {' '}
-                        {orderType === 'buy' ? base : quote}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span style={{ color: '#888' }}>Price with spread:</span>
-                      <span style={{ color: '#00F0FF', fontWeight: '700' }}>
-                        {(marketStats.lastPrice * (orderType === 'buy' ? 1.005 : 0.995)).toFixed(2)}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#888' }}>Spread:</span>
-                      <span style={{ color: '#FFD700', fontWeight: '700' }}>0.5%</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Execute button */}
-                <button
-                  onClick={handleExecuteTrade}
-                  disabled={isLoading || !amount || availableLiquidity <= 0}
-                  style={{
-                    width: '100%',
-                    padding: '16px',
-                    background: orderType === 'buy'
-                      ? 'linear-gradient(135deg, #00FF88, #00D870)'
-                      : 'linear-gradient(135deg, #FF4444, #DD2222)',
-                    border: 'none',
-                    borderRadius: '12px',
-                    color: '#000',
-                    fontSize: '16px',
-                    fontWeight: '900',
-                    cursor: isLoading || !amount || availableLiquidity <= 0 ? 'not-allowed' : 'pointer',
-                    opacity: isLoading || !amount || availableLiquidity <= 0 ? 0.5 : 1
-                  }}
-                >
-                  {isLoading ? '⏳ EXECUTING...' : `${orderType.toUpperCase()} ${base}`}
-                </button>
-
-                {availableLiquidity <= 0 && (
-                  <div style={{
-                    marginTop: '12px',
-                    padding: '12px',
-                    background: 'rgba(255, 68, 68, 0.1)',
-                    border: '1px solid rgba(255, 68, 68, 0.3)',
-                    borderRadius: '8px',
-                    color: '#FF4444',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    textAlign: 'center'
-                  }}>
-                    ⚠️ Insufficient platform liquidity for {base}
-                  </div>
-                )}
               </div>
             </div>
-          )}
 
-          {/* Success message */}
-          {orderSuccess && lastOrderDetails && (
-            <div style={{
-              marginTop: '1.5rem',
-              background: 'rgba(0, 255, 136, 0.1)',
-              border: '2px solid #00FF88',
-              borderRadius: '12px',
-              padding: '1.5rem',
-              textAlign: 'center'
-            }}>
-              <IoCheckmarkCircle size={48} color="#00FF88" />
-              <h3 style={{ color: '#00FF88', fontSize: '20px', fontWeight: '900', margin: '12px 0' }}>
-                Trade Executed Successfully!
-              </h3>
-              <p style={{ color: '#888', fontSize: '13px' }}>
-                Transaction ID: {lastOrderDetails.trade_id}
-              </p>
-            </div>
-          )}
+            {/* Recent Trades - Hide on mobile to save space */}
+            {!isMobile && (
+              <div style={{
+                background: 'rgba(26, 31, 58, 0.8)',
+                border: '1px solid rgba(0, 240, 255, 0.2)',
+                borderRadius: '12px',
+                padding: '1rem'
+              }}>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>
+                  Recent Trades
+                </h3>
+                <div style={{ maxHeight: '150px', overflow: 'auto' }}>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    fontSize: '0.7rem',
+                    padding: '0.5rem 0.5rem',
+                    color: 'rgba(255,255,255,0.5)',
+                    fontWeight: '600',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    textTransform: 'uppercase'
+                  }}>
+                    <span>Price (£)</span>
+                    <span style={{ textAlign: 'center' }}>Amount</span>
+                    <span style={{ textAlign: 'right' }}>Time</span>
+                  </div>
+                  {recentTrades.map((trade, idx) => (
+                    <div key={idx} style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr 1fr',
+                      fontSize: '0.75rem',
+                      padding: '0.4rem 0.5rem',
+                      background: idx % 2 === 0 ? 'rgba(0, 0, 0, 0.2)' : 'transparent',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 240, 255, 0.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'rgba(0, 0, 0, 0.2)' : 'transparent'}>
+                      <span style={{ 
+                        color: trade.type === 'buy' ? '#22C55E' : '#EF4444',
+                        fontWeight: '600',
+                        fontFamily: 'monospace'
+                      }}>
+                        {trade.price}
+                      </span>
+                      <span style={{ 
+                        color: 'rgba(255,255,255,0.8)', 
+                        textAlign: 'center',
+                        fontFamily: 'monospace'
+                      }}>
+                        {trade.amount}
+                      </span>
+                      <span style={{ 
+                        color: 'rgba(255,255,255,0.5)', 
+                        textAlign: 'right', 
+                        fontSize: '0.7rem' 
+                      }}>
+                        {trade.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Trading Panel */}
+          <TradingPanel />
         </div>
+
+        {/* Quick Buy Confirmation Modal */}
+        {showQuickBuyModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: isMobile ? '1rem' : 0
+          }}
+          onClick={() => setShowQuickBuyModal(false)}>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(15, 20, 40, 0.95))',
+              border: '2px solid rgba(0, 240, 255, 0.4)',
+              borderRadius: '16px',
+              padding: isMobile ? '1.5rem' : '2rem',
+              maxWidth: '500px',
+              width: '90%',
+              boxShadow: '0 20px 60px rgba(0, 240, 255, 0.3)'
+            }}
+            onClick={(e) => e.stopPropagation()}>
+              <h3 style={{
+                fontSize: isMobile ? '1.25rem' : '1.5rem',
+                fontWeight: '800',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                marginBottom: '1.5rem',
+                textAlign: 'center'
+              }}>
+                {orderType === 'buy' ? '⚡ Quick Buy' : '⚡ Quick Sell'}
+              </h3>
+
+              {/* Order Details */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{
+                  padding: '1.5rem',
+                  background: 'rgba(0, 240, 255, 0.05)',
+                  border: '1px solid rgba(0, 240, 255, 0.2)',
+                  borderRadius: '12px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>Pair:</span>
+                    <span style={{ fontWeight: '700', color: '#fff', fontSize: isMobile ? '1rem' : '1.125rem' }}>
+                      {selectedPairData?.icon} {selectedPair}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>Current Price:</span>
+                    <span style={{ fontWeight: '700', color: '#00F0FF', fontSize: isMobile ? '1rem' : '1.125rem' }}>
+                      £{marketStats.lastPrice.toLocaleString()}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>Amount:</span>
+                    <span style={{ fontWeight: '700', color: '#fff', fontSize: isMobile ? '1rem' : '1.125rem' }}>
+                      {amount} {selectedPairData?.base}
+                    </span>
+                  </div>
+                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '1rem 0' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>Total:</span>
+                    <span style={{ fontWeight: '700', color: '#fff', fontSize: isMobile ? '1.125rem' : '1.25rem' }}>
+                      £{(parseFloat(amount || 0) * marketStats.lastPrice).toFixed(2)}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Trading Fee (0.1%):</span>
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                      £{((parseFloat(amount || 0) * marketStats.lastPrice) * 0.001).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{
+                  marginTop: '1rem',
+                  padding: '1rem',
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  borderRadius: '8px'
+                }}>
+                  <div style={{ fontSize: isMobile ? '0.8rem' : '0.85rem', color: '#22C55E', lineHeight: '1.5' }}>
+                    <strong>Instant Execution:</strong> Your order will execute immediately at the current market price using platform liquidity.
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+                <button
+                  onClick={() => setShowQuickBuyModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '1rem',
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    border: '2px solid rgba(239, 68, 68, 0.4)',
+                    borderRadius: '12px',
+                    color: '#EF4444',
+                    fontSize: isMobile ? '0.875rem' : '1rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    minWidth: isMobile ? '100%' : 'auto'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleTrade(true)}
+                  style={{
+                    flex: 2,
+                    padding: '1rem',
+                    background: orderType === 'buy'
+                      ? 'linear-gradient(135deg, #22C55E, #16A34A)'
+                      : 'linear-gradient(135deg, #EF4444, #DC2626)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    color: '#fff',
+                    fontSize: isMobile ? '0.875rem' : '1rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    minWidth: isMobile ? '100%' : 'auto'
+                  }}
+                >
+                  <IoFlash size={20} />
+                  Confirm {orderType === 'buy' ? 'BUY' : 'SELL'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
