@@ -105,7 +105,7 @@ export default function SpotTradingPro() {
     });
 
     // Candlestick series (v5 API)
-    const candlestickSeries = chart.addSeries(createChart.CandlestickSeries || 'Candlestick', {
+    const candlestickSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
       upColor: '#22C55E',
       downColor: '#EF4444',
       borderUpColor: '#22C55E',
@@ -115,7 +115,7 @@ export default function SpotTradingPro() {
     });
 
     // Volume series (v5 API)
-    const volumeSeries = chart.addSeries(createChart.HistogramSeries || 'Histogram', {
+    const volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, {
       color: '#26a69a',
       priceFormat: { type: 'volume' },
       priceScaleId: '',
