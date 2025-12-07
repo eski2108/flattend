@@ -66,6 +66,7 @@ const AdminProofPage = lazy(() => import("@/pages/AdminProofPage"));
 const TradePage = lazy(() => import("@/pages/TradePageNew"));
 const CreateOffer = lazy(() => import("@/pages/CreateOffer"));
 const MobileAppPage = lazy(() => import("@/pages/MobileAppPage"));
+const ChartTest = lazy(() => import("@/pages/ChartTest"));
 const OrderConfirmation = lazy(() => import("@/pages/OrderConfirmation"));
 const SwapCrypto = lazy(() => import("@/pages/SwapCrypto"));
 const InstantBuy = lazy(() => import("@/pages/InstantBuy"));
