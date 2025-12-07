@@ -131,8 +131,14 @@ export default function SpotTradingPro() {
       
       if (window.TradingView && container) {
         try {
+          // Get proper dimensions based on container
+          const chartWidth = container.offsetWidth || 800;
+          const chartHeight = 600;
+          
           tvWidgetRef.current = new window.TradingView.widget({
-            autosize: true,
+            autosize: false,
+            width: chartWidth,
+            height: chartHeight,
             symbol: tvSymbol,
             interval: timeframe,
             timezone: 'Etc/UTC',
