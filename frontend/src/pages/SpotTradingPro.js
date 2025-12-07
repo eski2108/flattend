@@ -132,9 +132,7 @@ export default function SpotTradingPro() {
       if (window.TradingView && container) {
         try {
           tvWidgetRef.current = new window.TradingView.widget({
-            autosize: false,
-            width: container.offsetWidth || (isMobile ? 380 : 800),
-            height: chartHeight,
+            autosize: true,
             symbol: tvSymbol,
             interval: timeframe,
             timezone: 'Etc/UTC',
