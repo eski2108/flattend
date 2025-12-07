@@ -234,8 +234,19 @@ export default function SpotTradingPro() {
           }
         }
 
+        // Fit content and force redraw
         chart.timeScale().fitContent();
+        chart.timeScale().scrollToPosition(0, false);
+        
+        // Force chart update
+        setTimeout(() => {
+          if (chart) {
+            chart.timeScale().fitContent();
+          }
+        }, 100);
+        
         chartRef.current = chart;
+        console.log('✅ Chart initialized and rendered');
 
         // Handle resize
         const handleResize = () => {
