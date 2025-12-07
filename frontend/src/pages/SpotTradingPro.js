@@ -549,6 +549,64 @@ export default function SpotTradingPro() {
             flex-direction: column;
           }
 
+          /* Trading Pairs Button Selector */
+          .pairs-button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 14px;
+            max-width: 100%;
+          }
+
+          .pair-button {
+            min-width: 130px;
+            height: 46px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #0b0f19, #0f1625);
+            border: 1px solid #1c1f26;
+            border-radius: 11px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 250ms ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+          }
+
+          .pair-button .pair-symbol {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+          }
+
+          .pair-button .pair-price {
+            font-size: 11px;
+            font-weight: 500;
+            opacity: 0.7;
+          }
+
+          .pair-button:hover {
+            background: #062028;
+            border-color: rgba(0, 225, 255, 0.3);
+            transform: translateY(-1px);
+          }
+
+          .pair-button.active {
+            background: linear-gradient(135deg, rgba(0, 225, 255, 0.15), rgba(0, 193, 118, 0.1));
+            border: 1.5px solid #00E1FF;
+            box-shadow: 0 0 20px rgba(0, 225, 255, 0.4), 0 0 10px rgba(0, 225, 255, 0.2);
+            color: #00E1FF;
+            transform: translateY(-2px);
+          }
+
+          .pair-button.active .pair-price {
+            opacity: 1;
+            color: #00E1FF;
+          }
+
           /* Mobile: stacked layout */
           @media (max-width: 1024px) {
             .spot-trading-grid {
@@ -572,6 +630,27 @@ export default function SpotTradingPro() {
             #tv_chart_container {
               height: 450px !important;
               min-height: 450px !important;
+            }
+
+            /* Mobile Trading Pairs */
+            .trading-pairs-selector {
+              padding: 0 12px 16px !important;
+            }
+
+            .pairs-button-container {
+              display: flex;
+              overflow-x: auto;
+              scroll-snap-type: x mandatory;
+              gap: 12px;
+              padding-bottom: 8px;
+              -webkit-overflow-scrolling: touch;
+            }
+
+            .pair-button {
+              min-width: 110px;
+              height: 44px;
+              flex-shrink: 0;
+              scroll-snap-align: start;
             }
           }
         `}</style>
