@@ -634,8 +634,14 @@ export default function SpotTradingPro() {
               padding: 0 12px 12px !important;
               gap: 16px;
             }
-            .pairs-list-panel {
+            .spot-trading-grid .pairs-list-panel {
               display: none !important;
+              visibility: hidden !important;
+              width: 0 !important;
+              height: 0 !important;
+              overflow: hidden !important;
+              position: absolute !important;
+              left: -9999px !important;
             }
             .chart-panel {
               order: 1;
