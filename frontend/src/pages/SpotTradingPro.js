@@ -244,9 +244,9 @@ export default function SpotTradingPro() {
           </div>
         </div>
 
-        {/* Market Info Cards */}
+        {/* Market Info Cards - Hidden on mobile */}
         <div className="market-info-cards" style={{ 
-          display: 'grid', 
+          display: window.innerWidth > 1024 ? 'grid' : 'none', 
           gridTemplateColumns: 'repeat(4, 1fr)', 
           gap: '16px', 
           padding: '24px',
