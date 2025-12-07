@@ -1,0 +1,32 @@
+/* Desktop grid layout */
+.spot-trading-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 360px;
+}
+
+.pairs-list-panel {
+  display: block;
+}
+
+/* Mobile layout - CRITICAL */
+@media screen and (max-width: 1024px) {
+  .spot-trading-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Hide pairs list on mobile */
+  .pairs-list-panel {
+    display: none !important;
+  }
+  
+  .chart-panel {
+    order: 1 !important;
+    width: 100% !important;
+  }
+  
+  .buysell-panel {
+    order: 2 !important;
+    width: 100% !important;
+  }
+}
