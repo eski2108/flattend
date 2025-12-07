@@ -355,9 +355,10 @@ export default function SpotTradingPro() {
               id="tv_chart_container" 
               style={{ 
                 width: '100%', 
-                height: '600px',
+                height: '500px',
                 borderRadius: '6px',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                minHeight: '500px'
               }} 
             />
           </div>
