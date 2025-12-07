@@ -330,7 +330,8 @@ export default function SpotTradingPro() {
                 <div style={{ color: '#00E1FF', fontSize: '14px', fontWeight: '600' }}>£{pair.price?.toFixed(2) || '0.00'}</div>
               </div>
             ))}
-          </div>
+            </div>
+          )}
 
           {/* Chart */}
           <div className="chart-panel">
