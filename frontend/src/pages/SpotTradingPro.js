@@ -152,9 +152,22 @@ export default function SpotTradingPro() {
           },
           priceScaleId: '',
           scaleMargins: {
-            top: 0.8,
+            top: 0.6,
             bottom: 0,
           },
+        });
+
+        // Add Moving Averages
+        const ma20Series = chart.addLineSeries({
+          color: '#2962FF',
+          lineWidth: 2,
+          title: 'MA(20)',
+        });
+
+        const ma50Series = chart.addLineSeries({
+          color: '#FF6D00',
+          lineWidth: 2,
+          title: 'MA(50)',
         });
 
         // Fetch OHLCV data from backend
