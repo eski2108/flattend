@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Spot Trading Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0b0f19;
+            color: #E5F2FF;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        /* Trading Pairs Selector Container */
+        .trading-pairs-selector {
+            padding: 0 24px 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Trading Pairs Button Selector */
+        .pairs-button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 14px;
+            max-width: 100%;
+        }
+
+        .pair-button {
+            min-width: 130px;
+            height: 46px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #0b0f19, #0f1625);
+            border: 1px solid #1c1f26;
+            border-radius: 11px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 250ms ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .pair-button .pair-symbol {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .pair-button .pair-price {
+            font-size: 11px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .pair-button:hover {
+            background: #062028;
+            border-color: rgba(0, 225, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .pair-button.active {
+            background: linear-gradient(135deg, rgba(0, 225, 255, 0.15), rgba(0, 193, 118, 0.1));
+            border: 1.5px solid #00E1FF;
+            box-shadow: 0 0 20px rgba(0, 225, 255, 0.4), 0 0 10px rgba(0, 225, 255, 0.2);
+            color: #00E1FF;
+            transform: translateY(-2px);
+        }
+
+        .pair-button.active .pair-price {
+            opacity: 1;
+            color: #00E1FF;
+        }
+        
+        /* Main Grid */
+        .spot-trading-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 360px;
+            gap: 16px;
+            padding: 0 24px 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .pairs-list-panel {
+            background: #020817;
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            height: 600px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .chart-panel {
+            background: #020817;
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .buysell-panel {
+            background: #020817;
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Market Info Cards */
+        .market-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .market-card {
+            background: linear-gradient(135deg, rgba(0,225,255,0.05), rgba(0,193,118,0.05));
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        /* Mobile: stacked layout */
+        @media screen and (max-width: 1024px) {
+            /* CRITICAL: Hide trading pairs selector completely on mobile */
+            .trading-pairs-selector {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                overflow: hidden !important;
+                pointer-events: none !important;
+            }
+            
+            /* Force stacked layout */
+            .spot-trading-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 0 12px 12px !important;
+                gap: 16px !important;
+            }
+            
+            /* CRITICAL: Hide pairs list on mobile - multiple selectors for certainty */
+            .pairs-list-panel {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                width: 0 !important;
+                height: 0 !important;
+                overflow: hidden !important;
+                pointer-events: none !important;
+            }
+            
+            .chart-panel {
+                order: 1 !important;
+                padding: 12px !important;
+                min-height: 520px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .buysell-panel {
+                order: 2 !important;
+                height: auto !important;
+                min-height: 400px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Mobile Market Info Cards - 2 columns */
+            .market-info-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                padding: 16px 12px !important;
+                gap: 12px !important;
+            }
+            
+            /* Ensure mobile viewport doesn't have horizontal scroll */
+            body {
+                overflow-x: hidden !important;
+            }
+            
+            /* Mobile-specific adjustments for market cards */
+            .market-card {
+                padding: 16px !important;
+            }
+        }
+        
+        /* Test indicator */
+        .mobile-test-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #00E1FF;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 9999;
+        }
+        
+        @media screen and (max-width: 1024px) {
+            .mobile-test-indicator::after {
+                content: ' - MOBILE VIEW';
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-test-indicator">RESPONSIVE TEST</div>
+    
+    <!-- Market Info Cards -->
+    <div class="market-info-grid">
+        <div class="market-card">
+            <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: 500;">LAST PRICE</p>
+            <p style="color: #00E1FF; font-size: 28px; font-weight: 700;">£67,059.00</p>
+        </div>
+        <div class="market-card">
+            <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: 500;">24H HIGH</p>
+            <p style="color: #FF4976; font-size: 28px; font-weight: 700;">£70,412.00</p>
+        </div>
+        <div class="market-card">
+            <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: 500;">24H LOW</p>
+            <p style="color: #00C176; font-size: 28px; font-weight: 700;">£63,706.00</p>
+        </div>
+        <div class="market-card">
+            <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: 500;">24H VOLUME</p>
+            <p style="color: #E5F2FF; font-size: 28px; font-weight: 700;">1,234.56</p>
+        </div>
+    </div>
+
+    <!-- Trading Pairs Selection Buttons - Should be Hidden on Mobile -->
+    <div class="trading-pairs-selector">
+        <div class="pairs-button-container">
+            <button class="pair-button active">
+                <span class="pair-symbol">BTC/USD</span>
+                <span class="pair-price">$84,884.81</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">ETH/USD</span>
+                <span class="pair-price">$2,862.39</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">ADA/USD</span>
+                <span class="pair-price">$0.40</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">SOL/USD</span>
+                <span class="pair-price">$124.10</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">DOT/USD</span>
+                <span class="pair-price">$1.99</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">DOGE/USD</span>
+                <span class="pair-price">$0.13</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">LTC/USD</span>
+                <span class="pair-price">$76.95</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">BCH/USD</span>
+                <span class="pair-price">$552.94</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">BNB/USD</span>
+                <span class="pair-price">$844.52</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">XRP/USD</span>
+                <span class="pair-price">$1.94</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">TRX/USD</span>
+                <span class="pair-price">$0.27</span>
+            </button>
+            <button class="pair-button">
+                <span class="pair-symbol">MATIC/USD</span>
+                <span class="pair-price">$0.00</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main 3-Column Grid -->
+    <div class="spot-trading-grid">
+        <!-- Pairs List - Hidden on Mobile -->
+        <div class="pairs-list-panel">
+            <div style="padding: 16px; border-bottom: 1px solid #1c1f26;">
+                <h3 style="color: #E5F2FF; font-size: 16px; font-weight: 700; margin: 0;">Trading Pairs</h3>
+            </div>
+            <div style="padding: 16px; border-bottom: 1px solid #1c1f26;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <span style="color: #E5F2FF; font-weight: 600; font-size: 14px;">BTC/GBP</span>
+                    <span style="color: #00C176; font-size: 12px;">+2.5%</span>
+                </div>
+                <div style="color: #00E1FF; font-size: 14px; font-weight: 600;">£67,059.00</div>
+            </div>
+            <div style="padding: 16px; border-bottom: 1px solid #1c1f26;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <span style="color: #E5F2FF; font-weight: 600; font-size: 14px;">ETH/GBP</span>
+                    <span style="color: #FF4976; font-size: 12px;">-1.2%</span>
+                </div>
+                <div style="color: #00E1FF; font-size: 14px; font-weight: 600;">£2,261.29</div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: #E5F2FF; font-size: 18px; font-weight: 700; margin: 0;">BTC/GBP</h3>
+            </div>
+            <div style="width: 100%; height: 500px; background: #0b0f19; border: 1px solid #1c1f26; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9CA3AF;">
+                TradingView Chart Placeholder
+            </div>
+        </div>
+
+        <!-- Buy/Sell Panel -->
+        <div class="buysell-panel">
+            <div style="display: flex; border-bottom: 1px solid #1c1f26;">
+                <button style="flex: 1; padding: 16px; background: rgba(0,193,118,0.1); border: none; border-bottom: 2px solid #00C176; color: #00C176; font-size: 14px; font-weight: 700; cursor: pointer;">
+                    BUY
+                </button>
+                <button style="flex: 1; padding: 16px; background: transparent; border: none; border-bottom: 2px solid transparent; color: #9CA3AF; font-size: 14px; font-weight: 700; cursor: pointer;">
+                    SELL
+                </button>
+            </div>
+            <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
+                <div style="margin-bottom: 16px;">
+                    <label style="color: #9CA3AF; font-size: 13px; display: block; margin-bottom: 8px; font-weight: 500;">Amount</label>
+                    <input type="number" placeholder="0.00" style="width: 100%; padding: 14px; background: #0b0f19; border: 1px solid rgba(0,193,118,0.3); border-radius: 6px; color: #E5F2FF; font-size: 16px; outline: none; box-sizing: border-box;" />
+                </div>
+                <div style="margin-bottom: 24px; padding: 16px; background: #0b0f19; border-radius: 6px; border: 1px solid #1c1f26;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #9CA3AF; font-size: 13px;">Price</span>
+                        <span style="color: #E5F2FF; font-size: 14px; font-weight: 600;">£67,059.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #9CA3AF; font-size: 13px;">Total</span>
+                        <span style="color: #00E1FF; font-size: 14px; font-weight: 600;">£0.00</span>
+                    </div>
+                </div>
+                <button style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00C176, #00A85F); border: none; border-radius: 8px; color: #FFFFFF; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 193, 118, 0.4); margin-top: auto;">
+                    BUY BTC
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
