@@ -519,6 +519,66 @@ export default function SpotTradingPro() {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
           }
+
+          /* Add CSS classes for mobile responsiveness */
+          .spot-trading-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 360px;
+            gap: 16px;
+            padding: 0 24px 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+          }
+
+          .pairs-list-panel {
+            background: #020817;
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            height: 600px;
+            overflow-y: auto;
+          }
+
+          .chart-panel {
+            background: #020817;
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            padding: 16px;
+          }
+
+          .buysell-panel {
+            background: #020817;
+            border: 1px solid #1c1f26;
+            border-radius: 8px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+          }
+
+          /* Mobile: stacked layout */
+          @media (max-width: 1024px) {
+            .spot-trading-grid {
+              display: flex;
+              flex-direction: column;
+              padding: 0 12px 12px !important;
+            }
+            .pairs-list-panel {
+              display: none;
+            }
+            .chart-panel {
+              order: 1;
+              padding: 12px !important;
+              min-height: 550px;
+            }
+            .buysell-panel {
+              order: 2;
+              height: auto;
+              margin-top: 12px;
+            }
+            #tv_chart_container {
+              height: 450px !important;
+              min-height: 450px !important;
+            }
+          }
         `}</style>
       </div>
     </Layout>
