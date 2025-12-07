@@ -621,9 +621,14 @@ export default function SpotTradingPro() {
 
           /* Mobile: stacked layout */
           @media screen and (max-width: 1024px) {
-            /* Hide trading pairs selector on mobile */
+            /* CRITICAL: Hide trading pairs selector completely on mobile */
             .trading-pairs-selector {
               display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              height: 0 !important;
+              overflow: hidden !important;
+              pointer-events: none !important;
             }
             
             /* Force stacked layout */
@@ -665,40 +670,6 @@ export default function SpotTradingPro() {
               height: 500px !important;
               min-height: 500px !important;
               width: 100% !important;
-            }
-
-            /* Mobile Trading Pairs Selector */
-            .trading-pairs-selector {
-              padding: 0 12px 16px !important;
-            }
-
-            .pairs-button-container {
-              display: flex !important;
-              overflow-x: auto !important;
-              scroll-snap-type: x mandatory !important;
-              gap: 12px !important;
-              padding-bottom: 8px !important;
-              -webkit-overflow-scrolling: touch !important;
-            }
-
-            .pairs-button-container::-webkit-scrollbar {
-              height: 4px !important;
-            }
-
-            .pairs-button-container::-webkit-scrollbar-track {
-              background: #0b0f19 !important;
-            }
-
-            .pairs-button-container::-webkit-scrollbar-thumb {
-              background: #1c1f26 !important;
-              border-radius: 2px !important;
-            }
-
-            .pair-button {
-              min-width: 110px !important;
-              height: 44px !important;
-              flex-shrink: 0 !important;
-              scroll-snap-align: start !important;
             }
 
             /* Mobile Market Info Cards - 2 columns */
