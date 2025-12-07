@@ -234,7 +234,7 @@ export default function SpotTradingPro() {
         </div>
 
         {/* Market Info Cards */}
-        <div style={{ 
+        <div className="market-info-cards" style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(4, 1fr)', 
           gap: '16px', 
