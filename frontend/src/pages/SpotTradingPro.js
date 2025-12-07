@@ -84,7 +84,7 @@ export default function SpotTradingPro() {
       chartRef.current.remove();
     }
 
-    const chart = createChart(chartContainerRef.current, {
+    const chart = LightweightCharts.createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
       height: 500,
       layout: {
