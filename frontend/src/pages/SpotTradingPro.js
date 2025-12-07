@@ -172,13 +172,18 @@ export default function SpotTradingPro() {
 
         // Fetch OHLCV data from backend
         const pairSymbol = selectedPair.symbol.replace('/', '');
+        console.log('Fetching OHLCV for:', pairSymbol, 'interval:', timeframe);
+        
         try {
           const response = await axios.get(`${API}/api/trading/ohlcv/${pairSymbol}`, {
             params: { interval: timeframe, limit: 100 }
           });
           
-          if (response.data.success && response.data.data) {
+          console.log('OHLCV Response:', response.data);
+          
+          if (response.data.success && response.data.data && response.data.data.length > 0) {
             const ohlcvData = response.data.data;
+            console.log('Setting candlestick data:', ohlcvData.length, 'candles');
             candlestickSeries.setData(ohlcvData);
             
             const volumeData = ohlcvData.map(d => ({
@@ -189,32 +194,44 @@ export default function SpotTradingPro() {
             volumeSeries.setData(volumeData);
 
             // Calculate and add Moving Averages
-            const ma20Data = calculateMA(ohlcvData, 20);
-            const ma50Data = calculateMA(ohlcvData, 50);
-            ma20Series.setData(ma20Data);
-            ma50Series.setData(ma50Data);
+            if (ohlcvData.length >= 50) {
+              const ma20Data = calculateMA(ohlcvData, 20);
+              const ma50Data = calculateMA(ohlcvData, 50);
+              ma20Series.setData(ma20Data);
+              ma50Series.setData(ma50Data);
+            }
+            
+            console.log('✅ Chart data loaded successfully');
           } else {
-            // Fallback to generated data if API fails
-            const data = generateChartData(selectedPair.price || 47500);
+            console.warn('No OHLCV data returned, using fallback');
+            // Fallback to generated data
+            const basePrice = selectedPair.price || 71000;
+            const data = generateChartData(basePrice);
             candlestickSeries.setData(data.candles);
             volumeSeries.setData(data.volumes);
             
+            if (data.candles.length >= 50) {
+              const ma20Data = calculateMA(data.candles, 20);
+              const ma50Data = calculateMA(data.candles, 50);
+              ma20Series.setData(ma20Data);
+              ma50Series.setData(ma50Data);
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error fetching OHLCV data:', error);
+          // Fallback to generated data
+          const basePrice = 71000; // Default BTC price
+          const data = generateChartData(basePrice);
+          console.log('Using fallback data:', data.candles.length, 'candles');
+          candlestickSeries.setData(data.candles);
+          volumeSeries.setData(data.volumes);
+          
+          if (data.candles.length >= 50) {
             const ma20Data = calculateMA(data.candles, 20);
             const ma50Data = calculateMA(data.candles, 50);
             ma20Series.setData(ma20Data);
             ma50Series.setData(ma50Data);
           }
-        } catch (error) {
-          console.error('Error fetching OHLCV data:', error);
-          // Fallback to generated data
-          const data = generateChartData(selectedPair.price || 47500);
-          candlestickSeries.setData(data.candles);
-          volumeSeries.setData(data.volumes);
-          
-          const ma20Data = calculateMA(data.candles, 20);
-          const ma50Data = calculateMA(data.candles, 50);
-          ma20Series.setData(ma20Data);
-          ma50Series.setData(ma50Data);
         }
 
         chart.timeScale().fitContent();
