@@ -108,7 +108,7 @@ export default function SpotTradingPro() {
           width: containerWidth,
           height: containerHeight,
           layout: {
-            background: { color: '#0a0e1a' },
+            background: { type: 'solid', color: '#0a0e1a' },
             textColor: '#d1d4dc',
           },
           grid: {
@@ -124,11 +124,17 @@ export default function SpotTradingPro() {
           },
           rightPriceScale: {
             borderColor: 'rgba(197, 203, 206, 0.4)',
+            visible: true,
+            scaleMargins: {
+              top: 0.1,
+              bottom: 0.2,
+            },
           },
           timeScale: {
             borderColor: 'rgba(197, 203, 206, 0.4)',
             timeVisible: true,
             secondsVisible: false,
+            visible: true,
           },
         });
 
