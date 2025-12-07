@@ -176,17 +176,26 @@ export default function SpotTradingPro() {
           console.log('Last candle:', ohlcvData[ohlcvData.length - 1]);
           
           // Set candlestick data
-          candlestickSeries.setData(ohlcvData);
-          console.log('✅ Candlestick data set');
+          try {
+            candlestickSeries.setData(ohlcvData);
+            console.log('✅ Candlestick data set successfully');
+          } catch (err) {
+            console.error('❌ Error setting candlestick data:', err);
+            throw err;
+          }
           
           // Set volume data
-          const volumeData = ohlcvData.map(d => ({
-            time: d.time,
-            value: d.volume,
-            color: d.close >= d.open ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)'
-          }));
-          volumeSeries.setData(volumeData);
-          console.log('✅ Volume data set');
+          try {
+            const volumeData = ohlcvData.map(d => ({
+              time: d.time,
+              value: d.volume,
+              color: d.close >= d.open ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)'
+            }));
+            volumeSeries.setData(volumeData);
+            console.log('✅ Volume data set successfully');
+          } catch (err) {
+            console.error('❌ Error setting volume data:', err);
+          }
           
           // Fit content
           chart.timeScale().fitContent();
