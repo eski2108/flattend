@@ -627,35 +627,36 @@ export default function SpotTradingPro() {
           }
 
           /* Mobile: stacked layout */
-          @media (max-width: 1024px) {
+          @media screen and (max-width: 1024px) {
             .spot-trading-grid {
-              display: flex;
-              flex-direction: column;
+              display: flex !important;
+              flex-direction: column !important;
               padding: 0 12px 12px !important;
-              gap: 16px;
+              gap: 16px !important;
             }
-            .spot-trading-grid .pairs-list-panel {
+            
+            /* CRITICAL: Hide pairs list on mobile */
+            div.pairs-list-panel,
+            .pairs-list-panel,
+            .spot-trading-grid > div:first-child {
               display: none !important;
-              visibility: hidden !important;
-              width: 0 !important;
-              height: 0 !important;
-              overflow: hidden !important;
-              position: absolute !important;
-              left: -9999px !important;
             }
+            
             .chart-panel {
-              order: 1;
+              order: 1 !important;
               padding: 12px !important;
-              min-height: 520px;
-              width: 100%;
-              box-sizing: border-box;
+              min-height: 520px !important;
+              width: 100% !important;
+              box-sizing: border-box !important;
             }
+            
             .buysell-panel {
-              order: 2;
-              height: auto;
-              width: 100%;
-              box-sizing: border-box;
+              order: 2 !important;
+              height: auto !important;
+              width: 100% !important;
+              box-sizing: border-box !important;
             }
+            
             #tv_chart_container {
               height: 500px !important;
               min-height: 500px !important;
@@ -668,39 +669,32 @@ export default function SpotTradingPro() {
             }
 
             .pairs-button-container {
-              display: flex;
-              overflow-x: auto;
-              scroll-snap-type: x mandatory;
-              gap: 12px;
-              padding-bottom: 8px;
-              -webkit-overflow-scrolling: touch;
+              display: flex !important;
+              overflow-x: auto !important;
+              scroll-snap-type: x mandatory !important;
+              gap: 12px !important;
+              padding-bottom: 8px !important;
+              -webkit-overflow-scrolling: touch !important;
             }
 
             .pairs-button-container::-webkit-scrollbar {
-              height: 4px;
+              height: 4px !important;
             }
 
             .pairs-button-container::-webkit-scrollbar-track {
-              background: #0b0f19;
+              background: #0b0f19 !important;
             }
 
             .pairs-button-container::-webkit-scrollbar-thumb {
-              background: #1c1f26;
-              border-radius: 2px;
+              background: #1c1f26 !important;
+              border-radius: 2px !important;
             }
 
             .pair-button {
-              min-width: 110px;
-              height: 44px;
-              flex-shrink: 0;
-              scroll-snap-align: start;
-            }
-
-            /* Mobile Market Stats - 2 column grid */
-            .spot-trading-grid + div:first-of-type {
-              grid-template-columns: repeat(2, 1fr) !important;
-              padding: 16px 12px !important;
-              gap: 12px !important;
+              min-width: 110px !important;
+              height: 44px !important;
+              flex-shrink: 0 !important;
+              scroll-snap-align: start !important;
             }
           }
         `}</style>
