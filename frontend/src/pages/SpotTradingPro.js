@@ -77,24 +77,39 @@ export default function SpotTradingPro() {
 
   // Initialize TradingView Chart
   useEffect(() => {
-    if (!chartContainerRef.current || !selectedPair) return;
+    if (!chartContainerRef.current || !selectedPair) {
+      console.log('⚠️ Chart container or pair not ready');
+      return;
+    }
+
+    console.log('🔵 Starting chart initialization for', selectedPair.symbol);
+    console.log('Container dimensions:', chartContainerRef.current.offsetWidth, 'x', chartContainerRef.current.offsetHeight);
+
+    let chart = null;
+    let resizeObserver = null;
 
     const initChart = async () => {
       try {
         // Clear existing chart
         if (chartRef.current) {
+          console.log('Removing existing chart');
           chartRef.current.remove();
+          chartRef.current = null;
         }
 
-        const chart = createChart(chartContainerRef.current, {
-          width: chartContainerRef.current.clientWidth,
-          height: 600,
+        // Get container dimensions
+        const containerWidth = chartContainerRef.current.offsetWidth || 800;
+        const containerHeight = 600;
+
+        console.log('Creating chart with dimensions:', containerWidth, 'x', containerHeight);
+
+        // Create chart with v4 API
+        chart = createChart(chartContainerRef.current, {
+          width: containerWidth,
+          height: containerHeight,
           layout: {
-            background: {
-              type: 'solid',
-              color: '#0a0e1a',
-            },
-            textColor: '#888',
+            backgroundColor: '#0a0e1a',
+            textColor: '#d1d4dc',
           },
           grid: {
             vertLines: {
@@ -106,33 +121,18 @@ export default function SpotTradingPro() {
           },
           crosshair: {
             mode: 0,
-            vertLine: {
-              width: 1,
-              color: '#00F0FF',
-              style: 1,
-              labelBackgroundColor: '#00F0FF',
-            },
-            horzLine: {
-              color: '#00F0FF',
-              labelBackgroundColor: '#00F0FF',
-            },
           },
           rightPriceScale: {
             borderColor: 'rgba(197, 203, 206, 0.4)',
-            scaleMargins: {
-              top: 0.1,
-              bottom: 0.2,
-            },
           },
           timeScale: {
             borderColor: 'rgba(197, 203, 206, 0.4)',
             timeVisible: true,
             secondsVisible: false,
           },
-          watermark: {
-            visible: false,
-          },
         });
+
+        console.log('✅ Chart object created');
 
         // Add candlestick series
         const candlestickSeries = chart.addCandlestickSeries({
@@ -144,7 +144,9 @@ export default function SpotTradingPro() {
           wickDownColor: '#EF4444',
         });
 
-        // Add volume series  
+        console.log('✅ Candlestick series added');
+
+        // Add volume series
         const volumeSeries = chart.addHistogramSeries({
           color: '#26a69a',
           priceFormat: {
@@ -152,128 +154,77 @@ export default function SpotTradingPro() {
           },
           priceScaleId: '',
           scaleMargins: {
-            top: 0.6,
+            top: 0.7,
             bottom: 0,
           },
         });
 
-        // Add Moving Averages
-        const ma20Series = chart.addLineSeries({
-          color: '#2962FF',
-          lineWidth: 2,
-          title: 'MA(20)',
-        });
+        console.log('✅ Volume series added');
 
-        const ma50Series = chart.addLineSeries({
-          color: '#FF6D00',
-          lineWidth: 2,
-          title: 'MA(50)',
-        });
-
-        // Fetch OHLCV data from backend
+        // Fetch OHLCV data
         const pairSymbol = selectedPair.symbol.replace('/', '');
-        console.log('Fetching OHLCV for:', pairSymbol, 'interval:', timeframe);
+        console.log('📊 Fetching OHLCV for:', pairSymbol);
         
-        try {
-          const response = await axios.get(`${API}/api/trading/ohlcv/${pairSymbol}`, {
-            params: { interval: timeframe, limit: 100 }
-          });
+        const response = await axios.get(`${API}/api/trading/ohlcv/${pairSymbol}`, {
+          params: { interval: timeframe, limit: 100 }
+        });
+        
+        if (response.data.success && response.data.data && response.data.data.length > 0) {
+          const ohlcvData = response.data.data;
+          console.log('📈 Received', ohlcvData.length, 'candles');
+          console.log('First candle:', ohlcvData[0]);
+          console.log('Last candle:', ohlcvData[ohlcvData.length - 1]);
           
-          console.log('OHLCV Response:', response.data);
+          // Set candlestick data
+          candlestickSeries.setData(ohlcvData);
+          console.log('✅ Candlestick data set');
           
-          if (response.data.success && response.data.data && response.data.data.length > 0) {
-            const ohlcvData = response.data.data;
-            console.log('Setting candlestick data:', ohlcvData.length, 'candles');
-            candlestickSeries.setData(ohlcvData);
-            
-            const volumeData = ohlcvData.map(d => ({
-              time: d.time,
-              value: d.volume,
-              color: d.close >= d.open ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'
-            }));
-            volumeSeries.setData(volumeData);
-
-            // Calculate and add Moving Averages
-            if (ohlcvData.length >= 50) {
-              const ma20Data = calculateMA(ohlcvData, 20);
-              const ma50Data = calculateMA(ohlcvData, 50);
-              ma20Series.setData(ma20Data);
-              ma50Series.setData(ma50Data);
-            }
-            
-            console.log('✅ Chart data loaded successfully');
-          } else {
-            console.warn('No OHLCV data returned, using fallback');
-            // Fallback to generated data
-            const basePrice = selectedPair.price || 71000;
-            const data = generateChartData(basePrice);
-            candlestickSeries.setData(data.candles);
-            volumeSeries.setData(data.volumes);
-            
-            if (data.candles.length >= 50) {
-              const ma20Data = calculateMA(data.candles, 20);
-              const ma50Data = calculateMA(data.candles, 50);
-              ma20Series.setData(ma20Data);
-              ma50Series.setData(ma50Data);
-            }
-          }
-        } catch (error) {
-          console.error('❌ Error fetching OHLCV data:', error);
-          // Fallback to generated data
-          const basePrice = 71000; // Default BTC price
-          const data = generateChartData(basePrice);
-          console.log('Using fallback data:', data.candles.length, 'candles');
-          candlestickSeries.setData(data.candles);
-          volumeSeries.setData(data.volumes);
+          // Set volume data
+          const volumeData = ohlcvData.map(d => ({
+            time: d.time,
+            value: d.volume,
+            color: d.close >= d.open ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)'
+          }));
+          volumeSeries.setData(volumeData);
+          console.log('✅ Volume data set');
           
-          if (data.candles.length >= 50) {
-            const ma20Data = calculateMA(data.candles, 20);
-            const ma50Data = calculateMA(data.candles, 50);
-            ma20Series.setData(ma20Data);
-            ma50Series.setData(ma50Data);
-          }
+          // Fit content
+          chart.timeScale().fitContent();
+          console.log('✅ Chart content fitted');
+        } else {
+          console.error('❌ No valid OHLCV data received');
         }
 
-        // Fit content and force redraw
-        chart.timeScale().fitContent();
-        chart.timeScale().scrollToPosition(0, false);
-        
-        // Force chart update
-        setTimeout(() => {
-          if (chart) {
-            chart.timeScale().fitContent();
-          }
-        }, 100);
-        
         chartRef.current = chart;
-        console.log('✅ Chart initialized and rendered');
 
         // Handle resize
-        const handleResize = () => {
-          if (chartContainerRef.current && chartRef.current) {
-            chartRef.current.applyOptions({
-              width: chartContainerRef.current.clientWidth,
-            });
+        resizeObserver = new ResizeObserver(entries => {
+          if (chartRef.current && entries.length > 0) {
+            const { width } = entries[0].contentRect;
+            chartRef.current.applyOptions({ width: Math.max(width, 100) });
           }
-        };
+        });
 
-        window.addEventListener('resize', handleResize);
-        
-        return () => {
-          window.removeEventListener('resize', handleResize);
-        };
+        resizeObserver.observe(chartContainerRef.current);
+        console.log('✅ Chart fully initialized');
+
       } catch (error) {
-        console.error('Chart initialization error:', error);
+        console.error('❌ Chart initialization error:', error);
+        console.error('Error stack:', error.stack);
       }
     };
 
     initChart();
 
     return () => {
-      if (chartRef.current) {
-        chartRef.current.remove();
-        chartRef.current = null;
+      console.log('🔴 Cleaning up chart');
+      if (resizeObserver) {
+        resizeObserver.disconnect();
       }
+      if (chart) {
+        chart.remove();
+      }
+      chartRef.current = null;
     };
   }, [selectedPair, timeframe]);
 
