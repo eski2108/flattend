@@ -8337,3 +8337,19 @@ a[class*="btn"] {
   background: rgba(255, 255, 255, 0.2) !important;
 }
 
+
+/* CRITICAL OVERRIDE: Hide sidebar on all mobile devices - FINAL RULE */
+@media screen and (max-width: 1024px) {
+  aside.sidebar,
+  .sidebar,
+  aside[class*="sidebar"],
+  [class*="sidebar"] {
+    display: none !important;
+  }
+  
+  /* Only show when mobile menu is explicitly opened */
+  aside.sidebar.mobile-open,
+  .sidebar.mobile-open {
+    display: flex !important;
+  }
+}
