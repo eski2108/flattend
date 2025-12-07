@@ -195,12 +195,54 @@ export default function SpotTradingPro() {
     updateMarketStats(pair);
   };
 
-  const handlePlaceOrder = () => {
-    if (!tradeAmount) {
-      toast.error('Please enter an amount');
+  const handlePlaceOrder = async () => {
+    if (!tradeAmount || parseFloat(tradeAmount) <= 0) {
+      toast.error('Please enter a valid amount');
       return;
     }
-    toast.success(`${tradeTab.toUpperCase()} order placed for ${tradeAmount} ${selectedPair?.base}`);
+
+    if (!user) {
+      toast.error('Please log in to place orders');
+      navigate('/login');
+      return;
+    }
+
+    if (!selectedPair) {
+      toast.error('Please select a trading pair');
+      return;
+    }
+
+    try {
+      const orderData = {
+        user_id: user.user_id || user.id,
+        pair: selectedPair.symbol,
+        base: selectedPair.base,
+        quote: selectedPair.quote,
+        side: tradeTab, // 'buy' or 'sell'
+        order_type: orderType, // 'market' or 'limit'
+        amount: parseFloat(tradeAmount),
+        price: orderType === 'market' ? marketStats.lastPrice : parseFloat(tradeAmount) * marketStats.lastPrice,
+        total: parseFloat(tradeAmount) * marketStats.lastPrice
+      };
+
+      const response = await axios.post(`${API}/api/trading/order/${tradeTab}`, orderData);
+
+      if (response.data.success) {
+        toast.success(`${tradeTab.toUpperCase()} order placed successfully!`);
+        setTradeAmount('');
+        // Refresh user balance
+        const userData = localStorage.getItem('user') || localStorage.getItem('cryptobank_user');
+        if (userData) {
+          // Trigger balance refresh across app
+          window.dispatchEvent(new Event('balance-updated'));
+        }
+      } else {
+        toast.error(response.data.message || 'Order failed');
+      }
+    } catch (error) {
+      console.error('Order error:', error);
+      toast.error(error.response?.data?.detail || error.response?.data?.message || 'Failed to place order');
+    }
   };
 
   if (loading) {
