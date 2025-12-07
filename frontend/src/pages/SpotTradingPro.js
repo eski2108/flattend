@@ -273,6 +273,26 @@ export default function SpotTradingPro() {
           </div>
         </div>
 
+        {/* Trading Pairs Selection Buttons */}
+        <div className="trading-pairs-selector" style={{
+          padding: '0 24px 24px',
+          maxWidth: '1600px',
+          margin: '0 auto'
+        }}>
+          <div className="pairs-button-container">
+            {tradingPairs.map(pair => (
+              <button
+                key={pair.symbol}
+                onClick={() => handlePairSelect(pair)}
+                className={`pair-button ${selectedPair?.symbol === pair.symbol ? 'active' : ''}`}
+              >
+                <span className="pair-symbol">{pair.base}/USD</span>
+                <span className="pair-price">${pair.price?.toFixed(2) || '0.00'}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Main 3-Column Grid */}
         <div className="spot-trading-grid">
           {/* Pairs List */}
