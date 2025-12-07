@@ -346,14 +346,7 @@ export default function SpotTradingPro() {
           </div>
 
           {/* Buy/Sell Panel */}
-          <div style={{
-            background: '#020817',
-            border: '1px solid #1c1f26',
-            borderRadius: '8px',
-            height: '600px',
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
+          <div className="buysell-panel">
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid #1c1f26' }}>
               <button
