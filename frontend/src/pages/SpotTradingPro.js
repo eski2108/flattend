@@ -538,6 +538,7 @@ export default function SpotTradingPro() {
             border-radius: 8px;
             height: 600px;
             overflow-y: auto;
+            display: block;
           }
 
           .chart-panel {
