@@ -135,7 +135,7 @@
 
 **Curl Test Example**:
 ```bash
-curl "https://marketview-36.preview.emergentagent.com/api/p2p/trade/cab8b21a-e9c0-4a7c-af68-61391e6a520f?user_id=test_buyer_123"
+curl "https://protrading.preview.emergentagent.com/api/p2p/trade/cab8b21a-e9c0-4a7c-af68-61391e6a520f?user_id=test_buyer_123"
 # Returns: {"success": true, "trade": {...}, "messages": [...]}
 ```
 
@@ -336,11 +336,11 @@ navigate(`/p2p/order/${tradeId}`);
 
 ### Test URLs
 ```
-https://marketview-36.preview.emergentagent.com/p2p/order/cab8b21a-e9c0-4a7c-af68-61391e6a520f
-https://marketview-36.preview.emergentagent.com/p2p/order/337ad5e1-6d30-4311-9353-f125ace12b5c
-https://marketview-36.preview.emergentagent.com/p2p/order/85984ca6-3809-469f-a1b2-8638fff9ab82
-https://marketview-36.preview.emergentagent.com/p2p/order/fae0634d-04b3-491d-a114-0c5e378b4981
-https://marketview-36.preview.emergentagent.com/p2p/order/2f2259ff-827d-41ab-9ad4-accee11eb6e7
+https://protrading.preview.emergentagent.com/p2p/order/cab8b21a-e9c0-4a7c-af68-61391e6a520f
+https://protrading.preview.emergentagent.com/p2p/order/337ad5e1-6d30-4311-9353-f125ace12b5c
+https://protrading.preview.emergentagent.com/p2p/order/85984ca6-3809-469f-a1b2-8638fff9ab82
+https://protrading.preview.emergentagent.com/p2p/order/fae0634d-04b3-491d-a114-0c5e378b4981
+https://protrading.preview.emergentagent.com/p2p/order/2f2259ff-827d-41ab-9ad4-accee11eb6e7
 ```
 
 ---

@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://marketview-36.preview.emergentagent.com/p2p-express
+https://protrading.preview.emergentagent.com/p2p-express
 
 ---
 

@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://marketview-36.preview.emergentagent.com`
-- Backend API: `https://marketview-36.preview.emergentagent.com/api`
+- Frontend: `https://protrading.preview.emergentagent.com`
+- Backend API: `https://protrading.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

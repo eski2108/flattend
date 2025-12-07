@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
+BASE_URL = "https://protrading.preview.emergentagent.com/api"
 
 print("🎯 ACHIEVING 100% SUCCESS RATE - TESTING ALL ENDPOINTS CORRECTLY\n")
 print("=" * 70)

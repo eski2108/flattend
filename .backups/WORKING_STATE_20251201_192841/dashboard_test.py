@@ -18,7 +18,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
+BASE_URL = "https://protrading.preview.emergentagent.com/api"
 
 # Test User as requested
 TEST_USER = {

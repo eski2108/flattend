@@ -32,7 +32,7 @@ Tests all newly implemented security features for Coin Hub X as requested in rev
    - Verify JWT token is returned in response
    - Test token usage to access admin endpoints
 
-**Backend URL:** https://marketview-36.preview.emergentagent.com/api
+**Backend URL:** https://protrading.preview.emergentagent.com/api
 """
 
 import requests
@@ -45,7 +45,7 @@ from datetime import datetime
 import os
 
 # Configuration
-BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
+BASE_URL = "https://protrading.preview.emergentagent.com/api"
 
 # Test Users for security testing
 SECURITY_TEST_USER = {

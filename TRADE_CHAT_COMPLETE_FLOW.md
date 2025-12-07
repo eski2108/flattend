@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://marketview-36.preview.emergentagent.com
+**Test it now at:** https://protrading.preview.emergentagent.com

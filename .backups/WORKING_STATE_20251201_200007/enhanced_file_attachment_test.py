@@ -14,7 +14,7 @@ import time
 from PIL import Image
 
 # Configuration
-BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
+BASE_URL = "https://protrading.preview.emergentagent.com/api"
 
 def print_test_header(test_name):
     """Print formatted test header"""

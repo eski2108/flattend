@@ -22,7 +22,7 @@ import time
 from datetime import datetime, timezone
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://marketview-36.preview.emergentagent.com"
+BACKEND_URL = "https://protrading.preview.emergentagent.com"
 
 class UrgentRegistrationTester:
     """Urgent Registration Endpoint Tester"""

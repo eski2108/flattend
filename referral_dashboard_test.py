@@ -20,7 +20,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 # Backend URL from environment
-BACKEND_URL = "https://marketview-36.preview.emergentagent.com"
+BACKEND_URL = "https://protrading.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test users
