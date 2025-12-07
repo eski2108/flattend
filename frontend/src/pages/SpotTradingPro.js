@@ -64,7 +64,7 @@ export default function SpotTradingPro() {
 
   const fetchTradingPairs = async () => {
     try {
-      const response = await axios.get(`${API}/api/trading/pairs`);
+      const response = await axios.get(`${API}/trading/pairs`);
       if (response.data.success) {
         setTradingPairs(response.data.pairs);
         if (response.data.pairs.length > 0 && !selectedPair) {
