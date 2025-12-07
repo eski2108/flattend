@@ -10942,18 +10942,46 @@ async def get_trading_pairs(request: Request, response: Response):
             available = wallet.get("available", 0) if wallet else 0
             is_tradable = available > 0
             
+            # Get current price for this coin
+            coin_price_gbp = 0
+            try:
+                price_data = await get_coin_price(base)
+                coin_price_gbp = price_data.get("price_gbp", 0)
+            except:
+                coin_price_gbp = 0
+            
             # Create pair for each supported fiat currency
             for quote in fiat_currencies:
+                # Calculate price in quote currency
+                if quote == "GBP":
+                    price_in_quote = coin_price_gbp
+                elif quote == "USDT":
+                    # Convert GBP to USDT (approximate)
+                    try:
+                        usdt_price_data = await get_coin_price("USDT")
+                        usdt_to_gbp = usdt_price_data.get("price_gbp", 0.79)
+                        price_in_quote = coin_price_gbp / usdt_to_gbp if usdt_to_gbp > 0 else 0
+                    except:
+                        price_in_quote = coin_price_gbp / 0.79  # Default USDT rate
+                else:
+                    price_in_quote = coin_price_gbp
+                
+                # Calculate 24h change (placeholder - can be enhanced with historical data)
+                change_24h = 0  # TODO: Implement historical price tracking
+                
                 pair = {
                     "symbol": f"{base}/{quote}",
                     "base": base,
                     "quote": quote,
+                    "price": price_in_quote,
+                    "change_24h": change_24h,
+                    "volume_24h": 0,  # TODO: Implement volume tracking
                     "available_liquidity": available,
                     "is_tradable": is_tradable,
                     "status": "active" if is_tradable else "paused"
                 }
                 pairs_with_status.append(pair)
-                log_info(f"✅ Created pair: {pair['symbol']}")
+                log_info(f"✅ Created pair: {pair['symbol']} @ {price_in_quote}")
         
         log_info(f"🎯 Total pairs generated: {len(pairs_with_status)}")
         
