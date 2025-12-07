@@ -10,7 +10,6 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTradingPro() {
   const navigate = useNavigate();
-  const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
   
   const [user, setUser] = useState(null);
@@ -20,6 +19,7 @@ export default function SpotTradingPro() {
   const [timeframe, setTimeframe] = useState('15m');
   const [tradeAmount, setTradeAmount] = useState('');
   const [tradeType, setTradeType] = useState('buy');
+  const [chartData, setChartData] = useState([]);
   
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
