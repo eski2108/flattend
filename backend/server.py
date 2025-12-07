@@ -10942,12 +10942,17 @@ async def get_trading_pairs(request: Request, response: Response):
             available = wallet.get("available", 0) if wallet else 0
             is_tradable = available > 0
             
-            # Get current price for this coin
+            # Get current price for this coin from instant-buy pricing
             coin_price_gbp = 0
             try:
-                price_data = await get_coin_price(base)
-                coin_price_gbp = price_data.get("price_gbp", 0)
-            except:
+                # Get price from market data (same as instant buy uses)
+                market_prices = await get_live_prices()
+                if base in market_prices:
+                    coin_price_gbp = market_prices[base]
+                else:
+                    coin_price_gbp = 0
+            except Exception as e:
+                logger.error(f"Error getting price for {base}: {e}")
                 coin_price_gbp = 0
             
             # Create pair for each supported fiat currency
