@@ -514,6 +514,39 @@ export default function SpotTradingPro() {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
           }
+          
+          /* Desktop: 3-column layout */
+          @media (min-width: 1025px) {
+            .spot-trading-grid {
+              display: grid;
+              grid-template-columns: 280px 1fr 360px;
+            }
+            .pairs-list-panel {
+              height: 600px;
+              display: block;
+            }
+            .buysell-panel {
+              height: 600px;
+            }
+          }
+          
+          /* Mobile: stacked layout */
+          @media (max-width: 1024px) {
+            .spot-trading-grid {
+              display: flex;
+              flex-direction: column;
+            }
+            .pairs-list-panel {
+              display: none;
+            }
+            .chart-panel {
+              order: 1;
+            }
+            .buysell-panel {
+              order: 2;
+              height: auto;
+            }
+          }
         `}</style>
       </div>
     </Layout>
