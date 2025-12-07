@@ -27231,8 +27231,9 @@ async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
             raise HTTPException(status_code=400, detail="Invalid pair format")
         
         # Get current price
-        market_prices = await get_live_prices()
-        current_price = market_prices.get(base, 50000)
+        market_prices = await fetch_live_prices()
+        price_data = market_prices.get(base, {})
+        current_price = price_data.get("gbp", 50000)
         
         # Generate OHLCV data (in production, get from database or exchange API)
         now = int(time.time())
@@ -27742,8 +27743,9 @@ async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
             raise HTTPException(status_code=400, detail="Invalid pair format")
         
         # Get current price
-        market_prices = await get_live_prices()
-        current_price = market_prices.get(base, 50000)
+        market_prices = await fetch_live_prices()
+        price_data = market_prices.get(base, {})
+        current_price = price_data.get("gbp", 50000)
         
         # Generate OHLCV data (in production, get from database or exchange API)
         now = int(time.time())
