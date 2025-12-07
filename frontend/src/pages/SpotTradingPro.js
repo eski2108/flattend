@@ -1,3 +1,4 @@
+// LATEST VERSION - TRADINGVIEW INTEGRATION - UPDATED 2024-12-07
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
