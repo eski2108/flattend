@@ -108,7 +108,7 @@ export default function SpotTradingPro() {
           width: containerWidth,
           height: containerHeight,
           layout: {
-            backgroundColor: '#0a0e1a',
+            background: { color: '#0a0e1a' },
             textColor: '#d1d4dc',
           },
           grid: {
