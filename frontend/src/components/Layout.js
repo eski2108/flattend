@@ -100,10 +100,11 @@ export default function Layout({ children }) {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Force hide on mobile with inline style */}
       <aside 
         className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} 
         data-testid="sidebar"
+        style={typeof window !== 'undefined' && window.innerWidth <= 1024 && !isMobileMenuOpen ? { display: 'none' } : {}}
       >
           <div className="sidebar-header">
             <div className="sidebar-logo" data-testid="sidebar-logo">
