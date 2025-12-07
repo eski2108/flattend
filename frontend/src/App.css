@@ -1049,6 +1049,13 @@ html {
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
 }
 
+/* CRITICAL: Hide sidebar on mobile and tablet screens */
+@media (max-width: 1024px) {
+  .sidebar {
+    display: none !important;
+  }
+}
+
 .sidebar-header {
   padding: 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
