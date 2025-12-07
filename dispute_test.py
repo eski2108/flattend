@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://signupverify.preview.emergentagent.com/api"
+BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
 
 # Test Users for dispute
 DISPUTE_BUYER = {

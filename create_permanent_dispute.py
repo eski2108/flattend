@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 
 # Configuration
-BACKEND_URL = "https://signupverify.preview.emergentagent.com/api"
+BACKEND_URL = "https://marketview-36.preview.emergentagent.com/api"
 MONGO_URL = "mongodb://localhost:27017"
 DB_NAME = "coinhubx"
 
@@ -78,7 +78,7 @@ async def create_permanent_dispute():
                     print(f"🆔 FULL DISPUTE ID: {dispute_id}")
                     print(f"\n🌐 EXACT URLs FOR TESTING:")
                     print(f"   Localhost: http://localhost:3000/admin/disputes/{dispute_id}")
-                    print(f"   Frontend:  https://signupverify.preview.emergentagent.com/admin/disputes/{dispute_id}")
+                    print(f"   Frontend:  https://marketview-36.preview.emergentagent.com/admin/disputes/{dispute_id}")
                     print(f"\n📋 API ENDPOINT TO TEST:")
                     print(f"   GET {BACKEND_URL}/p2p/disputes/{dispute_id}")
                     

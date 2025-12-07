@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://signupverify.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://marketview-36.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

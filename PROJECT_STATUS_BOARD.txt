@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://signupverify.preview.emergentagent.com  │
-│ Backend API:    https://signupverify.preview.emergentagent.com/api│
+│ Frontend URL:   https://marketview-36.preview.emergentagent.com  │
+│ Backend API:    https://marketview-36.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘

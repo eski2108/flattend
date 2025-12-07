@@ -111,7 +111,7 @@ BTC: 0.12382175857852622
 
 ### API Endpoint Test
 ```bash
-$ curl https://signupverify.preview.emergentagent.com/api/portfolio/summary/USER_ID
+$ curl https://marketview-36.preview.emergentagent.com/api/portfolio/summary/USER_ID
 
 {
   "success": true,

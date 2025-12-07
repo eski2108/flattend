@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://signupverify.preview.emergentagent.com
+**URL:** https://marketview-36.preview.emergentagent.com
 
 **Services Status:**
 ```bash
