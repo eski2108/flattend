@@ -322,17 +322,84 @@ export default function SpotTradingPro() {
                 ))}
               </div>
             </div>
-            <div 
-              ref={chartContainerRef} 
-              style={{ 
-                width: '100%', 
-                height: '600px', 
-                borderRadius: '8px', 
-                overflow: 'hidden',
-                position: 'relative',
-                minHeight: '600px'
-              }} 
-            />
+            <div style={{ width: '100%', height: '600px' }}>
+              <ReactApexChart
+                options={{
+                  chart: {
+                    type: 'candlestick',
+                    height: 600,
+                    background: '#0a0e1a',
+                    toolbar: {
+                      show: true,
+                      tools: {
+                        download: true,
+                        zoom: true,
+                        zoomin: true,
+                        zoomout: true,
+                        pan: true,
+                        reset: true
+                      }
+                    }
+                  },
+                  theme: {
+                    mode: 'dark'
+                  },
+                  xaxis: {
+                    type: 'datetime',
+                    labels: {
+                      style: {
+                        colors: '#d1d4dc'
+                      }
+                    }
+                  },
+                  yaxis: {
+                    tooltip: {
+                      enabled: true
+                    },
+                    labels: {
+                      style: {
+                        colors: '#d1d4dc'
+                      },
+                      formatter: (value) => `£${value.toFixed(2)}`
+                    }
+                  },
+                  grid: {
+                    borderColor: 'rgba(42, 46, 57, 0.5)',
+                    strokeDashArray: 0,
+                    xaxis: {
+                      lines: {
+                        show: true
+                      }
+                    },
+                    yaxis: {
+                      lines: {
+                        show: true
+                      }
+                    }
+                  },
+                  plotOptions: {
+                    candlestick: {
+                      colors: {
+                        upward: '#22C55E',
+                        downward: '#EF4444'
+                      },
+                      wick: {
+                        useFillColor: true
+                      }
+                    }
+                  },
+                  tooltip: {
+                    theme: 'dark'
+                  }
+                }}
+                series={[{
+                  name: selectedPair?.symbol || 'BTC/GBP',
+                  data: chartData
+                }]}
+                type="candlestick"
+                height={600}
+              />
+            </div>
           </div>
 
           {/* Market Info */}
