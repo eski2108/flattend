@@ -618,6 +618,11 @@ export default function SpotTradingPro() {
 
           /* Mobile: stacked layout */
           @media screen and (max-width: 1024px) {
+            /* Hide trading pairs selector on mobile */
+            .trading-pairs-selector {
+              display: none !important;
+            }
+            
             /* Force stacked layout */
             .spot-trading-grid {
               display: flex !important;
