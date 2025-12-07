@@ -6,9 +6,8 @@ import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';;
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
-const API = 'https://coinhubx.net/api';
 
-// API already defined
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // Currency configuration
 const CURRENCIES = {
