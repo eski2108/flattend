@@ -88,28 +88,49 @@ export default function SpotTradingPro() {
 
         const chart = createChart(chartContainerRef.current, {
           width: chartContainerRef.current.clientWidth,
-          height: 500,
-          localization: {
-            locale: 'en-US',
-          },
+          height: 600,
           layout: {
-            backgroundColor: '#0a0e1a',
+            background: {
+              type: 'solid',
+              color: '#0a0e1a',
+            },
             textColor: '#888',
           },
           grid: {
-            vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
-            horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+            vertLines: {
+              color: 'rgba(42, 46, 57, 0.5)',
+            },
+            horzLines: {
+              color: 'rgba(42, 46, 57, 0.5)',
+            },
           },
           crosshair: {
             mode: 0,
+            vertLine: {
+              width: 1,
+              color: '#00F0FF',
+              style: 1,
+              labelBackgroundColor: '#00F0FF',
+            },
+            horzLine: {
+              color: '#00F0FF',
+              labelBackgroundColor: '#00F0FF',
+            },
           },
           rightPriceScale: {
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: 'rgba(197, 203, 206, 0.4)',
+            scaleMargins: {
+              top: 0.1,
+              bottom: 0.2,
+            },
           },
           timeScale: {
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: 'rgba(197, 203, 206, 0.4)',
             timeVisible: true,
             secondsVisible: false,
+          },
+          watermark: {
+            visible: false,
           },
         });
 
