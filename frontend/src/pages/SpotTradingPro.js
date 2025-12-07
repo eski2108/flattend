@@ -326,7 +326,8 @@ export default function SpotTradingPro() {
             background: '#020817',
             border: '1px solid #1c1f26',
             borderRadius: '8px',
-            padding: '16px'
+            padding: '16px',
+            order: window.innerWidth > 1024 ? 0 : 1
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ color: '#E5F2FF', fontSize: '18px', fontWeight: '700', margin: 0 }}>{selectedPair?.symbol || 'BTC/GBP'}</h3>
