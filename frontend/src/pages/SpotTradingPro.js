@@ -274,9 +274,7 @@ export default function SpotTradingPro() {
         </div>
 
         {/* Main 3-Column Grid */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: window.innerWidth > 1024 ? '280px 1fr 360px' : '1fr', 
+        <div className="spot-trading-grid" style={{ 
           gap: '16px',
           padding: '0 24px 24px',
           maxWidth: '1600px',
