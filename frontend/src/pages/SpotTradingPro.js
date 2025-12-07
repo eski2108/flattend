@@ -554,6 +554,13 @@ export default function SpotTradingPro() {
             flex-direction: column;
           }
 
+          /* Trading Pairs Selector Container */
+          .trading-pairs-selector {
+            padding: 0 24px 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+          }
+          
           /* Trading Pairs Button Selector */
           .pairs-button-container {
             display: grid;
