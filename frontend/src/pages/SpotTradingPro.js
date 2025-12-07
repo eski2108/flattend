@@ -110,6 +110,10 @@ export default function SpotTradingPro() {
     const base = selectedPair.base;
     const tvSymbol = symbolMap[base] || 'BINANCE:BTCUSDT';
     
+    // Detect mobile
+    const isMobile = window.innerWidth <= 1024;
+    const chartHeight = isMobile ? 500 : 600;
+    
     const loadTradingView = () => {
       if (window.TradingView) {
         initWidget();
@@ -131,8 +135,9 @@ export default function SpotTradingPro() {
       if (window.TradingView && container) {
         try {
           tvWidgetRef.current = new window.TradingView.widget({
-            width: '100%',
-            height: 600,
+            autosize: false,
+            width: container.offsetWidth || (isMobile ? 380 : 800),
+            height: chartHeight,
             symbol: tvSymbol,
             interval: timeframe,
             timezone: 'Etc/UTC',
@@ -148,7 +153,7 @@ export default function SpotTradingPro() {
               'MASimple@tv-basicstudies',
               'MACD@tv-basicstudies'
             ],
-            disabled_features: ['use_localstorage_for_settings'],
+            disabled_features: ['use_localstorage_for_settings', 'header_symbol_search'],
             enabled_features: ['study_templates'],
             overrides: {
               'mainSeriesProperties.candleStyle.upColor': '#00C176',
@@ -159,6 +164,7 @@ export default function SpotTradingPro() {
               'mainSeriesProperties.candleStyle.wickDownColor': '#FF4976',
             }
           });
+          console.log('✅ TradingView widget initialized for mobile:', isMobile, 'height:', chartHeight);
         } catch (error) {
           console.error('Error initializing TradingView:', error);
         }
