@@ -188,7 +188,7 @@ function App() {
             <Route path="/p2p-marketplace" element={<P2PMarketplace />} />
             <Route path="/disputes/:disputeId" element={<DisputeCentre />} />
             <Route path="/trading" element={<SpotTradingRebuild />} />
-            <Route path="/spot-trading" element={<SpotTradingRebuild />} />
+            <Route path="/spot-trading" element={<SpotTradingPro />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/swap-crypto" element={<SwapCrypto />} />
             <Route path="/swap/:coin" element={<SwapCrypto />} />
