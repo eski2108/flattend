@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { IoMail, IoLockClosed, IoEye, IoEyeOff, IoPerson, IoCall, IoCheckmarkCircle, IoShieldCheckmark } from 'react-icons/io5';
 import CHXButton from '@/components/CHXButton';
 
-const API_BASE = 'https://coinhubx.net/api';
+const API_BASE = process.env.REACT_APP_BACKEND_URL;
 
 export default function RegisterPageRebuild() {
   const navigate = useNavigate();

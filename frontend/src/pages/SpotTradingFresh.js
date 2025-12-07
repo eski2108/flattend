@@ -8,7 +8,7 @@ import { IoTrendingUp, IoTrendingDown, IoFlash, IoCheckmarkCircle } from 'react-
 import { HiChartBar, HiClock, HiCurrencyDollar } from 'react-icons/hi';
 
 // HARDCODED API URL - BYPASS ALL CACHE/ENV ISSUES
-const API_BASE = 'https://coinhubx.net/api';
+const API_BASE = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTradingFresh() {
   console.log('🚀 SpotTradingFresh component loaded! API_BASE:', API_BASE);

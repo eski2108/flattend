@@ -5,7 +5,7 @@ import { IoEye, IoEyeOff, IoLockClosed, IoMail, IoShield, IoCheckmarkCircle } fr
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function Login() {
   const { t } = useTranslation();

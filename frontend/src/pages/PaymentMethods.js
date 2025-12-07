@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 import { IoAdd, IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoClose, IoCreate } from 'react-icons/io5';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';;
 

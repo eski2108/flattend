@@ -19,7 +19,7 @@ import {
   IoSwapHorizontal
 } from 'react-icons/io5';
 
-const API = 'https://coinhubx.net/api';
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // Coin names mapping
 const COIN_NAMES = {
