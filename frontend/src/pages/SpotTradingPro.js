@@ -159,7 +159,7 @@ export default function SpotTradingPro() {
               'mainSeriesProperties.candleStyle.wickDownColor': '#FF4976',
             }
           });
-          console.log('✅ TradingView widget initialized for mobile:', isMobile, 'height:', chartHeight);
+          console.log('✅ TradingView widget initialized');
         } catch (error) {
           console.error('Error initializing TradingView:', error);
         }
