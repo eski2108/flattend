@@ -300,12 +300,13 @@ export default function SpotTradingPro() {
 
         {/* Main 3-Column Grid */}
         <div className="spot-trading-grid">
-          {/* Pairs List - Hidden on Mobile */}
-          <div className="pairs-list-panel">
-            <div style={{ padding: '16px', borderBottom: '1px solid #1c1f26' }}>
-              <h3 style={{ color: '#E5F2FF', fontSize: '16px', fontWeight: '700', margin: 0 }}>Trading Pairs</h3>
-            </div>
-            {tradingPairs.map(pair => (
+          {/* Pairs List - Only render on desktop (window width > 1024px) */}
+          {typeof window !== 'undefined' && window.innerWidth > 1024 && (
+            <div className="pairs-list-panel">
+              <div style={{ padding: '16px', borderBottom: '1px solid #1c1f26' }}>
+                <h3 style={{ color: '#E5F2FF', fontSize: '16px', fontWeight: '700', margin: 0 }}>Trading Pairs</h3>
+              </div>
+              {tradingPairs.map(pair => (
               <div
                 key={pair.symbol}
                 onClick={() => handlePairSelect(pair)}
