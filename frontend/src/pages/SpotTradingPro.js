@@ -244,52 +244,54 @@ export default function SpotTradingPro() {
           </div>
         </div>
 
-        {/* Market Info Cards - Hidden on mobile */}
-        <div className="market-info-cards" style={{ 
-          display: isDesktop ? 'grid' : 'none', 
-          gridTemplateColumns: 'repeat(4, 1fr)', 
-          gap: '16px', 
-          padding: '24px',
-          maxWidth: '1600px',
-          margin: '0 auto'
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(0,193,118,0.05))',
-            border: '1px solid #1c1f26',
-            borderRadius: '8px',
-            padding: '20px'
+        {/* Market Info Cards - Only render on desktop */}
+        {isDesktop && (
+          <div className="market-info-cards" style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
+            gap: '16px', 
+            padding: '24px',
+            maxWidth: '1600px',
+            margin: '0 auto'
           }}>
-            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>LAST PRICE</p>
-            <p style={{ color: '#00E1FF', fontSize: '28px', fontWeight: '700' }}>£{marketStats.lastPrice.toFixed(2)}</p>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(0,193,118,0.05))',
+              border: '1px solid #1c1f26',
+              borderRadius: '8px',
+              padding: '20px'
+            }}>
+              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>LAST PRICE</p>
+              <p style={{ color: '#00E1FF', fontSize: '28px', fontWeight: '700' }}>£{marketStats.lastPrice.toFixed(2)}</p>
+            </div>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(255,73,118,0.05), rgba(220,38,38,0.05))',
+              border: '1px solid #1c1f26',
+              borderRadius: '8px',
+              padding: '20px'
+            }}>
+              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H HIGH</p>
+              <p style={{ color: '#FF4976', fontSize: '28px', fontWeight: '700' }}>£{marketStats.high24h.toFixed(2)}</p>
+            </div>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(0,193,118,0.05), rgba(22,163,74,0.05))',
+              border: '1px solid #1c1f26',
+              borderRadius: '8px',
+              padding: '20px'
+            }}>
+              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H LOW</p>
+              <p style={{ color: '#00C176', fontSize: '28px', fontWeight: '700' }}>£{marketStats.low24h.toFixed(2)}</p>
+            </div>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(139,92,246,0.05))',
+              border: '1px solid #1c1f26',
+              borderRadius: '8px',
+              padding: '20px'
+            }}>
+              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H VOLUME</p>
+              <p style={{ color: '#E5F2FF', fontSize: '28px', fontWeight: '700' }}>{marketStats.volume24h.toFixed(2)}</p>
+            </div>
           </div>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(255,73,118,0.05), rgba(220,38,38,0.05))',
-            border: '1px solid #1c1f26',
-            borderRadius: '8px',
-            padding: '20px'
-          }}>
-            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H HIGH</p>
-            <p style={{ color: '#FF4976', fontSize: '28px', fontWeight: '700' }}>£{marketStats.high24h.toFixed(2)}</p>
-          </div>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(0,193,118,0.05), rgba(22,163,74,0.05))',
-            border: '1px solid #1c1f26',
-            borderRadius: '8px',
-            padding: '20px'
-          }}>
-            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H LOW</p>
-            <p style={{ color: '#00C176', fontSize: '28px', fontWeight: '700' }}>£{marketStats.low24h.toFixed(2)}</p>
-          </div>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(139,92,246,0.05))',
-            border: '1px solid #1c1f26',
-            borderRadius: '8px',
-            padding: '20px'
-          }}>
-            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H VOLUME</p>
-            <p style={{ color: '#E5F2FF', fontSize: '28px', fontWeight: '700' }}>{marketStats.volume24h.toFixed(2)}</p>
-          </div>
-        </div>
+        )}
 
         {/* Trading Pairs Selection Buttons - Hidden on mobile with inline style */}
         <div className="trading-pairs-selector" style={{ display: isDesktop ? 'block' : 'none' }}>
