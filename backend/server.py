@@ -10947,9 +10947,9 @@ async def get_trading_pairs(request: Request, response: Response):
             coin_price_gbp = 0
             try:
                 # Get price from market data (same as instant buy uses)
-                market_prices = await get_live_prices()
+                market_prices = await fetch_live_prices()
                 if base in market_prices:
-                    coin_price_gbp = market_prices[base]
+                    coin_price_gbp = market_prices[base].get("gbp", 0)
                 else:
                     coin_price_gbp = 0
             except Exception as e:
