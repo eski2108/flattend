@@ -1185,9 +1185,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Trading System - Liquidity Protection with MongoDB Transactions"
-    - "Trading System - Admin Liquidity Management Endpoints"
-    - "Platform Settings - Trading Markup/Markdown Configuration"
+    - "SPOT TRADING PAGE Testing (Priority: HIGHEST)"
+    - "REGISTRATION FLOW WITH PHONE VERIFICATION Testing (Priority: HIGH)"
+    - "LOGIN FLOW Testing (Priority: HIGH)"
+    - "SETTINGS PAGE Testing (Priority: CRITICAL - COMPLETELY UNTESTED)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
