@@ -346,7 +346,8 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        <PriceTickerEnhanced />
+        {/* Hide price ticker on trading page (it has its own ticker) */}
+        {location.pathname !== '/trading' && location.pathname !== '/spot-trading' && <PriceTickerEnhanced />}
         
         <PromoBanner />
         
