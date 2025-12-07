@@ -623,6 +623,11 @@ export default function SpotTradingPro() {
 
           /* Mobile: stacked layout */
           @media screen and (max-width: 1024px) {
+            /* Hide market info cards on mobile to save space */
+            .market-info-cards {
+              display: none !important;
+            }
+            
             /* CRITICAL: Hide trading pairs selector completely on mobile */
             .trading-pairs-selector {
               display: none !important;
