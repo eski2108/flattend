@@ -638,19 +638,21 @@ export default function SpotTradingPro() {
 
           /* Mobile: stacked layout */
           @media screen and (max-width: 1024px) {
-            /* Hide market info cards on mobile to save space */
-            .market-info-cards {
-              display: none !important;
-            }
-            
-            /* CRITICAL: Hide trading pairs selector completely on mobile */
-            .trading-pairs-selector {
+            /* NUCLEAR OPTION: Hide all potential sources on mobile */
+            .market-info-cards,
+            .trading-pairs-selector,
+            .pairs-list-panel,
+            .pair-button,
+            .pairs-button-container {
               display: none !important;
               visibility: hidden !important;
               opacity: 0 !important;
               height: 0 !important;
+              width: 0 !important;
               overflow: hidden !important;
               pointer-events: none !important;
+              position: absolute !important;
+              left: -9999px !important;
             }
             
             /* Force stacked layout */
