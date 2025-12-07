@@ -187,11 +187,22 @@ export default function SpotTradingPro() {
               color: d.close >= d.open ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'
             }));
             volumeSeries.setData(volumeData);
+
+            // Calculate and add Moving Averages
+            const ma20Data = calculateMA(ohlcvData, 20);
+            const ma50Data = calculateMA(ohlcvData, 50);
+            ma20Series.setData(ma20Data);
+            ma50Series.setData(ma50Data);
           } else {
             // Fallback to generated data if API fails
             const data = generateChartData(selectedPair.price || 47500);
             candlestickSeries.setData(data.candles);
             volumeSeries.setData(data.volumes);
+            
+            const ma20Data = calculateMA(data.candles, 20);
+            const ma50Data = calculateMA(data.candles, 50);
+            ma20Series.setData(ma20Data);
+            ma50Series.setData(ma50Data);
           }
         } catch (error) {
           console.error('Error fetching OHLCV data:', error);
@@ -199,6 +210,11 @@ export default function SpotTradingPro() {
           const data = generateChartData(selectedPair.price || 47500);
           candlestickSeries.setData(data.candles);
           volumeSeries.setData(data.volumes);
+          
+          const ma20Data = calculateMA(data.candles, 20);
+          const ma50Data = calculateMA(data.candles, 50);
+          ma20Series.setData(ma20Data);
+          ma50Series.setData(ma50Data);
         }
 
         chart.timeScale().fitContent();
