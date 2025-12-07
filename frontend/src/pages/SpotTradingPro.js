@@ -79,68 +79,120 @@ export default function SpotTradingPro() {
   useEffect(() => {
     if (!chartContainerRef.current || !selectedPair) return;
 
-    // Clear existing chart
-    if (chartRef.current) {
-      chartRef.current.remove();
-    }
+    const initChart = async () => {
+      try {
+        // Clear existing chart
+        if (chartRef.current) {
+          chartRef.current.remove();
+        }
 
-    const chart = LightweightCharts.createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
-      height: 500,
-      layout: {
-        background: { color: '#0a0e1a' },
-        textColor: '#888',
-      },
-      grid: {
-        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
-        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
-      },
-      crosshair: {
-        mode: 0,
-        vertLine: { color: '#00F0FF', width: 1, style: 2 },
-        horzLine: { color: '#00F0FF', width: 1, style: 2 },
-      },
-      rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.1)' },
-      timeScale: { borderColor: 'rgba(255, 255, 255, 0.1)', timeVisible: true },
-    });
-
-    // Candlestick series (v5 API)
-    const candlestickSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
-      upColor: '#22C55E',
-      downColor: '#EF4444',
-      borderUpColor: '#22C55E',
-      borderDownColor: '#EF4444',
-      wickUpColor: '#22C55E',
-      wickDownColor: '#EF4444',
-    });
-
-    // Volume series (v5 API)
-    const volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, {
-      color: '#26a69a',
-      priceFormat: { type: 'volume' },
-      priceScaleId: '',
-    });
-
-    // Generate sample data
-    const data = generateChartData(selectedPair.price || 47500);
-    candlestickSeries.setData(data.candles);
-    volumeSeries.setData(data.volumes);
-
-    chartRef.current = chart;
-
-    // Handle resize
-    const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({
+        const chart = LightweightCharts.createChart(chartContainerRef.current, {
           width: chartContainerRef.current.clientWidth,
+          height: 500,
+          layout: {
+            background: { type: 'solid', color: '#0a0e1a' },
+            textColor: '#888',
+          },
+          grid: {
+            vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+            horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+          },
+          crosshair: {
+            mode: LightweightCharts.CrosshairMode.Normal,
+          },
+          rightPriceScale: {
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+          },
+          timeScale: {
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            timeVisible: true,
+            secondsVisible: false,
+          },
         });
+
+        // Add candlestick series
+        const candlestickSeries = chart.addCandlestickSeries({
+          upColor: '#22C55E',
+          downColor: '#EF4444',
+          borderUpColor: '#22C55E',
+          borderDownColor: '#EF4444',
+          wickUpColor: '#22C55E',
+          wickDownColor: '#EF4444',
+        });
+
+        // Add volume series
+        const volumeSeries = chart.addHistogramSeries({
+          color: '#26a69a',
+          priceFormat: {
+            type: 'volume',
+          },
+          priceScaleId: '',
+          scaleMargins: {
+            top: 0.8,
+            bottom: 0,
+          },
+        });
+
+        // Fetch OHLCV data from backend
+        const pairSymbol = selectedPair.symbol.replace('/', '');
+        try {
+          const response = await axios.get(`${API}/api/trading/ohlcv/${pairSymbol}`, {
+            params: { interval: timeframe, limit: 100 }
+          });
+          
+          if (response.data.success && response.data.data) {
+            const ohlcvData = response.data.data;
+            candlestickSeries.setData(ohlcvData);
+            
+            const volumeData = ohlcvData.map(d => ({
+              time: d.time,
+              value: d.volume,
+              color: d.close >= d.open ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'
+            }));
+            volumeSeries.setData(volumeData);
+          } else {
+            // Fallback to generated data if API fails
+            const data = generateChartData(selectedPair.price || 47500);
+            candlestickSeries.setData(data.candles);
+            volumeSeries.setData(data.volumes);
+          }
+        } catch (error) {
+          console.error('Error fetching OHLCV data:', error);
+          // Fallback to generated data
+          const data = generateChartData(selectedPair.price || 47500);
+          candlestickSeries.setData(data.candles);
+          volumeSeries.setData(data.volumes);
+        }
+
+        chart.timeScale().fitContent();
+        chartRef.current = chart;
+
+        // Handle resize
+        const handleResize = () => {
+          if (chartContainerRef.current && chartRef.current) {
+            chartRef.current.applyOptions({
+              width: chartContainerRef.current.clientWidth,
+            });
+          }
+        };
+
+        window.addEventListener('resize', handleResize);
+        
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      } catch (error) {
+        console.error('Chart initialization error:', error);
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    initChart();
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      if (chartRef.current) chartRef.current.remove();
+      if (chartRef.current) {
+        chartRef.current.remove();
+        chartRef.current = null;
+      }
     };
   }, [selectedPair, timeframe]);
 
