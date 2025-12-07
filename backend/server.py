@@ -27664,15 +27664,16 @@ async def delete_payment_method(method_id: str, user_id: str):
 async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
     """
     Get OHLCV (candlestick) data for a trading pair
+    pair format: BTCGBP, ETHGBP, ADAUSDT, etc.
     interval: 1m, 5m, 15m, 1h, 4h, 1d
     """
     try:
-        # Parse pair
-        parts = pair.split("/")
-        if len(parts) != 2:
-            raise HTTPException(status_code=400, detail="Invalid pair format. Use BASE/QUOTE")
-        
-        base, quote = parts
+        # Parse pair (e.g., BTCGBP -> BTC/GBP)
+        if len(pair) >= 6:
+            base = pair[:3]
+            quote = pair[3:]
+        else:
+            raise HTTPException(status_code=400, detail="Invalid pair format")
         
         # Get current price
         market_prices = await get_live_prices()
