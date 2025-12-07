@@ -190,6 +190,7 @@ export default function SpotTradingPro() {
           try {
             candlestickSeries.setData(ohlcvData);
             console.log('✅ Candlestick data set successfully');
+            console.log('Data sample:', ohlcvData.slice(0, 3));
           } catch (err) {
             console.error('❌ Error setting candlestick data:', err);
             throw err;
@@ -208,9 +209,22 @@ export default function SpotTradingPro() {
             console.error('❌ Error setting volume data:', err);
           }
           
-          // Fit content
+          // Fit content and scroll to the end
           chart.timeScale().fitContent();
-          console.log('✅ Chart content fitted');
+          chart.timeScale().scrollToPosition(0, false);
+          console.log('✅ Chart content fitted and scrolled');
+          
+          // Force a resize to ensure proper rendering
+          setTimeout(() => {
+            if (chart) {
+              chart.applyOptions({ 
+                width: chartContainerRef.current.offsetWidth,
+                height: 600 
+              });
+              chart.timeScale().fitContent();
+              console.log('✅ Chart resized and refitted');
+            }
+          }, 100);
         } else {
           console.error('❌ No valid OHLCV data received');
         }
