@@ -73,38 +73,103 @@ export default function SpotTradingPro() {
     });
   };
 
-  // Fetch chart data
+  // Initialize TradingView widget
   useEffect(() => {
     if (!selectedPair) return;
     
-    const fetchChartData = async () => {
-      try {
-        const pairSymbol = selectedPair.symbol.replace('/', '');
-        console.log('📊 Fetching OHLCV for:', pairSymbol);
-        
-        const response = await axios.get(`${API}/api/trading/ohlcv/${pairSymbol}`, {
-          params: { interval: timeframe, limit: 100 }
-        });
-        
-        if (response.data.success && response.data.data) {
-          const ohlcvData = response.data.data;
-          console.log('📈 Received', ohlcvData.length, 'candles');
-          
-          // Convert to ApexCharts format
-          const formattedData = ohlcvData.map(d => ({
-            x: new Date(d.time * 1000),
-            y: [d.open, d.high, d.low, d.close]
-          }));
-          
-          setChartData(formattedData);
-          console.log('✅ Chart data set');
-        }
-      } catch (error) {
-        console.error('Error fetching chart data:', error);
+    // Map our crypto symbols to TradingView symbols
+    const symbolMap = {
+      'BTC': 'BINANCE:BTCUSDT',
+      'ETH': 'BINANCE:ETHUSDT',
+      'ADA': 'BINANCE:ADAUSDT',
+      'SOL': 'BINANCE:SOLUSDT',
+      'XRP': 'BINANCE:XRPUSDT',
+      'DOGE': 'BINANCE:DOGEUSDT',
+      'DOT': 'BINANCE:DOTUSDT',
+      'MATIC': 'BINANCE:MATICUSDT',
+      'SHIB': 'BINANCE:SHIBUSDT',
+      'LTC': 'BINANCE:LTCUSDT',
+      'BCH': 'BINANCE:BCHUSDT',
+      'LINK': 'BINANCE:LINKUSDT',
+      'UNI': 'BINANCE:UNIUSDT',
+      'ATOM': 'BINANCE:ATOMUSDT',
+      'ETC': 'BINANCE:ETCUSDT',
+      'XLM': 'BINANCE:XLMUSDT',
+      'AVAX': 'BINANCE:AVAXUSDT',
+      'TRX': 'BINANCE:TRXUSDT',
+      'BNB': 'BINANCE:BNBUSDT'
+    };
+    
+    const base = selectedPair.base;
+    const tvSymbol = symbolMap[base] || 'BINANCE:BTCUSDT';
+    
+    console.log('🔵 Initializing TradingView widget for', tvSymbol);
+    
+    // Load TradingView script if not already loaded
+    const loadTradingView = () => {
+      if (window.TradingView) {
+        initWidget();
+      } else {
+        const script = document.createElement('script');
+        script.src = 'https://s3.tradingview.com/tv.js';
+        script.async = true;
+        script.onload = initWidget;
+        document.head.appendChild(script);
       }
     };
     
-    fetchChartData();
+    const initWidget = () => {
+      // Clear previous widget
+      const container = document.getElementById('tv_chart_container');
+      if (container) {
+        container.innerHTML = '';
+      }
+      
+      if (window.TradingView && container) {
+        try {
+          tvWidgetRef.current = new window.TradingView.widget({
+            width: '100%',
+            height: 600,
+            symbol: tvSymbol,
+            interval: timeframe,
+            timezone: 'Etc/UTC',
+            theme: 'dark',
+            style: '1',
+            locale: 'en',
+            toolbar_bg: '#0a0e1a',
+            enable_publishing: false,
+            allow_symbol_change: true,
+            container_id: 'tv_chart_container',
+            studies: [
+              'RSI@tv-basicstudies',
+              'MASimple@tv-basicstudies',
+              'MACD@tv-basicstudies'
+            ],
+            disabled_features: ['use_localstorage_for_settings'],
+            enabled_features: ['study_templates'],
+            overrides: {
+              'mainSeriesProperties.candleStyle.upColor': '#22C55E',
+              'mainSeriesProperties.candleStyle.downColor': '#EF4444',
+              'mainSeriesProperties.candleStyle.borderUpColor': '#22C55E',
+              'mainSeriesProperties.candleStyle.borderDownColor': '#EF4444',
+              'mainSeriesProperties.candleStyle.wickUpColor': '#22C55E',
+              'mainSeriesProperties.candleStyle.wickDownColor': '#EF4444',
+            }
+          });
+          console.log('✅ TradingView widget initialized');
+        } catch (error) {
+          console.error('❌ Error initializing TradingView widget:', error);
+        }
+      }
+    };
+    
+    loadTradingView();
+    
+    return () => {
+      if (tvWidgetRef.current && tvWidgetRef.current.remove) {
+        tvWidgetRef.current.remove();
+      }
+    };
   }, [selectedPair, timeframe]);
 
   const calculateMA = (data, period) => {
