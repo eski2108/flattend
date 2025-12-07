@@ -108,8 +108,8 @@ export default function SpotTradingPro() {
           width: containerWidth,
           height: containerHeight,
           layout: {
-            background: '#0a0e1a',
-            textColor: '#d1d4dc',
+            background: '#ffffff',
+            textColor: '#000000',
           },
           grid: {
             vertLines: {
