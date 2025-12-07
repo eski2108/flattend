@@ -98,7 +98,7 @@ export default function SpotTradingPro() {
             horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
           },
           crosshair: {
-            mode: LightweightCharts.CrosshairMode.Normal,
+            mode: 0,
           },
           rightPriceScale: {
             borderColor: 'rgba(255, 255, 255, 0.1)',
