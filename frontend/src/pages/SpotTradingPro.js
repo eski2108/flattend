@@ -27,7 +27,14 @@ export default function SpotTradingPro() {
     change24h: 0
   });
 
-  const timeframes = ['1m', '5m', '15m', '1h', '4h', '1d'];
+  const timeframes = [
+    { label: '1m', value: '1' },
+    { label: '5m', value: '5' },
+    { label: '15m', value: '15' },
+    { label: '1h', value: '60' },
+    { label: '4h', value: '240' },
+    { label: '1d', value: 'D' }
+  ];
 
   // Load user
   useEffect(() => {
