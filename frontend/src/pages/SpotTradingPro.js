@@ -140,7 +140,7 @@ export default function SpotTradingPro() {
 
         console.log('✅ Chart object created');
 
-        // Add candlestick series
+        // Add candlestick series with explicit visibility
         const candlestickSeries = chart.addCandlestickSeries({
           upColor: '#22C55E',
           downColor: '#EF4444',
@@ -148,6 +148,11 @@ export default function SpotTradingPro() {
           borderDownColor: '#EF4444',
           wickUpColor: '#22C55E',
           wickDownColor: '#EF4444',
+          priceFormat: {
+            type: 'price',
+            precision: 2,
+            minMove: 0.01,
+          },
         });
 
         console.log('✅ Candlestick series added');
