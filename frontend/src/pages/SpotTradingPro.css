@@ -1,3 +1,27 @@
+/**
+ * 🔒 LOCKED FILE - DO NOT MODIFY WITHOUT EXPLICIT APPROVAL 🔒
+ * 
+ * File: SpotTradingPro.css
+ * Purpose: Styles for Spot Trading page including mobile responsive layout
+ * Lock Date: December 7, 2024
+ * Version: v1.0-LOCKED-PERMANENT
+ * 
+ * PROTECTED ELEMENTS:
+ * - Desktop grid layout (.spot-trading-grid)
+ * - Mobile media queries (@media max-width: 1024px)
+ * - Trading pair button styles (.pair-button)
+ * - Chart panel styles (.chart-panel)
+ * - Buy/Sell panel styles (.buysell-panel)
+ * 
+ * NEVER MODIFY:
+ * - Grid template columns
+ * - Mobile breakpoint (1024px)
+ * - Display properties for responsive behavior
+ * - Sidebar hide rules on mobile
+ * 
+ * See /app/LOCKED_BUILD.md for complete documentation
+ */
+
 /* Desktop grid layout */
 .spot-trading-grid {
   display: grid;
