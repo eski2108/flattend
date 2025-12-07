@@ -640,6 +640,21 @@ export default function SpotTradingPro() {
 
           /* Mobile: stacked layout */
           @media screen and (max-width: 1024px) {
+            /* Hide the PriceTickerEnhanced from Layout on mobile - it causes duplicate labels */
+            .rfm-marquee,
+            .rfm-marquee-container,
+            .rfm-child {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              height: 0 !important;
+              width: 0 !important;
+              overflow: hidden !important;
+              pointer-events: none !important;
+              position: absolute !important;
+              left: -9999px !important;
+            }
+            
             /* NUCLEAR OPTION: Hide all potential sources on mobile */
             .market-info-cards,
             .trading-pairs-selector,
