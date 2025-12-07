@@ -441,7 +441,17 @@ export default function SpotTradingPro() {
                 ))}
               </div>
             </div>
-            <div ref={chartContainerRef} style={{ borderRadius: '8px', overflow: 'hidden', width: '100%', height: '600px', background: '#0a0e1a' }} />
+            <div 
+              ref={chartContainerRef} 
+              style={{ 
+                width: '100%', 
+                height: '600px', 
+                borderRadius: '8px', 
+                overflow: 'hidden',
+                position: 'relative',
+                minHeight: '600px'
+              }} 
+            />
           </div>
 
           {/* Market Info */}
