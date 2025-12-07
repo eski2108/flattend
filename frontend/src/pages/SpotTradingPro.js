@@ -291,8 +291,8 @@ export default function SpotTradingPro() {
           </div>
         </div>
 
-        {/* Trading Pairs Selection Buttons - Only show on desktop (window width > 1024px) */}
-        {typeof window !== 'undefined' && window.innerWidth > 1024 && (
+        {/* Trading Pairs Selection Buttons - Only show on desktop */}
+        {isDesktop && (
           <div className="trading-pairs-selector">
             <div className="pairs-button-container">
               {tradingPairs.map(pair => (
