@@ -293,21 +293,23 @@ export default function SpotTradingPro() {
           </div>
         )}
 
-        {/* Trading Pairs Selection Buttons - Hidden on mobile with inline style */}
-        <div className="trading-pairs-selector" style={{ display: isDesktop ? 'block' : 'none' }}>
-          <div className="pairs-button-container">
-            {tradingPairs.map(pair => (
-              <button
-                key={pair.symbol}
-                onClick={() => handlePairSelect(pair)}
-                className={`pair-button ${selectedPair?.symbol === pair.symbol ? 'active' : ''}`}
-              >
-                <span className="pair-symbol">{pair.base}/USD</span>
-                <span className="pair-price">${pair.price?.toFixed(2) || '0.00'}</span>
-              </button>
-            ))}
+        {/* Trading Pairs Selection Buttons - Only render on desktop */}
+        {isDesktop && (
+          <div className="trading-pairs-selector">
+            <div className="pairs-button-container">
+              {tradingPairs.map(pair => (
+                <button
+                  key={pair.symbol}
+                  onClick={() => handlePairSelect(pair)}
+                  className={`pair-button ${selectedPair?.symbol === pair.symbol ? 'active' : ''}`}
+                >
+                  <span className="pair-symbol">{pair.base}/USD</span>
+                  <span className="pair-price">${pair.price?.toFixed(2) || '0.00'}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main 3-Column Grid */}
         <div className="spot-trading-grid">
