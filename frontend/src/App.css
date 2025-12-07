@@ -3981,7 +3981,7 @@ html {
 }
 
 /* Responsive Styles */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .mobile-header {
     display: block;
   }
@@ -4001,7 +4001,7 @@ html {
   }
 
   .sidebar {
-    transform: translateX(-100%);
+    transform: translateX(-100%) !important;
     z-index: 1000;
   }
 
