@@ -46,7 +46,7 @@ db.users.insertOne({
 
 ### Backend API Test (Direct):
 ```bash
-curl -X POST "https://marketview-36.preview.emergentagent.com/api/p2p/express/create"
+curl -X POST "https://protrading.preview.emergentagent.com/api/p2p/express/create"
 
 Response:
 {

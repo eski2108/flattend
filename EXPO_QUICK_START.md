@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://marketview-36.preview.emergentagent.com/api
+https://protrading.preview.emergentagent.com/api
 ```
 
 This means:

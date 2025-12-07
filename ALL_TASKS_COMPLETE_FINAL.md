@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://marketview-36.preview.emergentagent.com
+**URL:** https://protrading.preview.emergentagent.com
 
 **Services Status:**
 ```bash

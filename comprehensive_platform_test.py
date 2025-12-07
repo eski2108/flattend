@@ -68,7 +68,7 @@ Tests EVERY major feature of Coin Hub X platform to achieve 100% success rate as
    - Data consistency across devices
    - Real-time balance updates
 
-**Backend URL:** https://marketview-36.preview.emergentagent.com/api
+**Backend URL:** https://protrading.preview.emergentagent.com/api
 """
 
 import requests
@@ -79,7 +79,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
+BASE_URL = "https://protrading.preview.emergentagent.com/api"
 
 class ComprehensivePlatformTester:
     def __init__(self):
