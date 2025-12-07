@@ -612,6 +612,7 @@ export default function SpotTradingPro() {
 
           /* Mobile: stacked layout */
           @media screen and (max-width: 1024px) {
+            /* Force stacked layout */
             .spot-trading-grid {
               display: flex !important;
               flex-direction: column !important;
@@ -619,11 +620,15 @@ export default function SpotTradingPro() {
               gap: 16px !important;
             }
             
-            /* CRITICAL: Hide pairs list on mobile */
-            div.pairs-list-panel,
-            .pairs-list-panel,
-            .spot-trading-grid > div:first-child {
+            /* CRITICAL: Hide pairs list on mobile - multiple selectors for certainty */
+            .pairs-list-panel {
               display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              width: 0 !important;
+              height: 0 !important;
+              overflow: hidden !important;
+              pointer-events: none !important;
             }
             
             .chart-panel {
@@ -637,6 +642,7 @@ export default function SpotTradingPro() {
             .buysell-panel {
               order: 2 !important;
               height: auto !important;
+              min-height: 400px !important;
               width: 100% !important;
               box-sizing: border-box !important;
             }
@@ -647,7 +653,7 @@ export default function SpotTradingPro() {
               width: 100% !important;
             }
 
-            /* Mobile Trading Pairs */
+            /* Mobile Trading Pairs Selector */
             .trading-pairs-selector {
               padding: 0 12px 16px !important;
             }
@@ -679,6 +685,11 @@ export default function SpotTradingPro() {
               height: 44px !important;
               flex-shrink: 0 !important;
               scroll-snap-align: start !important;
+            }
+
+            /* Mobile Market Info Cards - 2 columns */
+            div[style*="grid-template-columns: repeat(4, 1fr)"] {
+              grid-template-columns: repeat(2, 1fr) !important;
             }
           }
         `}</style>
