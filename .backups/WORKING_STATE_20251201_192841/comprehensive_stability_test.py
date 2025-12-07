@@ -9,7 +9,7 @@ Tests ALL backend functionality as specified in review request:
 3. Payment Flow Verification (deposits, withdrawals, P2P fees, referral commissions)
 4. Existing Features Stability (P2P marketplace, wallet management, support chat, admin panel)
 
-**Backend URL:** https://signupverify.preview.emergentagent.com/api
+**Backend URL:** https://marketview-36.preview.emergentagent.com/api
 """
 
 import requests
@@ -20,7 +20,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://signupverify.preview.emergentagent.com/api"
+BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
 
 # Test User as requested in review
 TEST_USER = {

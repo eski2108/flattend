@@ -46,7 +46,7 @@ Referrals:    0  (no test data)
 ### ✅ Fixed 30 Files
 
 **Removed ALL hardcoded URLs:**
-- ❌ `https://signupverify.preview.emergentagent.com`
+- ❌ `https://marketview-36.preview.emergentagent.com`
 - ❌ `http://localhost:8001`
 - ❌ Any other hardcoded references
 

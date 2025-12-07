@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://signupverify.preview.emergentagent.com/api"
+BASE_URL = "https://marketview-36.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

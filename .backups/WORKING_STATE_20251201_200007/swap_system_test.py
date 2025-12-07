@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://signupverify.preview.emergentagent.com"
+BACKEND_URL = "https://marketview-36.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test data
