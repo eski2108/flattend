@@ -373,21 +373,21 @@ export default function SpotTradingPro() {
               <div style={{ display: 'flex', gap: '8px' }}>
                 {timeframes.map(tf => (
                   <button
-                    key={tf}
-                    onClick={() => setTimeframe(tf)}
+                    key={tf.value}
+                    onClick={() => setTimeframe(tf.value)}
                     style={{
                       padding: '6px 12px',
-                      background: timeframe === tf ? 'rgba(0,240,255,0.2)' : 'rgba(255,255,255,0.05)',
-                      border: `1px solid ${timeframe === tf ? '#00F0FF' : 'rgba(255,255,255,0.1)'}`,
+                      background: timeframe === tf.value ? 'rgba(0,240,255,0.2)' : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${timeframe === tf.value ? '#00F0FF' : 'rgba(255,255,255,0.1)'}`,
                       borderRadius: '6px',
-                      color: timeframe === tf ? '#00F0FF' : '#888',
+                      color: timeframe === tf.value ? '#00F0FF' : '#888',
                       fontSize: '12px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       transition: 'all 0.3s'
                     }}
                   >
-                    {tf}
+                    {tf.label}
                   </button>
                 ))}
               </div>
