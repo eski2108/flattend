@@ -370,9 +370,10 @@ export default function SpotTradingPro() {
             background: '#020817',
             border: '1px solid #1c1f26',
             borderRadius: '8px',
-            height: '600px',
+            height: window.innerWidth > 1024 ? '600px' : 'auto',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            order: window.innerWidth > 1024 ? 0 : 2
           }}>
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid #1c1f26' }}>
