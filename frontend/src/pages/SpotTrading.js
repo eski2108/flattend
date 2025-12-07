@@ -89,7 +89,7 @@ export default function SpotTrading() {
     }
 
     // Create chart (v5 API)
-    const chart = LightweightCharts.createChart(chartContainerRef.current, {
+    const chart = createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
       height: 400,
       layout: {
@@ -126,7 +126,7 @@ export default function SpotTrading() {
     });
 
     // Add candlestick series (v5 API)
-    const candlestickSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
+    const candlestickSeries = chart.addSeries("Candlestick", {
       upColor: '#22C55E',
       downColor: '#EF4444',
       borderUpColor: '#22C55E',
@@ -136,7 +136,7 @@ export default function SpotTrading() {
     });
 
     // Add volume series (v5 API)
-    const volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, {
+    const volumeSeries = chart.addSeries("Histogram", {
       color: '#26a69a',
       priceFormat: {
         type: 'volume',
