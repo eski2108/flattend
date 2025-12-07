@@ -153,19 +153,20 @@ export default function SpotTradingPro() {
     for (let i = 100; i >= 0; i--) {
       const time = now - (i * interval);
       const randomChange = (Math.random() - 0.5) * 0.02;
-      const open = basePrice * (1 + randomChange);
-      const close = open * (1 + (Math.random() - 0.5) * 0.01);
-      const high = Math.max(open, close) * (1 + Math.random() * 0.005);
-      const low = Math.min(open, close) * (1 - Math.random() * 0.005);
+      const open = parseFloat((basePrice * (1 + randomChange)).toFixed(2));
+      const close = parseFloat((open * (1 + (Math.random() - 0.5) * 0.01)).toFixed(2));
+      const high = parseFloat((Math.max(open, close) * (1 + Math.random() * 0.005)).toFixed(2));
+      const low = parseFloat((Math.min(open, close) * (1 - Math.random() * 0.005)).toFixed(2));
 
       candles.push({ time, open, high, low, close });
       volumes.push({
         time,
-        value: Math.random() * 100,
+        value: parseFloat((Math.random() * 100).toFixed(2)),
         color: close >= open ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'
       });
     }
 
+    console.log('Generated chart data:', { candles: candles.length, sample: candles[0] });
     return { candles, volumes };
   };
 
