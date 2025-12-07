@@ -360,14 +360,12 @@ export default function SpotTradingPro() {
           </div>
 
           {/* Buy/Sell Panel */}
-          <div style={{
+          <div className="buysell-panel" style={{
             background: '#020817',
             border: '1px solid #1c1f26',
             borderRadius: '8px',
-            height: window.innerWidth > 1024 ? '600px' : 'auto',
             display: 'flex',
-            flexDirection: 'column',
-            order: window.innerWidth > 1024 ? 0 : 2
+            flexDirection: 'column'
           }}>
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid #1c1f26' }}>
