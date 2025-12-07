@@ -11006,6 +11006,33 @@ async def get_trading_pairs(request: Request, response: Response):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+"""
+🔒 LOCKED SECTION - SPOT TRADING ENDPOINTS - DO NOT MODIFY 🔒
+
+Lock Date: December 7, 2024
+Version: v1.0-LOCKED-PERMANENT
+
+PROTECTED ENDPOINTS:
+- POST /api/trading/order/buy (line 11022)
+- POST /api/trading/order/sell (line 11117)
+
+PROTECTED LOGIC:
+- 0.5% trading fee calculation (NEVER CHANGE THIS PERCENTAGE)
+- Balance checking and updates
+- Admin wallet fee crediting
+- Trade recording in spot_trades collection
+- user_balances collection updates
+
+NEVER MODIFY:
+- Fee percentage (0.005)
+- Database collection names
+- Balance update sequence
+- Admin wallet crediting logic
+- Error handling flow
+
+See /app/LOCKED_BUILD.md for complete documentation
+"""
+
 # Spot Trading Order Endpoints
 class SpotTradeOrder(BaseModel):
     user_id: str
