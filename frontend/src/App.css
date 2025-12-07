@@ -4001,11 +4001,13 @@ html {
   }
 
   .sidebar {
+    display: none !important;
     transform: translateX(-100%) !important;
     z-index: 1000;
   }
 
   .sidebar.mobile-open {
+    display: flex !important;
     transform: translateX(0);
   }
 
