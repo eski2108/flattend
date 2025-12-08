@@ -311,54 +311,58 @@ export default function SpotTradingPro() {
           </div>
         )}
 
-        {/* Market Info Cards - Only render on desktop */}
-        {isDesktop && (
-          <div className="market-info-cards" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(4, 1fr)', 
-            gap: '16px', 
-            padding: '24px',
-            maxWidth: '1600px',
-            margin: '0 auto'
+        {/* Market Info Cards */}
+        <div className="market-info-cards" style={{ 
+          display: 'grid', 
+          gridTemplateColumns: isDesktop ? 'repeat(4, 1fr)' : 'repeat(2, 1fr)', 
+          gap: '10px', 
+          padding: isDesktop ? '24px' : '16px',
+          maxWidth: '1600px',
+          margin: '0 auto'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(0,193,118,0.05))',
+            border: window.innerWidth <= 1024 ? '1px solid rgba(0,255,255,0.25)' : '1px solid #1c1f26',
+            borderRadius: window.innerWidth <= 1024 ? '14px' : '8px',
+            padding: isDesktop ? '20px' : '16px',
+            boxShadow: window.innerWidth <= 1024 ? '0 0 14px rgba(0,255,255,0.15)' : 'none'
           }}>
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(0,193,118,0.05))',
-              border: '1px solid #1c1f26',
-              borderRadius: '8px',
-              padding: '20px'
-            }}>
-              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>LAST PRICE</p>
-              <p style={{ color: '#00E1FF', fontSize: '28px', fontWeight: '700' }}>£{marketStats.lastPrice.toFixed(2)}</p>
-            </div>
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(255,73,118,0.05), rgba(220,38,38,0.05))',
-              border: '1px solid #1c1f26',
-              borderRadius: '8px',
-              padding: '20px'
-            }}>
-              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H HIGH</p>
-              <p style={{ color: '#FF4976', fontSize: '28px', fontWeight: '700' }}>£{marketStats.high24h.toFixed(2)}</p>
-            </div>
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(0,193,118,0.05), rgba(22,163,74,0.05))',
-              border: '1px solid #1c1f26',
-              borderRadius: '8px',
-              padding: '20px'
-            }}>
-              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H LOW</p>
-              <p style={{ color: '#00C176', fontSize: '28px', fontWeight: '700' }}>£{marketStats.low24h.toFixed(2)}</p>
-            </div>
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(139,92,246,0.05))',
-              border: '1px solid #1c1f26',
-              borderRadius: '8px',
-              padding: '20px'
-            }}>
-              <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H VOLUME</p>
-              <p style={{ color: '#E5F2FF', fontSize: '28px', fontWeight: '700' }}>{marketStats.volume24h.toFixed(2)}</p>
-            </div>
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500', opacity: 0.7 }}>LAST PRICE</p>
+            <p style={{ color: '#00E1FF', fontSize: window.innerWidth <= 1024 ? '20px' : '28px', fontWeight: '700' }}>£{marketStats.lastPrice.toFixed(2)}</p>
           </div>
-        )}
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(255,73,118,0.05), rgba(220,38,38,0.05))',
+            border: window.innerWidth <= 1024 ? '1px solid rgba(0,255,255,0.25)' : '1px solid #1c1f26',
+            borderRadius: window.innerWidth <= 1024 ? '14px' : '8px',
+            padding: isDesktop ? '20px' : '16px',
+            boxShadow: window.innerWidth <= 1024 ? '0 0 14px rgba(0,255,255,0.15)' : 'none'
+          }}>
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500', opacity: 0.7 }}>24H HIGH</p>
+            <p style={{ color: '#FF4976', fontSize: window.innerWidth <= 1024 ? '20px' : '28px', fontWeight: '700' }}>£{marketStats.high24h.toFixed(2)}</p>
+          </div>
+          {isDesktop && (
+            <>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(0,193,118,0.05), rgba(22,163,74,0.05))',
+                border: '1px solid #1c1f26',
+                borderRadius: '8px',
+                padding: '20px'
+              }}>
+                <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H LOW</p>
+                <p style={{ color: '#00C176', fontSize: '28px', fontWeight: '700' }}>£{marketStats.low24h.toFixed(2)}</p>
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(0,225,255,0.05), rgba(139,92,246,0.05))',
+                border: '1px solid #1c1f26',
+                borderRadius: '8px',
+                padding: '20px'
+              }}>
+                <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '8px', fontWeight: '500' }}>24H VOLUME</p>
+                <p style={{ color: '#E5F2FF', fontSize: '28px', fontWeight: '700' }}>{marketStats.volume24h.toFixed(2)}</p>
+              </div>
+            </>
+          )}
+        </div>
 
         {/* Trading Pairs Selection Buttons - Only render on desktop */}
         {isDesktop && (
@@ -415,25 +419,24 @@ export default function SpotTradingPro() {
 
           {/* Chart */}
           <div className="chart-panel">
+            {/* Neon accent line for mobile */}
+            {window.innerWidth <= 1024 && (
+              <div style={{
+                height: '2px',
+                background: 'linear-gradient(90deg, transparent, #00E1FF, transparent)',
+                boxShadow: '0 0 8px rgba(0,225,255,0.6)',
+                marginBottom: '16px',
+                borderRadius: '2px'
+              }} />
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ color: '#E5F2FF', fontSize: '18px', fontWeight: '700', margin: 0 }}>{selectedPair?.symbol || 'BTC/GBP'}</h3>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="tf-group">
                 {timeframes.map(tf => (
                   <button
                     key={tf.value}
                     onClick={() => setTimeframe(tf.value)}
-                    style={{
-                      padding: '8px 16px',
-                      background: timeframe === tf.value ? 'rgba(0,225,255,0.15)' : 'transparent',
-                      border: `1px solid ${timeframe === tf.value ? '#00E1FF' : '#1c1f26'}`,
-                      borderRadius: '6px',
-                      color: timeframe === tf.value ? '#00E1FF' : '#9CA3AF',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      boxShadow: timeframe === tf.value ? '0 0 12px rgba(0,225,255,0.3)' : 'none'
-                    }}
+                    className={`tf-btn ${timeframe === tf.value ? 'tf-btn--active' : ''}`}
                   >
                     {tf.label}
                   </button>
@@ -456,26 +459,41 @@ export default function SpotTradingPro() {
           {/* Buy/Sell Panel */}
           <div className="buysell-panel">
             {/* Tabs */}
-            <div style={{ display: 'flex', borderBottom: '1px solid #1c1f26' }}>
+            <div className="trade-tab-group">
               <button
                 onClick={() => setTradeTab('buy')}
-                style={{
-                  flex: 1,
-                  padding: '16px',
-                  background: tradeTab === 'buy' ? 'rgba(0,193,118,0.1)' : 'transparent',
-                  border: 'none',
-                  borderBottom: tradeTab === 'buy' ? '2px solid #00C176' : '2px solid transparent',
-                  color: tradeTab === 'buy' ? '#00C176' : '#9CA3AF',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
+                className={`trade-tab ${tradeTab === 'buy' ? 'trade-tab--buy-active' : 'trade-tab--buy-inactive'}`}
               >
                 BUY
               </button>
               <button
                 onClick={() => setTradeTab('sell')}
+                className={`trade-tab ${tradeTab === 'sell' ? 'trade-tab--sell-active' : 'trade-tab--sell-inactive'}`}
+              >
+                SELL
+              </button>
+            </div>
+
+            {/* Market/Limit Toggle */}
+            <div className="order-type-group">
+              <button
+                onClick={() => setOrderType('market')}
+                className={`order-type-btn ${orderType === 'market' ? 'order-type-btn--active' : 'order-type-btn--inactive'}`}
+              >
+                Market
+              </button>
+              <button
+                onClick={() => setOrderType('limit')}
+                className={`order-type-btn ${orderType === 'limit' ? 'order-type-btn--active' : 'order-type-btn--inactive'}`}
+              >
+                Limit
+              </button>
+            </div>
+
+            {/* Old tabs section removed, replaced above */}
+            <div style={{ display: 'none', borderBottom: '1px solid #1c1f26' }}>
+              <button
+                onClick={() => setTradeTab('buy')}
                 style={{
                   flex: 1,
                   padding: '16px',
@@ -572,25 +590,59 @@ export default function SpotTradingPro() {
               {/* Action Button */}
               <button
                 onClick={handlePlaceOrder}
+                onMouseDown={(e) => e.target.style.transform = 'scale(0.96)'}
+                onMouseUp={(e) => e.target.style.transform = 'scale(1.0)'}
+                onMouseLeave={(e) => e.target.style.transform = 'scale(1.0)'}
+                onTouchStart={(e) => e.target.style.transform = 'scale(0.96)'}
+                onTouchEnd={(e) => e.target.style.transform = 'scale(1.0)'}
                 style={{
                   width: '100%',
-                  padding: '18px',
+                  height: window.innerWidth <= 768 ? '52px' : '46px',
+                  padding: window.innerWidth <= 768 ? '14px 20px' : 'auto',
                   background: tradeTab === 'buy' 
-                    ? 'linear-gradient(135deg, #00C176, #00A85F)' 
-                    : 'linear-gradient(135deg, #FF4976, #E0215E)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#FFFFFF',
-                  fontSize: '16px',
-                  fontWeight: '800',
+                    ? (window.innerWidth <= 768 
+                        ? 'radial-gradient(circle at 0% 0%, rgba(0,225,255,0.55), transparent 60%), radial-gradient(circle at 100% 0%, rgba(0,255,163,0.55), transparent 60%), linear-gradient(135deg, #00C46F 0%, #00FF9D 45%, #00E5FF 100%)'
+                        : '#00ff95')
+                    : (window.innerWidth <= 768
+                        ? 'radial-gradient(circle at 0% 0%, rgba(255,72,122,0.55), transparent 60%), linear-gradient(135deg, #E3295D 0%, #FF467A 45%, #FF6B9A 100%)'
+                        : '#ff3b3b'),
+                  border: window.innerWidth <= 768 
+                    ? '1px solid rgba(255,255,255,0.22)' 
+                    : `1px solid ${tradeTab === 'buy' ? '#00ff95' : '#ff3b3b'}`,
+                  borderRadius: window.innerWidth <= 768 ? '18px' : '8px',
+                  color: tradeTab === 'buy' 
+                    ? (window.innerWidth <= 768 ? '#02110A' : '#001a0f')
+                    : (window.innerWidth <= 768 ? '#1A0208' : '#1a0000'),
+                  fontSize: window.innerWidth <= 768 ? '15px' : '16px',
+                  fontWeight: '700',
+                  letterSpacing: window.innerWidth <= 768 ? '0.06em' : 'normal',
+                  textTransform: window.innerWidth <= 768 ? 'uppercase' : 'none',
                   cursor: 'pointer',
-                  boxShadow: tradeTab === 'buy' 
-                    ? '0 4px 20px rgba(0, 193, 118, 0.4)' 
-                    : '0 4px 20px rgba(255, 73, 118, 0.4)',
-                  transition: 'all 0.3s',
-                  marginTop: 'auto'
+                  transition: 'all 0.18s ease-out',
+                  marginTop: '20px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: window.innerWidth <= 768 ? '10px' : '0',
+                  boxShadow: tradeTab === 'buy'
+                    ? (window.innerWidth <= 768 
+                        ? '0 0 22px rgba(0,255,163,0.95), 0 0 40px rgba(0,225,255,0.80)'
+                        : '0 0 22px rgba(0,255,150,0.8), inset 0 0 10px rgba(0,140,90,0.8)')
+                    : (window.innerWidth <= 768
+                        ? '0 0 22px rgba(255,72,122,0.95), 0 0 40px rgba(255,139,178,0.80)'
+                        : '0 0 22px rgba(255,60,60,0.8), inset 0 0 10px rgba(120,0,0,0.8)')
                 }}
               >
+                {window.innerWidth <= 768 && tradeTab === 'buy' && (
+                  <span style={{
+                    width: '30px',
+                    height: '30px',
+                    borderRadius: '999px',
+                    background: 'radial-gradient(circle at 30% 0%, rgba(255,255,255,0.92), transparent 65%), linear-gradient(135deg, #3D2CFF 0%, #8A3CFF 50%, #00E5FF 100%)',
+                    boxShadow: '0 0 18px rgba(0,225,255,0.9), 0 0 28px rgba(0,255,163,0.7)',
+                    display: 'inline-block'
+                  }} />
+                )}
                 {tradeTab === 'buy' ? 'BUY' : 'SELL'} {selectedPair?.base}
               </button>
             </div>
@@ -623,10 +675,11 @@ export default function SpotTradingPro() {
           }
 
           .chart-panel {
-            background: #020817;
-            border: 1px solid #1c1f26;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #06131f, #030a12);
+            border: 1px solid rgba(0,255,255,0.15);
+            border-radius: 12px;
             padding: 16px;
+            box-shadow: 0 0 25px rgba(0,255,255,0.07), inset 0 0 18px rgba(0,30,40,0.6);
           }
 
           .buysell-panel {
@@ -762,6 +815,10 @@ export default function SpotTradingPro() {
               min-height: 520px !important;
               width: 100% !important;
               box-sizing: border-box !important;
+              background: linear-gradient(180deg, #06131f, #030a12) !important;
+              border: 1px solid rgba(0,255,255,0.15) !important;
+              border-radius: 16px !important;
+              box-shadow: 0 0 25px rgba(0,255,255,0.07), inset 0 0 18px rgba(0,30,40,0.6) !important;
             }
             
             .buysell-panel {

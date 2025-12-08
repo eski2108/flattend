@@ -22,6 +22,42 @@ export default function Login() {
   const [tempUserId, setTempUserId] = useState(null);
 
   useEffect(() => {
+    // 🔓 AUTO-LOGIN BYPASS FOR PREVIEW ENVIRONMENT ONLY
+    // This automatically logs you in on preview.emergentagent.com
+    // Production deployments will use normal login flow
+    const hostname = window.location.hostname;
+    const isPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('localhost');
+    
+    if (isPreview) {
+      // Check if already logged in
+      const existingUser = localStorage.getItem('user') || localStorage.getItem('cryptobank_user');
+      
+      if (!existingUser) {
+        // Auto-login with test user
+        const testUser = {
+          user_id: 'test_user_preview',
+          id: 'test_user_preview',
+          email: 'test@coinhubx.net',
+          username: 'Preview User',
+          role: 'user',
+          is_verified: true
+        };
+        
+        const testToken = 'preview_bypass_token_' + Date.now();
+        
+        localStorage.setItem('user', JSON.stringify(testUser));
+        localStorage.setItem('cryptobank_user', JSON.stringify(testUser));
+        localStorage.setItem('token', testToken);
+        
+        console.log('🔓 Auto-login bypass activated (Preview environment)');
+        toast.success('✅ Auto-logged in (Preview Mode)');
+        
+        // Redirect to spot trading page
+        setTimeout(() => navigate('/spot-trading'), 500);
+        return;
+      }
+    }
+    
     // Handle Google OAuth callback
     const urlParams = new URLSearchParams(location.search);
     if (urlParams.get('google_success') === 'true') {
