@@ -1083,46 +1083,99 @@ async def deposit(request: DepositRequest):
     }
 
 @api_router.post("/user/withdraw")
-async def withdraw(request: WithdrawRequest):
-    """Withdraw crypto from platform"""
-    if request.amount <= 0:
-        raise HTTPException(status_code=400, detail="Invalid withdrawal amount")
-    
-    # Get user
-    user = await db.users.find_one({"wallet_address": request.wallet_address}, {"_id": 0})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Calculate withdrawal fee
-    fee = request.amount * (PLATFORM_CONFIG["withdraw_fee_percent"] / 100)
-    total_needed = request.amount + fee
-    
-    if user["available_balance"] < total_needed:
-        raise HTTPException(status_code=400, detail="Insufficient balance")
-    
-    # Update user balance
-    await db.users.update_one(
-        {"wallet_address": request.wallet_address},
-        {"$inc": {"available_balance": -total_needed}}
-    )
-    
-    # Record transaction
-    tx = Transaction(
-        user_address=request.wallet_address,
-        tx_type="withdraw",
-        amount=request.amount,
-        fee=fee
-    )
-    tx_dict = tx.model_dump()
-    tx_dict['timestamp'] = tx_dict['timestamp'].isoformat()
-    await db.transactions.insert_one(tx_dict)
-    
-    return {
-        "success": True,
-        "amount": request.amount,
-        "fee": fee,
-        "message": "Withdrawal successful"
-    }
+async def withdraw(request: dict):
+    """
+    FIXED: Withdraw crypto from platform
+    Request body: {"user_id": "...", "currency": "BTC", "amount": 0.001, "wallet_address": "..."}
+    """
+    try:
+        user_id = request.get('user_id')
+        currency = request.get('currency', 'BTC').upper()
+        amount = float(request.get('amount', 0))
+        withdrawal_address = request.get('wallet_address') or request.get('address')
+        
+        if not user_id or not withdrawal_address:
+            raise HTTPException(status_code=400, detail="user_id and wallet_address required")
+        
+        if amount <= 0:
+            raise HTTPException(status_code=400, detail="Invalid withdrawal amount")
+        
+        # Validate address format (basic check)
+        if len(withdrawal_address) < 20:
+            raise HTTPException(status_code=400, detail="Invalid wallet address format")
+        
+        # Get user from correct collection
+        user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get user balance for this currency
+        balance_doc = await db.user_balances.find_one({"user_id": user_id, "currency": currency})
+        if not balance_doc:
+            raise HTTPException(status_code=400, detail=f"No {currency} balance found")
+        
+        available = balance_doc.get('balance', 0)
+        
+        # Calculate withdrawal fee (0.5% default)
+        fee_percent = 0.5
+        fee = amount * (fee_percent / 100)
+        total_needed = amount + fee
+        
+        if available < total_needed:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient balance. Available: {available}, Required: {total_needed} (including {fee} fee)"
+            )
+        
+        # Update user balance
+        new_balance = available - total_needed
+        await db.user_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {
+                "$set": {
+                    "balance": new_balance,
+                    "last_updated": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Create transaction record
+        transaction_id = str(uuid.uuid4())
+        transaction = {
+            "transaction_id": transaction_id,
+            "user_id": user_id,
+            "currency": currency,
+            "transaction_type": "withdrawal",
+            "amount": amount,
+            "fee": fee,
+            "withdrawal_address": withdrawal_address,
+            "status": "pending",  # Requires admin approval
+            "reference": f"WITHDRAW_{currency}_{transaction_id[:8]}",
+            "notes": f"Withdrawal to {withdrawal_address[:10]}...",
+            "created_at": datetime.utcnow(),
+            "completed_at": None
+        }
+        
+        await db.transactions.insert_one(transaction)
+        
+        return {
+            "success": True,
+            "transaction_id": transaction_id,
+            "amount": amount,
+            "fee": fee,
+            "total_withdrawn": total_needed,
+            "new_balance": new_balance,
+            "currency": currency,
+            "withdrawal_address": withdrawal_address,
+            "status": "pending",
+            "message": f"Withdrawal of {amount} {currency} initiated. Pending admin approval."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Withdrawal error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Withdrawal failed: {str(e)}")
 
 @api_router.post("/loans/create-offer")
 async def create_loan_offer(request: CreateLoanOfferRequest):
