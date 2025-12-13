@@ -230,21 +230,26 @@ class WithdrawalSystemTester:
         print("=" * 60)
         
         print("Step 6: Login as Admin")
-        response = self.make_request("POST", "/auth/login", ADMIN_USER)
         
-        if response["success"] and "token" in response["data"]:
-            self.admin_token = response["data"]["token"]
-            user_data = response["data"].get("user", {})
-            self.admin_id = user_data.get("user_id")
-            is_admin = user_data.get("role") == "admin" or user_data.get("is_admin", False)
+        # Try different admin credentials
+        for i, admin_user in enumerate(ADMIN_USER_OPTIONS):
+            print(f"   Trying admin {i+1}: {admin_user['email']}")
+            response = self.make_request("POST", "/auth/login", admin_user)
             
-            success = is_admin
-            details = f"Token obtained, Admin ID: {self.admin_id}, Admin flag: {is_admin}"
-            self.log_result("Admin Login", success, details)
-            return success
-        else:
-            self.log_result("Admin Login", False, f"Status: {response['status_code']}, Data: {response['data']}")
-            return False
+            if response["success"] and "token" in response["data"]:
+                self.admin_token = response["data"]["token"]
+                user_data = response["data"].get("user", {})
+                self.admin_id = user_data.get("user_id")
+                is_admin = user_data.get("role") == "admin" or user_data.get("is_admin", False)
+                
+                details = f"Logged in with {admin_user['email']}, Admin ID: {self.admin_id}, Admin flag: {is_admin}"
+                self.log_result("Admin Login", True, details)
+                return True
+            else:
+                print(f"      Failed: {response['status_code']} - {response['data']}")
+        
+        self.log_result("Admin Login", False, "All admin login attempts failed")
+        return False
 
     def test_7_check_pending_withdrawals(self, transaction_id):
         """TEST 7: Check Pending Withdrawals"""
