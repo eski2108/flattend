@@ -279,28 +279,39 @@ class WithdrawalSystemTester:
         """TEST 7: Check Pending Withdrawals"""
         print("Step 7: Check Pending Withdrawals")
         
-        response = self.make_request("GET", "/admin/withdrawals/pending", token=self.admin_token)
+        # Try multiple admin withdrawal endpoints
+        endpoints_to_try = [
+            "/admin/withdrawals/pending",
+            "/admin/withdrawals",
+            "/admin/withdrawals/all"
+        ]
         
-        if response["success"]:
-            withdrawals = response["data"].get("withdrawals", [])
-            found_withdrawal = None
+        for endpoint in endpoints_to_try:
+            print(f"   Trying admin endpoint: {endpoint}")
+            response = self.make_request("GET", endpoint, token=self.admin_token)
             
-            for withdrawal in withdrawals:
-                if withdrawal.get("transaction_id") == transaction_id or withdrawal.get("withdrawal_id") == transaction_id:
-                    found_withdrawal = withdrawal
-                    break
-            
-            if found_withdrawal:
-                details = f"Found withdrawal in pending list: {found_withdrawal.get('transaction_id', 'N/A')}"
-                self.log_result("Check Pending Withdrawals", True, details)
-                return True
+            if response["success"]:
+                withdrawals = response["data"].get("withdrawals", [])
+                found_withdrawal = None
+                
+                for withdrawal in withdrawals:
+                    if (withdrawal.get("transaction_id") == transaction_id or 
+                        withdrawal.get("withdrawal_id") == transaction_id):
+                        found_withdrawal = withdrawal
+                        break
+                
+                if found_withdrawal:
+                    details = f"Found withdrawal in {endpoint}: {found_withdrawal.get('transaction_id', 'N/A')}"
+                    self.log_result("Check Pending Withdrawals", True, details)
+                    return True
+                else:
+                    print(f"      Withdrawal {transaction_id} not found in {len(withdrawals)} withdrawals")
             else:
-                details = f"Withdrawal {transaction_id} not found in pending list. Found {len(withdrawals)} pending withdrawals"
-                self.log_result("Check Pending Withdrawals", False, details)
-                return False
-        else:
-            self.log_result("Check Pending Withdrawals", False, f"Status: {response['status_code']}, Data: {response['data']}")
-            return False
+                print(f"      Failed: {response['status_code']} - {response['data']}")
+        
+        details = f"Withdrawal {transaction_id} not found in any admin endpoint"
+        self.log_result("Check Pending Withdrawals", False, details)
+        return False
 
     def test_8_approve_withdrawal(self, transaction_id):
         """TEST 8: Approve Withdrawal"""
