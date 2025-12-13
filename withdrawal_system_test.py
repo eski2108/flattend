@@ -480,14 +480,64 @@ class WithdrawalSystemTester:
         self.log_result("Test Admin Routes", all_success, "; ".join(details))
         return all_success
 
+    def test_backend_health(self):
+        """Test backend health first"""
+        print("Step 0: Backend Health Check")
+        response = self.make_request("GET", "/health")
+        
+        if response["success"]:
+            self.log_result("Backend Health", True, f"Backend is healthy: {response['data']}")
+            return True
+        else:
+            self.log_result("Backend Health", False, f"Backend health check failed: {response['status_code']}")
+            return False
+
+    def create_test_users(self):
+        """Create test users if they don't exist"""
+        print("Step 0.5: Creating test users if needed")
+        
+        # Try to register withdrawal test user
+        user_data = {
+            "email": "withdrawal_test@demo.com",
+            "password": "Test123!",
+            "full_name": "Withdrawal Test User",
+            "phone_number": "+1234567890"
+        }
+        
+        response = self.make_request("POST", "/auth/register", user_data)
+        if response["success"]:
+            print("   Created withdrawal test user")
+        else:
+            print(f"   User creation failed or user exists: {response['status_code']}")
+        
+        # Try to register admin test user
+        admin_data = {
+            "email": "admin_test@demo.com",
+            "password": "Admin123!",
+            "full_name": "Admin Test User",
+            "phone_number": "+1234567891",
+            "role": "admin"
+        }
+        
+        response = self.make_request("POST", "/auth/register", admin_data)
+        if response["success"]:
+            print("   Created admin test user")
+        else:
+            print(f"   Admin creation failed or user exists: {response['status_code']}")
+
     def run_comprehensive_test(self):
         """Run the complete withdrawal system test"""
         print("🎯 COMPREHENSIVE END-TO-END WITHDRAWAL SYSTEM VERIFICATION")
         print("=" * 80)
         print(f"Backend URL: {BACKEND_URL}")
-        print(f"Test User: {TEST_USER['email']}")
-        print(f"Admin User: {ADMIN_USER['email']}")
         print("=" * 80)
+        
+        # Check backend health first
+        if not self.test_backend_health():
+            return self.generate_report()
+        
+        # Try to create test users
+        self.create_test_users()
         
         # TEST 1: USER WITHDRAWAL SUBMISSION FLOW
         if not self.test_1_user_login():
