@@ -75,7 +75,7 @@ const NotificationSettings = ({ user, onClose }) => {
       marginBottom: '12px'
     }}>
       <div style={{ flex: 1 }}>
-        <p style={{ color: '#000000', fontSize: '15px', fontWeight: '700', marginBottom: '4px' }}>
+        <p style={{ color: '#FFFFFF', fontSize: '15px', fontWeight: '700', marginBottom: '4px' }}>
           {label}
         </p>
         <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>
@@ -100,7 +100,7 @@ const NotificationSettings = ({ user, onClose }) => {
           width: '22px',
           height: '22px',
           borderRadius: '50%',
-          background: '#FFFFFF',
+          background: '#1a1f3a',
           position: 'absolute',
           top: '3px',
           left: enabled ? '27px' : '3px',
@@ -118,15 +118,15 @@ const NotificationSettings = ({ user, onClose }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(0, 0, 0, 0.7)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 9999,
+      zIndex: 99999,
       padding: '20px'
     }}>
       <div style={{
-        background: '#FFFFFF',
+        background: '#1a1f3a',
         border: '2px solid rgba(0, 240, 255, 0.3)',
         borderRadius: '20px',
         maxWidth: '550px',
@@ -145,7 +145,7 @@ const NotificationSettings = ({ user, onClose }) => {
           <h2 style={{
             fontSize: '24px',
             fontWeight: '800',
-            color: '#000000',
+            color: '#FFFFFF',
             margin: 0,
             display: 'flex',
             alignItems: 'center',
@@ -218,7 +218,7 @@ const NotificationSettings = ({ user, onClose }) => {
                 background: 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#FFFFFF',
                 fontSize: '15px',
                 fontWeight: '700',
                 cursor: loading ? 'not-allowed' : 'pointer'
@@ -235,7 +235,7 @@ const NotificationSettings = ({ user, onClose }) => {
                 background: loading ? 'rgba(0, 240, 255, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
                 border: 'none',
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#FFFFFF',
                 fontSize: '15px',
                 fontWeight: '700',
                 cursor: loading ? 'not-allowed' : 'pointer',
