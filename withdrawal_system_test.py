@@ -525,6 +525,58 @@ class WithdrawalSystemTester:
         else:
             print(f"   Admin creation failed or user exists: {response['status_code']}")
 
+    def fund_test_user(self):
+        """Fund the test user with BTC for withdrawal testing"""
+        print("Step 0.6: Funding test user with BTC")
+        
+        if not self.user_id:
+            print("   No user_id available for funding")
+            return False
+        
+        # Try admin manual deposit endpoint
+        funding_data = {
+            "user_id": self.user_id,
+            "currency": "BTC",
+            "amount": 0.01,  # Fund with 0.01 BTC
+            "admin_notes": "Test funding for withdrawal testing"
+        }
+        
+        # Try different funding endpoints
+        endpoints_to_try = [
+            "/admin/manual-deposit",
+            "/admin/fund-user",
+            "/admin/add-balance",
+            "/user/deposit"
+        ]
+        
+        for endpoint in endpoints_to_try:
+            print(f"   Trying {endpoint}")
+            response = self.make_request("POST", endpoint, funding_data, token=self.admin_token or self.user_token)
+            
+            if response["success"]:
+                print(f"   Successfully funded user via {endpoint}")
+                return True
+            else:
+                print(f"   Failed {endpoint}: {response['status_code']} - {response['data']}")
+        
+        # If admin endpoints fail, try creating balance record directly
+        print("   Trying to create balance record directly")
+        balance_data = {
+            "user_id": self.user_id,
+            "currency": "BTC",
+            "balance": 0.01,
+            "locked_balance": 0.0
+        }
+        
+        response = self.make_request("POST", "/admin/create-balance", balance_data, token=self.admin_token)
+        if response["success"]:
+            print("   Successfully created balance record")
+            return True
+        else:
+            print(f"   Failed to create balance: {response['status_code']} - {response['data']}")
+        
+        return False
+
     def run_comprehensive_test(self):
         """Run the complete withdrawal system test"""
         print("🎯 COMPREHENSIVE END-TO-END WITHDRAWAL SYSTEM VERIFICATION")
