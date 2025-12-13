@@ -211,31 +211,41 @@ class WithdrawalSystemTester:
         if not transaction_id:
             self.log_result("Verify Transaction Created", False, "No transaction ID to verify")
             return False
-            
-        response = self.make_request("GET", f"/transactions/{self.user_id}", token=self.user_token)
         
-        if response["success"]:
-            transactions = response["data"].get("transactions", [])
-            found_transaction = None
+        # Try multiple transaction endpoints
+        endpoints_to_try = [
+            f"/transactions/{self.user_id}",
+            f"/user/transactions/{self.user_id}",
+            f"/crypto-bank/transactions/{self.user_id}"
+        ]
+        
+        for endpoint in endpoints_to_try:
+            print(f"   Trying transaction endpoint: {endpoint}")
+            response = self.make_request("GET", endpoint, token=self.user_token)
             
-            for tx in transactions:
-                if tx.get("transaction_id") == transaction_id:
-                    found_transaction = tx
-                    break
-            
-            if found_transaction:
-                status = found_transaction.get("status", "unknown")
-                tx_type = found_transaction.get("transaction_type", "unknown")
-                success = status == "pending" and tx_type == "withdrawal"
-                details = f"Found transaction with status: {status}, type: {tx_type}"
-                self.log_result("Verify Transaction Created", success, details)
-                return success
+            if response["success"]:
+                transactions = response["data"].get("transactions", [])
+                found_transaction = None
+                
+                for tx in transactions:
+                    if tx.get("transaction_id") == transaction_id:
+                        found_transaction = tx
+                        break
+                
+                if found_transaction:
+                    status = found_transaction.get("status", "unknown")
+                    tx_type = found_transaction.get("transaction_type", "unknown")
+                    success = status == "pending" and tx_type == "withdrawal"
+                    details = f"Found transaction with status: {status}, type: {tx_type} (via {endpoint})"
+                    self.log_result("Verify Transaction Created", success, details)
+                    return success
+                else:
+                    print(f"      Transaction {transaction_id} not found in {len(transactions)} transactions")
             else:
-                self.log_result("Verify Transaction Created", False, f"Transaction {transaction_id} not found in user transactions")
-                return False
-        else:
-            self.log_result("Verify Transaction Created", False, f"Status: {response['status_code']}")
-            return False
+                print(f"      Failed: {response['status_code']} - {response['data']}")
+        
+        self.log_result("Verify Transaction Created", False, f"Transaction {transaction_id} not found in any endpoint")
+        return False
 
     def test_6_admin_login(self):
         """TEST 6: Login as Admin"""
