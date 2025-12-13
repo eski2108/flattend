@@ -13,17 +13,20 @@ from datetime import datetime
 BACKEND_URL = "https://fund-release-1.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
-# Test Credentials
-TEST_USER = {
-    "email": "withdrawal_test@demo.com",
-    "password": "Test123!"
-}
+# Test Credentials - trying different users that might exist
+TEST_USER_OPTIONS = [
+    {"email": "withdrawal_test@demo.com", "password": "Test123!"},
+    {"email": "demo@coinhubx.com", "password": "Test123!"},
+    {"email": "test@coinhubx.com", "password": "Test123456"},
+    {"email": "gads21083@gmail.com", "password": "test123"},
+    {"email": "alice@test.com", "password": "test123"}
+]
 
-ADMIN_USER = {
-    "email": "admin_test@demo.com", 
-    "password": "Admin123!",
-    "admin_code": "CRYPTOLEND_ADMIN_2025"
-}
+ADMIN_USER_OPTIONS = [
+    {"email": "admin_test@demo.com", "password": "Admin123!", "admin_code": "CRYPTOLEND_ADMIN_2025"},
+    {"email": "admin@coinhubx.com", "password": "Admin123!", "admin_code": "CRYPTOLEND_ADMIN_2025"},
+    {"email": "gads21083@gmail.com", "password": "test123", "admin_code": "CRYPTOLEND_ADMIN_2025"}
+]
 
 class WithdrawalSystemTester:
     def __init__(self):
