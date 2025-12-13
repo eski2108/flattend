@@ -160,7 +160,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.85)',
+      background: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -168,7 +168,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
       padding: '20px'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(19, 24, 41, 0.95))',
+        background: '#FFFFFF',
         border: '2px solid rgba(0, 240, 255, 0.3)',
         borderRadius: '20px',
         maxWidth: '550px',
@@ -187,7 +187,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
           <h2 style={{
             fontSize: '24px',
             fontWeight: '800',
-            color: '#FFFFFF',
+            color: '#000000',
             margin: 0,
             display: 'flex',
             alignItems: 'center',
@@ -199,7 +199,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
           <button onClick={onClose} style={{
             background: 'none',
             border: 'none',
-            color: '#888',
+            color: '#666',
             cursor: 'pointer',
             padding: '8px'
           }}>
@@ -238,10 +238,10 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <code style={{
                     flex: 1,
-                    background: 'rgba(0, 0, 0, 0.3)',
+                    background: '#F5F5F5',
                     padding: '12px',
                     borderRadius: '8px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '14px',
                     wordBreak: 'break-all'
                   }}>
@@ -265,7 +265,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
 
               <div style={{ marginBottom: '24px' }}>
                 <label style={{
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '13px',
                   fontWeight: '700',
                   marginBottom: '8px',
@@ -283,10 +283,10 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                   style={{
                     width: '100%',
                     padding: '16px',
-                    background: 'rgba(0, 0, 0, 0.4)',
+                    background: '#F5F5F5',
                     border: '2px solid rgba(0, 240, 255, 0.4)',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '24px',
                     fontWeight: '700',
                     textAlign: 'center',
@@ -306,7 +306,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                   background: loading || verificationCode.length !== 6 ? 'rgba(0, 240, 255, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
                   border: 'none',
                   borderRadius: '12px',
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '16px',
                   fontWeight: '700',
                   cursor: loading || verificationCode.length !== 6 ? 'not-allowed' : 'pointer',
@@ -337,7 +337,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                 }}>
                   <IoCheckmarkCircle size={48} color="#FFFFFF" />
                 </div>
-                <h3 style={{ color: '#FFFFFF', fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>
+                <h3 style={{ color: '#000000', fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>
                   2FA Enabled Successfully!
                 </h3>
               </div>
@@ -358,7 +358,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
               </div>
 
               <div style={{
-                background: 'rgba(0, 0, 0, 0.4)',
+                background: '#F5F5F5',
                 border: '1px solid rgba(0, 240, 255, 0.3)',
                 borderRadius: '12px',
                 padding: '16px',
@@ -415,7 +415,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                   background: 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
                   border: 'none',
                   borderRadius: '12px',
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '15px',
                   fontWeight: '700',
                   cursor: 'pointer',
@@ -447,7 +447,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '13px',
                   fontWeight: '700',
                   marginBottom: '8px',
@@ -463,10 +463,10 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                   style={{
                     width: '100%',
                     padding: '14px 16px',
-                    background: 'rgba(0, 0, 0, 0.4)',
+                    background: '#F5F5F5',
                     border: '1px solid rgba(0, 240, 255, 0.4)',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '15px',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -476,7 +476,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
 
               <div style={{ marginBottom: '24px' }}>
                 <label style={{
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '13px',
                   fontWeight: '700',
                   marginBottom: '8px',
@@ -494,10 +494,10 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                   style={{
                     width: '100%',
                     padding: '16px',
-                    background: 'rgba(0, 0, 0, 0.4)',
+                    background: '#F5F5F5',
                     border: '2px solid rgba(0, 240, 255, 0.4)',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '24px',
                     fontWeight: '700',
                     textAlign: 'center',
@@ -518,7 +518,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                     background: 'rgba(255, 255, 255, 0.1)',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '15px',
                     fontWeight: '700',
                     cursor: loading ? 'not-allowed' : 'pointer'
@@ -535,7 +535,7 @@ const TwoFactorSettings = ({ user, onClose, onUpdate }) => {
                     background: loading || !password || verificationCode.length !== 6 ? 'rgba(255, 68, 68, 0.3)' : 'linear-gradient(135deg, #FF4444 0%, #CC0000 100%)',
                     border: 'none',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '15px',
                     fontWeight: '700',
                     cursor: loading || !password || verificationCode.length !== 6 ? 'not-allowed' : 'pointer',

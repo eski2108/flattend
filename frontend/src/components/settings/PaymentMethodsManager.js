@@ -185,7 +185,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.85)',
+      background: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -193,7 +193,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
       padding: '20px'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(19, 24, 41, 0.95))',
+        background: '#FFFFFF',
         border: '2px solid rgba(0, 240, 255, 0.3)',
         borderRadius: '20px',
         maxWidth: '650px',
@@ -212,7 +212,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
           <h2 style={{
             fontSize: '24px',
             fontWeight: '800',
-            color: '#FFFFFF',
+            color: '#000000',
             margin: 0,
             display: 'flex',
             alignItems: 'center',
@@ -224,7 +224,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
           <button onClick={onClose} style={{
             background: 'none',
             border: 'none',
-            color: '#888',
+            color: '#666',
             cursor: 'pointer',
             padding: '8px'
           }}>
@@ -250,7 +250,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {paymentMethods.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                   <IoCard size={64} color="#888" style={{ marginBottom: '16px' }} />
-                  <p style={{ color: '#888', fontSize: '16px', marginBottom: '24px' }}>
+                  <p style={{ color: '#666', fontSize: '16px', marginBottom: '24px' }}>
                     No payment methods added yet
                   </p>
                 </div>
@@ -274,7 +274,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                             <span style={{ fontSize: '24px' }}>
                               {paymentTypes.find(t => t.value === method.method_type)?.icon || '💳'}
                             </span>
-                            <h3 style={{ color: '#FFFFFF', fontSize: '16px', fontWeight: '700', margin: 0 }}>
+                            <h3 style={{ color: '#000000', fontSize: '16px', fontWeight: '700', margin: 0 }}>
                               {method.method_label || paymentTypes.find(t => t.value === method.method_type)?.label}
                             </h3>
                             {method.is_primary && (
@@ -284,17 +284,17 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                                 borderRadius: '6px',
                                 fontSize: '11px',
                                 fontWeight: '700',
-                                color: '#FFFFFF'
+                                color: '#000000'
                               }}>
                                 PRIMARY
                               </span>
                             )}
                           </div>
-                          <p style={{ color: '#888', fontSize: '13px', margin: '4px 0' }}>
+                          <p style={{ color: '#666', fontSize: '13px', margin: '4px 0' }}>
                             {method.details?.account_holder_name}
                           </p>
                           {method.details?.bank_name && (
-                            <p style={{ color: '#888', fontSize: '13px', margin: '4px 0' }}>
+                            <p style={{ color: '#666', fontSize: '13px', margin: '4px 0' }}>
                               {method.details.bank_name}
                               {method.details.account_number && ` • ****${method.details.account_number.slice(-4)}`}
                             </p>
@@ -350,7 +350,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                   background: 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
                   border: 'none',
                   borderRadius: '12px',
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '16px',
                   fontWeight: '700',
                   cursor: 'pointer',
@@ -388,7 +388,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {/* Method Type Selection */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '13px',
                   fontWeight: '700',
                   marginBottom: '8px',
@@ -404,10 +404,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                   style={{
                     width: '100%',
                     padding: '14px 16px',
-                    background: 'rgba(0, 0, 0, 0.4)',
+                    background: '#F5F5F5',
                     border: '1px solid rgba(0, 240, 255, 0.4)',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '15px',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -425,7 +425,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {/* Method Label */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '13px',
                   fontWeight: '700',
                   marginBottom: '8px',
@@ -442,10 +442,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                   style={{
                     width: '100%',
                     padding: '14px 16px',
-                    background: 'rgba(0, 0, 0, 0.4)',
+                    background: '#F5F5F5',
                     border: '1px solid rgba(0, 240, 255, 0.4)',
                     borderRadius: '12px',
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '15px',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -457,7 +457,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {selectedType?.fields.includes('account_holder_name') && (
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '13px',
                     fontWeight: '700',
                     marginBottom: '8px',
@@ -473,10 +473,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      background: 'rgba(0, 0, 0, 0.4)',
+                      background: '#F5F5F5',
                       border: '1px solid rgba(0, 240, 255, 0.4)',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#000000',
                       fontSize: '15px',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -488,7 +488,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {selectedType?.fields.includes('bank_name') && (
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '13px',
                     fontWeight: '700',
                     marginBottom: '8px',
@@ -504,10 +504,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      background: 'rgba(0, 0, 0, 0.4)',
+                      background: '#F5F5F5',
                       border: '1px solid rgba(0, 240, 255, 0.4)',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#000000',
                       fontSize: '15px',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -519,7 +519,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {selectedType?.fields.includes('sort_code') && (
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '13px',
                     fontWeight: '700',
                     marginBottom: '8px',
@@ -536,10 +536,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      background: 'rgba(0, 0, 0, 0.4)',
+                      background: '#F5F5F5',
                       border: '1px solid rgba(0, 240, 255, 0.4)',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#000000',
                       fontSize: '15px',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -551,7 +551,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {selectedType?.fields.includes('account_number') && (
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '13px',
                     fontWeight: '700',
                     marginBottom: '8px',
@@ -568,10 +568,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      background: 'rgba(0, 0, 0, 0.4)',
+                      background: '#F5F5F5',
                       border: '1px solid rgba(0, 240, 255, 0.4)',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#000000',
                       fontSize: '15px',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -583,7 +583,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {selectedType?.fields.includes('iban') && (
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '13px',
                     fontWeight: '700',
                     marginBottom: '8px',
@@ -600,10 +600,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      background: 'rgba(0, 0, 0, 0.4)',
+                      background: '#F5F5F5',
                       border: '1px solid rgba(0, 240, 255, 0.4)',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#000000',
                       fontSize: '15px',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -615,7 +615,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
               {selectedType?.fields.includes('swift') && (
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{
-                    color: '#FFFFFF',
+                    color: '#000000',
                     fontSize: '13px',
                     fontWeight: '700',
                     marginBottom: '8px',
@@ -632,10 +632,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      background: 'rgba(0, 0, 0, 0.4)',
+                      background: '#F5F5F5',
                       border: '1px solid rgba(0, 240, 255, 0.4)',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#000000',
                       fontSize: '15px',
                       outline: 'none',
                       boxSizing: 'border-box'
@@ -656,10 +656,10 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                 marginBottom: '24px'
               }}>
                 <div>
-                  <p style={{ color: '#FFFFFF', fontSize: '15px', fontWeight: '700', marginBottom: '4px' }}>
+                  <p style={{ color: '#000000', fontSize: '15px', fontWeight: '700', marginBottom: '4px' }}>
                     Set as Primary Method
                   </p>
-                  <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
+                  <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>
                     Default method for P2P transactions
                   </p>
                 </div>
@@ -701,7 +701,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
                   background: loading ? 'rgba(0, 240, 255, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
                   border: 'none',
                   borderRadius: '12px',
-                  color: '#FFFFFF',
+                  color: '#000000',
                   fontSize: '16px',
                   fontWeight: '700',
                   cursor: loading ? 'not-allowed' : 'pointer',

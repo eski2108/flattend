@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout';
 import { IoArrowBack, IoCopy, IoCheckmarkCircle, IoWarning, IoTime, IoDocument, IoChatbubbles, IoShield } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -18,8 +17,17 @@ export default function AdminDisputeDetail() {
   const [resolution, setResolution] = useState('');
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [selectedWinner, setSelectedWinner] = useState('');
+  const [showWebViewWarning, setShowWebViewWarning] = useState(false);
 
   useEffect(() => {
+    // Detect if in Gmail/email app webview
+    const isWebView = /wv|WebView|Gmail/i.test(navigator.userAgent) || 
+                      (window.navigator.standalone === false);
+    
+    if (isWebView) {
+      setShowWebViewWarning(true);
+    }
+    
     loadDisputeDetails();
     const interval = setInterval(loadDisputeDetails, 10000); // Refresh every 10 seconds
     return () => clearInterval(interval);
@@ -32,12 +40,9 @@ export default function AdminDisputeDetail() {
         setDispute(response.data.dispute);
         setMessages(response.data.dispute.messages || []);
         
-        // Load trade details
-        if (response.data.dispute.trade_id) {
-          const tradeResponse = await axios.get(`${API}/api/p2p/trade/${response.data.dispute.trade_id}`);
-          if (tradeResponse.data.success) {
-            setTrade(tradeResponse.data.trade);
-          }
+        // Trade data is already included in dispute response
+        if (response.data.trade) {
+          setTrade(response.data.trade);
         }
       }
     } catch (error) {
@@ -110,38 +115,97 @@ export default function AdminDisputeDetail() {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 flex items-center justify-center">
-          <div className="text-center text-white">
-            <div className="animate-spin w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p>Loading dispute...</p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="animate-spin w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading dispute...</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   if (!dispute) {
     return (
-      <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 flex items-center justify-center">
-          <div className="text-center text-white">
-            <IoWarning className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <p className="text-xl">Dispute not found</p>
-            <button
-              onClick={() => navigate('/admin/disputes')}
-              className="mt-4 bg-cyan-600 hover:bg-cyan-700 px-6 py-3 rounded-lg transition-colors"
-            >
-              Back to Disputes
-            </button>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <IoWarning className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <p className="text-xl">Dispute not found</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
+    <div className="admin-dispute-standalone">
+      {/* WebView Warning Modal */}
+      {showWebViewWarning && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.95)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            background: '#1a1a2e',
+            borderRadius: '12px',
+            padding: '30px',
+            maxWidth: '400px',
+            textAlign: 'center',
+            border: '2px solid #FFA500'
+          }}>
+            <IoWarning style={{ width: '60px', height: '60px', color: '#FFA500', margin: '0 auto 20px' }} />
+            <h2 style={{ color: '#FFA500', fontSize: '24px', marginBottom: '15px' }}>⚠️ Please Open in Chrome</h2>
+            <p style={{ color: '#fff', marginBottom: '20px', lineHeight: '1.6' }}>
+              You're viewing this in an email app browser. For the best experience, please:
+            </p>
+            <ol style={{ color: '#fff', textAlign: 'left', marginBottom: '20px', paddingLeft: '20px' }}>
+              <li style={{ marginBottom: '10px' }}>Tap the <strong>3 dots (⋮)</strong> at the top</li>
+              <li style={{ marginBottom: '10px' }}>Select <strong>"Open in Chrome"</strong></li>
+            </ol>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('Link copied! Paste in Chrome');
+              }}
+              style={{
+                background: '#FFA500',
+                color: '#000',
+                padding: '15px 30px',
+                borderRadius: '8px',
+                border: 'none',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer',
+                width: '100%',
+                marginBottom: '10px'
+              }}
+            >
+              📋 Copy Link for Chrome
+            </button>
+            <button
+              onClick={() => setShowWebViewWarning(false)}
+              style={{
+                background: 'transparent',
+                color: '#888',
+                padding: '10px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Continue anyway (may not work correctly)
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -463,6 +527,6 @@ export default function AdminDisputeDetail() {
           </div>
         )}
       </div>
-    </Layout>
+    </div>
   );
 }

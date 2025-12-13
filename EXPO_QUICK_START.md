@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://protrading.preview.emergentagent.com/api
+https://fixdisputeflow.preview.emergentagent.com/api
 ```
 
 This means:

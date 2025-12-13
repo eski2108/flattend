@@ -1,0 +1,12 @@
+# Patch to add i18n to App.js
+
+# Add this at the top of App.js (after other imports):
+import './i18n';
+
+# This initializes i18n when the app starts
+# Language will be auto-detected based on:
+# 1. User's saved preference
+# 2. User's DB preference  
+# 3. IP-based country
+# 4. Browser language
+# 5. Default: English

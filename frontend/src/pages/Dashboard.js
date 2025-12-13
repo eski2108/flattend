@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Layout from '@/components/Layout';
 import { 
   IoTrendingUp, 
   IoTrendingDown, 
@@ -21,6 +20,41 @@ import {
   IoTime,
   IoStar
 } from 'react-icons/io5';
+
+// Import crypto SVG icons
+import btcIcon from '@/assets/coins/btc.svg';
+import ethIcon from '@/assets/coins/eth.svg';
+import usdtIcon from '@/assets/coins/usdt.svg';
+import usdcIcon from '@/assets/coins/usdc.svg';
+import bnbIcon from '@/assets/coins/bnb.svg';
+import solIcon from '@/assets/coins/sol.svg';
+import xrpIcon from '@/assets/coins/xrp.svg';
+import adaIcon from '@/assets/coins/ada.svg';
+import dogeIcon from '@/assets/coins/doge.svg';
+import dotIcon from '@/assets/coins/dot.svg';
+import maticIcon from '@/assets/coins/matic.svg';
+import ltcIcon from '@/assets/coins/ltc.svg';
+import linkIcon from '@/assets/coins/link.svg';
+import avaxIcon from '@/assets/coins/avax.svg';
+import trxIcon from '@/assets/coins/trx.svg';
+
+const COIN_SVG_ICONS = {
+  'BTC': btcIcon,
+  'ETH': ethIcon,
+  'USDT': usdtIcon,
+  'USDC': usdcIcon,
+  'BNB': bnbIcon,
+  'SOL': solIcon,
+  'XRP': xrpIcon,
+  'ADA': adaIcon,
+  'DOGE': dogeIcon,
+  'DOT': dotIcon,
+  'MATIC': maticIcon,
+  'LTC': ltcIcon,
+  'LINK': linkIcon,
+  'AVAX': avaxIcon,
+  'TRX': trxIcon
+};
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -93,7 +127,9 @@ export default function Dashboard() {
         }
       });
       if (assetsRes.data.success) {
-        setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
+        // Filter out zero balances and only show top 5
+        const nonZeroAssets = (assetsRes.data.balances || []).filter(asset => asset.total_balance > 0);
+        setTopAssets(nonZeroAssets.slice(0, 5));
       }
       
       // Load recent transactions (with cache busting + headers)
@@ -153,30 +189,27 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <Layout>
-        <div style={{
-          minHeight: '100vh',
-          background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <div style={{ textAlign: 'center', color: '#00F0FF' }}>
-            <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
-            <div>Loading Portfolio...</div>
-          </div>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center', color: '#00F0FF' }}>
+          <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
+          <div>Loading Portfolio...</div>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
-        paddingBottom: '60px'
-      }}>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
+      paddingBottom: '60px'
+    }}>
         <div style={{ padding: isMobile ? '16px' : '24px' }}>
           <div style={{ maxWidth: '1800px', margin: '0 auto' }}>
             
@@ -713,9 +746,22 @@ export default function Dashboard() {
                             justifyContent: 'center',
                             fontSize: '14px',
                             fontWeight: '700',
-                            color: '#000000'
+                            color: '#000000',
+                            overflow: 'hidden'
                           }}>
-                            {asset.currency?.substring(0, 2) || 'CR'}
+                            {COIN_SVG_ICONS[asset.currency] ? (
+                              <img 
+                                src={COIN_SVG_ICONS[asset.currency]}
+                                alt={asset.currency}
+                                style={{
+                                  width: '28px',
+                                  height: '28px',
+                                  objectFit: 'contain'
+                                }}
+                              />
+                            ) : (
+                              asset.currency?.substring(0, 2) || 'CR'
+                            )}
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
@@ -1109,10 +1155,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
 
-      <style>{`
-        .spinner {
+        <style>{`
+          .spinner {
           width: 40px;
           height: 40px;
           border: 3px solid rgba(0, 240, 255, 0.3);
@@ -1126,6 +1171,6 @@ export default function Dashboard() {
           100% { transform: rotate(360deg); }
         }
       `}</style>
-    </Layout>
+    </div>
   );
 }

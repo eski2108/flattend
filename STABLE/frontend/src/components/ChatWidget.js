@@ -1,0 +1,396 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { IoChatbubble as MessageCircle, IoChatbubbles, IoClose, IoContract, IoFlash, IoHelpCircle as HelpCircle, IoSend } from 'react-icons/io5';
+
+export default function ChatWidget() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      id: 'welcome',
+      sender: 'bot',
+      message: 'Hi! 👋 I\'m your Coin Hub IoClose as X AI assistant. How can I help you today?\n\nPopular topics:\n• How to deposit crypto\n• P2P trading guide\n• Swap fees\n• Account verification',
+      timestamp: new Date()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (!isOpen && unreadCount > 0) {
+      // Reset unread when opening
+      setUnreadCount(0);
+    }
+  }, [isOpen, unreadCount]);
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      sender: 'user',
+      message: inputMessage.trim(),
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    // Simulate AI response with relevant answers
+    setTimeout(() => {
+      let botReply = 'Thanks for your message! ';
+      
+      const lowerMsg = userMessage.message.toLowerCase();
+      
+      if (lowerMsg.includes('deposit') || lowerMsg.includes('how to deposit')) {
+        botReply = 'To deposit crypto:\n\n1. Go to Wallet page\n2. Select the coin you want to deposit\n3. Click "Deposit"\n4. Copy your unique deposit address\n5. Send crypto from your external wallet to this address\n\nDeposits usually arrive within 10-30 minutes depending on network congestion. 🚀';
+      } else if (lowerMsg.includes('withdraw') || lowerMsg.includes('withdrawal')) {
+        botReply = 'To withdraw crypto:\n\n1. Go to Wallet page\n2. Select the coin\n3. Click "Withdraw"\n4. Enter destination address\n5. Enter amount and confirm with 2FA\n\nWithdrawals process within 15 minutes. Make sure to double-check the address! ⚠️';
+      } else if (lowerMsg.includes('p2p') || lowerMsg.includes('trade')) {
+        botReply = 'P2P Trading Guide:\n\n1. Browse offers in P2P Marketplace\n2. Select an offer that matches your needs\n3. Initiate trade\n4. Make payment via agreed method\n5. Mark payment as complete\n6. Seller releases crypto from escrow\n\nAll trades are protected by our escrow system! 🔒';
+      } else if (lowerMsg.includes('fee') || lowerMsg.includes('cost')) {
+        botReply = 'Our fees:\n\n• P2P Trading: 0.1%\n• Instant Buy/Sell: 1-2%\n• Crypto Swap: 0.1%\n• Deposits: FREE\n• Withdrawals: Network fee only\n\nNew users get 0% P2P fees for 30 days! 🎉';
+      } else if (lowerMsg.includes('verify') || lowerMsg.includes('kyc')) {
+        botReply = 'KYC Verification:\n\n• Basic: Email verification (required for all)\n• Enhanced: ID verification (for P2P sellers & higher limits)\n\nVerification usually completes within 24 hours. Go to Settings > Verification to start! ✅';
+      } else if (lowerMsg.includes('swap') || lowerMsg.includes('exchange')) {
+        botReply = 'Crypto Swap is instant and easy:\n\n1. Go to Swap page\n2. Select FROM and TO coins\n3. Enter amount\n4. Review rate and fee\n5. Click "Swap Now"\n\nOnly 0.1% fee with best market rates! ⚡';
+      } else if (lowerMsg.includes('savings') || lowerMsg.includes('earn')) {
+        botReply = 'Earn passive rewards with Crypto Savings:\n\n• BTC: 4.5% APY\n• ETH: 5.2% APY\n• USDT: 8% APY\n\nFlexible savings - withdraw anytime! Transfer crypto from Wallet to Savings to start earning. 💰';
+      } else {
+        botReply += 'I\'m here to help with:\n\n• Deposits & Withdrawals\n• P2P Trading\n• Swap & Fees\n• Savings & Rewards\n• Account Verification\n\nFor complex issues, contact our 24/7 support:\n📧 support@coinhubx.com';
+      }
+
+      const botResponse = {
+        id: (Date.now() + 1).toString(),
+        sender: 'bot',
+        message: botReply,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, botResponse]);
+      setIsLoading(false);
+      
+      if (!isOpen) {
+        setUnreadCount(prev => prev + 1);
+      }
+    }, 1200);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // Floating Chat Button
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => {
+          setIsOpen(true);
+          setUnreadCount(0);
+        }}
+        style={{
+          position: 'fixed',
+          bottom: '28px',
+          left: '28px',
+          width: window.innerWidth <= 768 ? '48px' : '64px',
+          height: window.innerWidth <= 768 ? '48px' : '64px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
+          border: 'none',
+          boxShadow: '0 4px 24px rgba(0, 240, 255, 0.6), 0 0 48px rgba(155, 77, 255, 0.4)',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          transition: 'all 0.3s ease',
+          animation: 'pulse 2s infinite'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 6px 32px rgba(0, 240, 255, 0.8), 0 0 64px rgba(155, 77, 255, 0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1) translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 24px rgba(0, 240, 255, 0.6), 0 0 48px rgba(155, 77, 255, 0.4)';
+        }}
+      >
+        <IoChatbubbles size={30} color="#FFF" strokeWidth={2.5} />
+        {unreadCount > 0 && (
+          <div style={{
+            position: 'absolute',
+            top: '-4px',
+            right: '-4px',
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            background: '#EF4444',
+            color: '#FFF',
+            fontSize: '12px',
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid #020618'
+          }}>
+            {unreadCount}
+          </div>
+        )}
+        <style>{`
+          @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 24px rgba(0, 240, 255, 0.6), 0 0 48px rgba(155, 77, 255, 0.4); }
+            50% { box-shadow: 0 4px 24px rgba(0, 240, 255, 0.9), 0 0 64px rgba(155, 77, 255, 0.7); }
+          }
+        `}</style>
+      </button>
+    );
+  }
+
+  // Chat Window
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '28px',
+      left: '28px',
+      width: '400px',
+      maxWidth: 'calc(100vw - 56px)',
+      height: isMinimized ? '72px' : '600px',
+      maxHeight: 'calc(100vh - 100px)',
+      background: 'linear-gradient(135deg, #020618 0%, #0a0e27 100%)',
+      borderRadius: '20px',
+      border: '2px solid rgba(0, 240, 255, 0.4)',
+      boxShadow: '0 8px 40px rgba(0, 240, 255, 0.4), 0 0 80px rgba(0, 0, 0, 0.6)',
+      zIndex: 9999,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+      transition: 'height 0.3s ease'
+    }}>
+      {/* Header */}
+      <div style={{
+        background: 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
+        padding: '18px 20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: '#FFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <IoFlash size={22} color="#00F0FF" strokeWidth={2.5} />
+          </div>
+          <div>
+            <div style={{ color: '#FFF', fontSize: '17px', fontWeight: '700' }}>Coin Hub IoClose as X AI</div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', fontWeight: '500' }}>🟢 Always Online</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={() => setIsMinimized(!isMinimized)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+          >
+            <IoContract size={18} color="#FFF" />
+          </button>
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+          >
+            <IoClose size={18} color="#FFF" />
+          </button>
+        </div>
+      </div>
+
+      {!isMinimized && (
+        <>
+          {/* Messages */}
+          <div style={{
+            flex: 1,
+            padding: '20px',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            background: 'rgba(0, 0, 0, 0.2)'
+          }}>
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                  animation: 'fadeIn 0.3s ease-in-out'
+                }}
+              >
+                <div style={{
+                  maxWidth: '80%',
+                  padding: '14px 16px',
+                  borderRadius: msg.sender === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                  background: msg.sender === 'user' 
+                    ? 'linear-gradient(135deg, #00F0FF, #00D5FF)' 
+                    : 'rgba(155, 77, 255, 0.2)',
+                  color: msg.sender === 'user' ? '#000' : '#FFF',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  fontWeight: '500',
+                  wordBreak: 'break-word',
+                  whiteSpace: 'pre-line',
+                  boxShadow: msg.sender === 'user' 
+                    ? '0 2px 8px rgba(0, 240, 255, 0.3)'
+                    : '0 2px 8px rgba(155, 77, 255, 0.2)',
+                  border: msg.sender === 'user' 
+                    ? 'none'
+                    : '1px solid rgba(155, 77, 255, 0.3)'
+                }}>
+                  {msg.message}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{
+                  padding: '14px 16px',
+                  borderRadius: '16px 16px 16px 4px',
+                  background: 'rgba(155, 77, 255, 0.2)',
+                  border: '1px solid rgba(155, 77, 255, 0.3)',
+                  display: 'flex',
+                  gap: '6px'
+                }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#9B4DFF', animation: 'bounce 0.6s infinite 0s' }} />
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#9B4DFF', animation: 'bounce 0.6s infinite 0.2s' }} />
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#9B4DFF', animation: 'bounce 0.6s infinite 0.4s' }} />
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input */}
+          <div style={{
+            padding: '18px 20px',
+            borderTop: '1px solid rgba(0, 240, 255, 0.2)',
+            background: 'rgba(0, 0, 0, 0.3)',
+            display: 'flex',
+            gap: '10px'
+          }}>
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask me anything..."
+              style={{
+                flex: 1,
+                padding: '14px 16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(0, 240, 255, 0.3)',
+                background: 'rgba(0, 0, 0, 0.4)',
+                color: '#FFF',
+                fontSize: '14px',
+                outline: 'none',
+                transition: 'all 0.3s'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isLoading}
+              style={{
+                padding: '14px 18px',
+                borderRadius: '12px',
+                border: 'none',
+                background: inputMessage.trim() && !isLoading
+                  ? 'linear-gradient(135deg, #00F0FF, #9B4DFF)' 
+                  : 'rgba(100, 100, 100, 0.3)',
+                cursor: inputMessage.trim() && !isLoading ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s',
+                boxShadow: inputMessage.trim() && !isLoading ? '0 0 20px rgba(0, 240, 255, 0.4)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (inputMessage.trim() && !isLoading) {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <IoSend size={20} color={inputMessage.trim() && !isLoading ? '#FFF' : '#666'} />
+            </button>
+          </div>
+        </>
+      )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+      `}</style>
+    </div>
+  );
+}

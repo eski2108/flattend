@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://protrading.preview.emergentagent.com/api"
+BACKEND_URL = "https://fixdisputeflow.preview.emergentagent.com/api"
 
 def test_savings_with_proper_setup():
     """Test with proper user data setup"""

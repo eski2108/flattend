@@ -386,23 +386,53 @@ async def p2p_release_crypto_with_wallet(
             except Exception as comm_error:
                 logger.warning(f"⚠️ P2P: Referrer commission payment failed: {str(comm_error)}")
         
+        # Calculate timing metrics for trader stats
+        completion_timestamp = datetime.now(timezone.utc).isoformat()
+        completion_time = datetime.now(timezone.utc)
+        
+        # Calculate payment time (created_at -> paid_at)
+        payment_time_seconds = None
+        if trade.get("paid_at"):
+            try:
+                created_at = datetime.fromisoformat(trade["created_at"].replace('Z', '+00:00'))
+                paid_at = datetime.fromisoformat(trade["paid_at"].replace('Z', '+00:00'))
+                payment_time_seconds = int((paid_at - created_at).total_seconds())
+            except Exception as e:
+                logger.warning(f"Could not calculate payment_time: {e}")
+        
+        # Calculate release time (paid_at -> released_at)
+        release_time_seconds = None
+        if trade.get("paid_at"):
+            try:
+                paid_at = datetime.fromisoformat(trade["paid_at"].replace('Z', '+00:00'))
+                release_time_seconds = int((completion_time - paid_at).total_seconds())
+            except Exception as e:
+                logger.warning(f"Could not calculate release_time: {e}")
+        
         # Update trade status and save fee for audit trail
+        update_fields = {
+            "status": "completed",
+            "escrow_locked": False,
+            "platform_fee_amount": platform_fee,
+            "platform_fee_currency": currency,
+            "platform_fee_percent": fee_percent,
+            "admin_fee": admin_fee,
+            "referrer_commission": referrer_commission,
+            "referrer_id": referrer_id,
+            "amount_to_buyer": amount_to_buyer,
+            "completed_at": completion_timestamp,
+            "released_at": completion_timestamp  # For trader stats calculation
+        }
+        
+        # Add timing metrics if calculated
+        if payment_time_seconds is not None:
+            update_fields["payment_time_seconds"] = payment_time_seconds
+        if release_time_seconds is not None:
+            update_fields["release_time_seconds"] = release_time_seconds
+        
         await db.trades.update_one(
             {"trade_id": trade_id},
-            {
-                "$set": {
-                    "status": "completed",
-                    "escrow_locked": False,
-                    "platform_fee_amount": platform_fee,
-                    "platform_fee_currency": currency,
-                    "platform_fee_percent": fee_percent,
-                    "admin_fee": admin_fee,
-                    "referrer_commission": referrer_commission,
-                    "referrer_id": referrer_id,
-                    "amount_to_buyer": amount_to_buyer,
-                    "completed_at": datetime.now(timezone.utc).isoformat()
-                }
-            }
+            {"$set": update_fields}
         )
         
         # Log to fee_transactions for business dashboard

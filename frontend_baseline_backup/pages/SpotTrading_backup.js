@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://protrading.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://fixdisputeflow.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

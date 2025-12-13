@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { IoCard as CreditCard, IoGlobe as Globe, IoLockClosed as Lock, IoLogOut, IoMail, IoNotifications, IoNotifications as Bell, IoPersonOutline as User, IoPhonePortrait as Smartphone, IoShield as Shield, IoTrendingUp } from 'react-icons/io5';
+import { IoCard as CreditCard, IoGlobe as Globe, IoLockClosed as Lock, IoLogOut, IoMail, IoNotifications as Bell, IoPersonOutline as User, IoPhonePortrait as Smartphone, IoShield as Shield, IoTrendingUp, IoCheckmarkCircle } from 'react-icons/io5';
 import { toast } from 'sonner';
 import CurrencySelector from '@/components/CurrencySelector';
 import PriceAlerts from '@/components/PriceAlerts';
-import PremiumDownloadButtons from '@/components/PremiumDownloadButtons';
 
 // Settings Components
 import ProfileSettings from '@/components/settings/ProfileSettings';
@@ -23,7 +23,7 @@ export default function Settings() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loginEmailAlerts, setLoginEmailAlerts] = useState(true);
   const [loadingSettings, setLoadingSettings] = useState(false);
-  const [activeModal, setActiveModal] = useState(null); // 'profile' | 'email' | 'security' | '2fa' | 'notifications' | 'language' | 'payment'
+  const [activeModal, setActiveModal] = useState(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -35,7 +35,6 @@ export default function Settings() {
     const user = JSON.parse(userData);
     setCurrentUser(user);
     
-    // Fetch security settings
     fetchSecuritySettings();
   }, [navigate]);
 
@@ -54,41 +53,12 @@ export default function Settings() {
       const data = await response.json();
       if (data.success) {
         toast.success(data.message);
-        // Refresh user data
         window.location.reload();
       } else {
         toast.error(data.detail || 'Failed to verify seller');
       }
     } catch (error) {
       toast.error(error.message || 'Failed to verify seller');
-    }
-  };
-
-  const handleUpgradeLevel = async (level) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${BACKEND_URL}/api/monetization/upgrade-seller-level`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          user_id: currentUser?.user_id,
-          target_level: level
-        })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        toast.success(data.message);
-        // Refresh user data
-        window.location.reload();
-      } else {
-        toast.error(data.detail || 'Failed to upgrade level');
-      }
-    } catch (error) {
-      toast.error(error.message || 'Failed to upgrade level');
     }
   };
 
@@ -144,6 +114,8 @@ export default function Settings() {
 
   const handleLogout = () => {
     localStorage.removeItem('cryptobank_user');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     toast.success('Logged out successfully');
     navigate('/');
   };
@@ -160,51 +132,121 @@ export default function Settings() {
     {
       title: 'Account',
       items: [
-        { icon: User, label: 'Profile', description: 'Manage your account details', action: () => setActiveModal('profile') },
-        { icon: IoMail, label: 'Email', description: currentUser.email, action: () => setActiveModal('email') },
-        { icon: Lock, label: 'Security', description: 'Change password and security settings', action: () => setActiveModal('security') },
-        { icon: Shield, label: 'Two-Factor Authentication', description: 'Enable 2FA for enhanced security', action: () => setActiveModal('2fa') }
+        { 
+          icon: User, 
+          label: 'Profile', 
+          description: 'Manage your personal information', 
+          action: () => setActiveModal('profile'),
+          dataTestId: 'btn-profile-settings'
+        },
+        { 
+          icon: Lock, 
+          label: 'Security', 
+          description: 'Password and security settings', 
+          action: () => setActiveModal('security'),
+          dataTestId: 'btn-security-settings'
+        },
+        { 
+          icon: Shield, 
+          label: 'Two-Factor Authentication', 
+          description: '2FA for enhanced security', 
+          action: () => setActiveModal('2fa'),
+          dataTestId: 'btn-2fa-settings'
+        }
       ]
     },
     {
       title: 'Preferences',
       items: [
-        { icon: Bell, label: 'Notifications', description: 'Manage notification preferences', action: () => setActiveModal('notifications') },
-        { icon: Globe, label: 'Language', description: currentUser.language ? `${currentUser.language.toUpperCase()}` : 'English', action: () => setActiveModal('language') },
-        { icon: Smartphone, label: 'Mobile App', description: 'Download iOS or Android app', action: () => navigate('/mobile-app') }
+        { 
+          icon: Bell, 
+          label: 'Notifications', 
+          description: 'Manage notification preferences', 
+          action: () => setActiveModal('notifications'),
+          dataTestId: 'btn-notification-settings'
+        },
+        { 
+          icon: Globe, 
+          label: 'Language', 
+          description: currentUser.language ? `${currentUser.language.toUpperCase()}` : 'English', 
+          action: () => setActiveModal('language'),
+          dataTestId: 'btn-language-settings'
+        }
       ]
     },
     {
       title: 'Payment',
       items: [
-        { icon: CreditCard, label: 'Payment Methods', description: 'Manage your payment methods for P2P', action: () => setActiveModal('payment') }
+        { 
+          icon: CreditCard, 
+          label: 'Payment Methods', 
+          description: 'Manage P2P payment methods', 
+          action: () => setActiveModal('payment'),
+          dataTestId: 'btn-payment-methods'
+        }
+      ]
+    },
+    {
+      title: 'P2P Trading',
+      items: [
+        { 
+          icon: IoTrendingUp, 
+          label: 'Become a Seller', 
+          description: 'Start selling on P2P marketplace', 
+          action: handleVerifySeller, 
+          highlight: true,
+          dataTestId: 'btn-become-seller'
+        }
       ]
     }
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '2rem' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '36px', fontWeight: '900', color: '#fff', marginBottom: '0.5rem' }}>
-            Settings
-          </h1>
-          <p style={{ color: '#a0a0a0', fontSize: '16px' }}>
-            Manage your account settings and preferences
-          </p>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', padding: '3rem 2rem' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        {/* Premium Header with Logo */}
+        <div style={{ 
+          marginBottom: '3rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '2rem',
+          paddingBottom: '2rem',
+          borderBottom: '1px solid rgba(0, 240, 255, 0.1)'
+        }}>
+          <img 
+            src="/logo1-transparent.png" 
+            alt="CoinHubX" 
+            style={{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain'
+            }}
+          />
+          <div style={{ flex: 1 }}>
+            <h1 style={{ 
+              fontSize: '32px', 
+              fontWeight: '700', 
+              color: '#fff', 
+              marginBottom: '0.5rem',
+              letterSpacing: '-0.5px'
+            }}>
+              Settings
+            </h1>
+            <p style={{ color: '#888', fontSize: '15px', marginBottom: 0 }}>
+              Manage your account settings and preferences
+            </p>
+          </div>
         </div>
 
-        {/* Profile Card */}
+        {/* Premium Profile Card */}
         <Card style={{
-          background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8), rgba(19, 24, 41, 0.6))',
-          border: '2px solid rgba(0, 240, 255, 0.3)',
+          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)',
+          border: '1px solid rgba(0, 240, 255, 0.2)',
           borderRadius: '16px',
-          padding: '2rem',
-          marginBottom: '2rem',
-          boxShadow: '0 0 30px rgba(0, 240, 255, 0.2)'
+          padding: '2.5rem',
+          marginBottom: '3rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '2rem', flexDirection: 'column' }}>
             <div style={{
               width: '80px',
               height: '80px',
@@ -213,38 +255,64 @@ export default function Settings() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(0, 240, 255, 0.5)',
-              flexShrink: 0,
-              overflow: 'hidden'
+              overflow: 'hidden',
+              border: '3px solid rgba(0, 240, 255, 0.3)',
+              margin: '0 auto'
             }}>
-              <img 
-                src="/logo1-transparent.png" 
-                alt="CoinHubX" 
-                style={{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain'
-                }}
-              />
+              <span style={{ fontSize: '32px', fontWeight: '700', color: '#000' }}>
+                {(currentUser.full_name || currentUser.name || 'U').charAt(0).toUpperCase()}
+              </span>
             </div>
-            <div style={{ flex: 1, minWidth: '250px' }}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ color: '#888', fontSize: '12px', marginBottom: '0.5rem', display: 'block', textTransform: 'uppercase' }}>Full Name</label>
-                <input
-                  type="text"
-                  value={currentUser.full_name || currentUser.name || ''}
-                  onChange={(e) => {
-                    const newName = e.target.value;
-                    setCurrentUser({...currentUser, full_name: newName});
-                  }}
-                  onBlur={async (e) => {
-                    // Reset styling
-                    e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
-                    e.target.style.boxShadow = 'none';
-                    
-                    // Handle API update
-                    const newName = e.target.value.trim();
-                    if (newName && newName !== (currentUser.full_name || currentUser.name)) {
+            <div style={{ width: '100%' }}>
+              <div style={{ marginBottom: '2rem' }}>
+                <label style={{ 
+                  color: '#00F0FF', 
+                  fontSize: '11px', 
+                  marginBottom: '0.75rem', 
+                  display: 'block', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '1px',
+                  fontWeight: '600'
+                }}>Full Name</label>
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'stretch', flexDirection: 'column' }}>
+                  <input
+                    type="text"
+                    value={currentUser.full_name || currentUser.name || ''}
+                    onChange={(e) => {
+                      const newName = e.target.value;
+                      setCurrentUser({...currentUser, full_name: newName});
+                    }}
+                    disabled={loadingSettings}
+                    data-testid="input-full-name"
+                    style={{
+                      flex: 1,
+                      padding: '1rem 1.25rem',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      borderRadius: '10px',
+                      color: '#fff',
+                      fontSize: '17px',
+                      fontWeight: '600',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                      e.target.style.background = 'rgba(0, 0, 0, 0.5)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                      e.target.style.background = 'rgba(0, 0, 0, 0.4)';
+                    }}
+                  />
+                  <button
+                    onClick={async () => {
+                      const newName = (currentUser.full_name || currentUser.name || '').trim();
+                      if (!newName) {
+                        toast.error('Please enter a name');
+                        return;
+                      }
                       setLoadingSettings(true);
                       try {
                         const response = await fetch(`${BACKEND_URL}/api/user/profile`, {
@@ -260,330 +328,136 @@ export default function Settings() {
                         });
                         const data = await response.json();
                         if (data.success) {
-                          toast.success('Name updated successfully!');
+                          toast.success('✓ Name saved successfully');
                           const updatedUser = {...currentUser, full_name: newName};
                           setCurrentUser(updatedUser);
                           localStorage.setItem('cryptobank_user', JSON.stringify(updatedUser));
                         } else {
-                          toast.error('Failed to update name');
+                          toast.error('Failed to save name');
                         }
                       } catch (error) {
-                        toast.error('Failed to update name');
+                        toast.error('Failed to save name');
                       } finally {
                         setLoadingSettings(false);
                       }
-                    }
-                  }}
-                  disabled={loadingSettings}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '12px',
-                    color: '#fff',
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    outline: 'none',
-                    transition: 'all 0.3s ease',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(0, 240, 255, 0.6)';
-                    e.target.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.2)';
-                  }}
-                />
+                    }}
+                    disabled={loadingSettings}
+                    data-testid="btn-save-name"
+                    style={{
+                      width: '100%',
+                      padding: '1rem',
+                      background: loadingSettings ? '#666' : 'linear-gradient(135deg, #00F0FF, #0099CC)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      color: '#000',
+                      fontSize: '15px',
+                      fontWeight: '700',
+                      cursor: loadingSettings ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!loadingSettings) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 240, 255, 0.3)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {loadingSettings ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
               </div>
-              <p style={{ color: '#00F0FF', fontSize: '16px', fontWeight: '600', marginBottom: 0 }}>
-                {currentUser.email}
-              </p>
+              
+              {/* Email - Locked */}
+              <div>
+                <label style={{ 
+                  color: '#888', 
+                  fontSize: '11px', 
+                  marginBottom: '0.75rem', 
+                  display: 'block', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '1px',
+                  fontWeight: '600'
+                }}>Email Address</label>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  padding: '1rem 1.25rem',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '1px solid rgba(100, 100, 100, 0.3)',
+                  borderRadius: '10px'
+                }}>
+                  <Lock size={18} color="#666" />
+                  <span style={{ color: '#aaa', fontSize: '17px', fontWeight: '500', flex: 1 }}>{currentUser.email}</span>
+                  <span style={{ 
+                    fontSize: '10px', 
+                    color: '#666', 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '0.5px',
+                    padding: '4px 8px',
+                    background: 'rgba(100, 100, 100, 0.2)',
+                    borderRadius: '4px'
+                  }}>Locked</span>
+                </div>
+                <p style={{ fontSize: '12px', color: '#666', marginTop: '0.75rem', marginBottom: 0, lineHeight: '1.5' }}>
+                  Email cannot be changed for security reasons. Contact support if you need to update your email address.
+                </p>
+              </div>
             </div>
           </div>
         </Card>
 
-        {/* Seller Features & Premium */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
-            💎 Premium Features
-          </h3>
-          <Card style={{
-            background: 'rgba(26, 31, 58, 0.8)',
-            border: '2px solid rgba(168, 85, 247, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem'
-          }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-              {/* Seller Status */}
-              <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.2)' }}>
-                <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Seller Status</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  {currentUser?.is_verified_seller ? (
-                    <span style={{ color: '#A855F7', fontWeight: '700', fontSize: '16px' }}>✓ Verified</span>
-                  ) : (
-                    <span style={{ color: '#888', fontSize: '14px' }}>Not Verified</span>
-                  )}
-                </div>
-                <button
-                  onClick={() => {
-                    if (!currentUser?.is_verified_seller) {
-                      if (window.confirm('Get Verified Seller badge for £25?\n\nThis will be deducted from your GBP wallet balance.')) {
-                        handleVerifySeller();
-                      }
-                    }
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    background: currentUser?.is_verified_seller ? 'rgba(34, 197, 94, 0.2)' : 'rgba(168, 85, 247, 0.2)',
-                    border: '1px solid rgba(168, 85, 247, 0.3)',
-                    borderRadius: '6px',
-                    color: currentUser?.is_verified_seller ? '#22C55E' : '#A855F7',
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    cursor: currentUser?.is_verified_seller ? 'default' : 'pointer'
-                  }}
-                >
-                  {currentUser?.is_verified_seller ? 'Active' : 'Get Verified £25'}
-                </button>
-              </div>
-
-              {/* Seller Level */}
-              <div style={{ padding: '1rem', background: 'rgba(255, 215, 0, 0.05)', borderRadius: '12px', border: '1px solid rgba(255, 215, 0, 0.2)' }}>
-                <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Seller Level</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  {currentUser?.seller_level === 'gold' && (
-                    <span style={{ color: '#FFD700', fontWeight: '700', fontSize: '16px' }}>👑 Gold</span>
-                  )}
-                  {currentUser?.seller_level === 'silver' && (
-                    <span style={{ color: '#C0C0C0', fontWeight: '700', fontSize: '16px' }}>⭐ Silver</span>
-                  )}
-                  {(!currentUser?.seller_level || currentUser?.seller_level === 'bronze') && (
-                    <span style={{ color: '#888', fontSize: '14px' }}>Bronze (Default)</span>
-                  )}
-                </div>
-                <button
-                  onClick={() => {
-                    const currentLevel = currentUser?.seller_level || 'bronze';
-                    if (currentLevel === 'gold') {
-                      toast.info('You already have Gold level!');
-                      return;
-                    }
-                    
-                    const nextLevel = currentLevel === 'bronze' ? 'silver' : 'gold';
-                    const price = nextLevel === 'silver' ? '£20' : '£50';
-                    
-                    if (window.confirm(`Upgrade to ${nextLevel.toUpperCase()} level for ${price}?\n\nBenefits:\n- Priority ranking in marketplace\n- Reduced seller fees\n- ${nextLevel.toUpperCase()} badge\n\nAmount will be deducted from your GBP wallet.`)) {
-                      handleUpgradeLevel(nextLevel);
-                    }
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    background: 'rgba(255, 215, 0, 0.2)',
-                    border: '1px solid rgba(255, 215, 0, 0.3)',
-                    borderRadius: '6px',
-                    color: '#FFD700',
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {currentUser?.seller_level === 'gold' ? 'Max Level' : 'Upgrade Level'}
-                </button>
-              </div>
-
-              {/* Arbitrage Alerts */}
-              <div style={{ padding: '1rem', background: 'rgba(0, 240, 255, 0.05)', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.2)' }}>
-                <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Alerts Subscription</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <span style={{ color: '#888', fontSize: '14px' }}>Not Subscribed</span>
-                </div>
-                <button
-                  onClick={() => navigate('/subscriptions')}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    background: 'rgba(0, 240, 255, 0.2)',
-                    border: '1px solid rgba(0, 240, 255, 0.3)',
-                    borderRadius: '6px',
-                    color: '#00F0FF',
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Subscribe £10/mo
-                </button>
-              </div>
-
-              {/* View All Premium */}
-              <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.05)', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <button
-                  onClick={() => navigate('/subscriptions')}
-                  style={{
-                    width: '100%',
-                    padding: '1rem',
-                    background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#000',
-                    fontSize: '14px',
-                    fontWeight: '900',
-                    cursor: 'pointer'
-                  }}
-                >
-                  View All Features
-                </button>
-                <div style={{ fontSize: '12px', color: '#888', marginTop: '0.5rem', textAlign: 'center' }}>
-                  Boost earnings & priority
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Currency Selector */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
-            Currency Settings
-          </h3>
-          <CurrencySelector />
-        </div>
-
-        {/* Price Alerts */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
-            <IoTrendingUp size={20} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
-            Price Alerts
-          </h3>
-          <PriceAlerts />
-        </div>
-
-        {/* Security Settings */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
-            Security & Notifications
-          </h3>
-          <Card style={{
-            background: 'rgba(26, 31, 58, 0.8)',
-            border: '1px solid rgba(0, 240, 255, 0.2)',
-            borderRadius: '16px',
-            padding: '1.5rem'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem'
-            }}>
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.5rem'
-                }}>
-                  <div style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '8px',
-                    background: 'rgba(0, 240, 255, 0.1)',
-                    border: '1px solid rgba(0, 240, 255, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <IoMail size={20} color="#00F0FF" />
-                  </div>
-                  <div style={{ color: '#fff', fontSize: '16px', fontWeight: '700' }}>
-                    Login Email Alerts
-                  </div>
-                </div>
-                <p style={{
-                  color: '#888',
-                  fontSize: '14px',
-                  margin: 0,
-                  paddingLeft: '48px'
-                }}>
-                  Receive email notifications when your account is logged into
-                </p>
-              </div>
-              
-              {/* Toggle Switch */}
-              <button
-                onClick={() => updateSecuritySettings(!loginEmailAlerts)}
-                disabled={loadingSettings}
-                style={{
-                  width: '52px',
-                  height: '28px',
-                  borderRadius: '14px',
-                  background: loginEmailAlerts ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(100, 116, 139, 0.3)',
-                  border: 'none',
-                  position: 'relative',
-                  cursor: loadingSettings ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.3s ease',
-                  flexShrink: 0,
-                  opacity: loadingSettings ? 0.5 : 1
-                }}
-                onMouseEnter={(e) => {
-                  if (!loadingSettings) {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
-              >
-                <div style={{
-                  position: 'absolute',
-                  top: '2px',
-                  left: loginEmailAlerts ? 'calc(100% - 26px)' : '2px',
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: '#fff',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-                  transition: 'left 0.3s ease'
-                }} />
-              </button>
-            </div>
-          </Card>
-        </div>
-
         {/* Settings Sections */}
         {settingSections.map((section, sectionIdx) => (
-          <div key={sectionIdx} style={{ marginBottom: '2rem' }}>
-            <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
+          <div key={sectionIdx} style={{ marginBottom: '2.5rem' }}>
+            <h3 style={{ 
+              color: '#fff', 
+              fontSize: '14px', 
+              fontWeight: '600', 
+              marginBottom: '1rem', 
+              paddingLeft: '4px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}>
               {section.title}
             </h3>
             <Card style={{
-              background: 'rgba(26, 31, 58, 0.8)',
-              border: '1px solid rgba(0, 240, 255, 0.2)',
-              borderRadius: '16px',
+              background: 'rgba(26, 31, 58, 0.5)',
+              border: '1px solid rgba(0, 240, 255, 0.15)',
+              borderRadius: '12px',
               overflow: 'hidden'
             }}>
               {section.items.map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div
+                  <button
                     key={idx}
                     onClick={item.action}
+                    data-testid={item.dataTestId}
                     style={{
-                      padding: '1.5rem',
-                      borderBottom: idx < section.items.length - 1 ? '1px solid rgba(0, 240, 255, 0.1)' : 'none',
-                      cursor: item.action ? 'pointer' : 'default',
-                      transition: 'all 0.3s ease',
+                      width: '100%',
+                      padding: '1.5rem 1.75rem',
+                      borderBottom: idx < section.items.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '1rem'
+                      gap: '1.25rem',
+                      background: item.highlight ? 'rgba(0, 240, 255, 0.05)' : 'transparent',
+                      border: 'none',
+                      textAlign: 'left'
                     }}
                     onMouseEnter={(e) => {
-                      if (item.action) {
-                        e.currentTarget.style.background = 'rgba(0, 240, 255, 0.05)';
-                      }
+                      e.currentTarget.style.background = 'rgba(0, 240, 255, 0.08)';
+                      e.currentTarget.style.transform = 'translateX(4px)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.background = item.highlight ? 'rgba(0, 240, 255, 0.05)' : 'transparent';
+                      e.currentTarget.style.transform = 'translateX(0)';
                     }}
                   >
                     <div style={{
@@ -591,73 +465,213 @@ export default function Settings() {
                       height: '48px',
                       borderRadius: '12px',
                       background: 'rgba(0, 240, 255, 0.1)',
-                      border: '1px solid rgba(0, 240, 255, 0.3)',
+                      border: '1px solid rgba(0, 240, 255, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
-                      <Icon size={24} color="#00F0FF" />
+                      <Icon size={22} color="#00F0FF" />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ color: '#fff', fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>
+                      <div style={{ color: '#fff', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
                         {item.label}
                       </div>
-                      <div style={{ color: '#888', fontSize: '14px' }}>
+                      <div style={{ color: '#888', fontSize: '13px', lineHeight: '1.4' }}>
                         {item.description}
                       </div>
                     </div>
-                    {item.action && (
-                      <div style={{ color: '#00F0FF', fontSize: '20px' }}>→</div>
-                    )}
-                  </div>
+                    <div style={{ color: '#00F0FF', fontSize: '20px', opacity: 0.6 }}>→</div>
+                  </button>
                 );
               })}
             </Card>
           </div>
         ))}
 
-        {/* Mobile App Download Section */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '1rem', paddingLeft: '4px' }}>
-            📱 Mobile App
+        {/* Currency Selector */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <h3 style={{ 
+            color: '#fff', 
+            fontSize: '14px', 
+            fontWeight: '600', 
+            marginBottom: '1rem', 
+            paddingLeft: '4px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}>
+            Display Currency
+          </h3>
+          <CurrencySelector />
+        </div>
+
+        {/* Price Alerts */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <h3 style={{ 
+            color: '#fff', 
+            fontSize: '14px', 
+            fontWeight: '600', 
+            marginBottom: '1rem', 
+            paddingLeft: '4px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}>
+            Price Alerts
+          </h3>
+          <PriceAlerts />
+        </div>
+
+        {/* Security Settings */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <h3 style={{ 
+            color: '#fff', 
+            fontSize: '14px', 
+            fontWeight: '600', 
+            marginBottom: '1rem', 
+            paddingLeft: '4px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}>
+            Login Notifications
           </h3>
           <Card style={{
-            background: 'rgba(26, 31, 58, 0.8)',
-            border: '2px solid rgba(0, 240, 255, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem'
+            background: 'rgba(26, 31, 58, 0.5)',
+            border: '1px solid rgba(0, 240, 255, 0.15)',
+            borderRadius: '12px',
+            padding: '1.5rem 1.75rem'
           }}>
-            <PremiumDownloadButtons showTitle={false} compact={true} />
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1.5rem'
+            }}>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'rgba(0, 240, 255, 0.1)',
+                  border: '1px solid rgba(0, 240, 255, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IoMail size={22} color="#00F0FF" />
+                </div>
+                <div>
+                  <div style={{ color: '#fff', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
+                    Email Login Alerts
+                  </div>
+                  <div style={{ color: '#888', fontSize: '13px' }}>
+                    Get notified when someone logs into your account
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => updateSecuritySettings(!loginEmailAlerts)}
+                disabled={loadingSettings}
+                data-testid="toggle-login-alerts"
+                style={{
+                  position: 'relative',
+                  width: '52px',
+                  height: '28px',
+                  borderRadius: '14px',
+                  border: 'none',
+                  cursor: loadingSettings ? 'not-allowed' : 'pointer',
+                  background: loginEmailAlerts ? '#00F0FF' : '#333',
+                  transition: 'background 0.3s ease',
+                  flexShrink: 0
+                }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '3px',
+                  left: loginEmailAlerts ? '27px' : '3px',
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '50%',
+                  background: '#fff',
+                  transition: 'left 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {loginEmailAlerts && <IoCheckmarkCircle size={14} color="#00F0FF" />}
+                </div>
+              </button>
+            </div>
+          </Card>
+        </div>
+
+        {/* Mobile App - Coming Soon */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <h3 style={{ 
+            color: '#fff', 
+            fontSize: '14px', 
+            fontWeight: '600', 
+            marginBottom: '1rem', 
+            paddingLeft: '4px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}>
+            Mobile App
+          </h3>
+          <Card style={{
+            background: 'rgba(26, 31, 58, 0.5)',
+            border: '1px solid rgba(100, 100, 100, 0.3)',
+            borderRadius: '12px',
+            padding: '2.5rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: 'rgba(100, 100, 100, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem'
+            }}>
+              <Smartphone size={40} color="#666" />
+            </div>
+            <h4 style={{ color: '#aaa', fontSize: '18px', fontWeight: '600', marginBottom: '0.75rem' }}>
+              Mobile App Coming Soon
+            </h4>
+            <p style={{ color: '#666', fontSize: '14px', marginBottom: 0, maxWidth: '400px', margin: '0 auto', lineHeight: '1.6' }}>
+              iOS and Android apps are currently in development. You'll be notified when they're available.
+            </p>
           </Card>
         </div>
 
         {/* Logout Button */}
         <button
           onClick={handleLogout}
+          data-testid="btn-logout"
           style={{
             width: '100%',
-            padding: '16px',
+            padding: '1rem',
             background: 'linear-gradient(135deg, #EF4444, #DC2626)',
             border: 'none',
             borderRadius: '12px',
             fontSize: '16px',
-            fontWeight: '900',
+            fontWeight: '700',
             color: '#fff',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '12px',
-            boxShadow: '0 0 30px rgba(239, 68, 68, 0.4)',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.2s ease'
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.6)';
+            e.currentTarget.style.opacity = '0.9';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.4)';
+            e.currentTarget.style.opacity = '1';
           }}
         >
           <IoLogOut size={20} />
@@ -665,55 +679,62 @@ export default function Settings() {
         </button>
 
         {/* App Version */}
-        <div style={{ textAlign: 'center', marginTop: '2rem', color: '#666', fontSize: '13px' }}>
-          CoinHubX v2.0.0
+        <div style={{ textAlign: 'center', marginTop: '2rem', color: '#555', fontSize: '12px' }}>
+          CoinHubX v2.0.0 • Premium Exchange Platform
         </div>
       </div>
 
-      {/* Settings Modals */}
-      {activeModal === 'profile' && (
+      {/* Settings Modals - Rendered using Portal */}
+      {activeModal === 'profile' && ReactDOM.createPortal(
         <ProfileSettings
           user={currentUser}
           onClose={() => setActiveModal(null)}
           onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === 'email' && (
+      {activeModal === 'email' && ReactDOM.createPortal(
         <EmailSettings
           user={currentUser}
           onClose={() => setActiveModal(null)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === 'security' && (
+      {activeModal === 'security' && ReactDOM.createPortal(
         <SecuritySettings
           user={currentUser}
           onClose={() => setActiveModal(null)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === '2fa' && (
+      {activeModal === '2fa' && ReactDOM.createPortal(
         <TwoFactorSettings
           user={currentUser}
           onClose={() => setActiveModal(null)}
           onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === 'notifications' && (
+      {activeModal === 'notifications' && ReactDOM.createPortal(
         <NotificationSettings
           user={currentUser}
           onClose={() => setActiveModal(null)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === 'language' && (
+      {activeModal === 'language' && ReactDOM.createPortal(
         <LanguageSettings
           user={currentUser}
           onClose={() => setActiveModal(null)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === 'payment' && (
+      {activeModal === 'payment' && ReactDOM.createPortal(
         <PaymentMethodsManager
           user={currentUser}
           onClose={() => setActiveModal(null)}
-        />
+        />,
+        document.body
       )}
     </div>
   );

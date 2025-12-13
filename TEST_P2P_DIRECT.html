@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>P2P Test</title>
+</head>
+<body>
+    <h1>Testing P2P API Directly</h1>
+    <div id="result"></div>
+    
+    <script>
+        fetch('https://fixdisputeflow.preview.emergentagent.com/api/p2p/marketplace/offers')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(e => {
+                document.getElementById('result').innerHTML = 'Error: ' + e;
+            });
+    </script>
+</body>
+</html>

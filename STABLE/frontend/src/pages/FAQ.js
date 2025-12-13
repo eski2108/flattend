@@ -1,0 +1,433 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Layout from '@/components/Layout';
+import { IoBook as Book, IoCash as DollarSign, IoChatbubbles, IoChevronDown, IoChevronUp, IoFlash as Zap, IoHelpCircle, IoPeople as Users, IoSearch, IoShield as Shield, IoTrendingUp as TrendingUp } from 'react-icons/io5';
+
+const faqs = [
+  {
+    category: 'Getting Started',
+    icon: Book,
+    color: '#00E8FF',
+    questions: [
+      {
+        q: 'How do I create an account?',
+        a: 'Click "Sign Up" on the homepage, enter your email, create a strong password, and verify your email address. You can also sign up with Google for faster registration. Once verified, you\'ll have immediate access to buy crypto and use all platform features.'
+      },
+      {
+        q: 'Do I need KYC verification?',
+        a: 'Basic KYC (email verification) is required for all users. Enhanced KYC (ID verification) is needed to become a P2P seller, withdraw large amounts, or access premium features. The verification process is quick and secure, typically completing within 24 hours.'
+      },
+      {
+        q: 'What cryptocurrencies can I trade?',
+        a: 'We support 25+ cryptocurrencies including Bitcoin (BTC), Ethereum (ETH), Tether (USDT), USD Coin (USDC), Binance Coin (BNB), Solana (SOL), Ripple (XRP), Cardano (ADA), Dogecoin (DOGE), Polkadot (DOT), Polygon (MATIC), Chainlink (LINK), Litecoin (LTC), Bitcoin Cash (BCH), Uniswap (UNI), Avalanche (AVAX), Cosmos (ATOM), Tron (TRX), Shiba Inu (SHIB), and Dai (DAI). More cryptocurrencies are added regularly.'
+      },
+      {
+        q: 'Is my account secure?',
+        a: 'Yes! We use bank-grade security including 2FA (Two-Factor Authentication), encrypted data storage, cold wallet storage for 95% of funds, real-time fraud detection, and regular security audits. Your funds are protected by industry-leading security measures.'
+      }
+    ]
+  },
+  {
+    category: 'Trading & P2P',
+    icon: TrendingUp,
+    color: '#8FFF4E',
+    questions: [
+      {
+        q: 'How does P2P trading work?',
+        a: 'P2P (Peer-to-Peer) trading connects buyers and sellers directly. Browse offers in the Marketplace, select one matching your needs, initiate a trade, make payment via the agreed method (bank transfer, PayPal, etc.), mark payment as complete, and the seller releases crypto from escrow after confirming your payment. The entire process is protected by our smart escrow system.'
+      },
+      {
+        q: 'What is escrow protection?',
+        a: 'When a trade starts, the seller\'s cryptocurrency is automatically locked in our secure escrow smart contract. The crypto cannot be accessed by anyone until: (1) The buyer marks payment as sent, (2) The seller confirms receiving payment and releases the crypto, OR (3) Admin resolves the trade if there\'s a dispute. This protects both buyers and sellers from fraud.'
+      },
+      {
+        q: 'How long does a trade take?',
+        a: 'Most trades complete within 15-30 minutes. You have a payment window (typically 15 minutes) to send payment after starting a trade. After marking as paid, sellers usually release crypto within 5-10 minutes. If there are any issues, our 24/7 support team can help resolve disputes quickly.'
+      },
+      {
+        q: 'What payment methods are supported?',
+        a: 'We support 60+ payment methods globally including: Bank Transfers (SEPA, SWIFT, Faster Payments, ACH), Digital Wallets (PayPal, Skrill, Neteller, Wise, Revolut), Mobile Money (M-Pesa, Airtel Money, GCash, PayMaya), Instant Payments (Zelle, Venmo, Cash App, PIX, UPI), and many more. Each seller specifies their accepted payment methods.'
+      },
+      {
+        q: 'Can I cancel a trade?',
+        a: 'Yes, you can cancel before making payment. Once you\'ve marked payment as sent, cancellation requires seller approval or admin intervention. If the seller doesn\'t respond within the trade timer, you can open a dispute and our team will investigate.'
+      }
+    ]
+  },
+  {
+    category: 'Fees & Limits',
+    icon: DollarSign,
+    color: '#F5C542',
+    questions: [
+      {
+        q: 'What are the trading fees?',
+        a: 'P2P Trading: 0.1% platform fee on completed trades. Instant Buy/Sell: 1-2% depending on payment method. Crypto Swap: 0.1% exchange fee. Savings: 0% deposit/withdrawal fees (earn APY rewards). New users get 0% P2P fees for 30 days with a referral code!'
+      },
+      {
+        q: 'Are there withdrawal fees?',
+        a: 'Withdrawal fees vary by cryptocurrency and network conditions. Typical fees: BTC: 0.0005 BTC, ETH: 0.005 ETH, USDT (TRC20): 1 USDT, USDT (ERC20): 5 USDT. We always display the exact fee before you confirm any withdrawal.'
+      },
+      {
+        q: 'What are the trading limits?',
+        a: 'Limits depend on your verification level. Unverified: £500/day. Basic KYC: £5,000/day. Enhanced KYC: £50,000/day. VIP: Unlimited. Sellers can also set their own min/max limits per trade. Contact support to increase your limits.'
+      },
+      {
+        q: 'Do you charge deposit fees?',
+        a: 'No! Crypto deposits are completely free. You only pay the network transaction fee when sending from your external wallet. Fiat deposits via bank transfer are also free (your bank may charge transfer fees).'
+      }
+    ]
+  },
+  {
+    category: 'Wallet & Security',
+    icon: Shield,
+    color: '#9B4DFF',
+    questions: [
+      {
+        q: 'How do I deposit cryptocurrency?',
+        a: 'Go to Wallet > Select coin > Click Deposit > Copy your unique deposit address > Send crypto from your external wallet to this address. Most deposits confirm within 10-30 minutes depending on network congestion. Never send coins to the wrong network (e.g., don\'t send BTC to an ETH address).'
+      },
+      {
+        q: 'How do I withdraw cryptocurrency?',
+        a: 'Go to Wallet > Select coin > Click Withdraw > Enter destination address > Enter amount > Confirm 2FA code > Submit. Withdrawals are processed within 15 minutes. For security, large withdrawals may require manual approval (up to 24 hours).'
+      },
+      {
+        q: 'What is 2FA and should I enable it?',
+        a: 'Two-Factor Authentication (2FA) adds an extra security layer to your account. Even if someone knows your password, they cannot access your account without the 2FA code from your phone. We STRONGLY recommend enabling 2FA using Google Authenticator or Authy.'
+      },
+      {
+        q: 'Are my funds safe?',
+        a: 'Yes! 95% of user funds are stored in cold wallets (offline storage) that cannot be hacked. Only 5% remains in hot wallets for daily operations. We also have insurance coverage, regular security audits, and 24/7 monitoring to protect your assets.'
+      },
+      {
+        q: 'What if I lose my 2FA device?',
+        a: 'Contact support immediately with your account details and ID verification. Our team will help you recover access using your backup codes (saved during 2FA setup) or through identity verification. This process can take 24-48 hours for security reasons.'
+      }
+    ]
+  },
+  {
+    category: 'Savings & Rewards',
+    icon: Zap,
+    color: '#00E8FF',
+    questions: [
+      {
+        q: 'How does Crypto Savings work?',
+        a: 'Transfer crypto from your Spot Wallet to Savings Vault and earn daily rewards automatically. APY rates: BTC 4.5%, ETH 5.2%, USDT 8%. Rewards are calculated daily and paid every 24 hours. You can withdraw anytime with no lock-up period (flexible savings).'
+      },
+      {
+        q: 'How do I earn referral rewards?',
+        a: 'Share your unique referral link with friends. When they sign up and trade, you earn 20% commission on their trading fees for 12 months. Your referrals also get 0% fees for 30 days. Track all earnings in your Referrals Dashboard.'
+      },
+      {
+        q: 'What is the Instant Buy feature?',
+        a: 'Instant Buy lets you purchase crypto directly with your debit/credit card or bank transfer at fixed prices. No need to find sellers or negotiate. Click the coin > Enter amount > Pay > Receive crypto instantly. Perfect for beginners!'
+      }
+    ]
+  },
+  {
+    category: 'Support & Disputes',
+    icon: Users,
+    color: '#F5C542',
+    questions: [
+      {
+        q: 'How do I contact support?',
+        a: 'Click the Support icon (bottom right) or go to Help & Support page. Submit a ticket with your issue and our team responds within 2-4 hours. For urgent issues (frozen trades, security concerns), use Live Chat for immediate assistance 24/7.'
+      },
+      {
+        q: 'What happens if there\'s a dispute?',
+        a: 'If you and the seller disagree (e.g., payment sent but not received), you can open a dispute. Upload proof of payment (screenshot, transaction ID). Our admin team reviews evidence from both parties and makes a fair decision within 24 hours. The outcome is final and binding.'
+      },
+      {
+        q: 'How long does dispute resolution take?',
+        a: 'Most disputes are resolved within 24 hours. Complex cases may take up to 48-72 hours. During this time, funds remain in escrow. Our team investigates thoroughly, checks payment proof, contacts payment providers if needed, and ensures fair resolution for both parties.'
+      },
+      {
+        q: 'Can I appeal a dispute decision?',
+        a: 'Yes, if you have new evidence that wasn\'t considered in the original decision, you can submit an appeal within 7 days. Include all new proof and explanations. The appeals team will review and make a final decision.'
+      }
+    ]
+  }
+];
+
+function FAQ() {
+  const navigate = useNavigate();
+  const [openItems, setOpenItems] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const isMobile = window.innerWidth < 768;
+
+  const toggleItem = (categoryIndex, questionIndex) => {
+    const key = `${categoryIndex}-${questionIndex}`;
+    setOpenItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const filteredFaqs = faqs.map(category => ({
+    ...category,
+    questions: category.questions.filter(q =>
+      (selectedCategory === 'All' || category.category === selectedCategory) &&
+      (searchTerm === '' || 
+       q.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       q.a.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  })).filter(category => category.questions.length > 0);
+
+  const categories = ['All', ...faqs.map(f => f.category)];
+
+  return (
+    <Layout>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #07111A 0%, #0C1A27 100%)',
+        padding: isMobile ? '16px' : '20px',
+        paddingBottom: '60px'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+
+          {/* Header */}
+          <div style={{ marginBottom: isMobile ? '24px' : '32px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+              <IoHelpCircle size={isMobile ? 40 : 48} color="#00E8FF" strokeWidth={2.5} />
+              <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>
+                Frequently Asked Questions
+              </h1>
+            </div>
+            <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', maxWidth: '700px', margin: '0 auto' }}>
+              Find answers to common questions about Coin Hub X. Can't find what you're looking for? Contact our 24/7 support team.
+            </p>
+          </div>
+
+          {/* Search Bar */}
+          <div style={{
+            marginBottom: isMobile ? '20px' : '28px',
+            maxWidth: '700px',
+            margin: '0 auto',
+            marginBottom: isMobile ? '20px' : '28px'
+          }}>
+            <div style={{ position: 'relative' }}>
+              <IoSearch size={20} color="#00E8FF" style={{
+                position: 'absolute',
+                left: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none'
+              }} />
+              <input
+                type="text"
+                placeholder="Search FAQ..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: isMobile ? '14px 16px 14px 48px' : '16px 20px 16px 52px',
+                  background: 'rgba(12, 26, 39, 0.8)',
+                  border: '1px solid rgba(0, 232, 255, 0.3)',
+                  borderRadius: '14px',
+                  color: '#FFFFFF',
+                  fontSize: isMobile ? '15px' : '16px',
+                  outline: 'none',
+                  transition: 'all 0.3s'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(0, 232, 255, 0.6)';
+                  e.target.style.boxShadow = '0 0 20px rgba(0, 232, 255, 0.2)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(0, 232, 255, 0.3)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Category Filters */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            justifyContent: 'center',
+            marginBottom: isMobile ? '24px' : '32px'
+          }}>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  padding: isMobile ? '10px 18px' : '12px 24px',
+                  background: selectedCategory === cat ? 'linear-gradient(135deg, #00E8FF, #0080FF)' : 'rgba(12, 26, 39, 0.8)',
+                  border: `1px solid ${selectedCategory === cat ? 'rgba(0, 232, 255, 0.5)' : 'rgba(0, 232, 255, 0.3)'}`,
+                  borderRadius: '12px',
+                  color: selectedCategory === cat ? '#FFFFFF' : '#8F9BB3',
+                  fontSize: isMobile ? '13px' : '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  boxShadow: selectedCategory === cat ? '0 0 20px rgba(0, 232, 255, 0.4)' : 'none'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== cat) {
+                    e.target.style.borderColor = 'rgba(0, 232, 255, 0.5)';
+                    e.target.style.color = '#00E8FF';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== cat) {
+                    e.target.style.borderColor = 'rgba(0, 232, 255, 0.3)';
+                    e.target.style.color = '#8F9BB3';
+                  }
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* FAQ Items */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '20px' }}>
+            {filteredFaqs.map((category, catIndex) => (
+              <div key={catIndex}>
+                {/* Category Header */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px'
+                }}>
+                  <category.icon size={isMobile ? 24 : 28} color={category.color} strokeWidth={2.5} />
+                  <h2 style={{ fontSize: isMobile ? '22px' : '26px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>
+                    {category.category}
+                  </h2>
+                  <div style={{ flex: 1, height: '2px', background: `linear-gradient(90deg, ${category.color}40 0%, transparent 100%)` }} />
+                </div>
+
+                {/* Questions */}
+                {category.questions.map((item, qIndex) => {
+                  const key = `${catIndex}-${qIndex}`;
+                  const isOpen = openItems[key];
+
+                  return (
+                    <div
+                      key={qIndex}
+                      style={{
+                        background: 'rgba(12, 26, 39, 0.8)',
+                        border: `1px solid ${isOpen ? category.color + '60' : 'rgba(0, 232, 255, 0.25)'}`,
+                        borderRadius: '16px',
+                        marginBottom: '12px',
+                        overflow: 'hidden',
+                        transition: 'all 0.3s',
+                        boxShadow: isOpen ? `0 0 25px ${category.color}40` : 'none'
+                      }}
+                    >
+                      <button
+                        onClick={() => toggleItem(catIndex, qIndex)}
+                        style={{
+                          width: '100%',
+                          padding: isMobile ? '18px' : '22px',
+                          background: 'transparent',
+                          border: 'none',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          cursor: 'pointer',
+                          gap: '16px',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <span style={{
+                          fontSize: isMobile ? '15px' : '17px',
+                          fontWeight: '600',
+                          color: isOpen ? category.color : '#FFFFFF',
+                          transition: 'color 0.3s'
+                        }}>
+                          {item.q}
+                        </span>
+                        {isOpen ? (
+                          <IoChevronUp size={isMobile ? 20 : 24} color={category.color} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                        ) : (
+                          <IoChevronDown size={isMobile ? 20 : 24} color="#8F9BB3" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                        )}
+                      </button>
+
+                      {isOpen && (
+                        <div style={{
+                          padding: isMobile ? '0 18px 20px' : '0 22px 24px',
+                          fontSize: isMobile ? '14px' : '15px',
+                          lineHeight: '1.7',
+                          color: '#D1D5DB',
+                          borderTop: `1px solid ${category.color}30`,
+                          animation: 'fadeIn 0.3s ease-in-out'
+                        }}>
+                          {item.a}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          {/* Contact Support */}
+          <div style={{
+            marginTop: isMobile ? '32px' : '48px',
+            background: 'linear-gradient(135deg, rgba(0, 232, 255, 0.1) 0%, rgba(155, 77, 255, 0.1) 100%)',
+            border: '1px solid rgba(0, 232, 255, 0.3)',
+            borderRadius: '20px',
+            padding: isMobile ? '28px 20px' : '36px',
+            textAlign: 'center'
+          }}>
+            <IoChatbubbles size={isMobile ? 40 : 48} color="#00E8FF" strokeWidth={2} style={{ margin: '0 auto 16px' }} />
+            <h3 style={{ fontSize: isMobile ? '22px' : '26px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px' }}>
+              Still have questions?
+            </h3>
+            <p style={{ fontSize: isMobile ? '15px' : '16px', color: '#8F9BB3', marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px' }}>
+              Our support team is available 24/7 to help you with any questions or issues.
+            </p>
+            <button
+              onClick={() => navigate('/support')}
+              style={{
+                padding: isMobile ? '14px 32px' : '16px 40px',
+                background: 'linear-gradient(135deg, #00E8FF, #0080FF)',
+                border: 'none',
+                borderRadius: '14px',
+                color: '#FFFFFF',
+                fontSize: isMobile ? '15px' : '16px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: '0 0 20px rgba(0, 232, 255, 0.4)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 0 30px rgba(0, 232, 255, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 0 20px rgba(0, 232, 255, 0.4)';
+              }}
+            >
+              Contact Support
+            </button>
+          </div>
+
+        </div>
+
+        <style>{`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
+      </div>
+    </Layout>
+  );
+}
+
+export default FAQ;

@@ -7,12 +7,6 @@ const TICKER_COINS = ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'ripple', 
 const PriceTicker = () => {
   const [prices, setPrices] = useState([]);
 
-  useEffect(() => {
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchPrices = async () => {
     try {
       const response = await axios.get(
@@ -41,6 +35,12 @@ const PriceTicker = () => {
     }
   };
 
+  useEffect(() => {
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 30000); // Update every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   if (prices.length === 0) return null;
 
   return (
@@ -68,6 +68,15 @@ const PriceTicker = () => {
               minWidth: 'fit-content'
             }}
           >
+            <img 
+              src={`/crypto-logos/${coin.symbol.toLowerCase()}.png`}
+              alt={coin.symbol}
+              style={{
+                width: '20px',
+                height: '20px',
+                objectFit: 'contain'
+              }}
+            />
             <span style={{
               fontSize: '14px',
               fontWeight: '700',

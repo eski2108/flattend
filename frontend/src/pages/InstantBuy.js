@@ -2,9 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat, ChevronDown, Clock, Lock } from 'lucide-react';
+
+// Import all crypto SVG icons
+import btcIcon from '@/assets/coins/btc.svg';
+import ethIcon from '@/assets/coins/eth.svg';
+import usdtIcon from '@/assets/coins/usdt.svg';
+import usdcIcon from '@/assets/coins/usdc.svg';
+import bnbIcon from '@/assets/coins/bnb.svg';
+import solIcon from '@/assets/coins/sol.svg';
+import xrpIcon from '@/assets/coins/xrp.svg';
+import adaIcon from '@/assets/coins/ada.svg';
+import dogeIcon from '@/assets/coins/doge.svg';
+import dotIcon from '@/assets/coins/dot.svg';
+import maticIcon from '@/assets/coins/matic.svg';
+import ltcIcon from '@/assets/coins/ltc.svg';
+import linkIcon from '@/assets/coins/link.svg';
+import avaxIcon from '@/assets/coins/avax.svg';
+import trxIcon from '@/assets/coins/trx.svg';
+
+const COIN_ICONS = {
+  'BTC': btcIcon,
+  'ETH': ethIcon,
+  'USDT': usdtIcon,
+  'USDC': usdcIcon,
+  'BNB': bnbIcon,
+  'SOL': solIcon,
+  'XRP': xrpIcon,
+  'ADA': adaIcon,
+  'DOGE': dogeIcon,
+  'DOT': dotIcon,
+  'MATIC': maticIcon,
+  'LTC': ltcIcon,
+  'LINK': linkIcon,
+  'AVAX': avaxIcon,
+  'TRX': trxIcon
+};
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -224,7 +258,7 @@ function InstantBuy() {
   const [searchFocused, setSearchFocused] = useState(false);
 
   return (
-    <Layout>
+    <>
       <div style={{ padding: '24px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 8px' }}>
           
@@ -472,7 +506,7 @@ function InstantBuy() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }
 
@@ -532,9 +566,22 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             fontWeight: '700',
             color: '#FFFFFF',
             boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
-            border: `2px solid ${coin.color}22`
+            border: `2px solid ${coin.color}22`,
+            overflow: 'hidden'
           }}>
-            {coin.symbol[0]}
+            {COIN_ICONS[coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim()] ? (
+              <img 
+                src={COIN_ICONS[coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim()]}
+                alt={coin.symbol}
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  objectFit: 'contain'
+                }}
+              />
+            ) : (
+              coin.symbol[0]
+            )}
           </div>
           
           {/* Coin Info */}
@@ -571,9 +618,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         />
       </div>
 
-      {/* Sparkline removed - was placeholder data */}
-
-      {/* Liquidity Status */}
+      {/* Liquidity Status - Real admin wallet balance */}
       {!expanded && (
         <div style={{ 
           marginTop: '8px', 

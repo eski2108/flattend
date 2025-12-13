@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import Layout from '@/components/Layout';
 import { IoCheckmarkCircle as CheckCircle, IoChevronDown, IoClose, IoFilter, IoFlash, IoLocation, IoOptions, IoPersonOutline as User, IoSearch as Search, IoShield, IoStar, IoTime as Clock, IoTrendingUp as TrendingUp, IoTrophy } from 'react-icons/io5';
 import P2PNotifications from '@/components/P2PNotifications';
+import TraderStats from '@/components/TraderStats';
+import { COIN_EMOJIS } from '@/utils/coinConfig';
 import '../styles/globalSwapTheme.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -339,296 +340,519 @@ function P2PMarketplace() {
   };
 
   return (
-    <Layout>
-      <div style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 50%, rgba(2, 6, 24, 0.98) 100%)', minHeight: '100vh' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#00F0FF', textShadow: '0 0 20px rgba(0, 240, 255, 0.5)' }}>💰 P2P Marketplace</h1>
-          {/* Notification Bell - shows all P2P notifications */}
-          {(() => {
-            const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
-            return userData?.user_id ? (
-              <P2PNotifications 
-                userId={userData.user_id}
-                onNotificationClick={(notification) => {
-                  // Navigate to trade if notification is trade-specific
-                  if (notification.trade_id) {
-                    navigate(`/p2p/trade/${notification.trade_id}`);
+      <div style={{ 
+        padding: isMobile ? '16px' : '24px', 
+        background: 'linear-gradient(135deg, #020618 0%, #071327 50%, #020618 100%)', 
+        minHeight: '100vh',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Animated orbital glow background */}
+        <div style={{
+          position: 'absolute',
+          top: '-50%',
+          left: '-50%',
+          width: '200%',
+          height: '200%',
+          background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.03) 0%, transparent 50%)',
+          animation: 'orbitGlow 10s linear infinite',
+          pointerEvents: 'none',
+          zIndex: 0
+        }} />
+        <style>
+          {`
+            @keyframes orbitGlow {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            @keyframes pulseGlow {
+              0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
+              50% { box-shadow: 0 0 35px rgba(0, 240, 255, 0.6); }
+            }
+            @keyframes shimmer {
+              0% { background-position: -1000px 0; }
+              100% { background-position: 1000px 0; }
+            }
+          `}
+        </style>
+        
+        {/* Content wrapper with frosted glass */}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          {/* Header Section */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: isMobile ? 'flex-start' : 'center', 
+            marginBottom: '32px',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '16px' : '0'
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                <h1 style={{ 
+                  fontSize: isMobile ? '28px' : '36px', 
+                  fontWeight: '700', 
+                  background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  margin: 0,
+                  textShadow: '0 0 30px rgba(0, 240, 255, 0.3)'
+                }}>
+                  P2P Marketplace
+                </h1>
+                <div style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  background: 'rgba(0, 240, 255, 0.15)',
+                  border: '2px solid rgba(0, 240, 255, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 15px rgba(0, 240, 255, 0.3)'
+                }}>
+                  <IoShield size={16} color="#00F0FF" />
+                </div>
+              </div>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '13px', 
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontWeight: '400'
+              }}>
+                Buy and sell crypto with verified users. Fully escrow-protected.
+              </p>
+            </div>
+            {/* Notification Bell */}
+            {(() => {
+              const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
+              return userData?.user_id ? (
+                <P2PNotifications 
+                  userId={userData.user_id}
+                  onNotificationClick={(notification) => {
+                    if (notification.trade_id) {
+                      navigate(`/p2p/trade/${notification.trade_id}`);
+                    }
+                  }}
+                />
+              ) : null;
+            })()}
+          </div>
+
+          {/* Premium Frosted Glass Filter Container */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: isMobile ? '8px' : '12px',
+            padding: isMobile ? '16px' : '24px',
+            background: 'rgba(2, 6, 24, 0.4)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(0, 240, 255, 0.2)',
+            borderRadius: '20px',
+            marginBottom: '24px',
+            flexWrap: 'wrap',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 40px rgba(0, 240, 255, 0.1)'
+          }}>
+            {/* Premium Crypto Selector Pill */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <select
+                value={selectedCrypto}
+                onChange={(e) => setSelectedCrypto(e.target.value)}
+                style={{
+                  padding: '10px 32px 10px 14px',
+                  background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)',
+                  border: '1px solid rgba(0, 240, 255, 0.4)',
+                  borderRadius: '12px',
+                  color: '#00F0FF',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)',
+                  appearance: 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.4)';
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.2)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                {coinsData.length > 0 ? (
+                  coinsData.map(coin => (
+                    <option key={coin.symbol} value={coin.symbol} style={{ background: '#0f172a', color: '#fff' }}>
+                      {coin.emoji} {coin.symbol}
+                    </option>
+                  ))
+                ) : (
+                  availableCoins.map(coin => (
+                    <option key={coin} value={coin} style={{ background: '#0f172a', color: '#fff' }}>
+                      {COIN_EMOJIS[coin] || '💰'} {coin}
+                    </option>
+                  ))
+                )}
+              </select>
+              <IoChevronDown 
+                size={14} 
+                color="#00F0FF" 
+                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+              />
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />
+
+            {/* Premium Currency Selector Pill */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <select
+                value={selectedFiatCurrency}
+                onChange={(e) => setSelectedFiatCurrency(e.target.value)}
+                style={{
+                  padding: '10px 32px 10px 14px',
+                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%)',
+                  border: '1px solid rgba(168, 85, 247, 0.4)',
+                  borderRadius: '12px',
+                  color: '#A855F7',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  boxShadow: '0 0 20px rgba(168, 85, 247, 0.2)',
+                  appearance: 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.4)';
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(168, 85, 247, 0.2)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                <option value="" style={{ background: '#0f172a', color: '#fff' }}>🌍 All Currencies</option>
+                {availableCurrencies.length > 0 ? (
+                  availableCurrencies.map(currency => (
+                    <option 
+                      key={typeof currency === 'object' ? currency.code : currency} 
+                      value={typeof currency === 'object' ? currency.code : currency} 
+                      style={{ background: '#0f172a', color: '#fff' }}
+                    >
+                      💰 {typeof currency === 'object' ? `${currency.symbol} ${currency.code}` : currency}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="GBP" style={{ background: '#0f172a', color: '#fff' }}>💷 GBP</option>
+                    <option value="USD" style={{ background: '#0f172a', color: '#fff' }}>💵 USD</option>
+                    <option value="EUR" style={{ background: '#0f172a', color: '#fff' }}>💶 EUR</option>
+                  </>
+                )}
+              </select>
+              <IoChevronDown 
+                size={14} 
+                color="#A855F7" 
+                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+              />
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />
+
+            {/* Premium Filter Chips */}
+            <button
+              onClick={() => {
+                setSortBy('best_price');
+                setFilters({...filters});
+              }}
+              style={{
+                padding: '10px 16px',
+                background: sortBy === 'best_price' 
+                  ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)' 
+                  : 'rgba(255, 255, 255, 0.03)',
+                border: `1px solid ${sortBy === 'best_price' ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                borderRadius: '12px',
+                color: sortBy === 'best_price' ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                boxShadow: sortBy === 'best_price' ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (sortBy === 'best_price') {
+                  e.currentTarget.style.transform = 'scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (sortBy === 'best_price') {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
+                }
+              }}
+            >
+              {sortBy === 'best_price' && <CheckCircle size={14} />}
+              Best Price
+            </button>
+
+            <button
+              onClick={() => setFilters({...filters, trustedOnly: !filters.trustedOnly})}
+              style={{
+                padding: '10px 16px',
+                background: filters.trustedOnly 
+                  ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)' 
+                  : 'rgba(255, 255, 255, 0.03)',
+                border: `1px solid ${filters.trustedOnly ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                borderRadius: '12px',
+                color: filters.trustedOnly ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                boxShadow: filters.trustedOnly ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (filters.trustedOnly) {
+                  e.currentTarget.style.transform = 'scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (filters.trustedOnly) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
+                }
+              }}
+            >
+              {filters.trustedOnly && <CheckCircle size={14} />}
+              <IoShield size={14} />
+              Trusted
+            </button>
+
+            <button
+              onClick={() => setFilters({...filters, fastPaymentOnly: !filters.fastPaymentOnly})}
+              style={{
+                padding: '10px 16px',
+                background: filters.fastPaymentOnly 
+                  ? 'linear-gradient(135deg, rgba(252, 211, 77, 0.2) 0%, rgba(252, 211, 77, 0.1) 100%)' 
+                  : 'rgba(255, 255, 255, 0.03)',
+                border: `1px solid ${filters.fastPaymentOnly ? 'rgba(252, 211, 77, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                borderRadius: '12px',
+                color: filters.fastPaymentOnly ? '#FCD34D' : 'rgba(255, 255, 255, 0.5)',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                boxShadow: filters.fastPaymentOnly ? '0 0 20px rgba(252, 211, 77, 0.3)' : 'none',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (filters.fastPaymentOnly) {
+                  e.currentTarget.style.transform = 'scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(252, 211, 77, 0.5)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (filters.fastPaymentOnly) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(252, 211, 77, 0.3)';
+                }
+              }}
+            >
+              {filters.fastPaymentOnly && <CheckCircle size={14} />}
+              <IoFlash size={14} />
+              Fast Pay
+            </button>
+
+            {/* Advanced Filters Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              style={{
+                padding: '10px 16px',
+                background: showFilters 
+                  ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0.1) 100%)' 
+                  : 'rgba(255, 255, 255, 0.03)',
+                border: `1px solid ${showFilters ? 'rgba(168, 85, 247, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                borderRadius: '12px',
+                color: showFilters ? '#A855F7' : 'rgba(255, 255, 255, 0.5)',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                boxShadow: showFilters ? '0 0 20px rgba(168, 85, 247, 0.3)' : 'none',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (showFilters) {
+                  e.currentTarget.style.transform = 'scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (showFilters) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(168, 85, 247, 0.3)';
+                }
+              }}
+            >
+              <IoFilter size={14} />
+              Advanced Filters
+            </button>
+
+            {/* Divider */}
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0, marginLeft: isMobile ? '0' : 'auto' }} />
+
+            {/* Premium BUY/SELL Toggle */}
+            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+              <button
+                onClick={() => setActiveTab('buy')}
+                style={{
+                  padding: '10px 20px',
+                  background: activeTab === 'buy' 
+                    ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' 
+                    : 'rgba(255, 255, 255, 0.03)',
+                  border: `1px solid ${activeTab === 'buy' ? 'rgba(16, 185, 129, 0.6)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  boxShadow: activeTab === 'buy' ? '0 0 25px rgba(16, 185, 129, 0.4)' : 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab === 'buy') {
+                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.boxShadow = '0 0 35px rgba(16, 185, 129, 0.6)';
                   }
                 }}
-              />
-            ) : null;
-          })()}
-        </div>
+                onMouseLeave={(e) => {
+                  if (activeTab === 'buy') {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 0 25px rgba(16, 185, 129, 0.4)';
+                  }
+                }}
+              >
+                BUY
+              </button>
 
-        {/* ENHANCED FILTER ROW */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '20px',
-          background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 100%)',
-          border: '2px solid rgba(0, 240, 255, 0.4)',
-          borderRadius: '16px',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-          boxShadow: '0 0 40px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.05)'
-        }}>
-          {/* Cryptocurrency Dropdown */}
-          <div style={{ width: '110px', flexShrink: 0 }}>
-            <select
-              value={selectedCrypto}
-              onChange={(e) => setSelectedCrypto(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.35rem 0.4rem',
-                background: 'rgba(0, 0, 0, 0.6)',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
-                borderRadius: '4px',
-                color: '#00F0FF',
-                fontSize: '11px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                outline: 'none'
+              <button
+                onClick={() => setActiveTab('sell')}
+                style={{
+                  padding: '10px 20px',
+                  background: activeTab === 'sell' 
+                    ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' 
+                    : 'rgba(255, 255, 255, 0.03)',
+                  border: `1px solid ${activeTab === 'sell' ? 'rgba(239, 68, 68, 0.6)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  boxShadow: activeTab === 'sell' ? '0 0 25px rgba(239, 68, 68, 0.4)' : 'none',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab === 'sell') {
+                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.boxShadow = '0 0 35px rgba(239, 68, 68, 0.6)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab === 'sell') {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 0 25px rgba(239, 68, 68, 0.4)';
+                  }
+                }}
+              >
+                SELL
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />
+
+            {/* PREMIUM BECOME A SELLER CTA */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate('/p2p/merchant');
               }}
-            >
-              {coinsData.length > 0 ? (
-                coinsData.map(coin => (
-                  <option key={coin.symbol} value={coin.symbol} style={{ background: '#1a1f3a', color: '#fff' }}>
-                    {coin.emoji} {coin.symbol}
-                  </option>
-                ))
-              ) : (
-                availableCoins.map(coin => (
-                  <option key={coin} value={coin} style={{ background: '#1a1f3a', color: '#fff' }}>
-                    {coin}
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-
-          <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.15)', flexShrink: 0 }} />
-
-          {/* Fiat Currency Dropdown */}
-          <div style={{ width: '115px', flexShrink: 0 }}>
-            <select
-              value={selectedFiatCurrency}
-              onChange={(e) => setSelectedFiatCurrency(e.target.value)}
               style={{
-                width: '100%',
-                padding: '0.35rem 0.4rem',
-                background: 'rgba(0, 0, 0, 0.6)',
-                border: '1px solid rgba(168, 85, 247, 0.3)',
-                borderRadius: '4px',
-                color: '#A855F7',
-                fontSize: '11px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                outline: 'none'
-              }}
-            >
-              <option value="" style={{ background: '#1a1f3a', color: '#fff' }}>All Currencies</option>
-              {availableCurrencies.length > 0 ? (
-                availableCurrencies.map(currency => (
-                  <option 
-                    key={typeof currency === 'object' ? currency.code : currency} 
-                    value={typeof currency === 'object' ? currency.code : currency} 
-                    style={{ background: '#1a1f3a', color: '#fff' }}
-                  >
-                    {typeof currency === 'object' ? `${currency.symbol} ${currency.code}` : currency}
-                  </option>
-                ))
-              ) : (
-                <>
-                  <option value="GBP" style={{ background: '#1a1f3a', color: '#fff' }}>£ GBP</option>
-                  <option value="USD" style={{ background: '#1a1f3a', color: '#fff' }}>$ USD</option>
-                  <option value="EUR" style={{ background: '#1a1f3a', color: '#fff' }}>€ EUR</option>
-                </>
-              )}
-            </select>
-          </div>
-
-          <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.15)', flexShrink: 0 }} />
-
-          {/* Sort Dropdown */}
-          <div style={{ width: '105px', flexShrink: 0 }}>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.35rem 0.4rem',
-                background: 'rgba(0, 0, 0, 0.6)',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
-                borderRadius: '4px',
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+                border: 'none',
+                borderRadius: '14px',
                 color: '#fff',
-                fontSize: '11px',
-                fontWeight: '600',
+                fontWeight: '700',
+                fontSize: '14px',
                 cursor: 'pointer',
-                outline: 'none'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                flexShrink: 0,
+                boxShadow: '0 0 30px rgba(0, 240, 255, 0.5)',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                zIndex: 9999,
+                pointerEvents: 'auto',
+                animation: 'pulseGlow 10s infinite'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.04) translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 40px rgba(0, 240, 255, 0.7)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
               }}
             >
-              {sortOptions.map(option => (
-                <option key={option.value} value={option.value} style={{ background: '#1a1f3a', color: '#fff' }}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <TrendingUp size={18} />
+              Become a Seller
+            </button>
           </div>
-
-          <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.15)', flexShrink: 0 }} />
-
-          {/* Quick Filter Toggles */}
-          <button
-            onClick={() => setFilters({...filters, trustedOnly: !filters.trustedOnly})}
-            style={{
-              padding: '0.35rem 0.6rem',
-              background: filters.trustedOnly ? 'rgba(0, 240, 255, 0.2)' : 'transparent',
-              border: `1px solid ${filters.trustedOnly ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
-              borderRadius: '4px',
-              color: filters.trustedOnly ? '#00F0FF' : '#888',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontSize: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              whiteSpace: 'nowrap',
-              flexShrink: 0
-            }}
-          >
-            <IoShield size={10} />
-            Trusted
-          </button>
-
-          <button
-            onClick={() => setFilters({...filters, fastPaymentOnly: !filters.fastPaymentOnly})}
-            style={{
-              padding: '0.35rem 0.6rem',
-              background: filters.fastPaymentOnly ? 'rgba(252, 211, 77, 0.2)' : 'transparent',
-              border: `1px solid ${filters.fastPaymentOnly ? 'rgba(252, 211, 77, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
-              borderRadius: '4px',
-              color: filters.fastPaymentOnly ? '#FCD34D' : '#888',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontSize: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              whiteSpace: 'nowrap',
-              flexShrink: 0
-            }}
-          >
-            <IoFlash size={10} />
-            Fast Pay
-          </button>
-
-          <button
-            onClick={() => setFilters({...filters, favoritesOnly: !filters.favoritesOnly})}
-            style={{
-              padding: '0.35rem 0.6rem',
-              background: filters.favoritesOnly ? 'rgba(168, 85, 247, 0.2)' : 'transparent',
-              border: `1px solid ${filters.favoritesOnly ? 'rgba(168, 85, 247, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
-              borderRadius: '4px',
-              color: filters.favoritesOnly ? '#A855F7' : '#888',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontSize: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              whiteSpace: 'nowrap',
-              flexShrink: 0
-            }}
-          >
-            <IoStar size={10} fill={filters.favoritesOnly ? '#A855F7' : 'none'} />
-            Favorites
-          </button>
-
-          {/* Advanced Filters Button */}
-          <button
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            style={{
-              padding: '0.5rem 1rem',
-              background: showAdvancedFilters ? 'rgba(0, 198, 255, 0.2)' : 'rgba(0, 198, 255, 0.1)',
-              border: '1px solid rgba(0, 198, 255, 0.3)',
-              borderRadius: '6px',
-              color: '#00C6FF',
-              fontSize: '12px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.2s'
-            }}
-          >
-            <IoFilter size={14} />
-            {showAdvancedFilters ? 'Hide Filters' : 'Advanced Filters'}
-          </button>
-
-          <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.15)', flexShrink: 0 }} />
-
-          {/* Advanced Filters Button */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            style={{
-              padding: '0.35rem 0.65rem',
-              background: showFilters ? 'rgba(0, 240, 255, 0.15)' : 'transparent',
-              border: '1px solid rgba(0, 240, 255, 0.3)',
-              borderRadius: '4px',
-              color: '#00F0FF',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontSize: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              whiteSpace: 'nowrap',
-              flexShrink: 0
-            }}
-          >
-            <IoFilter size={10} />
-            More Filters
-          </button>
-
-          <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.15)', flexShrink: 0 }} />
-
-          {/* Buy/Sell Buttons */}
-          <button
-            onClick={() => setActiveTab('buy')}
-            style={{
-              padding: '0.35rem 0.75rem',
-              background: activeTab === 'buy' ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'rgba(255, 255, 255, 0.05)',
-              border: activeTab === 'buy' ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '4px',
-              color: '#fff',
-              fontWeight: '700',
-              fontSize: '11px',
-              cursor: 'pointer',
-              flexShrink: 0
-            }}
-          >
-            BUY
-          </button>
-
-          <button
-            onClick={() => setActiveTab('sell')}
-            style={{
-              padding: '0.35rem 0.75rem',
-              background: activeTab === 'sell' ? 'linear-gradient(135deg, #EF4444, #DC2626)' : 'rgba(255, 255, 255, 0.05)',
-              border: activeTab === 'sell' ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '4px',
-              color: '#fff',
-              fontWeight: '700',
-              fontSize: '11px',
-              cursor: 'pointer',
-              flexShrink: 0
-            }}
-          >
-            SELL
-          </button>
-        </div>
+          
+          {/* Helper text for BUY/SELL */}
+          <div style={{ 
+            marginTop: '-16px', 
+            marginBottom: '24px', 
+            padding: '0 8px',
+            fontSize: '12px',
+            color: 'rgba(255, 255, 255, 0.5)',
+            fontWeight: '400'
+          }}>
+            {activeTab === 'buy' 
+              ? '💡 Showing users who are selling ' + selectedCrypto + ' to you.'
+              : '💡 Showing users who want to buy ' + selectedCrypto + ' from you.'
+            }
+          </div>
 
         {/* EXPANDED FILTERS PANEL */}
         {showFilters && (
@@ -1065,69 +1289,177 @@ function P2PMarketplace() {
           </div>
         )}
 
-        {/* Offers List */}
-        <div>
-          <div style={{ marginBottom: '1rem', color: '#888', fontSize: '13px' }}>Showing {offers.length} offers</div>
-
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>Loading offers...</div>
-          ) : offers.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(15, 23, 42, 0.4)', borderRadius: '12px' }}>
-              <div style={{ color: '#888', fontSize: '16px', marginBottom: '0.5rem' }}>No offers available for {selectedCrypto}</div>
-              <div style={{ color: '#666', fontSize: '13px' }}>Try selecting a different cryptocurrency or adjusting filters</div>
+          {/* Offers List */}
+          <div>
+            <div style={{ 
+              marginBottom: '20px', 
+              fontSize: '13px',
+              fontWeight: '600',
+              color: 'rgba(255, 255, 255, 0.7)'
+            }}>
+              Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{offers.length}</span> {offers.length === 1 ? 'offer' : 'offers'}
             </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {offers.map((offer) => (
-                <div
-                  key={offer.offer_id}
-                  style={{
-                    padding: '1.25rem',
-                    background: 'rgba(15, 23, 42, 0.6)',
-                    border: '1px solid rgba(0, 240, 255, 0.2)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    flexDirection: isMobile ? 'column' : 'row',
-                    gap: '1.5rem',
-                    alignItems: isMobile ? 'stretch' : 'center',
-                    position: 'relative'
-                  }}
-                >
-                  {/* Favorite Star */}
-                  <button
-                    onClick={(e) => toggleFavorite(offer.seller_id, e)}
+
+            {loading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
                     style={{
-                      position: 'absolute',
-                      top: '0.75rem',
-                      right: '0.75rem',
-                      background: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '0.25rem'
+                      padding: isMobile ? '20px' : '24px',
+                      background: 'rgba(2, 6, 24, 0.4)',
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '24px',
+                      height: '160px',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
                     }}
                   >
-                    <IoStar 
-                      size={18} 
-                      color={favorites.includes(offer.seller_id) ? '#A855F7' : '#666'} 
-                      fill={favorites.includes(offer.seller_id) ? '#A855F7' : 'none'}
-                    />
-                  </button>
-
-                  {/* Seller Info */}
-                  <div style={{ flex: '1', minWidth: '200px' }}>
-                    <div 
-                      onClick={() => fetchSellerProfile(offer.seller_id)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', cursor: 'pointer' }}
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '200%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent)',
+                      animation: 'shimmer 2s infinite'
+                    }} />
+                  </div>
+                ))}
+              </div>
+            ) : offers.length === 0 ? (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: isMobile ? '40px 20px' : '60px 40px', 
+                background: 'rgba(2, 6, 24, 0.4)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '24px',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px', opacity: '0.3' }}>🔍</div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '18px', fontWeight: '600', marginBottom: '8px' }}>
+                  No offers available for {selectedCrypto}
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '14px' }}>
+                  Try selecting a different cryptocurrency or adjusting filters
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {offers.map((offer) => (
+                  <div
+                    key={offer.offer_id}
+                    style={{
+                      padding: isMobile ? '20px' : '24px',
+                      background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.6) 0%, rgba(7, 19, 39, 0.4) 100%)',
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: '1px solid rgba(0, 240, 255, 0.15)',
+                      borderRadius: '24px',
+                      display: 'flex',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      gap: isMobile ? '20px' : '24px',
+                      alignItems: isMobile ? 'stretch' : 'center',
+                      position: 'relative',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.15)';
+                    }}
+                  >
+                    {/* Favorite Star */}
+                    <button
+                      onClick={(e) => toggleFavorite(offer.seller_id, e)}
+                      style={{
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        background: favorites.includes(offer.seller_id) 
+                          ? 'rgba(168, 85, 247, 0.15)' 
+                          : 'rgba(255, 255, 255, 0.05)',
+                        border: `1px solid ${favorites.includes(offer.seller_id) ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        padding: '6px',
+                        transition: 'all 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.1)';
+                        e.currentTarget.style.background = favorites.includes(offer.seller_id) 
+                          ? 'rgba(168, 85, 247, 0.25)' 
+                          : 'rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.background = favorites.includes(offer.seller_id) 
+                          ? 'rgba(168, 85, 247, 0.15)' 
+                          : 'rgba(255, 255, 255, 0.05)';
+                      }}
                     >
-                      <span style={{ fontSize: '15px', fontWeight: '700', color: '#fff', textDecoration: 'underline' }}>
-                        {offer.seller_info?.username || 'Anonymous'}
-                      </span>
-                      {offer.seller_info?.is_verified && 
-                        <div title="Verified Seller" style={{ display: 'flex', alignItems: 'center' }}>
-                          <IoShield size={14} color="#00F0FF" />
-                        </div>
-                      }
-                    </div>
+                      <IoStar 
+                        size={16} 
+                        color={favorites.includes(offer.seller_id) ? '#A855F7' : 'rgba(255, 255, 255, 0.4)'} 
+                        fill={favorites.includes(offer.seller_id) ? '#A855F7' : 'none'}
+                      />
+                    </button>
+
+                    {/* Seller Info */}
+                    <div style={{ flex: '1', minWidth: isMobile ? 'auto' : '220px' }}>
+                      <div 
+                        onClick={() => fetchSellerProfile(offer.seller_id)}
+                        style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px', 
+                          marginBottom: '8px', 
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.querySelector('span').style.color = '#00F0FF';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.querySelector('span').style.color = '#fff';
+                        }}
+                      >
+                        <span style={{ 
+                          fontSize: '16px', 
+                          fontWeight: '700', 
+                          color: '#fff', 
+                          textDecoration: 'underline',
+                          transition: 'color 0.2s ease'
+                        }}>
+                          {offer.seller_info?.username || 'Anonymous'}
+                        </span>
+                        {offer.seller_info?.is_verified && 
+                          <div title="Verified Seller" style={{ 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            background: 'rgba(0, 240, 255, 0.15)',
+                            padding: '4px',
+                            borderRadius: '6px'
+                          }}>
+                            <IoShield size={14} color="#00F0FF" />
+                          </div>
+                        }
+                      </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
                       {offer.is_boosted && 
                         <div 
@@ -1250,97 +1582,203 @@ function P2PMarketplace() {
                         </div>
                       }
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.25rem' }}>
-                      <IoStar size={12} color="#FCD34D" fill="#FCD34D" />
-                      <span style={{ color: '#FCD34D', fontSize: '13px', fontWeight: '600' }}>
-                        {offer.seller_info?.rating?.toFixed(1) || '5.0'}
-                      </span>
-                    </div>
-                    <div style={{ color: '#888', fontSize: '11px' }}>
-                      {offer.seller_info?.total_trades || 0} trades | {offer.seller_info?.completion_rate?.toFixed(1) || '100'}%
-                    </div>
-                  </div>
-
-                  {/* Price */}
-                  <div style={{ flex: '1', minWidth: '150px' }}>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.25rem' }}>PRICE</div>
-                    <div style={{ fontSize: '20px', fontWeight: '900', color: '#00F0FF', marginBottom: '0.25rem' }}>
-                      £{offer.price_per_unit?.toLocaleString()}
-                    </div>
-                    <div style={{ color: '#888', fontSize: '11px' }}>Limits: £{offer.min_order_limit} - £{offer.max_order_limit}</div>
-                  </div>
-
-                  {/* Payment Methods */}
-                  <div style={{ flex: '1', minWidth: '150px' }}>
-                    <div style={{ color: '#888', fontSize: '11px', marginBottom: '0.5rem' }}>PAYMENT</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                      {offer.payment_methods?.slice(0, 2).map((method, idx) => (
-                        <span 
-                          key={idx} 
-                          style={{ 
-                            padding: '0.25rem 0.5rem', 
-                            background: 'rgba(0, 240, 255, 0.1)', 
-                            border: '1px solid rgba(0, 240, 255, 0.3)', 
-                            borderRadius: '8px', 
-                            color: '#00F0FF', 
-                            fontSize: '10px', 
-                            fontWeight: '600' 
-                          }}
-                        >
-                          {method}
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '6px',
+                        padding: '4px 0',
+                        marginBottom: '8px'
+                      }}>
+                        <IoStar size={16} color="#FCD34D" fill="#FCD34D" />
+                        <span style={{ 
+                          color: '#FCD34D', 
+                          fontSize: '15px', 
+                          fontWeight: '700',
+                          textShadow: '0 0 10px rgba(252, 211, 77, 0.3)'
+                        }}>
+                          {offer.seller_info?.rating?.toFixed(1) || '5.0'}
                         </span>
-                      ))}
+                      </div>
+                      {/* Real trader stats from backend API - NO MOCKS */}
+                      <TraderStats userId={offer.seller_id} compact={true} />
                     </div>
-                  </div>
 
-                  {/* Action Button with Auto-Match Info */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleBuyOffer(offer);
-                      }}
-                      disabled={processing}
-                      style={{
-                        padding: '0.75rem 1.5rem',
-                        background: processing 
-                          ? 'rgba(143, 155, 179, 0.3)'
-                          : activeTab === 'buy' 
-                            ? 'linear-gradient(135deg, #22C55E, #16A34A)' 
-                            : 'linear-gradient(135deg, #EF4444, #DC2626)',
-                        border: 'none',
+                    {/* Price Section */}
+                    <div style={{ flex: '1', minWidth: isMobile ? 'auto' : '180px' }}>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.5)', 
+                        fontSize: '11px', 
+                        marginBottom: '6px',
+                        fontWeight: '600',
+                        letterSpacing: '0.5px',
+                        textTransform: 'uppercase'
+                      }}>
+                        Price
+                      </div>
+                      <div style={{ 
+                        fontSize: '28px', 
+                        fontWeight: '900', 
+                        background: 'linear-gradient(135deg, #00F0FF 0%, #00C6FF 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        marginBottom: '6px',
+                        textShadow: '0 0 30px rgba(0, 240, 255, 0.3)',
+                        lineHeight: '1'
+                      }}>
+                        £{offer.price_per_unit?.toLocaleString()}
+                      </div>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.4)', 
+                        fontSize: '12px',
+                        fontWeight: '400'
+                      }}>
+                        Price per {selectedCrypto}
+                      </div>
+                      <div style={{
+                        marginTop: '8px',
+                        padding: '6px 10px',
+                        background: 'rgba(0, 0, 0, 0.3)',
                         borderRadius: '8px',
-                        color: '#fff',
-                        fontSize: '14px',
-                        fontWeight: '700',
-                        cursor: processing ? 'not-allowed' : 'pointer',
-                        whiteSpace: 'nowrap',
-                        boxShadow: processing 
-                          ? 'none'
-                          : activeTab === 'buy' 
-                            ? '0 0 15px rgba(34, 197, 94, 0.4)'
-                            : '0 0 15px rgba(239, 68, 68, 0.4)',
-                        flexShrink: 0,
-                        minWidth: '120px',
-                        opacity: processing ? 0.6 : 1
-                      }}
-                    >
-                      {processing ? 'Matching...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
-                    </button>
-                    <div style={{
-                      fontSize: '10px',
-                      color: '#8F9BB3',
-                      textAlign: 'right',
-                      maxWidth: '180px',
-                      lineHeight: '1.2'
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <span style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.5)' }}>Limits:</span>
+                        <span style={{ fontSize: '12px', color: '#fff', fontWeight: '600' }}>
+                          £{offer.min_order_limit} - £{offer.max_order_limit}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Payment Methods */}
+                    <div style={{ flex: '1', minWidth: isMobile ? 'auto' : '180px' }}>
+                      <div style={{ 
+                        color: 'rgba(255, 255, 255, 0.5)', 
+                        fontSize: '11px', 
+                        marginBottom: '10px',
+                        fontWeight: '600',
+                        letterSpacing: '0.5px',
+                        textTransform: 'uppercase'
+                      }}>
+                        Payment Methods
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {offer.payment_methods?.slice(0, 2).map((method, idx) => (
+                          <div
+                            key={idx} 
+                            style={{ 
+                              padding: '8px 14px', 
+                              background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)', 
+                              border: '1px solid rgba(0, 240, 255, 0.3)', 
+                              borderRadius: '10px', 
+                              color: '#00F0FF', 
+                              fontSize: '12px', 
+                              fontWeight: '600',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              boxShadow: '0 0 15px rgba(0, 240, 255, 0.1)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'scale(1.05)';
+                              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'scale(1)';
+                              e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 240, 255, 0.1)';
+                            }}
+                          >
+                            {method === 'bank_transfer' && '🏦'}
+                            {method === 'paypal' && '💳'}
+                            {method === 'revolut' && '💜'}
+                            {method === 'wise' && '🌐'}
+                            {method}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Premium Action Button */}
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      alignItems: isMobile ? 'stretch' : 'flex-end', 
+                      gap: '8px',
+                      minWidth: isMobile ? 'auto' : '160px'
                     }}>
-                      Auto-matched by price & reputation
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBuyOffer(offer);
+                        }}
+                        disabled={processing}
+                        style={{
+                          padding: '14px 28px',
+                          background: processing 
+                            ? 'rgba(143, 155, 179, 0.3)'
+                            : activeTab === 'buy' 
+                              ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' 
+                              : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                          border: 'none',
+                          borderRadius: '14px',
+                          color: '#fff',
+                          fontSize: '15px',
+                          fontWeight: '700',
+                          cursor: processing ? 'not-allowed' : 'pointer',
+                          whiteSpace: 'nowrap',
+                          boxShadow: processing 
+                            ? 'none'
+                            : activeTab === 'buy' 
+                              ? '0 0 25px rgba(16, 185, 129, 0.5)'
+                              : '0 0 25px rgba(239, 68, 68, 0.5)',
+                          flexShrink: 0,
+                          opacity: processing ? 0.6 : 1,
+                          transition: 'all 0.3s ease',
+                          width: isMobile ? '100%' : 'auto'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!processing) {
+                            e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
+                            e.currentTarget.style.boxShadow = activeTab === 'buy'
+                              ? '0 4px 35px rgba(16, 185, 129, 0.7)'
+                              : '0 4px 35px rgba(239, 68, 68, 0.7)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!processing) {
+                            e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                            e.currentTarget.style.boxShadow = activeTab === 'buy'
+                              ? '0 0 25px rgba(16, 185, 129, 0.5)'
+                              : '0 0 25px rgba(239, 68, 68, 0.5)';
+                          }
+                        }}
+                      >
+                        {processing ? 'Matching...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
+                      </button>
+                      <div style={{
+                        fontSize: '11px',
+                        color: 'rgba(255, 255, 255, 0.4)',
+                        textAlign: isMobile ? 'center' : 'right',
+                        maxWidth: '200px',
+                        lineHeight: '1.3',
+                        fontWeight: '400',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        justifyContent: isMobile ? 'center' : 'flex-end'
+                      }}>
+                        <span style={{ fontSize: '12px' }}>✨</span>
+                        Auto-matched by price & reputation
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Seller Profile Modal */}
@@ -1710,7 +2148,6 @@ function P2PMarketplace() {
           </div>
         )}
       </div>
-    </Layout>
   );
 }
 

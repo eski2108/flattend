@@ -194,7 +194,7 @@ class EmailService:
                                 <table cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
-                                            <a href="https://protrading.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+                                            <a href="https://fixdisputeflow.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
                                                target="_blank"
                                                style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
                                                 🚨 RESOLVE DISPUTE NOW →
@@ -213,7 +213,7 @@ class EmailService:
                         </p>
                         <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
                             <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-                                https://protrading.preview.emergentagent.com/admin/disputes/{dispute_id}
+                                https://fixdisputeflow.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                             </p>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
@@ -224,7 +224,7 @@ class EmailService:
                     <!-- Alternative Text Link (if button doesn't work) -->
                     <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
                         Button not working? Click here: 
-                        <a href="https://protrading.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+                        <a href="https://fixdisputeflow.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
                            style="color: #EF4444; font-weight: bold; text-decoration: underline;">
                             Open Dispute #{dispute_id}
                         </a>
@@ -1159,7 +1159,7 @@ def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, f
             <p style="color: #FFA500;"><strong>⚠️ Action Required:</strong></p>
             <p>Please verify the payment in your bank account and release the crypto.</p>
             
-            <a href="https://protrading.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://fixdisputeflow.preview.emergentagent.com/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #22C55E, #16A34A); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Order
             </a>
@@ -1191,7 +1191,7 @@ def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, 
             
             <p>The {crypto} has been added to your wallet. You can now use or withdraw it.</p>
             
-            <a href="https://protrading.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://fixdisputeflow.preview.emergentagent.com/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #00C6FF, #0096CC); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Receipt
             </a>
@@ -1205,7 +1205,7 @@ def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, 
     """
 
 
-def p2p_dispute_opened_email(trade_id: str, crypto_amount: float, crypto: str, role: str):
+def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: float, crypto: str, role: str):
     """Email template when dispute is opened"""
     return f"""
     <html>
@@ -1216,6 +1216,7 @@ def p2p_dispute_opened_email(trade_id: str, crypto_amount: float, crypto: str, r
             
             <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #EF4444; padding: 15px; margin: 20px 0;">
                 <p style="margin: 5px 0;"><strong>Trade ID:</strong> {trade_id}</p>
+                <p style="margin: 5px 0;"><strong>Dispute ID:</strong> {dispute_id}</p>
                 <p style="margin: 5px 0;"><strong>Amount:</strong> {crypto_amount} {crypto}</p>
                 <p style="margin: 5px 0;"><strong>Your Role:</strong> {role}</p>
             </div>
@@ -1227,12 +1228,26 @@ def p2p_dispute_opened_email(trade_id: str, crypto_amount: float, crypto: str, r
                 <li>Provide any evidence (screenshots, receipts) in the chat</li>
             </ul>
             
-            <a href="https://protrading.preview.emergentagent.com/p2p/order/{trade_id}" 
-               style="display: inline-block; background: linear-gradient(135deg, #EF4444, #DC2626); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
-                View Dispute
-            </a>
+            <!-- Button with table structure for better email compatibility -->
+            <table role="presentation" style="margin: 20px 0;">
+                <tr>
+                    <td style="border-radius: 8px; background-color: #EF4444;">
+                        <a href="https://fixdisputeflow.preview.emergentagent.com/p2p/order/{trade_id}" 
+                           style="display: inline-block; padding: 15px 30px; color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                            View Trade & Dispute
+                        </a>
+                    </td>
+                </tr>
+            </table>
             
-            <p style="margin-top: 30px; font-size: 12px; color: #8F9BB3;">
+            <p style="margin-top: 20px; font-size: 13px; color: #8F9BB3; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <strong>If button doesn't work, copy this link:</strong><br>
+                <a href="https://fixdisputeflow.preview.emergentagent.com/p2p/order/{trade_id}" style="color: #00F0FF; word-break: break-all;">
+                    https://fixdisputeflow.preview.emergentagent.com/p2p/order/{trade_id}
+                </a>
+            </p>
+            
+            <p style="margin-top: 20px; font-size: 12px; color: #8F9BB3;">
                 This is an automated email from CoinHubX P2P Marketplace.
             </p>
         </div>
@@ -1241,17 +1256,23 @@ def p2p_dispute_opened_email(trade_id: str, crypto_amount: float, crypto: str, r
     """
 
 
-def p2p_admin_dispute_alert(trade_id: str, crypto_amount: float, crypto: str, buyer_id: str, seller_id: str, reported_by: str):
+def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float, crypto: str, buyer_id: str, seller_id: str, reported_by: str):
     """Email template for admin when dispute is opened"""
+    from datetime import datetime
+    # Use old working domain that doesn't have cache issues
+    frontend_url = 'https://fixdisputeflow.preview.emergentagent.com'
+    cache_bust = int(datetime.now().timestamp())
+    dispute_link = f"{frontend_url}/admin/disputes/{dispute_id}?t={cache_bust}"
     return f"""
     <html>
     <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
         <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #051018 0%, #0A1929 100%); border: 1px solid #FFA500; border-radius: 12px; padding: 30px;">
             <h2 style="color: #FFA500;">🚨 New P2P Dispute - Action Required</h2>
-            <p><strong>Admin Alert:</strong> A new P2P dispute has been opened and requires review.</p>
+            <p><strong>Admin Alert:</strong> A new P2P dispute has been opened and requires immediate review.</p>
             
             <div style="background: rgba(255, 165, 0, 0.1); border-left: 4px solid #FFA500; padding: 15px; margin: 20px 0;">
                 <p style="margin: 5px 0;"><strong>Trade ID:</strong> {trade_id}</p>
+                <p style="margin: 5px 0;"><strong>Dispute ID:</strong> {dispute_id}</p>
                 <p style="margin: 5px 0;"><strong>Amount:</strong> {crypto_amount} {crypto}</p>
                 <p style="margin: 5px 0;"><strong>Buyer:</strong> {buyer_id}</p>
                 <p style="margin: 5px 0;"><strong>Seller:</strong> {seller_id}</p>
@@ -1262,16 +1283,28 @@ def p2p_admin_dispute_alert(trade_id: str, crypto_amount: float, crypto: str, bu
             <ul>
                 <li>Review trade details and chat history</li>
                 <li>Request evidence from both parties if needed</li>
-                <li>Resolve dispute in admin panel</li>
+                <li>Resolve dispute fairly and promptly</li>
             </ul>
             
-            <a href="https://protrading.preview.emergentagent.com/admin/disputes" 
-               style="display: inline-block; background: linear-gradient(135deg, #FFA500, #FF8C00); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
-                Go to Admin Panel
-            </a>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{dispute_link}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 20px 40px; background-color: #FFA500; color: #000000; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px;">
+                    🔓 OPEN DISPUTE IN BROWSER
+                </a>
+            </div>
             
-            <p style="margin-top: 30px; font-size: 12px; color: #8F9BB3;">
-                This is an automated admin alert from CoinHubX.
+            <p style="margin-top: 20px; font-size: 14px; color: #E0E0E0; text-align: center;">
+                <strong>⚠️ Gmail app user?</strong> Tap the button above, then tap the 3 dots (⋮) and select "Open in Chrome"
+            </p>
+            
+            <p style="margin-top: 30px; font-size: 14px; color: #8F9BB3; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center;">
+                <strong>Or copy this link and paste into Chrome:</strong><br>
+                <span style="color: #00F0FF; word-break: break-all; font-family: monospace;">
+                    {dispute_link}
+                </span>
+            </p>
+            
+            <p style="margin-top: 20px; font-size: 12px; color: #8F9BB3;">
+                This is an automated admin alert from CoinHubX. Click the button above to go directly to this specific dispute.
             </p>
         </div>
     </body>

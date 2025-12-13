@@ -1,0 +1,80 @@
+🔒 COINHUBX PROJECT - LOCKED STRUCTURE
+=====================================
+
+📁 /app/
+│
+├── 🛡️ STABLE/                    [FROZEN - READ ONLY]
+│   ├── backend/                  ← Backup of all working backend code
+│   ├── frontend/                 ← Backup of all working frontend code
+│   └── STABLE_MANIFEST.json      ← List of protected files
+│
+├── 💼 backend/                    [ACTIVE DEVELOPMENT]
+│   ├── server.py                 ← Main backend (PROTECTED)
+│   ├── wallet_service.py         ← Wallet logic (PROTECTED)
+│   ├── email_service.py          ← Email templates (PROTECTED)
+│   ├── nowpayments_integration.py← Payment logic (PROTECTED)
+│   └── ...all other files        ← All protected
+│
+├── 🎨 frontend/                   [ACTIVE DEVELOPMENT]
+│   ├── src/
+│   │   ├── App.js                ← Routes (PROTECTED)
+│   │   ├── pages/
+│   │   │   ├── P2PMarketplace.js ← PROTECTED
+│   │   │   ├── MerchantCenter.js ← PROTECTED
+│   │   │   ├── CreateAd.js       ← PROTECTED
+│   │   │   ├── AdminDisputes.js  ← PROTECTED
+│   │   │   └── ...all pages      ← All protected
+│   │   └── components/           ← All protected
+│   └── build/                    ← Auto-generated
+│
+├── 🚀 DEVELOPMENT/                [NEW WORK ONLY]
+│   ├── new_features/             ← Build new features here first
+│   ├── experiments/              ← Test ideas safely
+│   └── testing/                  ← Test scripts
+│
+├── 🔧 SCRIPTS/
+│   ├── RESTORE_STABLE.sh         ← Emergency restore
+│   ├── VERIFY_PROTECTION.sh      ← Check protection status
+│   └── CREATE_MANIFEST.sh        ← Generate manifest
+│
+└── 📋 DOCUMENTATION/
+    ├── PROJECT_LOCK_SETUP.md     ← Main protection guide
+    ├── PROJECT_STRUCTURE.txt     ← This file
+    └── STABLE_MANIFEST.json      ← Protected files list
+
+=====================================
+
+🚨 CRITICAL RULES:
+1. NEVER delete files from /app/backend or /app/frontend
+2. NEVER rename existing files
+3. NEVER modify protected files without approval
+4. ALWAYS build new features in /app/DEVELOPMENT first
+5. ALWAYS verify with bash VERIFY_PROTECTION.sh
+
+✅ SAFE OPERATIONS:
+- Add NEW components in frontend/src/components/NewFeature/
+- Add NEW pages in frontend/src/pages/NewFeaturePage.js
+- Add NEW endpoints at END of server.py (append only)
+- Create files in DEVELOPMENT/ folder
+
+❌ FORBIDDEN:
+- Deleting any existing file
+- Renaming files
+- Modifying App.js routes without approval
+- Removing imports
+- Overwriting working code
+
+🔄 WORKFLOW:
+1. Build in DEVELOPMENT/
+2. Test thoroughly
+3. Get user approval
+4. Integrate carefully to main codebase
+
+🆘 IF SOMETHING BREAKS:
+bash /app/RESTORE_STABLE.sh
+
+=====================================
+Status: ✅ PROTECTION ACTIVE
+Backup Size: 738MB
+Created: 2025-12-11
+=====================================

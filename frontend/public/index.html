@@ -7,10 +7,12 @@
         <meta name="color-scheme" content="dark" />
         <meta name="description" content="CoinHubX - Professional Cryptocurrency Trading Platform" />
         
-        <!-- AGGRESSIVE CACHE BUSTING -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <!-- AGGRESSIVE CACHE BUSTING - UPDATED -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="version" content="v2.0.<?php echo time(); ?>">
         
         <!-- PWA Manifest -->
         <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
@@ -29,25 +31,7 @@
         <script>
             console.log('🚀 COINHUBX LOADING - Clean build timestamp:', Date.now());
             
-            // BLOCK EMERGENT SCRIPTS
-            const originalAppendChild = Node.prototype.appendChild;
-            const originalInsertBefore = Node.prototype.insertBefore;
-            
-            Node.prototype.appendChild = function(child) {
-                if (child.tagName === 'SCRIPT' && child.src && child.src.includes('emergent')) {
-                    console.log('⚡ BLOCKED EMERGENT SCRIPT:', child.src);
-                    return child;
-                }
-                return originalAppendChild.call(this, child);
-            };
-            
-            Node.prototype.insertBefore = function(child, before) {
-                if (child.tagName === 'SCRIPT' && child.src && child.src.includes('emergent')) {
-                    console.log('⚡ BLOCKED EMERGENT SCRIPT:', child.src);
-                    return child;
-                }
-                return originalInsertBefore.call(this, child, before);
-            };
+            // Script blocking disabled to allow all app chunks to load properly
             
             // Simple cache bust
             window.addEventListener('load', function() {

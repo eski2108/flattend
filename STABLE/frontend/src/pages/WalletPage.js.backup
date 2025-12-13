@@ -1,0 +1,1037 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Layout from '@/components/Layout';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Wallet, ArrowUpRight, ArrowDownLeft, X, Copy, Check, CheckCircle2, Shield } from 'lucide-react';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { getCryptoEmoji } from '@/utils/cryptoIcons';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = BACKEND_URL;
+
+export default function WalletPage() {
+  const navigate = useNavigate();
+  const [balances, setBalances] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  // Modal states
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState('BTC');
+  const [selectedFiatCurrency, setSelectedFiatCurrency] = useState('usd');  // NEW: Fiat currency selection
+  
+  // Form states
+  const [depositAmount, setDepositAmount] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawAmountGBP, setWithdrawAmountGBP] = useState('');
+  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState('');  // NEW: For USDT network selection
+  const [processing, setProcessing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [inputMode, setInputMode] = useState('gbp'); // 'gbp' or 'crypto'
+  const [cryptoRates, setCryptoRates] = useState({ BTC: 47500, ETH: 2500, USDT: 0.79 }); // GBP rates
+  const [addressValidation, setAddressValidation] = useState(null);
+  const [validatingAddress, setValidatingAddress] = useState(false);
+  
+  // Get crypto currency display name
+  const cryptoCurrency = selectedCurrency || 'BTC';
+  
+  // Deposit address states
+  const [depositAddress, setDepositAddress] = useState('');
+  const [paymentId, setPaymentId] = useState('');
+  const [amountToSend, setAmountToSend] = useState('');
+  
+  // Withdrawal fee states
+  const [withdrawalFeePercent, setWithdrawalFeePercent] = useState(1.5);
+  const [withdrawalFee, setWithdrawalFee] = useState(0);
+  const [netWithdrawal, setNetWithdrawal] = useState(0);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('cryptobank_user');
+    if (!userData) {
+      navigate('/');
+      return;
+    }
+    
+    const user = JSON.parse(userData);
+    setCurrentUser(user);
+    fetchBalances(user.user_id);
+    fetchWithdrawalFee();
+  }, [navigate]);
+
+  // Calculate withdrawal fee when amount changes
+  useEffect(() => {
+    if (withdrawAmount && parseFloat(withdrawAmount) > 0) {
+      const amount = parseFloat(withdrawAmount);
+      const fee = amount * (withdrawalFeePercent / 100);
+      const net = amount - fee;
+      setWithdrawalFee(fee);
+      setNetWithdrawal(net);
+    } else {
+      setWithdrawalFee(0);
+      setNetWithdrawal(0);
+    }
+  }, [withdrawAmount, withdrawalFeePercent]);
+
+  const fetchBalances = async (userId) => {
+    try {
+      setLoading(true);
+      // Use unified wallet endpoint
+      const response = await axios.get(`${API}/api/wallets/balances/${userId}`);
+      
+      if (response.data.success) {
+        setBalances(response.data.balances);
+        console.log('✅ Unified balances loaded:', response.data.balances);
+      }
+    } catch (error) {
+      console.error('Error fetching balances:', error);
+      // Silent fail - retry in background
+      setTimeout(() => fetchBalances(userId), 3000);
+      setBalances([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWithdrawalFee = async () => {
+    try {
+      const response = await axios.get(`${API}/api/crypto-bank/withdrawal-fee`);
+      if (response.data.success) {
+        setWithdrawalFeePercent(response.data.withdrawal_fee_percent);
+      }
+    } catch (error) {
+      console.error('Error fetching withdrawal fee:', error);
+      // Use default 1.5% if fetch fails
+    }
+  };
+
+  const openDepositModal = (currency) => {
+    console.log('🔷 DEPOSIT BUTTON CLICKED - Currency:', currency);
+    setSelectedCurrency(currency);
+    setDepositAmount('');
+    setDepositAddress('');
+    setPaymentId('');
+    setAmountToSend('');
+    setShowDepositModal(true);
+    console.log('🔷 showDepositModal set to TRUE');
+  };
+
+  const openWithdrawModal = (currency) => {
+    console.log('🔶 WITHDRAW BUTTON CLICKED - Currency:', currency);
+    setSelectedCurrency(currency);
+    setWithdrawAmount('');
+    setWithdrawAddress('');
+    setShowWithdrawModal(true);
+    console.log('🔶 showWithdrawModal set to TRUE');
+  };
+
+  const closeModals = () => {
+    setShowDepositModal(false);
+    setShowWithdrawModal(false);
+    setSelectedCurrency(null);
+    setDepositAddress('');
+    setPaymentId('');
+    setAmountToSend('');
+    setDepositAmount('');
+    setWithdrawAmount('');
+    setWithdrawAddress('');
+  };
+
+  const handleDeposit = async () => {
+    if (!depositAmount || parseFloat(depositAmount) <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+
+    // Minimum amount check
+    if (parseFloat(depositAmount) < 50) {
+      toast.error('Minimum deposit amount is £50 / $50');
+      return;
+    }
+
+    setProcessing(true);
+    console.log('Starting deposit request with:', {
+      user_id: currentUser?.user_id,
+      amount: parseFloat(depositAmount),
+      currency: selectedFiatCurrency,
+      pay_currency: selectedCurrency
+    });
+    
+    try {
+      // Create deposit via payment processor
+      const response = await axios.post(`${API}/api/nowpayments/create-deposit`, {
+        user_id: currentUser.user_id,
+        amount: parseFloat(depositAmount),
+        currency: selectedFiatCurrency.toLowerCase(),
+        pay_currency: selectedCurrency.toLowerCase()
+      });
+
+      console.log('Deposit response received:', response.data);
+
+      if (response.data.success) {
+        // Show the deposit address
+        console.log('Setting deposit address:', response.data.deposit_address);
+        setDepositAddress(response.data.deposit_address);
+        setPaymentId(response.data.payment_id);
+        setAmountToSend(response.data.amount_to_send);
+        toast.success('Deposit address generated! Send crypto to the address shown.');
+      } else {
+        toast.error(response.data.message || 'Failed to generate deposit address');
+      }
+    } catch (error) {
+      console.error('Deposit error FULL:', error);
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error message:', error.message);
+      toast.error(error.response?.data?.message || error.message || 'Failed to create deposit address');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    // Validation
+    if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+
+    if (!withdrawAddress || withdrawAddress.length < 10) {
+      toast.error('Please enter a valid wallet address');
+      return;
+    }
+
+    if (addressValidation && !addressValidation.valid) {
+      toast.error('Please enter a valid wallet address for ' + selectedCurrency);
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      // Use real withdrawal request endpoint with all required fields
+      const response = await axios.post(`${API}/api/withdrawals/request`, {
+        user_id: currentUser.user_id,
+        currency: selectedCurrency,
+        network: selectedNetwork || null,
+        destination_address: withdrawAddress,
+        amount_crypto: parseFloat(withdrawAmount),
+        amount_fiat_gbp: parseFloat(withdrawAmountGBP),
+        rate_used: cryptoRates[selectedCurrency]
+      });
+
+      if (response.data.success) {
+        toast.success('Withdrawal request submitted! Awaiting admin approval.');
+        await fetchBalances(currentUser.user_id);
+        closeModals();
+        // Reset form
+        setWithdrawAmount('');
+        setWithdrawAmountGBP('');
+        setWithdrawAddress('');
+        setSelectedNetwork('');
+        setAddressValidation(null);
+      } else {
+        toast.error(response.data.message || 'Withdrawal request failed');
+      }
+    } catch (error) {
+      console.error('Withdrawal error:', error);
+      toast.error(error.response?.data?.detail || error.response?.data?.message || 'Withdrawal request failed');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const formatCurrency = (amount, currency) => {
+    const safeAmount = parseFloat(amount) || 0;
+    if (currency === 'USDT') {
+      return `$${safeAmount.toFixed(2)}`;
+    }
+    return `${safeAmount.toFixed(6)} ${currency}`;
+  };
+
+  const generateDepositAddress = (currency) => {
+    // Simulated deposit addresses for demo
+    const addresses = {
+      BTC: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+      ETH: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+      USDT: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'
+    };
+    return addresses[currency] || 'N/A';
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    toast.success('Address copied to clipboard!');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Currency conversion functions
+  const convertGBPtoCrypto = (gbpAmount, currency) => {
+    const rate = cryptoRates[currency] || 1;
+    return (parseFloat(gbpAmount) / rate).toFixed(8);
+  };
+
+  const convertCryptoToGBP = (cryptoAmount, currency) => {
+    const rate = cryptoRates[currency] || 1;
+    return (parseFloat(cryptoAmount) * rate).toFixed(2);
+  };
+
+  // Handle GBP input change
+  const handleGBPAmountChange = (value) => {
+    setWithdrawAmountGBP(value);
+    setInputMode('gbp');
+    if (value && parseFloat(value) > 0) {
+      const cryptoAmount = convertGBPtoCrypto(value, selectedCurrency);
+      setWithdrawAmount(cryptoAmount);
+    } else {
+      setWithdrawAmount('');
+    }
+  };
+
+  // Handle crypto input change
+  const handleCryptoAmountChange = (value) => {
+    setWithdrawAmount(value);
+    setInputMode('crypto');
+    if (value && parseFloat(value) > 0) {
+      const gbpAmount = convertCryptoToGBP(value, selectedCurrency);
+      setWithdrawAmountGBP(gbpAmount);
+    } else {
+      setWithdrawAmountGBP('');
+    }
+  };
+
+  // Validate withdrawal address
+  const validateWithdrawalAddress = async (address, currency, network = '') => {
+    if (!address || address.length < 20) {
+      setAddressValidation({ valid: false, message: 'Address too short' });
+      return;
+    }
+
+    setValidatingAddress(true);
+    try {
+      const response = await axios.post(`${API}/api/wallet/validate`, {
+        address,
+        currency,
+        network: network || undefined
+      });
+
+      if (response.data.success) {
+        setAddressValidation({
+          valid: response.data.valid,
+          message: response.data.message
+        });
+      }
+    } catch (error) {
+      setAddressValidation({
+        valid: false,
+        message: 'Validation failed. Please check your address.'
+      });
+    } finally {
+      setValidatingAddress(false);
+    }
+  };
+
+  // Debounced address validation
+  useEffect(() => {
+    if (withdrawAddress && withdrawAddress.length >= 20 && selectedCurrency) {
+      const timer = setTimeout(() => {
+        validateWithdrawalAddress(withdrawAddress, selectedCurrency, selectedNetwork);
+      }, 800);
+      return () => clearTimeout(timer);
+    } else {
+      setAddressValidation(null);
+    }
+  }, [withdrawAddress, selectedNetwork, selectedCurrency]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="loading-container">
+          <div className="spinner"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }} data-testid="wallet-page">
+        {/* Header */}
+        <div style={{ marginBottom: '2rem' }}>
+          <h1 style={{ 
+            fontSize: '2rem', 
+            fontWeight: '900', 
+            marginBottom: '0.5rem'
+          }}>
+            <span style={{ 
+              background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>
+              My Wallet
+            </span>
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem' }}>
+            Manage your crypto assets securely
+          </p>
+          
+          {/* Global Action Buttons - Always visible */}
+          <div className="wallet-action-buttons" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', position: 'relative', zIndex: 1 }}>
+            <button
+              onClick={() => {
+                console.log('🔷 GLOBAL DEPOSIT CLICKED');
+                setSelectedCurrency('BTC');
+                setShowDepositModal(true);
+              }}
+              className="wallet-button-primary"
+              style={{
+                padding: '1rem 2rem',
+                background: 'linear-gradient(135deg, #00F0FF, #00B8E6)',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '1rem',
+                fontWeight: '700',
+                color: '#0a1628',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 12px rgba(0, 240, 255, 0.4)'
+              }}
+            >
+              <ArrowDownLeft size={20} strokeWidth={3} /> Deposit Crypto
+            </button>
+            
+            <button
+              onClick={() => {
+                console.log('🔶 GLOBAL WITHDRAW CLICKED');
+                setSelectedCurrency('BTC');
+                setShowWithdrawModal(true);
+              }}
+              className="wallet-button-secondary"
+              style={{
+                padding: '1rem 2rem',
+                background: 'linear-gradient(135deg, #A855F7, #8B5CF6)',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '1rem',
+                fontWeight: '700',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 12px rgba(168, 85, 247, 0.4)'
+              }}
+            >
+              <ArrowUpRight size={20} strokeWidth={3} /> Withdraw Crypto
+            </button>
+          </div>
+        </div>
+
+        {/* Wallet Cards */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+          gap: '1.5rem',
+          marginBottom: '2rem',
+          maxWidth: '100%'
+        }}>
+          {balances.map((balance, index) => {
+            const gradients = {
+              BTC: 'linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(251, 146, 60, 0.08))',
+              ETH: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(167, 139, 250, 0.08))',
+              USDT: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(74, 222, 128, 0.08))'
+            };
+            const borderColors = {
+              BTC: 'rgba(249, 115, 22, 0.4)',
+              ETH: 'rgba(139, 92, 246, 0.4)',
+              USDT: 'rgba(34, 197, 94, 0.4)'
+            };
+            const textColors = {
+              BTC: '#F59E0B',
+              ETH: '#8B5CF6',
+              USDT: '#22C55E'
+            };
+
+            return (
+              <div 
+                key={balance.currency} 
+                data-testid={`wallet-card-${balance.currency}`}
+                className="wallet-card"
+                style={{
+                  background: gradients[balance.currency],
+                  border: `2px solid ${borderColors[balance.currency]}`,
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                {/* Card Header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: `${textColors[balance.currency]}20`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.875rem',
+                    fontWeight: '700',
+                    color: textColors[balance.currency]
+                  }}>
+                    {balance.currency}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', marginBottom: '2px' }}>
+                      {balance.currency === 'BTC' ? 'Bitcoin' : balance.currency === 'ETH' ? 'Ethereum' : 'Tether USD'}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                      Available Balance
+                    </div>
+                  </div>
+                </div>
+
+                {/* Balance */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{ 
+                    fontSize: '2rem', 
+                    fontWeight: '800', 
+                    color: textColors[balance.currency],
+                    marginBottom: '0.5rem'
+                  }}>
+                    {formatCurrency(balance.available_balance || 0, balance.currency)}
+                  </div>
+                  {(balance.locked_balance || 0) > 0 && (
+                    <div style={{ 
+                      fontSize: '0.875rem', 
+                      color: 'rgba(255,255,255,0.6)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      🔒 Locked: {formatCurrency(balance.locked_balance || 0, balance.currency)}
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button 
+                    onClick={() => openDepositModal(balance.currency)}
+                    data-testid={`deposit-btn-${balance.currency}`}
+                    className="wallet-action-btn"
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      padding: '0.75rem',
+                      background: 'linear-gradient(135deg, #00F0FF, #00B8E6)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '0.9375rem',
+                      fontWeight: '600',
+                      color: '#000000',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <ArrowDownLeft size={18} />
+                    Deposit
+                  </button>
+                  <button 
+                    onClick={() => openWithdrawModal(balance.currency)}
+                    data-testid={`withdraw-btn-${balance.currency}`}
+                    className="wallet-action-btn"
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      padding: '0.75rem',
+                      background: 'linear-gradient(135deg, #A855F7, #7E3DFF)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '0.9375rem',
+                      fontWeight: '600',
+                      color: '#FFFFFF',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <ArrowUpRight size={18} />
+                    Withdraw
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Deposit Modal */}
+        {showDepositModal && (
+          <>
+          {console.log('🟢 DEPOSIT MODAL IS RENDERING')}
+          <div className="modal-overlay" onClick={closeModals} style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            backdropFilter: 'blur(4px)'
+          }}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Deposit {selectedCurrency}</h2>
+                <button className="modal-close" onClick={closeModals}>
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                {!depositAddress ? (
+                  // Step 1: Enter amount to generate deposit address
+                  <>
+                    <div className="info-box">
+                      <p className="info-text">
+                        <strong>Deposit Instructions:</strong> Select your cryptocurrency and enter the amount in GBP. 
+                        We'll generate a deposit address for you to send your crypto to.
+                      </p>
+                    </div>
+
+                    {/* Crypto Currency Selector */}
+                    <div className="form-group">
+                      <label htmlFor="cryptoCurrency">Select Cryptocurrency</label>
+                      <select
+                        id="cryptoCurrency"
+                        value={selectedCurrency}
+                        onChange={(e) => setSelectedCurrency(e.target.value)}
+                        disabled={processing}
+                        style={{
+                          width: '100%',
+                          padding: '0.875rem',
+                          background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(168, 85, 247, 0.1))',
+                          border: '2px solid rgba(0, 240, 255, 0.5)',
+                          borderRadius: '10px',
+                          color: '#00F0FF',
+                          fontSize: '0.9375rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          outline: 'none',
+                          boxShadow: '0 0 15px rgba(0, 240, 255, 0.2)'
+                        }}
+                      >
+                        <option value="BTC" style={{background: '#0a1628', color: '#fff'}}>₿ Bitcoin (BTC)</option>
+                        <option value="ETH" style={{background: '#0a1628', color: '#fff'}}>Ξ Ethereum (ETH)</option>
+                        <option value="USDT" style={{background: '#0a1628', color: '#fff'}}>₮ Tether (USDT)</option>
+                        <option value="LTC" style={{background: '#0a1628', color: '#fff'}}>Ł Litecoin (LTC)</option>
+                        <option value="XRP" style={{background: '#0a1628', color: '#fff'}}>✕ Ripple (XRP)</option>
+                        <option value="ADA" style={{background: '#0a1628', color: '#fff'}}>₳ Cardano (ADA)</option>
+                      </select>
+                    </div>
+
+                    {/* Fiat Currency Selector */}
+                    <div className="form-group">
+                      <label htmlFor="fiatCurrency">Payment Currency</label>
+                      <select
+                        id="fiatCurrency"
+                        value={selectedFiatCurrency}
+                        onChange={(e) => setSelectedFiatCurrency(e.target.value)}
+                        disabled={processing}
+                        style={{
+                          width: '100%',
+                          padding: '0.875rem',
+                          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(0, 240, 255, 0.1))',
+                          border: '2px solid rgba(168, 85, 247, 0.5)',
+                          borderRadius: '10px',
+                          color: '#A855F7',
+                          fontSize: '0.9375rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          outline: 'none',
+                          boxShadow: '0 0 15px rgba(168, 85, 247, 0.2)'
+                        }}
+                      >
+                        <option value="usd" style={{background: '#0a1628', color: '#fff'}}>🇺🇸 US Dollar (USD)</option>
+                        <option value="gbp" style={{background: '#0a1628', color: '#fff'}}>🇬🇧 British Pound (GBP)</option>
+                        <option value="eur" style={{background: '#0a1628', color: '#fff'}}>🇪🇺 Euro (EUR)</option>
+                        <option value="cad" style={{background: '#0a1628', color: '#fff'}}>🇨🇦 Canadian Dollar (CAD)</option>
+                        <option value="aud" style={{background: '#0a1628', color: '#fff'}}>🇦🇺 Australian Dollar (AUD)</option>
+                        <option value="jpy" style={{background: '#0a1628', color: '#fff'}}>🇯🇵 Japanese Yen (JPY)</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="depositAmount">Amount ({selectedFiatCurrency.toUpperCase()})</label>
+                      <input
+                        type="number"
+                        id="depositAmount"
+                        value={depositAmount}
+                        onChange={(e) => setDepositAmount(e.target.value)}
+                        placeholder={`Enter ${selectedFiatCurrency.toUpperCase()} amount (e.g., 100)`}
+                        step="1"
+                        min="1"
+                        disabled={processing}
+                      />
+                      <div className="quick-amounts">
+                        <button onClick={() => setDepositAmount('20')}>20</button>
+                        <button onClick={() => setDepositAmount('50')}>50</button>
+                        <button onClick={() => setDepositAmount('100')}>100</button>
+                        <button onClick={() => setDepositAmount('500')}>500</button>
+                      </div>
+                      <p style={{fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem'}}>
+                        Minimum deposit: 20 {selectedFiatCurrency.toUpperCase()} (approx)
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={handleDeposit}
+                      disabled={processing || !depositAmount}
+                      style={{
+                        width: '100%',
+                        padding: '1rem',
+                        background: processing || !depositAmount 
+                          ? 'rgba(0, 240, 255, 0.3)' 
+                          : 'linear-gradient(135deg, #00F0FF, #00B8E6)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontSize: '1rem',
+                        fontWeight: '700',
+                        color: processing || !depositAmount ? 'rgba(255,255,255,0.5)' : '#0a1628',
+                        cursor: processing || !depositAmount ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      {processing ? 'Generating Address...' : 'Generate Deposit Address'}
+                    </button>
+                  </>
+                ) : (
+                  // Step 2: Show the generated deposit address
+                  <>
+                    <div className="info-box" style={{backgroundColor: '#10b981', color: 'white', padding: '15px', borderRadius: '8px', marginBottom: '20px'}}>
+                      <p className="info-text" style={{margin: 0, fontWeight: 600}}>
+                        ✅ Deposit Address Generated Successfully!
+                      </p>
+                    </div>
+
+                    <div className="deposit-address-section">
+                      <label>Send {selectedCurrency} to this address:</label>
+                      <div className="address-box">
+                        <code className="deposit-address">{depositAddress}</code>
+                        <button 
+                          className="copy-btn"
+                          onClick={() => copyToClipboard(depositAddress)}
+                        >
+                          {copied ? <Check size={18} /> : <Copy size={18} />}
+                        </button>
+                      </div>
+                      <p className="address-hint">Send exactly {amountToSend} {selectedCurrency} to this address</p>
+                    </div>
+
+                    <div className="info-box">
+                      <p className="info-text">
+                        <strong>Important:</strong> Send exactly <strong>{amountToSend} {selectedCurrency}</strong> to the address above. 
+                        Your balance will be credited automatically once the payment is confirmed.
+                      </p>
+                      <p className="info-text" style={{marginTop: '10px', fontSize: '13px'}}>
+                        Payment ID: {paymentId}
+                      </p>
+                    </div>
+
+                    <Button
+                      className="modal-submit-btn"
+                      onClick={() => {
+                        closeModals();
+                        setDepositAddress('');
+                        setPaymentId('');
+                        setAmountToSend('');
+                      }}
+                      style={{backgroundColor: '#6366f1'}}
+                    >
+                      Close
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          </>
+        )}
+
+        {/* Withdraw Modal */}
+        {showWithdrawModal && (
+          <div className="modal-overlay" onClick={closeModals} style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            backdropFilter: 'blur(4px)'
+          }}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Withdraw Crypto</h2>
+                <button className="modal-close" onClick={closeModals}>
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                {/* Currency Selector */}
+                <div className="form-group">
+                  <label htmlFor="withdrawCurrency">Select Cryptocurrency</label>
+                  <select
+                    id="withdrawCurrency"
+                    value={selectedCurrency}
+                    onChange={(e) => {
+                      setSelectedCurrency(e.target.value);
+                      setWithdrawAmount('');
+                      setWithdrawAmountGBP('');
+                      setWithdrawAddress('');
+                      setAddressValidation(null);
+                    }}
+                    disabled={processing}
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem',
+                      background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(0, 240, 255, 0.1))',
+                      border: '2px solid rgba(168, 85, 247, 0.5)',
+                      borderRadius: '10px',
+                      color: '#A855F7',
+                      fontSize: '0.9375rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      boxShadow: '0 0 15px rgba(168, 85, 247, 0.2)'
+                    }}
+                  >
+                    <option value="BTC" style={{background: '#0a1628', color: '#fff'}}>₿ Bitcoin (BTC)</option>
+                    <option value="ETH" style={{background: '#0a1628', color: '#fff'}}>Ξ Ethereum (ETH)</option>
+                    <option value="USDT" style={{background: '#0a1628', color: '#fff'}}>₮ Tether (USDT)</option>
+                  </select>
+                </div>
+
+                {/* Dual Input: GBP Amount */}
+                <div className="form-group">
+                  <label htmlFor="withdrawAmountGBP">Amount in GBP</label>
+                  <input
+                    type="number"
+                    id="withdrawAmountGBP"
+                    value={withdrawAmountGBP}
+                    onChange={(e) => handleGBPAmountChange(e.target.value)}
+                    placeholder="Enter amount in £ GBP"
+                    step="0.01"
+                    min="0"
+                    disabled={processing}
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600'
+                    }}
+                  />
+                  {withdrawAmountGBP && parseFloat(withdrawAmountGBP) > 0 && (
+                    <p style={{fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem'}}>
+                      ≈ {withdrawAmount} {selectedCurrency} at £{cryptoRates[selectedCurrency].toLocaleString()} / {selectedCurrency}
+                    </p>
+                  )}
+                </div>
+
+                {/* Dual Input: Crypto Amount */}
+                <div className="form-group">
+                  <label htmlFor="withdrawAmount">Amount in {selectedCurrency}</label>
+                  <input
+                    type="number"
+                    id="withdrawAmount"
+                    value={withdrawAmount}
+                    onChange={(e) => handleCryptoAmountChange(e.target.value)}
+                    placeholder={`Enter ${selectedCurrency} amount`}
+                    step="0.00000001"
+                    min="0"
+                    disabled={processing}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: '1rem'
+                    }}
+                  />
+                  {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
+                    <p style={{fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem'}}>
+                      ≈ £{withdrawAmountGBP} GBP
+                    </p>
+                  )}
+                  <p className="balance-hint">
+                    Available: {formatCurrency(
+                      balances.find(b => b.currency === selectedCurrency)?.balance || 0, 
+                      selectedCurrency
+                    )}
+                  </p>
+                </div>
+
+                {/* Destination Address */}
+                <div className="form-group">
+                  <label htmlFor="withdrawAddress">Destination {selectedCurrency} Address</label>
+                  <input
+                    type="text"
+                    id="withdrawAddress"
+                    value={withdrawAddress}
+                    onChange={(e) => setWithdrawAddress(e.target.value)}
+                    placeholder={`Enter ${selectedCurrency} wallet address`}
+                    disabled={processing}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: '0.875rem',
+                      border: addressValidation?.valid ? '2px solid #22C55E' : '2px solid rgba(168, 85, 247, 0.3)'
+                    }}
+                  />
+                  
+                  {/* Address Validation Status */}
+                  {validatingAddress && (
+                    <div style={{color: '#F59E0B', fontSize: '0.875rem', marginTop: '0.5rem'}}>
+                      🔄 Validating address...
+                    </div>
+                  )}
+                  
+                  {addressValidation?.valid && (
+                    <div style={{color: '#22C55E', fontSize: '0.875rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                      <CheckCircle2 size={16} /> {addressValidation.message}
+                    </div>
+                  )}
+                  
+                  {addressValidation && !addressValidation.valid && (
+                    <div style={{color: '#EF4444', fontSize: '0.875rem', marginTop: '0.5rem'}}>
+                      ❌ {addressValidation.message}
+                    </div>
+                  )}
+                </div>
+
+                {/* Network Selector for USDT */}
+                {selectedCurrency === 'USDT' && (
+                  <div className="form-group">
+                    <label htmlFor="withdrawNetwork">Network</label>
+                    <select
+                      id="withdrawNetwork"
+                      value={selectedNetwork}
+                      onChange={(e) => setSelectedNetwork(e.target.value)}
+                      disabled={processing}
+                      style={{
+                        width: '100%',
+                        padding: '0.875rem',
+                        background: 'rgba(0, 0, 0, 0.4)',
+                        border: '2px solid rgba(0, 240, 255, 0.3)',
+                        borderRadius: '10px',
+                        color: '#fff',
+                        fontSize: '0.9375rem'
+                      }}
+                    >
+                      <option value="">ERC20 (Ethereum)</option>
+                      <option value="TRC20">TRC20 (TRON)</option>
+                      <option value="BEP20">BEP20 (BSC)</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* FEE BREAKDOWN - AUTOMATED SYSTEM WITH GBP */}
+                {withdrawAmount && parseFloat(withdrawAmount) > 0 && withdrawAmountGBP && parseFloat(withdrawAmountGBP) > 0 && (
+                  <div style={{
+                    background: 'rgba(0, 240, 255, 0.1)',
+                    border: '2px solid rgba(0, 240, 255, 0.3)',
+                    borderRadius: '12px',
+                    padding: '1rem',
+                    marginTop: '1rem',
+                    marginBottom: '1rem'
+                  }}>
+                    <div style={{ 
+                      fontSize: '0.875rem', 
+                      fontWeight: '600', 
+                      color: '#00F0FF',
+                      marginBottom: '0.75rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      💰 Withdrawal Breakdown
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
+                          Withdrawal amount:
+                        </span>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '1rem', fontWeight: '600', color: '#FFFFFF' }}>
+                            {parseFloat(withdrawAmount).toFixed(8)} {selectedCurrency}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                            (≈ £{parseFloat(withdrawAmountGBP).toFixed(2)})
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
+                          Platform fee ({withdrawalFeePercent}%):
+                        </span>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '1rem', fontWeight: '600', color: '#F59E0B' }}>
+                            -{withdrawalFee.toFixed(8)} {selectedCurrency}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                            (≈ £{(parseFloat(withdrawAmountGBP) * (withdrawalFeePercent / 100)).toFixed(2)})
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ 
+                        height: '1px', 
+                        background: 'rgba(0, 240, 255, 0.3)', 
+                        margin: '0.25rem 0' 
+                      }}></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.9375rem', fontWeight: '600', color: '#00F0FF' }}>
+                          You will receive:
+                        </span>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#22C55E' }}>
+                            {netWithdrawal.toFixed(8)} {selectedCurrency}
+                          </div>
+                          <div style={{ fontSize: '0.875rem', color: '#22C55E' }}>
+                            (≈ £{(parseFloat(withdrawAmountGBP) * (1 - withdrawalFeePercent / 100)).toFixed(2)})
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{
+                      marginTop: '0.75rem',
+                      fontSize: '0.75rem',
+                      color: 'rgba(255,255,255,0.6)',
+                      fontStyle: 'italic'
+                    }}>
+                      ⚡ Fee automatically routed to platform wallet
+                    </div>
+                  </div>
+                )}
+
+                <Button
+                  className="modal-submit-btn withdraw"
+                  onClick={handleWithdraw}
+                  disabled={processing || !withdrawAmount || !withdrawAddress}
+                >
+                  {processing ? 'Processing...' : 'Complete Withdrawal'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+}

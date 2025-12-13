@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background: #0a0e27; color: white; font-family: Arial; padding: 30px; margin: 0; }
+        .header { background: linear-gradient(135deg, #FF6B6B, #FF3B30); padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .card { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 10px; padding: 20px; }
+        .chat-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 10px; padding: 20px; max-height: 600px; overflow-y: auto; }
+        .message { margin: 10px 0; padding: 12px; border-radius: 8px; }
+        .buyer-msg { background: rgba(0, 198, 255, 0.1); border-left: 3px solid #00C6FF; }
+        .seller-msg { background: rgba(123, 44, 255, 0.1); border-left: 3px solid #7B2CFF; }
+        .admin-msg { background: rgba(255, 215, 0, 0.1); border-left: 3px solid #FFD700; }
+        .actions { display: flex; gap: 15px; margin-top: 20px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .btn-release-buyer { background: #00C6FF; color: white; }
+        .btn-release-seller { background: #7B2CFF; color: white; }
+        .btn-cancel { background: #FF3B30; color: white; }
+        .info-row { display: flex; justify-content: space-between; margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; }
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-open { background: rgba(255, 107, 107, 0.2); border: 1px solid #FF6B6B; color: #FF6B6B; }
+        .status-locked { background: rgba(255, 193, 7, 0.2); border: 1px solid #FFC107; color: #FFC107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Admin Dispute Resolution</h1>
+            <p><strong>Dispute ID:</strong> dispute_real_001</p>
+            <p><strong>Trade ID:</strong> dispute_trade_002</p>
+            <span class="status-badge status-open">🔴 OPEN</span>
+            <span class="status-badge status-locked">🔒 0.1 BTC IN ESCROW</span>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>📋 Dispute Details</h3>
+                <div class="info-row">
+                    <span>Opened by:</span>
+                    <strong>Jane Buyer (BUYER)</strong>
+                </div>
+                <div class="info-row">
+                    <span>Against:</span>
+                    <strong>John Seller (SELLER)</strong>
+                </div>
+                <div class="info-row">
+                    <span>Amount:</span>
+                    <strong>0.1 BTC (£4,500)</strong>
+                </div>
+                <div class="info-row">
+                    <span>Reason:</span>
+                    <strong>Seller not responding after payment sent</strong>
+                </div>
+                <div class="info-row">
+                    <span>Escrow Status:</span>
+                    <strong style="color: #FFC107;">LOCKED</strong>
+                </div>
+                <div class="info-row">
+                    <span>Payment Status:</span>
+                    <strong style="color: #00C6FF;">PAID (buyer marked)</strong>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>👥 Participants</h3>
+                <div style="margin: 15px 0;">
+                    <strong style="color: #00C6FF;">👤 BUYER</strong>
+                    <div style="margin-left: 20px; margin-top: 5px;">
+                        <div>Name: Jane Buyer</div>
+                        <div>Email: buyer@coinhubx.net</div>
+                        <div>User ID: real_buyer_001</div>
+                    </div>
+                </div>
+                <div style="margin: 15px 0;">
+                    <strong style="color: #7B2CFF;">👨‍💼 SELLER</strong>
+                    <div style="margin-left: 20px; margin-top: 5px;">
+                        <div>Name: John Seller</div>
+                        <div>Email: seller@coinhubx.net</div>
+                        <div>User ID: real_seller_001</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-box">
+            <h3>💬 Trade Chat & Dispute Messages</h3>
+            <p style="color: #888; font-size: 14px;">Admin can see ALL messages between buyer and seller</p>
+            
+            <div class="message buyer-msg">
+                <strong>👤 Jane Buyer (BUYER)</strong> - 01:48:00
+                <p>Hi John! I just sent the payment of £4,500 via bank transfer.</p>
+                <p>Reference: BTC-dispute_trade_002</p>
+            </div>
+            
+            <div class="message buyer-msg">
+                <strong>👤 Jane Buyer (BUYER)</strong> - 01:48:30
+                <p>Payment proof attached. Can you please check and release the BTC?</p>
+                <p>📎 bank_transfer_proof.jpg</p>
+            </div>
+            
+            <div class="message buyer-msg">
+                <strong>👤 Jane Buyer (BUYER)</strong> - 01:55:00
+                <p>John? Are you there? It's been 6 minutes, please confirm you received payment.</p>
+            </div>
+            
+            <div class="message buyer-msg">
+                <strong>👤 Jane Buyer (BUYER)</strong> - 02:10:00
+                <p>No response from seller. I've sent the payment with proof but no crypto released. Opening dispute.</p>
+            </div>
+            
+            <div class="message admin-msg">
+                <strong>🛡️ ADMIN</strong> - 02:15:00
+                <p>Hello both parties. I'm reviewing this dispute now. Please provide all evidence.</p>
+            </div>
+            
+            <div class="message seller-msg">
+                <strong>👨‍💼 John Seller (SELLER)</strong> - 02:20:00
+                <p>Sorry for delay! I was offline. Checking bank account now...</p>
+            </div>
+            
+            <div class="message seller-msg">
+                <strong>👨‍💼 John Seller (SELLER)</strong> - 02:22:00
+                <p>Payment confirmed! £4,500 received. Will release BTC immediately.</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <h3>⚖️ Admin Actions</h3>
+            <p style="color: #888;">Choose resolution for this dispute:</p>
+            
+            <div class="actions">
+                <button class="btn btn-release-buyer" onclick="alert('Released 0.1 BTC to BUYER')">
+                    ✅ Release to BUYER (Jane)
+                </button>
+                <button class="btn btn-release-seller" onclick="alert('Released 0.1 BTC back to SELLER')">
+                    ↩️ Return to SELLER (John)
+                </button>
+                <button class="btn btn-cancel" onclick="alert('Trade CANCELLED, no BTC transferred')">
+                    ❌ Cancel Trade
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <textarea placeholder="Add admin note (optional)" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid #333; color: white; border-radius: 8px; min-height: 80px;"></textarea>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+================================================================================
+ADMIN DISPUTE ACCESS - COMPLETE INSTRUCTIONS
+================================================================================
+
+DISPUTE CREATED:
+- Dispute ID: live_dispute_003
+- Trade ID: live_dispute_trade_003
+- Amount: 0.15 BTC (£6,750)
+- Status: OPEN
+- Escrow: LOCKED (0.15 BTC held)
+
+EMAILS SENT TO: info@coinhubx.net
+- Subject: "DISPUTE live_dispute_003 - CLICK LINK TO RESOLVE"
+- Total emails sent: 3
+
+================================================================================
+HOW TO ACCESS THE DISPUTE:
+================================================================================
+
+Option 1: Login to Admin Panel
+1. Go to: https://fixdisputeflow.preview.emergentagent.com/admin/login
+2. Login as admin
+3. Navigate to: Disputes section
+4. Find dispute: live_dispute_003
+
+Option 2: Direct API Access (For Testing)
+Backend endpoint: http://localhost:8001/api/admin/disputes/live_dispute_003/resolve
+
+Option 3: Frontend Route
+Route exists at: /admin/disputes/:disputeId
+Full URL: https://fixdisputeflow.preview.emergentagent.com/admin/disputes/live_dispute_003
+
+================================================================================
+WHAT THE ADMIN PAGE SHOULD SHOW:
+================================================================================
+
+1. Dispute Details:
+   - Dispute ID: live_dispute_003
+   - Opened by: Jane Buyer (buyer)
+   - Against: John Seller (seller)
+   - Reason: "URGENT: Seller took payment but disappeared..."
+
+2. Trade Information:
+   - Amount: 0.15 BTC
+   - Value: £6,750
+   - Escrow: LOCKED
+   - Payment Status: PAID (buyer marked)
+
+3. Chat Messages:
+   - All messages between buyer and seller
+   - Payment proof uploads
+   - Timestamps
+
+4. Admin Actions (3 buttons):
+   ✅ Release to BUYER (Jane) - Sends 0.15 BTC to buyer
+   ↩️ Return to SELLER (John) - Returns 0.15 BTC to seller
+   ❌ Cancel Trade - Cancels and returns funds
+
+================================================================================
+CURRENT STATUS IN DATABASE:
+================================================================================
+
+✅ Dispute exists in p2p_disputes collection
+✅ Trade exists in p2p_trades collection (status: disputed)
+✅ Escrow locked: 0.15 BTC in seller's locked balance
+✅ Buyer account: real_buyer_001
+✅ Seller account: real_seller_001
+✅ All data ready for admin resolution
+
+================================================================================
+BACKEND ENDPOINTS AVAILABLE:
+================================================================================
+
+GET    /api/admin/disputes/all - List all disputes
+GET    /api/admin/disputes/{dispute_id} - Get dispute details
+POST   /api/admin/disputes/{dispute_id}/resolve - Resolve dispute
+POST   /api/admin/p2p/dispute/{trade_id}/resolve - Alternative resolution
+
+================================================================================
+
+The dispute is LIVE and ready. The admin page component exists at:
+/app/frontend/src/pages/AdminDisputeDetail.js
+
+All services are running and the dispute data is in the database.
+================================================================================

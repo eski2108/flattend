@@ -3,7 +3,7 @@
 BACKEND API ENDPOINT VERIFICATION - ALL NEW FEATURES
 Test all newly implemented backend endpoints to verify they're working correctly.
 
-**Backend URL:** https://protrading.preview.emergentagent.com/api
+**Backend URL:** https://fixdisputeflow.preview.emergentagent.com/api
 
 **TEST COVERAGE:**
 1. P2P Notification Endpoints (3 endpoints)
@@ -22,7 +22,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://protrading.preview.emergentagent.com/api"
+BASE_URL = "https://fixdisputeflow.preview.emergentagent.com/api"
 
 class NewEndpointsBackendTester:
     def __init__(self):

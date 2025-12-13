@@ -4,7 +4,7 @@ import "@/styles/responsive.css";
 import "@/styles/premium-ui.css";
 import "@/styles/global-design-system.css";
 import "@/styles/global-interactions.css";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
@@ -16,11 +16,12 @@ import './i18n'; // Multi-language support
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import WalletPage from "@/pages/WalletPage";
-import SpotTradingRebuild from "@/pages/SpotTradingRebuild";
-import SpotTrading from "@/pages/SpotTrading";
 import SpotTradingPro from "@/pages/SpotTradingPro";
-// Support Chat Widget
-// Support Chat Widget removed
+import MobileMarketSelection from "@/pages/MobileMarketSelection";
+import MobileTradingPage from "@/pages/MobileTradingPage";
+
+// Layout
+import MainLayout from "@/layouts/MainLayout";
 
 // Auth pages - load immediately (user needs these first)
 import Login from "@/pages/Login";
@@ -29,35 +30,37 @@ import Register from "@/pages/Register";
 // Cache bypass duplicates - NEW ROUTES TO FORCE FRESH BUILDS
 import Login2 from "@/pages/Login2";
 import Register2 from "@/pages/Register2";
-import SpotTrading2 from "@/pages/SpotTrading2";
+// Removed old trading page imports
 import AllocationsPageDirect from "@/pages/AllocationsPage";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
 // Lazy load non-critical pages for better performance
 const Transactions = lazy(() => import("@/pages/Transactions"));
-const Settings = lazy(() => import("@/pages/Settings"));
+import Settings from "@/pages/Settings";
 const AdminLiquidity = lazy(() => import("@/pages/AdminLiquidity"));
 const AdminLiquidityManager = lazy(() => import("@/pages/AdminLiquidityManager"));
 const AdminLiquidityManagement = lazy(() => import("@/pages/AdminLiquidityManagement"));
 const ManagerSettings = lazy(() => import("@/pages/ManagerSettings"));
-const MerchantCenter = lazy(() => import("@/pages/MerchantCenter"));
-const CreateAd = lazy(() => import("@/pages/CreateAd"));
+import MerchantCenter from "@/pages/MerchantCenter";
+import AddPaymentMethod from "@/pages/AddPaymentMethod";
+import CreateAd from "@/pages/CreateAd";
 const PremiumAuth = lazy(() => import("@/pages/PremiumAuth"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const TraderBalance = lazy(() => import("@/pages/TraderBalance"));
-const MyOrders = lazy(() => import("@/pages/MyOrders"));
+import MyOrders from "@/pages/MyOrders";
 const OrderDetails = lazy(() => import("@/pages/OrderDetails"));
 const P2POrderPage = lazy(() => import("@/pages/P2POrderPage"));
 const OrderPreview = lazy(() => import("@/pages/OrderPreview"));
 const PreviewOrder = lazy(() => import("@/pages/PreviewOrder"));
 const P2PTrading = lazy(() => import("@/pages/P2PTrading"));
-const P2PMarketplace = lazy(() => import("@/pages/P2PMarketplace"));
+import P2PMarketplace from "@/pages/P2PMarketplace";
 const P2PTradeDetailDemo = lazy(() => import("@/pages/P2PTradeDetailDemo"));
 const DisputeCentre = lazy(() => import("@/pages/DisputeCentre"));
 const AdminDisputes = lazy(() => import("@/pages/AdminDisputes"));
-const AdminDisputeDetail = lazy(() => import("@/pages/AdminDisputeDetail"));
+import AdminDisputeDetail from "@/pages/AdminDisputeDetail";
+import EmailDisputeEntry from "@/pages/EmailDisputeEntry";
 const BlockedUsers = lazy(() => import("@/pages/BlockedUsers"));
 const AdminSettings = lazy(() => import("@/pages/AdminSettings"));
 const MerchantProfile = lazy(() => import("@/pages/MerchantProfile"));
@@ -68,9 +71,9 @@ const CreateOffer = lazy(() => import("@/pages/CreateOffer"));
 const MobileAppPage = lazy(() => import("@/pages/MobileAppPage"));
 const ChartTest = lazy(() => import("@/pages/ChartTest"));
 const OrderConfirmation = lazy(() => import("@/pages/OrderConfirmation"));
-const SwapCrypto = lazy(() => import("@/pages/SwapCrypto"));
-const InstantBuy = lazy(() => import("@/pages/InstantBuy"));
-const P2PExpress = lazy(() => import("@/pages/P2PExpress"));
+import SwapCrypto from "@/pages/SwapCrypto";
+import InstantBuy from "@/pages/InstantBuy";
+import P2PExpress from "@/pages/P2PExpress";
 const Fees = lazy(() => import("@/pages/Fees"));
 const PaymentMethods = lazy(() => import("@/pages/PaymentMethods"));
 const BuyCrypto = lazy(() => import("@/pages/BuyCrypto"));
@@ -85,14 +88,14 @@ const AdminFees = lazy(() => import("@/pages/AdminFees"));
 const AdminUsersManagement = lazy(() => import("@/pages/AdminUsersManagement"));
 const ReferralDashboard = lazy(() => import("@/pages/ReferralDashboard"));
 const ReferralDashboardNew = lazy(() => import("@/pages/ReferralDashboardNew"));
-const ReferralDashboardComprehensive = lazy(() => import("@/pages/ReferralDashboardComprehensive"));
+import ReferralDashboardComprehensive from "@/pages/ReferralDashboardComprehensive";
 const EnhancedReferralDashboard = lazy(() => import("@/pages/EnhancedReferralDashboard"));
 const AdminReferralControl = lazy(() => import("@/pages/AdminReferralControl"));
 const AdminRevenueDashboard = lazy(() => import("@/pages/AdminRevenueDashboard"));
 const AdminP2PDashboard = lazy(() => import("@/pages/AdminP2PDashboard"));
 const AdminSupportSettings = lazy(() => import("@/pages/AdminSupportSettings"));
-const ReferralsPage = lazy(() => import("@/pages/ReferralsPage"));
-const ReferralsPageNew = lazy(() => import("@/pages/ReferralsPageNew"));
+import ReferralsPage from "@/pages/ReferralsPage";
+import ReferralsPageNew from "@/pages/ReferralsPageNew";
 const ReferralLinkGenerator = lazy(() => import("@/pages/ReferralLinkGenerator"));
 const SavingsPage = lazy(() => import("@/pages/Savings"));
 const PortfolioPage = lazy(() => import("@/pages/PortfolioPageEnhanced"));
@@ -100,7 +103,8 @@ const AllocationsPage = lazy(() => import("@/pages/AllocationsPage"));
 const AllocationsDemo = lazy(() => import("@/pages/AllocationsDemo"));
 const Markets = lazy(() => import("@/pages/Markets"));
 const WalletSettings = lazy(() => import("@/pages/WalletSettings"));
-const DepositInstructions = lazy(() => import("@/pages/DepositInstructions"));
+import DepositInstructions from "@/pages/DepositInstructions";
+import SimpleDeposit from "@/pages/SimpleDeposit";
 const WithdrawalRequest = lazy(() => import("@/pages/WithdrawalRequest"));
 const KYCVerification = lazy(() => import("@/pages/KYCVerification"));
 const AdminCMS = lazy(() => import("@/pages/AdminCMSNew"));
@@ -144,7 +148,7 @@ function App() {
           <div className="App">
             <TestModeBanner />
             <Toaster position="top-right" richColors />
-            <HashRouter>
+            <BrowserRouter>
           <Suspense fallback={
             <div style={{ 
               minHeight: '100vh', 
@@ -161,120 +165,143 @@ function App() {
             </div>
           }>
           <Routes>
+            {/* EMAIL ENTRY ROUTE - HARD REDIRECT TO BYPASS CACHE */}
+            <Route path="/email/dispute/:disputeId" element={<EmailDisputeEntry />} />
+            
+            {/* ADMIN DISPUTE ROUTES - PUBLIC ACCESS FOR EMAIL LINKS */}
+            <Route path="/admin/disputes/:disputeId" element={<AdminDisputeDetail />} />
+            <Route path="/dispute-view/:disputeId" element={<AdminDisputeDetail />} />
+            
+            {/* PUBLIC ROUTES - NO SIDEBAR */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/seller/:sellerId" element={<PublicSellerProfile />} />
-            <Route path="/security" element={<Security />} />
-            <Route path="/2fa-setup" element={<TwoFactorSetup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/auth" element={<PremiumAuth />} />
-            
-            {/* Cache bypass routes - NEW */}
-            <Route path="/login2" element={<Login2 />} />
-            <Route path="/register2" element={<Register2 />} />
-            <Route path="/spot-trading2" element={<SpotTrading2 />} />
-            <Route path="/auth/verify-phone" element={<PremiumAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/markets" element={<Markets />} />
-            <Route path="/create-offer" element={<CreateOffer />} />
-            <Route path="/buy-crypto" element={<BuyCrypto />} />
-            <Route path="/sell-crypto" element={<SellCrypto />} />
-            <Route path="/my-orders" element={<MyOrders />} />
-            <Route path="/order-preview/:orderId" element={<OrderPreview />} />
-            <Route path="/order-preview" element={<OrderPreview />} />
-            <Route path="/trade/:tradeId" element={<TradePage />} />
-            <Route path="/p2p" element={<P2PMarketplace />} />
-            <Route path="/p2p-marketplace" element={<P2PMarketplace />} />
-            <Route path="/disputes/:disputeId" element={<DisputeCentre />} />
-            <Route path="/trading" element={<SpotTradingRebuild />} />
-            <Route path="/spot-trading" element={<SpotTradingPro />} />
-            <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/swap-crypto" element={<SwapCrypto />} />
-            <Route path="/swap/:coin" element={<SwapCrypto />} />
-            <Route path="/instant-buy" element={<InstantBuy />} />
-            <Route path="/p2p-express" element={<P2PExpress />} />
-            <Route path="/referrals" element={<ReferralDashboardComprehensive />} />
-            <Route path="/referrals/old" element={<ReferralDashboardNew />} />
-            <Route path="/merchant/profile/:userId" element={<MerchantProfile />} />
-            <Route path="/referrals/premium" element={<ReferralsPage />} />
-            <Route path="/referrals/enhanced" element={<EnhancedReferralDashboard />} />
-            <Route path="/referrals/new" element={<ReferralsPageNew />} />
-            <Route path="/referrals/old" element={<ReferralDashboard />} />
-            <Route path="/admin/referral-control" element={<AdminReferralControl />} />
-            <Route path="/admin/revenue" element={<AdminRevenueDashboard />} />
-            <Route path="/admin/p2p" element={<AdminP2PDashboard />} />
-            <Route path="/admin/support-settings" element={<AdminSupportSettings />} />
-            <Route path="/order/:orderId" element={<OrderDetails />} />
-            <Route path="/p2p/order/:tradeId" element={<P2POrderPage />} />
-            <Route path="/fees" element={<Fees />} />
-            <Route path="/payment-methods" element={<PaymentMethods />} />
-            <Route path="/wallet" element={<WalletPage />} />
-            <Route path="/savings" element={<SavingsPage />} />
-            {/* Portfolio route removed - Dashboard page serves as Portfolio Overview */}
-            <Route path="/portfolio" element={<PortfolioPage />} />
-            <Route path="/allocations" element={<AllocationsPageDirect />} />
-            <Route path="/allocations-demo" element={<AllocationsDemo />} />
-            <Route path="/trader-balance" element={<TraderBalance />} />
-            <Route path="/wallet/settings" element={<WalletSettings />} />
-            <Route path="/wallet/deposit" element={<DepositInstructions />} />
-            <Route path="/wallet/withdraw" element={<WithdrawalRequest />} />
-            {/* Spec-compliant routes for deposit/withdraw */}
-            <Route path="/deposit/:coin" element={<DepositInstructions />} />
-            <Route path="/withdraw/:coin" element={<WithdrawalRequest />} />
-            <Route path="/kyc-verification" element={<KYCVerification />} />
-            <Route path="/admin/cms" element={<AdminCMS />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/settings/blocked" element={<BlockedUsers />} />
-            <Route path="/mobile-app" element={<MobileAppPage />} />
-            <Route path="/chart-test" element={<ChartTest />} />
-            <Route path="/admin-liquidity" element={<AdminLiquidity />} />
-            <Route path="/admin/liquidity-manager" element={<AdminLiquidityManager />} />
-            <Route path="/admin/liquidity" element={<AdminLiquidityManagement />} />
-            <Route path="/manager-settings" element={<ManagerSettings />} />
-            <Route path="/p2p/merchant" element={<MerchantCenter />} />
-            <Route path="/p2p/create-ad" element={<CreateAd />} />
-            <Route path="/p2p/trade/:tradeId" element={<P2PTradeDetailDemo />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/business" element={<AdminBusinessDashboard />} />
-            <Route path="/admin/disputes" element={<AdminDisputes />} />
-            <Route path="/admin/disputes/:disputeId" element={<AdminDisputeDetail />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
-            <Route path="/merchant/:userId" element={<MerchantProfile />} />
-            <Route path="/admin/support" element={<AdminSupport />} />
-            <Route path="/admin/earnings" element={<AdminEarnings />} />
-            <Route path="/admin/fees" element={<AdminFees />} />
-            <Route path="/admin/users" element={<AdminUsersManagement />} />
-            <Route path="/admin/security-logs" element={<AdminSecurityLogs />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/help" element={<HelpCenter />} />
-            <Route path="/staking" element={<Staking />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/otc-desk" element={<OTCDesk />} />
-            <Route path="/subscriptions" element={<Subscriptions />} />
-            <Route path="/transfer" element={<Transfer />} />
-            <Route path="/instant-sell" element={<InstantSell />} />
-            <Route path="/verification" element={<Verification />} />
-            <Route path="/account/upgrade" element={<AccountUpgrade />} />
-            <Route path="/p2p/boost" element={<P2PBoost />} />
-            <Route path="/price-alerts" element={<PriceAlerts />} />
-            <Route path="/help" element={<FAQ />} />
-            <Route path="/upload-apk" element={<UploadAPK />} />
-            <Route path="/verify-email" element={<EmailVerified />} />
-            <Route path="/ui-showcase" element={<UIShowcase />} />
+            <Route path="/auth" element={<PremiumAuth />} />
+            <Route path="/auth/verify-phone" element={<PremiumAuth />} />
+            <Route path="/seller/:sellerId" element={<PublicSellerProfile />} />
+            
+            {/* Cache bypass routes */}
+            <Route path="/login2" element={<Login2 />} />
+            <Route path="/register2" element={<Register2 />} />
+            
+            {/* AUTHENTICATED ROUTES - WITH SIDEBAR IN MAINLAYOUT */}
+            <Route element={<MainLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/wallet" element={<WalletPage />} />
+              <Route path="/portfolio" element={<PortfolioPage />} />
+              {/* Mobile Trading Routes - PRIMARY */}
+              <Route path="/markets" element={<MobileMarketSelection />} />
+              <Route path="/trading/:symbol" element={<MobileTradingPage />} />
+              {/* Main trading route - redirect to markets on mobile */}
+              <Route path="/trading" element={<MobileMarketSelection />} />
+              {/* Desktop Legacy Routes */}
+              <Route path="/spot-trading" element={<SpotTradingPro />} />
+              <Route path="/spot-trading-pro" element={<SpotTradingPro />} />
+              {/* Removed old trading page route */}
+              <Route path="/p2p" element={<P2PMarketplace />} />
+              <Route path="/p2p-marketplace" element={<P2PMarketplace />} />
+              <Route path="/p2p-express" element={<P2PExpress />} />
+              <Route path="/swap-crypto" element={<SwapCrypto />} />
+              <Route path="/swap/:coin" element={<SwapCrypto />} />
+              <Route path="/instant-buy" element={<InstantBuy />} />
+              <Route path="/referrals" element={<ReferralDashboardComprehensive />} />
+              <Route path="/referrals/old" element={<ReferralDashboardNew />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/profile" element={<Settings />} />
+              <Route path="/security" element={<Security />} />
+              <Route path="/2fa-setup" element={<TwoFactorSetup />} />
+              <Route path="/markets" element={<Markets />} />
+              <Route path="/create-offer" element={<CreateOffer />} />
+              <Route path="/buy-crypto" element={<BuyCrypto />} />
+              <Route path="/sell-crypto" element={<SellCrypto />} />
+              <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/order-preview/:orderId" element={<OrderPreview />} />
+              <Route path="/order-preview" element={<OrderPreview />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/trade/:tradeId" element={<TradePage />} />
+              <Route path="/disputes/:disputeId" element={<DisputeCentre />} />
+              <Route path="/merchant/profile/:userId" element={<MerchantProfile />} />
+              <Route path="/referrals/premium" element={<ReferralsPage />} />
+              <Route path="/referrals/enhanced" element={<EnhancedReferralDashboard />} />
+              <Route path="/referrals/new" element={<ReferralsPageNew />} />
+              <Route path="/referrals/old" element={<ReferralDashboard />} />
+              <Route path="/admin/referral-control" element={<AdminReferralControl />} />
+              <Route path="/admin/revenue" element={<AdminRevenueDashboard />} />
+              <Route path="/admin/p2p" element={<AdminP2PDashboard />} />
+              <Route path="/admin/support-settings" element={<AdminSupportSettings />} />
+              <Route path="/order/:orderId" element={<OrderDetails />} />
+              <Route path="/p2p/order/:tradeId" element={<P2POrderPage />} />
+              <Route path="/fees" element={<Fees />} />
+              <Route path="/payment-methods" element={<PaymentMethods />} />
+              <Route path="/wallet" element={<WalletPage />} />
+              <Route path="/savings" element={<SavingsPage />} />
+              {/* Portfolio route removed - Dashboard page serves as Portfolio Overview */}
+              <Route path="/portfolio" element={<PortfolioPage />} />
+              <Route path="/allocations" element={<AllocationsPageDirect />} />
+              <Route path="/allocations-demo" element={<AllocationsDemo />} />
+              <Route path="/trader-balance" element={<TraderBalance />} />
+              <Route path="/wallet/settings" element={<WalletSettings />} />
+              <Route path="/wallet/deposit" element={<DepositInstructions />} />
+              <Route path="/wallet/withdraw" element={<WithdrawalRequest />} />
+              {/* Spec-compliant routes for deposit/withdraw */}
+              <Route path="/deposit/:coin" element={<SimpleDeposit />} />
+              <Route path="/withdraw/:coin" element={<WithdrawalRequest />} />
+              <Route path="/kyc-verification" element={<KYCVerification />} />
+              <Route path="/admin/cms" element={<AdminCMS />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/profile" element={<Settings />} />
+              <Route path="/settings/blocked" element={<BlockedUsers />} />
+              <Route path="/mobile-app" element={<MobileAppPage />} />
+              <Route path="/chart-test" element={<ChartTest />} />
+              <Route path="/admin-liquidity" element={<AdminLiquidity />} />
+              <Route path="/admin/liquidity-manager" element={<AdminLiquidityManager />} />
+              <Route path="/admin/liquidity" element={<AdminLiquidityManagement />} />
+              <Route path="/manager-settings" element={<ManagerSettings />} />
+              <Route path="/p2p/merchant" element={<MerchantCenter />} />
+              <Route path="/p2p/add-payment-method" element={<AddPaymentMethod />} />
+              <Route path="/p2p/create-ad" element={<CreateAd />} />
+              <Route path="/p2p/trade/:tradeId" element={<P2PTradeDetailDemo />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/business" element={<AdminBusinessDashboard />} />
+              <Route path="/admin/disputes" element={<AdminDisputes />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
+              <Route path="/merchant/:userId" element={<MerchantProfile />} />
+              <Route path="/admin/support" element={<AdminSupport />} />
+              <Route path="/admin/earnings" element={<AdminEarnings />} />
+              <Route path="/admin/fees" element={<AdminFees />} />
+              <Route path="/admin/users" element={<AdminUsersManagement />} />
+              <Route path="/admin/security-logs" element={<AdminSecurityLogs />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/help" element={<HelpCenter />} />
+              <Route path="/staking" element={<Staking />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/otc-desk" element={<OTCDesk />} />
+              <Route path="/subscriptions" element={<Subscriptions />} />
+              <Route path="/transfer" element={<Transfer />} />
+              <Route path="/instant-sell" element={<InstantSell />} />
+              <Route path="/verification" element={<Verification />} />
+              <Route path="/account/upgrade" element={<AccountUpgrade />} />
+              <Route path="/p2p/boost" element={<P2PBoost />} />
+              <Route path="/price-alerts" element={<PriceAlerts />} />
+              <Route path="/help" element={<FAQ />} />
+              <Route path="/upload-apk" element={<UploadAPK />} />
+              <Route path="/verify-email" element={<EmailVerified />} />
+              <Route path="/ui-showcase" element={<UIShowcase />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
           {/* AI Chat Widget - Shows on ALL pages */}
           <ChatWidget />
-        </HashRouter>
+        </BrowserRouter>
       </div>
     </WalletProvider>
     </CurrencyProvider>

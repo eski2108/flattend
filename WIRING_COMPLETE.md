@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://protrading.preview.emergentagent.com/api
-- **Frontend App**: https://protrading.preview.emergentagent.com
+- **Backend API**: https://fixdisputeflow.preview.emergentagent.com/api
+- **Frontend App**: https://fixdisputeflow.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

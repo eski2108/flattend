@@ -92,7 +92,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.85)',
+      background: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -100,7 +100,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
       padding: '20px'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(19, 24, 41, 0.95))',
+        background: '#FFFFFF',
         border: '2px solid rgba(0, 240, 255, 0.3)',
         borderRadius: '20px',
         maxWidth: '500px',
@@ -120,7 +120,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
           <h2 style={{
             fontSize: '24px',
             fontWeight: '800',
-            color: '#FFFFFF',
+            color: '#000000',
             margin: 0,
             display: 'flex',
             alignItems: 'center',
@@ -134,7 +134,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
             style={{
               background: 'none',
               border: 'none',
-              color: '#888',
+              color: '#666',
               cursor: 'pointer',
               padding: '8px',
               display: 'flex',
@@ -153,7 +153,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#FFFFFF',
+              color: '#000000',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
@@ -169,10 +169,10 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.4)',
+                background: '#F5F5F5',
                 border: `1px solid ${errors.full_name ? '#FF4444' : 'rgba(0, 240, 255, 0.4)'}`,
                 borderRadius: '12px',
-                color: '#FFFFFF',
+                color: '#000000',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box'
@@ -191,7 +191,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#FFFFFF',
+              color: '#000000',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
@@ -208,10 +208,10 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.4)',
+                background: '#F5F5F5',
                 border: `1px solid ${errors.username ? '#FF4444' : 'rgba(0, 240, 255, 0.4)'}`,
                 borderRadius: '12px',
-                color: '#FFFFFF',
+                color: '#000000',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box'
@@ -230,7 +230,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#FFFFFF',
+              color: '#000000',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
@@ -249,14 +249,14 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
                 background: 'rgba(0, 0, 0, 0.2)',
                 border: '1px solid rgba(0, 240, 255, 0.2)',
                 borderRadius: '12px',
-                color: '#888',
+                color: '#666',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box',
                 cursor: 'not-allowed'
               }}
             />
-            <p style={{ color: '#888', fontSize: '12px', marginTop: '4px' }}>
+            <p style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>
               ✅ Verified - Contact support to change
             </p>
           </div>
@@ -267,7 +267,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#FFFFFF',
+              color: '#000000',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
@@ -282,10 +282,10 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.4)',
+                background: '#F5F5F5',
                 border: '1px solid rgba(0, 240, 255, 0.4)',
                 borderRadius: '12px',
-                color: '#FFFFFF',
+                color: '#000000',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box'
@@ -320,7 +320,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
                 background: 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '12px',
-                color: '#FFFFFF',
+                color: '#000000',
                 fontSize: '15px',
                 fontWeight: '700',
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -338,7 +338,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
                 background: loading ? 'rgba(0, 240, 255, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
                 border: 'none',
                 borderRadius: '12px',
-                color: '#FFFFFF',
+                color: '#000000',
                 fontSize: '15px',
                 fontWeight: '700',
                 cursor: loading ? 'not-allowed' : 'pointer',

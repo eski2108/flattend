@@ -22,42 +22,6 @@ export default function Login() {
   const [tempUserId, setTempUserId] = useState(null);
 
   useEffect(() => {
-    // 🔓 AUTO-LOGIN BYPASS FOR PREVIEW ENVIRONMENT ONLY
-    // This automatically logs you in on preview.emergentagent.com
-    // Production deployments will use normal login flow
-    const hostname = window.location.hostname;
-    const isPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('localhost');
-    
-    if (isPreview) {
-      // Check if already logged in
-      const existingUser = localStorage.getItem('user') || localStorage.getItem('cryptobank_user');
-      
-      if (!existingUser) {
-        // Auto-login with test user
-        const testUser = {
-          user_id: 'test_user_preview',
-          id: 'test_user_preview',
-          email: 'test@coinhubx.net',
-          username: 'Preview User',
-          role: 'user',
-          is_verified: true
-        };
-        
-        const testToken = 'preview_bypass_token_' + Date.now();
-        
-        localStorage.setItem('user', JSON.stringify(testUser));
-        localStorage.setItem('cryptobank_user', JSON.stringify(testUser));
-        localStorage.setItem('token', testToken);
-        
-        console.log('🔓 Auto-login bypass activated (Preview environment)');
-        toast.success('✅ Auto-logged in (Preview Mode)');
-        
-        // Redirect to spot trading page
-        setTimeout(() => navigate('/spot-trading'), 500);
-        return;
-      }
-    }
-    
     // Handle Google OAuth callback
     const urlParams = new URLSearchParams(location.search);
     if (urlParams.get('google_success') === 'true') {
@@ -73,7 +37,12 @@ export default function Login() {
           localStorage.setItem('token', token);
           
           toast.success('✅ Logged in successfully with Google!');
-          setTimeout(() => navigate('/dashboard'), 500);
+          
+          // Redirect to intended destination or dashboard
+          const urlParams = new URLSearchParams(location.search);
+          const returnUrl = urlParams.get('return');
+          const from = returnUrl || location.state?.from?.pathname || location.state?.from || '/dashboard';
+          setTimeout(() => window.location.replace(from), 500);
         } catch (error) {
           console.error('Error parsing Google login data:', error);
           toast.error('Login failed. Please try again.');
@@ -94,7 +63,8 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, formData);
+      // USE OLD AUTH ENDPOINT FOR NOW (working)
+      const response = await axios.post(`${API}/api/auth/login`, formData);
       
       if (response.data.success) {
         // Check if 2FA is required
@@ -108,7 +78,12 @@ export default function Login() {
           localStorage.setItem('user', JSON.stringify(response.data.user));
           localStorage.setItem('token', response.data.token);
           toast.success('✅ Logged in successfully!');
-          navigate('/dashboard');
+          
+          // Redirect to intended destination or dashboard
+          const urlParams = new URLSearchParams(location.search);
+          const returnUrl = urlParams.get('return');
+          const from = returnUrl || location.state?.from?.pathname || location.state?.from || '/dashboard';
+          window.location.replace(from);
         }
       } else {
         toast.error(response.data.message || 'Login failed');
@@ -129,7 +104,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/auth/2fa/login-verify`, {
+      const response = await axios.post(`${API}/api/auth/2fa/login-verify`, {
         user_id: tempUserId,
         code: twoFactorCode
       });
@@ -139,7 +114,12 @@ export default function Login() {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
         toast.success('✅ Logged in successfully!');
-        navigate('/dashboard');
+        
+        // Redirect to intended destination or dashboard
+        const urlParams = new URLSearchParams(location.search);
+        const returnUrl = urlParams.get('return');
+        const from = returnUrl || location.state?.from?.pathname || location.state?.from || '/dashboard';
+        window.location.replace(from);
       } else {
         toast.error(response.data.message || 'Invalid 2FA code');
       }

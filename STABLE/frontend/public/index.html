@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000D1A" />
+        <meta name="color-scheme" content="dark" />
+        <meta name="description" content="CoinHubX - Professional Cryptocurrency Trading Platform" />
+        
+        <!-- AGGRESSIVE CACHE BUSTING -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+        
+        <!-- iOS Meta Tags for PWA -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="CoinHubX" />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+        
+        <title>CoinHubX | Professional Crypto Trading</title>
+        
+        <!-- TradingView Chart Library -->
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        
+        <script>
+            console.log('🚀 COINHUBX LOADING - Clean build timestamp:', Date.now());
+            
+            // BLOCK EMERGENT SCRIPTS
+            const originalAppendChild = Node.prototype.appendChild;
+            const originalInsertBefore = Node.prototype.insertBefore;
+            
+            Node.prototype.appendChild = function(child) {
+                if (child.tagName === 'SCRIPT' && child.src && child.src.includes('emergent')) {
+                    console.log('⚡ BLOCKED EMERGENT SCRIPT:', child.src);
+                    return child;
+                }
+                return originalAppendChild.call(this, child);
+            };
+            
+            Node.prototype.insertBefore = function(child, before) {
+                if (child.tagName === 'SCRIPT' && child.src && child.src.includes('emergent')) {
+                    console.log('⚡ BLOCKED EMERGENT SCRIPT:', child.src);
+                    return child;
+                }
+                return originalInsertBefore.call(this, child, before);
+            };
+            
+            // Simple cache bust
+            window.addEventListener('load', function() {
+                console.log('📦 Clean page loaded successfully');
+            });
+        </script>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+    </body>
+</html>

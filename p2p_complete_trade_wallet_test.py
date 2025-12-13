@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://protrading.preview.emergentagent.com/api"
+BASE_URL = "https://fixdisputeflow.preview.emergentagent.com/api"
 
 # Test credentials as specified in the request
 BUYER_EMAIL = "buyer_proof@test.com"

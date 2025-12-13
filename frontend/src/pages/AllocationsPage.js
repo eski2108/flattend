@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout';
 import { 
   IoWallet, 
   IoTrendingUp, 
@@ -18,6 +17,41 @@ import {
   IoFlash,
   IoSwapHorizontal
 } from 'react-icons/io5';
+
+// Import crypto SVG icons
+import btcIcon from '@/assets/coins/btc.svg';
+import ethIcon from '@/assets/coins/eth.svg';
+import usdtIcon from '@/assets/coins/usdt.svg';
+import usdcIcon from '@/assets/coins/usdc.svg';
+import bnbIcon from '@/assets/coins/bnb.svg';
+import solIcon from '@/assets/coins/sol.svg';
+import xrpIcon from '@/assets/coins/xrp.svg';
+import adaIcon from '@/assets/coins/ada.svg';
+import dogeIcon from '@/assets/coins/doge.svg';
+import dotIcon from '@/assets/coins/dot.svg';
+import maticIcon from '@/assets/coins/matic.svg';
+import ltcIcon from '@/assets/coins/ltc.svg';
+import linkIcon from '@/assets/coins/link.svg';
+import avaxIcon from '@/assets/coins/avax.svg';
+import trxIcon from '@/assets/coins/trx.svg';
+
+const COIN_SVG_ICONS = {
+  'BTC': btcIcon,
+  'ETH': ethIcon,
+  'USDT': usdtIcon,
+  'USDC': usdcIcon,
+  'BNB': bnbIcon,
+  'SOL': solIcon,
+  'XRP': xrpIcon,
+  'ADA': adaIcon,
+  'DOGE': dogeIcon,
+  'DOT': dotIcon,
+  'MATIC': maticIcon,
+  'LTC': ltcIcon,
+  'LINK': linkIcon,
+  'AVAX': avaxIcon,
+  'TRX': trxIcon
+};
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -110,18 +144,20 @@ export default function AllocationsPage() {
       });
       
       if (response.data.success) {
-        // Map allocations to match component expectations
-        const mappedAllocations = response.data.allocations.map(a => ({
-          symbol: a.currency,
-          coin: COIN_NAMES[a.currency] || a.currency,
-          amount: a.balance || 0,
-          value: a.value || 0,
-          percent: a.percentage || 0,
-          // Keep original names for compatibility
-          currency: a.currency,
-          balance: a.balance,
-          percentage: a.percentage
-        }));
+        // Map allocations to match component expectations AND FILTER OUT ZERO BALANCES
+        const mappedAllocations = response.data.allocations
+          .filter(a => a.balance > 0)  // ONLY show coins with actual balance
+          .map(a => ({
+            symbol: a.currency,
+            coin: COIN_NAMES[a.currency] || a.currency,
+            amount: a.balance || 0,
+            value: a.value || 0,
+            percent: a.percentage || 0,
+            // Keep original names for compatibility
+            currency: a.currency,
+            balance: a.balance,
+            percentage: a.percentage
+          }));
         setAllocations(mappedAllocations);
         setTotalValue(response.data.total_value_usd || 0);
       }
@@ -156,7 +192,7 @@ export default function AllocationsPage() {
 
   if (loading) {
     return (
-      <Layout>
+      
         <div style={{
           minHeight: '100vh',
           background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
@@ -169,12 +205,12 @@ export default function AllocationsPage() {
             <div style={{ fontSize: '18px', fontWeight: '600' }}>Loading Portfolio Allocations...</div>
           </div>
         </div>
-      </Layout>
+      
     );
   }
 
   return (
-    <Layout>
+    
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
@@ -512,7 +548,9 @@ export default function AllocationsPage() {
                       gap: '12px',
                       maxHeight: '400px',
                       overflowY: 'auto',
-                      paddingRight: '8px'
+                      overflowX: 'hidden',
+                      paddingRight: '8px',
+                      boxSizing: 'border-box'
                     }}>
                       {allocations.map((allocation, index) => (
                         <div
@@ -527,7 +565,10 @@ export default function AllocationsPage() {
                             overflow: 'hidden',
                             transition: 'all 0.3s ease',
                             cursor: 'pointer',
-                            backdropFilter: 'blur(10px)'
+                            backdropFilter: 'blur(10px)',
+                            boxSizing: 'border-box',
+                            width: '100%',
+                            minHeight: 'fit-content'
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateX(4px)';
@@ -567,9 +608,22 @@ export default function AllocationsPage() {
                                 fontSize: '16px',
                                 fontWeight: '700',
                                 color: CHART_COLORS[allocation.symbol] || '#8B95A8',
-                                boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`
+                                boxShadow: `0 0 10px ${CHART_COLORS[allocation.symbol] || '#8B95A8'}30`,
+                                overflow: 'hidden'
                               }}>
-                                {COIN_ICONS[allocation.symbol] || allocation.symbol.charAt(0)}
+                                {COIN_SVG_ICONS[allocation.symbol] ? (
+                                  <img 
+                                    src={COIN_SVG_ICONS[allocation.symbol]}
+                                    alt={allocation.symbol}
+                                    style={{
+                                      width: '24px',
+                                      height: '24px',
+                                      objectFit: 'contain'
+                                    }}
+                                  />
+                                ) : (
+                                  COIN_ICONS[allocation.symbol] || allocation.symbol.charAt(0)
+                                )}
                               </div>
 
                               <div>
@@ -1116,6 +1170,6 @@ export default function AllocationsPage() {
           </div>
         </div>
       </div>
-    </Layout>
+    
   );
 }
