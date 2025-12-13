@@ -163,14 +163,20 @@ export default function Settings() {
           icon: User, 
           label: 'Profile', 
           description: 'Manage your personal information', 
-          action: () => setActiveModal('profile'),
+          action: () => {
+            console.log('Profile button clicked');
+            setActiveModal('profile');
+          },
           dataTestId: 'btn-profile-settings'
         },
         { 
           icon: Lock, 
           label: 'Security', 
           description: 'Password and security settings', 
-          action: () => setActiveModal('security'),
+          action: () => {
+            console.log('Security button clicked');
+            setActiveModal('security');
+          },
           dataTestId: 'btn-security-settings'
         },
         { 
