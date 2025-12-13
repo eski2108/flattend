@@ -1110,7 +1110,7 @@ async def withdraw(request: dict):
             raise HTTPException(status_code=404, detail="User not found")
         
         # Get user balance for this currency
-        balance_doc = await db.user_balances.find_one({"user_id": user_id, "currency": currency})
+        balance_doc = await db.cryptobank_balances.find_one({"user_id": user_id, "currency": currency})
         if not balance_doc:
             raise HTTPException(status_code=400, detail=f"No {currency} balance found")
         
@@ -1129,7 +1129,7 @@ async def withdraw(request: dict):
         
         # Update user balance
         new_balance = available - total_needed
-        await db.user_balances.update_one(
+        await db.cryptobank_balances.update_one(
             {"user_id": user_id, "currency": currency},
             {
                 "$set": {
