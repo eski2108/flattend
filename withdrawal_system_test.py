@@ -93,16 +93,22 @@ class WithdrawalSystemTester:
         print("=" * 60)
         
         print("Step 1: Login as User")
-        response = self.make_request("POST", "/auth/login", TEST_USER)
         
-        if response["success"] and "token" in response["data"]:
-            self.user_token = response["data"]["token"]
-            self.user_id = response["data"].get("user", {}).get("user_id")
-            self.log_result("User Login", True, f"Token obtained, User ID: {self.user_id}")
-            return True
-        else:
-            self.log_result("User Login", False, f"Status: {response['status_code']}, Data: {response['data']}")
-            return False
+        # Try different user credentials
+        for i, test_user in enumerate(TEST_USER_OPTIONS):
+            print(f"   Trying user {i+1}: {test_user['email']}")
+            response = self.make_request("POST", "/auth/login", test_user)
+            
+            if response["success"] and "token" in response["data"]:
+                self.user_token = response["data"]["token"]
+                self.user_id = response["data"].get("user", {}).get("user_id")
+                self.log_result("User Login", True, f"Logged in with {test_user['email']}, User ID: {self.user_id}")
+                return True
+            else:
+                print(f"      Failed: {response['status_code']} - {response['data']}")
+        
+        self.log_result("User Login", False, "All user login attempts failed")
+        return False
 
     def test_2_check_initial_balance(self):
         """TEST 2: Check Initial Balance"""
