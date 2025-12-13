@@ -189,7 +189,7 @@ const PaymentMethodsManager = ({ user, onClose }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 99999,
+      zIndex: 99999999,
       padding: '20px'
     }}>
       <div style={{
