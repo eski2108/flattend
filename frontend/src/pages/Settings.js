@@ -25,6 +25,18 @@ export default function Settings() {
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (activeModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [activeModal]);
+
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
