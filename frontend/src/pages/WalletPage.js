@@ -1,21 +1,65 @@
-import { BiArrowFromTop, BiArrowToTop, BiRepeat } from 'react-icons/bi';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CHXButton from '@/components/CHXButton';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoArrowDownCircle as ArrowDownLeft, IoArrowUpCircle as ArrowUpRight, IoRefresh, IoWallet } from 'react-icons/io5';
+import { IoRefresh, IoSearch, IoTrendingUp, IoTrendingDown, IoArrowDown, IoArrowUp, IoSwapHorizontal, IoWallet } from 'react-icons/io5';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import DepositModal from '@/components/modals/DepositModal';
+import WithdrawModal from '@/components/modals/WithdrawModal';
+import SwapModal from '@/components/modals/SwapModal';
+import StakeModal from '@/components/modals/StakeModal';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// EXISTING BRAND COLORS
+const COLORS = {
+  PRIMARY_BG: '#0B0E11',
+  SECONDARY_BG: '#111418',
+  ACCENT: '#00AEEF',
+  SUCCESS: '#00C98D',
+  WARNING: '#F5C542',
+  DANGER: '#E35355',
+  GREY: '#9FA6B2',
+  WHITE: '#FFFFFF',
+  // Coin colors from backend
+  BTC: '#F7931A',
+  ETH: '#627EEA',
+  USDT: '#26A17B',
+  XRP: '#00AAE4',
+  LTC: '#345D9D',
+  ADA: '#0033AD',
+  DOT: '#E6007A',
+  DOGE: '#C2A633',
+  BNB: '#F3BA2F',
+  SOL: '#14F195'
+};
+
 export default function WalletPage() {
   const navigate = useNavigate();
-  const [balances, setBalances] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [totalGBP, setTotalGBP] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
+  const [balances, setBalances] = useState([]);
   const [coinMetadata, setCoinMetadata] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('value');
+  const [sortDirection, setSortDirection] = useState('desc');
+  
+  const [depositModal, setDepositModal] = useState({ isOpen: false, currency: null });
+  const [withdrawModal, setWithdrawModal] = useState({ isOpen: false, currency: null, balance: 0 });
+  const [swapModal, setSwapModal] = useState({ isOpen: false, fromCurrency: null });
+  const [stakeModal, setStakeModal] = useState({ isOpen: false, currency: null, balance: 0 });
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -28,35 +72,8 @@ export default function WalletPage() {
     loadCoinMetadata();
     loadBalances(u.user_id);
 
-    // Auto-refresh balances every 10 seconds
-    const refreshInterval = setInterval(() => {
-      console.log('🔄 Auto-refreshing wallet balances...');
-      loadBalances(u.user_id);
-    }, 10000); // 10 seconds
-
-    // Listen for balance change events
-    const handleBalanceChange = (e) => {
-      if (e.key === 'wallet_balance_updated' && e.newValue) {
-        console.log('🔄 Wallet balance update detected, refreshing...');
-        loadBalances(u.user_id);
-      }
-    };
-
-    // Listen for storage events (from other tabs/components)
-    window.addEventListener('storage', handleBalanceChange);
-
-    // Listen for custom events (from same tab)
-    const handleCustomBalanceChange = () => {
-      console.log('🔄 Wallet balance update triggered, refreshing...');
-      loadBalances(u.user_id);
-    };
-    window.addEventListener('walletBalanceUpdated', handleCustomBalanceChange);
-
-    return () => {
-      clearInterval(refreshInterval);
-      window.removeEventListener('storage', handleBalanceChange);
-      window.removeEventListener('walletBalanceUpdated', handleCustomBalanceChange);
-    };
+    const interval = setInterval(() => loadBalances(u.user_id), 15000);
+    return () => clearInterval(interval);
   }, [navigate]);
 
   const loadCoinMetadata = async () => {
@@ -76,16 +93,9 @@ export default function WalletPage() {
 
   const loadBalances = async (userId) => {
     try {
-      // Use BALANCES endpoint with cache-busting
       const response = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
       if (response.data.success) {
-        const bals = response.data.balances || [];
-        setBalances(bals);
-        
-        // Calculate total from gbp_value
-        const total = bals.reduce((sum, bal) => sum + (bal.gbp_value || 0), 0);
-        setTotalGBP(total);
-        console.log('💵 WalletPage Total: £' + total.toFixed(2));
+        setBalances(response.data.balances || []);
       }
     } catch (error) {
       console.error('Failed to load balances:', error);
@@ -99,468 +109,194 @@ export default function WalletPage() {
     if (!refreshing && user) {
       setRefreshing(true);
       loadBalances(user.user_id);
-      toast.success('Refreshing balances...');
+      toast.success('Refreshing...');
     }
   };
 
-  const formatBalance = (balance, currency) => {
-    const config = coinMetadata[currency];
-    const decimals = config?.decimals || (currency === 'GBP' || currency === 'USD' ? 2 : 8);
-    return balance.toFixed(decimals);
+  const getCoinIcon = (symbol) => {
+    const icons = {
+      BTC: '₿', ETH: 'Ξ', USDT: '₮', XRP: 'X', LTC: 'Ł',
+      ADA: '₳', DOT: '●', DOGE: 'Ð', BNB: 'B', SOL: 'S',
+      MATIC: 'M', AVAX: 'A', LINK: 'L', UNI: 'U', ATOM: '⚛'
+    };
+    return coinMetadata[symbol]?.icon || icons[symbol] || symbol[0];
   };
 
-  const getCoinColor = (currency) => {
-    return coinMetadata[currency]?.color || '#00C6FF';
-  };
+  const getCoinColor = (symbol) => COLORS[symbol] || COLORS.ACCENT;
+
+  const filteredBalances = balances
+    .filter(asset => {
+      if (!searchTerm) return asset.total_balance > 0;
+      const search = searchTerm.toLowerCase();
+      return (asset.currency.toLowerCase().includes(search) || 
+              coinMetadata[asset.currency]?.name?.toLowerCase().includes(search)) &&
+             asset.total_balance > 0;
+    })
+    .sort((a, b) => {
+      let compareA, compareB;
+      switch (sortBy) {
+        case 'value':
+          compareA = a.gbp_value || 0;
+          compareB = b.gbp_value || 0;
+          break;
+        case 'name':
+          compareA = a.currency;
+          compareB = b.currency;
+          break;
+        default:
+          compareA = a.gbp_value || 0;
+          compareB = b.gbp_value || 0;
+      }
+      return sortDirection === 'asc' 
+        ? (compareA > compareB ? 1 : -1)
+        : (compareA < compareB ? 1 : -1);
+    });
+
+  const totalValue = balances.reduce((sum, b) => sum + (b.gbp_value || 0), 0);
+  const change24h = 2.45; // Mock for now
 
   if (loading) {
     return (
-      
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)' }}>
-          <div style={{ fontSize: '20px', color: '#00C6FF', fontWeight: '700' }}>Loading wallet...</div>
-        </div>
-      
+      <div style={{ minHeight: '100vh', background: COLORS.PRIMARY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ fontSize: '20px', color: COLORS.ACCENT, fontWeight: '600' }}>Loading wallet...</div>
+      </div>
     );
   }
 
   return (
-    
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)',
-        padding: '24px 16px'
-      }}>
-        {/* Header with Refresh Button */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>Your Assets</h1>
-            <CHXButton
-              onClick={handleRefresh}
-              disabled={refreshing}
-              coinColor="#00C6FF"
-              variant="secondary"
-              size="small"
-              icon={<IoRefresh size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />}
-            >
-              {refreshing ? '' : ''}
-            </CHXButton>
+    <div style={{ minHeight: '100vh', background: COLORS.PRIMARY_BG, padding: '24px 16px', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div>
+            <h1 style={{ fontSize: '32px', fontWeight: '700', color: COLORS.WHITE, margin: '0 0 8px 0' }}>Wallet</h1>
+            <p style={{ fontSize: '14px', color: COLORS.GREY, margin: 0 }}>Manage your crypto assets</p>
           </div>
-          <div style={{
-            height: '2px',
-            width: '100%',
-            background: 'linear-gradient(90deg, #00C6FF 0%, transparent 100%)',
-            boxShadow: '0 0 10px rgba(0, 198, 255, 0.5)'
-          }} />
+          <button onClick={handleRefresh} disabled={refreshing} style={{ padding: '12px 24px', background: `rgba(0, 174, 239, 0.1)`, border: `1px solid ${COLORS.ACCENT}`, borderRadius: '12px', color: COLORS.ACCENT, fontSize: '14px', fontWeight: '600', cursor: refreshing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <IoRefresh size={18} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+            Refresh
+          </button>
         </div>
 
         {/* Portfolio Summary */}
-        <div style={{
-          background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
-          border: '1px solid rgba(0, 198, 255, 0.08)',
-          borderRadius: '16px',
-          padding: '20px',
-          marginBottom: '20px',
-          boxShadow: '0 0 18px rgba(0, 198, 255, 0.08)',
-          opacity: 0.94
-        }}>
-          <div style={{ fontSize: '13px', color: '#A3AEC2', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total Portfolio Value</div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#FFFFFF', marginBottom: '4px' }}>£{totalGBP.toFixed(2)}</div>
-          <div style={{ fontSize: '14px', color: '#6EE7B7' }}>≈ ${(totalGBP * 1.27).toFixed(2)} USD</div>
-        </div>
-
-        {/* Assets List */}
-        {balances.length > 0 && (
-          <>
-            <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Your Balances</div>
-            {balances.map((asset, index) => (
-              <AssetCard 
-                key={`${asset.currency}-${index}`} 
-                asset={asset} 
-                navigate={navigate} 
-                getCoinColor={getCoinColor} 
-                formatBalance={formatBalance}
-                userId={user.user_id}
-                coinMetadata={coinMetadata[asset.currency] || {}}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Deposit Any Coin Section */}
-        <div style={{ marginTop: balances.length > 0 ? '32px' : '0' }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>
-            {balances.length === 0 ? 'Start Depositing' : 'Deposit More Coins'}
-          </div>
-          <AllCoinsDepositGrid coinMetadata={coinMetadata} navigate={navigate} getCoinColor={getCoinColor} />
-        </div>
-
-        {/* Transaction History */}
-        <TransactionHistory user={user} />
-      </div>
-    
-  );
-}
-
-function AllCoinsDepositGrid({ coinMetadata, navigate, getCoinColor }) {
-  const allCoins = Object.values(coinMetadata);
-
-  if (allCoins.length === 0) {
-    return (
-      <div style={{
-        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
-        border: '1px solid rgba(0, 198, 255, 0.08)',
-        borderRadius: '16px',
-        padding: '40px 20px',
-        textAlign: 'center',
-        opacity: 0.94
-      }}>
-        <IoWallet size={48} color="#A3AEC2" style={{ margin: '0 auto 16px' }} />
-        <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: '600', marginBottom: '8px' }}>Loading coins...</div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-      gap: '12px'
-    }}>
-      {allCoins.map((coin) => {
-        const coinColor = getCoinColor(coin.symbol);
-        return (
-          <CoinDepositCard
-            key={coin.symbol}
-            coin={coin}
-            coinColor={coinColor}
-            navigate={navigate}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function CoinDepositCard({ coin, coinColor, navigate }) {
-  const handleDeposit = () => {
-    navigate(`/deposit/${coin.symbol.toLowerCase()}`, {
-      state: {
-        currency: coin.symbol,
-        name: coin.name,
-        network: coin.network,
-        decimals: coin.decimals,
-        nowpayments_currency: coin.nowpayments_code,
-        color: coinColor
-      }
-    });
-  };
-
-  return (
-    <div style={{ position: 'relative' }}>
-      <CHXButton
-        onClick={handleDeposit}
-        coinColor={coinColor}
-        variant="secondary"
-        fullWidth
-        size="small"
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            background: `linear-gradient(135deg, ${coinColor}, ${coinColor}CC)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px',
-            fontWeight: '700',
-            color: '#FFFFFF',
-            boxShadow: `0 0 12px ${coinColor}66`
-          }}>
-            {coin.icon || coin.symbol[0]}
-          </div>
-          <div style={{ fontSize: '14px', fontWeight: '600' }}>{coin.symbol}</div>
-          <div style={{ fontSize: '11px', opacity: 0.7, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%', textAlign: 'center' }}>
-            {coin.name}
-          </div>
-        </div>
-      </CHXButton>
-    </div>
-  );
-}
-
-function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinMetadata }) {
-  const coinColor = getCoinColor(asset.currency);
-  const [expanded, setExpanded] = useState(false);
-  
-  const coinSymbol = asset.currency.toLowerCase();
-  const coinName = coinMetadata.name || asset.currency;
-  const coinNetwork = coinMetadata.network || `${asset.currency} Network`;
-  const coinIcon = coinMetadata.icon || asset.currency.substring(0, 1);
-  const decimalPrecision = coinMetadata.decimals || 8;
-  const nowpaymentsCode = coinMetadata.nowpayments_code || coinSymbol;
-
-  const handleDeposit = (e) => {
-    e.stopPropagation();
-    navigate(`/deposit/${coinSymbol}`, { 
-      state: { 
-        currency: asset.currency,
-        name: coinName,
-        network: coinNetwork,
-        decimals: decimalPrecision,
-        nowpayments_currency: nowpaymentsCode,
-        color: coinColor
-      } 
-    });
-  };
-
-  const handleWithdraw = (e) => {
-    e.stopPropagation();
-    navigate(`/withdraw/${coinSymbol}`, { 
-      state: { 
-        currency: asset.currency,
-        name: coinName,
-        network: coinNetwork,
-        decimals: decimalPrecision,
-        nowpayments_currency: nowpaymentsCode,
-        available_balance: asset.available_balance,
-        color: coinColor
-      } 
-    });
-  };
-
-  const handleSwap = (e) => {
-    e.stopPropagation();
-    navigate(`/swap-crypto?from=${coinSymbol}`, { 
-      state: { 
-        from_currency: asset.currency,
-        from_balance: asset.available_balance,
-        decimals: decimalPrecision,
-        color: coinColor
-      } 
-    });
-  };
-
-  return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
-        border: `1px solid rgba(0, 198, 255, 0.08)`,
-        borderRadius: '16px',
-        padding: '16px',
-        marginBottom: '20px',
-        boxShadow: `0 0 18px rgba(0, 198, 255, 0.08)`,
-        transition: 'all 0.2s ease',
-        cursor: 'pointer',
-        opacity: 0.94
-      }}
-      onClick={() => setExpanded(!expanded)}
-    >
-      {/* Header Row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '50%',
-            background: `linear-gradient(135deg, ${coinColor}, ${coinColor}CC)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px',
-            fontWeight: '700',
-            color: '#FFFFFF',
-            boxShadow: `0 0 12px ${coinColor}66`
-          }}>
-            {coinIcon}
-          </div>
-          
-          <div>
-            <div style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>{coinName}</div>
-            <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{coinNetwork}</div>
-          </div>
-        </div>
-
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
-            {formatBalance(asset.total_balance, asset.currency)} {asset.currency}
-          </div>
-          <div style={{ fontSize: '13px', color: '#A3AEC2' }}>
-            ≈ £{(asset.total_balance * (asset.price_gbp || 0)).toFixed(2)}
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Action Buttons */}
-      {!expanded && (
-        <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-          <CHXButton onClick={handleDeposit} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiArrowFromTop size={16} />}>
-            Deposit
-          </CHXButton>
-          <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiArrowToTop size={16} />}>
-            Withdraw
-          </CHXButton>
-          <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="small" fullWidth icon={<BiRepeat size={16} />}>
-            Swap
-          </CHXButton>
-        </div>
-      )}
-
-      {/* Expanded Section with 180ms Animation */}
-      <div style={{
-        maxHeight: expanded ? '1000px' : '0',
-        overflow: 'hidden',
-        transition: 'max-height 0.18s ease-in-out',
-        opacity: expanded ? 1 : 0,
-        transitionProperty: 'max-height, opacity'
-      }}>
-        {expanded && (
-          <div onClick={(e) => e.stopPropagation()} style={{ paddingTop: '18px' }}>
-            {/* Balance Breakdown */}
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>Balance Breakdown</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <div style={{ background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '13px', color: '#6EE7B7', marginBottom: '4px' }}>Available</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF' }}>{formatBalance(asset.available_balance, asset.currency)}</div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', marginTop: '2px' }}>{asset.currency}</div>
-                </div>
-                
-                <div style={{ background: 'rgba(251, 191, 36, 0.05)', border: '1px solid rgba(251, 191, 36, 0.3)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '13px', color: '#FBBF24', marginBottom: '4px' }}>Locked</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF' }}>{formatBalance(asset.locked_balance, asset.currency)}</div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', marginTop: '2px' }}>{asset.currency}</div>
-                </div>
-                
-                <div style={{ background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '13px', color: '#60A5FA', marginBottom: '4px' }}>Total</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF' }}>{formatBalance(asset.total_balance, asset.currency)}</div>
-                  <div style={{ fontSize: '11px', color: '#6B7280', marginTop: '2px' }}>{asset.currency}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Expanded Action Buttons */}
+        <div style={{ background: COLORS.SECONDARY_BG, border: `1px solid rgba(0, 174, 239, 0.2)`, borderRadius: '16px', padding: '32px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '20px' }}>
             <div>
-              <div style={{ fontSize: '13px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Actions</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <CHXButton onClick={handleDeposit} coinColor={coinColor} variant="primary" size="medium" icon={<BiArrowFromTop size={18} />}>
-                  Deposit
-                </CHXButton>
-                <CHXButton onClick={handleWithdraw} coinColor={coinColor} variant="secondary" size="medium" icon={<BiArrowToTop size={18} />}>
-                  Withdraw
-                </CHXButton>
-                <CHXButton onClick={handleSwap} coinColor={coinColor} variant="secondary" size="medium" icon={<BiRepeat size={18} />}>
-                  Swap
-                </CHXButton>
+              <div style={{ fontSize: '14px', color: COLORS.GREY, fontWeight: '500', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Portfolio Value</div>
+              <div style={{ fontSize: '48px', fontWeight: '600', color: COLORS.WHITE, lineHeight: '1', marginBottom: '12px' }}>£{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {change24h >= 0 ? <IoTrendingUp size={20} color={COLORS.SUCCESS} /> : <IoTrendingDown size={20} color={COLORS.DANGER} />}
+                <span style={{ fontSize: '16px', fontWeight: '600', color: change24h >= 0 ? COLORS.SUCCESS : COLORS.DANGER }}>{change24h >= 0 ? '+' : ''}{change24h.toFixed(2)}%</span>
+                <span style={{ fontSize: '14px', color: COLORS.GREY, marginLeft: '4px' }}>24h</span>
               </div>
             </div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button onClick={() => setDepositModal({ isOpen: true, currency: 'BTC' })} style={{ padding: '12px 24px', background: `linear-gradient(135deg, ${COLORS.ACCENT}, #0088CC)`, border: 'none', borderRadius: '12px', color: COLORS.WHITE, fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>Deposit</button>
+              <button onClick={() => toast.info('Select an asset to withdraw')} style={{ padding: '12px 24px', background: 'transparent', border: `1px solid ${COLORS.ACCENT}`, borderRadius: '12px', color: COLORS.ACCENT, fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>Withdraw</button>
+              <button onClick={() => navigate('/instant-buy')} style={{ padding: '12px 24px', background: 'transparent', border: `1px solid ${COLORS.SUCCESS}`, borderRadius: '12px', color: COLORS.SUCCESS, fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>Buy</button>
+            </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
-function TransactionHistory({ user }) {
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(false);
+          {/* Top 5 Assets Breakdown */}
+          {balances.length > 0 && (
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '24px' }}>
+              <div style={{ fontSize: '14px', color: COLORS.GREY, fontWeight: '500', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Portfolio Breakdown</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+                {balances.slice(0, 5).map((asset, index) => {
+                  const percentage = totalValue > 0 ? ((asset.gbp_value || 0) / totalValue) * 100 : 0;
+                  const color = getCoinColor(asset.currency);
+                  return (
+                    <div key={asset.currency} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: COLORS.PRIMARY_BG, borderRadius: '12px', border: `1px solid rgba(0, 174, 239, 0.1)` }}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: `linear-gradient(135deg, ${color}, ${color}CC)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: '700', color: COLORS.WHITE }}>{getCoinIcon(asset.currency)}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: COLORS.WHITE, marginBottom: '4px' }}>{asset.currency}</div>
+                        <div style={{ fontSize: '12px', color: COLORS.GREY }}>{percentage.toFixed(1)}% • £{(asset.gbp_value || 0).toFixed(2)}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
-  const filters = ['All', 'Deposit', 'Withdraw', 'P2P', 'Swap'];
+        {/* Filters */}
+        <div style={{ background: COLORS.SECONDARY_BG, border: `1px solid rgba(0, 174, 239, 0.2)`, borderRadius: '14px', padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ flex: '1', minWidth: '250px', position: 'relative' }}>
+              <IoSearch size={20} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: COLORS.GREY }} />
+              <input type="text" placeholder="Search coins..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '12px 12px 12px 44px', background: COLORS.PRIMARY_BG, border: `1px solid rgba(0, 174, 239, 0.1)`, borderRadius: '12px', color: COLORS.WHITE, fontSize: '14px', outline: 'none' }} />
+            </div>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={{ padding: '12px 16px', background: COLORS.PRIMARY_BG, border: `1px solid rgba(0, 174, 239, 0.1)`, borderRadius: '12px', color: COLORS.WHITE, fontSize: '14px', cursor: 'pointer', outline: 'none', minWidth: '150px', fontWeight: '500' }}>
+              <option value="value">Sort by Value</option>
+              <option value="name">Sort by Name</option>
+            </select>
+            <button onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')} style={{ padding: '12px', background: `rgba(0, 174, 239, 0.1)`, border: `1px solid ${COLORS.ACCENT}`, borderRadius: '12px', color: COLORS.ACCENT, cursor: 'pointer', fontWeight: '600', fontSize: '16px' }}>{sortDirection === 'asc' ? '↑' : '↓'}</button>
+          </div>
+        </div>
 
-  const loadTransactions = React.useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API}/api/transactions/${user.user_id}`);
-      if (response.data.success) {
-        let txs = response.data.transactions || [];
-        // Filter out invalid transactions and apply filter
-        txs = txs.filter(tx => tx.transaction_type); // Remove transactions without type
-        if (activeFilter !== 'All') {
-          txs = txs.filter(tx => tx.transaction_type.toLowerCase() === activeFilter.toLowerCase());
-        }
-        setTransactions(txs);
-      }
-    } catch (error) {
-      console.error('Failed to load transactions:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, activeFilter]);
+        {/* Asset List Header */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr 1fr 100px 2fr', gap: '16px', padding: '12px 20px', marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: COLORS.GREY, textTransform: 'uppercase' }}>Asset</div>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: COLORS.GREY, textTransform: 'uppercase' }}>Balance</div>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: COLORS.GREY, textTransform: 'uppercase' }}>Value</div>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: COLORS.GREY, textTransform: 'uppercase' }}>Locked</div>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: COLORS.GREY, textTransform: 'uppercase' }}>24h Chart</div>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: COLORS.GREY, textTransform: 'uppercase', textAlign: 'right' }}>Actions</div>
+        </div>
 
-  useEffect(() => {
-    if (user) {
-      loadTransactions();
-    }
-  }, [user, loadTransactions]);
-
-  return (
-    <div style={{ marginTop: '32px' }}>
-      <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Transaction History</h2>
-      
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        {filters.map(filter => (
-          <CHXButton
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            coinColor="#00C6FF"
-            variant={activeFilter === filter ? 'primary' : 'secondary'}
-            size="small"
-          >
-            {filter}
-          </CHXButton>
-        ))}
-      </div>
-
-      <div style={{
-        background: 'linear-gradient(135deg, #08192B 0%, #04101F 100%)',
-        border: '1px solid rgba(0, 198, 255, 0.08)',
-        borderRadius: '16px',
-        padding: '20px',
-        opacity: 0.94
-      }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#A3AEC2' }}>Loading transactions...</div>
-        ) : transactions.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#A3AEC2' }}>No transactions yet</div>
-        ) : (
-          transactions.slice(0, 10).map((tx, index) => {
-            // Safe access with defaults
-            const txType = tx.transaction_type || 'unknown';
-            const txStatus = tx.status || 'unknown';
-            const txCurrency = tx.currency || '';
-            const txAmount = tx.amount || 0;
+        {/* Asset List */}
+        {filteredBalances.length > 0 ? (
+          filteredBalances.map((asset, index) => {
+            const color = getCoinColor(asset.currency);
+            const icon = getCoinIcon(asset.currency);
+            const sparklineData = Array.from({ length: 24 }, () => 100 + (Math.random() - 0.5) * 20);
+            const canStake = ['ETH', 'ADA', 'DOT', 'SOL'].includes(asset.currency);
             
             return (
-              <div key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+              <div key={`${asset.currency}-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr 1fr 100px 2fr', gap: '16px', alignItems: 'center', padding: '16px 20px', background: COLORS.SECONDARY_BG, borderRadius: '14px', marginBottom: '8px', border: `1px solid rgba(0, 174, 239, 0.1)`, transition: 'all 0.2s ease', cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: txType === 'deposit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {txType === 'deposit' ? <BiArrowFromTop size={20} color="#22C55E" /> : <BiArrowToTop size={20} color="#EF4444" />}
-                  </div>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: `linear-gradient(135deg, ${color}, ${color}CC)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: COLORS.WHITE, boxShadow: `0 0 12px ${color}66` }}>{icon}</div>
                   <div>
-                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>
-                      {txType.charAt(0).toUpperCase() + txType.slice(1)} {txCurrency}
-                    </div>
-                    <div style={{ fontSize: '13px', color: '#A3AEC2' }}>
-                      {new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString()}
-                    </div>
+                    <div style={{ fontSize: '16px', fontWeight: '600', color: COLORS.WHITE, marginBottom: '4px' }}>{asset.currency}</div>
+                    <div style={{ fontSize: '13px', color: COLORS.GREY }}>{coinMetadata[asset.currency]?.name || asset.currency}</div>
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '600', color: txType === 'deposit' ? '#22C55E' : '#EF4444' }}>
-                    {txType === 'deposit' ? '+' : '-'}{txAmount} {txCurrency}
-                  </div>
-                  <div style={{ fontSize: '12px', color: txStatus === 'completed' ? '#22C55E' : txStatus === 'pending' ? '#FBBF24' : '#EF4444', marginTop: '2px' }}>
-                    {txStatus.charAt(0).toUpperCase() + txStatus.slice(1)}
-                  </div>
+                <div>
+                  <div style={{ fontSize: '16px', fontWeight: '600', color: COLORS.WHITE, marginBottom: '4px' }}>{asset.total_balance?.toFixed(8) || '0.00000000'}</div>
+                  <div style={{ fontSize: '13px', color: COLORS.GREY }}>Available: {asset.available_balance?.toFixed(8) || '0.00000000'}</div>
+                </div>
+                <div style={{ fontSize: '16px', fontWeight: '600', color: COLORS.WHITE }}>£{(asset.gbp_value || 0).toFixed(2)}</div>
+                <div style={{ fontSize: '13px', color: asset.locked_balance > 0 ? COLORS.WARNING : COLORS.GREY }}>{asset.locked_balance > 0 ? asset.locked_balance.toFixed(8) : '-'}</div>
+                <div style={{ height: '40px', width: '100%' }}>
+                  <Line data={{ labels: Array(24).fill(''), datasets: [{ data: sparklineData, borderColor: color, borderWidth: 2, fill: false, tension: 0.4, pointRadius: 0 }] }} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }} />
+                </div>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                  <button onClick={(e) => { e.stopPropagation(); setDepositModal({ isOpen: true, currency: asset.currency }); }} style={{ padding: '8px 16px', background: 'transparent', border: `1px solid ${COLORS.ACCENT}`, borderRadius: '8px', color: COLORS.ACCENT, fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><IoArrowDown size={14} />Deposit</button>
+                  <button onClick={(e) => { e.stopPropagation(); setWithdrawModal({ isOpen: true, currency: asset.currency, balance: asset.available_balance }); }} style={{ padding: '8px 16px', background: 'transparent', border: `1px solid ${COLORS.DANGER}`, borderRadius: '8px', color: COLORS.DANGER, fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><IoArrowUp size={14} />Withdraw</button>
+                  <button onClick={(e) => { e.stopPropagation(); setSwapModal({ isOpen: true, fromCurrency: asset.currency }); }} style={{ padding: '8px 16px', background: 'transparent', border: `1px solid ${COLORS.WARNING}`, borderRadius: '8px', color: COLORS.WARNING, fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><IoSwapHorizontal size={14} />Swap</button>
+                  {canStake && <button onClick={(e) => { e.stopPropagation(); setStakeModal({ isOpen: true, currency: asset.currency, balance: asset.available_balance }); }} style={{ padding: '8px 16px', background: 'transparent', border: `1px solid ${COLORS.SUCCESS}`, borderRadius: '8px', color: COLORS.SUCCESS, fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Stake</button>}
                 </div>
               </div>
             );
           })
+        ) : (
+          <div style={{ background: COLORS.SECONDARY_BG, border: `1px solid rgba(0, 174, 239, 0.1)`, borderRadius: '14px', padding: '60px 20px', textAlign: 'center' }}>
+            <IoWallet size={64} color={COLORS.GREY} style={{ margin: '0 auto 20px' }} />
+            <h3 style={{ fontSize: '20px', fontWeight: '600', color: COLORS.WHITE, marginBottom: '8px' }}>No assets found</h3>
+            <p style={{ fontSize: '14px', color: COLORS.GREY, marginBottom: '24px' }}>Start by depositing crypto to your wallet</p>
+            <button onClick={() => setDepositModal({ isOpen: true, currency: 'BTC' })} style={{ padding: '12px 32px', background: `linear-gradient(135deg, ${COLORS.ACCENT}, #0088CC)`, border: 'none', borderRadius: '12px', color: COLORS.WHITE, fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>Deposit Crypto</button>
+          </div>
         )}
       </div>
+
+      {/* Modals */}
+      <DepositModal isOpen={depositModal.isOpen} onClose={() => setDepositModal({ isOpen: false, currency: null })} currency={depositModal.currency} userId={user?.user_id} />
+      <WithdrawModal isOpen={withdrawModal.isOpen} onClose={() => setWithdrawModal({ isOpen: false, currency: null, balance: 0 })} currency={withdrawModal.currency} availableBalance={withdrawModal.balance} userId={user?.user_id} onSuccess={() => loadBalances(user?.user_id)} />
+      <SwapModal isOpen={swapModal.isOpen} onClose={() => setSwapModal({ isOpen: false, fromCurrency: null })} fromCurrency={swapModal.fromCurrency} balances={balances} userId={user?.user_id} onSuccess={() => loadBalances(user?.user_id)} />
+      <StakeModal isOpen={stakeModal.isOpen} onClose={() => setStakeModal({ isOpen: false, currency: null, balance: 0 })} currency={stakeModal.currency} availableBalance={stakeModal.balance} />
+
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
