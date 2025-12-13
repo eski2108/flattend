@@ -116,22 +116,36 @@ class WithdrawalSystemTester:
         if not self.user_id:
             self.log_result("Check Initial Balance", False, "No user_id available")
             return None
-            
-        response = self.make_request("GET", f"/wallets/balances/{self.user_id}", token=self.user_token)
         
-        if response["success"]:
-            balances = response["data"].get("balances", [])
-            btc_balance = None
-            for balance in balances:
-                if balance.get("currency") == "BTC":
-                    btc_balance = balance.get("balance", 0)
-                    break
+        # Try multiple balance endpoints
+        endpoints_to_try = [
+            f"/wallets/balances/{self.user_id}",
+            f"/crypto-bank/balances/{self.user_id}",
+            f"/user/balances/{self.user_id}"
+        ]
+        
+        for endpoint in endpoints_to_try:
+            print(f"   Trying balance endpoint: {endpoint}")
+            response = self.make_request("GET", endpoint, token=self.user_token)
             
-            self.log_result("Check Initial Balance", True, f"BTC Balance: {btc_balance}")
-            return btc_balance
-        else:
-            self.log_result("Check Initial Balance", False, f"Status: {response['status_code']}, Data: {response['data']}")
-            return None
+            if response["success"]:
+                balances = response["data"].get("balances", [])
+                btc_balance = None
+                for balance in balances:
+                    if balance.get("currency") == "BTC":
+                        btc_balance = balance.get("balance", 0)
+                        break
+                
+                if btc_balance is not None:
+                    self.log_result("Check Initial Balance", True, f"BTC Balance: {btc_balance} (via {endpoint})")
+                    return btc_balance
+                else:
+                    print(f"      No BTC balance found in response: {balances}")
+            else:
+                print(f"      Failed: {response['status_code']} - {response['data']}")
+        
+        self.log_result("Check Initial Balance", False, "All balance endpoints failed or no BTC balance found")
+        return None
 
     def test_3_submit_withdrawal(self, initial_balance):
         """TEST 3: Submit Withdrawal Request"""
