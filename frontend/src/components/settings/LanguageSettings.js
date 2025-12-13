@@ -1,53 +1,50 @@
 import React, { useState } from 'react';
 import { IoClose, IoGlobe, IoCheckmarkCircle } from 'react-icons/io5';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const languages = [
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+  { code: 'pt', name: 'Português', flag: '🇵🇹' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+  { code: 'zh', name: '中文', flag: '🇨🇳' },
+  { code: 'ja', name: '日本語', flag: '🇯🇵' },
+  { code: 'ko', name: '한국어', flag: '🇰🇷' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+  { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+  { code: 'pl', name: 'Polski', flag: '🇵🇱' },
+  { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
+  { code: 'no', name: 'Norsk', flag: '🇳🇴' },
+  { code: 'da', name: 'Dansk', flag: '🇩🇰' },
+  { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+  { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
+  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
+  { code: 'th', name: 'ไทย', flag: '🇹🇭' },
+  { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
+  { code: 'id', name: 'Bahasa Indonesia', flag: '🇮🇩' },
+];
 
-const LanguageSettings = ({ user, onClose }) => {
+const LanguageSettings = ({ onClose }) => {
+  const { i18n } = useTranslation();
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language || 'en');
   const [loading, setLoading] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(user.language || 'en');
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧', native: 'English' },
-    { code: 'es', name: 'Spanish', flag: '🇪🇸', native: 'Español', comingSoon: true },
-    { code: 'fr', name: 'French', flag: '🇫🇷', native: 'Français', comingSoon: true },
-    { code: 'de', name: 'German', flag: '🇩🇪', native: 'Deutsch', comingSoon: true },
-    { code: 'zh', name: 'Chinese', flag: '🇨🇳', native: '中文', comingSoon: true },
-    { code: 'ar', name: 'Arabic', flag: '🇸🇦', native: 'العربية', comingSoon: true },
-    { code: 'pt', name: 'Portuguese', flag: '🇧🇷', native: 'Português', comingSoon: true },
-    { code: 'ru', name: 'Russian', flag: '🇷🇺', native: 'Русский', comingSoon: true }
-  ];
-
-  const handleSave = async () => {
+  const handleLanguageChange = async (languageCode) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(
-        `${API}/api/user/language`,
-        {
-          user_id: user.user_id,
-          language: selectedLanguage
-        },
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
-      
-      if (response.data.success) {
-        // Update local storage
-        const updatedUser = { ...user, language: selectedLanguage };
-        localStorage.setItem('cryptobank_user', JSON.stringify(updatedUser));
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        
-        toast.success('✅ Language preference saved!');
-        setTimeout(() => {
-          onClose();
-          // Optionally reload to apply language changes
-          // window.location.reload();
-        }, 1000);
-      }
+      await i18n.changeLanguage(languageCode);
+      setSelectedLanguage(languageCode);
+      localStorage.setItem('language', languageCode);
+      toast.success('✅ Language changed successfully!');
+      setTimeout(() => onClose(), 500);
     } catch (error) {
-      toast.error('Failed to save language preference');
+      toast.error('Failed to change language');
     } finally {
       setLoading(false);
     }
@@ -60,34 +57,40 @@ const LanguageSettings = ({ user, onClose }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(0, 0, 0, 0.7)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 9999,
-      padding: '20px'
+      zIndex: 99999,
+      padding: '20px',
+      overflow: 'auto'
     }}>
       <div style={{
-        background: '#FFFFFF',
+        background: '#1a1f3a',
         border: '2px solid rgba(0, 240, 255, 0.3)',
         borderRadius: '20px',
-        maxWidth: '550px',
+        maxWidth: '600px',
         width: '100%',
         maxHeight: '90vh',
         overflow: 'auto',
-        boxShadow: '0 0 40px rgba(0, 240, 255, 0.3)'
+        boxShadow: '0 0 40px rgba(0, 240, 255, 0.3)',
+        margin: 'auto'
       }}>
         <div style={{
           padding: '24px',
           borderBottom: '1px solid rgba(0, 240, 255, 0.2)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          position: 'sticky',
+          top: 0,
+          background: '#1a1f3a',
+          zIndex: 10
         }}>
           <h2 style={{
             fontSize: '24px',
             fontWeight: '800',
-            color: '#000000',
+            color: '#FFFFFF',
             margin: 0,
             display: 'flex',
             alignItems: 'center',
@@ -99,120 +102,78 @@ const LanguageSettings = ({ user, onClose }) => {
           <button onClick={onClose} style={{
             background: 'none',
             border: 'none',
-            color: '#666',
+            color: '#aaa',
             cursor: 'pointer',
-            padding: '8px'
+            padding: '8px',
+            display: 'flex',
+            alignItems: 'center'
           }}>
             <IoClose size={28} />
           </button>
         </div>
 
         <div style={{ padding: '24px' }}>
-          <p style={{ color: '#B8C5D6', fontSize: '14px', marginBottom: '20px' }}>
-            Select your preferred language for the platform interface:
-          </p>
-
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+            gap: '12px'
+          }}>
             {languages.map((lang) => (
               <button
                 key={lang.code}
-                onClick={() => !lang.comingSoon && setSelectedLanguage(lang.code)}
-                disabled={lang.comingSoon}
+                onClick={() => handleLanguageChange(lang.code)}
+                disabled={loading}
                 style={{
-                  width: '100%',
-                  padding: '16px',
-                  marginBottom: '12px',
-                  background: selectedLanguage === lang.code 
-                    ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(155, 77, 255, 0.2))'
-                    : 'rgba(0, 0, 0, 0.2)',
-                  border: `2px solid ${selectedLanguage === lang.code ? '#00F0FF' : 'rgba(0, 240, 255, 0.2)'}`,
-                  borderRadius: '12px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  cursor: lang.comingSoon ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.3s',
-                  opacity: lang.comingSoon ? 0.5 : 1,
-                  boxShadow: selectedLanguage === lang.code ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none'
+                  padding: '16px',
+                  background: selectedLanguage === lang.code ? 'rgba(0, 240, 255, 0.1)' : 'rgba(0, 0, 0, 0.3)',
+                  border: `2px solid ${selectedLanguage === lang.code ? '#00F0FF' : 'rgba(0, 240, 255, 0.2)'}`,
+                  borderRadius: '12px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease',
+                  opacity: loading ? 0.6 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!loading && selectedLanguage !== lang.code) {
+                    e.currentTarget.style.background = 'rgba(0, 240, 255, 0.05)';
+                    e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedLanguage !== lang.code) {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                    e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.2)';
+                  }
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '32px' }}>{lang.flag}</span>
-                  <div style={{ textAlign: 'left' }}>
-                    <p style={{ color: '#000000', fontSize: '16px', fontWeight: '700', margin: 0 }}>
-                      {lang.native}
-                    </p>
-                    <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>
-                      {lang.name}
-                      {lang.comingSoon && ' - Coming Soon'}
-                    </p>
-                  </div>
+                  <span style={{ fontSize: '28px' }}>{lang.flag}</span>
+                  <span style={{
+                    color: selectedLanguage === lang.code ? '#00F0FF' : '#FFFFFF',
+                    fontSize: '15px',
+                    fontWeight: selectedLanguage === lang.code ? '700' : '500'
+                  }}>
+                    {lang.name}
+                  </span>
                 </div>
                 {selectedLanguage === lang.code && (
-                  <IoCheckmarkCircle size={24} color="#00F0FF" />
+                  <IoCheckmarkCircle size={20} color="#00F0FF" />
                 )}
               </button>
             ))}
           </div>
 
-          <div style={{
-            background: 'rgba(0, 240, 255, 0.1)',
-            border: '1px solid rgba(0, 240, 255, 0.3)',
-            borderRadius: '12px',
-            padding: '16px',
-            marginBottom: '24px'
+          <p style={{
+            color: '#666',
+            fontSize: '13px',
+            marginTop: '24px',
+            textAlign: 'center',
+            lineHeight: '1.6'
           }}>
-            <p style={{ color: '#00F0FF', fontSize: '13px', margin: 0 }}>
-              🌐 More languages are being added. Check back soon!
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button
-              onClick={onClose}
-              disabled={loading}
-              style={{
-                flex: 1,
-                padding: '14px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                borderRadius: '12px',
-                color: '#000000',
-                fontSize: '15px',
-                fontWeight: '700',
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={loading}
-              style={{
-                flex: 1,
-                padding: '14px',
-                background: loading ? 'rgba(0, 240, 255, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
-                border: 'none',
-                borderRadius: '12px',
-                color: '#000000',
-                fontSize: '15px',
-                fontWeight: '700',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                boxShadow: loading ? 'none' : '0 4px 20px rgba(0, 240, 255, 0.4)'
-              }}
-            >
-              {loading ? 'Saving...' : (
-                <>
-                  <IoCheckmarkCircle size={20} />
-                  Save Language
-                </>
-              )}
-            </button>
-          </div>
+            Select your preferred language. The interface will be updated immediately.
+          </p>
         </div>
       </div>
     </div>
