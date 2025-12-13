@@ -25,10 +25,17 @@ export default function Settings() {
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
 
-  // Prevent body scroll when modal is open
+  // Prevent body scroll when modal is open and force cleanup
   useEffect(() => {
     if (activeModal) {
       document.body.style.overflow = 'hidden';
+      // Remove any stale overlays
+      const staleOverlays = document.querySelectorAll('[data-modal-backdrop]');
+      staleOverlays.forEach(overlay => {
+        if (!overlay.querySelector('[data-active-modal]')) {
+          overlay.remove();
+        }
+      });
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -36,6 +43,14 @@ export default function Settings() {
       document.body.style.overflow = 'unset';
     };
   }, [activeModal]);
+  
+  // Force close modal handler
+  const closeModal = () => {
+    setActiveModal(null);
+    setTimeout(() => {
+      document.body.style.overflow = 'unset';
+    }, 100);
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -698,56 +713,49 @@ export default function Settings() {
 
       {/* Settings Modals - Rendered using Portal with proper cleanup */}
       {activeModal === 'profile' && ReactDOM.createPortal(
-        <ProfileSettings
-          user={currentUser}
-          onClose={() => {
-            setActiveModal(null);
-          }}
-          onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
-        />,
+        <div data-modal-backdrop key="profile-backdrop">
+          <ProfileSettings
+            user={currentUser}
+            onClose={closeModal}
+            onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+          />
+        </div>,
         document.body
       )}
       {activeModal === 'email' && ReactDOM.createPortal(
-        <EmailSettings
-          user={currentUser}
-          onClose={() => setActiveModal(null)}
-        />,
+        <div data-modal-backdrop key="email-backdrop">
+          <EmailSettings user={currentUser} onClose={closeModal} />
+        </div>,
         document.body
       )}
       {activeModal === 'security' && ReactDOM.createPortal(
-        <SecuritySettings
-          user={currentUser}
-          onClose={() => setActiveModal(null)}
-        />,
+        <div data-modal-backdrop key="security-backdrop">
+          <SecuritySettings user={currentUser} onClose={closeModal} />
+        </div>,
         document.body
       )}
       {activeModal === '2fa' && ReactDOM.createPortal(
-        <TwoFactorSettings
-          user={currentUser}
-          onClose={() => setActiveModal(null)}
-          onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
-        />,
+        <div data-modal-backdrop key="2fa-backdrop">
+          <TwoFactorSettings user={currentUser} onClose={closeModal} onUpdate={(updatedUser) => setCurrentUser(updatedUser)} />
+        </div>,
         document.body
       )}
       {activeModal === 'notifications' && ReactDOM.createPortal(
-        <NotificationSettings
-          user={currentUser}
-          onClose={() => setActiveModal(null)}
-        />,
+        <div data-modal-backdrop key="notifications-backdrop">
+          <NotificationSettings user={currentUser} onClose={closeModal} />
+        </div>,
         document.body
       )}
       {activeModal === 'language' && ReactDOM.createPortal(
-        <LanguageSettings
-          user={currentUser}
-          onClose={() => setActiveModal(null)}
-        />,
+        <div data-modal-backdrop key="language-backdrop">
+          <LanguageSettings user={currentUser} onClose={closeModal} />
+        </div>,
         document.body
       )}
       {activeModal === 'payment' && ReactDOM.createPortal(
-        <PaymentMethodsManager
-          user={currentUser}
-          onClose={() => setActiveModal(null)}
-        />,
+        <div data-modal-backdrop key="payment-backdrop">
+          <PaymentMethodsManager user={currentUser} onClose={closeModal} />
+        </div>,
         document.body
       )}
     </div>
