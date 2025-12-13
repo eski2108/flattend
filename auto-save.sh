@@ -2,21 +2,17 @@
 
 cd /app
 
-# List of all repositories
-REPOS=(
-    "https://github.com/eski2108/Crypto-livr.git"
-    "https://github.com/eski2108/C-hub.git"
-    "https://github.com/eski2108/Hub-x.git"
-    "https://github.com/eski2108/Coinhubx.git"
-    "https://github.com/eski2108/flattend.git"
-    "https://github.com/eski2108/Play.git"
-    "https://github.com/eski2108/Coinx1.git"
-    "https://github.com/eski2108/X1.git"
-    "https://github.com/eski2108/Latest-coinhubx.git"
-    "https://github.com/eski2108/F1.git"
-    "https://github.com/eski2108/Final1.git"
-    "https://github.com/eski2108/X-final-nu.git"
-    "https://github.com/eski2108/C-fish.git"
+# List of all git remote names
+REMOTES=(
+    "crypto-livr"
+    "c-hub"
+    "hub-x"
+    "coinhubx"
+    "flattend"
+    "coinx1"
+    "x1"
+    "latest-coinhubx"
+    "brand-new"
 )
 
 # Check if there are changes
@@ -36,24 +32,23 @@ if [[ -n $(git status -s) ]]; then
     SUCCESS_COUNT=0
     FAIL_COUNT=0
     
-    for REPO in "${REPOS[@]}"; do
-        REPO_NAME=$(echo $REPO | sed 's|https://github.com/eski2108/||' | sed 's|.git||')
-        echo "Pushing to $REPO_NAME..."
+    for REMOTE in "${REMOTES[@]}"; do
+        echo "Pushing to $REMOTE..."
         
-        git push $REPO main --force 2>&1
+        git push $REMOTE main --force 2>&1 | tail -2
         
-        if [ $? -eq 0 ]; then
-            echo "  ✅ SUCCESS: $REPO_NAME"
+        if [ ${PIPESTATUS[0]} -eq 0 ]; then
+            echo "  ✅ SUCCESS: $REMOTE"
             ((SUCCESS_COUNT++))
         else
-            echo "  ❌ FAILED: $REPO_NAME"
+            echo "  ❌ FAILED: $REMOTE"
             ((FAIL_COUNT++))
         fi
     done
     
     echo ""
     echo "════════════════════════════════════════════"
-    echo "✅ PUSH COMPLETE"
+    echo "✅ PUSH COMPLETE TO ALL REPOSITORIES"
     echo "════════════════════════════════════════════"
     echo "Commit Hash: $HASH"
     echo "Time: $TIMESTAMP"
