@@ -66,15 +66,12 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
       if (response.data.success) {
         toast.success('✅ Profile updated successfully!');
         
-        // Update localStorage
         const updatedUser = { ...user, ...formData };
         localStorage.setItem('cryptobank_user', JSON.stringify(updatedUser));
         localStorage.setItem('user', JSON.stringify(updatedUser));
         
-        // Notify parent component
         if (onUpdate) onUpdate(updatedUser);
         
-        // Close modal after short delay
         setTimeout(() => onClose(), 1000);
       }
     } catch (error) {
@@ -92,24 +89,25 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(0, 0, 0, 0.7)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 9999,
-      padding: '20px'
+      zIndex: 99999,
+      padding: '20px',
+      overflow: 'auto'
     }}>
       <div style={{
-        background: '#FFFFFF',
+        background: '#1a1f3a',
         border: '2px solid rgba(0, 240, 255, 0.3)',
         borderRadius: '20px',
         maxWidth: '500px',
         width: '100%',
         maxHeight: '90vh',
         overflow: 'auto',
-        boxShadow: '0 0 40px rgba(0, 240, 255, 0.3)'
+        boxShadow: '0 0 40px rgba(0, 240, 255, 0.3)',
+        margin: 'auto'
       }}>
-        {/* Header */}
         <div style={{
           padding: '24px',
           borderBottom: '1px solid rgba(0, 240, 255, 0.2)',
@@ -120,7 +118,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
           <h2 style={{
             fontSize: '24px',
             fontWeight: '800',
-            color: '#000000',
+            color: '#FFFFFF',
             margin: 0,
             display: 'flex',
             alignItems: 'center',
@@ -134,7 +132,7 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
             style={{
               background: 'none',
               border: 'none',
-              color: '#666',
+              color: '#aaa',
               cursor: 'pointer',
               padding: '8px',
               display: 'flex',
@@ -145,15 +143,13 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
-          {/* Full Name */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#000000',
+              color: '#FFFFFF',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
@@ -169,10 +165,10 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: '#F5F5F5',
+                background: 'rgba(0, 0, 0, 0.4)',
                 border: `1px solid ${errors.full_name ? '#FF4444' : 'rgba(0, 240, 255, 0.4)'}`,
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#FFFFFF',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box'
@@ -185,13 +181,12 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
             )}
           </div>
 
-          {/* Username */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#000000',
+              color: '#FFFFFF',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
@@ -204,14 +199,14 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               type="text"
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              placeholder="your_username"
+              placeholder="Optional"
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: '#F5F5F5',
+                background: 'rgba(0, 0, 0, 0.4)',
                 border: `1px solid ${errors.username ? '#FF4444' : 'rgba(0, 240, 255, 0.4)'}`,
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#FFFFFF',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box'
@@ -224,107 +219,52 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
             )}
           </div>
 
-          {/* Phone Number (read-only) */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              color: '#000000',
-              fontSize: '13px',
-              fontWeight: '700',
-              marginBottom: '8px',
-              textTransform: 'uppercase'
-            }}>
-              <IoCall size={16} color="#00F0FF" />
-              Phone Number
-            </label>
-            <input
-              type="text"
-              value={formData.phone_number}
-              readOnly
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                background: 'rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(0, 240, 255, 0.2)',
-                borderRadius: '12px',
-                color: '#666',
-                fontSize: '15px',
-                outline: 'none',
-                boxSizing: 'border-box',
-                cursor: 'not-allowed'
-              }}
-            />
-            <p style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>
-              ✅ Verified - Contact support to change
-            </p>
-          </div>
-
-          {/* Country */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: '#000000',
+              color: '#FFFFFF',
               fontSize: '13px',
               fontWeight: '700',
               marginBottom: '8px',
               textTransform: 'uppercase'
             }}>
               <IoGlobe size={16} color="#00F0FF" />
-              Country / Region
+              Country
             </label>
-            <select
+            <input
+              type="text"
               value={formData.country}
               onChange={(e) => setFormData({ ...formData, country: e.target.value })}
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: '#F5F5F5',
+                background: 'rgba(0, 0, 0, 0.4)',
                 border: '1px solid rgba(0, 240, 255, 0.4)',
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#FFFFFF',
                 fontSize: '15px',
                 outline: 'none',
                 boxSizing: 'border-box'
               }}
-            >
-              <option value="United Kingdom">🇬🇧 United Kingdom</option>
-              <option value="United States">🇺🇸 United States</option>
-              <option value="Canada">🇨🇦 Canada</option>
-              <option value="Australia">🇦🇺 Australia</option>
-              <option value="Germany">🇩🇪 Germany</option>
-              <option value="France">🇫🇷 France</option>
-              <option value="Spain">🇪🇸 Spain</option>
-              <option value="Italy">🇮🇹 Italy</option>
-              <option value="Netherlands">🇳🇱 Netherlands</option>
-              <option value="Nigeria">🇳🇬 Nigeria</option>
-              <option value="South Africa">🇿🇦 South Africa</option>
-              <option value="India">🇮🇳 India</option>
-              <option value="Singapore">🇸🇬 Singapore</option>
-              <option value="Other">🌍 Other</option>
-            </select>
+            />
           </div>
 
-          {/* Buttons */}
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
             <button
               type="button"
               onClick={onClose}
-              disabled={loading}
               style={{
                 flex: 1,
                 padding: '14px',
                 background: 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#FFFFFF',
                 fontSize: '15px',
-                fontWeight: '700',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s'
+                fontWeight: '600',
+                cursor: 'pointer'
               }}
             >
               Cancel
@@ -335,29 +275,16 @@ const ProfileSettings = ({ user, onClose, onUpdate }) => {
               style={{
                 flex: 1,
                 padding: '14px',
-                background: loading ? 'rgba(0, 240, 255, 0.3)' : 'linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%)',
+                background: loading ? '#666' : 'linear-gradient(135deg, #00F0FF, #0099CC)',
                 border: 'none',
                 borderRadius: '12px',
-                color: '#000000',
+                color: '#000',
                 fontSize: '15px',
                 fontWeight: '700',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'all 0.3s',
-                boxShadow: loading ? 'none' : '0 4px 20px rgba(0, 240, 255, 0.4)'
+                cursor: loading ? 'not-allowed' : 'pointer'
               }}
             >
-              {loading ? (
-                'Saving...'
-              ) : (
-                <>
-                  <IoCheckmarkCircle size={20} />
-                  Save Changes
-                </>
-              )}
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>
