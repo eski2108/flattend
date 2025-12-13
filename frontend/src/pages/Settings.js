@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { IoCard as CreditCard, IoGlobe as Globe, IoLockClosed as Lock, IoLogOut, IoMail, IoNotifications as Bell, IoPersonOutline as User, IoPhonePortrait as Smartphone, IoShield as Shield, IoTrendingUp, IoCheckmarkCircle } from 'react-icons/io5';
@@ -717,52 +717,31 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Settings Modals - Rendered using Portal with proper cleanup */}
-      {activeModal === 'profile' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="profile-backdrop">
-          <ProfileSettings
-            user={currentUser}
-            onClose={closeModal}
-            onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
-          />
-        </div>,
-        document.body
+      {/* Settings Modals - Simple conditional rendering */}
+      {activeModal === 'profile' && (
+        <ProfileSettings
+          user={currentUser}
+          onClose={closeModal}
+          onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+        />
       )}
-      {activeModal === 'email' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="email-backdrop">
-          <EmailSettings user={currentUser} onClose={closeModal} />
-        </div>,
-        document.body
+      {activeModal === 'email' && (
+        <EmailSettings user={currentUser} onClose={closeModal} />
       )}
-      {activeModal === 'security' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="security-backdrop">
-          <SecuritySettings user={currentUser} onClose={closeModal} />
-        </div>,
-        document.body
+      {activeModal === 'security' && (
+        <SecuritySettings user={currentUser} onClose={closeModal} />
       )}
-      {activeModal === '2fa' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="2fa-backdrop">
-          <TwoFactorSettings user={currentUser} onClose={closeModal} onUpdate={(updatedUser) => setCurrentUser(updatedUser)} />
-        </div>,
-        document.body
+      {activeModal === '2fa' && (
+        <TwoFactorSettings user={currentUser} onClose={closeModal} onUpdate={(updatedUser) => setCurrentUser(updatedUser)} />
       )}
-      {activeModal === 'notifications' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="notifications-backdrop">
-          <NotificationSettings user={currentUser} onClose={closeModal} />
-        </div>,
-        document.body
+      {activeModal === 'notifications' && (
+        <NotificationSettings user={currentUser} onClose={closeModal} />
       )}
-      {activeModal === 'language' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="language-backdrop">
-          <LanguageSettings user={currentUser} onClose={closeModal} />
-        </div>,
-        document.body
+      {activeModal === 'language' && (
+        <LanguageSettings user={currentUser} onClose={closeModal} />
       )}
-      {activeModal === 'payment' && ReactDOM.createPortal(
-        <div data-modal-backdrop key="payment-backdrop">
-          <PaymentMethodsManager user={currentUser} onClose={closeModal} />
-        </div>,
-        document.body
+      {activeModal === 'payment' && (
+        <PaymentMethodsManager user={currentUser} onClose={closeModal} />
       )}
     </div>
   );
