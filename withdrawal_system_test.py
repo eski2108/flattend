@@ -594,6 +594,9 @@ class WithdrawalSystemTester:
         # TEST 1: USER WITHDRAWAL SUBMISSION FLOW
         if not self.test_1_user_login():
             return self.generate_report()
+        
+        # Fund the test user with BTC
+        self.fund_test_user()
             
         initial_balance = self.test_2_check_initial_balance()
         transaction_id = self.test_3_submit_withdrawal(initial_balance)
