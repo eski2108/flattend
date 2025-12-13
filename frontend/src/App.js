@@ -232,6 +232,7 @@ function App() {
               <Route path="/admin/revenue" element={<AdminRevenueDashboard />} />
               <Route path="/admin/p2p" element={<AdminP2PDashboard />} />
               <Route path="/admin/support-settings" element={<AdminSupportSettings />} />
+              <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
               <Route path="/order/:orderId" element={<OrderDetails />} />
               <Route path="/p2p/order/:tradeId" element={<P2POrderPage />} />
               <Route path="/fees" element={<Fees />} />
