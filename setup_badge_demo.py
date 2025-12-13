@@ -95,7 +95,7 @@ async def setup_demo_traders():
     print("\n✅ Trader profiles created! Now calculating badges...")
     
     # Call API to calculate badges for each
-    BASE_URL = "https://fixdisputeflow.preview.emergentagent.com/api"
+    BASE_URL = "https://fund-release-1.preview.emergentagent.com/api"
     
     for email, user_id in users.items():
         if user_id:

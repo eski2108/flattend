@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://fixdisputeflow.preview.emergentagent.com/#/trading
+**Live URL:** https://fund-release-1.preview.emergentagent.com/#/trading
 
 ---
 

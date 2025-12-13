@@ -6,7 +6,7 @@
  */
 
 // Get backend URL from environment
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://fixdisputeflow.preview.emergentagent.com';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://fund-release-1.preview.emergentagent.com';
 
 // Ensure it ALWAYS has /api at the end
 export const API_BASE_URL = BACKEND_URL.endsWith('/api') ? BACKEND_URL : `${BACKEND_URL}/api`;

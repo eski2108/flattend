@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://fixdisputeflow.preview.emergentagent.com
-P2P Page:     https://fixdisputeflow.preview.emergentagent.com/p2p
-Backend API:  https://fixdisputeflow.preview.emergentagent.com/api
+Frontend:     https://fund-release-1.preview.emergentagent.com
+P2P Page:     https://fund-release-1.preview.emergentagent.com/p2p
+Backend API:  https://fund-release-1.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

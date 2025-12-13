@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://fixdisputeflow.preview.emergentagent.com
+https://fund-release-1.preview.emergentagent.com
 
 ### Test Route
 
-`https://fixdisputeflow.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://fund-release-1.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

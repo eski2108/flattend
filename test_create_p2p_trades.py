@@ -189,11 +189,11 @@ async def create_test_trades():
         print(f"✅ Created {trade['status']} trade: {trade['trade_id']}")
     
     print("\n📋 Test Trade URLs:")
-    print(f"1. Pending Payment: https://fixdisputeflow.preview.emergentagent.com/order/{trade1_id}")
-    print(f"2. Payment Made: https://fixdisputeflow.preview.emergentagent.com/order/{trade2_id}")
-    print(f"3. Completed: https://fixdisputeflow.preview.emergentagent.com/order/{trade3_id}")
-    print(f"4. Cancelled: https://fixdisputeflow.preview.emergentagent.com/order/{trade4_id}")
-    print(f"5. Disputed: https://fixdisputeflow.preview.emergentagent.com/order/{trade5_id}")
+    print(f"1. Pending Payment: https://fund-release-1.preview.emergentagent.com/order/{trade1_id}")
+    print(f"2. Payment Made: https://fund-release-1.preview.emergentagent.com/order/{trade2_id}")
+    print(f"3. Completed: https://fund-release-1.preview.emergentagent.com/order/{trade3_id}")
+    print(f"4. Cancelled: https://fund-release-1.preview.emergentagent.com/order/{trade4_id}")
+    print(f"5. Disputed: https://fund-release-1.preview.emergentagent.com/order/{trade5_id}")
     
     # Save trade IDs to file for screenshot testing
     with open('/tmp/test_trade_ids.txt', 'w') as f:

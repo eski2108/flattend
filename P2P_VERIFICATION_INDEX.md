@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://fixdisputeflow.preview.emergentagent.com
-- Backend API: https://fixdisputeflow.preview.emergentagent.com/api
-- P2P Marketplace: https://fixdisputeflow.preview.emergentagent.com/p2p
+- Frontend: https://fund-release-1.preview.emergentagent.com
+- Backend API: https://fund-release-1.preview.emergentagent.com/api
+- P2P Marketplace: https://fund-release-1.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

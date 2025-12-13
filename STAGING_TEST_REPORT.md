@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://fixdisputeflow.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://fund-release-1.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://fixdisputeflow.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://fund-release-1.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

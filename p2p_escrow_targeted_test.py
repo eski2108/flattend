@@ -13,7 +13,7 @@ Tests the actual available endpoints for P2P escrow system functionality.
 - GET /api/admin/internal-balances
 - GET /api/p2p/manual-mode/adverts
 
-**Backend URL:** https://fixdisputeflow.preview.emergentagent.com/api
+**Backend URL:** https://fund-release-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -24,7 +24,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://fixdisputeflow.preview.emergentagent.com/api"
+BASE_URL = "https://fund-release-1.preview.emergentagent.com/api"
 
 class P2PEscrowTargetedTester:
     def __init__(self):

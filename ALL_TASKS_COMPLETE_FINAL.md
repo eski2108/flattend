@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://fixdisputeflow.preview.emergentagent.com
+**URL:** https://fund-release-1.preview.emergentagent.com
 
 **Services Status:**
 ```bash

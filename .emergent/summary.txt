@@ -1,15 +1,18 @@
 <analysis>
-*Fix the user settings page — the Save button doesn’t work, and the user cannot update or save their profile details.
-Make sure saving profile changes updates correctly in the database without touching or modifying ANY backend wallet or liquidity logic.
-Do not change or refactor the backend routes, wallet services, balance logic, portfolio logic, liquidity logic, or anything connected to my funds.
+Withdrawals are implemented and working at backend/API level only (commit 456d2e26251cfb1a0212ae8ea68073bf08df8b1b). API tests confirm correct user lookup, balance updates, fee calculation, and transaction recording. However, withdrawals are not usable in the live app because required frontend work is missing.
 
-Fix the Allocations page so there is no overlapping UI anywhere in the list. Everything must sit cleanly inside the container with proper spacing.
+What needs to be done:
 
-Confirm that all frontend work is backed up to the rule-stats workspace, and make sure nothing breaks when deploying.
+Wire the frontend wallet page to the correct balance endpoints so real balances display (currently shows £0.00).
 
-Only work on: – the Save button + profile update flow
-– the overlapping UI on the allocations page
-– frontend stability and cleanup
+Build and connect a withdrawal form in the frontend to POST /api/user/withdraw.
 
-Do NOT modify backend financial logic under any circumstances.
+Create an admin transactions/withdrawals page to view and approve pending withdrawals (currently 404).
+
+Ensure frontend uses correct backend routes (several mismatches exist).
+
+(Optional/next) Complete NOWPayments frontend wiring if automated payments are required.
+
+
+Status: Backend logic complete; frontend integration and admin UI are required to make withdrawals work end-to-end.
 </analysis>

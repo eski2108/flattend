@@ -32,7 +32,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://fixdisputeflow.preview.emergentagent.com/api"
+BASE_URL = "https://fund-release-1.preview.emergentagent.com/api"
 
 # Test User for debugging
 DEBUG_USER = {
