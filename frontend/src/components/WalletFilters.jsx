@@ -1,10 +1,9 @@
 import React from 'react';
-import { IoSearch, IoFunnel, IoTrendingUp, IoTrendingDown, IoStar, IoStarOutline } from 'react-icons/io5';
+import { IoSearch, IoFunnel, IoTrendingUp, IoTrendingDown, IoStar } from 'react-icons/io5';
 
 /**
- * WalletFilters Component
- * Advanced filtering and sorting for wallet assets
- * Supports search, categories, and sortable columns
+ * WalletFilters Component - Binance Premium Design
+ * Exact brand colors and styling
  */
 export default function WalletFilters({
   searchTerm,
@@ -13,14 +12,13 @@ export default function WalletFilters({
   onCategoryToggle,
   sortBy,
   sortDirection,
-  onSortChange,
-  onToggleFavorites
+  onSortChange
 }) {
   const categories = [
-    { id: 'all', label: 'All Assets', color: '#00C6FF' },
-    { id: 'favorites', label: 'Favorites', icon: IoStar, color: '#FBBF24' },
-    { id: 'gainers', label: 'Gainers', icon: IoTrendingUp, color: '#22C55E' },
-    { id: 'losers', label: 'Losers', icon: IoTrendingDown, color: '#EF4444' }
+    { id: 'all', label: 'All Assets', color: '#F0B90B' },
+    { id: 'favorites', label: 'Favorites', icon: IoStar, color: '#F0B90B' },
+    { id: 'gainers', label: 'Gainers', icon: IoTrendingUp, color: '#0ECB81' },
+    { id: 'losers', label: 'Losers', icon: IoTrendingDown, color: '#F6465D' }
   ];
 
   const sortOptions = [
@@ -32,11 +30,13 @@ export default function WalletFilters({
 
   return (
     <div style={{
-      background: 'rgba(0, 0, 0, 0.2)',
-      border: '1px solid rgba(255, 255, 255, 0.05)',
-      borderRadius: '16px',
+      background: 'rgba(18, 22, 28, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid #1E2329',
+      borderRadius: '14px',
       padding: '20px',
-      marginBottom: '20px'
+      marginBottom: '20px',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)'
     }}>
       {/* Top Row: Search and Sort */}
       <div style={{
@@ -58,7 +58,7 @@ export default function WalletFilters({
               left: '12px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#8F9BB3'
+              color: '#B7BDC6'
             }}
           />
           <input
@@ -69,21 +69,21 @@ export default function WalletFilters({
             style={{
               width: '100%',
               padding: '12px 12px 12px 44px',
-              background: 'rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: '#0B0E11',
+              border: '1px solid #1E2329',
               borderRadius: '12px',
-              color: '#FFFFFF',
+              color: '#EAECEF',
               fontSize: '14px',
               outline: 'none',
               transition: 'all 0.2s ease'
             }}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor = '#00C6FF';
-              e.currentTarget.style.background = 'rgba(0, 198, 255, 0.05)';
+              e.currentTarget.style.borderColor = '#F0B90B';
+              e.currentTarget.style.background = 'rgba(240, 185, 11, 0.05)';
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+              e.currentTarget.style.borderColor = '#1E2329';
+              e.currentTarget.style.background = '#0B0E11';
             }}
           />
         </div>
@@ -94,20 +94,21 @@ export default function WalletFilters({
           gap: '8px',
           alignItems: 'center'
         }}>
-          <IoFunnel size={18} color="#8F9BB3" />
+          <IoFunnel size={18} color="#B7BDC6" />
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value, sortDirection)}
             style={{
               padding: '12px 16px',
-              background: 'rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: '#0B0E11',
+              border: '1px solid #1E2329',
               borderRadius: '12px',
-              color: '#FFFFFF',
+              color: '#EAECEF',
               fontSize: '14px',
               cursor: 'pointer',
               outline: 'none',
-              minWidth: '150px'
+              minWidth: '150px',
+              fontWeight: '500'
             }}
           >
             {sortOptions.map(option => (
@@ -120,18 +121,20 @@ export default function WalletFilters({
             onClick={() => onSortChange(sortBy, sortDirection === 'asc' ? 'desc' : 'asc')}
             style={{
               padding: '12px',
-              background: 'rgba(0, 198, 255, 0.1)',
-              border: '1px solid rgba(0, 198, 255, 0.3)',
+              background: 'rgba(240, 185, 11, 0.1)',
+              border: '1px solid #F0B90B',
               borderRadius: '12px',
-              color: '#00C6FF',
+              color: '#F0B90B',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              fontWeight: '600',
+              fontSize: '16px'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(0, 198, 255, 0.2)';
+              e.currentTarget.style.background = 'rgba(240, 185, 11, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(0, 198, 255, 0.1)';
+              e.currentTarget.style.background = 'rgba(240, 185, 11, 0.1)';
             }}
           >
             {sortDirection === 'asc' ? '↑' : '↓'}
@@ -160,11 +163,11 @@ export default function WalletFilters({
                 gap: '6px',
                 padding: '8px 16px',
                 background: isSelected 
-                  ? `${category.color}22` 
-                  : 'rgba(0, 0, 0, 0.3)',
-                border: `1px solid ${isSelected ? category.color : 'rgba(255, 255, 255, 0.1)'}`,
+                  ? `rgba(240, 185, 11, 0.15)` 
+                  : '#0B0E11',
+                border: `1px solid ${isSelected ? category.color : '#1E2329'}`,
                 borderRadius: '20px',
-                color: isSelected ? category.color : '#8F9BB3',
+                color: isSelected ? category.color : '#B7BDC6',
                 fontSize: '13px',
                 fontWeight: '600',
                 cursor: 'pointer',
@@ -178,8 +181,8 @@ export default function WalletFilters({
               }}
               onMouseLeave={(e) => {
                 if (!isSelected) {
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.currentTarget.style.color = '#8F9BB3';
+                  e.currentTarget.style.borderColor = '#1E2329';
+                  e.currentTarget.style.color = '#B7BDC6';
                 }
               }}
             >

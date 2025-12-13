@@ -1,12 +1,10 @@
 import React from 'react';
 import { IoTrendingUp, IoTrendingDown, IoWallet } from 'react-icons/io5';
-import { BiLineChart } from 'react-icons/bi';
 import { getCoinLogo } from '@/utils/coinLogos';
 
 /**
- * Portfolio Summary Component
- * Displays total balance, breakdown by asset, 24h change, and quick actions
- * Matches Binance/Crypto.com premium design standards
+ * Portfolio Summary Component - Binance Premium Design
+ * Exact brand colors: #0B0E11, #12161C, #F0B90B, #00E5FF, #0ECB81, #F6465D
  */
 export default function PortfolioSummary({ 
   totalValue, 
@@ -30,18 +28,19 @@ export default function PortfolioSummary({
       percentage: totalValue > 0 ? ((b.gbp_value || 0) / totalValue) * 100 : 0
     }))
     .sort((a, b) => b.value - a.value)
-    .slice(0, 5); // Top 5 assets
+    .slice(0, 5);
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #08192B 0%, #0A1F35 100%)',
-      border: '1px solid rgba(0, 198, 255, 0.2)',
-      borderRadius: '20px',
+      background: 'rgba(18, 22, 28, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid #1E2329',
+      borderRadius: '14px',
       padding: '32px',
       marginBottom: '24px',
-      boxShadow: '0 8px 32px rgba(0, 198, 255, 0.1)'
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)'
     }}>
-      {/* Top Section: Total Balance & Change */}
+      {/* Total Balance & Change */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -50,24 +49,25 @@ export default function PortfolioSummary({
         flexWrap: 'wrap',
         gap: '20px'
       }}>
-        {/* Total Balance */}
         <div>
           <div style={{
             fontSize: '14px',
-            color: '#8F9BB3',
+            color: '#B7BDC6',
             fontWeight: '500',
             marginBottom: '8px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '8px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
           }}>
             <IoWallet size={16} />
             Total Portfolio Value
           </div>
           <div style={{
             fontSize: '48px',
-            fontWeight: '700',
-            color: '#FFFFFF',
+            fontWeight: '600',
+            color: '#EAECEF',
             lineHeight: '1',
             marginBottom: '12px',
             fontFamily: 'Inter, sans-serif'
@@ -80,20 +80,20 @@ export default function PortfolioSummary({
             gap: '8px'
           }}>
             {isPositiveChange ? (
-              <IoTrendingUp size={20} color="#22C55E" />
+              <IoTrendingUp size={20} color="#0ECB81" />
             ) : (
-              <IoTrendingDown size={20} color="#EF4444" />
+              <IoTrendingDown size={20} color="#F6465D" />
             )}
             <span style={{
               fontSize: '16px',
               fontWeight: '600',
-              color: isPositiveChange ? '#22C55E' : '#EF4444'
+              color: isPositiveChange ? '#0ECB81' : '#F6465D'
             }}>
               {isPositiveChange ? '+' : ''}{change24h.toFixed(2)}%
             </span>
             <span style={{
               fontSize: '14px',
-              color: '#8F9BB3',
+              color: '#B7BDC6',
               marginLeft: '4px'
             }}>
               24h
@@ -111,45 +111,47 @@ export default function PortfolioSummary({
             onClick={onDeposit}
             style={{
               padding: '12px 24px',
-              background: 'linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)',
+              background: '#F0B90B',
               border: 'none',
               borderRadius: '12px',
-              color: '#FFFFFF',
+              color: '#000000',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0, 198, 255, 0.3)',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
+              boxShadow: '0 4px 12px rgba(240, 185, 11, 0.3)',
+              transition: 'all 0.2s ease'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.02)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(240, 185, 11, 0.35)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(240, 185, 11, 0.3)';
+            }}
           >
-            <BiLineChart size={18} />
             Deposit
           </button>
           <button
             onClick={onWithdraw}
             style={{
               padding: '12px 24px',
-              background: 'rgba(0, 198, 255, 0.1)',
-              border: '1px solid rgba(0, 198, 255, 0.3)',
+              background: 'transparent',
+              border: '1px solid #F0B90B',
               borderRadius: '12px',
-              color: '#00C6FF',
+              color: '#F0B90B',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(0, 198, 255, 0.2)';
-              e.currentTarget.style.borderColor = '#00C6FF';
+              e.currentTarget.style.background = 'rgba(240, 185, 11, 0.1)';
+              e.currentTarget.style.transform = 'scale(1.02)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(0, 198, 255, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(0, 198, 255, 0.3)';
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.transform = 'scale(1)';
             }}
           >
             Withdraw
@@ -158,22 +160,22 @@ export default function PortfolioSummary({
             onClick={onBuy}
             style={{
               padding: '12px 24px',
-              background: 'rgba(34, 197, 94, 0.1)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
+              background: 'transparent',
+              border: '1px solid #0ECB81',
               borderRadius: '12px',
-              color: '#22C55E',
+              color: '#0ECB81',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(34, 197, 94, 0.2)';
-              e.currentTarget.style.borderColor = '#22C55E';
+              e.currentTarget.style.background = 'rgba(14, 203, 129, 0.1)';
+              e.currentTarget.style.transform = 'scale(1.02)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(34, 197, 94, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.transform = 'scale(1)';
             }}
           >
             Buy
@@ -182,22 +184,22 @@ export default function PortfolioSummary({
             onClick={onSell}
             style={{
               padding: '12px 24px',
-              background: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
+              background: 'transparent',
+              border: '1px solid #F6465D',
               borderRadius: '12px',
-              color: '#EF4444',
+              color: '#F6465D',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
-              e.currentTarget.style.borderColor = '#EF4444';
+              e.currentTarget.style.background = 'rgba(246, 70, 93, 0.1)';
+              e.currentTarget.style.transform = 'scale(1.02)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.transform = 'scale(1)';
             }}
           >
             Sell
@@ -213,9 +215,11 @@ export default function PortfolioSummary({
         }}>
           <div style={{
             fontSize: '14px',
-            color: '#8F9BB3',
+            color: '#B7BDC6',
             fontWeight: '500',
-            marginBottom: '16px'
+            marginBottom: '16px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
           }}>
             Portfolio Breakdown
           </div>
@@ -232,9 +236,9 @@ export default function PortfolioSummary({
                   alignItems: 'center',
                   gap: '12px',
                   padding: '12px',
-                  background: 'rgba(0, 0, 0, 0.2)',
+                  background: '#0B0E11',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.05)'
+                  border: '1px solid #1E2329'
                 }}
               >
                 <img 
@@ -250,14 +254,14 @@ export default function PortfolioSummary({
                   <div style={{
                     fontSize: '14px',
                     fontWeight: '600',
-                    color: '#FFFFFF',
+                    color: '#EAECEF',
                     marginBottom: '4px'
                   }}>
                     {asset.currency}
                   </div>
                   <div style={{
                     fontSize: '12px',
-                    color: '#8F9BB3'
+                    color: '#B7BDC6'
                   }}>
                     {asset.percentage.toFixed(1)}% • {currencySymbol}{asset.value.toFixed(2)}
                   </div>

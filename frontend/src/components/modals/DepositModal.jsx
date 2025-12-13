@@ -8,8 +8,7 @@ import { toast } from 'sonner';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 /**
- * DepositModal Component
- * Shows deposit address and QR code for selected cryptocurrency
+ * DepositModal - Binance Premium Design
  */
 export default function DepositModal({ isOpen, onClose, currency, userId }) {
   const [depositAddress, setDepositAddress] = useState('');
@@ -60,18 +59,20 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 9999,
-      padding: '20px'
+      padding: '20px',
+      fontFamily: 'Inter, sans-serif'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, #08192B 0%, #0A1F35 100%)',
-        border: '1px solid rgba(0, 198, 255, 0.2)',
-        borderRadius: '20px',
+        background: 'rgba(18, 22, 28, 0.98)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid #1E2329',
+        borderRadius: '14px',
         padding: '32px',
         maxWidth: '500px',
         width: '100%',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)'
       }}>
-        {/* Close Button */}
         <button
           onClick={onClose}
           style={{
@@ -87,13 +88,12 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            color: '#FFFFFF'
+            color: '#EAECEF'
           }}
         >
           <IoClose size={20} />
         </button>
 
-        {/* Header */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -109,14 +109,14 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
             <h2 style={{
               fontSize: '24px',
               fontWeight: '700',
-              color: '#FFFFFF',
+              color: '#EAECEF',
               margin: 0
             }}>
               Deposit {currency}
             </h2>
             <p style={{
               fontSize: '14px',
-              color: '#8F9BB3',
+              color: '#B7BDC6',
               margin: '4px 0 0 0'
             }}>
               Send {currency} to this address
@@ -128,35 +128,33 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
           <div style={{
             textAlign: 'center',
             padding: '40px',
-            color: '#8F9BB3'
+            color: '#B7BDC6'
           }}>
             Loading deposit address...
           </div>
         ) : (
           <>
-            {/* QR Code */}
             <div style={{
               display: 'flex',
               justifyContent: 'center',
               marginBottom: '24px',
               background: '#FFFFFF',
               padding: '20px',
-              borderRadius: '16px'
+              borderRadius: '14px'
             }}>
               <QRCode value={depositAddress} size={200} />
             </div>
 
-            {/* Address */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: '#0B0E11',
+              border: '1px solid #1E2329',
               borderRadius: '12px',
               padding: '16px',
               marginBottom: '16px'
             }}>
               <div style={{
                 fontSize: '13px',
-                color: '#8F9BB3',
+                color: '#B7BDC6',
                 marginBottom: '8px',
                 fontWeight: '500'
               }}>
@@ -170,7 +168,7 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
                 <div style={{
                   flex: 1,
                   fontSize: '14px',
-                  color: '#FFFFFF',
+                  color: '#EAECEF',
                   fontFamily: 'monospace',
                   wordBreak: 'break-all'
                 }}>
@@ -180,10 +178,10 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
                   onClick={handleCopy}
                   style={{
                     padding: '8px',
-                    background: copied ? 'rgba(34, 197, 94, 0.2)' : 'rgba(0, 198, 255, 0.2)',
-                    border: `1px solid ${copied ? '#22C55E' : '#00C6FF'}`,
+                    background: copied ? 'rgba(14, 203, 129, 0.2)' : 'rgba(240, 185, 11, 0.2)',
+                    border: `1px solid ${copied ? '#0ECB81' : '#F0B90B'}`,
                     borderRadius: '8px',
-                    color: copied ? '#22C55E' : '#00C6FF',
+                    color: copied ? '#0ECB81' : '#F0B90B',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
@@ -193,17 +191,15 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
               </div>
             </div>
 
-            {/* Warning */}
             <div style={{
-              background: 'rgba(251, 191, 36, 0.1)',
-              border: '1px solid rgba(251, 191, 36, 0.3)',
+              background: 'rgba(240, 185, 11, 0.1)',
+              border: '1px solid rgba(240, 185, 11, 0.3)',
               borderRadius: '12px',
-              padding: '16px',
-              marginBottom: '16px'
+              padding: '16px'
             }}>
               <div style={{
                 fontSize: '14px',
-                color: '#FBBF24',
+                color: '#F0B90B',
                 fontWeight: '600',
                 marginBottom: '8px'
               }}>
@@ -213,7 +209,7 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
                 margin: 0,
                 paddingLeft: '20px',
                 fontSize: '13px',
-                color: '#8F9BB3'
+                color: '#B7BDC6'
               }}>
                 <li>Only send {currency} to this address</li>
                 <li>Sending other assets may result in permanent loss</li>
