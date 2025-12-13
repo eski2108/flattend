@@ -696,11 +696,13 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Settings Modals - Rendered using Portal */}
+      {/* Settings Modals - Rendered using Portal with proper cleanup */}
       {activeModal === 'profile' && ReactDOM.createPortal(
         <ProfileSettings
           user={currentUser}
-          onClose={() => setActiveModal(null)}
+          onClose={() => {
+            setActiveModal(null);
+          }}
           onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
         />,
         document.body
