@@ -60,6 +60,7 @@ const COIN_SVG_ICONS = {
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [totalValue, setTotalValue] = useState(0);
@@ -220,7 +221,7 @@ export default function Dashboard() {
                 <div>
                   <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <IoBarChart size={isMobile ? 32 : 42} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
-                    Portfolio Dashboard
+                    {t('dashboard.title')}
                   </h1>
                   <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>
                     Welcome back, {user?.first_name || 'Trader'}! Track your crypto investments in real-time
@@ -394,7 +395,7 @@ export default function Dashboard() {
                   filter: 'blur(25px)',
                   pointerEvents: 'none'
                 }} />
-                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</div>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('dashboard.quick_actions')}</div>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => navigate('/instant-buy')}
@@ -978,8 +979,8 @@ export default function Dashboard() {
                     >
                       <IoAdd size={20} color="#22C55E" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>Buy Crypto</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Instant purchase with GBP</div>
+                        <div>{t('dashboard.buy_crypto')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.instant_purchase')}</div>
                       </div>
                     </button>
                     
@@ -1011,8 +1012,8 @@ export default function Dashboard() {
                     >
                       <IoBarChart size={20} color="#00F0FF" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>Spot Trading</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Advanced trading with charts</div>
+                        <div>{t('dashboard.spot_trading')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.advanced_trading')}</div>
                       </div>
                     </button>
                     
@@ -1044,8 +1045,8 @@ export default function Dashboard() {
                     >
                       <IoSwapHorizontal size={20} color="#9B4DFF" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>Swap Crypto</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Exchange between currencies</div>
+                        <div>{t('dashboard.swap_crypto')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.exchange_currencies')}</div>
                       </div>
                     </button>
                     
