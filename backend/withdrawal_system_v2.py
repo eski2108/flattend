@@ -61,9 +61,14 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
                 "message": f"Invalid wallet address: {validation['message']}"
             }
         
-        # Check user balance via wallet service
-        balance_info = await wallet_service.get_balance(user_id, currency)
-        available = balance_info['available_balance']
+        # Check user balance via crypto_balances collection (direct DB access)
+        balance_doc = await db.crypto_balances.find_one({"user_id": user_id, "currency": currency})
+        if not balance_doc:
+            return {
+                "success": False,
+                "message": f"No {currency} balance found for user"
+            }
+        available = balance_doc.get('balance', 0)
         
         if amount > available:
             return {
@@ -149,14 +154,22 @@ async def create_withdrawal_request_v2(db, wallet_service, user_id: str, currenc
         
         # IMPORTANT: Lock balance immediately to prevent user from trading/withdrawing again
         try:
-            await wallet_service.lock_balance(
-                user_id=user_id,
-                currency=currency,
-                amount=amount,
-                lock_type="withdrawal_pending",
-                reference_id=withdrawal_id
+            # Move balance from available to locked in crypto_balances
+            current_locked = balance_doc.get('locked_balance', 0)
+            new_balance = available - amount
+            new_locked = current_locked + amount
+            
+            await db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {
+                    "$set": {
+                        "balance": new_balance,
+                        "locked_balance": new_locked,
+                        "last_updated": datetime.now(timezone.utc)
+                    }
+                }
             )
-            logger.info(f"✅ Locked {amount} {currency} for withdrawal {withdrawal_id}")
+            logger.info(f"✅ Locked {amount} {currency} for withdrawal {withdrawal_id} (balance: {available} -> {new_balance}, locked: {current_locked} -> {new_locked})")
         except Exception as lock_error:
             logger.error(f"❌ Failed to lock balance: {str(lock_error)}")
             return {
@@ -216,25 +229,34 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
         user_id = withdrawal["user_id"]
         currency = withdrawal["currency"]
         amount = withdrawal["amount"]
-        fee_amount = withdrawal["fee_amount"]
+        fee_amount = withdrawal.get("fee_amount", withdrawal.get("fee", 0.0))
         network_fee_amount = withdrawal.get("network_fee_amount", 0.0)
         fiat_fee_amount = withdrawal.get("fiat_fee_amount", 0.0)
         total_fee = withdrawal.get("total_fee", fee_amount)
-        net_amount = withdrawal["net_amount"]
+        net_amount = withdrawal.get("net_amount", amount - total_fee)
         withdrawal_id = approval.withdrawal_id
         is_fiat = withdrawal.get("is_fiat", False)
         
         if approval.action == "approve":
-            # Release locked balance (removes from total and locked)
+            # Release locked balance (removes from locked - withdrawal approved)
             try:
-                await wallet_service.release_locked_balance(
-                    user_id=user_id,
-                    currency=currency,
-                    amount=amount,
-                    release_type="withdrawal_approved",
-                    reference_id=withdrawal_id
+                balance_doc = await db.crypto_balances.find_one({"user_id": user_id, "currency": currency})
+                if not balance_doc:
+                    return {"success": False, "message": f"No {currency} balance found for user"}
+                
+                current_locked = balance_doc.get('locked_balance', 0)
+                new_locked = max(0, current_locked - amount)  # Ensure locked doesn't go negative
+                
+                await db.crypto_balances.update_one(
+                    {"user_id": user_id, "currency": currency},
+                    {
+                        "$set": {
+                            "locked_balance": new_locked,
+                            "last_updated": datetime.now(timezone.utc)
+                        }
+                    }
                 )
-                logger.info(f"✅ Released {amount} {currency} for withdrawal {withdrawal_id}")
+                logger.info(f"✅ Released {amount} {currency} for withdrawal {withdrawal_id} (locked: {current_locked} -> {new_locked})")
             except Exception as release_error:
                 logger.error(f"❌ Failed to release balance: {str(release_error)}")
                 return {
@@ -391,16 +413,28 @@ async def admin_review_withdrawal_v2(db, wallet_service, approval: WithdrawalApp
             }
         
         elif approval.action == "reject":
-            # Unlock balance back to available
+            # Unlock balance back to available (move from locked back to balance)
             try:
-                await wallet_service.unlock_balance(
-                    user_id=user_id,
-                    currency=currency,
-                    amount=amount,
-                    unlock_type="withdrawal_rejected",
-                    reference_id=withdrawal_id
+                balance_doc = await db.crypto_balances.find_one({"user_id": user_id, "currency": currency})
+                if not balance_doc:
+                    return {"success": False, "message": f"No {currency} balance found for user"}
+                
+                current_balance = balance_doc.get('balance', 0)
+                current_locked = balance_doc.get('locked_balance', 0)
+                new_balance = current_balance + amount
+                new_locked = max(0, current_locked - amount)  # Ensure locked doesn't go negative
+                
+                await db.crypto_balances.update_one(
+                    {"user_id": user_id, "currency": currency},
+                    {
+                        "$set": {
+                            "balance": new_balance,
+                            "locked_balance": new_locked,
+                            "last_updated": datetime.now(timezone.utc)
+                        }
+                    }
                 )
-                logger.info(f"✅ Unlocked {amount} {currency} for rejected withdrawal {withdrawal_id}")
+                logger.info(f"✅ Unlocked {amount} {currency} for rejected withdrawal {withdrawal_id} (balance: {current_balance} -> {new_balance}, locked: {current_locked} -> {new_locked})")
             except Exception as unlock_error:
                 logger.error(f"❌ Failed to unlock balance: {str(unlock_error)}")
                 return {

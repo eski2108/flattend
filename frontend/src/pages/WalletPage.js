@@ -5,6 +5,7 @@ import CHXButton from '@/components/CHXButton';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { IoArrowDownCircle as ArrowDownLeft, IoArrowUpCircle as ArrowUpRight, IoRefresh, IoWallet } from 'react-icons/io5';
+import { getCoinLogo } from '@/utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -265,21 +266,15 @@ function CoinDepositCard({ coin, coinColor, navigate }) {
         size="small"
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            background: `linear-gradient(135deg, ${coinColor}, ${coinColor}CC)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px',
-            fontWeight: '700',
-            color: '#FFFFFF',
-            boxShadow: `0 0 12px ${coinColor}66`
-          }}>
-            {coin.icon || coin.symbol[0]}
-          </div>
+          <img 
+            src={getCoinLogo(coin.symbol)} 
+            alt={coin.symbol}
+            style={{
+              width: '40px',
+              height: '40px',
+              objectFit: 'contain'
+            }}
+          />
           <div style={{ fontSize: '14px', fontWeight: '600' }}>{coin.symbol}</div>
           <div style={{ fontSize: '11px', opacity: 0.7, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%', textAlign: 'center' }}>
             {coin.name}
@@ -297,7 +292,6 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
   const coinSymbol = asset.currency.toLowerCase();
   const coinName = coinMetadata.name || asset.currency;
   const coinNetwork = coinMetadata.network || `${asset.currency} Network`;
-  const coinIcon = coinMetadata.icon || asset.currency.substring(0, 1);
   const decimalPrecision = coinMetadata.decimals || 8;
   const nowpaymentsCode = coinMetadata.nowpayments_code || coinSymbol;
 
@@ -360,21 +354,15 @@ function AssetCard({ asset, navigate, getCoinColor, formatBalance, userId, coinM
       {/* Header Row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '50%',
-            background: `linear-gradient(135deg, ${coinColor}, ${coinColor}CC)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px',
-            fontWeight: '700',
-            color: '#FFFFFF',
-            boxShadow: `0 0 12px ${coinColor}66`
-          }}>
-            {coinIcon}
-          </div>
+          <img 
+            src={getCoinLogo(asset.currency)} 
+            alt={asset.currency}
+            style={{
+              width: '42px',
+              height: '42px',
+              objectFit: 'contain'
+            }}
+          />
           
           <div>
             <div style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', marginBottom: '2px' }}>{coinName}</div>

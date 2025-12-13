@@ -6,11 +6,10 @@ import os
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, status, Query, UploadFile, File, Form, Cookie
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Depends, Request, Response, status, Query, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from starlette.middleware.cors import CORSMiddleware
-from response_sanitizer import ResponseSanitizerMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 import logging
@@ -235,39 +234,6 @@ logger.info("✅ P2P Notification Service initialized")
 
 # JWT Secret Key
 SECRET_KEY = "emergent_secret_key_2024"
-
-# Authentication dependency function
-async def get_current_user_from_session(authorization: Optional[str] = Header(None)):
-    """Dependency to get authenticated user from JWT token - returns full user object"""
-    import jwt
-    
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated - Authorization header required")
-    
-    # Extract JWT token
-    token = authorization.replace("Bearer ", "") if authorization.startswith("Bearer ") else authorization
-    
-    try:
-        # Decode JWT
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_id = payload.get("user_id")
-        
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid token - no user_id")
-        
-        # Get user from either collection
-        user = await db.users.find_one({"user_id": user_id})
-        if not user:
-            user = await db.user_accounts.find_one({"user_id": user_id})
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        return user
-        
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError as e:
-        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
 # Create the main app without a prefix with custom response class
 app = FastAPI(default_response_class=SafeJSONResponse)
@@ -1083,99 +1049,46 @@ async def deposit(request: DepositRequest):
     }
 
 @api_router.post("/user/withdraw")
-async def withdraw(request: dict):
-    """
-    FIXED: Withdraw crypto from platform
-    Request body: {"user_id": "...", "currency": "BTC", "amount": 0.001, "wallet_address": "..."}
-    """
-    try:
-        user_id = request.get('user_id')
-        currency = request.get('currency', 'BTC').upper()
-        amount = float(request.get('amount', 0))
-        withdrawal_address = request.get('wallet_address') or request.get('address')
-        
-        if not user_id or not withdrawal_address:
-            raise HTTPException(status_code=400, detail="user_id and wallet_address required")
-        
-        if amount <= 0:
-            raise HTTPException(status_code=400, detail="Invalid withdrawal amount")
-        
-        # Validate address format (basic check)
-        if len(withdrawal_address) < 20:
-            raise HTTPException(status_code=400, detail="Invalid wallet address format")
-        
-        # Get user from correct collection
-        user = await db.user_accounts.find_one({"user_id": user_id})
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        # Get user balance for this currency
-        balance_doc = await db.crypto_balances.find_one({"user_id": user_id, "currency": currency})
-        if not balance_doc:
-            raise HTTPException(status_code=400, detail=f"No {currency} balance found")
-        
-        available = balance_doc.get('balance', 0)
-        
-        # Calculate withdrawal fee (0.5% default)
-        fee_percent = 0.5
-        fee = amount * (fee_percent / 100)
-        total_needed = amount + fee
-        
-        if available < total_needed:
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Insufficient balance. Available: {available}, Required: {total_needed} (including {fee} fee)"
-            )
-        
-        # Update user balance
-        new_balance = available - total_needed
-        await db.crypto_balances.update_one(
-            {"user_id": user_id, "currency": currency},
-            {
-                "$set": {
-                    "balance": new_balance,
-                    "last_updated": datetime.utcnow()
-                }
-            }
-        )
-        
-        # Create transaction record
-        transaction_id = str(uuid.uuid4())
-        transaction = {
-            "transaction_id": transaction_id,
-            "user_id": user_id,
-            "currency": currency,
-            "transaction_type": "withdrawal",
-            "amount": amount,
-            "fee": fee,
-            "withdrawal_address": withdrawal_address,
-            "status": "pending",  # Requires admin approval
-            "reference": f"WITHDRAW_{currency}_{transaction_id[:8]}",
-            "notes": f"Withdrawal to {withdrawal_address[:10]}...",
-            "created_at": datetime.utcnow(),
-            "completed_at": None
-        }
-        
-        await db.transactions.insert_one(transaction)
-        
-        return {
-            "success": True,
-            "transaction_id": transaction_id,
-            "amount": amount,
-            "fee": fee,
-            "total_withdrawn": total_needed,
-            "new_balance": new_balance,
-            "currency": currency,
-            "withdrawal_address": withdrawal_address,
-            "status": "pending",
-            "message": f"Withdrawal of {amount} {currency} initiated. Pending admin approval."
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Withdrawal error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Withdrawal failed: {str(e)}")
+async def withdraw(request: WithdrawRequest):
+    """Withdraw crypto from platform"""
+    if request.amount <= 0:
+        raise HTTPException(status_code=400, detail="Invalid withdrawal amount")
+    
+    # Get user
+    user = await db.users.find_one({"wallet_address": request.wallet_address}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Calculate withdrawal fee
+    fee = request.amount * (PLATFORM_CONFIG["withdraw_fee_percent"] / 100)
+    total_needed = request.amount + fee
+    
+    if user["available_balance"] < total_needed:
+        raise HTTPException(status_code=400, detail="Insufficient balance")
+    
+    # Update user balance
+    await db.users.update_one(
+        {"wallet_address": request.wallet_address},
+        {"$inc": {"available_balance": -total_needed}}
+    )
+    
+    # Record transaction
+    tx = Transaction(
+        user_address=request.wallet_address,
+        tx_type="withdraw",
+        amount=request.amount,
+        fee=fee
+    )
+    tx_dict = tx.model_dump()
+    tx_dict['timestamp'] = tx_dict['timestamp'].isoformat()
+    await db.transactions.insert_one(tx_dict)
+    
+    return {
+        "success": True,
+        "amount": request.amount,
+        "fee": fee,
+        "message": "Withdrawal successful"
+    }
 
 @api_router.post("/loans/create-offer")
 async def create_loan_offer(request: CreateLoanOfferRequest):
@@ -1509,18 +1422,6 @@ async def update_user_profile(update_data: dict):
         
         if "full_name" in update_data:
             update_fields["full_name"] = update_data["full_name"]
-        
-        if "username" in update_data:
-            # Check if username is already taken by another user
-            username = update_data["username"].strip()
-            if username:
-                existing_user = await db.user_accounts.find_one({
-                    "username": username,
-                    "user_id": {"$ne": user_id}
-                })
-                if existing_user:
-                    raise HTTPException(status_code=400, detail="Username already taken")
-                update_fields["username"] = username
         
         if "phone_number" in update_data:
             update_fields["phone_number"] = update_data["phone_number"]
@@ -2034,7 +1935,7 @@ async def get_enhanced_offers(
         query["region"] = region
     
     # Get offers
-    offers = await db.p2p_ads.find(query, {"_id": 0}).to_list(1000)
+    offers = await db.enhanced_sell_orders.find(query, {"_id": 0}).to_list(1000)
     
     # **BLOCKING FILTER**: Remove blocked users' offers
     if user_id:
@@ -2146,14 +2047,12 @@ async def get_enhanced_offers(
 async def get_marketplace_offers(crypto_currency: Optional[str] = None):
     """Get marketplace offers for buyers (showing SELL offers)"""
     try:
-        query = {"status": "active", "ad_type": "SELL"}
+        query = {"status": "active", "offer_type": "sell"}
         
         if crypto_currency and crypto_currency != 'all':
             query["crypto_currency"] = crypto_currency
         
-        logger.info(f"P2P Marketplace query: {query}")
-        offers = await db.p2p_offers.find(query, {"_id": 0}).sort("price", 1).to_list(100)
-        logger.info(f"P2P Marketplace found {len(offers)} offers")
+        offers = await db.enhanced_sell_orders.find(query, {"_id": 0}).sort("price_per_unit", 1).to_list(100)
         
         # Enrich with seller info
         enriched_offers = []
@@ -3015,7 +2914,7 @@ async def get_user_seller_link(user_id: str):
             raise HTTPException(status_code=404, detail="User not found")
         
         # Generate seller link
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://fund-release-1.preview.emergentagent.com")
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://protrading.preview.emergentagent.com")
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         return {
@@ -3414,15 +3313,13 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
     except Exception as fee_error:
         logger.warning(f"⚠️ Failed to collect taker fee: {str(fee_error)}")
     
-    # Update trade status and capture paid_at timestamp for stats
-    paid_timestamp = datetime.now(timezone.utc).isoformat()
+    # Update trade status
     await db.trades.update_one(
         {"trade_id": request.trade_id},
         {
             "$set": {
                 "status": "buyer_marked_paid",
-                "buyer_marked_paid_at": paid_timestamp,
-                "paid_at": paid_timestamp,  # For trader stats calculation
+                "buyer_marked_paid_at": datetime.now(timezone.utc).isoformat(),
                 "payment_reference": request.payment_reference,
                 "taker_fee": taker_fee,
                 "taker_fee_percent": taker_fee_percent,
@@ -3929,212 +3826,6 @@ async def get_trader_profile(user_id: str):
         raise HTTPException(status_code=404, detail="Trader profile not found")
     
     return {"success": True, "trader": trader}
-
-
-async def calculate_trader_stats(user_id: str) -> dict:
-    """
-    Calculate comprehensive P2P trader statistics from real data.
-    NO MOCKS, NO PLACEHOLDERS - All metrics from actual trades.
-    
-    Calculates:
-    - 30-day trades and completion rate
-    - Average release and payment times
-    - Buy vs sell totals
-    - Unique trading partners
-    - Account age and verification status
-    - Escrow balances
-    """
-    from live_pricing import get_live_price
-    
-    # Define 30-day window
-    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
-    
-    # Query completed trades in last 30 days
-    completed_trades_30d = await db.trades.find({
-        "$or": [{"buyer_id": user_id}, {"seller_id": user_id}],
-        "status": "completed",
-        "completed_at": {"$gte": thirty_days_ago.isoformat()}
-    }).to_list(10000)
-    
-    # Query ALL initiated trades in last 30 days (for completion rate)
-    all_trades_30d = await db.trades.find({
-        "$or": [{"buyer_id": user_id}, {"seller_id": user_id}],
-        "created_at": {"$gte": thirty_days_ago.isoformat()},
-        "status": {"$in": ["completed", "cancelled", "disputed", "expired"]}
-    }).to_list(10000)
-    
-    # Query ALL completed trades (all-time)
-    all_completed_trades = await db.trades.find({
-        "$or": [{"buyer_id": user_id}, {"seller_id": user_id}],
-        "status": "completed"
-    }).to_list(10000)
-    
-    # 1. 30-day trades count
-    thirty_day_trades = len(completed_trades_30d)
-    
-    # 2. 30-day completion rate
-    thirty_day_completion_rate = 0.0
-    if len(all_trades_30d) > 0:
-        thirty_day_completion_rate = (len(completed_trades_30d) / len(all_trades_30d)) * 100.0
-    
-    # 3. Average release time (seller only)
-    release_times = []
-    for trade in completed_trades_30d:
-        if trade.get("seller_id") == user_id and trade.get("release_time_seconds"):
-            release_times.append(trade["release_time_seconds"])
-    
-    avg_release_time_minutes = 0.0
-    if release_times:
-        avg_release_time_minutes = (sum(release_times) / len(release_times)) / 60.0
-    
-    # 4. Average payment time (buyer only)
-    payment_times = []
-    for trade in completed_trades_30d:
-        if trade.get("buyer_id") == user_id and trade.get("payment_time_seconds"):
-            payment_times.append(trade["payment_time_seconds"])
-    
-    avg_payment_time_minutes = 0.0
-    if payment_times:
-        avg_payment_time_minutes = (sum(payment_times) / len(payment_times)) / 60.0
-    
-    # 5. Buy vs Sell totals (all-time)
-    buy_trades = [t for t in all_completed_trades if t.get("buyer_id") == user_id]
-    sell_trades = [t for t in all_completed_trades if t.get("seller_id") == user_id]
-    
-    total_buy_volume_fiat = sum([t.get("fiat_amount", 0) for t in buy_trades])
-    total_buy_count = len(buy_trades)
-    
-    total_sell_volume_fiat = sum([t.get("fiat_amount", 0) for t in sell_trades])
-    total_sell_count = len(sell_trades)
-    
-    # 6. Total trades (all-time)
-    total_trades = len(all_completed_trades)
-    
-    # 7. Unique counterparties
-    counterparties = set()
-    for trade in all_completed_trades:
-        if trade.get("buyer_id") == user_id:
-            counterparties.add(trade.get("seller_id"))
-        elif trade.get("seller_id") == user_id:
-            counterparties.add(trade.get("buyer_id"))
-    unique_counterparties = len(counterparties)
-    
-    # 8. Account age and first trade date
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
-    if not user:
-        # Return empty stats if user not found
-        return {
-            "thirty_day_trades": 0,
-            "thirty_day_completion_rate": 0.0,
-            "avg_release_time_minutes": 0.0,
-            "avg_payment_time_minutes": 0.0,
-            "total_buy_volume_fiat": 0.0,
-            "total_buy_count": 0,
-            "total_sell_volume_fiat": 0.0,
-            "total_sell_count": 0,
-            "total_trades": 0,
-            "unique_counterparties": 0,
-            "account_age_days": 0,
-            "first_trade_date": None,
-            "email_verified": False,
-            "phone_verified": False,
-            "kyc_verified": False,
-            "address_verified": False,
-            "escrow_amount_gbp": 0.0,
-            "trader_tier": "bronze",
-            "badges": []
-        }
-    
-    account_created = datetime.fromisoformat(user.get("created_at", datetime.now(timezone.utc).isoformat()).replace('Z', '+00:00'))
-    account_age_days = (datetime.now(timezone.utc) - account_created).days
-    
-    # Find first trade date
-    first_trade_date = None
-    if all_completed_trades:
-        sorted_trades = sorted(all_completed_trades, key=lambda x: x.get("completed_at", ""))
-        if sorted_trades:
-            first_trade_date = sorted_trades[0].get("completed_at")
-    
-    # 9. Verification status
-    email_verified = user.get("email_verified", False)
-    phone_verified = user.get("phone_verified", False)
-    kyc_verified = user.get("kyc_verified", False)
-    address_verified = user.get("address_verified", False)
-    
-    # 10. Trader tier/badges
-    trader_profile = await db.trader_profiles.find_one({"user_id": user_id}, {"_id": 0})
-    trader_tier = "bronze"
-    badges = []
-    
-    if trader_profile:
-        trader_tier = trader_profile.get("current_tier", "bronze")
-        badges = trader_profile.get("badges", [])
-    
-    # 11. Escrow amount (locked balances)
-    trader_balances = await db.trader_balances.find({"trader_id": user_id}).to_list(100)
-    escrow_amount_gbp = 0.0
-    
-    for balance in trader_balances:
-        locked_balance = balance.get("locked_balance", 0)
-        if locked_balance > 0:
-            currency = balance.get("currency", "BTC")
-            try:
-                # Convert to GBP
-                price_gbp = await get_live_price(currency, "gbp")
-                escrow_amount_gbp += locked_balance * price_gbp
-            except Exception as e:
-                logger.warning(f"Could not convert {currency} to GBP for escrow calculation: {e}")
-    
-    return {
-        "thirty_day_trades": thirty_day_trades,
-        "thirty_day_completion_rate": round(thirty_day_completion_rate, 2),
-        "avg_release_time_minutes": round(avg_release_time_minutes, 2),
-        "avg_payment_time_minutes": round(avg_payment_time_minutes, 2),
-        "total_buy_volume_fiat": round(total_buy_volume_fiat, 2),
-        "total_buy_count": total_buy_count,
-        "total_sell_volume_fiat": round(total_sell_volume_fiat, 2),
-        "total_sell_count": total_sell_count,
-        "total_trades": total_trades,
-        "unique_counterparties": unique_counterparties,
-        "account_age_days": account_age_days,
-        "first_trade_date": first_trade_date,
-        "email_verified": email_verified,
-        "phone_verified": phone_verified,
-        "kyc_verified": kyc_verified,
-        "address_verified": address_verified,
-        "escrow_amount_gbp": round(escrow_amount_gbp, 2),
-        "trader_tier": trader_tier,
-        "badges": badges
-    }
-
-
-@api_router.get("/trader/stats/{user_id}")
-async def get_trader_stats(user_id: str):
-    """
-    Get comprehensive P2P trader statistics.
-    All data calculated from real trades - NO MOCKS, NO PLACEHOLDERS.
-    
-    Returns:
-    - 30-day trades and completion rate
-    - Average release/payment times
-    - Buy vs sell volume breakdown
-    - Total trades and unique trading partners
-    - Account age and verification status
-    - Current escrow amount
-    - Trader tier and badges
-    """
-    try:
-        stats = await calculate_trader_stats(user_id)
-        
-        return {
-            "success": True,
-            "user_id": user_id,
-            "stats": stats,
-            "calculated_at": datetime.now(timezone.utc).isoformat()
-        }
-    except Exception as e:
-        logger.error(f"Error calculating trader stats for {user_id}: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to calculate stats: {str(e)}")
 
 
 @api_router.put("/trader/update-status")
@@ -6486,45 +6177,6 @@ async def initiate_dispute(request: InitiateDisputeRequest):
     notif_dict['created_at'] = notif_dict['created_at'].isoformat()
     await db.notifications.insert_one(notif_dict)
     
-    # Send email to admin
-    try:
-        admin_email = "info@coinhubx.net"
-        dispute_url = "https://fund-release-1.preview.emergentagent.com/admin"
-        
-        await send_email(
-            to_email=admin_email,
-            subject=f"🚨 NEW DISPUTE OPENED - {dispute.dispute_id[:8]} - CoinHubX",
-            html_content=f"""
-            <h2 style="color: #EF4444;">⚠️ New P2P Dispute Requires Your Attention</h2>
-            <p><strong>Dispute ID:</strong> {dispute.dispute_id}</p>
-            <p><strong>Order ID:</strong> {request.order_id}</p>
-            <p><strong>Initiated by:</strong> {request.user_address}</p>
-            <p><strong>Reason:</strong> {request.reason}</p>
-            <p><strong>Order Details:</strong></p>
-            <ul>
-                <li>Amount: {buy_order.get('crypto_amount', 'N/A')} {buy_order.get('crypto_currency', 'ETH')}</li>
-                <li>Value: £{buy_order.get('fiat_amount', 0):.2f}</li>
-                <li>Buyer: {buy_order.get('buyer_address', 'N/A')}</li>
-                <li>Seller: {buy_order.get('seller_address', 'N/A')}</li>
-            </ul>
-            <p><strong>Status:</strong> Crypto is locked in escrow pending your resolution.</p>
-            <hr>
-            <p style="margin: 30px 0;">
-                <a href="{dispute_url}" style="background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                    🔧 RESOLVE DISPUTE IN ADMIN DASHBOARD
-                </a>
-            </p>
-            <p style="font-size: 12px; color: #666;">
-                Go to Admin Dashboard → Disputes section to review evidence and make a decision.
-            </p>
-            """
-        )
-    except Exception as e:
-        print(f"❌ FAILED TO SEND DISPUTE EMAIL: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        logger.error(f"Failed to send dispute notification email: {e}")
-    
     return {
         "success": True,
         "dispute": dispute.model_dump(),
@@ -7116,7 +6768,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
-        base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://fund-release-1.preview.emergentagent.com')
+        base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://protrading.preview.emergentagent.com')
         redirect_uri = f"{base_url}/auth/google/callback"
         
         if not google_client_id:
@@ -7155,7 +6807,7 @@ async def google_callback(code: str = None, error: str = None):
     from fastapi.responses import RedirectResponse
     from urllib.parse import quote
     
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://fund-release-1.preview.emergentagent.com')
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://protrading.preview.emergentagent.com')
     
     logger.info(f"🔵 Google callback received - code: {'present' if code else 'missing'}, error: {error or 'none'}")
     
@@ -7330,7 +6982,7 @@ async def complete_google_signup(request: dict):
     <html>
     <head>
         <title>Email Verified - Coin Hub X</title>
-        <meta http-equiv="refresh" content="3;url=https://fund-release-1.preview.emergentagent.com/login">
+        <meta http-equiv="refresh" content="3;url=https://protrading.preview.emergentagent.com/login">
         <style>
             body { 
                 font-family: Arial, sans-serif; 
@@ -7374,93 +7026,53 @@ async def complete_google_signup(request: dict):
             <h1>Email Verified Successfully!</h1>
             <p>Your account has been activated. You can now log in and start trading.</p>
             <p style="font-size: 14px; color: #ccc;">Redirecting to login page in 3 seconds...</p>
-            <a href="https://fund-release-1.preview.emergentagent.com/login">Go to Login</a>
+            <a href="https://protrading.preview.emergentagent.com/login">Go to Login</a>
         </div>
     </body>
     </html>
     """
     return HTMLResponse(content=html_content)
 
-async def get_all_nowpayments_currencies():
-    """Fetch ALL currencies from NowPayments API"""
-    try:
-        nowpayments_service = get_nowpayments_service()
-        currencies = nowpayments_service.get_available_currencies()  # NOT awaited - it's synchronous
-        return [c.upper() for c in currencies]
-    except Exception as e:
-        logger.error(f"Failed to fetch NowPayments currencies: {e}")
-        return []
-
 async def initialize_user_wallets(user_id: str, initial_balances: dict = None):
     """
-    Initialize complete wallets for a new user with ALL NowPayments supported currencies
-    Creates entries in both 'wallets' and 'user_balances' collections
+    Initialize wallets for a new user using wallet_service
+    This ensures correct schema and prevents wallet issues
     """
     try:
-        # Get ALL NowPayments supported currencies dynamically
-        nowpayments_currencies = await get_all_nowpayments_currencies()
+        wallet_service = get_wallet_service()
         
-        if nowpayments_currencies:
-            logger.info(f"✅ Fetched {len(nowpayments_currencies)} currencies from NowPayments")
-        else:
-            logger.warning("⚠️ Could not fetch NowPayments currencies, using fallback list")
-            nowpayments_currencies = []
-        
-        # Fiat currencies
-        fiat_currencies = ['GBP', 'USD', 'EUR']
-        
-        # Major crypto (always included)
-        major_crypto = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'LTC', 'TRX', 'DOGE', 'SOL', 'ADA', 
-                       'MATIC', 'DOT', 'AVAX', 'UNI', 'LINK', 'BCH', 'ATOM', 'SHIB', 'USDC']
-        
-        # Combine all currencies (remove duplicates)
-        all_currencies = list(set(fiat_currencies + major_crypto + nowpayments_currencies))
-        
-        logger.info(f"💰 Initializing {len(all_currencies)} currencies for user {user_id}")
-        
-        # 1. Create individual wallet entries in 'wallets' collection
-        wallet_entries = []
-        for currency in all_currencies:
-            wallet_entries.append({
-                "user_id": user_id,
-                "currency": currency,
-                "available_balance": 0.0,
-                "locked_balance": 0.0,
-                "total_balance": 0.0,
-                "deposit_address": None,
-                "deposit_network": None,
-                "deposit_qr_code": None,
-                "created_at": datetime.now(timezone.utc),
-                "last_updated": datetime.now(timezone.utc)
-            })
-        
-        # Insert all wallet entries at once (in batches if too many)
-        if wallet_entries:
-            batch_size = 100
-            for i in range(0, len(wallet_entries), batch_size):
-                batch = wallet_entries[i:i + batch_size]
-                await db.wallets.insert_many(batch)
-                logger.info(f"   Inserted batch {i//batch_size + 1} ({len(batch)} wallets)")
-        
-        # 2. Create consolidated balance object in 'user_balances' collection
-        balance_structure = {}
-        for currency in all_currencies:
-            balance_structure[currency] = {
-                "available": 0.0,
-                "locked": 0.0,
-                "total": 0.0,
-                "deposit_address": None,
-                "deposit_network": None
+        # Default initial balances (0 for all)
+        if initial_balances is None:
+            initial_balances = {
+                'GBP': 0,
+                'BTC': 0,
+                'ETH': 0,
+                'USDT': 0
             }
         
-        await db.user_balances.insert_one({
-            "user_id": user_id,
-            "balances": balance_structure,
-            "created_at": datetime.now(timezone.utc),
-            "last_updated": datetime.now(timezone.utc)
-        })
+        # Create wallet entries using wallet_service
+        for currency, amount in initial_balances.items():
+            if amount > 0:
+                await wallet_service.credit(
+                    user_id=user_id,
+                    currency=currency,
+                    amount=amount,
+                    transaction_type='initial_balance',
+                    reference_id='user_registration'
+                )
+            else:
+                # Create empty wallet entry
+                await db.wallets.insert_one({
+                    "user_id": user_id,
+                    "currency": currency,
+                    "available_balance": 0.0,
+                    "locked_balance": 0.0,
+                    "total_balance": 0.0,
+                    "created_at": datetime.now(timezone.utc),
+                    "last_updated": datetime.now(timezone.utc)
+                })
         
-        logger.info(f"✅ Initialized complete wallets for user {user_id} ({len(all_currencies)} currencies)")
+        logger.info(f"✅ Initialized wallets for user {user_id}")
         return True
     except Exception as e:
         logger.error(f"❌ Failed to initialize wallets for {user_id}: {str(e)}")
@@ -7587,14 +7199,6 @@ async def register_user(request: RegisterRequest, req: Request):
     await db.user_accounts.insert_one(account_dict)
     
     # Send phone verification via Twilio Verify
-    test_verification_code = None  # Store for test mode
-    # Check if in production mode using PRODUCTION env var
-    is_production = os.environ.get('PRODUCTION', 'false').lower() == 'true'
-    
-    # ALWAYS generate test code in development
-    import random
-    test_code_for_dev = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-    
     try:
         from twilio.rest import Client
         
@@ -7602,11 +7206,7 @@ async def register_user(request: RegisterRequest, req: Request):
         auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
         verify_service_sid = os.environ.get('TWILIO_VERIFY_SERVICE_SID')
         
-        # Check if in production mode
-        is_production = os.environ.get('PRODUCTION', 'false').lower() == 'true'
-        
-        if all([account_sid, auth_token, verify_service_sid]) and is_production:
-            # Only use Twilio in production
+        if all([account_sid, auth_token, verify_service_sid]):
             client = Client(account_sid, auth_token)
             _verification = client.verify.v2.services(verify_service_sid).verifications.create(
                 to=request.phone_number,
@@ -7614,9 +7214,9 @@ async def register_user(request: RegisterRequest, req: Request):
             )
             logger.info(f"✅ SMS verification sent to {request.phone_number} via Twilio")
         else:
-            # Dev/Test mode: Use manual code
-            phone_code = test_code_for_dev
-            test_verification_code = phone_code  # Store for returning in response
+            # Fallback: Manual code generation (if Twilio not configured)
+            import random
+            phone_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
             
             await db.phone_verifications.insert_one({
                 "user_id": user_account.user_id,
@@ -7626,25 +7226,9 @@ async def register_user(request: RegisterRequest, req: Request):
                 "created_at": datetime.now(timezone.utc).isoformat()
             })
             
-            logger.warning(f"⚠️ TEST MODE: Manual code generated: {phone_code}")
-            
-            # Store code in user_account for test mode access
-            await db.user_accounts.update_one(
-                {"user_id": user_account.user_id},
-                {"$set": {"test_verification_code": phone_code}}
-            )
+            logger.warning(f"⚠️ Twilio not configured. Manual code: {phone_code}")
     except Exception as sms_error:
         logger.error(f"❌ SMS sending failed: {str(sms_error)}")
-        # Fallback to test code if SMS fails
-        if not test_verification_code:
-            test_verification_code = test_code_for_dev
-            await db.phone_verifications.insert_one({
-                "user_id": user_account.user_id,
-                "phone_number": request.phone_number,
-                "code": test_code_for_dev,
-                "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
-                "created_at": datetime.now(timezone.utc).isoformat()
-            })
     
     # Create initial onboarding status
     onboarding = OnboardingStatus(user_id=user_account.user_id)
@@ -7739,22 +7323,13 @@ async def register_user(request: RegisterRequest, req: Request):
         user_id=user_account.user_id
     )
     
-    # Prepare response
-    response_data = {
+    return {
         "success": True,
         "message": "Registration successful! Please verify your phone number with the SMS code sent.",
         "user_id": user_account.user_id,
         "email": request.email,
         "phone_verification_required": True
     }
-    
-    # Add verification code in test/development mode
-    if not is_production and test_verification_code:
-        response_data["test_verification_code"] = test_verification_code
-        response_data["message"] = f"Registration successful! TEST MODE: Your verification code is {test_verification_code}"
-        logger.info(f"📱 Returning test code in response: {test_verification_code}")
-    
-    return response_data
 
 
 @api_router.post("/auth/verify-phone")
@@ -7775,39 +7350,6 @@ async def verify_phone(request: dict):
     if not phone_number:
         raise HTTPException(status_code=400, detail="No phone number found")
     
-    # CHECK MONGODB FIRST (for test mode codes)
-    verification = await db.phone_verifications.find_one({
-        "user_id": user["user_id"],
-        "code": code
-    })
-    
-    if verification:
-        # Check if expired
-        expires_at = datetime.fromisoformat(verification["expires_at"])
-        if datetime.now(timezone.utc) > expires_at:
-            raise HTTPException(status_code=400, detail="Verification code expired")
-        
-        # Valid code from MongoDB - mark as verified
-        await db.user_accounts.update_one(
-            {"user_id": user["user_id"]},
-            {"$set": {
-                "phone_verified": True,
-                "email_verified": True,
-                "is_verified": True
-            }}
-        )
-        
-        # Delete used verification code
-        await db.phone_verifications.delete_one({"_id": verification["_id"]})
-        
-        logger.info(f"✅ Phone verified via MongoDB code for {email}")
-        
-        return {
-            "success": True,
-            "message": "Phone verified successfully"
-        }
-    
-    # If not in MongoDB, try Twilio (production mode)
     try:
         from twilio.rest import Client
         
@@ -7815,9 +7357,8 @@ async def verify_phone(request: dict):
         auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
         verify_service_sid = os.environ.get('TWILIO_VERIFY_SERVICE_SID')
         
-        is_production = os.environ.get('PRODUCTION', 'false').lower() == 'true'
-        if all([account_sid, auth_token, verify_service_sid]) and is_production:
-            # Verify with Twilio in production only
+        if all([account_sid, auth_token, verify_service_sid]):
+            # Verify with Twilio
             client = Client(account_sid, auth_token)
             verification_check = client.verify.v2.services(verify_service_sid).verification_checks.create(
                 to=phone_number,
@@ -7828,11 +7369,7 @@ async def verify_phone(request: dict):
                 # Mark phone as verified
                 await db.user_accounts.update_one(
                     {"user_id": user["user_id"]},
-                    {"$set": {
-                        "phone_verified": True,
-                        "email_verified": True,
-                        "is_verified": True
-                    }}
+                    {"$set": {"phone_verified": True, "email_verified": True}}
                 )
                 
                 logger.info(f"✅ Phone verified via Twilio for {email}")
@@ -7844,8 +7381,19 @@ async def verify_phone(request: dict):
             else:
                 raise HTTPException(status_code=400, detail="Invalid verification code")
         else:
-            # No valid code found anywhere
-            raise HTTPException(status_code=400, detail="Invalid verification code")
+            # Fallback to manual verification
+            verification = await db.phone_verifications.find_one({
+                "user_id": user["user_id"],
+                "code": code
+            })
+            
+            if not verification:
+                raise HTTPException(status_code=400, detail="Invalid verification code")
+            
+            # Check if expired
+            expires_at = datetime.fromisoformat(verification["expires_at"])
+            if datetime.now(timezone.utc) > expires_at:
+                raise HTTPException(status_code=400, detail="Verification code expired")
             
             # Mark phone as verified
             await db.user_accounts.update_one(
@@ -7964,23 +7512,6 @@ async def login_user(login_req: LoginRequest, request: Request):
     # Clear rate limit on successful login
     rate_limiter.clear_rate_limit(client_ip, "login")
     
-    # CRITICAL: Check phone verification - TEMPORARILY DISABLED FOR TESTING
-    # if not user.get("phone_verified"):
-    #     logger.warning(f"❌ Login blocked: Phone not verified for {login_req.email}")
-    #     await security_logger.log_login_attempt(
-    #         user_id=user["user_id"],
-    #         email=login_req.email,
-    #         success=False,
-    #         ip_address=client_ip,
-    #         user_agent=user_agent,
-    #         device_fingerprint=device_fingerprint,
-    #         failure_reason="Phone not verified"
-    #     )
-    #     raise HTTPException(
-    #         status_code=403, 
-    #         detail="Please verify your phone number before logging in. Check your SMS for the verification code."
-    #     )
-    
     # Check if 2FA is enabled for this user (unless exempt)
     from two_factor_auth import TwoFactorAuthService
     tfa_service = TwoFactorAuthService(db)
@@ -8007,13 +7538,10 @@ async def login_user(login_req: LoginRequest, request: Request):
         device_fingerprint=device_fingerprint
     )
     
-    # Generate JWT token with referral_tier and permissions
+    # Generate JWT token
     token_data = {
         "user_id": user["user_id"],
         "email": user["email"],
-        "referral_tier": user.get("referral_tier", "standard"),
-        "role": user.get("role", "user"),
-        "permissions": user.get("permissions", []),
         "exp": datetime.now(timezone.utc) + timedelta(days=7)
     }
     token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
@@ -8108,13 +7636,10 @@ async def login_with_2fa(request: dict, req: Request):
         device_fingerprint=device_fingerprint
     )
     
-    # Generate JWT token with referral_tier and permissions
+    # Generate JWT token
     token_data = {
         "user_id": user["user_id"],
         "email": user["email"],
-        "referral_tier": user.get("referral_tier", "standard"),
-        "role": user.get("role", "user"),
-        "permissions": user.get("permissions", []),
         "exp": datetime.now(timezone.utc) + timedelta(days=7)
     }
     token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
@@ -8631,7 +8156,7 @@ async def send_broadcast_message(request: dict):
                                 <div style="color: #fff; font-size: 16px; line-height: 1.6; text-align: left;">
                                     {message_content.replace(chr(10), '<br>')}
                                 </div>
-                                <a href="https://fund-release-1.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
+                                <a href="https://protrading.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
                                     View on Platform
                                 </a>
                             </div>
@@ -9263,9 +8788,7 @@ async def resolve_dispute_final(request: dict):
         raise HTTPException(status_code=400, detail="Invalid resolution")
     
     # Get dispute
-    print(f"🔍 Looking for dispute_id: {dispute_id}")
     dispute = await db.p2p_disputes.find_one({"dispute_id": dispute_id})
-    print(f"🔍 Dispute found: {dispute is not None}")
     if not dispute:
         raise HTTPException(status_code=404, detail="Dispute not found")
     
@@ -9421,132 +8944,10 @@ async def resolve_dispute_final(request: dict):
         
         action = f"Crypto returned to seller. Dispute fee of £{dispute_fee:.2f} charged to buyer."
     
-    # Send email notification to ADMIN
-    try:
-        admin_email = "info@coinhubx.net"
-        buyer_user = await db.users.find_one({"user_id": trade["buyer_id"]}, {"_id": 0, "email": 1, "full_name": 1})
-        seller_user = await db.users.find_one({"user_id": trade["seller_id"]}, {"_id": 0, "email": 1, "full_name": 1})
-        
-        # Send notification to admin email about the resolution
-        await send_email(
-            to_email=admin_email,
-            subject=f"✅ Dispute {dispute_id} Resolved - CoinHubX Admin",
-            html_content=f"""
-            <h2>Dispute Resolution Complete</h2>
-            <p><strong>Dispute ID:</strong> {dispute_id}</p>
-            <p><strong>Trade ID:</strong> {trade['trade_id']}</p>
-            <p><strong>Resolution:</strong> {resolution}</p>
-            <p><strong>Amount:</strong> {trade['crypto_amount']} {trade['crypto_currency']} (£{trade.get('fiat_amount', 0):.2f})</p>
-            <p><strong>Buyer:</strong> {buyer_user.get('full_name', 'Unknown')} ({buyer_user.get('email', 'N/A')})</p>
-            <p><strong>Seller:</strong> {seller_user.get('full_name', 'Unknown')} ({seller_user.get('email', 'N/A')})</p>
-            <p><strong>Dispute Fee:</strong> £{dispute_fee:.2f} charged to {"seller" if resolution == "release_to_buyer" else "buyer"}</p>
-            <p><strong>Admin Notes:</strong> {admin_notes or 'None'}</p>
-            <p><strong>Action Taken:</strong> {action}</p>
-            <hr>
-            <p>User notification emails have been sent to both parties.</p>
-            """
-        )
-        
-        if resolution == "release_to_buyer":
-            # Email to buyer (winner)
-            if buyer_user and buyer_user.get("email"):
-                await send_email(
-                    to_email=buyer_user["email"],
-                    subject="✅ Dispute Resolved in Your Favor - CoinHubX",
-                    html_content=f"""
-                    <h2>Dispute Resolved - You Won</h2>
-                    <p>Dear {buyer_user.get('full_name', 'User')},</p>
-                    <p>Good news! The dispute for Trade #{trade['trade_id'][:8]} has been resolved in your favor.</p>
-                    <p><strong>Resolution:</strong> {trade['crypto_amount']} {trade['crypto_currency']} has been released to your wallet.</p>
-                    <p><strong>Trade Details:</strong></p>
-                    <ul>
-                        <li>Amount: {trade['crypto_amount']} {trade['crypto_currency']}</li>
-                        <li>Value: £{trade.get('fiat_amount', 0):.2f}</li>
-                        <li>Trade ID: {trade['trade_id']}</li>
-                    </ul>
-                    <p><strong>Admin Notes:</strong> {admin_notes or 'No additional notes provided.'}</p>
-                    <p>The seller has been charged a dispute fee of £{dispute_fee:.2f}.</p>
-                    <p>Thank you for your patience.</p>
-                    <p>Best regards,<br>CoinHubX Support Team</p>
-                    """
-                )
-            
-            # Email to seller (loser)
-            if seller_user and seller_user.get("email"):
-                await send_email(
-                    to_email=seller_user["email"],
-                    subject="⚠️ Dispute Resolved - CoinHubX",
-                    html_content=f"""
-                    <h2>Dispute Resolution Update</h2>
-                    <p>Dear {seller_user.get('full_name', 'User')},</p>
-                    <p>The dispute for Trade #{trade['trade_id'][:8]} has been resolved.</p>
-                    <p><strong>Resolution:</strong> The crypto has been released to the buyer.</p>
-                    <p><strong>Dispute Fee:</strong> £{dispute_fee:.2f} has been deducted from your account.</p>
-                    <p><strong>Trade Details:</strong></p>
-                    <ul>
-                        <li>Amount: {trade['crypto_amount']} {trade['crypto_currency']}</li>
-                        <li>Value: £{trade.get('fiat_amount', 0):.2f}</li>
-                        <li>Trade ID: {trade['trade_id']}</li>
-                    </ul>
-                    <p><strong>Admin Notes:</strong> {admin_notes or 'No additional notes provided.'}</p>
-                    <p>If you believe this decision was made in error, please contact support.</p>
-                    <p>Best regards,<br>CoinHubX Support Team</p>
-                    """
-                )
-        else:
-            # Email to seller (winner)
-            if seller_user and seller_user.get("email"):
-                await send_email(
-                    to_email=seller_user["email"],
-                    subject="✅ Dispute Resolved in Your Favor - CoinHubX",
-                    html_content=f"""
-                    <h2>Dispute Resolved - You Won</h2>
-                    <p>Dear {seller_user.get('full_name', 'User')},</p>
-                    <p>Good news! The dispute for Trade #{trade['trade_id'][:8]} has been resolved in your favor.</p>
-                    <p><strong>Resolution:</strong> {trade['crypto_amount']} {trade['crypto_currency']} has been returned to your wallet.</p>
-                    <p><strong>Trade Details:</strong></p>
-                    <ul>
-                        <li>Amount: {trade['crypto_amount']} {trade['crypto_currency']}</li>
-                        <li>Value: £{trade.get('fiat_amount', 0):.2f}</li>
-                        <li>Trade ID: {trade['trade_id']}</li>
-                    </ul>
-                    <p><strong>Admin Notes:</strong> {admin_notes or 'No additional notes provided.'}</p>
-                    <p>The buyer has been charged a dispute fee of £{dispute_fee:.2f}.</p>
-                    <p>Thank you for your patience.</p>
-                    <p>Best regards,<br>CoinHubX Support Team</p>
-                    """
-                )
-            
-            # Email to buyer (loser)
-            if buyer_user and buyer_user.get("email"):
-                await send_email(
-                    to_email=buyer_user["email"],
-                    subject="⚠️ Dispute Resolved - CoinHubX",
-                    html_content=f"""
-                    <h2>Dispute Resolution Update</h2>
-                    <p>Dear {buyer_user.get('full_name', 'User')},</p>
-                    <p>The dispute for Trade #{trade['trade_id'][:8]} has been resolved.</p>
-                    <p><strong>Resolution:</strong> The crypto has been returned to the seller.</p>
-                    <p><strong>Dispute Fee:</strong> £{dispute_fee:.2f} has been deducted from your account.</p>
-                    <p><strong>Trade Details:</strong></p>
-                    <ul>
-                        <li>Amount: {trade['crypto_amount']} {trade['crypto_currency']}</li>
-                        <li>Value: £{trade.get('fiat_amount', 0):.2f}</li>
-                        <li>Trade ID: {trade['trade_id']}</li>
-                    </ul>
-                    <p><strong>Admin Notes:</strong> {admin_notes or 'No additional notes provided.'}</p>
-                    <p>If you believe this decision was made in error, please contact support.</p>
-                    <p>Best regards,<br>CoinHubX Support Team</p>
-                    """
-                )
-    except Exception as email_error:
-        logger.warning(f"⚠️ Failed to send dispute resolution emails: {str(email_error)}")
-    
     return {
         "success": True,
         "message": f"Dispute resolved: {action}",
-        "resolution": resolution,
-        "emails_sent": True
+        "resolution": resolution
     }
 
 @api_router.get("/admin/search/users")
@@ -9600,56 +9001,15 @@ async def admin_search_trades(q: str = "", status: str = ""):
 @api_router.get("/p2p/seller-status/{user_id}")
 async def get_seller_status(user_id: str):
     """Check if user can become a seller and current status"""
-    print(f"🔍 Getting seller status for user: {user_id}")
-    
-    # Try to find user in users collection first
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    
-    # If not found, try user_accounts collection
     if not user:
-        print("⚠️ User not in users collection, checking user_accounts...")
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
-        
-        # If found in user_accounts, also add to users collection for consistency
-        if user:
-            print("✅ Found in user_accounts, syncing to users collection...")
-            await db.users.insert_one(user.copy())
-    
-    # If still not found, check user_id mapping table
-    if not user:
-        print(f"⚠️ User not found with ID: {user_id}, checking mapping...")
-        mapping = await db.user_id_mappings.find_one({"old_user_id": user_id})
-        
-        if mapping:
-            corrected_user_id = mapping.get("new_user_id")
-            print(f"✅ Found mapping: {user_id} → {corrected_user_id}")
-            user_id = corrected_user_id
-            user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-            
-            if not user:
-                user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
-    
-    if not user:
-        print(f"❌ User not found: {user_id}")
         raise HTTPException(status_code=404, detail="User not found")
-    
-    print(f"✅ User found: {user.get('email')}")
     
     # Check requirements
     is_seller = user.get("is_seller", False)
     has_kyc = user.get("kyc_verified", False)
-    
-    # Check for payment methods in both user document AND payment_methods collection
-    user_payment_methods = user.get("payment_methods", [])
-    collection_payment_methods = await db.payment_methods.count_documents({"user_id": user_id})
-    has_payment_method = len(user_payment_methods) > 0 or collection_payment_methods > 0
-    
-    print("📊 Seller Status Check:")
-    print(f"   - KYC Verified: {has_kyc}")
-    print(f"   - User doc payment methods: {len(user_payment_methods)}")
-    print(f"   - Collection payment methods: {collection_payment_methods}")
-    print(f"   - Has payment method: {has_payment_method}")
-    print(f"   - Can activate: {has_kyc and has_payment_method}")
+    payment_methods = user.get("payment_methods", [])
+    has_payment_method = len(payment_methods) > 0
     
     # Get seller stats if already seller
     stats = {}
@@ -9661,7 +9021,7 @@ async def get_seller_status(user_id: str):
             "completion_rate": 98.5  # Calculate from actual data
         }
     
-    result = {
+    return {
         "success": True,
         "is_seller": is_seller,
         "can_activate": has_kyc and has_payment_method,
@@ -9671,9 +9031,6 @@ async def get_seller_status(user_id: str):
         },
         "stats": stats
     }
-    
-    print(f"📤 Returning seller status: {result}")
-    return result
 
 # DUPLICATE: @api_router.get("/p2p/seller-status/{user_id}")
 # DUPLICATE: async def get_seller_status(user_id: str):
@@ -9693,26 +9050,14 @@ async def activate_seller(request: dict):
     """Activate seller mode for user"""
     user_id = request.get("user_id")
     
-    # Check user_id mapping
-    mapping = await db.user_id_mappings.find_one({"old_user_id": user_id})
-    if mapping:
-        user_id = mapping.get("new_user_id")
-    
-    # Find user in both collections
     user = await db.users.find_one({"user_id": user_id})
-    if not user:
-        user = await db.user_accounts.find_one({"user_id": user_id})
-        if user:
-            await db.users.insert_one(user.copy())
-    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
     # Check requirements
     has_kyc = user.get("kyc_verified", False)
-    user_payment_methods = user.get("payment_methods", [])
-    collection_payment_methods = await db.payment_methods.count_documents({"user_id": user_id})
-    has_payment_method = len(user_payment_methods) > 0 or collection_payment_methods > 0
+    payment_methods = user.get("payment_methods", [])
+    has_payment_method = len(payment_methods) > 0
     
     if not has_kyc:
         raise HTTPException(status_code=400, detail="KYC verification required")
@@ -9720,118 +9065,70 @@ async def activate_seller(request: dict):
     if not has_payment_method:
         raise HTTPException(status_code=400, detail="At least one payment method required")
     
-    # Activate seller in both collections
+    # Activate seller
     await db.users.update_one(
         {"user_id": user_id},
-        {"$set": {"is_seller": True, "seller_activated_at": datetime.now(timezone.utc).isoformat()}}
+        {
+            "$set": {
+                "is_seller": True,
+                "seller_activated_at": datetime.now(timezone.utc)
+            }
+        }
     )
     
-    await db.user_accounts.update_one(
-        {"user_id": user_id},
-        {"$set": {"is_seller": True, "seller_activated_at": datetime.now(timezone.utc).isoformat()}}
-    )
-    
-    # Get seller stats
-    trades = await db.p2p_trades.find({"seller_id": user_id, "status": "completed"}).to_list(1000)
-    stats = {
-        "total_trades": len(trades),
-        "total_volume": sum(t.get("fiat_amount", 0) for t in trades),
-        "completion_rate": 98.5
-    }
-    
-    # Return the FULL updated seller status
     return {
         "success": True,
-        "message": "Seller account activated successfully",
-        "seller_status": {
-            "is_seller": True,
-            "can_activate": False,
-            "requirements": {
-                "kyc_verified": has_kyc,
-                "has_payment_method": has_payment_method
-            },
-            "stats": stats
-        }
+        "message": "Seller account activated successfully"
     }
 
 @api_router.post("/p2p/create-ad")
-async def create_p2p_ad(
-    request: dict,
-    current_user: dict = Depends(get_current_user_from_session)
-):
-    """Create a new P2P ad - AUTHENTICATED"""
-    user_id = current_user.get("user_id") or current_user.get("id")
-    logger.info(f"Creating P2P ad for authenticated user: {user_id}")
+async def create_p2p_ad(request: dict):
+    """Create a new P2P ad"""
+    user_id = request.get("user_id")
     
     # Verify user is seller
-    if not current_user.get("is_seller"):
-        logger.warning(f"User {user_id} is not an activated seller")
+    user = await db.users.find_one({"user_id": user_id})
+    if not user or not user.get("is_seller"):
         raise HTTPException(status_code=403, detail="Seller account required")
-    
-    # Validate ad_type
-    ad_type = request.get("ad_type")
-    if not ad_type or ad_type not in ["sell", "buy"]:
-        raise HTTPException(status_code=400, detail="ad_type must be 'sell' or 'buy'")
-    
-    # Validate required fields
-    if not request.get("crypto_currency"):
-        raise HTTPException(status_code=400, detail="crypto_currency is required")
-    if not request.get("fiat_currency"):
-        raise HTTPException(status_code=400, detail="fiat_currency is required")
-    if not request.get("price_value") or float(request.get("price_value", 0)) <= 0:
-        raise HTTPException(status_code=400, detail="price_value must be greater than 0")
-    if not request.get("min_amount") or float(request.get("min_amount", 0)) <= 0:
-        raise HTTPException(status_code=400, detail="min_amount must be greater than 0")
-    if not request.get("max_amount") or float(request.get("max_amount", 0)) <= 0:
-        raise HTTPException(status_code=400, detail="max_amount must be greater than 0")
-    if not request.get("payment_methods") or len(request.get("payment_methods", [])) == 0:
-        raise HTTPException(status_code=400, detail="At least one payment method is required")
-    
-    logger.info(f"User authenticated: {current_user.get('email')}, is_seller: {current_user.get('is_seller')}")
     
     ad_id = str(uuid.uuid4())
     ad = {
         "ad_id": ad_id,
         "seller_id": user_id,
-        "seller_name": current_user.get("email", ""),
-        "ad_type": ad_type,
+        "seller_name": user.get("full_name", "Seller"),
+        "ad_type": request.get("ad_type", "sell"),  # buy or sell
         "crypto_currency": request.get("crypto_currency", "BTC"),
         "fiat_currency": request.get("fiat_currency", "GBP"),
-        "price_per_unit": float(request.get("price_value", 0)),  # Use price_per_unit for consistency
-        "min_order_limit": float(request.get("min_amount", 0)),  # Use min_order_limit
-        "max_order_limit": float(request.get("max_amount", 0)),  # Use max_order_limit
+        "price_type": request.get("price_type", "fixed"),  # fixed or floating
+        "price_value": request.get("price_value", 0),  # fixed price or % margin
+        "min_amount": request.get("min_amount", 0),
+        "max_amount": request.get("max_amount", 0),
         "payment_methods": request.get("payment_methods", []),
         "terms": request.get("terms", ""),
         "status": "active",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "total_trades": 0
+        "created_at": datetime.now(timezone.utc),
+        "total_trades": 0,
+        "available_amount": request.get("available_amount", 0)
     }
     
-    result = await db.p2p_ads.insert_one(ad)
-    logger.info(f"Ad created successfully: {ad_id}")
+    await db.p2p_ads.insert_one(ad)
     
-    # Return without MongoDB _id field
+    # Remove MongoDB _id and convert datetime for JSON serialization
+    ad_response = ad.copy()
+    if "_id" in ad_response:
+        del ad_response["_id"]
+    if "created_at" in ad_response:
+        ad_response["created_at"] = ad_response["created_at"].isoformat()
+    
     return {
         "success": True,
-        "ad_id": ad_id,
+        "ad": ad_response,
         "message": "Ad created successfully"
-    }
-
-@api_router.get("/p2p/my-ads")
-async def get_my_ads_authenticated(current_user: dict = Depends(get_current_user_from_session)):
-    """Get all ads for authenticated user"""
-    user_id = current_user.get("user_id") or current_user.get("id")
-    ads = await db.p2p_ads.find({"seller_id": user_id}, {"_id": 0}).to_list(100)
-    
-    return {
-        "success": True,
-        "ads": ads
     }
 
 @api_router.get("/p2p/my-ads/{user_id}")
 async def get_my_ads(user_id: str):
-    """Get all ads by user (public endpoint for viewing other users' ads)"""
+    """Get all ads by user"""
     ads = await db.p2p_ads.find({"seller_id": user_id}, {"_id": 0}).to_list(100)
     
     return {
@@ -10070,31 +9367,14 @@ async def execute_swap(request: dict):
     """Execute cryptocurrency swap via wallet service"""
     from swap_wallet_service import execute_swap_with_wallet
     
-    # Validation
-    user_id = request.get("user_id")
-    from_currency = request.get("from_currency")
-    to_currency = request.get("to_currency")
-    from_amount = request.get("from_amount", 0)
-    
-    if not user_id or not from_currency or not to_currency:
-        raise HTTPException(status_code=400, detail="Missing required fields")
-    
-    try:
-        from_amount = float(from_amount)
-    except (ValueError, TypeError):
-        raise HTTPException(status_code=400, detail="Invalid amount format")
-    
-    if from_amount <= 0:
-        raise HTTPException(status_code=400, detail="Amount must be greater than 0")
-    
     wallet_service = get_wallet_service()
     result = await execute_swap_with_wallet(
         db=db,
         wallet_service=wallet_service,
-        user_id=user_id,
-        from_currency=from_currency,
-        to_currency=to_currency,
-        from_amount=from_amount
+        user_id=request.get("user_id"),
+        from_currency=request.get("from_currency"),
+        to_currency=request.get("to_currency"),
+        from_amount=float(request.get("from_amount", 0))
     )
     return result
 
@@ -11139,457 +10419,6 @@ async def get_admin_withdrawals():
     # Unreachable code removed - duplicate return with undefined variables
 
 # ===========================
-# NOWPAYMENTS PAYOUT SYSTEM (ADMIN CRYPTO WITHDRAWALS)
-# ===========================
-
-@api_router.post("/admin/payout/request")
-async def request_admin_payout(request: dict):
-    """
-    Admin requests real crypto payout from PLATFORM_FEES wallet via NOWPayments
-    This executes a REAL blockchain transaction
-    """
-    try:
-        from nowpayments_payout_service import get_payout_service
-        
-        admin_id = request.get("admin_id")
-        currency = request.get("currency")
-        amount = float(request.get("amount", 0))
-        destination_address = request.get("destination_address")
-        extra_id = request.get("extra_id")  # For XRP, XLM, etc.
-        
-        if not all([admin_id, currency, amount, destination_address]):
-            raise HTTPException(status_code=400, detail="Missing required fields")
-        
-        if amount <= 0:
-            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
-        
-        # Verify admin
-        admin = await db.user_accounts.find_one({"user_id": admin_id})
-        if not admin or admin.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
-        
-        # Check PLATFORM_FEES balance
-        platform_balance = await db.internal_balances.find_one({
-            "user_id": "PLATFORM_FEES",
-            "currency": currency.upper()
-        })
-        
-        if not platform_balance:
-            raise HTTPException(status_code=404, detail=f"No PLATFORM_FEES balance found for {currency}")
-        
-        available_balance = platform_balance.get("balance", 0)
-        if available_balance < amount:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Insufficient PLATFORM_FEES balance. Available: {available_balance}, Requested: {amount}"
-            )
-        
-        # Get payout service
-        payout_service = get_payout_service()
-        
-        # Check minimum payout amount
-        min_amount = payout_service.get_minimum_payout_amount(currency)
-        if amount < min_amount:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Amount below minimum payout. Minimum: {min_amount} {currency}"
-            )
-        
-        # Generate payout ID
-        payout_id = str(uuid.uuid4())
-        
-        # Deduct from PLATFORM_FEES (do this BEFORE calling NOWPayments)
-        await db.internal_balances.update_one(
-            {"user_id": "PLATFORM_FEES", "currency": currency.upper()},
-            {
-                "$inc": {"balance": -amount},
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            }
-        )
-        
-        logger.info(f"💰 Deducted {amount} {currency} from PLATFORM_FEES for payout {payout_id}")
-        
-        # Create payout via NOWPayments
-        payout_result = payout_service.create_payout(
-            currency=currency,
-            amount=amount,
-            address=destination_address,
-            payout_id=payout_id,
-            extra_id=extra_id
-        )
-        
-        if not payout_result:
-            # Rollback - return funds to PLATFORM_FEES
-            await db.internal_balances.update_one(
-                {"user_id": "PLATFORM_FEES", "currency": currency.upper()},
-                {
-                    "$inc": {"balance": amount},
-                    "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-                }
-            )
-            raise HTTPException(status_code=500, detail="Failed to create payout via NOWPayments")
-        
-        # Save payout record
-        payout_record = {
-            "payout_id": payout_id,
-            "nowpayments_payout_id": payout_result.get("id"),
-            "admin_id": admin_id,
-            "currency": currency.upper(),
-            "amount": amount,
-            "destination_address": destination_address,
-            "extra_id": extra_id,
-            "status": payout_result.get("status", "pending"),
-            "nowpayments_response": payout_result,
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        }
-        
-        await db.admin_payouts.insert_one(payout_record)
-        
-        logger.info(f"✅ Admin payout created: {payout_id} | {amount} {currency} to {destination_address[:10]}...")
-        
-        return {
-            "success": True,
-            "payout_id": payout_id,
-            "nowpayments_payout_id": payout_result.get("id"),
-            "status": payout_result.get("status"),
-            "message": f"Payout of {amount} {currency} initiated",
-            "payout": {
-                "payout_id": payout_id,
-                "currency": currency,
-                "amount": amount,
-                "destination_address": destination_address,
-                "status": payout_result.get("status")
-            }
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Admin payout error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@api_router.get("/admin/payout/history")
-async def get_admin_payout_history(admin_id: str):
-    """Get all admin payout transactions"""
-    # Verify admin
-    admin = await db.user_accounts.find_one({"user_id": admin_id})
-    if not admin or admin.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
-    
-    payouts = await db.admin_payouts.find(
-        {},
-        {"_id": 0}
-    ).sort("created_at", -1).to_list(100)
-    
-    return {
-        "success": True,
-        "payouts": payouts,
-        "count": len(payouts)
-    }
-
-@api_router.get("/admin/payout/status/{payout_id}")
-async def get_payout_status(payout_id: str, admin_id: str):
-    """Get status of a specific payout"""
-    try:
-        from nowpayments_payout_service import get_payout_service
-        
-        # Verify admin
-        admin = await db.user_accounts.find_one({"user_id": admin_id})
-        if not admin or admin.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
-        
-        # Get payout record
-        payout = await db.admin_payouts.find_one({"payout_id": payout_id}, {"_id": 0})
-        if not payout:
-            raise HTTPException(status_code=404, detail="Payout not found")
-        
-        # Get latest status from NOWPayments
-        payout_service = get_payout_service()
-        status_result = payout_service.get_payout_status(payout_id)
-        
-        if status_result:
-            # Update our record with latest status
-            await db.admin_payouts.update_one(
-                {"payout_id": payout_id},
-                {
-                    "$set": {
-                        "status": status_result.get("status"),
-                        "nowpayments_response": status_result,
-                        "updated_at": datetime.now(timezone.utc).isoformat()
-                    }
-                }
-            )
-            
-            return {
-                "success": True,
-                "payout_id": payout_id,
-                "status": status_result.get("status"),
-                "details": status_result
-            }
-        else:
-            # Return cached status
-            return {
-                "success": True,
-                "payout_id": payout_id,
-                "status": payout.get("status"),
-                "details": payout,
-                "note": "Using cached status (NOWPayments API unavailable)"
-            }
-            
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Get payout status error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@api_router.post("/admin/payout/webhook")
-async def nowpayments_payout_webhook(request: Request):
-    """
-    Webhook endpoint for NOWPayments payout status updates
-    Called by NOWPayments when payout status changes
-    """
-    try:
-        from nowpayments_payout_service import get_payout_service
-        
-        payout_service = get_payout_service()
-        
-        # Get raw body and signature
-        body = await request.body()
-        signature = request.headers.get('x-nowpayments-sig', '')
-        
-        logger.info("📥 NOWPayments Payout webhook received")
-        
-        # Verify signature
-        if not payout_service.verify_payout_webhook_signature(body, signature):
-            logger.error("❌ INVALID PAYOUT WEBHOOK SIGNATURE")
-            return {"status": "error", "message": "Invalid signature"}
-        
-        # Parse webhook data
-        import json
-        webhook_data = json.loads(body.decode('utf-8'))
-        
-        payout_id = webhook_data.get('unique_external_id')
-        payout_status = webhook_data.get('status')
-        
-        logger.info(f"📦 Payout Webhook: payout_id={payout_id}, status={payout_status}")
-        
-        # Update payout record
-        await db.admin_payouts.update_one(
-            {"payout_id": payout_id},
-            {
-                "$set": {
-                    "status": payout_status,
-                    "nowpayments_response": webhook_data,
-                    "updated_at": datetime.now(timezone.utc).isoformat(),
-                    "last_webhook_data": webhook_data
-                }
-            }
-        )
-        
-        logger.info(f"✅ Payout {payout_id} status updated to {payout_status}")
-        
-        return {"status": "ok", "message": "webhook_processed"}
-        
-    except Exception as e:
-        logger.error(f"❌ Payout webhook error: {str(e)}")
-        return {"status": "error", "message": str(e)}
-
-# ===========================
-# ADMIN LIQUIDITY MANAGEMENT
-# ===========================
-
-@api_router.get("/admin/liquidity/summary")
-async def get_admin_liquidity_summary(admin_id: str):
-    """Get complete admin liquidity summary across all currencies"""
-    try:
-        # Verify admin
-        admin = await db.user_accounts.find_one({"user_id": admin_id})
-        if not admin or admin.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
-        
-        # Get all liquidity wallets
-        liquidity_wallets = await db.admin_liquidity_wallets.find({}).to_list(100)
-        
-        total_currencies = len(liquidity_wallets)
-        total_liquidity_gbp = 0
-        low_liquidity_currencies = []
-        
-        # Calculate totals and identify low liquidity
-        for wallet in liquidity_wallets:
-            currency = wallet.get("currency")
-            available = wallet.get("available", 0)
-            balance = wallet.get("balance", 0)
-            
-            # Check for low liquidity (arbitrary threshold for demo)
-            if available < 0.01:  # Adjust threshold per currency in production
-                low_liquidity_currencies.append({
-                    "currency": currency,
-                    "available": available,
-                    "balance": balance
-                })
-        
-        return {
-            "success": True,
-            "summary": {
-                "total_currencies": total_currencies,
-                "low_liquidity_count": len(low_liquidity_currencies),
-                "low_liquidity_currencies": low_liquidity_currencies
-            },
-            "liquidity_wallets": liquidity_wallets
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Get liquidity summary error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@api_router.post("/admin/liquidity/topup")
-async def topup_admin_liquidity(request: dict):
-    """Admin tops up liquidity for a currency"""
-    try:
-        admin_id = request.get("admin_id")
-        currency = request.get("currency")
-        amount = float(request.get("amount", 0))
-        source = request.get("source", "manual")  # "manual", "nowpayments_deposit", etc.
-        notes = request.get("notes")
-        
-        if not all([admin_id, currency, amount]):
-            raise HTTPException(status_code=400, detail="Missing required fields")
-        
-        if amount <= 0:
-            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
-        
-        # Verify admin
-        admin = await db.user_accounts.find_one({"user_id": admin_id})
-        if not admin or admin.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
-        
-        # Update liquidity wallet
-        await db.admin_liquidity_wallets.update_one(
-            {"currency": currency.upper()},
-            {
-                "$inc": {
-                    "balance": amount,
-                    "available": amount
-                },
-                "$set": {
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                },
-                "$setOnInsert": {
-                    "currency": currency.upper(),
-                    "reserved": 0,
-                    "created_at": datetime.now(timezone.utc).isoformat()
-                }
-            },
-            upsert=True
-        )
-        
-        # Log liquidity top-up
-        topup_id = str(uuid.uuid4())
-        await db.admin_liquidity_history.insert_one({
-            "history_id": topup_id,
-            "currency": currency.upper(),
-            "amount": amount,
-            "operation": "topup",
-            "source": source,
-            "admin_id": admin_id,
-            "notes": notes,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        })
-        
-        logger.info(f"✅ Admin liquidity topped up: {amount} {currency} (Source: {source})")
-        
-        # Get updated balance
-        updated_wallet = await db.admin_liquidity_wallets.find_one({"currency": currency.upper()}, {"_id": 0})
-        
-        return {
-            "success": True,
-            "message": f"Liquidity topped up: {amount} {currency}",
-            "topup_id": topup_id,
-            "currency": currency,
-            "amount": amount,
-            "new_balance": updated_wallet.get("balance") if updated_wallet else amount,
-            "new_available": updated_wallet.get("available") if updated_wallet else amount
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Liquidity top-up error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@api_router.get("/admin/fees/summary")
-async def get_platform_fees_summary(admin_id: str, currency: str = None):
-    """Get summary of all platform fees collected"""
-    try:
-        # Verify admin
-        admin = await db.user_accounts.find_one({"user_id": admin_id})
-        if not admin or admin.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
-        
-        if currency:
-            # Get specific currency
-            fee_data = await db.internal_balances.find_one({
-                "user_id": "PLATFORM_FEES",
-                "currency": currency.upper()
-            }, {"_id": 0})
-            
-            if not fee_data:
-                return {
-                    "success": True,
-                    "message": f"No fee data for {currency}",
-                    "currency": currency,
-                    "fee_data": {}
-                }
-            
-            return {
-                "success": True,
-                "currency": currency,
-                "fee_data": fee_data
-            }
-        else:
-            # Get all currencies
-            fee_data_list = await db.internal_balances.find({
-                "user_id": "PLATFORM_FEES"
-            }, {"_id": 0}).to_list(500)
-            
-            # Calculate totals
-            total_balance_by_currency = {}
-            total_fees_by_type = {
-                "swap_fees": 0,
-                "instant_buy_fees": 0,
-                "instant_sell_fees": 0,
-                "spot_trading_fees": 0,
-                "p2p_buyer_fees": 0,
-                "p2p_seller_fees": 0,
-                "deposit_fees": 0,
-                "withdrawal_fees": 0
-            }
-            
-            for fee_record in fee_data_list:
-                currency_code = fee_record.get("currency")
-                total_balance_by_currency[currency_code] = fee_record.get("balance", 0)
-                
-                for fee_type in total_fees_by_type.keys():
-                    total_fees_by_type[fee_type] += fee_record.get(fee_type, 0)
-            
-            return {
-                "success": True,
-                "total_currencies": len(fee_data_list),
-                "total_balance_by_currency": total_balance_by_currency,
-                "total_fees_by_type": total_fees_by_type,
-                "detailed_fees": fee_data_list
-            }
-            
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Get fees summary error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# ===========================
 # EXPRESS BUY ENDPOINTS (WITH ADMIN LIQUIDITY)
 # ===========================
 
@@ -12135,11 +10964,10 @@ async def get_trading_pairs(request: Request, response: Response):
                 elif quote == "USDT":
                     # Convert GBP to USDT (approximate)
                     try:
-                        from live_pricing import get_live_price
-                        usdt_to_gbp = await get_live_price("USDT", "gbp")
+                        usdt_price_data = await get_coin_price("USDT")
+                        usdt_to_gbp = usdt_price_data.get("price_gbp", 0.79)
                         price_in_quote = coin_price_gbp / usdt_to_gbp if usdt_to_gbp > 0 else 0
-                    except Exception as e:
-                        logger.warning(f"Failed to get USDT price: {e}")
+                    except:
                         price_in_quote = coin_price_gbp / 0.79  # Default USDT rate
                 else:
                     price_in_quote = coin_price_gbp
@@ -12248,11 +11076,8 @@ async def place_spot_buy_order(order: SpotTradeOrder):
                 detail=f"Insufficient {order.quote} balance. You have {quote_balance}, need {order.total}"
             )
         
-        # Calculate fee from centralized fee system
-        from centralized_fee_system import get_fee_manager
-        fee_manager = get_fee_manager(db)
-        fee_percent = await fee_manager.get_fee("spot_trading_fee_percent")
-        fee = order.total * (fee_percent / 100.0)
+        # Calculate fee (0.5% trading fee)
+        fee = order.total * 0.005
         total_with_fee = order.total + fee
         
         if quote_balance < total_with_fee:
@@ -12261,47 +11086,13 @@ async def place_spot_buy_order(order: SpotTradeOrder):
                 detail=f"Insufficient balance including fee. Need {total_with_fee} {order.quote}"
             )
         
-        # LIQUIDITY ENFORCEMENT: Check and reserve admin liquidity for the crypto user is buying
-        from liquidity_lock_service import get_liquidity_service
-        liquidity_service = get_liquidity_service(db)
-        trade_id = str(uuid.uuid4())
+        # Deduct quote currency
+        balances[order.quote]["available"] = balances[order.quote].get("available", 0) - total_with_fee
         
-        liquidity_check = await liquidity_service.check_and_reserve_liquidity(
-            currency=order.base,
-            required_amount=order.amount,
-            transaction_type="spot_buy",
-            transaction_id=trade_id,
-            user_id=order.user_id,
-            metadata={"pair": order.pair, "price": order.price, "total": order.total}
-        )
-        
-        if not liquidity_check["success"]:
-            logger.error(f"🚫 SPOT BUY BLOCKED: {liquidity_check['message']}")
-            raise HTTPException(
-                status_code=400,
-                detail=f"Transaction blocked due to insufficient admin liquidity. {liquidity_check['message']}"
-            )
-        
-        logger.info(f"✅ Admin liquidity reserved: {order.amount} {order.base} for spot buy")
-        
-        try:
-            # Deduct quote currency
-            balances[order.quote]["available"] = balances[order.quote].get("available", 0) - total_with_fee
-            
-            # Add base currency
-            if order.base not in balances:
-                balances[order.base] = {"available": 0, "locked": 0}
-            balances[order.base]["available"] = balances[order.base].get("available", 0) + order.amount
-        except Exception:
-            # Release reserved liquidity if balance operations fail
-            await liquidity_service.release_reserved_liquidity(
-                currency=order.base,
-                amount=order.amount,
-                transaction_type="spot_buy",
-                transaction_id=trade_id,
-                reason="balance_operation_failed"
-            )
-            raise
+        # Add base currency
+        if order.base not in balances:
+            balances[order.base] = {"available": 0, "locked": 0}
+        balances[order.base]["available"] = balances[order.base].get("available", 0) + order.amount
         
         # Update user balances
         await db.user_balances.update_one(
@@ -12309,44 +11100,9 @@ async def place_spot_buy_order(order: SpotTradeOrder):
             {"$set": {"balances": balances, "updated_at": datetime.now(timezone.utc).isoformat()}}
         )
         
-        # LIQUIDITY ENFORCEMENT: Deduct from admin liquidity (transaction successful)
-        await liquidity_service.deduct_liquidity(
-            currency=order.base,
-            amount=order.amount,
-            transaction_type="spot_buy",
-            transaction_id=trade_id,
-            user_id=order.user_id,
-            metadata={"pair": order.pair, "price": order.price, "total": order.total}
-        )
-        
-        logger.info(f"✅ Admin liquidity deducted: {order.amount} {order.base}")
-        
-        # Process referral commission
-        from referral_engine import get_referral_engine
-        referral_engine = get_referral_engine()
-        commission_result = await referral_engine.process_referral_commission(
-            user_id=order.user_id,
-            fee_amount=fee,
-            fee_type="TRADING",
-            currency=order.quote,
-            related_transaction_id=trade_id,
-            metadata={"pair": order.pair, "side": "buy", "amount": order.amount, "price": order.price}
-        )
-        
-        # Extract referral details
-        if commission_result["success"]:
-            referrer_commission = commission_result['commission_amount']
-            admin_fee = fee - referrer_commission
-            referrer_id = commission_result.get('referrer_id')
-            logger.info(f"✅ Spot Trading (BUY) referral commission: {referrer_commission} {order.quote}")
-        else:
-            referrer_commission = 0.0
-            admin_fee = fee
-            referrer_id = None
-        
         # Record trade
         trade_record = {
-            "trade_id": trade_id,
+            "trade_id": str(uuid.uuid4()),
             "user_id": order.user_id,
             "pair": order.pair,
             "side": "buy",
@@ -12355,27 +11111,15 @@ async def place_spot_buy_order(order: SpotTradeOrder):
             "price": order.price,
             "total": order.total,
             "fee": fee,
-            "fee_percent": fee_percent,
-            "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
-            "referrer_id": referrer_id,
             "status": "completed",
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.spot_trades.insert_one(trade_record)
         
-        # Add fee to PLATFORM_FEES wallet
+        # Add fee to admin fee wallet
         await db.internal_balances.update_one(
-            {"user_id": "PLATFORM_FEES", "currency": order.quote},
-            {
-                "$inc": {
-                    "balance": fee,
-                    "total_fees": fee,
-                    "spot_trading_fees": fee,
-                    "net_platform_revenue": admin_fee
-                },
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            },
+            {"user_id": "admin_wallet", "currency": order.quote},
+            {"$inc": {"available": fee, "balance": fee}},
             upsert=True
         )
         
@@ -12421,11 +11165,8 @@ async def place_spot_sell_order(order: SpotTradeOrder):
                 detail=f"Insufficient {order.base} balance. You have {base_balance}, need {order.amount}"
             )
         
-        # Calculate fee from centralized fee system
-        from centralized_fee_system import get_fee_manager
-        fee_manager = get_fee_manager(db)
-        fee_percent = await fee_manager.get_fee("spot_trading_fee_percent")
-        fee = order.total * (fee_percent / 100.0)
+        # Calculate fee (0.5% trading fee)
+        fee = order.total * 0.005
         total_after_fee = order.total - fee
         
         # Deduct base currency
@@ -12442,49 +11183,9 @@ async def place_spot_sell_order(order: SpotTradeOrder):
             {"$set": {"balances": balances, "updated_at": datetime.now(timezone.utc).isoformat()}}
         )
         
-        # Generate trade ID for referral tracking
-        trade_id = str(uuid.uuid4())
-        
-        # LIQUIDITY ENFORCEMENT: Add crypto to admin liquidity (user sold to admin)
-        from liquidity_lock_service import get_liquidity_service
-        liquidity_service = get_liquidity_service(db)
-        await liquidity_service.add_liquidity(
-            currency=order.base,
-            amount=order.amount,
-            transaction_type="spot_sell",
-            transaction_id=trade_id,
-            user_id=order.user_id,
-            metadata={"pair": order.pair, "price": order.price, "total": order.total}
-        )
-        
-        logger.info(f"✅ Admin liquidity increased: {order.amount} {order.base} (spot sell)")
-        
-        # Process referral commission
-        from referral_engine import get_referral_engine
-        referral_engine = get_referral_engine()
-        commission_result = await referral_engine.process_referral_commission(
-            user_id=order.user_id,
-            fee_amount=fee,
-            fee_type="TRADING",
-            currency=order.quote,
-            related_transaction_id=trade_id,
-            metadata={"pair": order.pair, "side": "sell", "amount": order.amount, "price": order.price}
-        )
-        
-        # Extract referral details
-        if commission_result["success"]:
-            referrer_commission = commission_result['commission_amount']
-            admin_fee = fee - referrer_commission
-            referrer_id = commission_result.get('referrer_id')
-            logger.info(f"✅ Spot Trading (SELL) referral commission: {referrer_commission} {order.quote}")
-        else:
-            referrer_commission = 0.0
-            admin_fee = fee
-            referrer_id = None
-        
         # Record trade
         trade_record = {
-            "trade_id": trade_id,
+            "trade_id": str(uuid.uuid4()),
             "user_id": order.user_id,
             "pair": order.pair,
             "side": "sell",
@@ -12493,27 +11194,15 @@ async def place_spot_sell_order(order: SpotTradeOrder):
             "price": order.price,
             "total": order.total,
             "fee": fee,
-            "fee_percent": fee_percent,
-            "admin_fee": admin_fee,
-            "referrer_commission": referrer_commission,
-            "referrer_id": referrer_id,
             "status": "completed",
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.spot_trades.insert_one(trade_record)
         
-        # Add fee to PLATFORM_FEES wallet
+        # Add fee to admin fee wallet
         await db.internal_balances.update_one(
-            {"user_id": "PLATFORM_FEES", "currency": order.quote},
-            {
-                "$inc": {
-                    "balance": fee,
-                    "total_fees": fee,
-                    "spot_trading_fees": fee,
-                    "net_platform_revenue": admin_fee
-                },
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            },
+            {"user_id": "admin_wallet", "currency": order.quote},
+            {"$inc": {"available": fee, "balance": fee}},
             upsert=True
         )
         
@@ -14212,7 +12901,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
             
-            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://fund-release-1.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
+            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://protrading.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
             
             message = Mail(
                 from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -14711,6 +13400,7 @@ from referral_system import (
     load_referral_config_from_db,
     update_referral_config_in_db
 )
+from fastapi import Cookie
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 import httpx
 
@@ -15107,135 +13797,116 @@ async def get_comprehensive_referral_dashboard(user_id: str):
 
 @api_router.get("/referral/dashboard/{user_id}")
 async def get_referral_dashboard(user_id: str = None):
-    """
-    Get comprehensive referral dashboard with real earnings data.
-    All data pulled directly from backend database.
-    """
-    try:
-        # Get user account and tier
+    """Get user's referral dashboard"""
+    # Get referral code
+    code_data = await db.referral_codes.find_one({"user_id": user_id})
+    
+    # If no referral code exists, create one on-the-fly
+    if not code_data:
+        logger.info(f"No referral code found for user {user_id}, creating one...")
+        
+        # Get user's name from either user_accounts or users collection
         user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            user = await db.users.find_one({"user_id": user_id})
+        
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        referral_tier = user.get("referral_tier", "standard")
-        is_golden = (referral_tier == "golden")
-        commission_rate = 0.50 if is_golden else 0.20
+        # Generate referral code
+        username = user.get("full_name") or user.get("name") or user.get("email", "user")
+        code = generate_referral_code(username)
+        link = generate_referral_link(code)
         
-        # Get all referral commissions for this referrer
-        commissions = await db.referral_commissions.find(
-            {"referrer_id": user_id}
-        ).to_list(10000)
-        
-        # Calculate total earned per currency
-        earnings_by_currency = {}
-        total_earned_gbp_equivalent = 0.0
-        
-        for commission in commissions:
-            currency = commission.get("currency", "GBP")
-            amount = float(commission.get("commission_amount", 0))
-            
-            if currency not in earnings_by_currency:
-                earnings_by_currency[currency] = {
-                    "currency": currency,
-                    "total_earned": 0.0,
-                    "transaction_count": 0
-                }
-            
-            earnings_by_currency[currency]["total_earned"] += amount
-            earnings_by_currency[currency]["transaction_count"] += 1
-            
-            # Convert to GBP for total (simplified - assume 1:1 for GBP, otherwise use live price)
-            if currency == "GBP":
-                total_earned_gbp_equivalent += amount
-        
-        # Get count of referred users
-        referred_users_count = await db.user_accounts.count_documents(
-            {"referred_by": user_id}
+        referral = ReferralCode(
+            user_id=user_id,
+            referral_code=code,
+            referral_link=link
         )
+        await db.referral_codes.insert_one(referral.model_dump())
         
-        # Get list of referred users
-        referred_users = await db.user_accounts.find(
-            {"referred_by": user_id},
-            {"_id": 0, "user_id": 1, "email": 1, "full_name": 1, "created_at": 1, "phone_verified": 1}
-        ).to_list(1000)
+        # Initialize stats
+        stats_doc = ReferralStats(user_id=user_id)
+        await db.referral_stats.insert_one(stats_doc.model_dump())
         
-        referred_users_list = []
-        for ref_user in referred_users:
-            # Count commissions generated by this referred user
-            user_commissions = [c for c in commissions if c.get("referred_user_id") == ref_user["user_id"]]
-            total_generated = sum(float(c.get("commission_amount", 0)) for c in user_commissions)
-            
-            referred_users_list.append({
-                "user_id": ref_user.get("user_id"),
-                "email": ref_user.get("email", "N/A"),
-                "name": ref_user.get("full_name", "Unknown"),
-                "joined_at": ref_user.get("created_at").isoformat() if isinstance(ref_user.get("created_at"), datetime) else ref_user.get("created_at", "N/A"),
-                "verified": ref_user.get("phone_verified", False),
-                "earnings_generated": round(total_generated, 2)
-            })
-        
-        # Build earnings history (transaction-by-transaction)
-        earnings_history = []
-        for commission in sorted(commissions, key=lambda x: x.get("created_at", datetime.now()), reverse=True)[:100]:
-            earnings_history.append({
-                "transaction_id": commission.get("related_transaction_id", "N/A"),
-                "transaction_type": commission.get("fee_type", "Unknown"),
-                "fee_amount": float(commission.get("fee_amount", 0)),
-                "commission_amount": float(commission.get("commission_amount", 0)),
-                "commission_rate": float(commission.get("commission_rate", 0)) * 100,  # Convert to percentage
-                "currency": commission.get("currency", "GBP"),
-                "referred_user_id": commission.get("referred_user_id", "N/A"),
-                "timestamp": commission.get("created_at").isoformat() if isinstance(commission.get("created_at"), datetime) else commission.get("created_at", "N/A"),
-                "status": commission.get("status", "completed")
-            })
-        
-        # Get referral code
-        code_data = await db.referral_codes.find_one({"user_id": user_id})
-        if not code_data:
-            # Create referral code if doesn't exist
-            from referral_system import generate_referral_code, generate_referral_link
-            username = user.get("full_name") or user.get("email", "user")
-            code = generate_referral_code(username)
-            link = generate_referral_link(code)
-            
-            code_data = {
-                "user_id": user_id,
-                "referral_code": code,
-                "referral_link": link,
-                "created_at": datetime.now(timezone.utc)
-            }
-            await db.referral_codes.insert_one(code_data)
-        
-        return {
-            "success": True,
-            "referral_tier": referral_tier,
-            "is_golden": is_golden,
-            "commission_rate": commission_rate * 100,  # Return as percentage
-            "referral_code": code_data.get("referral_code", "N/A"),
-            "referral_link": code_data.get("referral_link", "N/A"),
-            
-            # Summary stats
-            "total_earned": round(total_earned_gbp_equivalent, 2),
-            "total_commissions_count": len(commissions),
-            "referred_users_count": referred_users_count,
-            
-            # Earnings per coin
-            "earnings_by_currency": list(earnings_by_currency.values()),
-            
-            # Referred users list
-            "referred_users": referred_users_list,
-            
-            # Complete earnings history
-            "earnings_history": earnings_history
+        code_data = referral.model_dump()
+        logger.info(f"Created referral code for user {user_id}: {code}")
+    
+    # Get stats
+    stats = await db.referral_stats.find_one({"user_id": user_id})
+    if not stats:
+        # Create default stats if missing
+        stats_doc = ReferralStats(user_id=user_id)
+        await db.referral_stats.insert_one(stats_doc.model_dump())
+        stats = {"total_invited": 0, "total_signups": 0, "total_trades": 0, "active_referrals": 0}
+    
+    # Get earnings by currency
+    earnings = await db.referral_earnings.find({"user_id": user_id}).to_list(100)
+    earnings_list = [
+        {
+            "currency": e.get("currency", "N/A"),
+            "total_earned": e.get("total_earned", 0),
+            "pending": e.get("pending_earnings", 0),
+            "paid": e.get("paid_earnings", 0)
         }
+        for e in earnings
+    ]
+    
+    # Get recent commissions
+    commissions = await db.referral_commissions.find(
+        {"referrer_user_id": user_id}
+    ).sort("created_at", -1).limit(10).to_list(10)
+    
+    commissions_list = [
+        {
+            "commission_id": c["commission_id"],
+            "amount": c["commission_amount"],
+            "currency": c["currency"],
+            "transaction_type": c["transaction_type"],
+            "created_at": c["created_at"].isoformat() if isinstance(c["created_at"], datetime) else c["created_at"],
+            "status": c["status"]
+        }
+        for c in commissions
+    ]
+    
+    # Get list of referred users with qualification status
+    referred_users = await db.referral_relationships.find(
+        {"referrer_user_id": user_id}
+    ).to_list(100)
+    
+    referred_list = []
+    for ref in referred_users:
+        referred_user = await db.user_accounts.find_one(
+            {"user_id": ref["referred_user_id"]},
+            {"_id": 0, "full_name": 1, "email": 1}
+        )
+        referred_list.append({
+            "user_id": ref["referred_user_id"],
+            "name": referred_user.get("full_name", "Unknown") if referred_user else "Unknown",
+            "email": referred_user.get("email", "N/A") if referred_user else "N/A",
+            "registered_at": ref.get("signup_date", ref.get("created_at", "N/A")),
+            "bonus_qualified": ref.get("bonus_awarded", False),
+            "qualifying_top_up": ref.get("qualifying_top_up", 0)
+        })
+    
+    return {
+        "success": True,
+        "referral_code": code_data["referral_code"],
+        "referral_link": code_data["referral_link"],
         
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error getting referral dashboard: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        # Updated stats for new system
+        "total_referrals": stats.get("total_signups", 0),
+        "qualified_referrals": stats.get("qualified_referrals", 0),  # ≥£150 top-up
+        "total_referral_bonus_earned": stats.get("total_referral_bonus_earned", 0),  # £20 bonuses
+        "lifetime_commission_earned": stats.get("lifetime_commission_earned", 0),  # 20% commissions
+        "total_fees_generated_by_network": stats.get("total_fees_generated_by_network", 0),
+        "active_referrals": stats.get("active_referrals", 0),
+        
+        # Detailed lists
+        "referred_users": referred_list,
+        "recent_commissions": commissions_list,
+        "earnings_by_currency": earnings_list
+    }
 
 @api_router.get("/referral/commissions/{user_id}")
 async def get_user_referral_commissions(user_id: str):
@@ -15975,10 +14646,30 @@ async def get_session_data(
 
 @api_router.get("/auth/me")
 async def get_current_user_info(session_token: Optional[str] = Cookie(None), authorization: Optional[str] = None):
-    """Get current user from session token or Authorization header - for /auth/me endpoint"""
-    user = await get_current_user_from_session(session_token, authorization)
+    """Get current user from session token or Authorization header"""
+    token = session_token
+    if not token and authorization:
+        token = authorization.replace("Bearer ", "")
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Find session
+    session = await db.user_sessions.find_one({"session_token": token})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    # Check expiry
+    if datetime.now(timezone.utc) > session["expires_at"]:
+        raise HTTPException(status_code=401, detail="Session expired")
+    
+    # Get user
+    user = await db.users.find_one({"_id": session["user_id"]})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
     return {
-        "id": user.get("id", user.get("user_id")),
+        "id": user["id"],
         "email": user["email"],
         "name": user.get("name", user.get("full_name")),
         "picture": user.get("picture")
@@ -18216,26 +16907,15 @@ async def get_live_prices_endpoint():
         # Fetch raw price data which now includes 24h change
         all_prices = await fetch_live_prices()
         
-        # Build response with full market data
+        # Build response with full data
         result = {}
         for symbol, data in all_prices.items():
-            # Convert USD values to GBP for display (assuming 1 USD = 0.755 GBP approximately)
-            usd_to_gbp = data.get("gbp", 1) / data.get("usd", 1) if data.get("usd", 0) > 0 else 0.755
-            
             result[symbol] = {
                 "symbol": symbol,
                 "price_usd": data.get("usd", 0),
                 "price_gbp": data.get("gbp", 0),
                 "change_24h": data.get("usd_24h_change", 0),  # Use USD change as primary
                 "change_24h_gbp": data.get("gbp_24h_change", 0),
-                "high_24h": data.get("gbp_24h_high", 0),  # GBP high
-                "low_24h": data.get("gbp_24h_low", 0),   # GBP low
-                "volume_24h": data.get("gbp_24h_vol", 0), # GBP volume
-                "market_cap": data.get("market_cap", 0) * usd_to_gbp,  # Convert to GBP
-                "circulating_supply": data.get("circulating_supply", 0),
-                "ath": data.get("ath", 0) * usd_to_gbp,  # Convert to GBP
-                "atl": data.get("atl", 0) * usd_to_gbp,  # Convert to GBP
-                "sentiment": data.get("sentiment", {"type": "neutral", "percentage": 50}),
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
         
@@ -18245,9 +16925,6 @@ async def get_live_prices_endpoint():
             "source": "CoinGecko API",
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
-        
-        # LOG FULL RESPONSE
-        logger.info(f"🪙 RETURNING {len(result)} COINS FROM BACKEND: {list(result.keys())}")
         
         # Cache the response
         cache.set(cache_key, response_data, PRICE_CACHE_TTL)
@@ -18368,7 +17045,7 @@ async def assign_golden_tier(request: dict):
             "success": True,
             "data": {
                 "referral_code": user.get("referral_code", user_id[:8].upper()),
-                "referral_link": f"https://fund-release-1.preview.emergentagent.com/register?ref={user.get('referral_code', user_id[:8].upper())}",
+                "referral_link": f"https://protrading.preview.emergentagent.com/register?ref={user.get('referral_code', user_id[:8].upper())}",
                 "total_referrals": len(referred_users),
                 "active_referrals": len([u for u in referred_users if u.get("is_active", True)]),
                 "total_earnings": total_earnings,
@@ -19453,7 +18130,13 @@ async def get_fee_statistics():
 
 # Router will be included at the end of the file
 
-# Add response sanitizer (removes sensitive data from ALL responses)\napp.add_middleware(ResponseSanitizerMiddleware)\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_credentials=True,\n    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),\n    allow_methods=["*"],\n    allow_headers=["*"],\n)
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Add middleware to prevent ALL caching on API responses
 @app.middleware("http")
@@ -19550,75 +18233,20 @@ async def create_dispute(request: dict):
             }
         )
         
-        # 🚨 SEND IMMEDIATE ADMIN EMAIL NOTIFICATION
+        # 🚨 SEND IMMEDIATE ADMIN NOTIFICATIONS
         try:
-            from sendgrid import SendGridAPIClient
-            from sendgrid.helpers.mail import Mail
-            
-            admin_email = "info@coinhubx.net"
-            admin_url = "https://fund-release-1.preview.emergentagent.com/admin"
-            
-            message = Mail(
-                from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
-                to_emails=admin_email,
-                subject=f"🚨 NEW P2P DISPUTE - {dispute_id} - Action Required",
-                html_content=f"""
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #EF4444; border-bottom: 2px solid #EF4444; padding-bottom: 10px;">
-                        ⚠️ NEW P2P DISPUTE OPENED
-                    </h2>
-                    
-                    <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Dispute Details:</h3>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr><td style="padding: 8px 0;"><strong>Dispute ID:</strong></td><td>{dispute_id}</td></tr>
-                            <tr><td style="padding: 8px 0;"><strong>Trade ID:</strong></td><td>{trade_id}</td></tr>
-                            <tr><td style="padding: 8px 0;"><strong>Initiated By:</strong></td><td>{user_id}</td></tr>
-                            <tr><td style="padding: 8px 0;"><strong>Reason:</strong></td><td>{reason}</td></tr>
-                        </table>
-                    </div>
-                    
-                    <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;">
-                        <strong>Description:</strong>
-                        <p style="margin: 10px 0 0 0;">{description or 'No additional description provided'}</p>
-                    </div>
-                    
-                    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                        <h3 style="margin-top: 0;">Trade Information:</h3>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr><td style="padding: 8px 0;"><strong>Amount:</strong></td><td>{trade.get('crypto_amount', 0)} {trade.get('crypto_currency', 'N/A')}</td></tr>
-                            <tr><td style="padding: 8px 0;"><strong>Value:</strong></td><td>£{trade.get('fiat_amount', 0):.2f} {trade.get('fiat_currency', 'GBP')}</td></tr>
-                            <tr><td style="padding: 8px 0;"><strong>Buyer:</strong></td><td>{trade.get('buyer_id')}</td></tr>
-                            <tr><td style="padding: 8px 0;"><strong>Seller:</strong></td><td>{trade.get('seller_id')}</td></tr>
-                        </table>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 40px 0;">
-                        <a href="{admin_url}" style="background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);">
-                            🔧 RESOLVE DISPUTE NOW
-                        </a>
-                    </div>
-                    
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 14px; color: #666;">
-                        <p style="margin: 0;"><strong>Action Required:</strong></p>
-                        <ul style="margin: 10px 0 0 20px; padding: 0;">
-                            <li>Review evidence from both parties</li>
-                            <li>Make a fair decision</li>
-                            <li>Click "Release to Buyer" or "Return to Seller"</li>
-                        </ul>
-                    </div>
-                    
-                    <p style="font-size: 12px; color: #999; text-align: center; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 15px;">
-                        CoinHubX P2P Dispute System | Crypto is locked in escrow
-                    </p>
-                </div>
-                """
+            # 1. Send Email Alert to Admin
+            await email_service.send_dispute_alert_to_admin(
+                trade_id=trade_id,
+                dispute_id=dispute_id,
+                buyer_id=trade.get("buyer_id"),
+                seller_id=trade.get("seller_id"),
+                amount=trade.get("crypto_amount", 0),
+                currency=trade.get("crypto_currency", "Unknown"),
+                reason=reason,
+                description=description,
+                initiated_by=user_id
             )
-            
-            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-            response = sg.send(message)
-            print(f"✅ Dispute email sent to {admin_email}, status: {response.status_code}")
-            logger.info(f"Dispute email sent to {admin_email}, status: {response.status_code}")
             logger.info(f"✅ Admin email alert sent for dispute {dispute_id}")
         except Exception as e:
             logger.error(f"❌ Failed to send admin email for dispute {dispute_id}: {str(e)}")
@@ -19777,9 +18405,9 @@ async def upload_dispute_evidence(dispute_id: str, request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.get("/p2p/disputes/{dispute_id}")
-async def get_dispute_admin(dispute_id: str, user_id: str = Query(None)):
-    """Get dispute details for admin or involved users"""
+# DUPLICATE: @api_router.get("/p2p/disputes/{dispute_id}")
+# DUPLICATE: async def get_dispute(dispute_id: str, user_id: str = Query(None)):
+    """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
         dispute = await db.p2p_disputes.find_one({"dispute_id": dispute_id})
@@ -19793,25 +18421,20 @@ async def get_dispute_admin(dispute_id: str, user_id: str = Query(None)):
             del dispute["_id"]
         
         # Check authorization if user_id provided
-        if user_id and user_id not in [dispute.get("reported_by"), dispute.get("buyer_id"), dispute.get("seller_id")]:
+        if user_id and user_id not in [dispute.get("buyer_id"), dispute.get("seller_id")]:
             raise HTTPException(status_code=403, detail="Not authorized")
         
         # Get trade details
-        trade = await db.trades.find_one({"trade_id": dispute.get("trade_id")})
-        if not trade:
-            trade = await db.p2p_trades.find_one({"trade_id": dispute.get("trade_id")})
+        trade = await db.p2p_trades.find_one({"trade_id": dispute.get("trade_id")})
         if trade and "_id" in trade:
             del trade["_id"]
         
-        # Get user details from trades
-        buyer_id = trade.get("buyer_id") if trade else None
-        seller_id = trade.get("seller_id") if trade else None
-        
-        buyer = await db.user_accounts.find_one({"user_id": buyer_id}) if buyer_id else None
+        # Get user details
+        buyer = await db.users.find_one({"user_id": dispute.get("buyer_id")})
         if buyer and "_id" in buyer:
             del buyer["_id"]
         
-        seller = await db.user_accounts.find_one({"user_id": seller_id}) if seller_id else None
+        seller = await db.users.find_one({"user_id": dispute.get("seller_id")})
         if seller and "_id" in seller:
             del seller["_id"]
         
@@ -19819,14 +18442,10 @@ async def get_dispute_admin(dispute_id: str, user_id: str = Query(None)):
             "success": True,
             "dispute": {
                 **dispute,
-                "trade_id": dispute.get("trade_id"),
-                "buyer_id": buyer_id,
-                "seller_id": seller_id,
-                "messages": dispute.get("messages", [])
-            },
-            "trade": trade,
-            "buyer_info": buyer,
-            "seller_info": seller
+                "trade": trade,
+                "buyer_info": buyer,
+                "seller_info": seller
+            }
         }
     except HTTPException:
         raise
@@ -20270,35 +18889,10 @@ async def get_all_trade_chats(admin_token: str = Header(None), skip: int = 0, li
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.on_event("startup")
 async def startup_event():
-    """Initialize financial systems on startup"""
-    # Load referral config
+    """Load referral config from database on startup"""
     await load_referral_config_from_db(db)
-    print("✅ Referral configuration loaded from database")
-    
-    # Initialize financial engine
-    try:
-        from financial_engine import initialize_financial_engine
-        financial_engine = initialize_financial_engine(db)
-        print("✅ Financial Engine initialized")
-        
-        # Initialize PLATFORM_FEES wallets for all currencies
-        result = await financial_engine.initialize_platform_fees_wallet()
-        if result["success"]:
-            print(f"✅ PLATFORM_FEES wallet initialized for {result['currencies_initialized']} currencies")
-        else:
-            print(f"⚠️ PLATFORM_FEES wallet initialization warning: {result.get('error')}")
-    except Exception as e:
-        print(f"⚠️ Financial Engine initialization error: {str(e)}")
-    
-    # Initialize referral engine
-    try:
-        from referral_engine import initialize_referral_engine
-        initialize_referral_engine(db)
-        print("✅ Referral Engine initialized (already done globally)")
-    except Exception as e:
-        print(f"⚠️ Referral Engine initialization warning: {str(e)}")
+    print("Referral configuration loaded from database")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
@@ -20440,27 +19034,18 @@ try:
                 logger.warning(f"⚠️ Payment {payment_id} already credited to user {user_id}")
                 return {"status": "ok", "message": "already_credited"}
             
-            # Calculate deposit fee from centralized system
-            from centralized_fee_system import get_fee_manager
-            fee_manager = get_fee_manager(db)
-            deposit_fee_percent = await fee_manager.get_fee("deposit_fee_percent")
-            deposit_fee = actually_paid * (deposit_fee_percent / 100.0)
-            net_deposit = actually_paid - deposit_fee
-            
-            # Credit user via central wallet service (minus fee if any)
+            # Credit user via central wallet service
             try:
                 success = await wallet_service.credit(
                     user_id=user_id,
                     currency=currency,
-                    amount=net_deposit,
+                    amount=actually_paid,
                     transaction_type="deposit_nowpayments",
                     reference_id=payment_id,
                     metadata={
                         "order_id": order_id,
                         "payment_status": payment_status,
                         "network_confirmations": network_confirmations,
-                        "gross_amount": actually_paid,
-                        "fee_amount": deposit_fee,
                         "ipn_timestamp": datetime.now(timezone.utc).isoformat()
                     }
                 )
@@ -20471,73 +19056,27 @@ try:
                         {"payment_id": payment_id},
                         {"$set": {
                             "credited": True,
-                            "credited_at": datetime.now(timezone.utc).isoformat(),
-                            "gross_amount": actually_paid,
-                            "fee_amount": deposit_fee,
-                            "net_amount": net_deposit
+                            "credited_at": datetime.now(timezone.utc).isoformat()
                         }}
                     )
                     
-                    # If there's a deposit fee, process it with referral commission
-                    if deposit_fee > 0:
-                        from referral_engine import get_referral_engine
-                        referral_engine = get_referral_engine()
-                        commission_result = await referral_engine.process_referral_commission(
-                            user_id=user_id,
-                            fee_amount=deposit_fee,
-                            fee_type="DEPOSIT",
-                            currency=currency,
-                            related_transaction_id=payment_id,
-                            metadata={"order_id": order_id, "payment_status": payment_status}
-                        )
-                        
-                        if commission_result["success"]:
-                            referrer_commission = commission_result['commission_amount']
-                            admin_fee = deposit_fee - referrer_commission
-                            referrer_id = commission_result.get('referrer_id')
-                            logger.info(f"✅ Deposit referral commission: {referrer_commission} {currency}")
-                        else:
-                            referrer_commission = 0.0
-                            admin_fee = deposit_fee
-                            referrer_id = None
-                        
-                        # Credit PLATFORM_FEES with deposit fee
-                        await db.internal_balances.update_one(
-                            {"user_id": "PLATFORM_FEES", "currency": currency},
-                            {
-                                "$inc": {
-                                    "balance": deposit_fee,
-                                    "total_fees": deposit_fee,
-                                    "deposit_fees": deposit_fee,
-                                    "net_platform_revenue": admin_fee
-                                },
-                                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-                            },
-                            upsert=True
-                        )
-                    else:
-                        # No fee (currently 0%)
-                        referrer_commission = 0.0
-                        admin_fee = 0.0
-                        referrer_id = None
-                    
-                    # Log deposit to fee_transactions (tracked for analytics even if 0% fee)
+                    # Log deposit to fee_transactions (0% fee but tracked for analytics)
                     await db.fee_transactions.insert_one({
                         "user_id": user_id,
                         "transaction_type": "deposit",
                         "fee_type": "deposit_fee_percent",
                         "amount": actually_paid,
-                        "fee_amount": deposit_fee,
-                        "fee_percent": deposit_fee_percent,
-                        "admin_fee": admin_fee,
-                        "referrer_commission": referrer_commission,
-                        "referrer_id": referrer_id,
+                        "fee_amount": 0.0,
+                        "fee_percent": 0.0,
+                        "admin_fee": 0.0,
+                        "referrer_commission": 0.0,
+                        "referrer_id": None,
                         "currency": currency,
                         "reference_id": payment_id,
                         "timestamp": datetime.now(timezone.utc).isoformat()
                     })
                     
-                    logger.info(f"✅ User {user_id} credited {net_deposit} {currency} (Gross: {actually_paid}, Fee: {deposit_fee})")
+                    logger.info(f"✅ User {user_id} credited {actually_paid} {currency} via wallet service")
                     
                     # TODO: Send notification to user
                     # await create_notification(user_id, "deposit_confirmed", {...})
@@ -24060,7 +22599,6 @@ async def open_p2p_dispute(request: Request):
         if buyer and buyer.get("email"):
             email_html = p2p_dispute_opened_email(
                 trade_id=trade_id,
-                dispute_id=dispute_id,
                 crypto_amount=trade.get("crypto_amount", 0),
                 crypto=trade.get("crypto_currency", "BTC"),
                 role="Buyer"
@@ -24074,7 +22612,6 @@ async def open_p2p_dispute(request: Request):
         if seller and seller.get("email"):
             email_html = p2p_dispute_opened_email(
                 trade_id=trade_id,
-                dispute_id=dispute_id,
                 crypto_amount=trade.get("crypto_amount", 0),
                 crypto=trade.get("crypto_currency", "BTC"),
                 role="Seller"
@@ -24089,7 +22626,6 @@ async def open_p2p_dispute(request: Request):
         admins = await db.users.find({"role": "admin"}).to_list(length=10)
         admin_email_html = p2p_admin_dispute_alert(
             trade_id=trade_id,
-            dispute_id=dispute_id,
             crypto_amount=trade.get("crypto_amount", 0),
             crypto=trade.get("crypto_currency", "BTC"),
             buyer_id=trade["buyer_id"],
@@ -24838,7 +23374,7 @@ async def get_my_seller_link(request: Request):
             return {"success": False, "error": "User not found"}
         
         # Create seller link with current domain
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://fund-release-1.preview.emergentagent.com")
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://protrading.preview.emergentagent.com")
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         # Get username/email for display
@@ -25645,7 +24181,7 @@ async def instant_sell_to_admin(request: Dict):
         
         # Collect fee to admin
         await db.internal_balances.update_one(
-            {"user_id": "PLATFORM_FEES", "currency": "GBP"},
+            {"user_id": "ADMIN", "currency": "GBP"},
             {"$inc": {"instant_sell_fees": fee_gbp}},
             upsert=True
         )
@@ -26272,6 +24808,7 @@ async def get_complete_revenue(period: str = "all"):
         total = sum(breakdown.values())
         
         # Calculate period-specific totals
+        # now_iso = now.isoformat()  # Unused variable removed
         today_start = (now - timedelta(days=1)).isoformat()
         week_start = (now - timedelta(days=7)).isoformat()
         month_start = (now - timedelta(days=30)).isoformat()
@@ -26295,8 +24832,6 @@ async def get_complete_revenue(period: str = "all"):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api_router.get("/user/{user_id}/portfolio-history")
-async def get_user_portfolio_history(user_id: str):
     """
     CRITICAL: This endpoint MUST return the SAME total value as /api/wallets/portfolio
     Uses unified GBP pricing via fetch_live_prices()
@@ -26698,8 +25233,7 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
                 if isinstance(tx_timestamp, str):
                     try:
                         tx_date = datetime.fromisoformat(tx_timestamp.replace('Z', '+00:00'))
-                    except Exception as e:
-                        logger.warning(f"Failed to parse timestamp {tx_timestamp}: {e}")
+                    except:
                         tx_date = datetime.now(timezone.utc)
                 else:
                     tx_date = tx_timestamp
@@ -27015,7 +25549,6 @@ async def get_nowpayments_balances():
         total_nowpayments_gbp = 0
         total_user_funds_gbp = 0
         total_platform_liquidity_gbp = 0
-        total_gbp = 0  # Initialize total_gbp
         
         for balance in balances_data["balances"]:
             currency = balance["currency"]
@@ -27037,7 +25570,6 @@ async def get_nowpayments_balances():
             total_nowpayments_gbp += nowpayments_value_gbp
             total_user_funds_gbp += user_funds_gbp
             total_platform_liquidity_gbp += platform_liquidity_gbp
-            total_gbp += nowpayments_value_gbp
             
             enriched_balances.append({
                 "currency": currency,
@@ -27330,7 +25862,7 @@ async def get_user_referral_dashboard(user_id: str):
             )
         
         # Generate referral link
-        frontend_url = os.environ.get("FRONTEND_URL", "https://fund-release-1.preview.emergentagent.com")
+        frontend_url = os.environ.get("FRONTEND_URL", "https://protrading.preview.emergentagent.com")
         referral_link = f"{frontend_url}/register?ref={referral_code}"
         
         # Get all users referred by this user
@@ -28902,7 +27434,7 @@ async def republish_listing(listing_id: str, request: dict):
 # =============================================================================
 
 @api_router.get("/trading/ohlcv/{pair}")
-async def get_ohlcv_data_v2(pair: str, interval: str = "15m", limit: int = 100):
+async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
     """
     Get OHLCV (candlestick) data for a trading pair
     pair format: BTCGBP, ETHGBP, ADAUSDT, etc.
@@ -28968,313 +27500,9 @@ async def get_ohlcv_data_v2(pair: str, interval: str = "15m", limit: int = 100):
         logger.error(f"Error getting OHLCV data: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-@api_router.post("/users/payment-methods")
-async def add_user_payment_method_v2(request: dict):
-    """
-    Add payment method for P2P sellers (frontend compatibility endpoint)
-    This endpoint matches the format used by MerchantCenter and AddPaymentMethod pages
-    """
-    print("="*80)
-    print("💳 PAYMENT METHOD ENDPOINT CALLED")
-    print(f"Request data: {request}")
-    print("="*80)
-    
-    try:
-        user_id = request.get("user_id")
-        payment_method = request.get("payment_method", {})
-        
-        print(f"👤 User ID: {user_id}")
-        print(f"💳 Payment method: {payment_method}")
-        
-        if not user_id:
-            raise HTTPException(status_code=400, detail="user_id is required")
-        
-        # Create payment method record
-        method_id = str(uuid.uuid4())
-        method_type = payment_method.get("type", "bank_transfer")
-        
-        # Build display label based on type
-        if method_type == "bank_transfer":
-            label = f"{payment_method.get('bank_name', 'Bank')} - {payment_method.get('account_name', 'Account')}"
-        elif method_type in ["paypal", "wise", "revolut", "cashapp", "venmo", "zelle"]:
-            label = f"{method_type.title()} - {payment_method.get('email', 'Email')}"
-        elif method_type in ["alipay", "wechat", "paytm", "upi", "gcash", "maya", "m_pesa"]:
-            label = f"{method_type.upper()} - {payment_method.get('wallet_id', 'Wallet')}"
-        else:
-            label = f"{method_type.title()} Payment Method"
-        
-        method_data = {
-            "method_id": method_id,
-            "user_id": user_id,
-            "method_label": label,
-            "method_type": method_type,
-            "details": payment_method,
-            "is_primary": False,
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        
-        print(f"💾 About to insert: {method_data}")
-        print(f"Database: {db.name}")
-        print("Collection: payment_methods")
-        
-        # Insert into payment_methods collection
-        insert_result = await db.payment_methods.insert_one(method_data)
-        print(f"✅ INSERT SUCCESSFUL! ID: {insert_result.inserted_id}")
-        
-        # Also update user document
-        print(f"Updating user document for user_id: {user_id}")
-        update_result = await db.users.update_one(
-            {"user_id": user_id},
-            {"$set": {"has_payment_method": True}}
-        )
-        print(f"✅ USER UPDATE: matched={update_result.matched_count}, modified={update_result.modified_count}")
-        
-        print("🎉 PAYMENT METHOD SAVED SUCCESSFULLY!")
-        print("="*80)
-        
-        return {
-            "success": True, 
-            "method_id": method_id,
-            "message": "Payment method added successfully"
-        }
-    except Exception as e:
-        print(f"❌ EXCEPTION CAUGHT: {type(e).__name__}: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        print("="*80)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 # Include the API router in the main FastAPI app
 # This registers ALL endpoints defined above with the /api prefix
 app.include_router(api_router)
-
-
-# ==================== NEW CLEAN AUTHENTICATION SYSTEM ====================
-# These are the NEW, clean auth endpoints that follow the exact specifications
-# Use /api/auth/v2/* for the new system to avoid conflicts with legacy
-logger.info("🔐 Initializing new authentication system...")
-
-from auth_service import AuthService, AuthErrorCode
-
-# Helper to get client info
-def get_client_info(request: Request) -> tuple:
-    client_ip = request.client.host if request.client else "unknown"
-    user_agent = request.headers.get("user-agent", "unknown")
-    return client_ip, user_agent
-
-# Helper to convert auth errors to HTTP exceptions
-def handle_auth_error(error: ValueError) -> HTTPException:
-    error_msg = str(error)
-    error_map = {
-        AuthErrorCode.INVALID_OTP: (400, "Invalid OTP code"),
-        AuthErrorCode.USER_NOT_FOUND: (404, "User not found"),
-        AuthErrorCode.USER_NOT_VERIFIED: (403, "User not verified"),
-        AuthErrorCode.WRONG_PASSWORD: (401, "Invalid credentials"),
-        AuthErrorCode.OTP_EXPIRED: (400, "OTP code expired"),
-        AuthErrorCode.RATE_LIMIT_EXCEEDED: (429, "Too many attempts. Please try again in 1 hour."),
-        AuthErrorCode.ACCOUNT_DISABLED: (403, "Account disabled")
-    }
-    
-    for code, (http_status, message) in error_map.items():
-        if code in error_msg:
-            return HTTPException(
-                status_code=http_status,
-                detail={"error_code": code, "message": message}
-            )
-    
-    return HTTPException(
-        status_code=400,
-        detail={"error_code": "UNKNOWN_ERROR", "message": error_msg}
-    )
-
-# SIGNUP ENDPOINTS
-@app.post("/api/auth/v2/register")
-async def auth_v2_register(request: RegisterRequest, req: Request):
-    """NEW Clean registration endpoint"""
-    auth_service = AuthService(db)
-    client_ip, user_agent = get_client_info(req)
-    
-    try:
-        result = await auth_service.register_user(
-            email=request.email,
-            phone_number=request.phone_number,
-            password=request.password,
-            full_name=request.full_name,
-            referral_code=request.referral_code,
-            client_ip=client_ip,
-            user_agent=user_agent
-        )
-        
-        return {
-            "success": True,
-            "message": "Registration successful! Please verify your phone number.",
-            **result
-        }
-    
-    except ValueError as e:
-        if "Email already registered" in str(e):
-            raise HTTPException(
-                status_code=400,
-                detail={"error_code": "EMAIL_EXISTS", "message": "Email already registered"}
-            )
-        raise handle_auth_error(e)
-    except Exception as e:
-        logger.error(f"Registration error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@app.post("/api/auth/v2/verify-phone")
-async def auth_v2_verify_phone(request: dict, req: Request):
-    """NEW Clean phone verification endpoint"""
-    auth_service = AuthService(db)
-    
-    try:
-        result = await auth_service.verify_otp_and_activate(
-            email=request.get("email"),
-            otp_code=request.get("code")
-        )
-        return result
-    
-    except ValueError as e:
-        raise handle_auth_error(e)
-    except Exception as e:
-        logger.error(f"Phone verification error: {str(e)}\"")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-# LOGIN ENDPOINTS
-@app.post("/api/auth/v2/login")
-async def auth_v2_login(request: LoginRequest, req: Request):
-    """NEW Clean login endpoint"""
-    auth_service = AuthService(db)
-    client_ip, user_agent = get_client_info(req)
-    
-    try:
-        result = await auth_service.login_step1_credentials(
-            email=request.email,
-            password=request.password,
-            client_ip=client_ip,
-            user_agent=user_agent
-        )
-        
-        # If user requires verification (unverified status)
-        if result.get("requires_verification"):
-            return result
-        
-        # If 2FA is disabled, generate tokens immediately
-        if not result.get("requires_2fa"):
-            user = await db.user_accounts.find_one({"user_id": result["user_id"]})
-            access_token, refresh_token = auth_service._generate_jwt(
-                result["user_id"],
-                result["email"],
-                user.get("role", "user")
-            )
-            return {
-                "success": True,
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-                "user": {
-                    "user_id": result["user_id"],
-                    "email": result["email"],
-                    "full_name": user.get("full_name"),
-                    "role": user.get("role", "user")
-                }
-            }
-        
-        # 2FA required - return that info
-        return result
-    
-    except ValueError as e:
-        raise handle_auth_error(e)
-    except Exception as e:
-        logger.error(f"Login error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@app.post("/api/auth/v2/login/send-otp")
-async def auth_v2_login_send_otp(request: dict, req: Request):
-    """NEW Send OTP for 2FA"""
-    auth_service = AuthService(db)
-    
-    try:
-        result = await auth_service.login_step2_send_otp(request.get("user_id"))
-        return result
-    
-    except ValueError as e:
-        raise handle_auth_error(e)
-    except Exception as e:
-        logger.error(f"Send OTP error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@app.post("/api/auth/v2/login/verify-otp")
-async def auth_v2_login_verify_otp(request: dict, req: Request):
-    """NEW Verify OTP for login"""
-    auth_service = AuthService(db)
-    client_ip, user_agent = get_client_info(req)
-    
-    try:
-        result = await auth_service.login_step3_verify_otp(
-            user_id=request.get("user_id"),
-            otp_code=request.get("code"),
-            client_ip=client_ip,
-            user_agent=user_agent
-        )
-        return result
-    
-    except ValueError as e:
-        raise handle_auth_error(e)
-    except Exception as e:
-        logger.error(f"OTP verification error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-# ADMIN ENDPOINTS
-@app.post("/api/auth/v2/admin/reset-phone")
-async def auth_v2_admin_reset_phone(request: dict):
-    """Admin: Reset user's phone verification"""
-    auth_service = AuthService(db)
-    
-    try:
-        result = await auth_service.admin_reset_phone_verification(
-            request.get("user_id"),
-            request.get("admin_id")
-        )
-        return result
-    except Exception as e:
-        logger.error(f"Admin reset phone error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@app.post("/api/auth/v2/admin/toggle-2fa")
-async def auth_v2_admin_toggle_2fa(request: dict):
-    """Admin: Enable/disable 2FA"""
-    auth_service = AuthService(db)
-    
-    try:
-        result = await auth_service.admin_toggle_2fa(
-            request.get("user_id"),
-            request.get("enabled"),
-            request.get("admin_id")
-        )
-        return result
-    except Exception as e:
-        logger.error(f"Admin toggle 2FA error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@app.post("/api/auth/v2/admin/resend-sms")
-async def auth_v2_admin_resend_sms(request: dict):
-    """Admin: Resend verification SMS"""
-    auth_service = AuthService(db)
-    
-    try:
-        result = await auth_service.admin_resend_verification_sms(
-            request.get("user_id"),
-            request.get("admin_id")
-        )
-        return result
-    except Exception as e:
-        logger.error(f"Admin resend SMS error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-logger.info("✅ New authentication system endpoints registered at /api/auth/v2/*")
 
 
 # Test Mode and System Endpoints
@@ -29408,7 +27636,7 @@ async def change_password(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/user/2fa/status")
-async def get_2fa_status_v2(user_id: str):
+async def get_2fa_status(user_id: str):
     """Check if 2FA is enabled"""
     try:
         user = await db.user_accounts.find_one({"user_id": user_id})
@@ -29423,7 +27651,7 @@ async def get_2fa_status_v2(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/user/2fa/setup")
-async def setup_2fa_v2(request: dict):
+async def setup_2fa(request: dict):
     """Initialize 2FA setup - generate secret"""
     try:
         import pyotp
@@ -29505,7 +27733,7 @@ async def enable_2fa(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/user/2fa/disable")
-async def disable_2fa_v2(request: dict):
+async def disable_2fa(request: dict):
     """Disable 2FA with password and code verification"""
     try:
         import pyotp
@@ -29657,7 +27885,7 @@ async def add_payment_method(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/user/payment-methods/{method_id}")
-async def update_payment_method_v2(method_id: str, request: dict):
+async def update_payment_method(method_id: str, request: dict):
     """Update a payment method"""
     try:
         user_id = request.get("user_id")
@@ -29691,7 +27919,7 @@ async def update_payment_method_v2(method_id: str, request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/user/payment-methods/{method_id}")
-async def delete_payment_method_v2(method_id: str, user_id: str):
+async def delete_payment_method(method_id: str, user_id: str):
     """Delete a payment method"""
     try:
         # Check if used in active P2P offers
@@ -29718,7 +27946,7 @@ async def delete_payment_method_v2(method_id: str, user_id: str):
 
 
 @api_router.get("/trading/ohlcv/{pair}")
-async def get_ohlcv_data_v2(pair: str, interval: str = "15m", limit: int = 100):
+async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
     """
     Get OHLCV (candlestick) data for a trading pair
     pair format: BTCGBP, ETHGBP, ADAUSDT, etc.
@@ -29782,248 +28010,5 @@ async def get_ohlcv_data_v2(pair: str, interval: str = "15m", limit: int = 100):
         
     except Exception as e:
         logger.error(f"Error getting OHLCV data: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# Magic link for dispute access (no login required)
-@app.get("/api/admin/dispute-access")
-async def magic_link_dispute_access(token: str):
-    """
-    Magic link endpoint - allows direct access to dispute without login
-    Returns HTML page with dispute details and resolution buttons
-    """
-    try:
-        from fastapi.responses import HTMLResponse
-        
-        # Find the magic link token
-        magic_link = await db.magic_links.find_one({
-            'token': token,
-            'used': False
-        })
-        
-        if not magic_link:
-            return HTMLResponse(content="<h1>Invalid or expired link</h1>", status_code=404)
-        
-        # Check if expired
-        expires_at = datetime.fromisoformat(magic_link['expires_at'])
-        if datetime.utcnow() > expires_at:
-            return HTMLResponse(content="<h1>Link has expired</h1>", status_code=403)
-        
-        # Get dispute data
-        dispute_id = magic_link['dispute_id']
-        trade_id = magic_link['trade_id']
-        
-        dispute = await db.p2p_disputes.find_one({'dispute_id': dispute_id}, {'_id': 0})
-        trade = await db.p2p_trades.find_one({'trade_id': trade_id}, {'_id': 0})
-        
-        # Get chat messages
-        messages = await db.p2p_messages.find({'trade_id': trade_id}, {'_id': 0}).sort('timestamp', 1).to_list(100)
-        
-        # Build HTML response
-        messages_html = ""
-        for msg in messages:
-            role_color = "#00C6FF" if msg['sender_role'] == 'buyer' else "#7B2CFF"
-            messages_html += f"""
-            <div style="background: rgba(255,255,255,0.05); padding: 12px; margin: 10px 0; border-left: 3px solid {role_color}; border-radius: 5px;">
-                <strong style="color: {role_color};">{msg['sender_name']} ({msg['sender_role'].upper()})</strong>
-                <small style="color: #888; display: block;">{msg.get('timestamp', '')}</small>
-                <p style="margin: 8px 0 0 0;">{msg['message']}</p>
-            </div>
-            """
-        
-        html = f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dispute Resolution</title>
-    <style>
-        body {{ margin: 0; padding: 20px; background: #0a0e27; color: white; font-family: Arial, sans-serif; }}
-        .container {{ max-width: 900px; margin: 0 auto; }}
-        .header {{ background: linear-gradient(135deg, #FF6B6B, #DC2626); padding: 20px; border-radius: 10px; margin-bottom: 20px; }}
-        .card {{ background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; }}
-        .info {{ display: flex; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.05); margin: 5px 0; border-radius: 5px; }}
-        .chat {{ max-height: 400px; overflow-y: auto; }}
-        .btn {{ padding: 15px 30px; margin: 10px 5px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }}
-        .btn-primary {{ background: #00C6FF; color: white; }}
-        .btn-secondary {{ background: #7B2CFF; color: white; }}
-        .btn-danger {{ background: #FF3B30; color: white; }}
-        @media (max-width: 600px) {{ .btn {{ width: 100%; margin: 5px 0; }} }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1 style="margin: 0;">🚨 P2P Dispute Resolution</h1>
-            <p style="margin: 5px 0 0 0;">Dispute ID: {dispute_id}</p>
-        </div>
-        
-        <div class="card">
-            <h2>Trade Details</h2>
-            <div class="info"><span>Trade ID:</span><strong>{trade_id}</strong></div>
-            <div class="info"><span>Amount:</span><strong>{trade['crypto_amount']} BTC (£{trade['fiat_amount']})</strong></div>
-            <div class="info"><span>Buyer:</span><strong>{trade['buyer_name']} ({trade['buyer_email']})</strong></div>
-            <div class="info"><span>Seller:</span><strong>{trade['seller_name']} ({trade['seller_email']})</strong></div>
-            <div class="info"><span>Escrow:</span><strong style="color: #FFC107;">LOCKED</strong></div>
-            <div class="info"><span>Payment:</span><strong style="color: #00C6FF;">{trade['payment_status']}</strong></div>
-        </div>
-        
-        <div class="card">
-            <h2>Dispute Reason</h2>
-            <p style="color: #FF6B6B; background: rgba(255,107,107,0.1); padding: 15px; border-radius: 5px;">{dispute['reason']}</p>
-        </div>
-        
-        <div class="card">
-            <h2>💬 Chat History</h2>
-            <div class="chat">{messages_html}</div>
-        </div>
-        
-        <div class="card">
-            <h2>⚖️ Resolve Dispute</h2>
-            <p>Choose an action to resolve this dispute:</p>
-            <button class="btn btn-primary" onclick="resolve('release_to_buyer')">✅ Release to Buyer</button>
-            <button class="btn btn-secondary" onclick="resolve('return_to_seller')">↩️ Return to Seller</button>
-            <button class="btn btn-danger" onclick="resolve('cancel_trade')">❌ Cancel Trade</button>
-        </div>
-    </div>
-    
-    <script>
-        function resolve(action) {{
-            if (!confirm('Are you sure you want to ' + action.replace(/_/g, ' ') + '?')) return;
-            
-            fetch('/api/admin/dispute-access/resolve?token={token}&action=' + action, {{
-                method: 'POST',
-                headers: {{'Content-Type': 'application/json'}}
-            }})
-            .then(r => r.json())
-            .then(data => {{
-                alert('✅ Dispute resolved: ' + data.action);
-                location.reload();
-            }})
-            .catch(e => alert('Error: ' + e));
-        }}
-    </script>
-</body>
-</html>
-        """
-        
-        return HTMLResponse(content=html)
-        
-    except Exception as e:
-        logger.error(f"Magic link error: {str(e)}")
-        return HTMLResponse(content=f"<h1>Error: {str(e)}</h1>", status_code=500)
-
-# Resolve dispute via magic link
-@app.post("/api/admin/dispute-access/resolve")
-async def resolve_dispute_magic(token: str, action: str, resolution_note: str = ""):
-    """
-    Resolve dispute via magic link
-    action: 'release_to_buyer', 'return_to_seller', 'cancel_trade'
-    """
-    try:
-        # Verify token
-        magic_link = await db.magic_links.find_one({'token': token})
-        
-        if not magic_link:
-            raise HTTPException(status_code=404, detail="Invalid link")
-        
-        trade_id = magic_link['trade_id']
-        trade = await db.p2p_trades.find_one({'trade_id': trade_id})
-        
-        if action == 'release_to_buyer':
-            # Release crypto from escrow to buyer
-            crypto_amount = trade['crypto_amount']
-            
-            # Update wallets
-            await db.wallets.update_one(
-                {'user_id': trade['seller_id']},
-                {
-                    '$inc': {
-                        f"{trade['crypto_currency']}.balance": -crypto_amount,
-                        f"{trade['crypto_currency']}.locked": -crypto_amount
-                    }
-                }
-            )
-            
-            await db.wallets.update_one(
-                {'user_id': trade['buyer_id']},
-                {
-                    '$inc': {
-                        f"{trade['crypto_currency']}.balance": crypto_amount,
-                        f"{trade['crypto_currency']}.available": crypto_amount
-                    }
-                }
-            )
-            
-            # Update trade and dispute
-            await db.p2p_trades.update_one(
-                {'trade_id': trade_id},
-                {'$set': {'escrow_status': 'RELEASED', 'status': 'completed', 'completed_at': datetime.utcnow().isoformat()}}
-            )
-            
-            await db.p2p_disputes.update_one(
-                {'trade_id': trade_id},
-                {'$set': {'status': 'RESOLVED', 'resolution': 'released_to_buyer', 'resolved_at': datetime.utcnow().isoformat(), 'resolution_note': resolution_note}}
-            )
-            
-            return {"success": True, "action": "released_to_buyer", "amount": crypto_amount}
-        
-        elif action == 'return_to_seller':
-            # Return crypto to seller
-            crypto_amount = trade['crypto_amount']
-            
-            await db.wallets.update_one(
-                {'user_id': trade['seller_id']},
-                {
-                    '$inc': {
-                        f"{trade['crypto_currency']}.available": crypto_amount,
-                        f"{trade['crypto_currency']}.locked": -crypto_amount
-                    }
-                }
-            )
-            
-            await db.p2p_trades.update_one(
-                {'trade_id': trade_id},
-                {'$set': {'escrow_status': 'RETURNED', 'status': 'cancelled', 'cancelled_at': datetime.utcnow().isoformat()}}
-            )
-            
-            await db.p2p_disputes.update_one(
-                {'trade_id': trade_id},
-                {'$set': {'status': 'RESOLVED', 'resolution': 'returned_to_seller', 'resolved_at': datetime.utcnow().isoformat(), 'resolution_note': resolution_note}}
-            )
-            
-            return {"success": True, "action": "returned_to_seller", "amount": crypto_amount}
-        
-        elif action == 'cancel_trade':
-            # Cancel and return to seller
-            crypto_amount = trade['crypto_amount']
-            
-            await db.wallets.update_one(
-                {'user_id': trade['seller_id']},
-                {
-                    '$inc': {
-                        f"{trade['crypto_currency']}.available": crypto_amount,
-                        f"{trade['crypto_currency']}.locked": -crypto_amount
-                    }
-                }
-            )
-            
-            await db.p2p_trades.update_one(
-                {'trade_id': trade_id},
-                {'$set': {'escrow_status': 'CANCELLED', 'status': 'cancelled', 'cancelled_at': datetime.utcnow().isoformat()}}
-            )
-            
-            await db.p2p_disputes.update_one(
-                {'trade_id': trade_id},
-                {'$set': {'status': 'RESOLVED', 'resolution': 'trade_cancelled', 'resolved_at': datetime.utcnow().isoformat(), 'resolution_note': resolution_note}}
-            )
-            
-            return {"success": True, "action": "trade_cancelled"}
-        
-        else:
-            raise HTTPException(status_code=400, detail="Invalid action")
-            
-    except Exception as e:
-        logger.error(f"Dispute resolution error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 

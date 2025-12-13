@@ -92,16 +92,16 @@ export default function WithdrawalRequest() {
   const handleOTPVerified = async (otp) => {
     setSubmitting(true);
     try {
-      const response = await axios.post(`${API}/api/user/withdraw`, {
+      const response = await axios.post(`${API}/api/nowpayments/withdraw`, {
         user_id: user.user_id,
         currency: pendingWithdrawal.currency,
         amount: pendingWithdrawal.amount,
-        wallet_address: pendingWithdrawal.address,
+        address: pendingWithdrawal.address,
         otp_code: otp
       });
 
       if (response.data.success) {
-        toast.success('Withdrawal request submitted! Pending admin approval.');
+        toast.success('Withdrawal request submitted successfully!');
         setAmount('');
         setWithdrawalAddress('');
         setShowOTPModal(false);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { IoCard as CreditCard, IoGlobe as Globe, IoLockClosed as Lock, IoLogOut, IoMail, IoNotifications as Bell, IoPersonOutline as User, IoPhonePortrait as Smartphone, IoShield as Shield, IoTrendingUp, IoCheckmarkCircle } from 'react-icons/io5';
@@ -25,17 +25,10 @@ export default function Settings() {
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
 
-  // Prevent body scroll when modal is open and force cleanup
+  // Prevent body scroll when modal is open
   useEffect(() => {
     if (activeModal) {
       document.body.style.overflow = 'hidden';
-      // Remove any stale overlays
-      const staleOverlays = document.querySelectorAll('[data-modal-backdrop]');
-      staleOverlays.forEach(overlay => {
-        if (!overlay.querySelector('[data-active-modal]')) {
-          overlay.remove();
-        }
-      });
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -43,14 +36,6 @@ export default function Settings() {
       document.body.style.overflow = 'unset';
     };
   }, [activeModal]);
-  
-  // Force close modal handler
-  const closeModal = () => {
-    setActiveModal(null);
-    setTimeout(() => {
-      document.body.style.overflow = 'unset';
-    }, 100);
-  };
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -163,20 +148,14 @@ export default function Settings() {
           icon: User, 
           label: 'Profile', 
           description: 'Manage your personal information', 
-          action: () => {
-            console.log('Profile button clicked');
-            setActiveModal('profile');
-          },
+          action: () => setActiveModal('profile'),
           dataTestId: 'btn-profile-settings'
         },
         { 
           icon: Lock, 
           label: 'Security', 
           description: 'Password and security settings', 
-          action: () => {
-            console.log('Security button clicked');
-            setActiveModal('security');
-          },
+          action: () => setActiveModal('security'),
           dataTestId: 'btn-security-settings'
         },
         { 
@@ -717,31 +696,59 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Settings Modals - Simple conditional rendering */}
-      {activeModal === 'profile' && (
+      {/* Settings Modals - Rendered using Portal with proper cleanup */}
+      {activeModal === 'profile' && ReactDOM.createPortal(
         <ProfileSettings
           user={currentUser}
-          onClose={closeModal}
+          onClose={() => {
+            setActiveModal(null);
+          }}
           onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
-        />
+        />,
+        document.body
       )}
-      {activeModal === 'email' && (
-        <EmailSettings user={currentUser} onClose={closeModal} />
+      {activeModal === 'email' && ReactDOM.createPortal(
+        <EmailSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />,
+        document.body
       )}
-      {activeModal === 'security' && (
-        <SecuritySettings user={currentUser} onClose={closeModal} />
+      {activeModal === 'security' && ReactDOM.createPortal(
+        <SecuritySettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />,
+        document.body
       )}
-      {activeModal === '2fa' && (
-        <TwoFactorSettings user={currentUser} onClose={closeModal} onUpdate={(updatedUser) => setCurrentUser(updatedUser)} />
+      {activeModal === '2fa' && ReactDOM.createPortal(
+        <TwoFactorSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+          onUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+        />,
+        document.body
       )}
-      {activeModal === 'notifications' && (
-        <NotificationSettings user={currentUser} onClose={closeModal} />
+      {activeModal === 'notifications' && ReactDOM.createPortal(
+        <NotificationSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />,
+        document.body
       )}
-      {activeModal === 'language' && (
-        <LanguageSettings user={currentUser} onClose={closeModal} />
+      {activeModal === 'language' && ReactDOM.createPortal(
+        <LanguageSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />,
+        document.body
       )}
-      {activeModal === 'payment' && (
-        <PaymentMethodsManager user={currentUser} onClose={closeModal} />
+      {activeModal === 'payment' && ReactDOM.createPortal(
+        <PaymentMethodsManager
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />,
+        document.body
       )}
     </div>
   );
