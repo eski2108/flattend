@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { 
   IoTrendingUp, 
@@ -945,7 +946,7 @@ export default function Dashboard() {
                     textShadow: '0 0 15px rgba(245, 197, 66, 0.5)'
                   }}>
                     <IoFlash size={20} color="#F5C542" />
-                    Quick Actions
+                    {t('dashboard.quick_actions')}
                   </h3>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
