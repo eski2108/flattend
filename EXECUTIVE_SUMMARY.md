@@ -10,7 +10,7 @@
 **Quality Level:** ⭐⭐⭐⭐⭐ **ULTRA-PREMIUM**  
 **Spec Compliance:** **100%** (15/15 items completed)
 
-**Preview URL:** https://fund-release-1.preview.emergentagent.com/p2p
+**Preview URL:** https://crypto-wallet-ui-3.preview.emergentagent.com/p2p
 
 ---
 
@@ -138,7 +138,7 @@ The P2P Marketplace page has been upgraded from a basic interface to an **ultra-
 
 ### Environment:
 - **Type:** Preview (production-ready)
-- **URL:** https://fund-release-1.preview.emergentagent.com/p2p
+- **URL:** https://crypto-wallet-ui-3.preview.emergentagent.com/p2p
 - **Status:** LIVE
 - **Last Updated:** December 12, 2024
 
@@ -148,7 +148,7 @@ The P2P Marketplace page has been upgraded from a basic interface to an **ultra-
 
 ### Quick Test (5 minutes):
 
-1. **Navigate:** https://fund-release-1.preview.emergentagent.com/p2p
+1. **Navigate:** https://crypto-wallet-ui-3.preview.emergentagent.com/p2p
 
 2. **Observe:**
    - ✅ Animated background glow
@@ -258,7 +258,7 @@ The P2P Marketplace page has been upgraded from a basic interface to an **ultra-
 > - Fully responsive mobile design
 > - Production-ready quality
 >
-> **Preview URL:** https://fund-release-1.preview.emergentagent.com/p2p
+> **Preview URL:** https://crypto-wallet-ui-3.preview.emergentagent.com/p2p
 >
 > Please review and provide feedback. Ready for production deployment pending final sign-off."
 
@@ -278,7 +278,7 @@ The P2P Marketplace page has been upgraded from a basic interface to an **ultra-
 > - Mobile-optimized
 > - Ready for production
 >
-> **Preview:** https://fund-release-1.preview.emergentagent.com/p2p"
+> **Preview:** https://crypto-wallet-ui-3.preview.emergentagent.com/p2p"
 
 ---
 

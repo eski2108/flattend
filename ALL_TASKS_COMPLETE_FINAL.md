@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://fund-release-1.preview.emergentagent.com
+**URL:** https://crypto-wallet-ui-3.preview.emergentagent.com
 
 **Services Status:**
 ```bash

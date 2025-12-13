@@ -9,7 +9,7 @@ Addresses specific issues found in comprehensive testing:
 4. Admin Dashboard System - Check correct endpoints
 5. Trader Balance System - Fix add-funds endpoint parameters
 
-**Backend URL:** https://fund-release-1.preview.emergentagent.com/api
+**Backend URL:** https://crypto-wallet-ui-3.preview.emergentagent.com/api
 """
 
 import requests
@@ -19,7 +19,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://fund-release-1.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USERS = {

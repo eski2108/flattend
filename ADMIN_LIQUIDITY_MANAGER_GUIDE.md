@@ -2,7 +2,7 @@
 
 ## Access the Page
 
-**URL:** `https://fund-release-1.preview.emergentagent.com/admin/liquidity-manager`
+**URL:** `https://crypto-wallet-ui-3.preview.emergentagent.com/admin/liquidity-manager`
 
 ---
 
@@ -154,7 +154,7 @@ Updates a specific currency's balance:
 
 ### "Failed to load liquidity data"
 - Check backend is running: `sudo supervisorctl status backend`
-- Check API endpoint: `curl https://fund-release-1.preview.emergentagent.com/api/admin/liquidity-all`
+- Check API endpoint: `curl https://crypto-wallet-ui-3.preview.emergentagent.com/api/admin/liquidity-all`
 - Restart backend if needed: `sudo supervisorctl restart backend`
 
 ### Update button is disabled

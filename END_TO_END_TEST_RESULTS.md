@@ -63,7 +63,7 @@
 
 ### **Dispute Link:**
 ```
-https://fund-release-1.preview.emergentagent.com/admin/disputes/dispute_40e60813ad5e
+https://crypto-wallet-ui-3.preview.emergentagent.com/admin/disputes/dispute_40e60813ad5e
 ```
 
 **Expected Behavior:**
@@ -125,21 +125,21 @@ https://fund-release-1.preview.emergentagent.com/admin/disputes/dispute_40e60813
 
 ### **1. Check Trader Stats (Buyer):**
 ```bash
-curl "https://fund-release-1.preview.emergentagent.com/api/trader/stats/test_buyer_d07e8c39" | python3 -m json.tool
+curl "https://crypto-wallet-ui-3.preview.emergentagent.com/api/trader/stats/test_buyer_d07e8c39" | python3 -m json.tool
 ```
 
 **Expected:** `"thirty_day_trades": 1` (or more if other test trades exist)
 
 ### **2. Check Trader Stats (Seller):**
 ```bash
-curl "https://fund-release-1.preview.emergentagent.com/api/trader/stats/test_seller_1d9a79d9" | python3 -m json.tool
+curl "https://crypto-wallet-ui-3.preview.emergentagent.com/api/trader/stats/test_seller_1d9a79d9" | python3 -m json.tool
 ```
 
 **Expected:** `"thirty_day_trades": 1`, `"avg_release_time_minutes": 0.03`
 
 ### **3. Dispute Page (CLICK THIS LINK IN EMAIL):**
 ```
-https://fund-release-1.preview.emergentagent.com/admin/disputes/dispute_40e60813ad5e
+https://crypto-wallet-ui-3.preview.emergentagent.com/admin/disputes/dispute_40e60813ad5e
 ```
 
 **Expected:**
@@ -278,7 +278,7 @@ curl "http://localhost:8001/api/trader/stats/test_seller_1d9a79d9"
 
 **To:** `info@coinhubx.net`  
 **Time:** 2025-12-12 15:14 UTC  
-**Dispute Link:** `https://fund-release-1.preview.emergentagent.com/admin/disputes/dispute_40e60813ad5e`
+**Dispute Link:** `https://crypto-wallet-ui-3.preview.emergentagent.com/admin/disputes/dispute_40e60813ad5e`
 
 **Please check your inbox and click the link to verify the end-to-end flow.**
 

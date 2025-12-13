@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://fund-release-1.preview.emergentagent.com
-P2P Page:     https://fund-release-1.preview.emergentagent.com/p2p
-Backend API:  https://fund-release-1.preview.emergentagent.com/api
+Frontend:     https://crypto-wallet-ui-3.preview.emergentagent.com
+P2P Page:     https://crypto-wallet-ui-3.preview.emergentagent.com/p2p
+Backend API:  https://crypto-wallet-ui-3.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

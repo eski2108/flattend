@@ -11,7 +11,7 @@ from datetime import datetime
 import uuid
 
 # Configuration
-BASE_URL = "https://fund-release-1.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
 TEST_USER_EMAIL = "gads21083@gmail.com"
 TEST_USER_PASSWORD = "123456789"
 

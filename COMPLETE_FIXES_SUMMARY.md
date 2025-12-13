@@ -63,7 +63,7 @@
 - Admin Code: `CRYPTOLEND_ADMIN_2025`
 
 **Access URL:**
-- https://fund-release-1.preview.emergentagent.com/admin/earnings
+- https://crypto-wallet-ui-3.preview.emergentagent.com/admin/earnings
 
 ---
 
@@ -162,14 +162,14 @@
 ### Step-by-Step Guide:
 
 1. **Login to Admin Panel:**
-   - Go to: https://fund-release-1.preview.emergentagent.com/admin/login
+   - Go to: https://crypto-wallet-ui-3.preview.emergentagent.com/admin/login
    - Email: `info@coinhubx.net`
    - Password: `Admin123!`
    - Admin Code: `CRYPTOLEND_ADMIN_2025`
 
 2. **Navigate to Earnings:**
    - Click "Admin" → "Earnings" in sidebar
-   - Or go to: https://fund-release-1.preview.emergentagent.com/admin/earnings
+   - Or go to: https://crypto-wallet-ui-3.preview.emergentagent.com/admin/earnings
 
 3. **Set Your Personal Wallet Addresses:**
    - Scroll to "Earnings by Currency" section

@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://fund-release-1.preview.emergentagent.com
+**Preview URL:** https://crypto-wallet-ui-3.preview.emergentagent.com

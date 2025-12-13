@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://fund-release-1.preview.emergentagent.com/api
-- **Frontend App**: https://fund-release-1.preview.emergentagent.com
+- **Backend API**: https://crypto-wallet-ui-3.preview.emergentagent.com/api
+- **Frontend App**: https://crypto-wallet-ui-3.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:
