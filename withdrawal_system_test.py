@@ -533,49 +533,22 @@ class WithdrawalSystemTester:
             print("   No user_id available for funding")
             return False
         
-        # Try admin manual deposit endpoint
+        # Use the crypto-bank deposit endpoint (simulated deposit)
         funding_data = {
             "user_id": self.user_id,
             "currency": "BTC",
-            "amount": 0.01,  # Fund with 0.01 BTC
-            "admin_notes": "Test funding for withdrawal testing"
+            "amount": 0.01  # Fund with 0.01 BTC
         }
         
-        # Try different funding endpoints
-        endpoints_to_try = [
-            "/admin/manual-deposit",
-            "/admin/fund-user",
-            "/admin/add-balance",
-            "/user/deposit"
-        ]
+        print(f"   Funding user {self.user_id} with 0.01 BTC via /crypto-bank/deposit")
+        response = self.make_request("POST", "/crypto-bank/deposit", funding_data, token=self.user_token)
         
-        for endpoint in endpoints_to_try:
-            print(f"   Trying {endpoint}")
-            response = self.make_request("POST", endpoint, funding_data, token=self.admin_token or self.user_token)
-            
-            if response["success"]:
-                print(f"   Successfully funded user via {endpoint}")
-                return True
-            else:
-                print(f"   Failed {endpoint}: {response['status_code']} - {response['data']}")
-        
-        # If admin endpoints fail, try creating balance record directly
-        print("   Trying to create balance record directly")
-        balance_data = {
-            "user_id": self.user_id,
-            "currency": "BTC",
-            "balance": 0.01,
-            "locked_balance": 0.0
-        }
-        
-        response = self.make_request("POST", "/admin/create-balance", balance_data, token=self.admin_token)
         if response["success"]:
-            print("   Successfully created balance record")
+            print("   Successfully funded user with BTC")
             return True
         else:
-            print(f"   Failed to create balance: {response['status_code']} - {response['data']}")
-        
-        return False
+            print(f"   Failed to fund user: {response['status_code']} - {response['data']}")
+            return False
 
     def run_comprehensive_test(self):
         """Run the complete withdrawal system test"""
