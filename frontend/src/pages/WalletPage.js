@@ -327,21 +327,22 @@ export default function WalletPage() {
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           marginBottom: '16px'
         }}>
-          {['Crypto', 'NFTs', 'DeFi'].map((tab, idx) => (
+          {['Crypto', 'Activity', 'Portfolio'].map((tab) => (
             <button
               key={tab}
-              onClick={() => idx === 1 ? navigate('/nfts') : idx === 2 ? navigate('/defi') : null}
+              onClick={() => setActiveTab(tab)}
               style={{
                 flex: 1,
                 padding: '12px 0',
                 background: 'none',
                 border: 'none',
-                borderBottom: idx === 0 ? '1px solid #0047D9' : '1px solid transparent',
-                color: idx === 0 ? '#FFFFFF' : '#6B7A99',
+                borderBottom: activeTab === tab ? '1px solid #0047D9' : '1px solid transparent',
+                color: activeTab === tab ? '#FFFFFF' : '#6B7A99',
                 fontSize: '14px',
                 fontWeight: '500',
                 cursor: 'pointer',
-                transition: 'color 0.2s'
+                transition: 'color 0.2s',
+                opacity: activeTab === tab ? 1 : 0.7
               }}
             >
               {tab}
