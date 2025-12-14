@@ -428,6 +428,7 @@ export default function WalletPage() {
               return (
                 <div
                   key={asset.currency}
+                  onClick={() => navigate(`/asset/${asset.currency.toLowerCase()}`)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -439,8 +440,11 @@ export default function WalletPage() {
                     borderLeft: `2px solid ${hasBalance ? 'rgba(0, 229, 255, 0.8)' : 'rgba(0, 229, 255, 0.4)'}`,
                     transition: 'all 0.2s ease',
                     gap: '16px',
-                    flexWrap: 'wrap'
+                    flexWrap: 'wrap',
+                    cursor: 'pointer'
                   }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
                   {/* COIN ICON + NAME */}
                   <div style={{
