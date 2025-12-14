@@ -274,94 +274,80 @@ export default function WalletPage() {
           </div>
         </div>
 
-        {/* ACTION BUTTONS ROW - Coinbase Style */}
+        {/* ACTION BUTTONS ROW - CIRCULAR ICONS LIKE COINBASE */}
         <div style={{
           display: 'flex',
-          gap: '12px',
+          gap: '16px',
           marginBottom: '24px',
-          overflowX: 'auto'
+          padding: '0 20px',
+          justifyContent: 'space-around'
         }}>
-          <button
-            onClick={() => navigate('/buy')}
-            style={{
-              flex: 1,
-              padding: '14px 20px',
-              background: '#00E5FF',
-              border: 'none',
-              borderRadius: '12px',
-              color: '#001018',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Buy
-          </button>
-          <button
-            onClick={() => navigate('/swap')}
-            style={{
-              flex: 1,
-              padding: '14px 20px',
-              background: 'transparent',
-              border: '1.5px solid #00E5FF',
-              borderRadius: '12px',
-              color: '#00E5FF',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Swap
-          </button>
-          <button
-            onClick={() => navigate('/send')}
-            style={{
-              flex: 1,
-              padding: '14px 20px',
-              background: 'transparent',
-              border: '1.5px solid #F5C542',
-              borderRadius: '12px',
-              color: '#F5C542',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Send
-          </button>
-          <button
-            onClick={() => navigate('/receive')}
-            style={{
-              flex: 1,
-              padding: '14px 20px',
-              background: 'transparent',
-              border: '1.5px solid #F5C542',
-              borderRadius: '12px',
-              color: '#F5C542',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            Receive
-          </button>
+          {[
+            { label: 'Buy', route: '/buy', icon: '+' },
+            { label: 'Swap', route: '/swap', icon: '⇄' },
+            { label: 'Bridge', route: '/bridge', icon: '⟷' },
+            { label: 'Send', route: '/send', icon: '↑' },
+            { label: 'Receive', route: '/receive', icon: '↓' }
+          ].map((btn) => (
+            <button
+              key={btn.label}
+              onClick={() => navigate(btn.route)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0
+              }}
+            >
+              <div style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: '#0052FF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '24px',
+                color: '#fff',
+                fontWeight: '700'
+              }}>
+                {btn.icon}
+              </div>
+              <div style={{ fontSize: '13px', color: '#8FA3C8', fontWeight: '500' }}>{btn.label}</div>
+            </button>
+          ))}
         </div>
 
-        {/* MINI STATS BAR */}
-        <MiniStatsBar
-          assetsWithBalance={assetsWithBalance}
-          totalValue={totalValue}
-          portfolioChange24h={portfolioChange24h}
-          priceData={priceData}
-        />
+        {/* TABS - CRYPTO / NFTS / DEFI */}
+        <div style={{
+          display: 'flex',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          marginBottom: '24px'
+        }}>
+          {['Crypto', 'NFTs', 'DeFi'].map((tab, idx) => (
+            <button
+              key={tab}
+              style={{
+                flex: 1,
+                padding: '16px 0',
+                background: 'none',
+                border: 'none',
+                borderBottom: idx === 0 ? '2px solid #0052FF' : '2px solid transparent',
+                color: idx === 0 ? '#FFFFFF' : '#8FA3C8',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
         {/* SEARCH BAR */}
         <div style={{
