@@ -160,7 +160,16 @@ export default function ReceivePage() {
         </div>
       </div>
 
-      <div style={{ padding: '24px 20px', maxWidth: '500px', margin: '0 auto' }}>
+      {/* Main Content with relative positioning for glows */}
+      <div style={{ padding: '24px 20px', maxWidth: '500px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          33% { transform: translateY(-30px) translateX(20px); }
+          66% { transform: translateY(-10px) translateX(-20px); }
+        }
+      `}</style>
         {/* Coin Selector */}
         <div style={{ marginBottom: '24px' }}>
           <label style={{ display: 'block', fontSize: '14px', color: '#8FA3C8', marginBottom: '8px', fontWeight: '500' }}>
