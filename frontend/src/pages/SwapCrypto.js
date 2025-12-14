@@ -584,11 +584,24 @@ function SwapCrypto() {
                             fontSize: isMobile ? '16px' : '18px',
                             fontWeight: '700',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            appearance: 'none',
+                            WebkitAppearance: 'none'
                           }}
                         >
                           {cryptos.map(crypto => (
-                            <option key={crypto.code} value={crypto.code}>{crypto.code}</option>
+                            <option 
+                              key={crypto.code} 
+                              value={crypto.code}
+                              style={{
+                                background: '#1A1F2E',
+                                color: '#FFFFFF',
+                                padding: '12px',
+                                fontSize: '16px'
+                              }}
+                            >
+                              {crypto.code} - {crypto.name}
+                            </option>
                           ))}
                         </select>
                       </div>
