@@ -206,9 +206,8 @@ export default function Dashboard() {
 
   return (
     <div style={{
-      minHeight: '100vh',
       background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
-      paddingBottom: '60px'
+      paddingBottom: isMobile ? '16px' : '24px'
     }}>
         <div style={{ padding: isMobile ? '16px' : '24px' }}>
           <div style={{ maxWidth: '1800px', margin: '0 auto' }}>
