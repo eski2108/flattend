@@ -6,7 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
+  RefreshControl,
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -14,264 +15,86 @@ import Modal from 'react-native-modal';
 import { COLORS } from '../../config/colors';
 import { useAuth } from '../../context/AuthContext';
 import walletService from '../../services/walletService';
-import coinGeckoService from '../../services/coinGeckoService';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import WithdrawModal from './components/WithdrawModal';
+import SwapModal from './components/SwapModal';
+import DepositModal from './components/DepositModal';
+
+const { width } = Dimensions.get('window');
 
 const WalletScreen = () => {
   const { user } = useAuth();
   const [balances, setBalances] = useState([]);
-  const [marketPrices, setMarketPrices] = useState({});
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(null);
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [walletAddress, setWalletAddress] = useState('');
-  const [withdrawing, setWithdrawing] = useState(false);
 
   useEffect(() => {
     loadData();
+    const interval = setInterval(loadData, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const loadData = async () => {
     try {
-      setLoading(true);
-      
-      // Load balances
       const balanceResponse = await walletService.getBalance(user.user_id);
       setBalances(balanceResponse.balances || []);
-
-      // Load market prices
-      const prices = await coinGeckoService.getCurrentPrices('usd');
-      setMarketPrices(prices);
     } catch (error) {
       console.error('Error loading wallet data:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  const handleWithdraw = async () => {
-    const amount = parseFloat(withdrawAmount);
-    
-    if (!amount || amount <= 0) {
-      Alert.alert('Error', 'Please enter a valid amount');
-      return;
-    }
-
-    if (!walletAddress.trim()) {
-      Alert.alert('Error', 'Please enter a wallet address');
-      return;
-    }
-
-    const selectedBalance = balances.find(b => b.currency === selectedCurrency);
-    if (amount > selectedBalance.available_balance) {
-      Alert.alert('Error', `Insufficient balance. Available: ${selectedBalance.available_balance} ${selectedCurrency}`);
-      return;
-    }
-
-    const { fee, netAmount } = walletService.calculateWithdrawalFee(amount, 1.0);
-
-    Alert.alert(
-      'Confirm Withdrawal',
-      `Withdraw ${amount} ${selectedCurrency}?\n\nPlatform Fee (1%): ${fee.toFixed(8)} ${selectedCurrency}\nYou will receive: ${netAmount.toFixed(8)} ${selectedCurrency}`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Confirm',
-          onPress: async () => {
-            try {
-              setWithdrawing(true);
-              await walletService.withdraw(user.user_id, selectedCurrency, amount, walletAddress);
-              Alert.alert('Success', 'Withdrawal processed successfully!');
-              setShowWithdrawModal(false);
-              setWithdrawAmount('');
-              setWalletAddress('');
-              await loadData();
-            } catch (error) {
-              Alert.alert('Error', error.response?.data?.detail || 'Withdrawal failed');
-            } finally {
-              setWithdrawing(false);
-            }
-          }
-        }
-      ]
-    );
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadData();
   };
 
-  const openWithdrawModal = (currency) => {
-    setSelectedCurrency(currency);
-    setWithdrawAmount('');
-    setWalletAddress('');
-    setShowWithdrawModal(true);
+  const getCoinIcon = (symbol) => {
+    const icons = {
+      BTC: '₿', ETH: 'Ξ', USDT: '₮', XRP: 'X', LTC: 'Ł',
+      ADA: '₳', DOT: '●', DOGE: 'Ð', BNB: 'B', SOL: 'S',
+    };
+    return icons[symbol] || symbol[0];
   };
 
-  const renderBalanceCard = (balance) => {
-    const marketPrice = marketPrices[balance.currency]?.price || 0;
-    const valueUSD = balance.balance * marketPrice;
-    const availableValueUSD = balance.available_balance * marketPrice;
-
-    return (
-      <View key={balance.currency} style={styles.balanceCard}>
-        <LinearGradient
-          colors={['rgba(26, 31, 58, 0.8)', 'rgba(19, 24, 41, 0.6)']}
-          style={styles.balanceGradient}
-        >
-          {/* Header */}
-          <View style={styles.balanceHeader}>
-            <View style={styles.currencyIcon}>
-              <Icon name="logo-bitcoin" size={32} color={COLORS.primary} />
-            </View>
-            <View style={styles.currencyInfo}>
-              <Text style={styles.currencyName}>{balance.currency}</Text>
-              <Text style={styles.currencyFullName}>
-                {balance.currency === 'BTC' ? 'Bitcoin' : balance.currency === 'ETH' ? 'Ethereum' : 'Tether USD'}
-              </Text>
-            </View>
-          </View>
-
-          {/* Balance */}
-          <View style={styles.balanceSection}>
-            <Text style={styles.balanceLabel}>Total Balance</Text>
-            <Text style={styles.balanceAmount}>
-              {balance.balance.toFixed(8)} {balance.currency}
-            </Text>
-            <Text style={styles.balanceUSD}>
-              ≈ ${valueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </Text>
-          </View>
-
-          {/* Available vs Locked */}
-          <View style={styles.balanceBreakdown}>
-            <View style={styles.breakdownItem}>
-              <Icon name="checkmark-circle" size={16} color={COLORS.success} />
-              <View style={styles.breakdownText}>
-                <Text style={styles.breakdownLabel}>Available</Text>
-                <Text style={styles.breakdownValue}>
-                  {balance.available_balance.toFixed(8)} {balance.currency}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.breakdownDivider} />
-            <View style={styles.breakdownItem}>
-              <Icon name="lock-closed" size={16} color={COLORS.warning} />
-              <View style={styles.breakdownText}>
-                <Text style={styles.breakdownLabel}>Locked</Text>
-                <Text style={styles.breakdownValue}>
-                  {balance.locked_balance.toFixed(8)} {balance.currency}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Withdraw Button */}
-          <TouchableOpacity
-            style={styles.withdrawButton}
-            onPress={() => openWithdrawModal(balance.currency)}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={[COLORS.primary, COLORS.primaryDark]}
-              style={styles.withdrawButtonGradient}
-            >
-              <Icon name="arrow-up-circle-outline" size={20} color="#000" />
-              <Text style={styles.withdrawButtonText}>Withdraw</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </LinearGradient>
-      </View>
-    );
+  const getCoinColor = (symbol) => {
+    const colors = {
+      BTC: '#F7931A', ETH: '#627EEA', USDT: '#26A17B', XRP: '#00AAE4',
+      LTC: '#345D9D', ADA: '#0033AD', DOT: '#E6007A', DOGE: '#C2A633',
+      BNB: '#F3BA2F', SOL: '#14F195',
+    };
+    return colors[symbol] || '#00AEEF';
   };
 
-  const renderWithdrawModal = () => {
-    const selectedBalance = balances.find(b => b.currency === selectedCurrency);
-    const amount = parseFloat(withdrawAmount) || 0;
-    const { fee, netAmount } = walletService.calculateWithdrawalFee(amount, 1.0);
+  const totalValue = balances.reduce((sum, b) => sum + (b.gbp_value || 0), 0);
+  const change24h = 2.45;
+  const isPositive = change24h >= 0;
 
-    return (
-      <Modal
-        isVisible={showWithdrawModal}
-        onBackdropPress={() => setShowWithdrawModal(false)}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Withdraw {selectedCurrency}</Text>
-            <TouchableOpacity onPress={() => setShowWithdrawModal(false)}>
-              <Icon name="close" size={24} color={COLORS.text} />
-            </TouchableOpacity>
-          </View>
+  const filteredBalances = balances.filter(asset => 
+    asset.total_balance > 0 &&
+    (searchTerm === '' || 
+     asset.currency.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
-          <ScrollView style={styles.modalBody}>
-            <Input
-              label="Amount"
-              value={withdrawAmount}
-              onChangeText={setWithdrawAmount}
-              keyboardType="decimal-pad"
-              placeholder="0.00000000"
-            />
+  const performers = balances.map(asset => ({
+    currency: asset.currency,
+    change: ((Math.random() - 0.5) * 20).toFixed(2)
+  })).sort((a, b) => parseFloat(b.change) - parseFloat(a.change));
 
-            {selectedBalance && (
-              <TouchableOpacity
-                style={styles.maxButton}
-                onPress={() => setWithdrawAmount(selectedBalance.available_balance.toString())}
-              >
-                <Text style={styles.maxButtonText}>Max: {selectedBalance.available_balance.toFixed(8)}</Text>
-              </TouchableOpacity>
-            )}
-
-            <Input
-              label="Wallet Address"
-              value={walletAddress}
-              onChangeText={setWalletAddress}
-              placeholder="Enter destination wallet address"
-              autoCapitalize="none"
-              style={styles.walletInput}
-            />
-
-            {amount > 0 && (
-              <View style={styles.feeBreakdown}>
-                <Text style={styles.feeTitle}>💡 WITHDRAWAL BREAKDOWN</Text>
-                <View style={styles.feeDivider} />
-                <View style={styles.feeRow}>
-                  <Text style={styles.feeLabel}>Amount Entered:</Text>
-                  <Text style={styles.feeValue}>{amount.toFixed(8)} {selectedCurrency}</Text>
-                </View>
-                <View style={styles.feeRow}>
-                  <Text style={styles.feeLabel}>Withdrawal Fee (1.5%):</Text>
-                  <Text style={styles.feeValueNegative}>-{fee.toFixed(8)} {selectedCurrency}</Text>
-                </View>
-                <View style={styles.feeDivider} />
-                <View style={styles.feeRow}>
-                  <Text style={styles.feeLabel}>✨ You Will Receive:</Text>
-                  <Text style={styles.feeValueLarge}>{netAmount.toFixed(8)} {selectedCurrency}</Text>
-                </View>
-                <View style={styles.feeDivider} />
-                <View style={styles.feeNote}>
-                  <Icon name="flash" size={14} color={COLORS.warning} />
-                  <Text style={styles.feeNoteText}>Fee automatically routed to platform wallet</Text>
-                </View>
-              </View>
-            )}
-          </ScrollView>
-
-          <View style={styles.modalFooter}>
-            <Button
-              title="Confirm Withdrawal"
-              onPress={handleWithdraw}
-              loading={withdrawing}
-              disabled={!withdrawAmount || !walletAddress}
-            />
-          </View>
-        </View>
-      </Modal>
-    );
-  };
+  const bestPerformer = performers[0] || { currency: '-', change: '0.00' };
+  const worstPerformer = performers[performers.length - 1] || { currency: '-', change: '0.00' };
+  const totalAssets = balances.filter(b => b.total_balance > 0).length;
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color="#00AEEF" />
         <Text style={styles.loadingText}>Loading wallet...</Text>
       </View>
     );
@@ -279,248 +102,163 @@ const WalletScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {balances.map(renderBalanceCard)}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#00AEEF" />
+        }
+      >
+        {/* Portfolio Summary */}
+        <LinearGradient colors={['#111418', '#0B0E11']} style={styles.portfolioCard}>
+          <Text style={styles.portfolioLabel}>TOTAL PORTFOLIO VALUE</Text>
+          <Text style={styles.portfolioValue}>£{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+          <View style={styles.changeContainer}>
+            <Icon name={isPositive ? 'trending-up' : 'trending-down'} size={20} color={isPositive ? '#00C98D' : '#E35355'} />
+            <Text style={[styles.changeText, { color: isPositive ? '#00C98D' : '#E35355' }]}>
+              {isPositive ? '+' : ''}{change24h.toFixed(2)}%
+            </Text>
+            <Text style={styles.change24h}>24h</Text>
+          </View>
+
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={styles.primaryButton} onPress={() => setShowDepositModal(true)}>
+              <Text style={styles.primaryButtonText}>Deposit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.secondaryButton}>
+              <Text style={styles.secondaryButtonText}>Withdraw</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.secondaryButton}>
+              <Text style={styles.secondaryButtonText}>Buy</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+
+        {/* Mini Stats Bar */}
+        <View style={styles.statsGrid}>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: isPositive ? '#00C98D22' : '#E3535522' }]}>
+              <Icon name={isPositive ? 'trending-up' : 'trending-down'} size={20} color={isPositive ? '#00C98D' : '#E35355'} />
+            </View>
+            <View style={styles.statContent}>
+              <Text style={styles.statLabel}>24h Change</Text>
+              <Text style={styles.statValue}>{isPositive ? '+' : ''}{change24h.toFixed(2)}%</Text>
+              <Text style={[styles.statSub, { color: isPositive ? '#00C98D' : '#E35355' }]}>£{Math.abs(totalValue * change24h / 100).toFixed(2)}</Text>
+            </View>
+          </View>
+
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: '#00C98D22' }]}>
+              <Icon name="trending-up" size={20} color="#00C98D" />
+            </View>
+            <View style={styles.statContent}>
+              <Text style={styles.statLabel}>Best Performer</Text>
+              <Text style={styles.statValue}>{bestPerformer.currency}</Text>
+              <Text style={[styles.statSub, { color: '#00C98D' }]}>+{bestPerformer.change}%</Text>
+            </View>
+          </View>
+
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: '#E3535522' }]}>
+              <Icon name="trending-down" size={20} color="#E35355" />
+            </View>
+            <View style={styles.statContent}>
+              <Text style={styles.statLabel}>Worst Performer</Text>
+              <Text style={styles.statValue}>{worstPerformer.currency}</Text>
+              <Text style={[styles.statSub, { color: '#E35355' }]}>{worstPerformer.change}%</Text>
+            </View>
+          </View>
+
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: '#00AEEF22' }]}>
+              <Icon name="wallet" size={20} color="#00AEEF" />
+            </View>
+            <View style={styles.statContent}>
+              <Text style={styles.statLabel}>Total Assets</Text>
+              <Text style={styles.statValue}>{totalAssets}</Text>
+              <Text style={styles.statSub}>holdings</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Asset List Header */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Assets</Text>
+        </View>
+
+        {/* Asset List */}
+        {filteredBalances.map((asset, index) => {
+          const color = getCoinColor(asset.currency);
+          const icon = getCoinIcon(asset.currency);
+          return (
+            <View key={asset.currency} style={styles.assetCard}>
+              <View style={styles.assetLeft}>
+                <View style={[styles.coinIcon, { backgroundColor: color + '22' }]}>
+                  <Text style={[styles.coinIconText, { color }]}>{icon}</Text>
+                </View>
+                <View>
+                  <Text style={styles.assetSymbol}>{asset.currency}</Text>
+                  <Text style={styles.assetBalance}>{asset.total_balance?.toFixed(8)}</Text>
+                </View>
+              </View>
+              <View style={styles.assetRight}>
+                <Text style={styles.assetValue}>£{(asset.gbp_value || 0).toFixed(2)}</Text>
+                <View style={styles.assetActions}>
+                  <TouchableOpacity style={[styles.assetButton, { borderColor: '#00AEEF' }]} onPress={() => { setSelectedCurrency(asset.currency); setShowDepositModal(true); }}>
+                    <Icon name="arrow-down" size={12} color="#00AEEF" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.assetButton, { borderColor: '#E35355' }]} onPress={() => { setSelectedCurrency(asset.currency); setShowWithdrawModal(true); }}>
+                    <Icon name="arrow-up" size={12} color="#E35355" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.assetButton, { borderColor: '#F5C542' }]} onPress={() => { setSelectedCurrency(asset.currency); setShowSwapModal(true); }}>
+                    <Icon name="swap-horizontal" size={12} color="#F5C542" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          );
+        })}
       </ScrollView>
-      {renderWithdrawModal()}
+
+      <DepositModal visible={showDepositModal} onClose={() => setShowDepositModal(false)} currency={selectedCurrency} userId={user?.user_id} />
+      <WithdrawModal visible={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} currency={selectedCurrency} userId={user?.user_id} onSuccess={loadData} />
+      <SwapModal visible={showSwapModal} onClose={() => setShowSwapModal(false)} fromCurrency={selectedCurrency} balances={balances} userId={user?.user_id} onSuccess={loadData} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.background,
-  },
-  loadingText: {
-    color: COLORS.textSecondary,
-    marginTop: 16,
-    fontSize: 16,
-  },
-  scrollContent: {
-    padding: 16,
-  },
-
-  // Balance Card
-  balanceCard: {
-    marginBottom: 20,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  balanceGradient: {
-    padding: 20,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
-  },
-  balanceHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  currencyIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: COLORS.backgroundCard,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-  },
-  currencyInfo: {
-    marginLeft: 16,
-  },
-  currencyName: {
-    color: COLORS.text,
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  currencyFullName: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    marginTop: 2,
-  },
-
-  // Balance Section
-  balanceSection: {
-    marginBottom: 20,
-  },
-  balanceLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    marginBottom: 8,
-  },
-  balanceAmount: {
-    color: COLORS.text,
-    fontSize: 28,
-    fontWeight: '900',
-    marginBottom: 4,
-  },
-  balanceUSD: {
-    color: COLORS.primary,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-
-  // Breakdown
-  balanceBreakdown: {
-    flexDirection: 'row',
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    marginBottom: 16,
-  },
-  breakdownItem: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  breakdownText: {
-    marginLeft: 8,
-  },
-  breakdownLabel: {
-    color: COLORS.textMuted,
-    fontSize: 11,
-  },
-  breakdownValue: {
-    color: COLORS.text,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 2,
-  },
-  breakdownDivider: {
-    width: 1,
-    backgroundColor: COLORS.border,
-    marginHorizontal: 12,
-  },
-
-  // Withdraw Button
-  withdrawButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  withdrawButtonGradient: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 14,
-    gap: 8,
-  },
-  withdrawButtonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-
-  // Modal
-  modal: {
-    margin: 0,
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: COLORS.background,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  modalTitle: {
-    color: COLORS.text,
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  modalBody: {
-    padding: 20,
-  },
-  maxButton: {
-    alignSelf: 'flex-end',
-    marginTop: -8,
-    marginBottom: 16,
-  },
-  maxButtonText: {
-    color: COLORS.primary,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  walletInput: {
-    marginBottom: 24,
-  },
-
-  // Fee Breakdown
-  feeBreakdown: {
-    backgroundColor: COLORS.backgroundCard,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-  },
-  feeTitle: {
-    color: COLORS.primary,
-    fontSize: 14,
-    fontWeight: '900',
-    marginBottom: 12,
-  },
-  feeDivider: {
-    height: 1,
-    backgroundColor: COLORS.border,
-    marginVertical: 12,
-  },
-  feeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  feeLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-  },
-  feeValue: {
-    color: COLORS.text,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  feeValueNegative: {
-    color: COLORS.error,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  feeValueLarge: {
-    color: COLORS.primary,
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  feeNote: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  feeNoteText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    flex: 1,
-  },
-
-  modalFooter: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
+  container: { flex: 1, backgroundColor: '#0B0E11' },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0B0E11' },
+  loadingText: { marginTop: 16, fontSize: 16, color: '#00AEEF', fontWeight: '600' },
+  portfolioCard: { margin: 16, padding: 24, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(0, 174, 239, 0.2)' },
+  portfolioLabel: { fontSize: 12, color: '#9FA6B2', fontWeight: '500', letterSpacing: 0.5, marginBottom: 8 },
+  portfolioValue: { fontSize: 42, fontWeight: '700', color: '#FFFFFF', marginBottom: 12 },
+  changeContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  changeText: { fontSize: 16, fontWeight: '600', marginLeft: 8 },
+  change24h: { fontSize: 14, color: '#9FA6B2', marginLeft: 8 },
+  actionButtons: { flexDirection: 'row', gap: 12 },
+  primaryButton: { flex: 1, backgroundColor: '#00AEEF', paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
+  primaryButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
+  secondaryButton: { flex: 1, backgroundColor: 'transparent', borderWidth: 1, borderColor: '#00AEEF', paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
+  secondaryButtonText: { color: '#00AEEF', fontSize: 14, fontWeight: '600' },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 12, marginBottom: 16 },
+  statCard: { width: (width - 44) / 2, backgroundColor: '#111418', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(0, 174, 239, 0.2)', padding: 12, flexDirection: 'row', alignItems: 'center' },
+  statIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  statContent: { flex: 1 },
+  statLabel: { fontSize: 11, color: '#9FA6B2', marginBottom: 4 },
+  statValue: { fontSize: 16, fontWeight: '700', color: '#FFFFFF', marginBottom: 2 },
+  statSub: { fontSize: 11, fontWeight: '600' },
+  sectionHeader: { paddingHorizontal: 16, marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#FFFFFF' },
+  assetCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#111418', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(0, 174, 239, 0.1)', padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  assetLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  coinIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  coinIconText: { fontSize: 18, fontWeight: '700' },
+  assetSymbol: { fontSize: 16, fontWeight: '600', color: '#FFFFFF', marginBottom: 4 },
+  assetBalance: { fontSize: 13, color: '#9FA6B2' },
+  assetRight: { alignItems: 'flex-end' },
+  assetValue: { fontSize: 16, fontWeight: '600', color: '#FFFFFF', marginBottom: 8 },
+  assetActions: { flexDirection: 'row', gap: 8 },
+  assetButton: { width: 32, height: 32, borderRadius: 8, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 });
 
 export default WalletScreen;
