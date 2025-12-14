@@ -746,23 +746,23 @@ function VaultCard({ vault, balancesHidden, onEarlyUnlock }) {
           Early Unlock (Penalty Applies)
         </button>
       ) : (
-        <button
-          style={{
-            width: '100%',
-            height: '52px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
-            color: '#FFF',
-            border: 'none',
-            fontSize: '15px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(0,229,255,0.3)',
-            transition: 'all 0.3s'
-          }}
-        >
-          Withdraw to Savings
-        </button>
+        <div style={{
+          width: '100%',
+          height: '52px',
+          borderRadius: '12px',
+          background: 'rgba(16,185,129,0.15)',
+          border: '1px solid rgba(16,185,129,0.3)',
+          color: '#10B981',
+          fontSize: '15px',
+          fontWeight: '700',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px'
+        }}>
+          <IoShieldCheckmark size={20} />
+          Vault Matured - Ready to Withdraw
+        </div>
       )}
     </div>
   );
