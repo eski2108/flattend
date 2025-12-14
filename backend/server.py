@@ -18965,6 +18965,121 @@ try:
                 "message": f"System error: {str(e)}"
             }
     
+    @api_router.post("/nowpayments/create-payout")
+    async def create_payout(request: dict):
+        """
+        Create a payout (withdrawal) to external wallet
+        
+        Request body:
+        {
+            "user_id": "user123",
+            "currency": "btc",
+            "amount": 0.001,
+            "address": "bc1q..."
+        }
+        """
+        try:
+            user_id = request.get('user_id')
+            currency = request.get('currency', '').upper()
+            amount = float(request.get('amount', 0))
+            address = request.get('address', '')
+            
+            # Validation
+            if not all([user_id, currency, amount, address]):
+                return {
+                    "success": False,
+                    "message": "Missing required fields"
+                }
+            
+            if amount <= 0:
+                return {
+                    "success": False,
+                    "message": "Amount must be greater than 0"
+                }
+            
+            # Check user balance
+            user_balance_doc = await db.crypto_balances.find_one({
+                "user_id": user_id,
+                "currency": currency
+            })
+            
+            if not user_balance_doc:
+                return {
+                    "success": False,
+                    "message": f"No {currency} balance found"
+                }
+            
+            available_balance = user_balance_doc.get('total_balance', 0)
+            
+            if amount > available_balance:
+                return {
+                    "success": False,
+                    "message": f"Insufficient balance. Available: {available_balance} {currency}"
+                }
+            
+            # Create payout with NOWPayments
+            from nowpayments_integration import get_nowpayments_service
+            nowpayments = get_nowpayments_service()
+            
+            payout_result = nowpayments.create_payout(
+                currency=currency.lower(),
+                amount=amount,
+                address=address
+            )
+            
+            if not payout_result or not payout_result.get('success'):
+                return {
+                    "success": False,
+                    "message": payout_result.get('error', 'Failed to create payout')
+                }
+            
+            # Deduct from user balance
+            new_balance = available_balance - amount
+            
+            await db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {
+                    "$set": {
+                        "total_balance": new_balance,
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            )
+            
+            # Record transaction
+            await db.transactions.insert_one({
+                "transaction_id": f"payout_{payout_result.get('payout_id')}",
+                "user_id": user_id,
+                "type": "withdrawal",
+                "currency": currency,
+                "amount": amount,
+                "address": address,
+                "status": payout_result.get('status', 'pending'),
+                "payout_id": payout_result.get('payout_id'),
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            logger.info(f"✅ Payout created for user {user_id}: {amount} {currency} to {address[:10]}...")
+            
+            return {
+                "success": True,
+                "message": "Withdrawal initiated successfully",
+                "payout_id": payout_result.get('payout_id'),
+                "status": payout_result.get('status'),
+                "amount": amount,
+                "currency": currency,
+                "new_balance": new_balance
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Payout endpoint error: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return {
+                "success": False,
+                "message": f"System error: {str(e)}"
+            }
+    
     @api_router.post("/nowpayments/ipn")
     async def nowpayments_ipn_webhook(request: Request):
         """
