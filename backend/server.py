@@ -20915,21 +20915,29 @@ async def get_deposit_address(currency: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/crypto-bank/deposit-address/{currency}")
-async def get_user_deposit_address(currency: str):
-    """Get blockchain deposit address for user deposits (user-facing endpoint)"""
+async def get_user_deposit_address(
+    currency: str,
+    user_id: Optional[str] = Query(None)
+):
+    """Get blockchain deposit address for user deposits via NOWPayments (user-facing endpoint)"""
     try:
-        address_data = await generate_deposit_address(db, currency)
+        # Generate real deposit address from NOWPayments
+        address_data = await generate_deposit_address(db, currency.upper(), user_id=user_id)
         
         return {
             "success": True,
-            "currency": currency,
+            "currency": currency.upper(),
             "address": address_data["address"],
-            "network": address_data["network"],
+            "network": address_data.get("network", "Native"),
+            "payment_id": address_data.get("payment_id"),
             "qr_data": f"{address_data['address']}"
         }
     except Exception as e:
-        logger.error(f"Failed to get deposit address: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"❌ Failed to get deposit address for {currency}: {str(e)}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Failed to generate deposit address: {str(e)}"
+        )
 
 
 @api_router.get("/admin/platform-wallet/transactions")
