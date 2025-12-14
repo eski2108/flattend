@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IoClose, IoCopy, IoCheckmark } from 'react-icons/io5';
 import { getCoinLogo } from '@/utils/coinLogos';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
