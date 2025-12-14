@@ -99,6 +99,17 @@ export default function WalletPage() {
     }
   };
 
+  const loadTransactions = async (userId) => {
+    try {
+      const response = await axios.get(`${API}/api/transactions/${userId}`);
+      if (response.data.success) {
+        setTransactions(response.data.transactions || []);
+      }
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+    }
+  };
+
   const handleRefresh = () => {
     if (!refreshing && user) {
       setRefreshing(true);
