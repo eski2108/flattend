@@ -6,8 +6,6 @@ import { IoRefresh, IoSearch } from 'react-icons/io5';
 import DepositModal from '@/components/modals/DepositModal';
 import WithdrawModal from '@/components/modals/WithdrawModal';
 import SwapModal from '@/components/modals/SwapModal';
-import MiniStatsBar from '@/components/MiniStatsBar';
-import Sparkline from '@/components/Sparkline';
 import { getCoinLogo } from '@/utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
