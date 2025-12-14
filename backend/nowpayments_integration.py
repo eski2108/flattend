@@ -503,6 +503,92 @@ class NOWPaymentsService:
                 "error": str(e),
                 "balances": []
             }
+    
+    def create_payout(
+        self,
+        currency: str,
+        amount: float,
+        address: str,
+        ipn_callback_url: str = None
+    ) -> Optional[Dict]:
+        """
+        Create a payout (withdrawal) to external wallet address
+        
+        Args:
+            currency: Cryptocurrency symbol (e.g., "btc", "eth")
+            amount: Amount to send
+            address: Recipient wallet address
+            ipn_callback_url: Optional webhook URL for status updates
+            
+        Returns:
+            {
+                "success": True/False,
+                "payout_id": "...",
+                "status": "...",
+                "message": "..."
+            }
+        """
+        try:
+            logger.info(f"🚀 Creating payout: {amount} {currency.upper()} to {address[:10]}...")
+            
+            payload = {
+                "withdrawals": [
+                    {
+                        "address": address,
+                        "currency": currency.lower(),
+                        "amount": float(amount),
+                        "ipn_callback_url": ipn_callback_url
+                    }
+                ]
+            }
+            
+            response = requests.post(
+                f"{self.PAYOUT_BASE_URL}",
+                json=payload,
+                headers=self.headers,
+                timeout=30
+            )
+            
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get('withdrawals') and len(data['withdrawals']) > 0:
+                withdrawal = data['withdrawals'][0]
+                logger.info(f"✅ Payout created successfully: ID={withdrawal.get('id')}")
+                return {
+                    "success": True,
+                    "payout_id": withdrawal.get('id'),
+                    "status": withdrawal.get('status'),
+                    "currency": currency.upper(),
+                    "amount": amount,
+                    "address": address
+                }
+            else:
+                logger.error(f"❌ Payout creation failed: {data}")
+                return {
+                    "success": False,
+                    "error": "Payout creation failed",
+                    "details": data
+                }
+                
+        except requests.exceptions.HTTPError as e:
+            error_msg = f"HTTP error: {e.response.status_code}"
+            try:
+                error_data = e.response.json()
+                error_msg = error_data.get('message', error_msg)
+            except:
+                pass
+            logger.error(f"❌ Payout failed: {error_msg}")
+            return {
+                "success": False,
+                "error": error_msg
+            }
+        except Exception as e:
+            logger.error(f"❌ Payout creation error: {str(e)}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
 
 
 # Global instance
