@@ -24,9 +24,7 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
   const fetchDepositAddress = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/api/deposit-address`, {
-        params: { currency, user_id: userId }
-      });
+      const response = await axios.get(`${API}/api/crypto-bank/deposit-address/${currency}`);
       if (response.data.address) {
         setDepositAddress(response.data.address);
       }
