@@ -37,7 +37,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
       <div
         style={{
           background: 'linear-gradient(180deg, #0F1B2E 0%, #0C1626 100%)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '16px',
           padding: '20px',
           transition: 'all 0.3s ease'
@@ -46,7 +46,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
         <div
           style={{
             fontSize: '11px',
-            color: '#9AA4B2',
+            color: '#B8BFC9',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.8px',
@@ -70,7 +70,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
             <div
               style={{
                 fontSize: '13px',
-                color: '#9AA4B2',
+                color: '#B8BFC9',
                 fontWeight: '500'
               }}
             >
@@ -82,8 +82,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
             style={{
               fontSize: '16px',
               fontWeight: '500',
-              color: '#5E6A7D',
-              fontStyle: 'italic',
+              color: '#7A8596',
               marginTop: '8px'
             }}
           >
@@ -96,7 +95,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
       <div
         style={{
           background: 'linear-gradient(180deg, #0F1B2E 0%, #0C1626 100%)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '16px',
           padding: '20px',
           transition: 'all 0.3s ease'
@@ -105,7 +104,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
         <div
           style={{
             fontSize: '11px',
-            color: '#9AA4B2',
+            color: '#B8BFC9',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.8px',
@@ -141,8 +140,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
             style={{
               fontSize: '16px',
               fontWeight: '500',
-              color: '#5E6A7D',
-              fontStyle: 'italic',
+              color: '#7A8596',
               marginTop: '8px'
             }}
           >
@@ -155,7 +153,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
       <div
         style={{
           background: 'linear-gradient(180deg, #0F1B2E 0%, #0C1626 100%)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '16px',
           padding: '20px',
           transition: 'all 0.3s ease'
@@ -164,7 +162,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
         <div
           style={{
             fontSize: '11px',
-            color: '#9AA4B2',
+            color: '#B8BFC9',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.8px',
@@ -200,8 +198,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
             style={{
               fontSize: '16px',
               fontWeight: '500',
-              color: '#5E6A7D',
-              fontStyle: 'italic',
+              color: '#7A8596',
               marginTop: '8px'
             }}
           >
@@ -214,7 +211,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
       <div
         style={{
           background: 'linear-gradient(180deg, #0F1B2E 0%, #0C1626 100%)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '16px',
           padding: '20px',
           transition: 'all 0.3s ease'
@@ -223,7 +220,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
         <div
           style={{
             fontSize: '11px',
-            color: '#9AA4B2',
+            color: '#B8BFC9',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.8px',
@@ -245,7 +242,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
         <div
           style={{
             fontSize: '13px',
-            color: '#9AA4B2',
+            color: '#B8BFC9',
             fontWeight: '500'
           }}
         >

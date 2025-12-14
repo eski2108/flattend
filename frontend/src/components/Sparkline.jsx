@@ -31,17 +31,16 @@ export default function Sparkline({ currency }) {
   if (loading) {
     return (
       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontSize: '10px', color: '#5E6A7D' }}>...</div>
+        <div style={{ fontSize: '10px', color: '#7A8596' }}>...</div>
       </div>
     );
   }
 
-  // If no data available, show NOTHING (empty space)
+  // If no data, show NOTHING (empty space)
   if (!priceHistory || priceHistory.length < 2) {
     return <div style={{ width: '100%', height: '100%' }} />;
   }
 
-  // Normalize prices to fit in SVG viewBox
   const minPrice = Math.min(...priceHistory);
   const maxPrice = Math.max(...priceHistory);
   const priceRange = maxPrice - minPrice || 1;
@@ -52,7 +51,6 @@ export default function Sparkline({ currency }) {
     return `${x},${y}`;
   }).join(' ');
 
-  // Determine if trend is positive (last > first)
   const isPositive = priceHistory[priceHistory.length - 1] >= priceHistory[0];
   const strokeColor = isPositive ? '#16C784' : '#EA3943';
 
@@ -65,7 +63,6 @@ export default function Sparkline({ currency }) {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        opacity="0.9"
       />
     </svg>
   );
