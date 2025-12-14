@@ -225,51 +225,39 @@ export default function WalletPage() {
           </button>
         </div>
 
-        {/* TOTAL PORTFOLIO CARD */}
+        {/* BALANCE AREA - FLAT, NO CARD */}
         <div style={{
-          background: 'linear-gradient(180deg, #0B1C3A 0%, #08142B 100%)',
-          border: 'none',
-          borderRadius: '22px',
-          padding: '36px',
-          marginBottom: '24px',
-          boxShadow: '0 8px 24px rgba(0, 170, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04)'
+          padding: '24px 20px 20px',
+          marginBottom: '20px'
         }}>
-          <div>
-            <div style={{
-              fontSize: '12px',
-              color: '#8FA3C8',
-              fontWeight: '600',
-              marginBottom: '12px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px'
-            }}>Total Portfolio Value</div>
-            <div style={{
-              fontSize: '48px',
-              fontWeight: '800',
-              color: '#FFFFFF',
-              lineHeight: '1',
-              marginBottom: '16px'
-            }}>
-              £{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-            {assetsWithBalance.length > 0 ? (
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '18px',
-                fontWeight: '700',
-                color: portfolioChange24h >= 0 ? '#16C784' : '#EA3943'
-              }}>
-                {portfolioChange24h >= 0 ? '+' : ''}{portfolioChange24h.toFixed(2)}%
-                <span style={{
-                  fontSize: '14px',
-                  color: '#8FA3C8',
-                  fontWeight: '500'
-                }}>24h</span>
-              </div>
-            ) : null}
+          <div style={{
+            fontSize: '11px',
+            color: '#8FA3C8',
+            fontWeight: '500',
+            marginBottom: '8px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>Total Portfolio Value</div>
+          <div style={{
+            fontSize: '40px',
+            fontWeight: '700',
+            color: '#FFFFFF',
+            lineHeight: '1',
+            marginBottom: '8px'
+          }}>
+            £{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
+          {assetsWithBalance.length > 0 ? (
+            <div style={{
+              fontSize: '15px',
+              fontWeight: '600',
+              color: portfolioChange24h >= 0 ? '#16C784' : '#EA3943'
+            }}>
+              {portfolioChange24h >= 0 ? '+' : ''}{portfolioChange24h.toFixed(2)}% today
+            </div>
+          ) : (
+            <div style={{ fontSize: '14px', color: '#8FA3C8' }}>No holdings yet</div>
+          )}
         </div>
 
         {/* ACTION BUTTONS ROW - CIRCULAR ICONS LIKE COINBASE */}
