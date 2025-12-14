@@ -21,6 +21,7 @@ import MobileMarketSelection from "@/pages/MobileMarketSelection";
 import MobileTradingPage from "@/pages/MobileTradingPage";
 import SendPage from "@/pages/SendPage";
 import ReceivePage from "@/pages/ReceivePage";
+import BridgePage from "@/pages/BridgePage";
 import AssetDetailPage from "@/pages/AssetDetailPage";
 
 // Layout
