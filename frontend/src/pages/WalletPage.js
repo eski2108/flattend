@@ -395,18 +395,14 @@ export default function WalletPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '26px 24px',
-                    paddingLeft: '26px',
+                    padding: '14px 20px',
                     background: 'transparent',
-                    borderBottom: idx < filteredAssets.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                    borderLeft: `2px solid ${hasBalance ? 'rgba(0, 229, 255, 0.8)' : 'rgba(0, 229, 255, 0.4)'}`,
-                    transition: 'all 0.2s ease',
-                    gap: '16px',
-                    flexWrap: 'wrap',
-                    cursor: 'pointer'
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
                   {/* COIN ICON + NAME */}
                   <div style={{
