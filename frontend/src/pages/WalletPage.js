@@ -172,7 +172,7 @@ export default function WalletPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0B1220',
+      background: '#060B1A',
       padding: '32px 20px',
       fontFamily: 'Inter, sans-serif'
     }}>
