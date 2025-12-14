@@ -307,26 +307,27 @@ export default function WalletPage() {
           ))}
         </div>
 
-        {/* TABS - CRYPTO / NFTS / DEFI */}
+        {/* TABS - FLAT */}
         <div style={{
           display: 'flex',
-          borderBottom: '1px solid rgba(255,255,255,0.04)',
-          marginBottom: '24px'
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          marginBottom: '16px'
         }}>
           {['Crypto', 'NFTs', 'DeFi'].map((tab, idx) => (
             <button
               key={tab}
+              onClick={() => idx === 1 ? navigate('/nfts') : idx === 2 ? navigate('/defi') : null}
               style={{
                 flex: 1,
-                padding: '16px 0',
+                padding: '12px 0',
                 background: 'none',
                 border: 'none',
-                borderBottom: idx === 0 ? '2px solid #0052FF' : '2px solid transparent',
-                color: idx === 0 ? '#FFFFFF' : '#8FA3C8',
-                fontSize: '15px',
-                fontWeight: '600',
+                borderBottom: idx === 0 ? '1px solid #0047D9' : '1px solid transparent',
+                color: idx === 0 ? '#FFFFFF' : '#6B7A99',
+                fontSize: '14px',
+                fontWeight: '500',
                 cursor: 'pointer',
-                transition: 'all 0.2s'
+                transition: 'color 0.2s'
               }}
             >
               {tab}
