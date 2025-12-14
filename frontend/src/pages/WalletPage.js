@@ -508,7 +508,7 @@ export default function WalletPage() {
                       style={{
                         padding: '10px 20px',
                         background: 'transparent',
-                        border: '1.5px solid #F0B90B',
+                        border: '2px solid #F0B90B',
                         borderRadius: '12px',
                         color: '#F0B90B',
                         fontSize: '13px',
