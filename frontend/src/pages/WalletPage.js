@@ -503,7 +503,7 @@ export default function WalletPage() {
                     >
                       Withdraw
                     </button>
-                    {/* SWAP - YELLOW, NO PURPLE */}
+                    {/* SWAP - TERTIARY */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -512,9 +512,9 @@ export default function WalletPage() {
                       style={{
                         padding: '10px 20px',
                         background: 'transparent',
-                        border: '2px solid #F0B90B',
+                        border: '1.5px solid #F5C542',
                         borderRadius: '12px',
-                        color: '#F0B90B',
+                        color: '#F5C542',
                         fontSize: '13px',
                         fontWeight: '600',
                         cursor: 'pointer',
