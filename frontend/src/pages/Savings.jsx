@@ -200,57 +200,75 @@ export default function SavingsPage() {
 
         {/* 2) SAVINGS SUMMARY PANEL */}
         <div style={{
-          background: COLORS.BG_CARD,
-          padding: '24px',
-          borderRadius: '16px',
-          marginBottom: '32px',
           display: 'grid',
-          gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(3, 1fr)',
-          gap: '24px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '16px',
+          marginBottom: '32px'
         }}>
-          <div>
+          <div style={{
+            background: 'rgba(0,229,255,0.05)',
+            border: '1px solid rgba(0,229,255,0.2)',
+            borderRadius: '16px',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
             <div style={{
-              fontSize: '12px',
-              color: COLORS.TEXT_MUTED,
-              marginBottom: '8px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>Total Savings</div>
-            <div style={{
-              fontSize: '26px',
-              fontWeight: '700',
-              color: COLORS.TEXT_PRIMARY
-            }}>£{totalSavings.toFixed(2)}</div>
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 70%)',
+              borderRadius: '50%'
+            }}></div>
+            <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Savings</div>
+            <div style={{ fontSize: '32px', fontWeight: '700', color: '#00E5FF', marginBottom: '4px' }}>£{totalSavings.toFixed(2)}</div>
+            <div style={{ fontSize: '12px', color: '#6B7A99' }}>Combined balance</div>
           </div>
           
-          <div>
+          <div style={{
+            background: 'rgba(123,44,255,0.05)',
+            border: '1px solid rgba(123,44,255,0.2)',
+            borderRadius: '16px',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
             <div style={{
-              fontSize: '12px',
-              color: COLORS.TEXT_MUTED,
-              marginBottom: '8px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>Available Balance</div>
-            <div style={{
-              fontSize: '26px',
-              fontWeight: '700',
-              color: COLORS.TEXT_PRIMARY
-            }}>£{availableBalance.toFixed(2)}</div>
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(123,44,255,0.15) 0%, transparent 70%)',
+              borderRadius: '50%'
+            }}></div>
+            <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Available</div>
+            <div style={{ fontSize: '32px', fontWeight: '700', color: '#7B2CFF', marginBottom: '4px' }}>£{availableBalance.toFixed(2)}</div>
+            <div style={{ fontSize: '12px', color: '#6B7A99' }}>Flexible access</div>
           </div>
           
-          <div>
+          <div style={{
+            background: 'rgba(16,185,129,0.05)',
+            border: '1px solid rgba(16,185,129,0.2)',
+            borderRadius: '16px',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
             <div style={{
-              fontSize: '12px',
-              color: COLORS.TEXT_MUTED,
-              marginBottom: '8px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>Locked in Vaults</div>
-            <div style={{
-              fontSize: '26px',
-              fontWeight: '700',
-              color: COLORS.TEXT_PRIMARY
-            }}>£{lockedInVaults.toFixed(2)}</div>
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              width: '100px',
+              height: '100px',
+              background: 'radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%)',
+              borderRadius: '50%'
+            }}></div>
+            <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Locked</div>
+            <div style={{ fontSize: '32px', fontWeight: '700', color: '#10B981', marginBottom: '4px' }}>£{lockedInVaults.toFixed(2)}</div>
+            <div style={{ fontSize: '12px', color: '#6B7A99' }}>In vaults</div>
           </div>
         </div>
 
