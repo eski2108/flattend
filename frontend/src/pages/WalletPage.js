@@ -284,11 +284,12 @@ export default function WalletPage() {
 
         {/* SEARCH BAR */}
         <div style={{
-          background: '#101A36',
-          border: '1px solid rgba(255,255,255,0.04)',
-          borderRadius: '16px',
+          background: '#081227',
+          border: 'none',
+          borderRadius: '14px',
           padding: '16px',
-          marginBottom: '24px'
+          marginBottom: '24px',
+          boxShadow: '0 8px 24px rgba(0, 170, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04)'
         }}>
           <div style={{ position: 'relative' }}>
             <IoSearch
