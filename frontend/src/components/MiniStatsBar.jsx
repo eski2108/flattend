@@ -2,12 +2,13 @@ import React from 'react';
 import { IoTrendingUp, IoTrendingDown, IoWallet } from 'react-icons/io5';
 
 const COLORS = {
-  PRIMARY_BG: '#0B0E11',
-  SECONDARY_BG: '#111418',
-  ACCENT: '#00AEEF',
-  SUCCESS: '#00C98D',
-  DANGER: '#E35355',
-  GREY: '#9FA6B2',
+  PRIMARY_BG: '#0B0F14',
+  SECONDARY_BG: '#0F172A',
+  DIVIDER: '#1F2937',
+  BINANCE_BLUE: '#1E90FF',
+  SUCCESS: '#16C784',
+  DANGER: '#EA3943',
+  GREY: '#9CA3AF',
   WHITE: '#FFFFFF'
 };
 
