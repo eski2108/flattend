@@ -58,7 +58,8 @@ export default function WalletPage() {
     await Promise.all([
       loadCoinMetadata(),
       loadBalances(userId),
-      loadPriceData()
+      loadPriceData(),
+      loadTransactions(userId)
     ]);
     setLoading(false);
   };
