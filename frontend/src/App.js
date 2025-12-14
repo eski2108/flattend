@@ -19,6 +19,9 @@ import WalletPage from "@/pages/WalletPage";
 import SpotTradingPro from "@/pages/SpotTradingPro";
 import MobileMarketSelection from "@/pages/MobileMarketSelection";
 import MobileTradingPage from "@/pages/MobileTradingPage";
+import SendPage from "@/pages/SendPage";
+import ReceivePage from "@/pages/ReceivePage";
+import AssetDetailPage from "@/pages/AssetDetailPage";
 
 // Layout
 import MainLayout from "@/layouts/MainLayout";
