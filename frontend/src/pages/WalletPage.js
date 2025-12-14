@@ -266,7 +266,7 @@ export default function WalletPage() {
                 {portfolioChange24h >= 0 ? '+' : ''}{portfolioChange24h.toFixed(2)}%
                 <span style={{
                   fontSize: '14px',
-                  color: '#8FA3BF',
+                  color: '#8FA3C8',
                   fontWeight: '500'
                 }}>24h</span>
               </div>
