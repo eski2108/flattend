@@ -180,7 +180,7 @@ export default function ReceivePage() {
               display: 'inline-block',
               marginBottom: '24px'
             }}>
-              <QRCode value={depositAddress} size={200} />
+              <QRCodeSVG value={depositAddress} size={200} />
             </div>
 
             {/* Address Display */}
