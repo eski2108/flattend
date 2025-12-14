@@ -37,8 +37,7 @@ export default function WalletPage() {
   const [depositModal, setDepositModal] = useState({ isOpen: false, currency: null });
   const [withdrawModal, setWithdrawModal] = useState({ isOpen: false, currency: null, balance: 0 });
   const [swapModal, setSwapModal] = useState({ isOpen: false, fromCurrency: null });
-  const [activeTab, setActiveTab] = useState('Crypto');
-  const [transactions, setTransactions] = useState([]);
+  const [activeTab, setActiveTab] = useState('Crypto'); // Only used for Crypto tab now
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -58,8 +57,7 @@ export default function WalletPage() {
     await Promise.all([
       loadCoinMetadata(),
       loadBalances(userId),
-      loadPriceData(),
-      loadTransactions(userId)
+      loadPriceData()
     ]);
     setLoading(false);
   };
