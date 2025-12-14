@@ -142,7 +142,7 @@ export default function DepositModal({ isOpen, onClose, currency, userId }) {
               padding: '20px',
               borderRadius: '14px'
             }}>
-              <QRCode value={depositAddress} size={200} />
+              <QRCodeCanvas value={depositAddress} size={200} />
             </div>
 
             <div style={{
