@@ -221,6 +221,9 @@ export default function WalletPage() {
           )}
         </div>
 
+        {/* Mini Stats Bar */}
+        <MiniStatsBar balances={balances} totalValue={totalValue} />
+
         {/* Filters */}
         <div style={{ background: COLORS.SECONDARY_BG, border: `1px solid rgba(0, 174, 239, 0.2)`, borderRadius: '14px', padding: '20px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
