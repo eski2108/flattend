@@ -522,3 +522,335 @@ function FixedTermContent({ vaults, onEarlyUnlock, onCreate }) {
 }
 
 // Keep existing modals
+function TransferModal({ onClose, userId, onSuccess }) {
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.BG_CARD,
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '480px',
+        width: '90%'
+      }}>
+        <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '16px' }}>Transfer from Wallet</h3>
+        <p style={{ color: COLORS.TEXT_SECONDARY, marginBottom: '24px' }}>Select asset and amount to transfer to savings.</p>
+        {/* Implementation needed */}
+        <button onClick={onClose} style={{
+          width: '100%',
+          height: '44px',
+          background: COLORS.ACTION_PRIMARY,
+          color: COLORS.TEXT_PRIMARY,
+          border: 'none',
+          borderRadius: '10px',
+          fontSize: '14px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// CREATE VAULT MODAL
+function CreateVaultModal({ onClose, userId, savingsBalances, onSuccess }) {
+  const [step, setStep] = useState(1);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [amount, setAmount] = useState('');
+  const [lockPeriod, setLockPeriod] = useState(null);
+  
+  const handleCreate = async () => {
+    try {
+      const response = await axios.post(`${API}/api/vaults/create`, {
+        user_id: userId,
+        currency: selectedAsset.currency,
+        amount: parseFloat(amount),
+        lock_period: lockPeriod
+      });
+      
+      if (response.data.success) {
+        toast.success('Vault created successfully');
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(response.data.error || 'Failed to create vault');
+      }
+    } catch (error) {
+      console.error('Create vault error:', error);
+      toast.error('Failed to create vault');
+    }
+  };
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.BG_CARD,
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '480px',
+        width: '90%'
+      }}>
+        <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '24px' }}>Create Vault</h3>
+        
+        {step === 1 && (
+          <div>
+            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 1: Select Asset</div>
+            {savingsBalances.map(asset => (
+              <div
+                key={asset.currency}
+                onClick={() => { setSelectedAsset(asset); setStep(2); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '16px',
+                  background: COLORS.BG_PANEL,
+                  borderRadius: '12px',
+                  marginBottom: '8px',
+                  cursor: 'pointer',
+                  border: `1px solid ${COLORS.BG_PANEL}`
+                }}
+              >
+                <img src={getCoinLogo(asset.currency)} alt={asset.currency} style={{ width: '32px', height: '32px' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{asset.currency}</div>
+                  <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>Available: {asset.savings_balance.toFixed(8)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {step === 2 && (
+          <div>
+            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 2: Enter Amount</div>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              style={{
+                width: '100%',
+                height: '44px',
+                padding: '0 16px',
+                background: COLORS.BG_PANEL,
+                border: `1px solid ${COLORS.BG_PANEL}`,
+                borderRadius: '10px',
+                color: COLORS.TEXT_PRIMARY,
+                fontSize: '14px',
+                marginBottom: '12px'
+              }}
+            />
+            <button
+              onClick={() => setAmount(selectedAsset.savings_balance.toString())}
+              style={{
+                padding: '8px 16px',
+                background: COLORS.BG_PANEL,
+                color: COLORS.ACTION_PRIMARY,
+                border: `1px solid ${COLORS.ACTION_PRIMARY}`,
+                borderRadius: '8px',
+                fontSize: '13px',
+                cursor: 'pointer',
+                marginBottom: '24px'
+              }}
+            >
+              Max
+            </button>
+            <button onClick={() => setStep(3)} style={{
+              width: '100%',
+              height: '44px',
+              background: COLORS.ACTION_PRIMARY,
+              color: COLORS.TEXT_PRIMARY,
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}>Continue</button>
+          </div>
+        )}
+        
+        {step === 3 && (
+          <div>
+            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 3: Select Lock Period</div>
+            {[30, 60, 90].map(period => (
+              <button
+                key={period}
+                onClick={() => setLockPeriod(period)}
+                style={{
+                  width: '100%',
+                  height: '44px',
+                  background: lockPeriod === period ? 'transparent' : COLORS.BG_PANEL,
+                  border: lockPeriod === period ? `2px solid ${COLORS.ACTION_PRIMARY}` : `1px solid ${COLORS.BG_PANEL}`,
+                  borderRadius: '10px',
+                  color: COLORS.TEXT_PRIMARY,
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  marginBottom: '8px'
+                }}
+              >
+                {period} days
+              </button>
+            ))}
+            <div style={{
+              marginTop: '24px',
+              padding: '16px',
+              background: `${COLORS.ACTION_PRIMARY}10`,
+              border: `1px solid ${COLORS.ACTION_PRIMARY}30`,
+              borderRadius: '10px',
+              fontSize: '13px',
+              color: COLORS.TEXT_SECONDARY
+            }}>
+              <div style={{ marginBottom: '8px' }}>⚠️ Lock Rules:</div>
+              <div>• Funds cannot be withdrawn before expiry</div>
+              <div>• Early unlock incurs a penalty</div>
+            </div>
+            <button
+              onClick={handleCreate}
+              disabled={!lockPeriod}
+              style={{
+                width: '100%',
+                height: '44px',
+                background: lockPeriod ? COLORS.ACTION_PRIMARY : COLORS.ACTION_DISABLED,
+                color: COLORS.TEXT_PRIMARY,
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: lockPeriod ? 'pointer' : 'not-allowed',
+                marginTop: '24px',
+                boxShadow: lockPeriod ? GLOW_PRIMARY : 'none'
+              }}
+            >
+              Create Vault
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// EARLY UNLOCK MODAL
+function EarlyUnlockModal({ vault, onClose, userId, onSuccess }) {
+  const penaltyPercent = 10;
+  const penaltyAmount = vault.amount * (penaltyPercent / 100);
+  const finalAmount = vault.amount - penaltyAmount;
+  
+  const handleEarlyUnlock = async () => {
+    try {
+      const response = await axios.post(`${API}/api/vaults/early-unlock`, {
+        user_id: userId,
+        vault_id: vault.vault_id
+      });
+      
+      if (response.data.success) {
+        toast.success('Vault unlocked with penalty applied');
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(response.data.error || 'Failed to unlock vault');
+      }
+    } catch (error) {
+      console.error('Early unlock error:', error);
+      toast.error('Failed to unlock vault');
+    }
+  };
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.BG_CARD,
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '480px',
+        width: '90%'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <IoWarning size={48} color="#F59E0B" style={{ marginBottom: '16px' }} />
+          <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '8px' }}>Early Unlock Warning</h3>
+          <p style={{ color: COLORS.TEXT_SECONDARY, fontSize: '14px' }}>Unlocking before expiry will incur a penalty</p>
+        </div>
+        
+        <div style={{
+          background: COLORS.BG_PANEL,
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ color: COLORS.TEXT_SECONDARY }}>Original Amount:</span>
+            <span style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{vault.amount.toFixed(8)} {vault.currency}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ color: COLORS.TEXT_SECONDARY }}>Penalty ({penaltyPercent}%):</span>
+            <span style={{ color: '#F59E0B', fontWeight: '600' }}>-{penaltyAmount.toFixed(8)} {vault.currency}</span>
+          </div>
+          <div style={{ height: '1px', background: COLORS.BG_CARD, margin: '12px 0' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: COLORS.TEXT_SECONDARY }}>You'll Receive:</span>
+            <span style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '700', fontSize: '16px' }}>{finalAmount.toFixed(8)} {vault.currency}</span>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button onClick={onClose} style={{
+            flex: 1,
+            height: '44px',
+            background: 'transparent',
+            color: COLORS.TEXT_SECONDARY,
+            border: `1px solid ${COLORS.BG_PANEL}`,
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>Cancel</button>
+          <button onClick={handleEarlyUnlock} style={{
+            flex: 1,
+            height: '44px',
+            background: '#F59E0B',
+            color: COLORS.TEXT_PRIMARY,
+            border: 'none',
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>Confirm Unlock</button>
+        </div>
+      </div>
+    </div>
+  );
+}
