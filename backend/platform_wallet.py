@@ -280,36 +280,93 @@ async def get_transaction_history(
     return transactions
 
 
-async def generate_deposit_address(db, currency: str = "USDT") -> Dict[str, Any]:
+async def generate_deposit_address(db, currency: str = "USDT", user_id: str = None) -> Dict[str, Any]:
     """
-    Generate blockchain deposit address for platform wallet top-ups
-    For MVP, return a static address. In production, use proper address generation.
+    Generate REAL blockchain deposit address using NOWPayments API
+    This function creates a unique payment request and returns a real deposit address
     """
-    # Static addresses for MVP (replace with real address generation in production)
-    deposit_addresses = {
-        "USDT": "TRXPlatformWallet123456789ABCDEFGH",  # TRC20 USDT
-        "BTC": "bc1qplatformwalletbtcaddress12345",
-        "ETH": "0xPlatformWalletETHAddress1234567890"
-    }
-    
-    address = deposit_addresses.get(currency, "ADDRESS_NOT_CONFIGURED")
-    
-    # Store address in database
-    await db.platform_deposit_addresses.update_one(
-        {"currency": currency},
-        {
-            "$set": {
-                "address": address,
-                "currency": currency,
-                "wallet_id": PLATFORM_WALLET_ID,
-                "created_at": datetime.now(timezone.utc).isoformat()
+    try:
+        from nowpayments_integration import get_nowpayments_service
+        
+        # Check if we already have an active address for this currency + user combination
+        existing_address = await db.platform_deposit_addresses.find_one({
+            "currency": currency.upper(),
+            "user_id": user_id,
+            "status": "active",
+            "expires_at": {"$gt": datetime.now(timezone.utc).isoformat()}
+        })
+        
+        if existing_address and existing_address.get("address") and existing_address.get("address") != "ADDRESS_NOT_CONFIGURED":
+            logger.info(f"✅ Returning existing deposit address for {currency}: {existing_address['address']}")
+            return {
+                "currency": currency.upper(),
+                "address": existing_address["address"],
+                "network": existing_address.get("network", "Native"),
+                "payment_id": existing_address.get("payment_id")
             }
-        },
-        upsert=True
-    )
-    
-    return {
-        "currency": currency,
-        "address": address,
-        "network": "TRC20" if currency == "USDT" else "Native"
-    }
+        
+        # Generate new deposit address via NOWPayments
+        nowpayments = get_nowpayments_service()
+        
+        # Create a unique order ID
+        order_id = f"deposit_{user_id or 'platform'}_{currency.lower()}_{int(datetime.now(timezone.utc).timestamp())}"
+        
+        # Create payment with NOWPayments
+        # We use a nominal amount (min deposit) to generate the address
+        payment_result = nowpayments.create_payment(
+            price_amount=20,  # Minimum deposit amount in USD/GBP
+            price_currency="usd",
+            pay_currency=currency.lower(),
+            order_id=order_id,
+            order_description=f"{currency.upper()} deposit for user"
+        )
+        
+        if not payment_result:
+            logger.error(f"❌ Failed to generate deposit address from NOWPayments for {currency}")
+            raise Exception("Failed to generate deposit address from payment provider")
+        
+        deposit_address = payment_result.get("pay_address")
+        payment_id = payment_result.get("payment_id")
+        
+        if not deposit_address:
+            logger.error(f"❌ NOWPayments returned no address: {payment_result}")
+            raise Exception("Payment provider returned invalid response")
+        
+        logger.info(f"✅ Generated NEW deposit address for {currency}: {deposit_address}")
+        
+        # Store address in database with 7-day expiry
+        from datetime import timedelta
+        expires_at = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+        
+        await db.platform_deposit_addresses.update_one(
+            {
+                "currency": currency.upper(),
+                "user_id": user_id
+            },
+            {
+                "$set": {
+                    "address": deposit_address,
+                    "currency": currency.upper(),
+                    "user_id": user_id,
+                    "wallet_id": PLATFORM_WALLET_ID,
+                    "payment_id": payment_id,
+                    "order_id": order_id,
+                    "network": payment_result.get("network", "Native"),
+                    "status": "active",
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "expires_at": expires_at
+                }
+            },
+            upsert=True
+        )
+        
+        return {
+            "currency": currency.upper(),
+            "address": deposit_address,
+            "network": payment_result.get("network", "Native"),
+            "payment_id": payment_id
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error generating deposit address for {currency}: {str(e)}")
+        raise Exception(f"Failed to generate deposit address: {str(e)}")
