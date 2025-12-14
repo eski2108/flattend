@@ -311,10 +311,19 @@ async def generate_deposit_address(db, currency: str = "USDT", user_id: str = No
         # Create a unique order ID
         order_id = f"deposit_{user_id or 'platform'}_{currency.lower()}_{int(datetime.now(timezone.utc).timestamp())}"
         
+        # Determine minimum deposit amount based on currency
+        # BTC requires higher minimum due to network fees
+        min_amounts = {
+            "btc": 50,   # $50 minimum for BTC
+            "eth": 30,   # $30 minimum for ETH
+            "usdt": 25,  # $25 minimum for USDT
+            "default": 20
+        }
+        min_amount = min_amounts.get(currency.lower(), min_amounts["default"])
+        
         # Create payment with NOWPayments
-        # We use a nominal amount (min deposit) to generate the address
         payment_result = nowpayments.create_payment(
-            price_amount=20,  # Minimum deposit amount in USD/GBP
+            price_amount=min_amount,
             price_currency="usd",
             pay_currency=currency.lower(),
             order_id=order_id,
