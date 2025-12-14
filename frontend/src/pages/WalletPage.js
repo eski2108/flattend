@@ -435,12 +435,12 @@ export default function WalletPage() {
                     </div>
                   </div>
 
-                  {/* BALANCE - RIGHT SIDE LIKE COINBASE */}
+                  {/* RIGHT: VALUES */}
                   <div style={{
                     textAlign: 'right'
                   }}>
                     <div style={{
-                      fontSize: '16px',
+                      fontSize: '15px',
                       fontWeight: '600',
                       color: '#FFFFFF',
                       marginBottom: '2px'
@@ -448,8 +448,8 @@ export default function WalletPage() {
                       £{asset.gbp_value.toFixed(2)}
                     </div>
                     <div style={{
-                      fontSize: '14px',
-                      color: '#8FA3C8',
+                      fontSize: '13px',
+                      color: '#6B7A99',
                       fontWeight: '400'
                     }}>
                       {asset.total_balance.toFixed(4)} {asset.currency}
