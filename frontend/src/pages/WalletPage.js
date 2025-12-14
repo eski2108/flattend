@@ -322,18 +322,19 @@ export default function WalletPage() {
           </div>
         </div>
 
-        {/* ASSET LIST */}
+        {/* ASSET LIST - ONE CONTAINER */}
         <div style={{
-          background: '#101A36',
-          border: '1px solid rgba(255,255,255,0.04)',
+          background: '#0A1633',
+          border: 'none',
           borderRadius: '16px',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(0, 170, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04)'
         }}>
           {filteredAssets.length === 0 ? (
             <div style={{
               padding: '60px 20px',
               textAlign: 'center',
-              color: '#8FA3BF'
+              color: '#8FA3C8'
             }}>
               <p style={{ fontSize: '16px', margin: 0 }}>
                 You don't have any assets yet. Use Deposit to add funds.
