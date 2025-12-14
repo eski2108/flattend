@@ -468,29 +468,18 @@ function SwapCrypto() {
                       }}>From</span>
                     </div>
                     
-                    {/* BTC Selector - CENTERED */}
+                    {/* Asset Selector - ONE ONLY */}
                     <div style={{ 
                       display: 'flex',
                       justifyContent: 'center',
                       marginBottom: '8px'
                     }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '10px', 
-                        background: 'rgba(0, 240, 255, 0.1)', 
-                        padding: isMobile ? '10px 14px' : '12px 16px', 
-                        borderRadius: '12px', 
-                        border: '1px solid rgba(0, 240, 255, 0.3)' 
-                      }}>
-                        <img src={getCoinLogo(fromCrypto)} alt={fromCrypto} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                        <CoinDropdown
-                          value={fromCrypto}
-                          onChange={setFromCrypto}
-                          cryptos={cryptos}
-                          label="From"
-                        />
-                      </div>
+                      <CoinDropdown
+                        value={fromCrypto}
+                        onChange={setFromCrypto}
+                        cryptos={cryptos}
+                        label="From"
+                      />
                     </div>
                     
                     {/* Balance Display - PROMINENT */}
