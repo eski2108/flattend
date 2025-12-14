@@ -190,11 +190,11 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div style={{
-        minHeight: '100vh',
         background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: '60px 20px'
       }}>
         <div style={{ textAlign: 'center', color: '#00F0FF' }}>
           <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
@@ -207,7 +207,7 @@ export default function Dashboard() {
   return (
     <div style={{
       background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
-      paddingBottom: isMobile ? '16px' : '24px'
+      paddingBottom: 0
     }}>
         <div style={{ padding: isMobile ? '16px' : '24px' }}>
           <div style={{ maxWidth: '1800px', margin: '0 auto' }}>

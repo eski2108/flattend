@@ -148,11 +148,7 @@ export default function Login() {
   if (show2FA) {
     return (
       <div style={{
-        minHeight: '100vh',
         background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         padding: '40px 20px',
         position: 'relative',
         overflow: 'hidden'
@@ -326,11 +322,7 @@ export default function Login() {
 
   return (
     <div style={{
-      minHeight: '100vh',
       background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
       padding: '40px 20px',
       position: 'relative',
       overflow: 'hidden'

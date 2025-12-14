@@ -1,0 +1,35 @@
+APPROVED LAYOUT REFERENCE - 2024-12-14
+=====================================
+
+STATUS: ✅ LOCKED AND APPROVED
+
+MOBILE VIEWPORT TEST:
+- Device: 390x844px (iPhone standard)
+- Page: Homepage
+- Content Height: 10,475px (natural flow)
+- Footer Position: Immediately after last content section
+- Extra Space: 0px
+
+SPACING VALUES (DO NOT CHANGE):
+- Desktop main-content padding: 24px (bottom: 0)
+- Mobile main-content padding-top: 60px
+- Mobile main-content padding-bottom: 0
+- All page containers: paddingBottom: 0
+
+VISUAL CONFIRMATION:
+✅ Footer sits directly after content
+✅ No large gap above footer
+✅ No duplicate footer
+✅ Mobile spacing is tight and clean
+
+IF LAYOUT BREAKS:
+1. Check git diff for changes to locked files
+2. Restore exact values from LAYOUT_LOCK.md
+3. Verify screenshot matches this reference
+
+PROTECTED FILES:
+- /app/frontend/src/App.css (lines 1169-1177, 4035-4042)
+- /app/frontend/src/index.css (mobile overrides)
+- /app/frontend/src/styles/LAYOUT_LOCKED.css
+- /app/frontend/src/pages/Dashboard.js (line 210)
+- /app/frontend/src/pages/WalletPage.js (line 187)

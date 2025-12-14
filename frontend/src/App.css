@@ -176,7 +176,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .App {
-  min-height: 100vh;
 }
 
 /* Smooth Scrolling */
@@ -192,13 +191,13 @@ html {
 
 /* Landing Page Styles */
 .landing-page {
-  min-height: 100vh;
+  
   width: 100%;
   overflow-x: hidden;
 }
 
 .hero-section {
-  min-height: 100vh;
+  
   position: relative;
   background: linear-gradient(135deg, #0A0E27 0%, #1a0f3d 40%, #0f1a42 100%);
   overflow: hidden;
@@ -970,7 +969,6 @@ html {
 .layout {
   display: flex;
   flex-direction: row;
-  min-height: 100vh;
   background: var(--bg-primary);
   overflow-x: hidden;
 }
@@ -1168,16 +1166,22 @@ html {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* ========================================
+   DO NOT MODIFY - LOCKED LAYOUT
+   Footer positioning rules - Approved 2024-12-14
+   See /app/LAYOUT_LOCK.md for details
+   ======================================== */
 .main-content {
   margin-left: 250px;
   padding: 24px;
+  padding-bottom: 0; /* LOCKED - DO NOT CHANGE */
   width: calc(100% - 250px);
-  min-height: 100vh;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
   animation: fadeIn 0.5s ease-out;
   box-sizing: border-box;
   position: relative;
 }
+/* END LOCKED SECTION */
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -2688,7 +2692,7 @@ html {
 
 /* Public Buy Crypto Page */
 .public-buy-page {
-  min-height: 100vh;
+  
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
 }
 
@@ -3162,7 +3166,7 @@ html {
 
 /* Admin Login Page */
 .admin-login-page {
-  min-height: 100vh;
+  
   background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
   display: flex;
   align-items: center;
@@ -3298,7 +3302,7 @@ html {
 
 /* Admin Dashboard */
 .admin-dashboard-page {
-  min-height: 100vh;
+  
   background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
 }
 
@@ -3612,7 +3616,7 @@ html {
 
 /* 404 Not Found Page */
 .not-found-page {
-  min-height: 100vh;
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3795,7 +3799,7 @@ html {
 
 /* Admin Setup Page */
 .admin-setup-page {
-  min-height: 100vh;
+  
   background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
   display: flex;
   align-items: center;
@@ -4035,12 +4039,15 @@ html {
     pointer-events: none;
   }
 
+  /* LOCKED - Mobile Layout - DO NOT MODIFY */
   .main-content {
     margin-left: 0;
     width: 100%;
     padding: 0;
-    padding-top: 100px;
+    padding-top: 60px; /* LOCKED */
+    padding-bottom: 0; /* LOCKED */
   }
+  /* END LOCKED SECTION */
 
   .page-header {
     flex-direction: column;
@@ -4173,7 +4180,7 @@ html {
    AUTH PAGES (Login/Register)
    ========================================== */
 .auth-page {
-  min-height: 100vh;
+  
   display: flex;
   align-items: center;
   justify-content: center;

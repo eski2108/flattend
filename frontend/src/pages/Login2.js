@@ -132,7 +132,7 @@ export default function Login2() {
   if (show2FA) {
     return (
       <div style={{
-        minHeight: '100vh',
+        
         background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
         display: 'flex',
         alignItems: 'center',
@@ -310,7 +310,7 @@ export default function Login2() {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      
       background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
       display: 'flex',
       alignItems: 'center',

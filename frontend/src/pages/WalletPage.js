@@ -184,9 +184,10 @@ export default function WalletPage() {
   return (
     <div style={{
       background: '#060B1A',
-      fontFamily: 'Inter, sans-serif'
+      fontFamily: 'Inter, sans-serif',
+      paddingBottom: 0
     }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', paddingBottom: 0 }}>
         {/* HEADER */}
         <div style={{
           display: 'flex',

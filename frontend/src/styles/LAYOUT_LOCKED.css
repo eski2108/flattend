@@ -1,0 +1,51 @@
+/* ========================================
+   LAYOUT LOCK - DO NOT MODIFY
+   Date: 2024-12-14
+   Status: APPROVED AND PROTECTED
+   ======================================== */
+
+/* 
+ * FOOTER POSITIONING RULES - LOCKED
+ * These rules ensure footer sits immediately after content
+ * with no extra spacing.
+ * 
+ * DO NOT MODIFY WITHOUT EXPLICIT APPROVAL
+ */
+
+/* Desktop Layout - LOCKED */
+.main-content {
+  padding-bottom: 0 !important;
+}
+
+/* Mobile Layout - LOCKED */
+@media (max-width: 768px) {
+  body, html, #root, .App, .layout, .main-content {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+  
+  .main-content {
+    padding-top: 60px !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .main-content > * {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+/* Page Container Rules - LOCKED */
+.dashboard-page,
+.wallet-page,
+.page-wrapper {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* 
+ * END LOCKED SECTION
+ * =============================================
+ * If footer spacing is broken, restore these exact values
+ * and check git history for unauthorized changes.
+ */

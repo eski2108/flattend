@@ -1,6 +1,5 @@
 /* SWAP THEME - APPLY TO ALL PAGES */
 .swap-theme-page {
-  min-height: 100vh;
   background: linear-gradient(135deg, rgba(2, 6, 24, 0.98) 0%, rgba(7, 19, 39, 0.95) 50%, rgba(2, 6, 24, 0.98) 100%);
   padding: 24px;
 }

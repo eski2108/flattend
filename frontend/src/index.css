@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+/* Override Tailwind's min-h-screen to prevent forced 100vh */
+.min-h-screen {
+    min-height: 0 !important;
+}
+
 body {
     margin: 0;
     font-family:
@@ -233,4 +243,19 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #00E5FF, #9B4DFF);
+}
+
+/* SIMPLE FIX: Remove forced viewport height on mobile */
+@media (max-width: 768px) {
+  body, html, #root, .App, .layout, .main-content {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
+/* Mobile spacing fix */
+@media (max-width: 768px) {
+  .main-content > * {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
 }
