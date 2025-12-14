@@ -457,7 +457,7 @@ export default function WalletPage() {
                     gap: '8px',
                     flex: '0 0 auto'
                   }}>
-                    {/* DEPOSIT - BRIGHTEST ELEMENT */}
+                    {/* DEPOSIT - PRIMARY */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -465,16 +465,15 @@ export default function WalletPage() {
                       }}
                       style={{
                         padding: '10px 20px',
-                        background: 'linear-gradient(135deg, #00E5FF 0%, #3F8CFF 100%)',
+                        background: '#00E5FF',
                         border: 'none',
                         borderRadius: '12px',
-                        color: '#081225',
+                        color: '#001018',
                         fontSize: '13px',
                         fontWeight: '600',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap',
-                        boxShadow: '0 4px 16px rgba(0, 229, 255, 0.25)'
+                        whiteSpace: 'nowrap'
                       }}
                     >
                       Deposit
