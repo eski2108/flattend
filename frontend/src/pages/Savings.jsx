@@ -1,409 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoLockClosed, IoTrendingUp, IoWallet, IoCheckmarkCircle, IoClose, IoTime } from 'react-icons/io5';
-import { BiArrowToTop, BiArrowFromTop } from 'react-icons/bi';
 import { toast } from 'sonner';
-import { Sparklines, SparklinesLine } from 'react-sparklines';
+import { IoArrowForward, IoLockClosed, IoTime, IoWarning } from 'react-icons/io5';
+import { getCoinLogo } from '@/utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// No hardcoded coins - all loaded from backend!
-
-// Premium Card Component
-const PremiumCard = ({ children, className = '', glow = false }) => (
-  <div 
-    className={`rounded-2xl border border-cyan-400/25 bg-[#030A14]/80 backdrop-blur-sm ${className}`}
-    style={{
-      boxShadow: glow 
-        ? '0 0 30px rgba(0, 234, 255, 0.2), inset 0 0 30px rgba(0, 234, 255, 0.05)'
-        : '0 0 20px rgba(0, 234, 255, 0.1), inset 0 0 20px rgba(0, 234, 255, 0.03)'
-    }}
-  >
-    {children}
-  </div>
-);
-
-// Animated Counter
-const AnimatedCounter = ({ value, prefix = '£', decimals = 2 }) => {
-  const [display, setDisplay] = useState(0);
-
-  useEffect(() => {
-    let start = display;
-    const end = value;
-    const duration = 1000;
-    const startTime = performance.now();
-
-    const animate = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(start + (end - start) * eased);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [value]);
-
-  return (
-    <span className="text-cyan-400">
-      {prefix}{display.toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
-    </span>
-  );
+// GLOBAL VISUAL SYSTEM - NON-NEGOTIABLE
+const COLORS = {
+  BG_PRIMARY: '#0B0F1A',
+  BG_CARD: '#12182A',
+  BG_PANEL: '#161D33',
+  TEXT_PRIMARY: '#FFFFFF',
+  TEXT_SECONDARY: '#AAB0C0',
+  TEXT_MUTED: '#7A8095',
+  ACTION_PRIMARY: '#4DA3FF',
+  ACTION_HOVER: '#6AB6FF',
+  ACTION_DISABLED: '#2A3B55'
 };
 
-// Coin Tile Component - Always shows, even with 0 balance
-const CoinTile = ({ coin, savingsBalance, spotBalance, gbpValue, priceHistory, onDeposit, onWithdraw, onNowPaymentsDeposit }) => {
-  // Use real price history if available, otherwise use memoized placeholder
-  const [placeholderData] = useState(() => 
-    Array.from({ length: 20 }, () => Math.random() * 100 + 50)
-  );
-  
-  const sparklineData = priceHistory && priceHistory.length > 0 
-    ? priceHistory 
-    : placeholderData;
+const GLOW_PRIMARY = '0 0 18px rgba(77,163,255,0.35)';
 
-  // Calculate 24h price change percentage
-  const priceChange = React.useMemo(() => {
-    if (!priceHistory || priceHistory.length < 2) return 0;
-    const oldest = priceHistory[0];
-    const newest = priceHistory[priceHistory.length - 1];
-    return ((newest - oldest) / oldest) * 100;
-  }, [priceHistory]);
-
-  const isPositive = priceChange >= 0;
-
-  return (
-    <PremiumCard className="p-6 transition-all duration-300 hover:scale-[1.02]">
-      {/* Coin Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-4">
-          {/* Coin Icon - Premium 3D Style */}
-          <div 
-            className={`w-16 h-16 rounded-full bg-gradient-to-br ${coin.gradient} flex items-center justify-center text-3xl font-black text-white shadow-2xl relative overflow-hidden`}
-            style={{
-              boxShadow: `0 8px 32px ${coin.color}60, 0 0 0 3px ${coin.color}20, inset 0 -4px 8px rgba(0,0,0,0.3), inset 0 4px 8px rgba(255,255,255,0.3)`,
-              textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 -1px 2px rgba(255,255,255,0.3)',
-              transform: 'translateZ(0)',
-              fontFamily: '"SF Pro Display", -apple-system, system-ui, sans-serif',
-              letterSpacing: '-0.02em'
-            }}
-          >
-            {/* Glossy overlay */}
-            <div 
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%)',
-                pointerEvents: 'none'
-              }}
-            />
-            <span style={{ position: 'relative', zIndex: 1 }}>{coin.icon}</span>
-          </div>
-          
-          {/* Coin Info */}
-          <div>
-            <div className="text-xl font-bold text-white">{coin.code}</div>
-            <div className="text-sm text-gray-400">{coin.name}</div>
-          </div>
-        </div>
-
-        {/* Savings Balance */}
-        <div className="text-right">
-          <div className="text-2xl font-bold text-white">{savingsBalance.toFixed(8)}</div>
-          <div className="text-lg font-semibold text-cyan-400">£{gbpValue.toFixed(2)}</div>
-        </div>
-      </div>
-
-      {/* Mini Sparkline with 24h Change */}
-      <div className="mb-4 relative">
-        <div style={{ opacity: 0.6, height: '40px' }}>
-          <Sparklines data={sparklineData} height={40}>
-            <SparklinesLine color={coin.color} style={{ strokeWidth: 2, fill: 'none' }} />
-          </Sparklines>
-        </div>
-        {/* 24h Change Badge */}
-        <div className="absolute top-0 right-0 px-3 py-1 rounded-lg bg-black/60 backdrop-blur-sm">
-          <span className={`text-sm font-bold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
-            {isPositive ? '+' : ''}{priceChange.toFixed(2)}%
-          </span>
-        </div>
-      </div>
-
-      {/* Spot Wallet Balance Info */}
-      <div className="mb-4 p-3 rounded-lg bg-white/5 border border-cyan-400/20">
-        <div className="text-xs text-gray-400 mb-1">Available in Spot Wallet</div>
-        <div className="text-sm font-bold text-white">{spotBalance.toFixed(8)} {coin.code}</div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          onClick={() => spotBalance > 0 ? onDeposit(coin.code) : onNowPaymentsDeposit(coin.code)}
-          className="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg"
-          style={{
-            boxShadow: '0 0 20px rgba(0, 234, 255, 0.4)'
-          }}
-        >
-          <BiArrowToTop size={20} />
-          <span>{spotBalance > 0 ? 'Add' : 'Deposit'}</span>
-        </button>
-        
-        <button
-          onClick={() => onWithdraw(coin.code)}
-          disabled={savingsBalance === 0}
-          className="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl border-2 border-cyan-400/50 bg-cyan-400/10 text-cyan-400 font-semibold hover:bg-cyan-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <BiArrowFromTop size={20} />
-          <span>Withdraw</span>
-        </button>
-      </div>
-    </PremiumCard>
-  );
-};
-
-// Transfer Modal Component
-const TransferModal = ({ isOpen, onClose, coin, direction, spotBalance, savingsBalance, onConfirm }) => {
-  const [amount, setAmount] = useState('');
-  const [processing, setProcessing] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const coinData = SUPPORTED_COINS.find(c => c.code === coin) || SUPPORTED_COINS[0];
-
-  if (!isOpen) return null;
-
-  const handleConfirm = async () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-
-    const maxBalance = direction === 'to_savings' ? spotBalance : savingsBalance;
-    if (parseFloat(amount) > maxBalance) {
-      toast.error('Insufficient balance');
-      return;
-    }
-
-    setProcessing(true);
-    const success = await onConfirm(coin, parseFloat(amount), direction);
-    setProcessing(false);
-
-    if (success) {
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        onClose();
-        setAmount('');
-      }, 2000);
-    }
-  };
-
-  if (showSuccess) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0, 0, 0, 0.8)' }}>
-        <PremiumCard className="max-w-md w-full p-8 animate-fadeIn">
-          <div className="text-center">
-            <div className="mb-6 flex justify-center">
-              <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center animate-bounce">
-                <IoCheckmarkCircle size={60} className="text-green-500" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Transfer Successful!</h2>
-            <p className="text-gray-400 mb-4">
-              {amount} {coin} has been {direction === 'to_savings' ? 'moved to' : 'withdrawn from'} your Savings Vault
-            </p>
-          </div>
-        </PremiumCard>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0, 0, 0, 0.8)' }}>
-      <PremiumCard className="max-w-md w-full p-8 animate-fadeIn">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div 
-              className={`w-14 h-14 rounded-full bg-gradient-to-br ${coinData.gradient} flex items-center justify-center text-2xl font-black text-white shadow-2xl relative overflow-hidden`}
-              style={{
-                boxShadow: `0 8px 24px ${coinData.color}50, inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 3px 6px rgba(255,255,255,0.3)`,
-                textShadow: '0 2px 6px rgba(0,0,0,0.5)',
-                fontFamily: '"SF Pro Display", -apple-system, system-ui, sans-serif'
-              }}
-            >
-              {/* Glossy overlay */}
-              <div 
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%)',
-                  pointerEvents: 'none'
-                }}
-              />
-              <span style={{ position: 'relative', zIndex: 1 }}>{coinData.icon}</span>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">
-                {direction === 'to_savings' ? 'Add to Savings' : 'Withdraw from Savings'}
-              </h2>
-              <p className="text-sm text-gray-400">{coinData.name}</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
-            <IoClose size={28} />
-          </button>
-        </div>
-
-        {/* Balance Display */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 rounded-xl bg-white/5 border border-cyan-400/20">
-            <div className="text-xs text-gray-400 mb-1">Spot Wallet</div>
-            <div className="text-lg font-bold text-white">{spotBalance.toFixed(8)}</div>
-          </div>
-          <div className="p-4 rounded-xl bg-white/5 border border-cyan-400/20">
-            <div className="text-xs text-gray-400 mb-1">Savings Vault</div>
-            <div className="text-lg font-bold text-cyan-400">{savingsBalance.toFixed(8)}</div>
-          </div>
-        </div>
-
-        {/* Amount Input */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-300 mb-2">Amount</label>
-          <div className="relative">
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00000000"
-              step="0.00000001"
-              className="w-full px-4 py-3 rounded-xl bg-black/50 border border-cyan-400/30 text-white text-lg focus:outline-none focus:border-cyan-400 transition-all"
-              style={{
-                boxShadow: '0 0 10px rgba(0, 234, 255, 0.1)'
-              }}
-            />
-            <button
-              onClick={() => setAmount((direction === 'to_savings' ? spotBalance : savingsBalance).toString())}
-              className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm font-semibold hover:bg-cyan-500/30 transition-all"
-            >
-              MAX
-            </button>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={onClose}
-            className="px-6 py-3 rounded-xl border-2 border-gray-600 text-gray-300 font-semibold hover:bg-gray-600/20 transition-all"
-            disabled={processing}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleConfirm}
-            disabled={processing || !amount || parseFloat(amount) <= 0}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              boxShadow: processing ? 'none' : '0 0 20px rgba(0, 234, 255, 0.4)'
-            }}
-          >
-            {processing ? 'Processing...' : 'Confirm'}
-          </button>
-        </div>
-      </PremiumCard>
-    </div>
-  );
-};
-
-// Main Savings Vault Component
-export default function SavingsVault() {
+export default function SavingsPage() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [savingsBalances, setSavingsBalances] = useState({});
-  const [spotBalances, setSpotBalances] = useState({});
-  const [totalSavingsGBP, setTotalSavingsGBP] = useState(0);
-  const [totalSavingsUSD, setTotalSavingsUSD] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [modalConfig, setModalConfig] = useState({});
-  const [savingsHistory, setSavingsHistory] = useState([]);
-  const [prices, setPrices] = useState({});
-  const [priceHistories, setPriceHistories] = useState({});
-  const [supportedCoins, setSupportedCoins] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const coinsPerPage = 12;
-
-  const loadData = React.useCallback(async (userId) => {
-    try {
-      setLoading(true);
-
-      // Load ALL supported coins from backend (unlimited, dynamic)
-      const coinsRes = await axios.get(`${API}/savings/supported-coins`);
-      if (coinsRes.data.success) {
-        setSupportedCoins(coinsRes.data.coins);
-      }
-
-      // Load savings balances
-      const savingsRes = await axios.get(`${API}/savings/balances/${userId}`);
-      if (savingsRes.data.success) {
-        const savingsMap = {};
-        let totalGBP = 0;
-        let totalUSD = 0;
-        savingsRes.data.balances.forEach(b => {
-          savingsMap[b.currency] = b.savings_balance || 0;
-          totalGBP += b.value_gbp || 0;
-          totalUSD += b.value_usd || 0;
-        });
-        setSavingsBalances(savingsMap);
-        setTotalSavingsGBP(totalGBP);
-        setTotalSavingsUSD(totalUSD);
-      }
-
-      // Load spot wallet balances
-      const walletRes = await axios.get(`${API}/wallets/balances/${userId}`);
-      if (walletRes.data.balances) {
-        const spotMap = {};
-        const priceMap = {};
-        
-        walletRes.data.balances.forEach(b => {
-          spotMap[b.currency] = b.available_balance || 0;
-          priceMap[b.currency] = b.price_gbp || 0;
-        });
-        
-        setSpotBalances(spotMap);
-        setPrices(priceMap);
-      }
-
-      // Load savings history
-      const historyRes = await axios.get(`${API}/savings/history/${userId}`);
-      if (historyRes.data.success) {
-        setSavingsHistory(historyRes.data.history || []);
-      }
-
-      // Load 24h price history for ALL supported coins (from backend list)
-      const historyMap = {};
-      const coinsList = coinsRes.data.success ? coinsRes.data.coins : [];
-      
-      for (const coin of coinsList) {
-        try {
-          const priceHistRes = await axios.get(`${API}/savings/price-history/${coin.code}`);
-          if (priceHistRes.data.success && priceHistRes.data.prices.length > 0) {
-            historyMap[coin.code] = priceHistRes.data.prices;
-          }
-        } catch (err) {
-          console.error(`Failed to load price history for ${coin.code}:`, err);
-        }
-      }
-      setPriceHistories(historyMap);
-
-      setLoading(false);
-    } catch (error) {
-      console.error('Error loading savings:', error);
-      toast.error('Failed to load savings data');
-      setLoading(false);
-    }
-  }, []);
+  const [loading, setLoading] = useState(true);
+  
+  // Data states
+  const [savingsBalances, setSavingsBalances] = useState([]);
+  const [vaults, setVaults] = useState([]);
+  const [totalSavings, setTotalSavings] = useState(0);
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [lockedInVaults, setLockedInVaults] = useState(0);
+  
+  // Modal states
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
+  const [showEarlyUnlockModal, setShowEarlyUnlockModal] = useState(false);
+  const [selectedVault, setSelectedVault] = useState(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -411,339 +46,798 @@ export default function SavingsVault() {
       navigate('/login');
       return;
     }
-    const u = JSON.parse(userData);
-    setUser(u);
-    loadData(u.user_id);
-  }, [navigate, loadData]);
+    const parsedUser = JSON.parse(userData);
+    setUser(parsedUser);
+    loadAllData(parsedUser.user_id);
+  }, [navigate]);
 
-  const handleTransfer = async (coin, amount, direction) => {
+  const loadAllData = async (userId) => {
+    setLoading(true);
     try {
-      const response = await axios.post(`${API}/savings/transfer`, {
-        user_id: user.user_id,
-        currency: coin,
-        amount: amount,
-        direction: direction
-      });
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        loadData(user.user_id);
-        return true;
-      } else {
-        toast.error(response.data.message || 'Transfer failed');
-        return false;
-      }
+      await Promise.all([
+        loadSavingsBalances(userId),
+        loadVaults(userId)
+      ]);
     } catch (error) {
-      console.error('Transfer error:', error);
-      toast.error(error.response?.data?.message || 'Transfer failed');
-      return false;
+      console.error('Error loading data:', error);
+      toast.error('Failed to load savings data');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const openDepositModal = (coinCode) => {
-    const spot = spotBalances[coinCode] || 0;
-    const savings = savingsBalances[coinCode] || 0;
-    setModalConfig({
-      coin: coinCode,
-      direction: 'to_savings',
-      spotBalance: spot,
-      savingsBalance: savings
-    });
-    setShowModal(true);
-  };
-
-  const openWithdrawModal = (coinCode) => {
-    const spot = spotBalances[coinCode] || 0;
-    const savings = savingsBalances[coinCode] || 0;
-    setModalConfig({
-      coin: coinCode,
-      direction: 'to_spot',
-      spotBalance: spot,
-      savingsBalance: savings
-    });
-    setShowModal(true);
-  };
-
-  const handleNowPaymentsDeposit = async (coinCode) => {
+  const loadSavingsBalances = async (userId) => {
     try {
-      // Show input modal to get amount
-      const amount = prompt(`How much ${coinCode} would you like to deposit?`);
-      if (!amount || parseFloat(amount) <= 0) {
-        return;
-      }
-
-      toast.info('Creating payment...');
-      
-      const response = await axios.post(`${API}/savings/create-deposit`, {
-        user_id: user.user_id,
-        currency: coinCode,
-        amount: parseFloat(amount)
-      });
-
+      const response = await axios.get(`${API}/api/savings/balances/${userId}`);
       if (response.data.success) {
-        const { pay_address, payment_url, pay_amount } = response.data;
+        const balances = response.data.balances || [];
+        // Only show assets with balance > 0
+        const nonZeroBalances = balances.filter(b => b.savings_balance > 0);
+        setSavingsBalances(nonZeroBalances);
         
-        // Show payment details
-        const message = `
-Payment Created!
-
-Send ${pay_amount} ${coinCode} to:
-${pay_address}
-
-Or use this link: ${payment_url}
-
-After payment is confirmed, funds will be credited to your Spot Wallet automatically.
-        `;
-        
-        alert(message);
-        toast.success('Payment created! Check your email for details.');
-        
-        // Optionally open payment URL
-        if (payment_url && confirm('Open payment page?')) {
-          window.open(payment_url, '_blank');
-        }
-      } else {
-        toast.error('Failed to create payment');
+        // Calculate available balance
+        const available = nonZeroBalances.reduce((sum, b) => sum + (b.gbp_value || 0), 0);
+        setAvailableBalance(available);
       }
     } catch (error) {
-      console.error('NOWPayments deposit error:', error);
-      toast.error(error.response?.data?.detail || 'Failed to create deposit');
+      console.error('Error loading savings balances:', error);
+      throw error;
+    }
+  };
+
+  const loadVaults = async (userId) => {
+    try {
+      const response = await axios.get(`${API}/api/vaults/${userId}`);
+      if (response.data.success) {
+        setVaults(response.data.vaults || []);
+        
+        // Calculate locked in vaults
+        const locked = (response.data.vaults || []).reduce((sum, v) => sum + (v.gbp_value || 0), 0);
+        setLockedInVaults(locked);
+      }
+    } catch (error) {
+      console.error('Error loading vaults:', error);
+      throw error;
+    }
+  };
+
+  // Calculate total savings
+  useEffect(() => {
+    setTotalSavings(availableBalance + lockedInVaults);
+  }, [availableBalance, lockedInVaults]);
+
+  const handleWithdrawToWallet = async (currency, amount) => {
+    try {
+      const response = await axios.post(`${API}/api/savings/withdraw`, {
+        user_id: user.user_id,
+        currency,
+        amount
+      });
+      
+      if (response.data.success) {
+        toast.success('Withdrawn to wallet successfully');
+        loadAllData(user.user_id);
+      } else {
+        toast.error(response.data.error || 'Withdrawal failed');
+      }
+    } catch (error) {
+      console.error('Withdrawal error:', error);
+      toast.error('Failed to withdraw to wallet');
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)' }}>
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400 text-lg">Loading Savings Vault...</p>
-          </div>
-        </div>
+      <div style={{
+        background: COLORS.BG_PRIMARY,
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: COLORS.TEXT_PRIMARY
+      }}>
+        Loading savings...
       </div>
     );
   }
 
   return (
-    <>
-      <div 
-        className="min-h-screen pb-20 px-4 py-8"
-        style={{ background: 'linear-gradient(180deg, #05121F 0%, #071E2C 50%, #03121E 100%)' }}
-      >
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-white mb-3" style={{ textShadow: '0 0 30px rgba(0, 234, 255, 0.5)' }}>
-              Savings Vault
-            </h1>
-            <p className="text-gray-400 text-lg">Secure your crypto and earn passive rewards</p>
-          </div>
-
-          {/* Total Balance Card */}
-          <PremiumCard className="p-8 mb-8" glow>
-            <div className="text-center">
-              <div className="text-sm text-gray-400 uppercase tracking-wider mb-2 font-semibold">Total Savings Balance</div>
-              <div className="text-6xl font-bold mb-2">
-                <AnimatedCounter value={totalSavingsGBP} prefix="£" decimals={2} />
-              </div>
-              <div className="text-xl text-gray-400 mb-6">≈ ${totalSavingsUSD.toFixed(2)} USD</div>
-            </div>
-          </PremiumCard>
-
-          {/* Stats Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <PremiumCard className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  <IoTrendingUp size={24} className="text-white" />
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Estimated APY</div>
-                  <div className="text-2xl font-bold text-white">4.5%</div>
-                </div>
-              </div>
-            </PremiumCard>
-
-            <PremiumCard className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                  <IoWallet size={24} className="text-white" />
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Total Assets</div>
-                  <div className="text-2xl font-bold text-white">{supportedCoins.length}</div>
-                </div>
-              </div>
-            </PremiumCard>
-
-            <PremiumCard className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-yellow-600 flex items-center justify-center">
-                  <IoTime size={24} className="text-white" />
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Coming Soon</div>
-                  <div className="text-lg font-bold text-gray-500">APY Rewards</div>
-                </div>
-              </div>
-            </PremiumCard>
-          </div>
-
-          {/* All Coin Tiles - Dynamic Grid */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-white">All Savings Assets ({supportedCoins.length})</h2>
-              {supportedCoins.length > coinsPerPage && (
-                <div className="text-sm text-gray-400">
-                  Page {currentPage} of {Math.ceil(supportedCoins.length / coinsPerPage)}
-                </div>
-              )}
-            </div>
-            
-            {/* Dynamic Responsive Grid */}
-            <div 
-              className="grid gap-6 mb-6"
-              style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))'
-              }}
-            >
-              {supportedCoins
-                .slice((currentPage - 1) * coinsPerPage, currentPage * coinsPerPage)
-                .map((coin) => (
-                  <CoinTile
-                    key={coin.code}
-                    coin={coin}
-                    savingsBalance={savingsBalances[coin.code] || 0}
-                    spotBalance={spotBalances[coin.code] || 0}
-                    gbpValue={(savingsBalances[coin.code] || 0) * (prices[coin.code] || 0)}
-                    priceHistory={priceHistories[coin.code] || []}
-                    onDeposit={openDepositModal}
-                    onWithdraw={openWithdrawModal}
-                    onNowPaymentsDeposit={handleNowPaymentsDeposit}
-                  />
-                ))}
-            </div>
-
-            {/* Pagination */}
-            {supportedCoins.length > coinsPerPage && (
-              <div className="flex justify-center items-center space-x-4">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                
-                <div className="flex space-x-2">
-                  {Array.from({ length: Math.ceil(supportedCoins.length / coinsPerPage) }, (_, i) => i + 1).map(pageNum => (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`w-10 h-10 rounded-lg font-semibold transition-all ${
-                        currentPage === pageNum
-                          ? 'bg-cyan-500 text-white'
-                          : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  ))}
-                </div>
-                
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(Math.ceil(supportedCoins.length / coinsPerPage), p + 1))}
-                  disabled={currentPage === Math.ceil(supportedCoins.length / coinsPerPage)}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Savings History */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Savings History</h2>
-            <PremiumCard className="overflow-hidden">
-              {savingsHistory.length === 0 ? (
-                <div className="p-12 text-center">
-                  <p className="text-gray-400">No transactions yet. Start saving to see your history here.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-white/5">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Date</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Type</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Coin</th>
-                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Amount</th>
-                        <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">GBP Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {savingsHistory.slice(0, 20).map((tx, index) => (
-                        <tr key={index} className="border-t border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="px-6 py-4 text-sm text-gray-400">
-                            {new Date(tx.timestamp).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-semibold ${
-                              tx.direction === 'to_savings' 
-                                ? 'bg-green-500/20 text-green-400' 
-                                : 'bg-orange-500/20 text-orange-400'
-                            }`}>
-                              {tx.direction === 'to_savings' ? (
-                                <><BiArrowToTop size={14} /> <span>Deposit</span></>
-                              ) : (
-                                <><BiArrowFromTop size={14} /> <span>Withdraw</span></>
-                              )}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-sm font-semibold text-white">{tx.currency}</td>
-                          <td className="px-6 py-4 text-sm font-semibold text-right text-white">
-                            {tx.amount?.toFixed(8) || '0.00000000'}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-semibold text-right text-cyan-400">
-                            £{tx.gbp_value?.toFixed(2) || '0.00'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </PremiumCard>
-          </div>
-
-          {/* APY Coming Soon Banner */}
-          <PremiumCard className="p-8 text-center">
-            <div className="max-w-2xl mx-auto">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500 to-orange-600 mb-4">
-                <IoLockClosed size={32} className="text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">APY Rewards Coming Soon</h3>
-              <p className="text-gray-400">
-                We&apos;re working on implementing automatic daily APY rewards. For now, enjoy secure storage in your Savings Vault.
-              </p>
-            </div>
-          </PremiumCard>
+    <div style={{
+      background: COLORS.BG_PRIMARY,
+      minHeight: '100vh',
+      padding: '24px',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        
+        {/* 1) PAGE HEADER */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '32px'
+        }}>
+          <h1 style={{
+            fontSize: '22px',
+            fontWeight: '700',
+            color: COLORS.TEXT_PRIMARY,
+            margin: 0
+          }}>Savings</h1>
+          
+          <button
+            onClick={() => setShowTransferModal(true)}
+            style={{
+              height: '44px',
+              padding: '0 24px',
+              borderRadius: '10px',
+              background: COLORS.ACTION_PRIMARY,
+              color: COLORS.TEXT_PRIMARY,
+              border: 'none',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              boxShadow: GLOW_PRIMARY
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = COLORS.ACTION_HOVER}
+            onMouseLeave={(e) => e.currentTarget.style.background = COLORS.ACTION_PRIMARY}
+          >
+            Transfer from Wallet
+          </button>
         </div>
+
+        {/* 2) SAVINGS SUMMARY PANEL */}
+        <div style={{
+          background: COLORS.BG_CARD,
+          padding: '24px',
+          borderRadius: '16px',
+          marginBottom: '32px',
+          display: 'grid',
+          gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(3, 1fr)',
+          gap: '24px'
+        }}>
+          <div>
+            <div style={{
+              fontSize: '12px',
+              color: COLORS.TEXT_MUTED,
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>Total Savings</div>
+            <div style={{
+              fontSize: '26px',
+              fontWeight: '700',
+              color: COLORS.TEXT_PRIMARY
+            }}>£{totalSavings.toFixed(2)}</div>
+          </div>
+          
+          <div>
+            <div style={{
+              fontSize: '12px',
+              color: COLORS.TEXT_MUTED,
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>Available Balance</div>
+            <div style={{
+              fontSize: '26px',
+              fontWeight: '700',
+              color: COLORS.TEXT_PRIMARY
+            }}>£{availableBalance.toFixed(2)}</div>
+          </div>
+          
+          <div>
+            <div style={{
+              fontSize: '12px',
+              color: COLORS.TEXT_MUTED,
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>Locked in Vaults</div>
+            <div style={{
+              fontSize: '26px',
+              fontWeight: '700',
+              color: COLORS.TEXT_PRIMARY
+            }}>£{lockedInVaults.toFixed(2)}</div>
+          </div>
+        </div>
+
+        {/* 3) FLEXIBLE SAVINGS SECTION */}
+        <div style={{ marginBottom: '48px' }}>
+          <h2 style={{
+            fontSize: '18px',
+            fontWeight: '700',
+            color: COLORS.TEXT_PRIMARY,
+            marginBottom: '20px'
+          }}>Flexible Savings</h2>
+          
+          {savingsBalances.length === 0 ? (
+            <div style={{
+              background: COLORS.BG_CARD,
+              padding: '40px',
+              borderRadius: '16px',
+              textAlign: 'center',
+              color: COLORS.TEXT_SECONDARY
+            }}>
+              No assets in flexible savings. Transfer from wallet to start saving.
+            </div>
+          ) : (
+            <div style={{
+              background: COLORS.BG_CARD,
+              borderRadius: '16px',
+              overflow: 'hidden'
+            }}>
+              {savingsBalances.map((asset, index) => (
+                <div
+                  key={asset.currency}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '20px 24px',
+                    borderBottom: index < savingsBalances.length - 1 ? `1px solid ${COLORS.BG_PANEL}` : 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                    <img
+                      src={getCoinLogo(asset.currency)}
+                      alt={asset.currency}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+                    />
+                    <div>
+                      <div style={{
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        color: COLORS.TEXT_PRIMARY
+                      }}>{asset.currency}</div>
+                      <div style={{
+                        fontSize: '13px',
+                        color: COLORS.TEXT_SECONDARY
+                      }}>{asset.coin_name || asset.currency}</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ textAlign: 'right', marginRight: '24px' }}>
+                    <div style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: COLORS.TEXT_PRIMARY
+                    }}>{asset.savings_balance.toFixed(8)}</div>
+                    <div style={{
+                      fontSize: '13px',
+                      color: COLORS.TEXT_SECONDARY
+                    }}>£{(asset.gbp_value || 0).toFixed(2)}</div>
+                  </div>
+                  
+                  <button
+                    onClick={() => handleWithdrawToWallet(asset.currency, asset.savings_balance)}
+                    style={{
+                      height: '36px',
+                      padding: '0 20px',
+                      borderRadius: '8px',
+                      border: `1px solid ${COLORS.ACTION_PRIMARY}`,
+                      background: 'transparent',
+                      color: COLORS.ACTION_PRIMARY,
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = COLORS.ACTION_PRIMARY;
+                      e.currentTarget.style.color = COLORS.TEXT_PRIMARY;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = COLORS.ACTION_PRIMARY;
+                    }}
+                  >
+                    Withdraw to Wallet
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 4) LOCKED VAULTS SECTION */}
+        <div>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: COLORS.TEXT_PRIMARY,
+              margin: 0
+            }}>Locked Vaults</h2>
+            
+            <button
+              onClick={() => setShowCreateVaultModal(true)}
+              style={{
+                height: '44px',
+                padding: '0 24px',
+                borderRadius: '10px',
+                background: COLORS.ACTION_PRIMARY,
+                color: COLORS.TEXT_PRIMARY,
+                border: 'none',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: GLOW_PRIMARY
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = COLORS.ACTION_HOVER}
+              onMouseLeave={(e) => e.currentTarget.style.background = COLORS.ACTION_PRIMARY}
+            >
+              Create Vault
+            </button>
+          </div>
+          
+          {vaults.length === 0 ? (
+            <div style={{
+              background: COLORS.BG_CARD,
+              padding: '40px',
+              borderRadius: '16px',
+              textAlign: 'center',
+              color: COLORS.TEXT_SECONDARY
+            }}>
+              No vaults created yet. Lock your savings for secure storage.
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {vaults.map(vault => <VaultCard key={vault.vault_id} vault={vault} onEarlyUnlock={() => {
+                setSelectedVault(vault);
+                setShowEarlyUnlockModal(true);
+              }} />)}
+            </div>
+          )}
+        </div>
+
       </div>
 
-      {/* Transfer Modal */}
-      {showModal && (
-        <TransferModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          coin={modalConfig.coin}
-          direction={modalConfig.direction}
-          spotBalance={modalConfig.spotBalance}
-          savingsBalance={modalConfig.savingsBalance}
-          onConfirm={handleTransfer}
-        />
+      {/* MODALS */}
+      {showTransferModal && <TransferModal onClose={() => setShowTransferModal(false)} userId={user.user_id} onSuccess={() => loadAllData(user.user_id)} />}
+      {showCreateVaultModal && <CreateVaultModal onClose={() => setShowCreateVaultModal(false)} userId={user.user_id} savingsBalances={savingsBalances} onSuccess={() => loadAllData(user.user_id)} />}
+      {showEarlyUnlockModal && selectedVault && <EarlyUnlockModal vault={selectedVault} onClose={() => setShowEarlyUnlockModal(false)} userId={user.user_id} onSuccess={() => loadAllData(user.user_id)} />}
+    </div>
+  );
+}
+
+// VAULT CARD COMPONENT
+function VaultCard({ vault, onEarlyUnlock }) {
+  const now = new Date();
+  const unlockDate = new Date(vault.unlock_date);
+  const daysRemaining = Math.max(0, Math.ceil((unlockDate - now) / (1000 * 60 * 60 * 24)));
+  const isCompleted = daysRemaining === 0;
+  const status = isCompleted ? 'completed' : (daysRemaining <= 7 ? 'unlocking' : 'locked');
+  
+  const statusColors = {
+    locked: '#4DA3FF',
+    unlocking: '#F59E0B',
+    completed: '#10B981'
+  };
+
+  return (
+    <div style={{
+      background: COLORS.BG_CARD,
+      borderRadius: '16px',
+      padding: '24px',
+      border: `1px solid ${COLORS.BG_PANEL}`
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <img src={getCoinLogo(vault.currency)} alt={vault.currency} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+          <div>
+            <div style={{ fontSize: '16px', fontWeight: '600', color: COLORS.TEXT_PRIMARY }}>{vault.currency}</div>
+            <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>{vault.amount.toFixed(8)}</div>
+          </div>
+        </div>
+        
+        <div style={{
+          padding: '4px 12px',
+          borderRadius: '6px',
+          background: `${statusColors[status]}20`,
+          border: `1px solid ${statusColors[status]}`,
+          color: statusColors[status],
+          fontSize: '12px',
+          fontWeight: '600',
+          textTransform: 'uppercase'
+        }}>
+          {status}
+        </div>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '20px' }}>
+        <div>
+          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Lock Duration</div>
+          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{vault.lock_period} days</div>
+        </div>
+        <div>
+          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Days Remaining</div>
+          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{daysRemaining} days</div>
+        </div>
+        <div>
+          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Unlock Date</div>
+          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{unlockDate.toLocaleDateString()}</div>
+        </div>
+        <div>
+          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Value</div>
+          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>£{(vault.gbp_value || 0).toFixed(2)}</div>
+        </div>
+      </div>
+      
+      {!isCompleted ? (
+        <button
+          onClick={onEarlyUnlock}
+          style={{
+            width: '100%',
+            height: '36px',
+            borderRadius: '8px',
+            border: `1px solid ${COLORS.ACTION_PRIMARY}`,
+            background: 'transparent',
+            color: COLORS.ACTION_PRIMARY,
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Early Unlock
+        </button>
+      ) : (
+        <button
+          style={{
+            width: '100%',
+            height: '36px',
+            borderRadius: '8px',
+            background: COLORS.ACTION_PRIMARY,
+            color: COLORS.TEXT_PRIMARY,
+            border: 'none',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Withdraw to Savings
+        </button>
       )}
-    </>
+    </div>
+  );
+}
+
+// TRANSFER MODAL (Wallet → Savings)
+function TransferModal({ onClose, userId, onSuccess }) {
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.BG_CARD,
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '480px',
+        width: '90%'
+      }}>
+        <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '16px' }}>Transfer from Wallet</h3>
+        <p style={{ color: COLORS.TEXT_SECONDARY, marginBottom: '24px' }}>Select asset and amount to transfer to savings.</p>
+        {/* Implementation needed */}
+        <button onClick={onClose} style={{
+          width: '100%',
+          height: '44px',
+          background: COLORS.ACTION_PRIMARY,
+          color: COLORS.TEXT_PRIMARY,
+          border: 'none',
+          borderRadius: '10px',
+          fontSize: '14px',
+          fontWeight: '600',
+          cursor: 'pointer'
+        }}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// CREATE VAULT MODAL
+function CreateVaultModal({ onClose, userId, savingsBalances, onSuccess }) {
+  const [step, setStep] = useState(1);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [amount, setAmount] = useState('');
+  const [lockPeriod, setLockPeriod] = useState(null);
+  
+  const handleCreate = async () => {
+    try {
+      const response = await axios.post(`${API}/api/vaults/create`, {
+        user_id: userId,
+        currency: selectedAsset.currency,
+        amount: parseFloat(amount),
+        lock_period: lockPeriod
+      });
+      
+      if (response.data.success) {
+        toast.success('Vault created successfully');
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(response.data.error || 'Failed to create vault');
+      }
+    } catch (error) {
+      console.error('Create vault error:', error);
+      toast.error('Failed to create vault');
+    }
+  };
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.BG_CARD,
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '480px',
+        width: '90%'
+      }}>
+        <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '24px' }}>Create Vault</h3>
+        
+        {step === 1 && (
+          <div>
+            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 1: Select Asset</div>
+            {savingsBalances.map(asset => (
+              <div
+                key={asset.currency}
+                onClick={() => { setSelectedAsset(asset); setStep(2); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '16px',
+                  background: COLORS.BG_PANEL,
+                  borderRadius: '12px',
+                  marginBottom: '8px',
+                  cursor: 'pointer',
+                  border: `1px solid ${COLORS.BG_PANEL}`
+                }}
+              >
+                <img src={getCoinLogo(asset.currency)} alt={asset.currency} style={{ width: '32px', height: '32px' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{asset.currency}</div>
+                  <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>Available: {asset.savings_balance.toFixed(8)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {step === 2 && (
+          <div>
+            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 2: Enter Amount</div>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              style={{
+                width: '100%',
+                height: '44px',
+                padding: '0 16px',
+                background: COLORS.BG_PANEL,
+                border: `1px solid ${COLORS.BG_PANEL}`,
+                borderRadius: '10px',
+                color: COLORS.TEXT_PRIMARY,
+                fontSize: '14px',
+                marginBottom: '12px'
+              }}
+            />
+            <button
+              onClick={() => setAmount(selectedAsset.savings_balance.toString())}
+              style={{
+                padding: '8px 16px',
+                background: COLORS.BG_PANEL,
+                color: COLORS.ACTION_PRIMARY,
+                border: `1px solid ${COLORS.ACTION_PRIMARY}`,
+                borderRadius: '8px',
+                fontSize: '13px',
+                cursor: 'pointer',
+                marginBottom: '24px'
+              }}
+            >
+              Max
+            </button>
+            <button onClick={() => setStep(3)} style={{
+              width: '100%',
+              height: '44px',
+              background: COLORS.ACTION_PRIMARY,
+              color: COLORS.TEXT_PRIMARY,
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}>Continue</button>
+          </div>
+        )}
+        
+        {step === 3 && (
+          <div>
+            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 3: Select Lock Period</div>
+            {[30, 60, 90].map(period => (
+              <button
+                key={period}
+                onClick={() => setLockPeriod(period)}
+                style={{
+                  width: '100%',
+                  height: '44px',
+                  background: lockPeriod === period ? 'transparent' : COLORS.BG_PANEL,
+                  border: lockPeriod === period ? `2px solid ${COLORS.ACTION_PRIMARY}` : `1px solid ${COLORS.BG_PANEL}`,
+                  borderRadius: '10px',
+                  color: COLORS.TEXT_PRIMARY,
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  marginBottom: '8px'
+                }}
+              >
+                {period} days
+              </button>
+            ))}
+            <div style={{
+              marginTop: '24px',
+              padding: '16px',
+              background: `${COLORS.ACTION_PRIMARY}10`,
+              border: `1px solid ${COLORS.ACTION_PRIMARY}30`,
+              borderRadius: '10px',
+              fontSize: '13px',
+              color: COLORS.TEXT_SECONDARY
+            }}>
+              <div style={{ marginBottom: '8px' }}>⚠️ Lock Rules:</div>
+              <div>• Funds cannot be withdrawn before expiry</div>
+              <div>• Early unlock incurs a penalty</div>
+            </div>
+            <button
+              onClick={handleCreate}
+              disabled={!lockPeriod}
+              style={{
+                width: '100%',
+                height: '44px',
+                background: lockPeriod ? COLORS.ACTION_PRIMARY : COLORS.ACTION_DISABLED,
+                color: COLORS.TEXT_PRIMARY,
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: lockPeriod ? 'pointer' : 'not-allowed',
+                marginTop: '24px',
+                boxShadow: lockPeriod ? GLOW_PRIMARY : 'none'
+              }}
+            >
+              Create Vault
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// EARLY UNLOCK MODAL
+function EarlyUnlockModal({ vault, onClose, userId, onSuccess }) {
+  const penaltyPercent = 10;
+  const penaltyAmount = vault.amount * (penaltyPercent / 100);
+  const finalAmount = vault.amount - penaltyAmount;
+  
+  const handleEarlyUnlock = async () => {
+    try {
+      const response = await axios.post(`${API}/api/vaults/early-unlock`, {
+        user_id: userId,
+        vault_id: vault.vault_id
+      });
+      
+      if (response.data.success) {
+        toast.success('Vault unlocked with penalty applied');
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(response.data.error || 'Failed to unlock vault');
+      }
+    } catch (error) {
+      console.error('Early unlock error:', error);
+      toast.error('Failed to unlock vault');
+    }
+  };
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.BG_CARD,
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '480px',
+        width: '90%'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <IoWarning size={48} color="#F59E0B" style={{ marginBottom: '16px' }} />
+          <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '8px' }}>Early Unlock Warning</h3>
+          <p style={{ color: COLORS.TEXT_SECONDARY, fontSize: '14px' }}>Unlocking before expiry will incur a penalty</p>
+        </div>
+        
+        <div style={{
+          background: COLORS.BG_PANEL,
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ color: COLORS.TEXT_SECONDARY }}>Original Amount:</span>
+            <span style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{vault.amount.toFixed(8)} {vault.currency}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ color: COLORS.TEXT_SECONDARY }}>Penalty ({penaltyPercent}%):</span>
+            <span style={{ color: '#F59E0B', fontWeight: '600' }}>-{penaltyAmount.toFixed(8)} {vault.currency}</span>
+          </div>
+          <div style={{ height: '1px', background: COLORS.BG_CARD, margin: '12px 0' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: COLORS.TEXT_SECONDARY }}>You'll Receive:</span>
+            <span style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '700', fontSize: '16px' }}>{finalAmount.toFixed(8)} {vault.currency}</span>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button onClick={onClose} style={{
+            flex: 1,
+            height: '44px',
+            background: 'transparent',
+            color: COLORS.TEXT_SECONDARY,
+            border: `1px solid ${COLORS.BG_PANEL}`,
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>Cancel</button>
+          <button onClick={handleEarlyUnlock} style={{
+            flex: 1,
+            height: '44px',
+            background: '#F59E0B',
+            color: COLORS.TEXT_PRIMARY,
+            border: 'none',
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>Confirm Unlock</button>
+        </div>
+      </div>
+    </div>
   );
 }
