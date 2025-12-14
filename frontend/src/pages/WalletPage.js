@@ -183,9 +183,8 @@ export default function WalletPage() {
 
   return (
     <div style={{
-      minHeight: '100vh',
       background: '#060B1A',
-      padding: '32px 20px',
+      padding: '32px 20px 24px 20px',
       fontFamily: 'Inter, sans-serif'
     }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
