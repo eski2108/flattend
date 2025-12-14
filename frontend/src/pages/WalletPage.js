@@ -8,6 +8,7 @@ import WithdrawModal from '@/components/modals/WithdrawModal';
 import SwapModal from '@/components/modals/SwapModal';
 import StakeModal from '@/components/modals/StakeModal';
 import MiniStatsBar from '@/components/MiniStatsBar';
+import { getCoinLogo } from '@/utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
