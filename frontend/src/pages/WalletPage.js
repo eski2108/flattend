@@ -281,8 +281,8 @@ export default function WalletPage() {
           justifyContent: 'space-around'
         }}>
           {[
-            { label: 'Buy', route: '/buy', icon: '+' },
-            { label: 'Swap', route: '/swap', icon: '⇄' },
+            { label: 'Buy', route: '/buy-crypto', icon: '+' },
+            { label: 'Swap', route: '/swap-crypto', icon: '⇄' },
             { label: 'Bridge', route: '/bridge', icon: '⟷' },
             { label: 'Send', route: '/send', icon: '↑' },
             { label: 'Receive', route: '/receive', icon: '↓' }
