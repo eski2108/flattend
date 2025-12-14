@@ -199,6 +199,8 @@ function App() {
               <Route path="/send" element={<SendPage />} />
               <Route path="/receive" element={<ReceivePage />} />
               <Route path="/bridge" element={<BridgePage />} />
+              <Route path="/nfts" element={<NFTsPage />} />
+              <Route path="/defi" element={<DeFiPage />} />
               <Route path="/asset/:symbol" element={<AssetDetailPage />} />
               <Route path="/portfolio" element={<PortfolioPage />} />
               {/* Mobile Trading Routes - PRIMARY */}
