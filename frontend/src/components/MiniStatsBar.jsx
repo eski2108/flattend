@@ -24,10 +24,10 @@ export default function MiniStatsBar({ balances, totalValue, allCoins }) {
 
   return (
     <div style={{ 
-      display: 'flex', 
-      gap: '16px', 
-      marginBottom: '24px',
-      flexWrap: 'wrap'
+      display: 'grid',
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      gap: '12px', 
+      marginBottom: '24px'
     }}>
       {/* 24h Change */}
       <div style={{ 
