@@ -394,12 +394,12 @@ export default function WalletPage() {
                       <div style={{
                         fontSize: '17px',
                         fontWeight: '700',
-                        color: '#FFFFFF',
+                        color: '#E6ECFF',
                         marginBottom: '4px'
                       }}>{asset.currency}</div>
                       <div style={{
                         fontSize: '13px',
-                        color: '#8FA3BF',
+                        color: '#8FA3C8',
                         fontWeight: '400'
                       }}>{asset.name}</div>
                     </div>
