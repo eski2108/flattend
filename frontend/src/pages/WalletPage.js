@@ -140,7 +140,9 @@ export default function WalletPage() {
           {filteredAssets.map((asset, idx) => (
             <div key={asset.currency} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', background: idx % 2 === 0 ? 'rgba(20, 24, 44, 0.4)' : 'transparent', borderBottom: idx < filteredAssets.length - 1 ? '1px solid rgba(139, 146, 178, 0.1)' : 'none', transition: 'all 0.3s ease' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: '1.5' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: `linear-gradient(135deg, ${asset.color}40, ${asset.color}20)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '800', color: asset.color, boxShadow: `0 0 20px ${asset.color}40` }}>{asset.icon}</div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: `linear-gradient(135deg, ${asset.color}40, ${asset.color}20)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px ${asset.color}40`, overflow: 'hidden' }}>
+                  <img src={asset.logoUrl} alt={asset.currency} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                </div>
                 <div>
                   <div style={{ fontSize: '17px', fontWeight: '700', color: '#FFF', marginBottom: '4px' }}>{asset.currency}</div>
                   <div style={{ fontSize: '13px', color: '#8B92B2', fontWeight: '500' }}>{asset.name}</div>
