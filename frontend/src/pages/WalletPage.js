@@ -125,7 +125,7 @@ export default function WalletPage() {
           </div>
         </div>
 
-        <MiniStatsBar balances={balances} totalValue={totalValue} />
+        <MiniStatsBar balances={balances} totalValue={totalValue} allCoins={allCoins} />
 
         {/* Search */}
         <div style={{ background: 'rgba(28, 32, 56, 0.6)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0, 240, 255, 0.1)', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
