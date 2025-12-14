@@ -21,7 +21,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
+BACKEND_URL = "https://musing-brown-1.preview.emergentagent.com/api"
 ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
 
 class AdminFeeSystemTester:

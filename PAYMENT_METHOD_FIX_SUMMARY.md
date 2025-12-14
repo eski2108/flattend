@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://premium-wallet-hub.preview.emergentagent.com
+https://musing-brown-1.preview.emergentagent.com
 
 ### Test Route
 
-`https://premium-wallet-hub.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://musing-brown-1.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

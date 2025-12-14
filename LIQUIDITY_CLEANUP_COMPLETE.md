@@ -130,7 +130,7 @@ To complete the file locking:
 **Build Completed:** December 9, 2024
 **Frontend Restarted:** Yes
 **Services Status:** All running
-**Live URL:** https://premium-wallet-hub.preview.emergentagent.com
+**Live URL:** https://musing-brown-1.preview.emergentagent.com
 
 ---
 

@@ -220,7 +220,7 @@ webpack compiled successfully
 
 ## Next Steps
 
-1. **Login to the site** at https://premium-wallet-hub.preview.emergentagent.com/login
+1. **Login to the site** at https://musing-brown-1.preview.emergentagent.com/login
    - Email: gads21083@gmail.com
    - Password: 123456789
 

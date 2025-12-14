@@ -504,8 +504,8 @@ $ curl http://localhost:8001/api/prices/live | jq '.prices.BTC.price_usd'
 ```
 
 **Pages Accessible:**
-- ✅ https://premium-wallet-hub.preview.emergentagent.com/trading
-- ✅ https://premium-wallet-hub.preview.emergentagent.com/p2p-express
+- ✅ https://musing-brown-1.preview.emergentagent.com/trading
+- ✅ https://musing-brown-1.preview.emergentagent.com/p2p-express
 
 ---
 

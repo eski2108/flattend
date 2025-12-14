@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://premium-wallet-hub.preview.emergentagent.com/api
+https://musing-brown-1.preview.emergentagent.com/api
 ```
 
 This means:

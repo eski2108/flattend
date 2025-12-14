@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://premium-wallet-hub.preview.emergentagent.com
-P2P Page:     https://premium-wallet-hub.preview.emergentagent.com/p2p
-Backend API:  https://premium-wallet-hub.preview.emergentagent.com/api
+Frontend:     https://musing-brown-1.preview.emergentagent.com
+P2P Page:     https://musing-brown-1.preview.emergentagent.com/p2p
+Backend API:  https://musing-brown-1.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

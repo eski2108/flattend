@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://premium-wallet-hub.preview.emergentagent.com
+**URL:** https://musing-brown-1.preview.emergentagent.com
 
 **Services Status:**
 ```bash

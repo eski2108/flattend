@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://premium-wallet-hub.preview.emergentagent.com/api/admin/fees/test
+$ curl https://musing-brown-1.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://premium-wallet-hub.preview.emergentagent.com/api/admin/fees/all
+$ curl https://musing-brown-1.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

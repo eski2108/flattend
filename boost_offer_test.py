@@ -21,7 +21,7 @@ import sys
 from datetime import datetime, timezone
 
 # Configuration
-BASE_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
+BASE_URL = "https://musing-brown-1.preview.emergentagent.com/api"
 
 class BoostOfferTester:
     def __init__(self):

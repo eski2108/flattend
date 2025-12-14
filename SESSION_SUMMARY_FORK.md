@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://premium-wallet-hub.preview.emergentagent.com
+https://musing-brown-1.preview.emergentagent.com
 
 ---
 

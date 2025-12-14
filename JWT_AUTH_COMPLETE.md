@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://premium-wallet-hub.preview.emergentagent.com
+**Live URL:** https://musing-brown-1.preview.emergentagent.com
 
 ---
 

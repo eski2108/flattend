@@ -1,7 +1,7 @@
 # COINHUBX TRADING PAGE - EXACT SPECIFICATION IMPLEMENTATION
 
 **Deployment Status:** ✅ LIVE
-**URL:** https://premium-wallet-hub.preview.emergentagent.com
+**URL:** https://musing-brown-1.preview.emergentagent.com
 **Date:** December 10, 2025 01:35 UTC
 
 ---
@@ -169,7 +169,7 @@
 - MongoDB: pid 8285
 - Nginx: pid 8281
 
-**Live URL:** https://premium-wallet-hub.preview.emergentagent.com
+**Live URL:** https://musing-brown-1.preview.emergentagent.com
 
 ---
 

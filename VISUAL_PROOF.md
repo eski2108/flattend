@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://premium-wallet-hub.preview.emergentagent.com/admin/disputes/dispute_123
+https://musing-brown-1.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://premium-wallet-hub.preview.emergentagent.com/admin/disputes/dispute_123
 
 ### ✅ AFTER (FIXED)
 ```
-https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://musing-brown-1.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://premium-wallet-hub.preview.emergentagent.com/`
+2. Browser loads: `https://musing-brown-1.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/dispute_12
 
 #### ❌ BEFORE
 ```html
-<a href="https://premium-wallet-hub.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://musing-brown-1.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://musing-brown-1.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/dispute_12
 
 #### ❌ BEFORE
 ```
-https://premium-wallet-hub.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://musing-brown-1.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://musing-brown-1.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/{dispute_i
 
 #### ❌ BEFORE
 ```html
-<a href="https://premium-wallet-hub.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://musing-brown-1.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://premium-wallet-hub.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://musing-brown-1.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

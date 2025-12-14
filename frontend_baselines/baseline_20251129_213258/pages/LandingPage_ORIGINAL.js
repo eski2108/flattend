@@ -985,7 +985,7 @@ export default function LandingPage() {
                 if (isIOS) {
                   alert('📱 To install on iPhone:\n\n1. Tap the Share button (⬆️)\n2. Scroll and tap "Add to Home Screen"\n3. Tap "Add" to install Coin Hub X\n\nThe app will appear on your home screen!');
                 } else {
-                  window.open('https://premium-wallet-hub.preview.emergentagent.com', '_blank');
+                  window.open('https://musing-brown-1.preview.emergentagent.com', '_blank');
                 }
               }}
               style={{
