@@ -412,31 +412,41 @@ export default function WalletPage() {
           </button>
         </div>
 
-        {/* TABS - FLAT */}
+        {/* TABS - FLAT WITH PROPER ROUTING */}
         <div style={{
           display: 'flex',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           marginBottom: '16px'
         }}>
-          {['Crypto', 'Activity', 'Portfolio'].map((tab) => (
+          {[
+            { name: 'Crypto', route: '/wallet' },
+            { name: 'Activity', route: '/transactions' },
+            { name: 'Portfolio', route: '/dashboard' }
+          ].map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.name}
+              onClick={() => {
+                if (tab.route === '/wallet') {
+                  setActiveTab('Crypto');
+                } else {
+                  navigate(tab.route);
+                }
+              }}
               style={{
                 flex: 1,
                 padding: '12px 0',
                 background: 'none',
                 border: 'none',
-                borderBottom: activeTab === tab ? '1px solid #0047D9' : '1px solid transparent',
-                color: activeTab === tab ? '#FFFFFF' : '#6B7A99',
+                borderBottom: (tab.route === '/wallet' && activeTab === 'Crypto') ? '1px solid #0047D9' : '1px solid transparent',
+                color: (tab.route === '/wallet' && activeTab === 'Crypto') ? '#FFFFFF' : '#6B7A99',
                 fontSize: '14px',
                 fontWeight: '500',
                 cursor: 'pointer',
                 transition: 'color 0.2s',
-                opacity: activeTab === tab ? 1 : 0.7
+                opacity: (tab.route === '/wallet' && activeTab === 'Crypto') ? 1 : 0.7
               }}
             >
-              {tab}
+              {tab.name}
             </button>
           ))}
         </div>
