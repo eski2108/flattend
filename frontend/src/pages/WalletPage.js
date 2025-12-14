@@ -260,18 +260,17 @@ export default function WalletPage() {
           )}
         </div>
 
-        {/* ACTION BUTTONS ROW - CIRCULAR ICONS LIKE COINBASE */}
+        {/* ACTION BUTTONS - FLAT CIRCULAR */}
         <div style={{
           display: 'flex',
-          gap: '16px',
+          gap: '20px',
           marginBottom: '24px',
           padding: '0 20px',
-          justifyContent: 'space-around'
+          justifyContent: 'flex-start'
         }}>
           {[
             { label: 'Buy', route: '/buy-crypto', icon: '+' },
             { label: 'Swap', route: '/swap-crypto', icon: '⇄' },
-            { label: 'Bridge', route: '/bridge', icon: '⟷' },
             { label: 'Send', route: '/send', icon: '↑' },
             { label: 'Receive', route: '/receive', icon: '↓' }
           ].map((btn) => (
@@ -282,7 +281,7 @@ export default function WalletPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -290,20 +289,20 @@ export default function WalletPage() {
               }}
             >
               <div style={{
-                width: '56px',
-                height: '56px',
+                width: '48px',
+                height: '48px',
                 borderRadius: '50%',
-                background: '#0052FF',
+                background: '#0047D9',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '24px',
+                fontSize: '20px',
                 color: '#fff',
-                fontWeight: '700'
+                fontWeight: '600'
               }}>
                 {btn.icon}
               </div>
-              <div style={{ fontSize: '13px', color: '#8FA3C8', fontWeight: '500' }}>{btn.label}</div>
+              <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>{btn.label}</div>
             </button>
           ))}
         </div>
