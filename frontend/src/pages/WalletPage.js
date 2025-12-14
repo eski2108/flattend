@@ -282,43 +282,135 @@ export default function WalletPage() {
           padding: '0 20px',
           justifyContent: 'flex-start'
         }}>
-          {[
-            { label: 'Buy', route: '/buy-crypto', icon: '+' },
-            { label: 'Swap', route: '/swap-crypto', icon: '⇄' },
-            { label: 'Send', route: '/send', icon: '↑' },
-            { label: 'Receive', route: '/receive', icon: '↓' }
-          ].map((btn) => (
-            <button
-              key={btn.label}
-              onClick={() => navigate(btn.route)}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '6px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: 0
-              }}
-            >
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                background: '#0047D9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '20px',
-                color: '#fff',
-                fontWeight: '600'
-              }}>
-                {btn.icon}
-              </div>
-              <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>{btn.label}</div>
-            </button>
-          ))}
+          <button
+            onClick={() => navigate('/buy-crypto')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0
+            }}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#0047D9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              color: '#fff',
+              fontWeight: '600'
+            }}>
+              +
+            </div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Buy</div>
+          </button>
+
+          <button
+            onClick={() => navigate('/swap-crypto')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0
+            }}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#0047D9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              color: '#fff',
+              fontWeight: '600'
+            }}>
+              ⇄
+            </div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Swap</div>
+          </button>
+
+          <button
+            onClick={() => {
+              // Send to first asset with balance, or BTC if none
+              const firstAsset = balances.find(b => b.total_balance > 0);
+              const currency = firstAsset ? firstAsset.currency.toLowerCase() : 'btc';
+              navigate(`/send/${currency}`);
+            }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0
+            }}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#0047D9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              color: '#fff',
+              fontWeight: '600'
+            }}>
+              ↑
+            </div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Send</div>
+          </button>
+
+          <button
+            onClick={() => {
+              // Receive to first asset or BTC
+              const firstAsset = balances.find(b => b.total_balance > 0);
+              const currency = firstAsset ? firstAsset.currency : 'BTC';
+              navigate(`/receive?asset=${currency}`);
+            }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0
+            }}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#0047D9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              color: '#fff',
+              fontWeight: '600'
+            }}>
+              ↓
+            </div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Receive</div>
+          </button>
         </div>
 
         {/* TABS - FLAT */}
