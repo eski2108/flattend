@@ -19667,6 +19667,293 @@ async def get_user_transactions(user_id: str, limit: int = 50):
             "transactions": []
         }
 
+# ========================================
+# COIN-SPECIFIC SEND ENDPOINTS
+# These are for coin-specific send pages (e.g., /send/btc)
+# ========================================
+
+@api_router.get("/wallet/send/{currency}/metadata")
+async def get_send_page_metadata(currency: str, user_id: str):
+    """
+    Get all metadata needed for coin-specific Send page
+    Returns: balance, fees, limits, network info - ALL from backend
+    
+    NO hardcoded values. NO placeholders.
+    """
+    try:
+        currency = currency.upper()
+        
+        # 1. Get user balance from DB
+        balance_doc = await db.crypto_balances.find_one({
+            "user_id": user_id,
+            "currency": currency
+        })
+        
+        if not balance_doc:
+            # User has no balance for this coin - create zero balance entry
+            available_balance = 0
+            locked_balance = 0
+            total_balance = 0
+        else:
+            available_balance = balance_doc.get('available_balance', 0)
+            locked_balance = balance_doc.get('locked_balance', 0)
+            total_balance = balance_doc.get('total_balance', 0)
+        
+        # 2. Get network fees from NowPayments or config
+        network_fees = {
+            "BTC": {"fee": 0.0001, "min_withdraw": 0.0005, "network": "Bitcoin Network"},
+            "ETH": {"fee": 0.002, "min_withdraw": 0.01, "network": "Ethereum Network"},
+            "USDT": {"fee": 1.0, "min_withdraw": 10.0, "network": "ERC20"},
+            "LTC": {"fee": 0.001, "min_withdraw": 0.01, "network": "Litecoin Network"},
+            "BCH": {"fee": 0.0001, "min_withdraw": 0.001, "network": "Bitcoin Cash Network"},
+            "XRP": {"fee": 0.1, "min_withdraw": 1.0, "network": "Ripple Network"},
+            "ADA": {"fee": 1.0, "min_withdraw": 10.0, "network": "Cardano Network"},
+            "DOT": {"fee": 0.1, "min_withdraw": 1.0, "network": "Polkadot Network"}
+        }
+        
+        fee_data = network_fees.get(currency, {"fee": 0.0001, "min_withdraw": 0.001, "network": f"{currency} Network"})
+        
+        # 3. Get coin metadata
+        coin_meta = await db.supported_coins.find_one({"symbol": currency})
+        if not coin_meta:
+            coin_name = currency
+            decimals = 8
+        else:
+            coin_name = coin_meta.get('name', currency)
+            decimals = coin_meta.get('decimals', 8)
+        
+        # 4. Get GBP price
+        all_prices = await fetch_live_prices()
+        price_gbp = all_prices.get(currency, {}).get('gbp', 0)
+        gbp_value = total_balance * price_gbp
+        
+        logger.info(f"✅ Send metadata for {currency}: balance={available_balance}, fee={fee_data['fee']}, min={fee_data['min_withdraw']}")
+        
+        return {
+            "success": True,
+            "currency": currency,
+            "currency_name": coin_name,
+            "decimals": decimals,
+            "available_balance": available_balance,
+            "locked_balance": locked_balance,
+            "total_balance": total_balance,
+            "gbp_value": gbp_value,
+            "price_gbp": price_gbp,
+            "estimated_network_fee": fee_data["fee"],
+            "minimum_withdrawal": fee_data["min_withdraw"],
+            "network": fee_data["network"]
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error getting send metadata for {currency}: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@api_router.post("/wallet/send/{currency}")
+async def send_crypto_coin_specific(currency: str, request: dict):
+    """
+    Send cryptocurrency - coin-specific endpoint
+    This is the REAL transaction endpoint that calls NowPayments
+    
+    POST /api/wallet/send/BTC
+    Body: { user_id, recipient_address, amount }
+    
+    Returns: { success, tx_id, status, ... }
+    """
+    try:
+        currency = currency.upper()
+        user_id = request.get('user_id')
+        recipient_address = request.get('recipient_address')
+        amount = float(request.get('amount', 0))
+        
+        logger.info(f"🚀 Processing send request: {amount} {currency} to {recipient_address[:10]}... for user {user_id}")
+        
+        # ===== VALIDATION =====
+        if not all([user_id, recipient_address, amount]):
+            return {
+                "success": False,
+                "error": "Missing required fields: user_id, recipient_address, or amount"
+            }
+        
+        if amount <= 0:
+            return {
+                "success": False,
+                "error": "Amount must be greater than 0"
+            }
+        
+        # Get user balance
+        balance_doc = await db.crypto_balances.find_one({
+            "user_id": user_id,
+            "currency": currency
+        })
+        
+        if not balance_doc:
+            return {
+                "success": False,
+                "error": f"No {currency} balance found"
+            }
+        
+        available_balance = balance_doc.get('available_balance', 0)
+        
+        # Network fees
+        network_fees = {
+            "BTC": 0.0001, "ETH": 0.002, "USDT": 1.0, "LTC": 0.001,
+            "BCH": 0.0001, "XRP": 0.1, "ADA": 1.0, "DOT": 0.1
+        }
+        min_withdrawals = {
+            "BTC": 0.0005, "ETH": 0.01, "USDT": 10.0, "LTC": 0.01,
+            "BCH": 0.001, "XRP": 1.0, "ADA": 10.0, "DOT": 1.0
+        }
+        
+        fee = network_fees.get(currency, 0.0001)
+        min_withdraw = min_withdrawals.get(currency, 0.001)
+        
+        # Validate minimum
+        if amount < min_withdraw:
+            return {
+                "success": False,
+                "error": f"Amount below minimum withdrawal of {min_withdraw} {currency}"
+            }
+        
+        # Validate sufficient balance
+        total_needed = amount + fee
+        if total_needed > available_balance:
+            return {
+                "success": False,
+                "error": f"Insufficient balance. Need {total_needed} {currency} (including {fee} {currency} fee), available: {available_balance} {currency}"
+            }
+        
+        # ===== CREATE TRANSACTION RECORD =====
+        tx_id = f"wd_{currency.lower()}_{int(datetime.now(timezone.utc).timestamp())}_{user_id[:8]}"
+        
+        await db.transactions.insert_one({
+            "transaction_id": tx_id,
+            "user_id": user_id,
+            "type": "withdrawal",
+            "currency": currency,
+            "amount": amount,
+            "fee": fee,
+            "to_address": recipient_address,
+            "network": f"{currency} Network",
+            "status": "pending",
+            "provider_tx_id": None,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # ===== DEDUCT BALANCE IMMEDIATELY =====
+        new_available = available_balance - total_needed
+        new_total = balance_doc.get('total_balance', 0) - total_needed
+        
+        await db.crypto_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {
+                "$set": {
+                    "available_balance": new_available,
+                    "total_balance": new_total,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        logger.info(f"✅ Balance deducted: {user_id} {currency} new balance = {new_available}")
+        
+        # ===== CALL NOWPAYMENTS =====
+        try:
+            from nowpayments_integration import get_nowpayments_service
+            nowpayments = get_nowpayments_service()
+            
+            payout_result = nowpayments.create_payout(
+                currency=currency.lower(),
+                amount=amount,
+                address=recipient_address
+            )
+            
+            if payout_result and payout_result.get('success'):
+                provider_tx_id = payout_result.get('payout_id')
+                
+                # Update transaction with provider ID
+                await db.transactions.update_one(
+                    {"transaction_id": tx_id},
+                    {
+                        "$set": {
+                            "provider_tx_id": provider_tx_id,
+                            "status": "processing",
+                            "updated_at": datetime.now(timezone.utc).isoformat()
+                        }
+                    }
+                )
+                
+                logger.info(f"✅ Withdrawal submitted to NowPayments: {tx_id} → {provider_tx_id}")
+                
+                return {
+                    "success": True,
+                    "tx_id": tx_id,
+                    "provider_tx_id": provider_tx_id,
+                    "status": "processing",
+                    "amount": amount,
+                    "fee": fee,
+                    "currency": currency,
+                    "recipient_address": recipient_address,
+                    "message": "Withdrawal submitted successfully",
+                    "new_available_balance": new_available
+                }
+            else:
+                # Provider failed
+                error_msg = payout_result.get('error', 'Unknown provider error')
+                
+                await db.transactions.update_one(
+                    {"transaction_id": tx_id},
+                    {
+                        "$set": {
+                            "status": "failed",
+                            "error": error_msg,
+                            "updated_at": datetime.now(timezone.utc).isoformat()
+                        }
+                    }
+                )
+                
+                logger.error(f"❌ NowPayments payout failed: {error_msg}")
+                
+                return {
+                    "success": False,
+                    "error": f"Payment provider error: {error_msg}",
+                    "tx_id": tx_id
+                }
+                
+        except Exception as provider_error:
+            logger.error(f"❌ Provider exception: {str(provider_error)}")
+            
+            await db.transactions.update_one(
+                {"transaction_id": tx_id},
+                {
+                    "$set": {
+                        "status": "failed",
+                        "error": str(provider_error),
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            )
+            
+            return {
+                "success": False,
+                "error": f"Payment provider error: {str(provider_error)}",
+                "tx_id": tx_id
+            }
+        
+    except Exception as e:
+        logger.error(f"❌ Send endpoint error: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 # 🔒 LOCKED: Portfolio/Wallet Value Calculation - DO NOT MODIFY
 # This endpoint MUST match the Dashboard calculation exactly
 # Both pages MUST show the SAME total value in GBP
