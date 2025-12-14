@@ -478,7 +478,7 @@ export default function WalletPage() {
                     >
                       Deposit
                     </button>
-                    {/* WITHDRAW - NO GLOW */}
+                    {/* WITHDRAW - SECONDARY */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -491,7 +491,7 @@ export default function WalletPage() {
                       style={{
                         padding: '10px 20px',
                         background: 'transparent',
-                        border: '2px solid #00E5FF',
+                        border: '1.5px solid #00E5FF',
                         borderRadius: '12px',
                         color: '#00E5FF',
                         fontSize: '13px',
