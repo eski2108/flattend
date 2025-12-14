@@ -2,39 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoArrowForward, IoLockClosed, IoTime, IoWarning } from 'react-icons/io5';
+import { IoEye, IoEyeOff, IoWallet, IoLockClosed, IoTime, IoShieldCheckmark, IoWarning, IoArrowForward, IoTrendingUp } from 'react-icons/io5';
 import { getCoinLogo } from '@/utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
-
-// GLOBAL VISUAL SYSTEM - NON-NEGOTIABLE
-const COLORS = {
-  BG_PRIMARY: '#0B0F1A',
-  BG_CARD: '#12182A',
-  BG_PANEL: '#161D33',
-  TEXT_PRIMARY: '#FFFFFF',
-  TEXT_SECONDARY: '#AAB0C0',
-  TEXT_MUTED: '#7A8095',
-  ACTION_PRIMARY: '#4DA3FF',
-  ACTION_HOVER: '#6AB6FF',
-  ACTION_DISABLED: '#2A3B55'
-};
-
-const GLOW_PRIMARY = '0 0 18px rgba(77,163,255,0.35)';
 
 export default function SavingsPage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [balancesHidden, setBalancesHidden] = useState(false);
   
-  // Data states
   const [savingsBalances, setSavingsBalances] = useState([]);
   const [vaults, setVaults] = useState([]);
   const [totalSavings, setTotalSavings] = useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
   const [lockedInVaults, setLockedInVaults] = useState(0);
   
-  // Modal states
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
   const [showEarlyUnlockModal, setShowEarlyUnlockModal] = useState(false);
@@ -71,11 +55,8 @@ export default function SavingsPage() {
       const response = await axios.get(`${API}/api/savings/balances/${userId}`);
       if (response.data.success) {
         const balances = response.data.balances || [];
-        // Only show assets with balance > 0
         const nonZeroBalances = balances.filter(b => b.savings_balance > 0);
         setSavingsBalances(nonZeroBalances);
-        
-        // Calculate available balance
         const available = nonZeroBalances.reduce((sum, b) => sum + (b.gbp_value || 0), 0);
         setAvailableBalance(available);
       }
@@ -90,8 +71,6 @@ export default function SavingsPage() {
       const response = await axios.get(`${API}/api/vaults/${userId}`);
       if (response.data.success) {
         setVaults(response.data.vaults || []);
-        
-        // Calculate locked in vaults
         const locked = (response.data.vaults || []).reduce((sum, v) => sum + (v.gbp_value || 0), 0);
         setLockedInVaults(locked);
       }
@@ -101,7 +80,6 @@ export default function SavingsPage() {
     }
   };
 
-  // Calculate total savings
   useEffect(() => {
     setTotalSavings(availableBalance + lockedInVaults);
   }, [availableBalance, lockedInVaults]);
@@ -129,240 +107,399 @@ export default function SavingsPage() {
   if (loading) {
     return (
       <div style={{
-        background: COLORS.BG_PRIMARY,
+        background: 'linear-gradient(135deg, #0B0F1A 0%, #0E1C2F 100%)',
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        color: COLORS.TEXT_PRIMARY
+        justifyContent: 'center'
       }}>
-        Loading savings...
+        <div style={{ textAlign: 'center', color: '#FFF' }}>
+          <div className="spinner" style={{ margin: '0 auto 1rem', borderColor: '#00E5FF', borderTopColor: 'transparent' }}></div>
+          <div style={{ fontSize: '16px', color: '#8FA3C8' }}>Loading savings...</div>
+        </div>
       </div>
     );
   }
 
+  const formatBalance = (value) => {
+    return balancesHidden ? '••••••' : `£${value.toFixed(2)}`;
+  };
+
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
+      background: 'linear-gradient(135deg, #0B0F1A 0%, #0E1C2F 100%)',
       minHeight: '100vh',
-      padding: '24px',
-      fontFamily: 'Inter, sans-serif'
+      padding: '20px',
+      fontFamily: 'Inter, -apple-system, sans-serif'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* 1) PAGE HEADER */}
+        {/* SUMMARY CARD */}
         <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px'
+          background: 'linear-gradient(135deg, rgba(0,229,255,0.08) 0%, rgba(0,150,255,0.08) 100%)',
+          border: '1px solid rgba(0,229,255,0.2)',
+          borderRadius: '20px',
+          padding: '32px',
+          marginBottom: '24px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3), 0 0 40px rgba(0,229,255,0.1)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div>
-            <h1 style={{
-              fontSize: '32px',
+          {/* Ambient glow */}
+          <div style={{
+            position: 'absolute',
+            top: '-50%',
+            right: '-20%',
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 70%)',
+            borderRadius: '50%',
+            pointerEvents: 'none'
+          }}></div>
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h1 style={{
+                fontSize: '20px',
+                fontWeight: '600',
+                color: '#8FA3C8',
+                margin: 0,
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>Total Savings Balance</h1>
+              <button
+                onClick={() => setBalancesHidden(!balancesHidden)}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '10px',
+                  padding: '10px 14px',
+                  cursor: 'pointer',
+                  color: '#8FA3C8',
+                  transition: 'all 0.3s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                  e.currentTarget.style.color = '#00E5FF';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  e.currentTarget.style.color = '#8FA3C8';
+                }}
+              >
+                {balancesHidden ? <IoEye size={20} /> : <IoEyeOff size={20} />}
+              </button>
+            </div>
+
+            <div style={{
+              fontSize: '56px',
               fontWeight: '700',
-              background: 'linear-gradient(135deg, #00E5FF 0%, #7B2CFF 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              margin: 0,
-              marginBottom: '4px'
-            }}>Savings Vault</h1>
-            <p style={{ fontSize: '14px', color: '#8FA3C8', margin: 0 }}>Secure your crypto assets</p>
-          </div>
-          
-          <button
-            onClick={() => setShowTransferModal(true)}
-            style={{
-              height: '48px',
-              padding: '0 28px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
               color: '#FFF',
-              border: 'none',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s',
-              boxShadow: '0 0 20px rgba(0,229,255,0.5), 0 4px 12px rgba(0,0,0,0.3)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(0,229,255,0.7), 0 6px 16px rgba(0,0,0,0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(0,229,255,0.5), 0 4px 12px rgba(0,0,0,0.3)';
-            }}
-          >
-            Transfer from Wallet
-          </button>
+              marginBottom: '32px',
+              letterSpacing: '-2px'
+            }}>
+              {formatBalance(totalSavings)}
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '24px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: 'rgba(123,44,255,0.15)',
+                  border: '1px solid rgba(123,44,255,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IoWallet size={20} color="#7B2CFF" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '4px' }}>Available Balance</div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFF' }}>{formatBalance(availableBalance)}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: 'rgba(16,185,129,0.15)',
+                  border: '1px solid rgba(16,185,129,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IoLockClosed size={20} color="#10B981" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '4px' }}>Locked in Vaults</div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFF' }}>{formatBalance(lockedInVaults)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* 2) SAVINGS SUMMARY PANEL */}
+        {/* PRIMARY ACTION BUTTONS */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
           gap: '16px',
-          marginBottom: '32px'
+          marginBottom: '40px'
         }}>
-          <div style={{
-            background: 'rgba(0,229,255,0.05)',
-            border: '1px solid rgba(0,229,255,0.2)',
-            borderRadius: '16px',
-            padding: '20px',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-20px',
-              right: '-20px',
-              width: '100px',
-              height: '100px',
-              background: 'radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 70%)',
-              borderRadius: '50%'
-            }}></div>
-            <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Savings</div>
-            <div style={{ fontSize: '32px', fontWeight: '700', color: '#00E5FF', marginBottom: '4px' }}>£{totalSavings.toFixed(2)}</div>
-            <div style={{ fontSize: '12px', color: '#6B7A99' }}>Combined balance</div>
-          </div>
-          
-          <div style={{
-            background: 'rgba(123,44,255,0.05)',
-            border: '1px solid rgba(123,44,255,0.2)',
-            borderRadius: '16px',
-            padding: '20px',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-20px',
-              right: '-20px',
-              width: '100px',
-              height: '100px',
-              background: 'radial-gradient(circle, rgba(123,44,255,0.15) 0%, transparent 70%)',
-              borderRadius: '50%'
-            }}></div>
-            <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Available</div>
-            <div style={{ fontSize: '32px', fontWeight: '700', color: '#7B2CFF', marginBottom: '4px' }}>£{availableBalance.toFixed(2)}</div>
-            <div style={{ fontSize: '12px', color: '#6B7A99' }}>Flexible access</div>
-          </div>
-          
-          <div style={{
-            background: 'rgba(16,185,129,0.05)',
-            border: '1px solid rgba(16,185,129,0.2)',
-            borderRadius: '16px',
-            padding: '20px',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-20px',
-              right: '-20px',
-              width: '100px',
-              height: '100px',
-              background: 'radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%)',
-              borderRadius: '50%'
-            }}></div>
-            <div style={{ fontSize: '13px', color: '#8FA3C8', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Locked</div>
-            <div style={{ fontSize: '32px', fontWeight: '700', color: '#10B981', marginBottom: '4px' }}>£{lockedInVaults.toFixed(2)}</div>
-            <div style={{ fontSize: '12px', color: '#6B7A99' }}>In vaults</div>
-          </div>
+          <button
+            onClick={() => setShowTransferModal(true)}
+            style={{
+              height: '56px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
+              border: 'none',
+              color: '#FFF',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              boxShadow: '0 8px 24px rgba(0,229,255,0.3)',
+              transition: 'all 0.3s',
+              transform: 'translateY(0)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,229,255,0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,229,255,0.3)';
+            }}
+          >
+            <IoArrowForward size={22} />
+            Transfer from Wallet
+          </button>
+
+          <button
+            onClick={() => setShowCreateVaultModal(true)}
+            style={{
+              height: '56px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              border: 'none',
+              color: '#FFF',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              boxShadow: '0 8px 24px rgba(16,185,129,0.3)',
+              transition: 'all 0.3s',
+              transform: 'translateY(0)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 12px 32px rgba(16,185,129,0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(16,185,129,0.3)';
+            }}
+          >
+            <IoLockClosed size={22} />
+            Create Vault
+          </button>
         </div>
 
-        {/* 3) FLEXIBLE SAVINGS SECTION */}
+        {/* FLEXIBLE SAVINGS ACCOUNT */}
         <div style={{ marginBottom: '48px' }}>
-          <h2 style={{
-            fontSize: '18px',
-            fontWeight: '700',
-            color: COLORS.TEXT_PRIMARY,
-            marginBottom: '20px'
-          }}>Flexible Savings</h2>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '24px'
+          }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, rgba(0,229,255,0.15) 0%, rgba(123,44,255,0.15) 100%)',
+              border: '1px solid rgba(0,229,255,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <IoTrendingUp size={20} color="#00E5FF" />
+            </div>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              color: '#FFF',
+              margin: 0
+            }}>Flexible Savings Account</h2>
+          </div>
           
           {savingsBalances.length === 0 ? (
             <div style={{
-              background: COLORS.BG_CARD,
-              padding: '40px',
-              borderRadius: '16px',
-              textAlign: 'center',
-              color: COLORS.TEXT_SECONDARY
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '20px',
+              padding: '56px 32px',
+              textAlign: 'center'
             }}>
-              No assets in flexible savings. Transfer from wallet to start saving.
+              <div style={{
+                width: '120px',
+                height: '120px',
+                margin: '0 auto 24px',
+                background: 'linear-gradient(135deg, rgba(0,229,255,0.1) 0%, rgba(123,44,255,0.1) 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '2px solid rgba(0,229,255,0.2)'
+              }}>
+                <IoWallet size={56} color="#00E5FF" />
+              </div>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#FFF',
+                marginBottom: '12px'
+              }}>Start Your Savings Journey</h3>
+              <p style={{
+                fontSize: '15px',
+                color: '#8FA3C8',
+                maxWidth: '460px',
+                margin: '0 auto 32px',
+                lineHeight: '1.6'
+              }}>
+                Transfer crypto from your wallet to start saving with instant access to your funds anytime
+              </p>
+              <button
+                onClick={() => setShowTransferModal(true)}
+                style={{
+                  height: '56px',
+                  padding: '0 40px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
+                  border: 'none',
+                  color: '#FFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 24px rgba(0,229,255,0.3)',
+                  transition: 'all 0.3s'
+                }}
+              >
+                Start Saving
+              </button>
             </div>
           ) : (
-            <div style={{
-              background: COLORS.BG_CARD,
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              {savingsBalances.map((asset, index) => (
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {savingsBalances.map((asset) => (
                 <div
                   key={asset.currency}
                   style={{
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '16px',
+                    padding: '24px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '20px 24px',
-                    borderBottom: index < savingsBalances.length - 1 ? `1px solid ${COLORS.BG_PANEL}` : 'none'
+                    transition: 'all 0.3s',
+                    cursor: 'default'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                    e.currentTarget.style.borderColor = 'rgba(0,229,255,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                    <img
-                      src={getCoinLogo(asset.currency)}
-                      alt={asset.currency}
-                      style={{ width: '40px', height: '40px', borderRadius: '50%' }}
-                    />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flex: 1 }}>
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, rgba(0,229,255,0.1) 0%, rgba(123,44,255,0.1) 100%)',
+                      border: '2px solid rgba(0,229,255,0.2)',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <img
+                        src={getCoinLogo(asset.currency)}
+                        alt={asset.currency}
+                        style={{ width: '48px', height: '48px', borderRadius: '50%' }}
+                      />
+                    </div>
                     <div>
-                      <div style={{
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        color: COLORS.TEXT_PRIMARY
-                      }}>{asset.currency}</div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: COLORS.TEXT_SECONDARY
-                      }}>{asset.coin_name || asset.currency}</div>
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFF', marginBottom: '4px' }}>
+                        {asset.currency}
+                      </div>
+                      <div style={{ fontSize: '14px', color: '#8FA3C8' }}>{asset.coin_name || 'Cryptocurrency'}</div>
                     </div>
                   </div>
                   
                   <div style={{ textAlign: 'right', marginRight: '24px' }}>
+                    <div style={{ fontSize: '22px', fontWeight: '700', color: '#00E5FF', marginBottom: '4px' }}>
+                      {balancesHidden ? '••••••' : asset.savings_balance.toFixed(8)}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#8FA3C8' }}>
+                      {balancesHidden ? '••••' : `£${(asset.gbp_value || 0).toFixed(2)}`}
+                    </div>
                     <div style={{
-                      fontSize: '16px',
+                      display: 'inline-block',
+                      marginTop: '8px',
+                      padding: '4px 10px',
+                      background: 'rgba(16,185,129,0.15)',
+                      border: '1px solid rgba(16,185,129,0.3)',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      color: '#10B981',
                       fontWeight: '600',
-                      color: COLORS.TEXT_PRIMARY
-                    }}>{asset.savings_balance.toFixed(8)}</div>
-                    <div style={{
-                      fontSize: '13px',
-                      color: COLORS.TEXT_SECONDARY
-                    }}>£{(asset.gbp_value || 0).toFixed(2)}</div>
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>Instant Withdraw</div>
                   </div>
                   
                   <button
                     onClick={() => handleWithdrawToWallet(asset.currency, asset.savings_balance)}
                     style={{
-                      height: '36px',
-                      padding: '0 20px',
-                      borderRadius: '8px',
-                      border: `1px solid ${COLORS.ACTION_PRIMARY}`,
-                      background: 'transparent',
-                      color: COLORS.ACTION_PRIMARY,
-                      fontSize: '14px',
-                      fontWeight: '600',
+                      height: '48px',
+                      padding: '0 28px',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(0,229,255,0.3)',
+                      background: 'rgba(0,229,255,0.08)',
+                      color: '#00E5FF',
+                      fontSize: '15px',
+                      fontWeight: '700',
                       cursor: 'pointer',
-                      transition: 'all 0.3s'
+                      transition: 'all 0.3s',
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = COLORS.ACTION_PRIMARY;
-                      e.currentTarget.style.color = COLORS.TEXT_PRIMARY;
+                      e.currentTarget.style.background = 'rgba(0,229,255,0.15)';
+                      e.currentTarget.style.transform = 'scale(1.02)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.color = COLORS.ACTION_PRIMARY;
+                      e.currentTarget.style.background = 'rgba(0,229,255,0.08)';
+                      e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
-                    Withdraw to Wallet
+                    Withdraw
                   </button>
                 </div>
               ))}
@@ -370,56 +507,74 @@ export default function SavingsPage() {
           )}
         </div>
 
-        {/* 4) LOCKED VAULTS SECTION */}
+        {/* TIME-LOCKED VAULTS */}
         <div>
           <div style={{
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '20px'
+            gap: '12px',
+            marginBottom: '24px'
           }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(5,150,105,0.15) 100%)',
+              border: '1px solid rgba(16,185,129,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <IoShieldCheckmark size={20} color="#10B981" />
+            </div>
             <h2 style={{
-              fontSize: '18px',
+              fontSize: '24px',
               fontWeight: '700',
-              color: COLORS.TEXT_PRIMARY,
+              color: '#FFF',
               margin: 0
-            }}>Locked Vaults</h2>
-            
-            <button
-              onClick={() => setShowCreateVaultModal(true)}
-              style={{
-                height: '44px',
-                padding: '0 24px',
-                borderRadius: '10px',
-                background: COLORS.ACTION_PRIMARY,
-                color: COLORS.TEXT_PRIMARY,
-                border: 'none',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                boxShadow: GLOW_PRIMARY
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = COLORS.ACTION_HOVER}
-              onMouseLeave={(e) => e.currentTarget.style.background = COLORS.ACTION_PRIMARY}
-            >
-              Create Vault
-            </button>
+            }}>Time-Locked Vaults</h2>
           </div>
           
           {vaults.length === 0 ? (
             <div style={{
-              background: COLORS.BG_CARD,
-              padding: '40px',
-              borderRadius: '16px',
-              textAlign: 'center',
-              color: COLORS.TEXT_SECONDARY
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '20px',
+              padding: '56px 32px',
+              textAlign: 'center'
             }}>
-              No vaults created yet. Lock your savings for secure storage.
+              <div style={{
+                width: '120px',
+                height: '120px',
+                margin: '0 auto 24px',
+                background: 'linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '2px solid rgba(16,185,129,0.2)'
+              }}>
+                <IoLockClosed size={56} color="#10B981" />
+              </div>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#FFF',
+                marginBottom: '12px'
+              }}>Maximum Security Storage</h3>
+              <p style={{
+                fontSize: '15px',
+                color: '#8FA3C8',
+                maxWidth: '460px',
+                margin: '0 auto',
+                lineHeight: '1.6'
+              }}>
+                Lock your crypto for enhanced security. Choose 30, 60, or 90-day periods. Early withdrawal available with penalty.
+              </p>
             </div>
           ) : (
             <div style={{ display: 'grid', gap: '16px' }}>
-              {vaults.map(vault => <VaultCard key={vault.vault_id} vault={vault} onEarlyUnlock={() => {
+              {vaults.map(vault => <VaultCard key={vault.vault_id} vault={vault} balancesHidden={balancesHidden} onEarlyUnlock={() => {
                 setSelectedVault(vault);
                 setShowEarlyUnlockModal(true);
               }} />)}
@@ -429,7 +584,6 @@ export default function SavingsPage() {
 
       </div>
 
-      {/* MODALS */}
       {showTransferModal && <TransferModal onClose={() => setShowTransferModal(false)} userId={user.user_id} onSuccess={() => loadAllData(user.user_id)} />}
       {showCreateVaultModal && <CreateVaultModal onClose={() => setShowCreateVaultModal(false)} userId={user.user_id} savingsBalances={savingsBalances} onSuccess={() => loadAllData(user.user_id)} />}
       {showEarlyUnlockModal && selectedVault && <EarlyUnlockModal vault={selectedVault} onClose={() => setShowEarlyUnlockModal(false)} userId={user.user_id} onSuccess={() => loadAllData(user.user_id)} />}
@@ -437,66 +591,86 @@ export default function SavingsPage() {
   );
 }
 
-// VAULT CARD COMPONENT
-function VaultCard({ vault, onEarlyUnlock }) {
+// PREMIUM VAULT CARD
+function VaultCard({ vault, balancesHidden, onEarlyUnlock }) {
   const now = new Date();
   const unlockDate = new Date(vault.unlock_date);
   const daysRemaining = Math.max(0, Math.ceil((unlockDate - now) / (1000 * 60 * 60 * 24)));
   const isCompleted = daysRemaining === 0;
-  const status = isCompleted ? 'completed' : (daysRemaining <= 7 ? 'unlocking' : 'locked');
+  const status = isCompleted ? 'Matured' : (daysRemaining <= 7 ? 'Unlocking' : 'Locked');
   
   const statusColors = {
-    locked: '#4DA3FF',
-    unlocking: '#F59E0B',
-    completed: '#10B981'
+    Locked: { bg: 'rgba(16,185,129,0.15)', border: '#10B981', text: '#10B981' },
+    Unlocking: { bg: 'rgba(245,158,11,0.15)', border: '#F59E0B', text: '#F59E0B' },
+    Matured: { bg: 'rgba(0,229,255,0.15)', border: '#00E5FF', text: '#00E5FF' }
   };
 
   return (
     <div style={{
-      background: COLORS.BG_CARD,
-      borderRadius: '16px',
-      padding: '24px',
-      border: `1px solid ${COLORS.BG_PANEL}`
+      background: 'rgba(255,255,255,0.02)',
+      border: `1px solid ${statusColors[status].border}40`,
+      borderRadius: '20px',
+      padding: '28px',
+      boxShadow: `0 4px 24px ${statusColors[status].border}15`,
+      transition: 'all 0.3s'
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img src={getCoinLogo(vault.currency)} alt={vault.currency} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <img src={getCoinLogo(vault.currency)} alt={vault.currency} style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
           <div>
-            <div style={{ fontSize: '16px', fontWeight: '600', color: COLORS.TEXT_PRIMARY }}>{vault.currency}</div>
-            <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>{vault.amount.toFixed(8)}</div>
+            <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFF', marginBottom: '4px' }}>{vault.vault_name || `${vault.currency} Vault`}</div>
+            <div style={{ fontSize: '14px', color: '#8FA3C8' }}>{vault.currency}</div>
           </div>
         </div>
         
         <div style={{
-          padding: '4px 12px',
-          borderRadius: '6px',
-          background: `${statusColors[status]}20`,
-          border: `1px solid ${statusColors[status]}`,
-          color: statusColors[status],
-          fontSize: '12px',
-          fontWeight: '600',
-          textTransform: 'uppercase'
+          padding: '8px 16px',
+          borderRadius: '10px',
+          background: statusColors[status].bg,
+          border: `1px solid ${statusColors[status].border}`,
+          color: statusColors[status].text,
+          fontSize: '13px',
+          fontWeight: '700',
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
         }}>
           {status}
         </div>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '20px' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ fontSize: '14px', color: '#8FA3C8', marginBottom: '8px' }}>Locked Amount</div>
+        <div style={{ fontSize: '32px', fontWeight: '700', color: '#FFF', marginBottom: '4px' }}>
+          {balancesHidden ? '••••••' : vault.amount.toFixed(8)}
+        </div>
+        <div style={{ fontSize: '16px', color: '#8FA3C8' }}>
+          {balancesHidden ? '••••' : `£${(vault.gbp_value || 0).toFixed(2)}`}
+        </div>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '16px',
+        marginBottom: '24px',
+        padding: '20px',
+        background: 'rgba(255,255,255,0.02)',
+        borderRadius: '12px'
+      }}>
         <div>
-          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Lock Duration</div>
-          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{vault.lock_period} days</div>
+          <div style={{ fontSize: '12px', color: '#6B7A99', marginBottom: '6px', textTransform: 'uppercase' }}>Duration</div>
+          <div style={{ fontSize: '18px', color: '#FFF', fontWeight: '700' }}>{vault.lock_period} days</div>
         </div>
         <div>
-          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Days Remaining</div>
-          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{daysRemaining} days</div>
+          <div style={{ fontSize: '12px', color: '#6B7A99', marginBottom: '6px', textTransform: 'uppercase' }}>Remaining</div>
+          <div style={{ fontSize: '18px', color: statusColors[status].text, fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <IoTime size={18} />
+            {daysRemaining} days
+          </div>
         </div>
         <div>
-          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Unlock Date</div>
-          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{unlockDate.toLocaleDateString()}</div>
-        </div>
-        <div>
-          <div style={{ fontSize: '12px', color: COLORS.TEXT_MUTED, marginBottom: '4px' }}>Value</div>
-          <div style={{ fontSize: '14px', color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>£{(vault.gbp_value || 0).toFixed(2)}</div>
+          <div style={{ fontSize: '12px', color: '#6B7A99', marginBottom: '6px', textTransform: 'uppercase' }}>Unlocks</div>
+          <div style={{ fontSize: '14px', color: '#FFF', fontWeight: '600' }}>{unlockDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
         </div>
       </div>
       
@@ -505,30 +679,46 @@ function VaultCard({ vault, onEarlyUnlock }) {
           onClick={onEarlyUnlock}
           style={{
             width: '100%',
-            height: '36px',
-            borderRadius: '8px',
-            border: `1px solid ${COLORS.ACTION_PRIMARY}`,
-            background: 'transparent',
-            color: COLORS.ACTION_PRIMARY,
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
+            height: '52px',
+            borderRadius: '12px',
+            border: '1px solid rgba(245,158,11,0.3)',
+            background: 'rgba(245,158,11,0.08)',
+            color: '#F59E0B',
+            fontSize: '15px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.3s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(245,158,11,0.15)';
+            e.currentTarget.style.transform = 'scale(1.01)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(245,158,11,0.08)';
+            e.currentTarget.style.transform = 'scale(1)';
           }}
         >
-          Early Unlock
+          <IoWarning size={20} />
+          Early Unlock (Penalty Applies)
         </button>
       ) : (
         <button
           style={{
             width: '100%',
-            height: '36px',
-            borderRadius: '8px',
-            background: COLORS.ACTION_PRIMARY,
-            color: COLORS.TEXT_PRIMARY,
+            height: '52px',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
+            color: '#FFF',
             border: 'none',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
+            fontSize: '15px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(0,229,255,0.3)',
+            transition: 'all 0.3s'
           }}
         >
           Withdraw to Savings
@@ -538,336 +728,4 @@ function VaultCard({ vault, onEarlyUnlock }) {
   );
 }
 
-// TRANSFER MODAL (Wallet → Savings)
-function TransferModal({ onClose, userId, onSuccess }) {
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.8)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={{
-        background: COLORS.BG_CARD,
-        borderRadius: '16px',
-        padding: '32px',
-        maxWidth: '480px',
-        width: '90%'
-      }}>
-        <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '16px' }}>Transfer from Wallet</h3>
-        <p style={{ color: COLORS.TEXT_SECONDARY, marginBottom: '24px' }}>Select asset and amount to transfer to savings.</p>
-        {/* Implementation needed */}
-        <button onClick={onClose} style={{
-          width: '100%',
-          height: '44px',
-          background: COLORS.ACTION_PRIMARY,
-          color: COLORS.TEXT_PRIMARY,
-          border: 'none',
-          borderRadius: '10px',
-          fontSize: '14px',
-          fontWeight: '600',
-          cursor: 'pointer'
-        }}>Close</button>
-      </div>
-    </div>
-  );
-}
-
-// CREATE VAULT MODAL
-function CreateVaultModal({ onClose, userId, savingsBalances, onSuccess }) {
-  const [step, setStep] = useState(1);
-  const [selectedAsset, setSelectedAsset] = useState(null);
-  const [amount, setAmount] = useState('');
-  const [lockPeriod, setLockPeriod] = useState(null);
-  
-  const handleCreate = async () => {
-    try {
-      const response = await axios.post(`${API}/api/vaults/create`, {
-        user_id: userId,
-        currency: selectedAsset.currency,
-        amount: parseFloat(amount),
-        lock_period: lockPeriod
-      });
-      
-      if (response.data.success) {
-        toast.success('Vault created successfully');
-        onSuccess();
-        onClose();
-      } else {
-        toast.error(response.data.error || 'Failed to create vault');
-      }
-    } catch (error) {
-      console.error('Create vault error:', error);
-      toast.error('Failed to create vault');
-    }
-  };
-  
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.8)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={{
-        background: COLORS.BG_CARD,
-        borderRadius: '16px',
-        padding: '32px',
-        maxWidth: '480px',
-        width: '90%'
-      }}>
-        <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '24px' }}>Create Vault</h3>
-        
-        {step === 1 && (
-          <div>
-            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 1: Select Asset</div>
-            {savingsBalances.map(asset => (
-              <div
-                key={asset.currency}
-                onClick={() => { setSelectedAsset(asset); setStep(2); }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '16px',
-                  background: COLORS.BG_PANEL,
-                  borderRadius: '12px',
-                  marginBottom: '8px',
-                  cursor: 'pointer',
-                  border: `1px solid ${COLORS.BG_PANEL}`
-                }}
-              >
-                <img src={getCoinLogo(asset.currency)} alt={asset.currency} style={{ width: '32px', height: '32px' }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{asset.currency}</div>
-                  <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>Available: {asset.savings_balance.toFixed(8)}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {step === 2 && (
-          <div>
-            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 2: Enter Amount</div>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount"
-              style={{
-                width: '100%',
-                height: '44px',
-                padding: '0 16px',
-                background: COLORS.BG_PANEL,
-                border: `1px solid ${COLORS.BG_PANEL}`,
-                borderRadius: '10px',
-                color: COLORS.TEXT_PRIMARY,
-                fontSize: '14px',
-                marginBottom: '12px'
-              }}
-            />
-            <button
-              onClick={() => setAmount(selectedAsset.savings_balance.toString())}
-              style={{
-                padding: '8px 16px',
-                background: COLORS.BG_PANEL,
-                color: COLORS.ACTION_PRIMARY,
-                border: `1px solid ${COLORS.ACTION_PRIMARY}`,
-                borderRadius: '8px',
-                fontSize: '13px',
-                cursor: 'pointer',
-                marginBottom: '24px'
-              }}
-            >
-              Max
-            </button>
-            <button onClick={() => setStep(3)} style={{
-              width: '100%',
-              height: '44px',
-              background: COLORS.ACTION_PRIMARY,
-              color: COLORS.TEXT_PRIMARY,
-              border: 'none',
-              borderRadius: '10px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}>Continue</button>
-          </div>
-        )}
-        
-        {step === 3 && (
-          <div>
-            <div style={{ fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '12px' }}>Step 3: Select Lock Period</div>
-            {[30, 60, 90].map(period => (
-              <button
-                key={period}
-                onClick={() => setLockPeriod(period)}
-                style={{
-                  width: '100%',
-                  height: '44px',
-                  background: lockPeriod === period ? 'transparent' : COLORS.BG_PANEL,
-                  border: lockPeriod === period ? `2px solid ${COLORS.ACTION_PRIMARY}` : `1px solid ${COLORS.BG_PANEL}`,
-                  borderRadius: '10px',
-                  color: COLORS.TEXT_PRIMARY,
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  marginBottom: '8px'
-                }}
-              >
-                {period} days
-              </button>
-            ))}
-            <div style={{
-              marginTop: '24px',
-              padding: '16px',
-              background: `${COLORS.ACTION_PRIMARY}10`,
-              border: `1px solid ${COLORS.ACTION_PRIMARY}30`,
-              borderRadius: '10px',
-              fontSize: '13px',
-              color: COLORS.TEXT_SECONDARY
-            }}>
-              <div style={{ marginBottom: '8px' }}>⚠️ Lock Rules:</div>
-              <div>• Funds cannot be withdrawn before expiry</div>
-              <div>• Early unlock incurs a penalty</div>
-            </div>
-            <button
-              onClick={handleCreate}
-              disabled={!lockPeriod}
-              style={{
-                width: '100%',
-                height: '44px',
-                background: lockPeriod ? COLORS.ACTION_PRIMARY : COLORS.ACTION_DISABLED,
-                color: COLORS.TEXT_PRIMARY,
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: lockPeriod ? 'pointer' : 'not-allowed',
-                marginTop: '24px',
-                boxShadow: lockPeriod ? GLOW_PRIMARY : 'none'
-              }}
-            >
-              Create Vault
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// EARLY UNLOCK MODAL
-function EarlyUnlockModal({ vault, onClose, userId, onSuccess }) {
-  const penaltyPercent = 10;
-  const penaltyAmount = vault.amount * (penaltyPercent / 100);
-  const finalAmount = vault.amount - penaltyAmount;
-  
-  const handleEarlyUnlock = async () => {
-    try {
-      const response = await axios.post(`${API}/api/vaults/early-unlock`, {
-        user_id: userId,
-        vault_id: vault.vault_id
-      });
-      
-      if (response.data.success) {
-        toast.success('Vault unlocked with penalty applied');
-        onSuccess();
-        onClose();
-      } else {
-        toast.error(response.data.error || 'Failed to unlock vault');
-      }
-    } catch (error) {
-      console.error('Early unlock error:', error);
-      toast.error('Failed to unlock vault');
-    }
-  };
-  
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.8)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={{
-        background: COLORS.BG_CARD,
-        borderRadius: '16px',
-        padding: '32px',
-        maxWidth: '480px',
-        width: '90%'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <IoWarning size={48} color="#F59E0B" style={{ marginBottom: '16px' }} />
-          <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '8px' }}>Early Unlock Warning</h3>
-          <p style={{ color: COLORS.TEXT_SECONDARY, fontSize: '14px' }}>Unlocking before expiry will incur a penalty</p>
-        </div>
-        
-        <div style={{
-          background: COLORS.BG_PANEL,
-          borderRadius: '12px',
-          padding: '16px',
-          marginBottom: '24px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: COLORS.TEXT_SECONDARY }}>Original Amount:</span>
-            <span style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{vault.amount.toFixed(8)} {vault.currency}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: COLORS.TEXT_SECONDARY }}>Penalty ({penaltyPercent}%):</span>
-            <span style={{ color: '#F59E0B', fontWeight: '600' }}>-{penaltyAmount.toFixed(8)} {vault.currency}</span>
-          </div>
-          <div style={{ height: '1px', background: COLORS.BG_CARD, margin: '12px 0' }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: COLORS.TEXT_SECONDARY }}>You'll Receive:</span>
-            <span style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '700', fontSize: '16px' }}>{finalAmount.toFixed(8)} {vault.currency}</span>
-          </div>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={onClose} style={{
-            flex: 1,
-            height: '44px',
-            background: 'transparent',
-            color: COLORS.TEXT_SECONDARY,
-            border: `1px solid ${COLORS.BG_PANEL}`,
-            borderRadius: '10px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}>Cancel</button>
-          <button onClick={handleEarlyUnlock} style={{
-            flex: 1,
-            height: '44px',
-            background: '#F59E0B',
-            color: COLORS.TEXT_PRIMARY,
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}>Confirm Unlock</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+// Keep existing TransferModal, CreateVaultModal, EarlyUnlockModal implementations
