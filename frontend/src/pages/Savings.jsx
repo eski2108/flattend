@@ -267,123 +267,70 @@ export default function SavingsPage() {
   );
 }
 
-// FLEXIBLE SAVINGS CONTENT
+// FLEXIBLE SAVINGS CONTENT - NEXO STYLE (SIMPLE LIST)
 function FlexibleSavingsContent({ savingsBalances, onWithdraw, onTransfer }) {
-  if (savingsBalances.length === 0) {
-    return (
-      <div style={{
-        padding: '80px 40px',
-        textAlign: 'center'
-      }}>
-        <div style={{
-          width: '80px',
-          height: '80px',
-          margin: '0 auto 24px',
-          background: '#F3F4F6',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <IoWallet size={40} color="#9CA3AF" />
-        </div>
-        <h3 style={{
-          fontSize: '20px',
-          fontWeight: '600',
-          color: '#111827',
-          marginBottom: '8px'
-        }}>No Flexible Savings</h3>
-        <p style={{
-          fontSize: '15px',
-          color: '#6B7280',
-          marginBottom: '24px'
-        }}>Transfer crypto from your wallet to start earning</p>
-        <button
-          onClick={onTransfer}
-          style={{
-            height: '44px',
-            padding: '0 28px',
-            borderRadius: '8px',
-            background: '#00A8E8',
-            border: 'none',
-            color: '#FFF',
-            fontSize: '15px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}
-        >
-          Get Started
-        </button>
-      </div>
-    );
-  }
+  const availableAssets = [
+    { currency: 'USDC', amount: 0, rate: '13%' },
+    { currency: 'BTC', amount: 0, rate: '6.5%' },
+    { currency: 'ETH', amount: 0, rate: '7.5%' },
+    { currency: 'USDT', amount: 0, rate: '13%' },
+    { currency: 'LTC', amount: 0, rate: '8%' },
+    { currency: 'XRP', amount: 0, rate: '12%' }
+  ];
+
+  // Merge user balances with available assets
+  const displayAssets = availableAssets.map(available => {
+    const userBalance = savingsBalances.find(b => b.currency === available.currency);
+    return {
+      ...available,
+      amount: userBalance ? userBalance.savings_balance : 0,
+      hasBalance: !!userBalance
+    };
+  });
 
   return (
-    <div>
-      {savingsBalances.map((asset, index) => (
+    <div style={{ padding: '8px 0' }}>
+      {displayAssets.map((asset, index) => (
         <div
           key={asset.currency}
+          onClick={() => asset.hasBalance && onWithdraw(asset.currency, asset.amount)}
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '20px 40px',
-            borderBottom: index < savingsBalances.length - 1 ? '1px solid #F3F4F6' : 'none',
-            transition: 'background 0.2s'
+            padding: '20px 32px',
+            borderBottom: '1px solid #F3F4F6',
+            cursor: asset.hasBalance ? 'pointer' : 'default',
+            transition: 'background 0.15s'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#FAFAFA'}
+          onMouseEnter={(e) => asset.hasBalance && (e.currentTarget.style.background = '#FAFAFA')}
           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <img
               src={getCoinLogo(asset.currency)}
               alt={asset.currency}
-              style={{ width: '48px', height: '48px', borderRadius: '50%' }}
+              style={{ width: '44px', height: '44px', borderRadius: '50%' }}
             />
             <div>
-              <div style={{ fontSize: '17px', fontWeight: '600', color: '#111827', marginBottom: '2px' }}>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '2px' }}>
                 {asset.currency}
               </div>
-              <div style={{ fontSize: '15px', color: '#6B7280' }}>
-                {asset.savings_balance.toFixed(8)}
+              <div style={{ fontSize: '16px', color: '#9CA3AF' }}>
+                {asset.amount > 0 ? asset.amount.toFixed(2) : '0.00'}
               </div>
             </div>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '13px', color: '#10B981', fontWeight: '600', marginBottom: '4px' }}>
-                Instant Access
-              </div>
-              <div style={{ fontSize: '15px', color: '#6B7280' }}>
-                £{(asset.gbp_value || 0).toFixed(2)}
-              </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: '#10B981',
+              letterSpacing: '-0.5px'
+            }}>
+              Up to {asset.rate}
             </div>
-            <button
-              onClick={() => onWithdraw(asset.currency, asset.savings_balance)}
-              style={{
-                height: '36px',
-                padding: '0 20px',
-                borderRadius: '6px',
-                border: '1px solid #E5E7EB',
-                background: '#FFF',
-                color: '#374151',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#00A8E8';
-                e.currentTarget.style.color = '#00A8E8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#E5E7EB';
-                e.currentTarget.style.color = '#374151';
-              }}
-            >
-              Withdraw
-            </button>
           </div>
         </div>
       ))}
@@ -391,132 +338,74 @@ function FlexibleSavingsContent({ savingsBalances, onWithdraw, onTransfer }) {
   );
 }
 
-// FIXED-TERM CONTENT
+// FIXED-TERM CONTENT - NEXO STYLE (SIMPLE LIST)
 function FixedTermContent({ vaults, onEarlyUnlock, onCreate }) {
-  if (vaults.length === 0) {
-    return (
-      <div style={{
-        padding: '80px 40px',
-        textAlign: 'center'
-      }}>
-        <div style={{
-          width: '80px',
-          height: '80px',
-          margin: '0 auto 24px',
-          background: '#F3F4F6',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <IoLockClosed size={40} color="#9CA3AF" />
-        </div>
-        <h3 style={{
-          fontSize: '20px',
-          fontWeight: '600',
-          color: '#111827',
-          marginBottom: '8px'
-        }}>No Fixed-term Vaults</h3>
-        <p style={{
-          fontSize: '15px',
-          color: '#6B7280',
-          marginBottom: '24px'
-        }}>Lock crypto for 30, 60, or 90 days for secure storage</p>
-        <button
-          onClick={onCreate}
-          style={{
-            height: '44px',
-            padding: '0 28px',
-            borderRadius: '8px',
-            background: '#10B981',
-            border: 'none',
-            color: '#FFF',
-            fontSize: '15px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}
-        >
-          Create First Vault
-        </button>
-      </div>
-    );
-  }
+  const availableAssets = [
+    { currency: 'USDC', amount: 0, rate: '15%' },
+    { currency: 'BTC', amount: 0, rate: '8%' },
+    { currency: 'ETH', amount: 0, rate: '9%' },
+    { currency: 'USDT', amount: 0, rate: '15%' },
+    { currency: 'LTC', amount: 0, rate: '10%' },
+    { currency: 'XRP', amount: 0, rate: '14%' }
+  ];
+
+  // Merge user vaults with available assets
+  const displayAssets = availableAssets.map(available => {
+    const userVault = vaults.find(v => v.currency === available.currency);
+    return {
+      ...available,
+      amount: userVault ? userVault.amount : 0,
+      hasVault: !!userVault,
+      vault: userVault
+    };
+  });
 
   return (
-    <div>
-      {vaults.map((vault, index) => {
-        const now = new Date();
-        const unlockDate = new Date(vault.unlock_date);
-        const daysRemaining = Math.max(0, Math.ceil((unlockDate - now) / (1000 * 60 * 60 * 24)));
-        const isCompleted = daysRemaining === 0;
-        
-        return (
-          <div
-            key={vault.vault_id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '20px 40px',
-              borderBottom: index < vaults.length - 1 ? '1px solid #F3F4F6' : 'none',
-              transition: 'background 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#FAFAFA'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-              <img
-                src={getCoinLogo(vault.currency)}
-                alt={vault.currency}
-                style={{ width: '48px', height: '48px', borderRadius: '50%' }}
-              />
-              <div>
-                <div style={{ fontSize: '17px', fontWeight: '600', color: '#111827', marginBottom: '2px' }}>
-                  {vault.currency}
-                </div>
-                <div style={{ fontSize: '15px', color: '#6B7280' }}>
-                  {vault.amount.toFixed(8)}
-                </div>
+    <div style={{ padding: '8px 0' }}>
+      {displayAssets.map((asset, index) => (
+        <div
+          key={asset.currency}
+          onClick={() => asset.hasVault && onEarlyUnlock(asset.vault)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 32px',
+            borderBottom: '1px solid #F3F4F6',
+            cursor: asset.hasVault ? 'pointer' : 'default',
+            transition: 'background 0.15s'
+          }}
+          onMouseEnter={(e) => asset.hasVault && (e.currentTarget.style.background = '#FAFAFA')}
+          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <img
+              src={getCoinLogo(asset.currency)}
+              alt={asset.currency}
+              style={{ width: '44px', height: '44px', borderRadius: '50%' }}
+            />
+            <div>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '2px' }}>
+                {asset.currency}
               </div>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{
-                  fontSize: '13px',
-                  color: isCompleted ? '#10B981' : '#F59E0B',
-                  fontWeight: '600',
-                  marginBottom: '4px'
-                }}>
-                  {isCompleted ? 'Matured' : `${daysRemaining} days left`}
-                </div>
-                <div style={{ fontSize: '13px', color: '#9CA3AF' }}>
-                  {vault.lock_period}-day lock
-                </div>
+              <div style={{ fontSize: '16px', color: '#9CA3AF' }}>
+                {asset.amount > 0 ? asset.amount.toFixed(2) : '0.00'}
               </div>
-              {!isCompleted && (
-                <button
-                  onClick={() => onEarlyUnlock(vault)}
-                  style={{
-                    height: '36px',
-                    padding: '0 20px',
-                    borderRadius: '6px',
-                    border: '1px solid #FEE2E2',
-                    background: '#FEF2F2',
-                    color: '#DC2626',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  Early Unlock
-                </button>
-              )}
             </div>
           </div>
-        );
-      })}
+          
+          <div style={{ textAlign: 'right' }}>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: '#10B981',
+              letterSpacing: '-0.5px'
+            }}>
+              Up to {asset.rate}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
