@@ -404,45 +404,32 @@ export default function WalletPage() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  {/* COIN ICON + NAME */}
+                  {/* LEFT: ICON + NAME */}
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '14px',
-                    flex: '0 0 200px',
-                    minWidth: '200px'
+                    gap: '12px',
+                    flex: 1
                   }}>
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.06)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '10px',
-                      opacity: hasBalance ? 1 : 0.7
-                    }}>
-                      <img
-                        src={asset.logoUrl}
-                        alt={asset.currency}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain'
-                        }}
-                      />
-                    </div>
+                    <img
+                      src={asset.logoUrl}
+                      alt={asset.currency}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%'
+                      }}
+                    />
                     <div>
                       <div style={{
-                        fontSize: '17px',
-                        fontWeight: '700',
-                        color: '#E6ECFF',
-                        marginBottom: '4px'
+                        fontSize: '15px',
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                        marginBottom: '2px'
                       }}>{asset.currency}</div>
                       <div style={{
                         fontSize: '13px',
-                        color: '#8FA3C8',
+                        color: '#6B7A99',
                         fontWeight: '400'
                       }}>{asset.name}</div>
                     </div>
