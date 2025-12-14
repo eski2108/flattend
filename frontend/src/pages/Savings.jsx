@@ -189,12 +189,12 @@ export default function SavingsPage() {
         {/* 2) SAVINGS SUMMARY PANEL */}
         <div style={{
           background: COLORS.BG_CARD,
-          padding: '24px',
+          padding: window.innerWidth <= 768 ? '16px' : '24px',
           borderRadius: '16px',
           marginBottom: '32px',
           display: 'grid',
           gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(3, 1fr)',
-          gap: '24px'
+          gap: window.innerWidth <= 768 ? '16px' : '24px'
         }}>
           <div>
             <div style={{
@@ -259,7 +259,24 @@ export default function SavingsPage() {
               textAlign: 'center',
               color: COLORS.TEXT_SECONDARY
             }}>
-              No assets in flexible savings. Transfer from wallet to start saving.
+              <p style={{ marginBottom: '20px' }}>No assets in flexible savings.</p>
+              <button
+                onClick={() => setShowTransferModal(true)}
+                style={{
+                  height: '44px',
+                  padding: '0 24px',
+                  borderRadius: '10px',
+                  background: COLORS.ACTION_PRIMARY,
+                  color: COLORS.TEXT_PRIMARY,
+                  border: 'none',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: GLOW_PRIMARY
+                }}
+              >
+                Transfer from Wallet
+              </button>
             </div>
           ) : (
             <div style={{
@@ -510,6 +527,56 @@ function VaultCard({ vault, onEarlyUnlock }) {
 
 // TRANSFER MODAL (Wallet → Savings)
 function TransferModal({ onClose, userId, onSuccess }) {
+  const [walletBalances, setWalletBalances] = useState([]);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadWalletBalances();
+  }, []);
+
+  const loadWalletBalances = async () => {
+    try {
+      const response = await axios.get(`${API}/api/wallet/balances/${userId}`);
+      if (response.data.success) {
+        const nonZero = response.data.balances.filter(b => b.balance > 0);
+        setWalletBalances(nonZero);
+      }
+    } catch (error) {
+      console.error('Error loading wallet balances:', error);
+      toast.error('Failed to load wallet balances');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTransfer = async () => {
+    if (!selectedAsset || !amount || parseFloat(amount) <= 0) {
+      toast.error('Please select asset and enter valid amount');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API}/api/savings/deposit`, {
+        user_id: userId,
+        currency: selectedAsset.currency,
+        amount: parseFloat(amount)
+      });
+
+      if (response.data.success) {
+        toast.success('Transferred to savings successfully');
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(response.data.error || 'Transfer failed');
+      }
+    } catch (error) {
+      console.error('Transfer error:', error);
+      toast.error('Failed to transfer to savings');
+    }
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -528,22 +595,133 @@ function TransferModal({ onClose, userId, onSuccess }) {
         borderRadius: '16px',
         padding: '32px',
         maxWidth: '480px',
-        width: '90%'
+        width: '90%',
+        maxHeight: '80vh',
+        overflow: 'auto'
       }}>
         <h3 style={{ fontSize: '20px', color: COLORS.TEXT_PRIMARY, marginBottom: '16px' }}>Transfer from Wallet</h3>
-        <p style={{ color: COLORS.TEXT_SECONDARY, marginBottom: '24px' }}>Select asset and amount to transfer to savings.</p>
-        {/* Implementation needed */}
-        <button onClick={onClose} style={{
-          width: '100%',
-          height: '44px',
-          background: COLORS.ACTION_PRIMARY,
-          color: COLORS.TEXT_PRIMARY,
-          border: 'none',
-          borderRadius: '10px',
-          fontSize: '14px',
-          fontWeight: '600',
-          cursor: 'pointer'
-        }}>Close</button>
+        
+        {loading ? (
+          <p style={{ color: COLORS.TEXT_SECONDARY, padding: '20px', textAlign: 'center' }}>Loading...</p>
+        ) : walletBalances.length === 0 ? (
+          <p style={{ color: COLORS.TEXT_SECONDARY, marginBottom: '24px' }}>No assets in wallet.</p>
+        ) : !selectedAsset ? (
+          <div>
+            <p style={{ color: COLORS.TEXT_SECONDARY, marginBottom: '16px', fontSize: '14px' }}>Select asset to transfer:</p>
+            {walletBalances.map(asset => (
+              <div
+                key={asset.currency}
+                onClick={() => setSelectedAsset(asset)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '16px',
+                  background: COLORS.BG_PANEL,
+                  borderRadius: '12px',
+                  marginBottom: '8px',
+                  cursor: 'pointer',
+                  border: `1px solid ${COLORS.BG_PANEL}`
+                }}
+              >
+                <img src={getCoinLogo(asset.currency)} alt={asset.currency} style={{ width: '32px', height: '32px' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{asset.currency}</div>
+                  <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>Available: {asset.balance.toFixed(8)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>
+            <div style={{ marginBottom: '20px', padding: '16px', background: COLORS.BG_PANEL, borderRadius: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <img src={getCoinLogo(selectedAsset.currency)} alt={selectedAsset.currency} style={{ width: '32px', height: '32px' }} />
+                <div>
+                  <div style={{ color: COLORS.TEXT_PRIMARY, fontWeight: '600' }}>{selectedAsset.currency}</div>
+                  <div style={{ fontSize: '13px', color: COLORS.TEXT_SECONDARY }}>Available: {selectedAsset.balance.toFixed(8)}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '14px', color: COLORS.TEXT_SECONDARY, marginBottom: '8px' }}>Amount</label>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
+                style={{
+                  width: '100%',
+                  height: '44px',
+                  padding: '0 16px',
+                  background: COLORS.BG_PANEL,
+                  border: `1px solid ${COLORS.BG_PANEL}`,
+                  borderRadius: '10px',
+                  color: COLORS.TEXT_PRIMARY,
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+            
+            <button
+              onClick={() => setAmount(selectedAsset.balance.toString())}
+              style={{
+                padding: '8px 16px',
+                background: 'transparent',
+                color: COLORS.ACTION_PRIMARY,
+                border: `1px solid ${COLORS.ACTION_PRIMARY}`,
+                borderRadius: '8px',
+                fontSize: '13px',
+                cursor: 'pointer',
+                marginBottom: '24px'
+              }}
+            >
+              Max
+            </button>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={() => setSelectedAsset(null)} style={{
+                flex: 1,
+                height: '44px',
+                background: 'transparent',
+                color: COLORS.TEXT_SECONDARY,
+                border: `1px solid ${COLORS.BG_PANEL}`,
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}>Back</button>
+              <button onClick={handleTransfer} style={{
+                flex: 1,
+                height: '44px',
+                background: COLORS.ACTION_PRIMARY,
+                color: COLORS.TEXT_PRIMARY,
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: GLOW_PRIMARY
+              }}>Transfer</button>
+            </div>
+          </div>
+        )}
+        
+        {(walletBalances.length === 0 || !selectedAsset) && (
+          <button onClick={onClose} style={{
+            width: '100%',
+            height: '44px',
+            background: 'transparent',
+            color: COLORS.TEXT_SECONDARY,
+            border: `1px solid ${COLORS.BG_PANEL}`,
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            marginTop: '16px'
+          }}>Close</button>
+        )}
       </div>
     </div>
   );
