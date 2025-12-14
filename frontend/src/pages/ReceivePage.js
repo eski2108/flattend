@@ -78,8 +78,44 @@ export default function ReceivePage() {
       minHeight: '100vh', 
       background: 'linear-gradient(180deg, #0A0F1E 0%, #050810 100%)', 
       color: '#fff', 
-      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif' 
+      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
+      {/* MASSIVE Animated Background Glows */}
+      <div style={{
+        position: 'absolute',
+        top: '-15%',
+        left: '-15%',
+        width: '500px',
+        height: '500px',
+        background: 'radial-gradient(circle, rgba(0,229,255,0.25) 0%, rgba(0,229,255,0.1) 40%, transparent 70%)',
+        filter: 'blur(100px)',
+        pointerEvents: 'none',
+        animation: 'float 8s ease-in-out infinite'
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '30%',
+        right: '-20%',
+        width: '450px',
+        height: '450px',
+        background: 'radial-gradient(circle, rgba(123,44,255,0.2) 0%, rgba(123,44,255,0.08) 40%, transparent 70%)',
+        filter: 'blur(100px)',
+        pointerEvents: 'none',
+        animation: 'float 10s ease-in-out infinite reverse'
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '10%',
+        left: '20%',
+        width: '350px',
+        height: '350px',
+        background: 'radial-gradient(circle, rgba(0,71,217,0.18) 0%, transparent 70%)',
+        filter: 'blur(90px)',
+        pointerEvents: 'none',
+        animation: 'float 12s ease-in-out infinite'
+      }} />
       {/* Premium Header */}
       <div style={{
         position: 'sticky',
