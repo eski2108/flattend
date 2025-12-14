@@ -229,7 +229,7 @@ export default function WalletPage() {
 
         {/* TOTAL PORTFOLIO CARD */}
         <div style={{
-          background: '#101A36',
+          background: '#0E1B3F',
           border: '1px solid rgba(255,255,255,0.04)',
           borderRadius: '16px',
           padding: '36px',
@@ -246,7 +246,7 @@ export default function WalletPage() {
             }}>Total Portfolio Value</div>
             <div style={{
               fontSize: '48px',
-              fontWeight: '700',
+              fontWeight: '800',
               color: '#FFFFFF',
               lineHeight: '1',
               marginBottom: '16px'
