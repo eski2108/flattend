@@ -1,7 +1,7 @@
 # CoinHubX Production Deployment - LOCKED VERSION
 
 ## Production URL
-**Primary:** https://payflow-crypto-3.preview.emergentagent.com
+**Primary:** https://savingsflow.preview.emergentagent.com
 **Custom Domain (to be configured):** https://coinhubx.net
 
 ## Current Status: STABLE AND LOCKED

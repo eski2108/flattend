@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://payflow-crypto-3.preview.emergentagent.com/#/trading
+**Live URL:** https://savingsflow.preview.emergentagent.com/#/trading
 
 ---
 

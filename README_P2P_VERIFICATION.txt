@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://payflow-crypto-3.preview.emergentagent.com
-P2P Page:     https://payflow-crypto-3.preview.emergentagent.com/p2p
-Backend API:  https://payflow-crypto-3.preview.emergentagent.com/api
+Frontend:     https://savingsflow.preview.emergentagent.com
+P2P Page:     https://savingsflow.preview.emergentagent.com/p2p
+Backend API:  https://savingsflow.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

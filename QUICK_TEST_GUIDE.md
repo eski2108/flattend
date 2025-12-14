@@ -23,7 +23,7 @@ Create new users during testing or use existing test accounts.
 ### 1. P2P Notification System (15 mins)
 
 **Test Flow**:
-1. Open browser: `https://payflow-crypto-3.preview.emergentagent.com`
+1. Open browser: `https://savingsflow.preview.emergentagent.com`
 2. Register 2 new users: Seller & Buyer
 3. Login as Seller
 4. Navigate to P2P Marketplace
@@ -243,7 +243,7 @@ cd /app && python3 -c "from motor.motor_asyncio import AsyncIOMotorClient; impor
 ### VIP Upgrade Fails:
 ```bash
 # Check if endpoint exists
-curl https://payflow-crypto-3.preview.emergentagent.com/api/referrals/purchase-vip
+curl https://savingsflow.preview.emergentagent.com/api/referrals/purchase-vip
 
 # Check user's GBP balance
 # Login to MongoDB and query: db.wallets.findOne({user_id: "USER_ID", currency: "GBP"})

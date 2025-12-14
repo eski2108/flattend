@@ -1,6 +1,6 @@
 # ✅ ALL CHANGES DEPLOYED TO PREVIEW
 
-**Preview URL:** https://payflow-crypto-3.preview.emergentagent.com  
+**Preview URL:** https://savingsflow.preview.emergentagent.com  
 **Deployment Time:** December 11, 2025 23:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -86,7 +86,7 @@
 
 1. **Navigate to Preview:**
    ```
-   https://payflow-crypto-3.preview.emergentagent.com
+   https://savingsflow.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -139,10 +139,10 @@
 sudo supervisorctl status
 
 # Test preview URL
-curl https://payflow-crypto-3.preview.emergentagent.com
+curl https://savingsflow.preview.emergentagent.com
 
 # Test API health
-curl https://payflow-crypto-3.preview.emergentagent.com/api/health
+curl https://savingsflow.preview.emergentagent.com/api/health
 
 # All return 200 OK ✅
 ```
@@ -183,7 +183,7 @@ curl https://payflow-crypto-3.preview.emergentagent.com/api/health
 
 **All changes are LIVE at:**
 ```
-https://payflow-crypto-3.preview.emergentagent.com
+https://savingsflow.preview.emergentagent.com
 ```
 
 **Test Account:**

@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://payflow-crypto-3.preview.emergentagent.com
+https://savingsflow.preview.emergentagent.com
 
 ---
 

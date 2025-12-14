@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://payflow-crypto-3.preview.emergentagent.com/api
+https://savingsflow.preview.emergentagent.com/api
 ```
 
 This means:

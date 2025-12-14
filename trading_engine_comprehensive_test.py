@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 load_dotenv('/app/backend/.env')
 
 # Configuration
-BACKEND_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
+BACKEND_URL = "https://savingsflow.preview.emergentagent.com/api"
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DB_NAME', 'coinhubx')
 

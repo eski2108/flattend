@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
+BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
 
 # Test Users
 BUYER_USER = {

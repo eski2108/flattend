@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://payflow-crypto-3.preview.emergentagent.com
+**URL:** https://savingsflow.preview.emergentagent.com
 
 **Services Status:**
 ```bash

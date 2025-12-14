@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
+BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

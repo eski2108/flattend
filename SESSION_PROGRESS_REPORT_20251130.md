@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://payflow-crypto-3.preview.emergentagent.com/api/admin/fees/test
+$ curl https://savingsflow.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://payflow-crypto-3.preview.emergentagent.com/api/admin/fees/all
+$ curl https://savingsflow.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

@@ -8,7 +8,7 @@ import json
 import time
 from datetime import datetime
 
-BACKEND_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
+BACKEND_URL = "https://savingsflow.preview.emergentagent.com/api"
 
 def test_system_messages():
     """Test if system messages are created during P2P flow"""

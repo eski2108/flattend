@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
+BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
 
 # Test credentials as specified in the request
 BUYER_EMAIL = "buyer_proof@test.com"

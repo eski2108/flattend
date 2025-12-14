@@ -13,7 +13,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
+BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
 
 def test_trading_issues():
     print("🔍 FOCUSED SPOT TRADING ISSUE ANALYSIS")

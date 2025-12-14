@@ -424,7 +424,7 @@ git show 3eb29aa09b469004823a1b1b89d795f45546d66c --name-only
 ```
 
 **Live Testing:**
-- Login to preview URL: https://payflow-crypto-3.preview.emergentagent.com
+- Login to preview URL: https://savingsflow.preview.emergentagent.com
 - Navigate to /wallet
 - All features are live and functional
 

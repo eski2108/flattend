@@ -504,8 +504,8 @@ $ curl http://localhost:8001/api/prices/live | jq '.prices.BTC.price_usd'
 ```
 
 **Pages Accessible:**
-- ✅ https://payflow-crypto-3.preview.emergentagent.com/trading
-- ✅ https://payflow-crypto-3.preview.emergentagent.com/p2p-express
+- ✅ https://savingsflow.preview.emergentagent.com/trading
+- ✅ https://savingsflow.preview.emergentagent.com/p2p-express
 
 ---
 

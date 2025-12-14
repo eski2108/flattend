@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { X, Zap, TrendingUp, Star, Check } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://payflow-crypto-3.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://savingsflow.preview.emergentagent.com';
 
 const BOOST_PRICING = [
   {

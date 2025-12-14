@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://payflow-crypto-3.preview.emergentagent.com  │
-│ Backend API:    https://payflow-crypto-3.preview.emergentagent.com/api│
+│ Frontend URL:   https://savingsflow.preview.emergentagent.com  │
+│ Backend API:    https://savingsflow.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘
