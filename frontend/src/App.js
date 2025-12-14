@@ -22,6 +22,8 @@ import MobileTradingPage from "@/pages/MobileTradingPage";
 import SendPage from "@/pages/SendPage";
 import ReceivePage from "@/pages/ReceivePage";
 import BridgePage from "@/pages/BridgePage";
+import NFTsPage from "@/pages/NFTsPage";
+import DeFiPage from "@/pages/DeFiPage";
 import AssetDetailPage from "@/pages/AssetDetailPage";
 
 // Layout
