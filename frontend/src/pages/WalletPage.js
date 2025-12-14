@@ -413,14 +413,14 @@ export default function WalletPage() {
                     <div style={{
                       fontSize: '17px',
                       fontWeight: '700',
-                      color: '#B8C7E0',
+                      color: '#FFFFFF',
                       marginBottom: '4px'
                     }}>
                       {asset.total_balance.toFixed(8)}
                     </div>
                     <div style={{
                       fontSize: '14px',
-                      color: '#7E90AD',
+                      color: '#8FA3C8',
                       fontWeight: '500'
                     }}>
                       £{asset.gbp_value.toFixed(2)}
