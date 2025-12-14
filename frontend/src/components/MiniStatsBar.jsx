@@ -54,7 +54,7 @@ export default function MiniStatsBar({ balances, totalValue }) {
       label: 'Total Assets',
       value: totalAssets.toString(),
       subValue: 'holdings',
-      color: COLORS.ACCENT,
+      color: COLORS.BINANCE_BLUE,
       icon: IoWallet
     }
   ];
