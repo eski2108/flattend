@@ -127,21 +127,36 @@ export default function SavingsPage() {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0B0F1A 0%, #0E1C2F 100%)',
+      background: '#0A0E1A',
       minHeight: '100vh',
-      padding: '20px',
-      fontFamily: 'Inter, -apple-system, sans-serif'
+      padding: '24px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif',
+      position: 'relative'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      {/* Animated background */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'radial-gradient(circle at 20% 50%, rgba(0,229,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(123,44,255,0.08) 0%, transparent 50%)',
+        pointerEvents: 'none',
+        zIndex: 0
+      }}></div>
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         
-        {/* SUMMARY CARD */}
+        {/* GLASSMORPHIC SUMMARY CARD */}
         <div style={{
-          background: 'linear-gradient(135deg, rgba(0,229,255,0.08) 0%, rgba(0,150,255,0.08) 100%)',
-          border: '1px solid rgba(0,229,255,0.2)',
-          borderRadius: '20px',
-          padding: '32px',
-          marginBottom: '24px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.3), 0 0 40px rgba(0,229,255,0.1)',
+          background: 'linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.7) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '32px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.1) inset',
           position: 'relative',
           overflow: 'hidden'
         }}>
@@ -192,11 +207,14 @@ export default function SavingsPage() {
             </div>
 
             <div style={{
-              fontSize: '56px',
-              fontWeight: '700',
-              color: '#FFF',
+              fontSize: '64px',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #00E5FF 50%, #7B2CFF 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               marginBottom: '32px',
-              letterSpacing: '-2px'
+              letterSpacing: '-3px',
+              textShadow: '0 0 60px rgba(0,229,255,0.3)'
             }}>
               {formatBalance(totalSavings)}
             </div>
@@ -247,75 +265,97 @@ export default function SavingsPage() {
           </div>
         </div>
 
-        {/* PRIMARY ACTION BUTTONS */}
+        {/* PREMIUM ACTION BUTTONS */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '16px',
-          marginBottom: '40px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
+          marginBottom: '48px'
         }}>
           <button
             onClick={() => setShowTransferModal(true)}
             style={{
-              height: '56px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
+              height: '68px',
+              borderRadius: '18px',
+              background: 'linear-gradient(135deg, #00E5FF 0%, #0099FF 50%, #0066FF 100%)',
               border: 'none',
               color: '#FFF',
-              fontSize: '16px',
+              fontSize: '17px',
               fontWeight: '700',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '12px',
-              boxShadow: '0 8px 24px rgba(0,229,255,0.3)',
-              transition: 'all 0.3s',
-              transform: 'translateY(0)'
+              gap: '14px',
+              boxShadow: '0 12px 40px rgba(0,229,255,0.4), 0 0 1px rgba(255,255,255,0.5) inset',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: 'translateY(0)',
+              position: 'relative',
+              overflow: 'hidden'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,229,255,0.4)';
+              e.currentTarget.style.transform = 'translateY(-4px) scale(1.01)';
+              e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,229,255,0.5), 0 0 2px rgba(255,255,255,0.8) inset';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,229,255,0.3)';
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,229,255,0.4), 0 0 1px rgba(255,255,255,0.5) inset';
             }}
           >
-            <IoArrowForward size={22} />
-            Transfer from Wallet
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: '-100%',
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+              transition: 'left 0.5s'
+            }}></div>
+            <IoArrowForward size={24} />
+            <span style={{ letterSpacing: '0.5px' }}>Transfer from Wallet</span>
           </button>
 
           <button
             onClick={() => setShowCreateVaultModal(true)}
             style={{
-              height: '56px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              height: '68px',
+              borderRadius: '18px',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
               border: 'none',
               color: '#FFF',
-              fontSize: '16px',
+              fontSize: '17px',
               fontWeight: '700',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '12px',
-              boxShadow: '0 8px 24px rgba(16,185,129,0.3)',
-              transition: 'all 0.3s',
-              transform: 'translateY(0)'
+              gap: '14px',
+              boxShadow: '0 12px 40px rgba(16,185,129,0.4), 0 0 1px rgba(255,255,255,0.5) inset',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: 'translateY(0)',
+              position: 'relative',
+              overflow: 'hidden'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(16,185,129,0.4)';
+              e.currentTarget.style.transform = 'translateY(-4px) scale(1.01)';
+              e.currentTarget.style.boxShadow = '0 20px 60px rgba(16,185,129,0.5), 0 0 2px rgba(255,255,255,0.8) inset';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(16,185,129,0.3)';
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 12px 40px rgba(16,185,129,0.4), 0 0 1px rgba(255,255,255,0.5) inset';
             }}
           >
-            <IoLockClosed size={22} />
-            Create Vault
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: '-100%',
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+              transition: 'left 0.5s'
+            }}></div>
+            <IoLockClosed size={24} />
+            <span style={{ letterSpacing: '0.5px' }}>Create Vault</span>
           </button>
         </div>
 
