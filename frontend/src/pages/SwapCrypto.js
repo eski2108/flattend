@@ -650,36 +650,12 @@ function SwapCrypto() {
                         border: '1px solid rgba(155, 77, 255, 0.3)' 
                       }}>
                         <img src={getCoinLogo(toCrypto)} alt={toCrypto} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                        <select
+                        <CoinDropdown
                           value={toCrypto}
-                          onChange={(e) => setToCrypto(e.target.value)}
-                          style={{
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#FFFFFF',
-                            fontSize: isMobile ? '16px' : '18px',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            appearance: 'none',
-                            WebkitAppearance: 'none'
-                          }}
-                        >
-                          {cryptos.map(crypto => (
-                            <option 
-                              key={crypto.code} 
-                              value={crypto.code}
-                              style={{
-                                background: '#1A1F2E',
-                                color: '#FFFFFF',
-                                padding: '12px',
-                                fontSize: '16px'
-                              }}
-                            >
-                              {crypto.code} - {crypto.name}
-                            </option>
-                          ))}
-                        </select>
+                          onChange={setToCrypto}
+                          cryptos={cryptos}
+                          label="To"
+                        />
                       </div>
                     </div>
                     
