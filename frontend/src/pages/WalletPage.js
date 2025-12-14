@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { IoRefresh, IoSearch, IoArrowDown, IoArrowUp, IoSwapHorizontal } from 'react-icons/io5';
+import { IoRefresh, IoSearch } from 'react-icons/io5';
 import DepositModal from '@/components/modals/DepositModal';
 import WithdrawModal from '@/components/modals/WithdrawModal';
 import SwapModal from '@/components/modals/SwapModal';
@@ -141,11 +141,11 @@ export default function WalletPage() {
       )
     : mergedAssets;
 
-  // Calculate real portfolio metrics
+  // Calculate real portfolio metrics - ONLY from assets with balance > 0
   const assetsWithBalance = mergedAssets.filter(a => a.total_balance > 0);
   const totalValue = assetsWithBalance.reduce((sum, a) => sum + a.gbp_value, 0);
   
-  // Calculate weighted 24h change
+  // Calculate weighted 24h change - ONLY from held assets
   let portfolioChange24h = 0;
   if (totalValue > 0 && assetsWithBalance.length > 0) {
     portfolioChange24h = assetsWithBalance.reduce((sum, asset) => {
@@ -186,15 +186,14 @@ export default function WalletPage() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '32px'
+          marginBottom: '24px'
         }}>
           <div>
             <h1 style={{
-              fontSize: '36px',
+              fontSize: '32px',
               fontWeight: '700',
               color: '#FFFFFF',
-              margin: '0 0 8px 0',
-              letterSpacing: '-0.5px'
+              margin: '0 0 6px 0'
             }}>Wallet</h1>
             <p style={{
               fontSize: '14px',
@@ -207,10 +206,10 @@ export default function WalletPage() {
             onClick={handleRefresh}
             disabled={refreshing}
             style={{
-              padding: '12px 24px',
+              padding: '10px 20px',
               background: 'transparent',
               border: '2px solid #0094FF',
-              borderRadius: '12px',
+              borderRadius: '10px',
               color: '#0094FF',
               fontSize: '14px',
               fontWeight: '600',
@@ -223,7 +222,7 @@ export default function WalletPage() {
             }}
           >
             <IoRefresh
-              size={18}
+              size={16}
               style={{
                 animation: refreshing ? 'spin 1s linear infinite' : 'none'
               }}
@@ -237,57 +236,56 @@ export default function WalletPage() {
           background: '#0D111C',
           border: '1px solid #1F2A44',
           borderRadius: '16px',
-          padding: '32px',
-          marginBottom: '24px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+          padding: '28px',
+          marginBottom: '20px'
         }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            flexWrap: 'wrap',
-            gap: '24px'
-          }}>
-            <div>
-              <div style={{
-                fontSize: '12px',
-                color: '#9AA4BF',
-                fontWeight: '600',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}>Total Portfolio Value</div>
-              <div style={{
-                fontSize: '48px',
-                fontWeight: '700',
-                color: '#FFFFFF',
-                lineHeight: '1',
-                marginBottom: '16px'
-              }}>
-                £{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
+          <div>
+            <div style={{
+              fontSize: '12px',
+              color: '#9AA4BF',
+              fontWeight: '600',
+              marginBottom: '10px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}>Total Portfolio Value</div>
+            <div style={{
+              fontSize: '42px',
+              fontWeight: '700',
+              color: '#FFFFFF',
+              lineHeight: '1',
+              marginBottom: '12px'
+            }}>
+              £{totalValue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            {assetsWithBalance.length > 0 ? (
               <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                fontSize: '18px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: portfolioChange24h >= 0 ? '#00FF94' : '#FF4D4D'
               }}>
                 {portfolioChange24h >= 0 ? '+' : ''}{portfolioChange24h.toFixed(2)}%
                 <span style={{
-                  fontSize: '14px',
+                  fontSize: '13px',
                   color: '#9AA4BF',
                   fontWeight: '400'
                 }}>24h</span>
               </div>
-            </div>
+            ) : (
+              <div style={{
+                fontSize: '14px',
+                color: '#6B7390',
+                fontStyle: 'italic'
+              }}>Deposit funds to activate portfolio analytics</div>
+            )}
           </div>
         </div>
 
         {/* 3. Mini Stats Bar */}
         <MiniStatsBar
-          balances={assetsWithBalance}
+          assetsWithBalance={assetsWithBalance}
           totalValue={totalValue}
           portfolioChange24h={portfolioChange24h}
           priceData={priceData}
@@ -298,15 +296,15 @@ export default function WalletPage() {
           background: '#0D111C',
           border: '1px solid #1F2A44',
           borderRadius: '12px',
-          padding: '16px',
-          marginBottom: '24px'
+          padding: '14px',
+          marginBottom: '20px'
         }}>
           <div style={{ position: 'relative' }}>
             <IoSearch
-              size={20}
+              size={18}
               style={{
                 position: 'absolute',
-                left: '14px',
+                left: '12px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 color: '#9AA4BF'
@@ -319,7 +317,7 @@ export default function WalletPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
-                padding: '14px 14px 14px 46px',
+                padding: '12px 12px 12px 40px',
                 background: '#141A32',
                 border: '1px solid #1E2545',
                 borderRadius: '10px',
@@ -350,183 +348,201 @@ export default function WalletPage() {
               </p>
             </div>
           ) : (
-            filteredAssets.map((asset, idx) => (
-              <div
-                key={asset.currency}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '20px 24px',
-                  background: idx % 2 === 0 ? '#141A32' : '#11162A',
-                  borderBottom: idx < filteredAssets.length - 1 ? '1px solid #1E2545' : 'none',
-                  opacity: asset.has_balance ? 1 : 0.5,
-                  transition: 'all 0.2s ease',
-                  gap: '16px',
-                  flexWrap: 'wrap'
-                }}
-              >
-                {/* Coin Icon + Name */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  flex: '0 0 200px',
-                  minWidth: '200px'
-                }}>
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: '#1C2342',
+            filteredAssets.map((asset, idx) => {
+              const hasBalance = asset.total_balance > 0;
+              
+              return (
+                <div
+                  key={asset.currency}
+                  style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '8px',
-                    opacity: asset.has_balance ? 1 : 0.4
+                    justifyContent: 'space-between',
+                    padding: '14px 20px',
+                    background: idx % 2 === 0 ? '#141A32' : '#11162A',
+                    borderBottom: idx < filteredAssets.length - 1 ? '1px solid #1E2545' : 'none',
+                    opacity: hasBalance ? 1 : 0.6,
+                    transition: 'all 0.2s ease',
+                    gap: '12px',
+                    flexWrap: 'wrap'
+                  }}
+                >
+                  {/* Coin Icon + Name */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    flex: '0 0 180px',
+                    minWidth: '180px'
                   }}>
-                    <img
-                      src={asset.logoUrl}
-                      alt={asset.currency}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain'
-                      }}
-                    />
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#1C2342',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '7px',
+                      opacity: hasBalance ? 1 : 0.4
+                    }}>
+                      <img
+                        src={asset.logoUrl}
+                        alt={asset.currency}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '15px',
+                        fontWeight: '600',
+                        color: '#E6EAF2',
+                        marginBottom: '2px'
+                      }}>{asset.currency}</div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#9AA4BF',
+                        fontWeight: '400'
+                      }}>{asset.name}</div>
+                    </div>
                   </div>
-                  <div>
+
+                  {/* Balance */}
+                  <div style={{
+                    flex: '0 0 130px',
+                    textAlign: 'right'
+                  }}>
                     <div style={{
-                      fontSize: '15px',
+                      fontSize: '14px',
                       fontWeight: '600',
-                      color: '#E6EAF2',
+                      color: hasBalance ? '#E6EAF2' : '#6B7390',
                       marginBottom: '2px'
-                    }}>{asset.currency}</div>
+                    }}>
+                      {asset.total_balance.toFixed(8)}
+                    </div>
                     <div style={{
-                      fontSize: '13px',
+                      fontSize: '12px',
                       color: '#9AA4BF',
                       fontWeight: '400'
-                    }}>{asset.name}</div>
+                    }}>
+                      £{asset.gbp_value.toFixed(2)}
+                    </div>
                   </div>
-                </div>
 
-                {/* Balance */}
-                <div style={{
-                  flex: '0 0 140px',
-                  textAlign: 'right'
-                }}>
+                  {/* 24h Change - ONLY if balance > 0 */}
                   <div style={{
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    color: asset.has_balance ? '#E6EAF2' : '#6B7390',
-                    marginBottom: '2px'
+                    flex: '0 0 70px',
+                    textAlign: 'right'
                   }}>
-                    {asset.total_balance.toFixed(8)}
+                    {hasBalance ? (
+                      <div style={{
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        color: asset.change_24h >= 0 ? '#2DFF9A' : '#FF5C5C'
+                      }}>
+                        {asset.change_24h >= 0 ? '+' : ''}{asset.change_24h.toFixed(2)}%
+                      </div>
+                    ) : (
+                      <div style={{
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        color: '#6B7390'
+                      }}>
+                        —
+                      </div>
+                    )}
                   </div>
+
+                  {/* Sparkline - real data if balance > 0, flat line otherwise */}
                   <div style={{
-                    fontSize: '13px',
-                    color: '#9AA4BF',
-                    fontWeight: '400'
+                    flex: '0 0 100px',
+                    height: '35px'
                   }}>
-                    £{asset.gbp_value.toFixed(2)}
+                    <Sparkline
+                      currency={asset.currency}
+                      color={asset.color}
+                      hasBalance={hasBalance}
+                    />
                   </div>
-                </div>
 
-                {/* 24h Change */}
-                <div style={{
-                  flex: '0 0 80px',
-                  textAlign: 'right'
-                }}>
+                  {/* Action Buttons */}
                   <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: asset.change_24h >= 0 ? '#2DFF9A' : '#FF5C5C'
+                    display: 'flex',
+                    gap: '6px',
+                    flex: '0 0 auto'
                   }}>
-                    {asset.change_24h >= 0 ? '+' : ''}{asset.change_24h.toFixed(2)}%
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDepositModal({ isOpen: true, currency: asset.currency });
+                      }}
+                      style={{
+                        padding: '7px 14px',
+                        background: 'linear-gradient(135deg, #00E5FF 0%, #7C7CFF 100%)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#0B0F1A',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Deposit
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setWithdrawModal({
+                          isOpen: true,
+                          currency: asset.currency,
+                          balance: asset.available_balance
+                        });
+                      }}
+                      style={{
+                        padding: '7px 14px',
+                        background: 'transparent',
+                        border: '1px solid #00E5FF',
+                        borderRadius: '8px',
+                        color: '#00E5FF',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Withdraw
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSwapModal({ isOpen: true, fromCurrency: asset.currency });
+                      }}
+                      style={{
+                        padding: '7px 14px',
+                        background: 'transparent',
+                        border: '1px solid #B26CFF',
+                        borderRadius: '8px',
+                        color: '#B26CFF',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Swap
+                    </button>
                   </div>
                 </div>
-
-                {/* Sparkline */}
-                <div style={{
-                  flex: '0 0 120px',
-                  height: '40px'
-                }}>
-                  <Sparkline currency={asset.currency} color={asset.color} />
-                </div>
-
-                {/* Action Buttons */}
-                <div style={{
-                  display: 'flex',
-                  gap: '8px',
-                  flex: '0 0 auto'
-                }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDepositModal({ isOpen: true, currency: asset.currency });
-                    }}
-                    style={{
-                      padding: '8px 16px',
-                      background: '#0094FF',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: '#FFFFFF',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    Deposit
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setWithdrawModal({
-                        isOpen: true,
-                        currency: asset.currency,
-                        balance: asset.available_balance
-                      });
-                    }}
-                    style={{
-                      padding: '8px 16px',
-                      background: 'transparent',
-                      border: '1px solid #0094FF',
-                      borderRadius: '8px',
-                      color: '#0094FF',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    Withdraw
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSwapModal({ isOpen: true, fromCurrency: asset.currency });
-                    }}
-                    style={{
-                      padding: '8px 16px',
-                      background: 'transparent',
-                      border: '1px solid #FFCC00',
-                      borderRadius: '8px',
-                      color: '#FFCC00',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    Swap
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
