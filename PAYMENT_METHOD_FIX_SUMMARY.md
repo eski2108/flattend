@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://musing-brown-1.preview.emergentagent.com
+https://payflow-crypto-3.preview.emergentagent.com
 
 ### Test Route
 
-`https://musing-brown-1.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://payflow-crypto-3.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -20,7 +20,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 # Backend URL from environment
-BACKEND_URL = "https://musing-brown-1.preview.emergentagent.com"
+BACKEND_URL = "https://payflow-crypto-3.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test users

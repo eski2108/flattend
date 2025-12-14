@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://musing-brown-1.preview.emergentagent.com/api
-- **Frontend App**: https://musing-brown-1.preview.emergentagent.com
+- **Backend API**: https://payflow-crypto-3.preview.emergentagent.com/api
+- **Frontend App**: https://payflow-crypto-3.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

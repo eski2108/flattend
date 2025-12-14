@@ -5,7 +5,7 @@
 Date: December 9, 2024
 Time: 15:41 UTC
 Environment: Production Preview
-URL: https://musing-brown-1.preview.emergentagent.com
+URL: https://payflow-crypto-3.preview.emergentagent.com
 
 ================================================================================
                             SERVICE STATUS
@@ -166,7 +166,7 @@ The CoinHubX platform has been successfully updated with the following fixes:
                          LIVE PREVIEW ACCESS
 ================================================================================
 
-URL: https://musing-brown-1.preview.emergentagent.com
+URL: https://payflow-crypto-3.preview.emergentagent.com
 
 Test Deposit: /#/deposit/btc
 Test Trading: /#/trading

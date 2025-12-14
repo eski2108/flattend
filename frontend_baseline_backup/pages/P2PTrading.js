@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://musing-brown-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://payflow-crypto-3.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {

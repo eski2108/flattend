@@ -84,7 +84,7 @@ The iOS button is already working! When users click it:
 ## 🚀 NEXT STEPS:
 
 1. Go to **WebIntoApp.com**
-2. Enter your URL: `https://musing-brown-1.preview.emergentagent.com`
+2. Enter your URL: `https://payflow-crypto-3.preview.emergentagent.com`
 3. Package: `com.coinhubx.app`
 4. Build APK
 5. Download APK

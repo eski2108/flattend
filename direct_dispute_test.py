@@ -17,7 +17,7 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-BACKEND_URL = "https://musing-brown-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
 
 async def direct_dispute_test():
     """Create a dispute directly and verify email"""

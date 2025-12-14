@@ -285,7 +285,7 @@ UI Display: £68,973 +1.10%
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview
-**URL:** https://musing-brown-1.preview.emergentagent.com/trading
+**URL:** https://payflow-crypto-3.preview.emergentagent.com/trading
 
 **Services:**
 - ✅ Backend: Running (real data endpoint active)

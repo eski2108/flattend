@@ -92,7 +92,7 @@ currencies.forEach(currency => {
 
 ## Proof from Live Preview
 
-**URL:** https://musing-brown-1.preview.emergentagent.com
+**URL:** https://payflow-crypto-3.preview.emergentagent.com
 
 ### Trading Page (Desktop)
 - Header shows: "106 pairs" (reduced from 494)

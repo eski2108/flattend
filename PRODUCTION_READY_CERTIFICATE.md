@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://musing-brown-1.preview.emergentagent.com`
-- Backend API: `https://musing-brown-1.preview.emergentagent.com/api`
+- Frontend: `https://payflow-crypto-3.preview.emergentagent.com`
+- Backend API: `https://payflow-crypto-3.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

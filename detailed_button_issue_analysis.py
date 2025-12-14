@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://musing-brown-1.preview.emergentagent.com/api"
+BASE_URL = "https://payflow-crypto-3.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {
