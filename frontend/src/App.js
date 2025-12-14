@@ -196,6 +196,7 @@ function App() {
               <Route path="/wallet" element={<WalletPage />} />
               <Route path="/send" element={<SendPage />} />
               <Route path="/receive" element={<ReceivePage />} />
+              <Route path="/bridge" element={<BridgePage />} />
               <Route path="/asset/:symbol" element={<AssetDetailPage />} />
               <Route path="/portfolio" element={<PortfolioPage />} />
               {/* Mobile Trading Routes - PRIMARY */}
