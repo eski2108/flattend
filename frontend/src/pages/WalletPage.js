@@ -37,6 +37,8 @@ export default function WalletPage() {
   const [depositModal, setDepositModal] = useState({ isOpen: false, currency: null });
   const [withdrawModal, setWithdrawModal] = useState({ isOpen: false, currency: null, balance: 0 });
   const [swapModal, setSwapModal] = useState({ isOpen: false, fromCurrency: null });
+  const [activeTab, setActiveTab] = useState('Crypto');
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
