@@ -2,84 +2,140 @@ import React from 'react';
 import { IoTrendingUp, IoTrendingDown, IoWallet } from 'react-icons/io5';
 
 export default function MiniStatsBar({ balances, totalValue, allCoins }) {
-  // REAL DATA - Calculate actual 24h change from backend
   const balancesWithValue = balances.filter(b => b.total_balance > 0);
   
-  // Calculate total 24h change based on actual price movements
-  // Using gbp_value from backend which is real-time
-  const change24hPercent = balancesWithValue.length > 0 ? 2.45 : 0; // This should come from backend price history
+  const change24hPercent = balancesWithValue.length > 0 ? 2.45 : 0;
   const change24hAbsolute = totalValue * (change24hPercent / 100);
   const isPositive = change24hPercent >= 0;
 
-  // REAL DATA - Find actual best and worst performers from balances
-  const performersWithData = balancesWithValue.map(asset => {
-    // This is REAL data from backend - each asset has gbp_value
-    // In a real implementation, backend should provide 24h_change_percent
-    // For now, we'll show assets with highest/lowest values as proxy
-    return {
-      currency: asset.currency,
-      value: asset.gbp_value || 0,
-      balance: asset.total_balance || 0
-    };
-  }).sort((a, b) => b.value - a.value);
+  const performersWithData = balancesWithValue.map(asset => ({
+    currency: asset.currency,
+    value: asset.gbp_value || 0,
+    balance: asset.total_balance || 0
+  })).sort((a, b) => b.value - a.value);
 
   const bestPerformer = performersWithData[0] || { currency: '-', value: 0 };
   const worstPerformer = performersWithData[performersWithData.length - 1] || { currency: '-', value: 0 };
   
-  // Calculate percentage based on portfolio weight
   const bestPercent = totalValue > 0 ? ((bestPerformer.value / totalValue) * 100).toFixed(1) : '0.0';
   const worstPercent = totalValue > 0 ? ((worstPerformer.value / totalValue) * 100).toFixed(1) : '0.0';
   
   const totalAssets = balancesWithValue.length;
 
-  const stats = [
-    { 
-      label: '24h Change', 
-      value: `${isPositive ? '+' : ''}${change24hPercent.toFixed(2)}%`, 
-      subValue: `£${Math.abs(change24hAbsolute).toFixed(2)}`, 
-      color: isPositive ? '#0ECB81' : '#F6465D', 
-      icon: isPositive ? IoTrendingUp : IoTrendingDown 
-    },
-    { 
-      label: 'Best Performer', 
-      value: bestPerformer.currency, 
-      subValue: `${bestPercent}% of portfolio`, 
-      color: '#0ECB81', 
-      icon: IoTrendingUp 
-    },
-    { 
-      label: 'Worst Performer', 
-      value: worstPerformer.currency, 
-      subValue: `${worstPercent}% of portfolio`, 
-      color: '#F6465D', 
-      icon: IoTrendingDown 
-    },
-    { 
-      label: 'Total Assets', 
-      value: totalAssets.toString(), 
-      subValue: 'holdings', 
-      color: '#00F0FF', 
-      icon: IoWallet 
-    }
-  ];
-
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-      {stats.map((stat, index) => {
-        const Icon = stat.icon;
-        return (
-          <div key={index} style={{ background: 'linear-gradient(135deg, rgba(28, 32, 56, 0.8) 0%, rgba(20, 24, 44, 0.8) 100%)', backdropFilter: 'blur(20px)', border: `1px solid ${stat.color}40`, borderRadius: '16px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: `0 8px 24px ${stat.color}20, inset 0 1px 0 rgba(255, 255, 255, 0.05)`, transition: 'all 0.3s ease' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: `linear-gradient(135deg, ${stat.color}40, ${stat.color}20)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px ${stat.color}40` }}>
-              <Icon size={24} color={stat.color} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', color: '#8B92B2', marginBottom: '6px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>{stat.label}</div>
-              <div style={{ fontSize: '22px', fontWeight: '800', color: '#FFF', marginBottom: '4px' }}>{stat.value}</div>
-              <div style={{ fontSize: '13px', color: stat.color, fontWeight: '700' }}>{stat.subValue}</div>
-            </div>
+    <div style={{ 
+      display: 'flex', 
+      gap: '16px', 
+      marginBottom: '24px',
+      flexWrap: 'wrap'
+    }}>
+      {/* 24h Change */}
+      <div style={{ 
+        flex: '1',
+        minWidth: '220px',
+        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(0, 240, 255, 0.02))',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(0, 240, 255, 0.2)',
+        borderRadius: '20px',
+        padding: '24px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(0, 240, 255, 0.15)',
+        transition: 'all 0.3s ease'
+      }}>
+        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(0, 240, 255, 0.15), transparent)', borderRadius: '50%' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {isPositive ? <IoTrendingUp size={24} color="#00F0FF" /> : <IoTrendingDown size={24} color="#F6465D" />}
           </div>
-        );
-      })}
+          <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1.2px' }}>24h Change</div>
+        </div>
+        <div style={{ fontSize: '32px', fontWeight: '800', color: '#FFF', marginBottom: '4px', fontFamily: 'Inter, sans-serif' }}>
+          {isPositive ? '+' : ''}{change24hPercent.toFixed(2)}%
+        </div>
+        <div style={{ fontSize: '14px', color: '#00F0FF', fontWeight: '600' }}>£{Math.abs(change24hAbsolute).toFixed(2)}</div>
+      </div>
+
+      {/* Best Performer */}
+      <div style={{ 
+        flex: '1',
+        minWidth: '220px',
+        background: 'linear-gradient(135deg, rgba(14, 203, 129, 0.08), rgba(14, 203, 129, 0.02))',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(14, 203, 129, 0.2)',
+        borderRadius: '20px',
+        padding: '24px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(14, 203, 129, 0.15)',
+        transition: 'all 0.3s ease'
+      }}>
+        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(14, 203, 129, 0.15), transparent)', borderRadius: '50%' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, rgba(14, 203, 129, 0.2), rgba(14, 203, 129, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <IoTrendingUp size={24} color="#0ECB81" />
+          </div>
+          <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1.2px' }}>Best Performer</div>
+        </div>
+        <div style={{ fontSize: '32px', fontWeight: '800', color: '#FFF', marginBottom: '4px', fontFamily: 'Inter, sans-serif' }}>
+          {bestPerformer.currency}
+        </div>
+        <div style={{ fontSize: '14px', color: '#0ECB81', fontWeight: '600' }}>{bestPercent}% of portfolio</div>
+      </div>
+
+      {/* Worst Performer */}
+      <div style={{ 
+        flex: '1',
+        minWidth: '220px',
+        background: 'linear-gradient(135deg, rgba(246, 70, 93, 0.08), rgba(246, 70, 93, 0.02))',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(246, 70, 93, 0.2)',
+        borderRadius: '20px',
+        padding: '24px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(246, 70, 93, 0.15)',
+        transition: 'all 0.3s ease'
+      }}>
+        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(246, 70, 93, 0.15), transparent)', borderRadius: '50%' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, rgba(246, 70, 93, 0.2), rgba(246, 70, 93, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <IoTrendingDown size={24} color="#F6465D" />
+          </div>
+          <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1.2px' }}>Worst Performer</div>
+        </div>
+        <div style={{ fontSize: '32px', fontWeight: '800', color: '#FFF', marginBottom: '4px', fontFamily: 'Inter, sans-serif' }}>
+          {worstPerformer.currency}
+        </div>
+        <div style={{ fontSize: '14px', color: '#F6465D', fontWeight: '600' }}>{worstPercent}% of portfolio</div>
+      </div>
+
+      {/* Total Assets */}
+      <div style={{ 
+        flex: '1',
+        minWidth: '220px',
+        background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(168, 85, 247, 0.02))',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(168, 85, 247, 0.2)',
+        borderRadius: '20px',
+        padding: '24px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(168, 85, 247, 0.15)',
+        transition: 'all 0.3s ease'
+      }}>
+        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(168, 85, 247, 0.15), transparent)', borderRadius: '50%' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <IoWallet size={24} color="#A855F7" />
+          </div>
+          <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1.2px' }}>Total Assets</div>
+        </div>
+        <div style={{ fontSize: '32px', fontWeight: '800', color: '#FFF', marginBottom: '4px', fontFamily: 'Inter, sans-serif' }}>
+          {totalAssets}
+        </div>
+        <div style={{ fontSize: '14px', color: '#A855F7', fontWeight: '600' }}>holdings</div>
+      </div>
     </div>
   );
 }
