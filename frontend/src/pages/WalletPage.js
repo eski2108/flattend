@@ -373,7 +373,7 @@ export default function WalletPage() {
                       width: '48px',
                       height: '48px',
                       borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.04)',
+                      background: 'rgba(255,255,255,0.06)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
