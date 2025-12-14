@@ -27683,12 +27683,40 @@ async def release_crypto_to_buyer(request: dict):
         crypto = trade.get("crypto_currency")
         amount = trade.get("crypto_amount")
         
-        # Credit buyer
-        await db.internal_balances.update_one(
-            {"user_id": buyer_id, "currency": crypto},
-            {"$inc": {"balance": amount}},
-            upsert=True
-        )
+        # Credit buyer's crypto_balances (NOT internal_balances)
+        buyer_balance = await db.crypto_balances.find_one({
+            "user_id": buyer_id,
+            "currency": crypto
+        })
+        
+        if buyer_balance:
+            # Update existing balance
+            new_available = buyer_balance.get('available_balance', 0) + amount
+            new_total = buyer_balance.get('total_balance', 0) + amount
+            
+            await db.crypto_balances.update_one(
+                {"user_id": buyer_id, "currency": crypto},
+                {
+                    "$set": {
+                        "available_balance": new_available,
+                        "total_balance": new_total,
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            )
+        else:
+            # Create new balance entry
+            await db.crypto_balances.insert_one({
+                "user_id": buyer_id,
+                "currency": crypto,
+                "available_balance": amount,
+                "locked_balance": 0,
+                "total_balance": amount,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            })
+        
+        logger.info(f"✅ P2P: Credited {amount} {crypto} to buyer {buyer_id}")
         
         # Update trade status
         await db.p2p_trades.update_one(
