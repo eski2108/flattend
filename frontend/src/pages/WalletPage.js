@@ -474,125 +474,25 @@ export default function WalletPage() {
                     </div>
                   </div>
 
-                  {/* BALANCE */}
+                  {/* BALANCE - RIGHT SIDE LIKE COINBASE */}
                   <div style={{
-                    flex: '0 0 160px',
                     textAlign: 'right'
                   }}>
                     <div style={{
-                      fontSize: '17px',
-                      fontWeight: '700',
+                      fontSize: '16px',
+                      fontWeight: '600',
                       color: '#FFFFFF',
-                      marginBottom: '4px'
+                      marginBottom: '2px'
                     }}>
-                      {asset.total_balance.toFixed(8)}
+                      £{asset.gbp_value.toFixed(2)}
                     </div>
                     <div style={{
                       fontSize: '14px',
                       color: '#8FA3C8',
-                      fontWeight: '500'
+                      fontWeight: '400'
                     }}>
-                      £{asset.gbp_value.toFixed(2)}
+                      {asset.total_balance.toFixed(4)} {asset.currency}
                     </div>
-                  </div>
-
-                  {/* 24H CHANGE - ONLY IF BALANCE > 0 */}
-                  <div style={{
-                    flex: '0 0 90px',
-                    textAlign: 'right'
-                  }}>
-                    {hasBalance ? (
-                      <div style={{
-                        fontSize: '15px',
-                        fontWeight: '700',
-                        color: asset.change_24h >= 0 ? '#16C784' : '#EA3943'
-                      }}>
-                        {asset.change_24h >= 0 ? '+' : ''}{asset.change_24h.toFixed(2)}%
-                      </div>
-                    ) : null}
-                  </div>
-
-                  {/* SPARKLINE - ONLY IF BALANCE > 0 */}
-                  <div style={{
-                    flex: '0 0 120px',
-                    height: '40px'
-                  }}>
-                    {hasBalance && <Sparkline currency={asset.currency} />}
-                  </div>
-
-                  {/* ACTION BUTTONS */}
-                  <div style={{
-                    display: 'flex',
-                    gap: '8px',
-                    flex: '0 0 auto'
-                  }}>
-                    {/* DEPOSIT - PRIMARY */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDepositModal({ isOpen: true, currency: asset.currency });
-                      }}
-                      style={{
-                        padding: '10px 20px',
-                        background: '#00E5FF',
-                        border: 'none',
-                        borderRadius: '12px',
-                        color: '#001018',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Deposit
-                    </button>
-                    {/* WITHDRAW - SECONDARY */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setWithdrawModal({
-                          isOpen: true,
-                          currency: asset.currency,
-                          balance: asset.available_balance
-                        });
-                      }}
-                      style={{
-                        padding: '10px 20px',
-                        background: 'transparent',
-                        border: '1.5px solid #00E5FF',
-                        borderRadius: '12px',
-                        color: '#00E5FF',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Withdraw
-                    </button>
-                    {/* SWAP - TERTIARY */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSwapModal({ isOpen: true, fromCurrency: asset.currency });
-                      }}
-                      style={{
-                        padding: '10px 20px',
-                        background: 'transparent',
-                        border: '1.5px solid #F5C542',
-                        borderRadius: '12px',
-                        color: '#F5C542',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Swap
-                    </button>
                   </div>
                 </div>
               );
