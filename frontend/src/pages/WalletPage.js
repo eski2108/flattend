@@ -66,17 +66,12 @@ export default function WalletPage() {
     if (!refreshing && user) { setRefreshing(true); loadBalances(user.user_id); toast.success('Refreshing...'); }
   };
 
-  const getCoinIcon = (symbol) => {
-    const icons = { BTC: '₿', ETH: 'Ξ', USDT: '₮', XRP: 'X', LTC: 'Ł', ADA: '₳', DOT: '●', DOGE: 'Ð', BNB: 'B', SOL: 'S', MATIC: 'M', AVAX: 'A', LINK: 'L', UNI: 'U', ATOM: '⚛' };
-    return icons[symbol] || symbol[0];
-  };
-
   const getCoinColor = (symbol) => COLORS[symbol] || '#1E90FF';
 
   const mergedAssets = allCoins.map(coin => {
     const balance = balances.find(b => b.currency === coin.symbol);
     return {
-      currency: coin.symbol, name: coin.name, icon: getCoinIcon(coin.symbol),
+      currency: coin.symbol, name: coin.name, logoUrl: getCoinLogo(coin.symbol),
       color: getCoinColor(coin.symbol), total_balance: balance?.total_balance || 0,
       available_balance: balance?.available_balance || 0, locked_balance: balance?.locked_balance || 0,
       gbp_value: balance?.gbp_value || 0, price_gbp: balance?.price_gbp || 0
