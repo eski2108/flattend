@@ -11,6 +11,106 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 const getCoinLogo = (symbol) => `/crypto-logos/${symbol?.toLowerCase()}.png`;
 
+// Custom Dropdown Component with Coin Logos
+const CoinDropdown = ({ value, onChange, cryptos, label }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const selectedCrypto = cryptos.find(c => c.code === value) || cryptos[0];
+  
+  return (
+    <div style={{ position: 'relative' }}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          cursor: 'pointer',
+          padding: '8px',
+          borderRadius: '8px',
+          background: isOpen ? 'rgba(255,255,255,0.05)' : 'transparent'
+        }}
+      >
+        <img 
+          src={getCoinLogo(selectedCrypto.code)} 
+          alt={selectedCrypto.code}
+          style={{ width: '28px', height: '28px', borderRadius: '50%' }}
+          onError={(e) => e.target.style.display = 'none'}
+        />
+        <span style={{ color: '#FFF', fontSize: '20px', fontWeight: '700' }}>
+          {selectedCrypto.code}
+        </span>
+        <IoChevronDown style={{ color: '#8FA3C8', marginLeft: '4px' }} />
+      </div>
+      
+      {isOpen && (
+        <>
+          <div 
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 999
+            }}
+            onClick={() => setIsOpen(false)}
+          />
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            marginTop: '8px',
+            background: '#1A1F2E',
+            borderRadius: '12px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            maxHeight: '300px',
+            overflowY: 'auto',
+            zIndex: 1000,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
+          }}>
+            {cryptos.map(crypto => (
+              <div
+                key={crypto.code}
+                onClick={() => {
+                  onChange(crypto.code);
+                  setIsOpen(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 16px',
+                  cursor: 'pointer',
+                  background: value === crypto.code ? 'rgba(0,71,217,0.2)' : 'transparent',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = value === crypto.code ? 'rgba(0,71,217,0.2)' : 'transparent'}
+              >
+                <img 
+                  src={getCoinLogo(crypto.code)} 
+                  alt={crypto.code}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: '#FFF', fontSize: '15px', fontWeight: '600' }}>
+                    {crypto.code}
+                  </div>
+                  <div style={{ color: '#6B7A99', fontSize: '12px' }}>
+                    {crypto.name}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 function SwapCrypto() {
   const navigate = useNavigate();
   const [cryptos, setCryptos] = useState([
