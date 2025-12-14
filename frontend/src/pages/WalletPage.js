@@ -274,6 +274,87 @@ export default function WalletPage() {
           </div>
         </div>
 
+        {/* ACTION BUTTONS ROW - Coinbase Style */}
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          marginBottom: '24px',
+          overflowX: 'auto'
+        }}>
+          <button
+            onClick={() => navigate('/buy')}
+            style={{
+              flex: 1,
+              padding: '14px 20px',
+              background: '#00E5FF',
+              border: 'none',
+              borderRadius: '12px',
+              color: '#001018',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Buy
+          </button>
+          <button
+            onClick={() => navigate('/swap')}
+            style={{
+              flex: 1,
+              padding: '14px 20px',
+              background: 'transparent',
+              border: '1.5px solid #00E5FF',
+              borderRadius: '12px',
+              color: '#00E5FF',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Swap
+          </button>
+          <button
+            onClick={() => navigate('/send')}
+            style={{
+              flex: 1,
+              padding: '14px 20px',
+              background: 'transparent',
+              border: '1.5px solid #F5C542',
+              borderRadius: '12px',
+              color: '#F5C542',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Send
+          </button>
+          <button
+            onClick={() => navigate('/receive')}
+            style={{
+              flex: 1,
+              padding: '14px 20px',
+              background: 'transparent',
+              border: '1.5px solid #F5C542',
+              borderRadius: '12px',
+              color: '#F5C542',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Receive
+          </button>
+        </div>
+
         {/* MINI STATS BAR */}
         <MiniStatsBar
           assetsWithBalance={assetsWithBalance}
