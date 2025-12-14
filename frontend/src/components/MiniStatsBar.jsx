@@ -73,7 +73,7 @@ export default function MiniStatsBar({ balances, totalValue }) {
             key={index}
             style={{
               background: COLORS.SECONDARY_BG,
-              border: `1px solid rgba(0, 174, 239, 0.2)`,
+              border: `1px solid ${COLORS.DIVIDER}`,
               borderRadius: '12px',
               padding: '16px',
               display: 'flex',
