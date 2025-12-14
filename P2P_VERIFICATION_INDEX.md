@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://crypto-wallet-ui-3.preview.emergentagent.com
-- Backend API: https://crypto-wallet-ui-3.preview.emergentagent.com/api
-- P2P Marketplace: https://crypto-wallet-ui-3.preview.emergentagent.com/p2p
+- Frontend: https://premium-wallet-hub.preview.emergentagent.com
+- Backend API: https://premium-wallet-hub.preview.emergentagent.com/api
+- P2P Marketplace: https://premium-wallet-hub.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

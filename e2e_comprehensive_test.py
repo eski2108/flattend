@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 class ComprehensiveE2ETest:
-    def __init__(self, base_url="https://crypto-wallet-ui-3.preview.emergentagent.com"):
+    def __init__(self, base_url="https://premium-wallet-hub.preview.emergentagent.com"):
         self.base_url = base_url
         self.session = requests.Session()
         self.session.headers.update({'Content-Type': 'application/json'})

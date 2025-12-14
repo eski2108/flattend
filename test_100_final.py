@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
+BASE_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
 
 print("🎯 FINAL 100% SUCCESS RATE TEST")
 print("=" * 70)

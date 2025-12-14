@@ -2,7 +2,7 @@ import requests
 import json
 
 # Backend URL
-BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
+BASE_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
 
 # Register admin user
 print("Creating admin account...")
@@ -39,7 +39,7 @@ try:
         print(f"Email: gads21083@gmail.com")
         print(f"Password: 1231123")
         print(f"Admin Code: CRYPTOLEND_ADMIN_2025")
-        print(f"Admin URL: https://crypto-wallet-ui-3.preview.emergentagent.com/admin/login")
+        print(f"Admin URL: https://premium-wallet-hub.preview.emergentagent.com/admin/login")
 except Exception as e:
     print(f"Error: {e}")
 

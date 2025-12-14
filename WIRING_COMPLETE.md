@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://crypto-wallet-ui-3.preview.emergentagent.com/api
-- **Frontend App**: https://crypto-wallet-ui-3.preview.emergentagent.com
+- **Backend API**: https://premium-wallet-hub.preview.emergentagent.com/api
+- **Frontend App**: https://premium-wallet-hub.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

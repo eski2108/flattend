@@ -16,7 +16,7 @@ from typing import Dict, List, Any, Optional
 import time
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com"
+BACKEND_URL = "https://premium-wallet-hub.preview.emergentagent.com"
 
 class CoinHubXFocusedTester:
     """Focused CoinHubX Backend API Tester"""

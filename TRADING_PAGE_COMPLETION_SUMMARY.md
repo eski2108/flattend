@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://crypto-wallet-ui-3.preview.emergentagent.com/#/trading
+**Live URL:** https://premium-wallet-hub.preview.emergentagent.com/#/trading
 
 ---
 

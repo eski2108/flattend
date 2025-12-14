@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://crypto-wallet-ui-3.preview.emergentagent.com`
-- Backend API: `https://crypto-wallet-ui-3.preview.emergentagent.com/api`
+- Frontend: `https://premium-wallet-hub.preview.emergentagent.com`
+- Backend API: `https://premium-wallet-hub.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://crypto-wallet-ui-3.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://premium-wallet-hub.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
+BASE_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
 
 def test_fee_tracking():
     print("\n" + "="*60)

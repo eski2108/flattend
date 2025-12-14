@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
+BASE_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

@@ -35,7 +35,7 @@ Create 3 test P2P sell offers with different payment methods:
 - Filter by Wise → Should show Offer 2
 - Filter by Bank Transfer → Should show Offer 1
 
-**Backend URL:** https://crypto-wallet-ui-3.preview.emergentagent.com/api
+**Backend URL:** https://premium-wallet-hub.preview.emergentagent.com/api
 """
 
 import requests
@@ -45,7 +45,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
+BASE_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
 
 # Test Users for P2P offers
 TEST_USERS = [

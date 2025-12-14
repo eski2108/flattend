@@ -13,7 +13,7 @@ import json
 from datetime import datetime, timezone
 
 # Configuration
-BACKEND_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com/api"
+BACKEND_URL = "https://premium-wallet-hub.preview.emergentagent.com/api"
 
 class OrderBookTest:
     def __init__(self):

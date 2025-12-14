@@ -63,7 +63,7 @@ offers = await db.p2p_ads.find(query, {"_id": 0}).to_list(1000)
 
 **API Test:**
 ```bash
-curl "https://crypto-wallet-ui-3.preview.emergentagent.com/api/p2p/offers?crypto_currency=BTC"
+curl "https://premium-wallet-hub.preview.emergentagent.com/api/p2p/offers?crypto_currency=BTC"
 ```
 
 Returns Dog's offer with all details.

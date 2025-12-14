@@ -8,7 +8,7 @@ import aiohttp
 import json
 from datetime import datetime, timezone
 
-BACKEND_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com"
+BACKEND_URL = "https://premium-wallet-hub.preview.emergentagent.com"
 
 async def test_referral_endpoint():
     """Test the referral dashboard endpoint"""

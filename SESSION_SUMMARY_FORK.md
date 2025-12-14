@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://crypto-wallet-ui-3.preview.emergentagent.com
+https://premium-wallet-hub.preview.emergentagent.com
 
 ---
 

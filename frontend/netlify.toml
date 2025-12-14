@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://crypto-wallet-ui-3.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://premium-wallet-hub.preview.emergentagent.com"
