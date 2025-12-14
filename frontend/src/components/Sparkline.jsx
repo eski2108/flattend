@@ -3,18 +3,13 @@ import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function Sparkline({ currency, color, hasBalance }) {
+export default function Sparkline({ currency }) {
   const [priceHistory, setPriceHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only load real data if user has balance
-    if (hasBalance) {
-      loadPriceHistory();
-    } else {
-      setLoading(false);
-    }
-  }, [currency, hasBalance]);
+    loadPriceHistory();
+  }, [currency]);
 
   const loadPriceHistory = async () => {
     try {
@@ -33,46 +28,17 @@ export default function Sparkline({ currency, color, hasBalance }) {
     }
   };
 
-  // If no balance, show flat muted line (inactive asset)
-  if (!hasBalance) {
-    return (
-      <svg width="100%" height="100%" viewBox="0 0 100 35" preserveAspectRatio="none">
-        <line
-          x1="0"
-          y1="17.5"
-          x2="100"
-          y2="17.5"
-          stroke="#2A2F3A"
-          strokeWidth="1.5"
-          fill="none"
-        />
-      </svg>
-    );
-  }
-
   if (loading) {
     return (
       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontSize: '10px', color: '#6B7390' }}>...</div>
+        <div style={{ fontSize: '10px', color: '#5E6A7D' }}>...</div>
       </div>
     );
   }
 
-  // If no data available, show flat grey line
+  // If no data available, show NOTHING (empty space)
   if (!priceHistory || priceHistory.length < 2) {
-    return (
-      <svg width="100%" height="100%" viewBox="0 0 100 35" preserveAspectRatio="none">
-        <line
-          x1="0"
-          y1="17.5"
-          x2="100"
-          y2="17.5"
-          stroke="#2A2F3A"
-          strokeWidth="1.5"
-          fill="none"
-        />
-      </svg>
-    );
+    return <div style={{ width: '100%', height: '100%' }} />;
   }
 
   // Normalize prices to fit in SVG viewBox
@@ -81,24 +47,25 @@ export default function Sparkline({ currency, color, hasBalance }) {
   const priceRange = maxPrice - minPrice || 1;
 
   const points = priceHistory.map((price, i) => {
-    const x = (i / (priceHistory.length - 1)) * 100;
-    const y = 35 - ((price - minPrice) / priceRange) * 25 - 5;
+    const x = (i / (priceHistory.length - 1)) * 120;
+    const y = 40 - ((price - minPrice) / priceRange) * 30 - 5;
     return `${x},${y}`;
   }).join(' ');
 
   // Determine if trend is positive (last > first)
   const isPositive = priceHistory[priceHistory.length - 1] >= priceHistory[0];
-  const strokeColor = isPositive ? '#2DFF9A' : '#FF5C5C';
+  const strokeColor = isPositive ? '#16C784' : '#EA3943';
 
   return (
-    <svg width="100%" height="100%" viewBox="0 0 100 35" preserveAspectRatio="none">
+    <svg width="100%" height="100%" viewBox="0 0 120 40" preserveAspectRatio="none">
       <polyline
         points={points}
         fill="none"
         stroke={strokeColor}
-        strokeWidth="1.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        opacity="0.9"
       />
     </svg>
   );
