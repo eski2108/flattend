@@ -246,7 +246,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
         <div
           style={{
             fontSize: '13px',
-            color: '#8FA3BF',
+            color: '#8FA3C8',
             fontWeight: '500'
           }}
         >
