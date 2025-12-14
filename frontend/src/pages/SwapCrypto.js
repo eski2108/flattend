@@ -629,23 +629,12 @@ function SwapCrypto() {
                       justifyContent: 'center',
                       marginBottom: '16px'
                     }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '10px', 
-                        background: 'rgba(155, 77, 255, 0.1)', 
-                        padding: isMobile ? '10px 14px' : '12px 16px', 
-                        borderRadius: '12px', 
-                        border: '1px solid rgba(155, 77, 255, 0.3)' 
-                      }}>
-                        <img src={getCoinLogo(toCrypto)} alt={toCrypto} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                        <CoinDropdown
-                          value={toCrypto}
-                          onChange={setToCrypto}
-                          cryptos={cryptos}
-                          label="To"
-                        />
-                      </div>
+                      <CoinDropdown
+                        value={toCrypto}
+                        onChange={setToCrypto}
+                        cryptos={cryptos}
+                        label="To"
+                      />
                     </div>
                     
                     {/* To Amount Display - CENTERED */}
