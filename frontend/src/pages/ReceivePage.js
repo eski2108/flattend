@@ -116,7 +116,7 @@ export default function ReceivePage() {
         pointerEvents: 'none',
         animation: 'float 12s ease-in-out infinite'
       }} />
-      {/* Premium Header */}
+      {/* Premium Header with Enhanced Glow */}
       <div style={{
         position: 'sticky',
         top: 0,
@@ -124,12 +124,12 @@ export default function ReceivePage() {
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         padding: '18px 24px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgba(0,229,255,0.15)',
         display: 'flex',
         alignItems: 'center',
         gap: '16px',
         zIndex: 10,
-        boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+        boxShadow: '0 4px 20px rgba(0,0,0,0.3), 0 0 40px rgba(0,229,255,0.1)'
       }}>
         <button 
           onClick={() => navigate(-1)} 
