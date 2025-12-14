@@ -335,37 +335,33 @@ export default function WalletPage() {
           ))}
         </div>
 
-        {/* SEARCH BAR */}
+        {/* SEARCH - FLAT */}
         <div style={{
-          background: '#081227',
-          border: 'none',
-          borderRadius: '14px',
-          padding: '16px',
-          marginBottom: '24px',
-          boxShadow: '0 8px 24px rgba(0, 170, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04)'
+          padding: '0 20px',
+          marginBottom: '16px'
         }}>
           <div style={{ position: 'relative' }}>
             <IoSearch
-              size={20}
+              size={18}
               style={{
                 position: 'absolute',
-                left: '14px',
+                left: '12px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#8FA3C8'
+                color: '#6B7A99'
               }}
             />
             <input
               type="text"
-              placeholder="Search coins..."
+              placeholder="Search assets"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
-                padding: '14px 14px 14px 46px',
-                background: 'rgba(16, 26, 54, 0.5)',
-                border: '1px solid rgba(255,255,255,0.03)',
-                borderRadius: '12px',
+                padding: '10px 10px 10px 38px',
+                background: 'rgba(255,255,255,0.03)',
+                border: 'none',
+                borderRadius: '10px',
                 color: '#FFFFFF',
                 fontSize: '14px',
                 outline: 'none',
