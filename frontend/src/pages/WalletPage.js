@@ -299,7 +299,7 @@ export default function WalletPage() {
                 left: '14px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#8FA3BF'
+                color: '#8FA3C8'
               }}
             />
             <input
