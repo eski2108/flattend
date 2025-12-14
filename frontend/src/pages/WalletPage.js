@@ -75,8 +75,8 @@ export default function WalletPage() {
   const mergedAssets = allCoins.map(coin => {
     const balance = balances.find(b => b.currency === coin.symbol);
     return {
-      currency: coin.symbol, name: coin.name, icon: coin.icon || getCoinIcon(coin.symbol),
-      color: coin.color || getCoinColor(coin.symbol), total_balance: balance?.total_balance || 0,
+      currency: coin.symbol, name: coin.name, icon: getCoinIcon(coin.symbol),
+      color: getCoinColor(coin.symbol), total_balance: balance?.total_balance || 0,
       available_balance: balance?.available_balance || 0, locked_balance: balance?.locked_balance || 0,
       gbp_value: balance?.gbp_value || 0, price_gbp: balance?.price_gbp || 0
     };
