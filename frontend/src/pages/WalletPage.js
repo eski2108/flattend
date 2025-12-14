@@ -386,9 +386,10 @@ export default function WalletPage() {
           </div>
         </div>
 
-        {/* ASSET LIST - FLAT FULL WIDTH */}
-        <div>
-          {filteredAssets.length === 0 ? (
+        {/* CRYPTO TAB */}
+        {activeTab === 'Crypto' && (
+          <div>
+            {filteredAssets.length === 0 ? (
             <div style={{
               padding: '60px 20px',
               textAlign: 'center',
