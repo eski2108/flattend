@@ -373,7 +373,7 @@ export default function WalletPage() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       padding: '10px',
-                      opacity: hasBalance ? 1 : 0.6
+                      opacity: hasBalance ? 1 : 0.7
                     }}>
                       <img
                         src={asset.logoUrl}
