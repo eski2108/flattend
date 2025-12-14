@@ -196,7 +196,7 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/wallet" element={<WalletPage />} />
-              <Route path="/send" element={<SendPage />} />
+              <Route path="/send/:currency" element={<SendPage />} />
               <Route path="/receive" element={<ReceivePage />} />
               <Route path="/bridge" element={<BridgePage />} />
               <Route path="/nfts" element={<NFTsPage />} />

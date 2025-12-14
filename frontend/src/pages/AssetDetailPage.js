@@ -317,7 +317,7 @@ export default function AssetDetailPage() {
 
           {/* Send Button - Blue Outline */}
           <button
-            onClick={() => navigate('/send', { state: { asset: asset.currency } })}
+            onClick={() => navigate(`/send/${asset.currency.toLowerCase()}`)}
             style={{
               padding: '18px',
               background: 'rgba(0,71,217,0.08)',
