@@ -124,14 +124,14 @@ export default function AssetDetailPage() {
 
       <div style={{ padding: '0 20px', display: 'flex', gap: '12px', marginTop: '12px' }}>
         <button
-          onClick={() => navigate('/send')}
+          onClick={() => navigate('/send', { state: { asset: asset.currency } })}
           style={{
             flex: 1,
             padding: '14px',
             background: 'transparent',
-            border: '1.5px solid #F5C542',
+            border: '1.5px solid #0047D9',
             borderRadius: '12px',
-            color: '#F5C542',
+            color: '#0047D9',
             fontSize: '15px',
             fontWeight: '600',
             cursor: 'pointer'
@@ -140,14 +140,14 @@ export default function AssetDetailPage() {
           Send
         </button>
         <button
-          onClick={() => navigate('/receive')}
+          onClick={() => navigate(`/receive?asset=${asset.currency}`, { state: { asset: asset.currency } })}
           style={{
             flex: 1,
             padding: '14px',
-            background: 'transparent',
-            border: '1.5px solid #F5C542',
+            background: '#0047D9',
+            border: 'none',
             borderRadius: '12px',
-            color: '#F5C542',
+            color: '#fff',
             fontSize: '15px',
             fontWeight: '600',
             cursor: 'pointer'
