@@ -239,7 +239,7 @@ export default function WalletPage() {
           <div>
             <div style={{
               fontSize: '12px',
-              color: '#8FA3BF',
+              color: '#8FA3C8',
               fontWeight: '600',
               marginBottom: '12px',
               textTransform: 'uppercase',
