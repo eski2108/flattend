@@ -17,6 +17,7 @@ import DepositModal from '@/components/modals/DepositModal';
 import WithdrawModal from '@/components/modals/WithdrawModal';
 import SwapModal from '@/components/modals/SwapModal';
 import StakeModal from '@/components/modals/StakeModal';
+import MiniStatsBar from '@/components/MiniStatsBar';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
