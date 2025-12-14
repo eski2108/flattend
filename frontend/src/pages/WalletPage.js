@@ -348,7 +348,7 @@ export default function WalletPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '20px 24px',
+                    padding: '26px 24px',
                     background: idx % 2 === 0 ? 'rgba(16, 26, 54, 0.4)' : 'rgba(11, 18, 32, 0.4)',
                     borderBottom: idx < filteredAssets.length - 1 ? '1px solid rgba(255,255,255,0.02)' : 'none',
                     transition: 'all 0.2s ease',
