@@ -201,7 +201,7 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
             style={{
               fontSize: '16px',
               fontWeight: '500',
-              color: '#7E90AD',
+              color: '#8FA3C8',
               marginTop: '8px'
             }}
           >
@@ -213,17 +213,18 @@ export default function MiniStatsBar({ assetsWithBalance, totalValue, portfolioC
       {/* Total Assets */}
       <div
         style={{
-          background: '#101A36',
-          border: '1px solid rgba(255,255,255,0.04)',
-          borderRadius: '16px',
+          background: '#081227',
+          border: 'none',
+          borderRadius: '14px',
           padding: '20px',
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          boxShadow: '0 8px 24px rgba(0, 170, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04)'
         }}
       >
         <div
           style={{
             fontSize: '11px',
-            color: '#8FA3BF',
+            color: '#8FA3C8',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.8px',
