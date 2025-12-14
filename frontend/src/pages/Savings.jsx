@@ -588,10 +588,6 @@ function VaultCard({ vault, onEarlyUnlock }) {
   );
 }
 
-// Keep all existing modal implementations (TransferModal, CreateVaultModal, EarlyUnlockModal)
-// ... (rest of the code stays the same)
-        background: COLORS.BG_CARD,
-        borderRadius: '16px',
         padding: '32px',
         maxWidth: '480px',
         width: '90%'
