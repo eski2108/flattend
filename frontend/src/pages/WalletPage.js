@@ -229,11 +229,12 @@ export default function WalletPage() {
 
         {/* TOTAL PORTFOLIO CARD */}
         <div style={{
-          background: '#0E1B3F',
-          border: '1px solid rgba(255,255,255,0.04)',
-          borderRadius: '16px',
+          background: 'linear-gradient(180deg, #0B1C3A 0%, #08142B 100%)',
+          border: 'none',
+          borderRadius: '22px',
           padding: '36px',
-          marginBottom: '24px'
+          marginBottom: '24px',
+          boxShadow: '0 8px 24px rgba(0, 170, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04)'
         }}>
           <div>
             <div style={{
