@@ -143,7 +143,7 @@ export default function SavingsPage() {
 
   return (
     <div style={{
-      background: COLORS.BG_PRIMARY,
+      background: 'linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%)',
       minHeight: '100vh',
       padding: '24px',
       fontFamily: 'Inter, sans-serif'
@@ -157,30 +157,42 @@ export default function SavingsPage() {
           alignItems: 'center',
           marginBottom: '32px'
         }}>
-          <h1 style={{
-            fontSize: '22px',
-            fontWeight: '700',
-            color: COLORS.TEXT_PRIMARY,
-            margin: 0
-          }}>Savings</h1>
+          <div>
+            <h1 style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              background: 'linear-gradient(135deg, #00E5FF 0%, #7B2CFF 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              margin: 0,
+              marginBottom: '4px'
+            }}>Savings Vault</h1>
+            <p style={{ fontSize: '14px', color: '#8FA3C8', margin: 0 }}>Secure your crypto assets</p>
+          </div>
           
           <button
             onClick={() => setShowTransferModal(true)}
             style={{
-              height: '44px',
-              padding: '0 24px',
-              borderRadius: '10px',
-              background: COLORS.ACTION_PRIMARY,
-              color: COLORS.TEXT_PRIMARY,
+              height: '48px',
+              padding: '0 28px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #00E5FF 0%, #0096FF 100%)',
+              color: '#FFF',
               border: 'none',
-              fontSize: '14px',
+              fontSize: '15px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.3s',
-              boxShadow: GLOW_PRIMARY
+              boxShadow: '0 0 20px rgba(0,229,255,0.5), 0 4px 12px rgba(0,0,0,0.3)'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.background = COLORS.ACTION_HOVER}
-            onMouseLeave={(e) => e.currentTarget.style.background = COLORS.ACTION_PRIMARY}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(0,229,255,0.7), 0 6px 16px rgba(0,0,0,0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(0,229,255,0.5), 0 4px 12px rgba(0,0,0,0.3)';
+            }}
           >
             Transfer from Wallet
           </button>
