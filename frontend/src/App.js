@@ -105,6 +105,7 @@ import ReferralsPage from "@/pages/ReferralsPage";
 import ReferralsPageNew from "@/pages/ReferralsPageNew";
 const ReferralLinkGenerator = lazy(() => import("@/pages/ReferralLinkGenerator"));
 const SavingsPage = lazy(() => import("@/pages/Savings"));
+const SavingsHistory = lazy(() => import("@/pages/SavingsHistory"));
 const PortfolioPage = lazy(() => import("@/pages/PortfolioPageEnhanced"));
 const AllocationsPage = lazy(() => import("@/pages/AllocationsPage"));
 const AllocationsDemo = lazy(() => import("@/pages/AllocationsDemo"));
@@ -250,6 +251,7 @@ function App() {
               <Route path="/payment-methods" element={<PaymentMethods />} />
               <Route path="/wallet" element={<WalletPage />} />
               <Route path="/savings" element={<SavingsPage />} />
+              <Route path="/savings/history" element={<SavingsHistory />} />
               {/* Portfolio route removed - Dashboard page serves as Portfolio Overview */}
               <Route path="/portfolio" element={<PortfolioPage />} />
               <Route path="/allocations" element={<AllocationsPageDirect />} />

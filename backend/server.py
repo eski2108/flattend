@@ -22318,6 +22318,10 @@ async def start_background_tasks():
     
     # Start subscription renewal background task
     start_subscription_worker()
+    
+    # Initialize savings products
+    await initialize_savings_products()
+    logger.info("✅ Savings products initialized")
     logger.info("✅ Subscription renewal worker started")
     
     # Start admin liquidity price updater
@@ -28190,6 +28194,882 @@ async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
 
 # Include the API router in the main FastAPI app
 # This registers ALL endpoints defined above with the /api prefix
+# ==================== SAVINGS & VAULT SYSTEM ====================
+# Complete Savings/Earn hub for CoinHubX
+# Supports: Flexible Savings (daily payout) + Lock Vaults (30/60/90 days)
+
+async def fetch_nowpayments_currencies():
+    """Fetch ALL supported currencies from NowPayments"""
+    try:
+        import aiohttp
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://api.nowpayments.io/v1/currencies", timeout=10) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    return data.get('currencies', [])
+    except Exception as e:
+        logger.warning(f"Failed to fetch NowPayments currencies: {str(e)}")
+    # Fallback to basic list if API fails
+    return ['btc', 'eth', 'usdt', 'usdc', 'bnb', 'xrp', 'sol', 'ltc', 'doge', 'ada']
+
+async def initialize_savings_products():
+    """Initialize Flexible Savings for ALL NowPayments currencies + Lock Vaults"""
+    try:
+        existing_count = await db.savings_products.count_documents({})
+        logger.info(f"🔍 Checking savings products: {existing_count} exist")
+        
+        # ALWAYS reinitialize if less than 200 products (NowPayments has ~236)
+        if existing_count < 200:
+            # Fetch ALL currencies from NowPayments
+            all_currencies = await fetch_nowpayments_currencies()
+            logger.info(f"Fetched {len(all_currencies)} currencies from NowPayments")
+            
+            # APY tiers based on currency type
+            def get_apy(currency):
+                currency_lower = currency.lower()
+                if 'usd' in currency_lower or 'dai' in currency_lower or 'busd' in currency_lower or 'tusd' in currency_lower:
+                    return 8.0  # Stablecoins: 8%
+                elif currency_lower in ['btc', 'eth']:
+                    return 5.0  # Major coins: 5%
+                elif currency_lower in ['bnb', 'sol', 'avax', 'matic', 'dot', 'atom']:
+                    return 9.0  # Top L1s: 9%
+                else:
+                    return 6.0  # Everything else: 6%
+            
+            # Min deposit defaults
+            def get_min_deposit(currency):
+                currency_lower = currency.lower()
+                if currency_lower == 'btc':
+                    return 0.0001
+                elif currency_lower == 'eth':
+                    return 0.001
+                elif 'usd' in currency_lower:
+                    return 1.0
+                elif 'shib' in currency_lower or 'doge' in currency_lower:
+                    return 1000
+                else:
+                    return 0.01
+            
+            # Create Flexible Savings for EVERY currency
+            inserted_count = 0
+            for currency in all_currencies:
+                currency_upper = currency.upper()
+                apy = get_apy(currency)
+                product = {
+                    "product_id": f"flexible_{currency.lower()}",
+                    "product_type": "flexible",
+                    "currency": currency_upper,
+                    "apy_min": apy - 1.0,
+                    "apy_max": apy,
+                    "min_deposit": get_min_deposit(currency),
+                    "payout_frequency": "daily",
+                    "early_exit_penalty": 0,
+                    "description": f"Earn daily interest on your {currency_upper}",
+                    "is_active": True,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+                await db.savings_products.insert_one(product)
+                inserted_count += 1
+            
+            # Add Lock Vaults (for ALL currencies)
+            vaults = [
+                {
+                    "product_id": "vault_30d",
+                    "product_type": "vault",
+                    "currency": "ALL",
+                    "apy_min": 8.0,
+                    "apy_max": 10.0,
+                    "lock_days": 30,
+                    "min_deposit": 10,
+                    "payout_frequency": "maturity",
+                    "early_exit_penalty": 50,
+                    "description": "Lock any crypto for 30 days and earn 10% APY",
+                    "is_active": True
+                },
+                {
+                    "product_id": "vault_60d",
+                    "product_type": "vault",
+                    "currency": "ALL",
+                    "apy_min": 12.0,
+                    "apy_max": 15.0,
+                    "lock_days": 60,
+                    "min_deposit": 10,
+                    "payout_frequency": "maturity",
+                    "early_exit_penalty": 60,
+                    "description": "Lock any crypto for 60 days and earn 15% APY",
+                    "is_active": True
+                },
+                {
+                    "product_id": "vault_90d",
+                    "product_type": "vault",
+                    "currency": "ALL",
+                    "apy_min": 15.0,
+                    "apy_max": 20.0,
+                    "lock_days": 90,
+                    "min_deposit": 10,
+                    "payout_frequency": "maturity",
+                    "early_exit_penalty": 70,
+                    "description": "Lock any crypto for 90 days and earn 20% APY",
+                    "is_active": True
+                }
+            ]
+            
+            for vault in vaults:
+                vault['created_at'] = datetime.now(timezone.utc).isoformat()
+                vault['updated_at'] = datetime.now(timezone.utc).isoformat()
+                await db.savings_products.insert_one(vault)
+                inserted_count += 1
+            
+            total_count = await db.savings_products.count_documents({})
+            logger.info(f"✅ Initialized {total_count} savings products ({len(all_currencies)} flexible + 3 vaults)")
+    except Exception as e:
+        logger.error(f"Error initializing savings products: {str(e)}")
+
+@api_router.get("/savings/products")
+async def get_savings_products():
+    """Get all active savings products"""
+    try:
+        products = await db.savings_products.find(
+            {"is_active": True},
+            {"_id": 0}
+        ).to_list(500)
+        
+        return {
+            "success": True,
+            "products": products
+        }
+    except Exception as e:
+        logger.error(f"Error fetching savings products: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/savings/balances/{user_id}")
+async def get_savings_balances(user_id: str):
+    """Get user's flexible savings balances"""
+    try:
+        # Get all savings balances for user
+        balances_cursor = db.savings_balances.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        )
+        balances = await balances_cursor.to_list(100)
+        
+        return {
+            "success": True,
+            "balances": balances
+        }
+    except Exception as e:
+        logger.error(f"Error fetching savings balances: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/vaults/{user_id}")
+async def get_user_vaults(user_id: str):
+    """Get all user's vault positions"""
+    try:
+        vaults_cursor = db.vaults.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("created_at", -1)
+        vaults = await vaults_cursor.to_list(100)
+        
+        # Calculate current status and time remaining
+        now = datetime.now(timezone.utc)
+        for vault in vaults:
+            unlock_date = datetime.fromisoformat(vault['unlock_date'].replace('Z', '+00:00'))
+            vault['is_matured'] = now >= unlock_date
+            if not vault['is_matured']:
+                delta = unlock_date - now
+                vault['days_remaining'] = delta.days
+                vault['hours_remaining'] = delta.seconds // 3600
+            else:
+                vault['days_remaining'] = 0
+                vault['hours_remaining'] = 0
+        
+        return {
+            "success": True,
+            "vaults": vaults
+        }
+    except Exception as e:
+        logger.error(f"Error fetching vaults: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/savings/positions/{user_id}")
+async def get_savings_positions(user_id: str):
+    """Get all user positions (flexible + vaults) - for My Positions table"""
+    try:
+        positions = []
+        
+        # Get flexible savings
+        savings_cursor = db.savings_balances.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        )
+        savings = await savings_cursor.to_list(100)
+        
+        for saving in savings:
+            if saving.get('savings_balance', 0) > 0:
+                # Get product info
+                product = await db.savings_products.find_one({
+                    "product_type": "flexible",
+                    "currency": saving['currency']
+                })
+                
+                positions.append({
+                    "position_id": f"flex_{saving['currency']}_{user_id}",
+                    "product_type": "flexible",
+                    "product_name": f"Flexible {saving['currency']}",
+                    "currency": saving['currency'],
+                    "principal": saving.get('savings_balance', 0),
+                    "accrued_earnings": saving.get('accrued_earnings', 0),
+                    "apy": product.get('apy_max', 0) if product else 0,
+                    "start_date": saving.get('created_at', datetime.now(timezone.utc).isoformat()),
+                    "status": "active",
+                    "next_payout": "Daily",
+                    "can_withdraw": True
+                })
+        
+        # Get vaults
+        vaults_cursor = db.vaults.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        )
+        vaults = await vaults_cursor.to_list(100)
+        
+        now = datetime.now(timezone.utc)
+        for vault in vaults:
+            if vault['status'] != 'redeemed':
+                unlock_date = datetime.fromisoformat(vault['unlock_date'].replace('Z', '+00:00'))
+                is_matured = now >= unlock_date
+                
+                positions.append({
+                    "position_id": vault['vault_id'],
+                    "product_type": "vault",
+                    "product_name": f"{vault['lock_days']}-Day Vault",
+                    "currency": vault['currency'],
+                    "principal": vault['amount_locked'],
+                    "accrued_earnings": vault.get('accrued_earnings', 0),
+                    "apy": vault['apy'],
+                    "start_date": vault['created_at'],
+                    "maturity_date": vault['unlock_date'],
+                    "status": "matured" if is_matured else vault['status'],
+                    "next_payout": vault['unlock_date'] if not is_matured else "Ready to redeem",
+                    "can_withdraw": is_matured,
+                    "early_exit_penalty": vault.get('early_exit_penalty_percent', 0)
+                })
+        
+        return {
+            "success": True,
+            "positions": positions,
+            "count": len(positions)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching positions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/savings/summary/{user_id}")
+async def get_savings_summary(user_id: str):
+    """Get user's total savings summary (for hero card)"""
+    try:
+        total_value_gbp = 0
+        total_earnings_today = 0
+        total_earnings_30d = 0
+        
+        # Get live prices
+        market_prices = await fetch_live_prices()
+        
+        # Calculate from flexible savings
+        savings_cursor = db.savings_balances.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        )
+        savings = await savings_cursor.to_list(100)
+        
+        for saving in savings:
+            currency = saving['currency']
+            balance = saving.get('savings_balance', 0)
+            
+            # Convert to GBP
+            price_data = market_prices.get(currency, {})
+            price_gbp = price_data.get('gbp', 0)
+            value_gbp = balance * price_gbp
+            total_value_gbp += value_gbp
+            
+            # Calculate earnings (simplified - daily accrual)
+            product = await db.savings_products.find_one({
+                "product_type": "flexible",
+                "currency": currency
+            })
+            if product:
+                apy = product.get('apy_max', 0) / 100
+                daily_rate = apy / 365
+                daily_earnings = balance * daily_rate
+                total_earnings_today += daily_earnings * price_gbp
+                total_earnings_30d += daily_earnings * 30 * price_gbp
+        
+        # Calculate from vaults
+        vaults_cursor = db.vaults.find(
+            {"user_id": user_id, "status": {"$in": ["active", "locked"]}},
+            {"_id": 0}
+        )
+        vaults = await vaults_cursor.to_list(100)
+        
+        for vault in vaults:
+            currency = vault['currency']
+            amount = vault['amount_locked']
+            
+            # Convert to GBP
+            price_data = market_prices.get(currency, {})
+            price_gbp = price_data.get('gbp', 0)
+            value_gbp = amount * price_gbp
+            total_value_gbp += value_gbp
+            
+            # Calculate accrued earnings
+            apy = vault['apy'] / 100
+            lock_days = vault['lock_days']
+            total_earnings = amount * apy * (lock_days / 365)
+            
+            # Calculate daily portion
+            start_date = datetime.fromisoformat(vault['created_at'].replace('Z', '+00:00'))
+            days_elapsed = (datetime.now(timezone.utc) - start_date).days
+            if days_elapsed > 0:
+                daily_earnings = total_earnings / lock_days
+                accrued = min(daily_earnings * days_elapsed, total_earnings)
+                total_earnings_today += daily_earnings * price_gbp
+                total_earnings_30d += min(daily_earnings * 30, total_earnings) * price_gbp
+        
+        # Calculate weighted average APY
+        avg_apy = 0
+        if total_value_gbp > 0:
+            # Simplified: use earnings ratio
+            annual_earnings = total_earnings_today * 365
+            avg_apy = (annual_earnings / total_value_gbp) * 100 if total_value_gbp > 0 else 0
+        
+        return {
+            "success": True,
+            "summary": {
+                "total_value_gbp": round(total_value_gbp, 2),
+                "today_earnings_gbp": round(total_earnings_today, 2),
+                "earnings_30d_gbp": round(total_earnings_30d, 2),
+                "average_apy": round(avg_apy, 2)
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error fetching savings summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/savings/transfer")
+async def transfer_to_savings(request: Request):
+    """Transfer funds between wallet and savings (bidirectional)"""
+    try:
+        data = await request.json()
+        user_id = data.get('user_id')
+        currency = data.get('currency')
+        amount = float(data.get('amount', 0))
+        direction = data.get('direction', 'to_savings')  # to_savings or to_wallet
+        
+        if amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be positive")
+        
+        if direction == 'to_savings':
+            # Move from wallet to savings
+            # Check wallet balance
+            wallet_balance = await db.crypto_balances.find_one({
+                "user_id": user_id,
+                "currency": currency
+            })
+            
+            if not wallet_balance or wallet_balance.get('balance', 0) < amount:
+                raise HTTPException(status_code=400, detail="Insufficient wallet balance")
+            
+            # Deduct from wallet
+            await db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$inc": {"balance": -amount}}
+            )
+            
+            # Add to savings
+            savings_balance = await db.savings_balances.find_one({
+                "user_id": user_id,
+                "currency": currency
+            })
+            
+            if savings_balance:
+                await db.savings_balances.update_one(
+                    {"user_id": user_id, "currency": currency},
+                    {
+                        "$inc": {"savings_balance": amount},
+                        "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                    }
+                )
+            else:
+                await db.savings_balances.insert_one({
+                    "user_id": user_id,
+                    "currency": currency,
+                    "savings_balance": amount,
+                    "accrued_earnings": 0,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                })
+            
+            # Record transaction
+            await db.savings_transactions.insert_one({
+                "transaction_id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "type": "deposit",
+                "currency": currency,
+                "amount": amount,
+                "from": "wallet",
+                "to": "savings",
+                "status": "completed",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            return {
+                "success": True,
+                "message": f"Transferred {amount} {currency} to savings"
+            }
+        
+        else:  # to_wallet
+            # Move from savings to wallet
+            savings_balance = await db.savings_balances.find_one({
+                "user_id": user_id,
+                "currency": currency
+            })
+            
+            if not savings_balance or savings_balance.get('savings_balance', 0) < amount:
+                raise HTTPException(status_code=400, detail="Insufficient savings balance")
+            
+            # Deduct from savings
+            await db.savings_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {
+                    "$inc": {"savings_balance": -amount},
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
+            )
+            
+            # Add to wallet
+            wallet_balance = await db.crypto_balances.find_one({
+                "user_id": user_id,
+                "currency": currency
+            })
+            
+            if wallet_balance:
+                await db.crypto_balances.update_one(
+                    {"user_id": user_id, "currency": currency},
+                    {"$inc": {"balance": amount}}
+                )
+            else:
+                await db.crypto_balances.insert_one({
+                    "user_id": user_id,
+                    "currency": currency,
+                    "balance": amount,
+                    "locked_balance": 0
+                })
+            
+            # Record transaction
+            await db.savings_transactions.insert_one({
+                "transaction_id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "type": "withdrawal",
+                "currency": currency,
+                "amount": amount,
+                "from": "savings",
+                "to": "wallet",
+                "status": "completed",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            return {
+                "success": True,
+                "message": f"Transferred {amount} {currency} to wallet"
+            }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in savings transfer: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/vaults/create")
+async def create_vault(request: Request):
+    """Create a locked vault position"""
+    try:
+        data = await request.json()
+        user_id = data.get('user_id')
+        currency = data.get('currency')
+        amount = float(data.get('amount', 0))
+        lock_days = int(data.get('lock_days', 30))
+        
+        if amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be positive")
+        
+        # Get product info
+        product = await db.savings_products.find_one({
+            "product_type": "vault",
+            "lock_days": lock_days,
+            "is_active": True
+        })
+        
+        if not product:
+            raise HTTPException(status_code=404, detail="Vault product not found")
+        
+        # Check wallet balance
+        wallet_balance = await db.crypto_balances.find_one({
+            "user_id": user_id,
+            "currency": currency
+        })
+        
+        if not wallet_balance or wallet_balance.get('balance', 0) < amount:
+            raise HTTPException(status_code=400, detail="Insufficient wallet balance")
+        
+        # Deduct from wallet
+        await db.crypto_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {"$inc": {"balance": -amount}}
+        )
+        
+        # Create vault
+        now = datetime.now(timezone.utc)
+        unlock_date = now + timedelta(days=lock_days)
+        
+        vault_id = str(uuid.uuid4())
+        vault = {
+            "vault_id": vault_id,
+            "user_id": user_id,
+            "currency": currency,
+            "amount_locked": amount,
+            "lock_days": lock_days,
+            "apy": product['apy_max'],
+            "start_date": now.isoformat(),
+            "unlock_date": unlock_date.isoformat(),
+            "status": "locked",
+            "early_exit_penalty_percent": product.get('early_exit_penalty', 50),
+            "accrued_earnings": 0,
+            "created_at": now.isoformat(),
+            "updated_at": now.isoformat()
+        }
+        
+        await db.vaults.insert_one(vault)
+        
+        # Record transaction
+        await db.savings_transactions.insert_one({
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "type": "vault_lock",
+            "currency": currency,
+            "amount": amount,
+            "vault_id": vault_id,
+            "lock_days": lock_days,
+            "status": "completed",
+            "created_at": now.isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": f"Created {lock_days}-day vault with {amount} {currency}",
+            "vault_id": vault_id,
+            "unlock_date": unlock_date.isoformat()
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating vault: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/vaults/redeem")
+async def redeem_vault(request: Request):
+    """Redeem a matured vault"""
+    try:
+        data = await request.json()
+        user_id = data.get('user_id')
+        vault_id = data.get('vault_id')
+        
+        # Get vault
+        vault = await db.vaults.find_one({
+            "vault_id": vault_id,
+            "user_id": user_id
+        })
+        
+        if not vault:
+            raise HTTPException(status_code=404, detail="Vault not found")
+        
+        if vault['status'] == 'redeemed':
+            raise HTTPException(status_code=400, detail="Vault already redeemed")
+        
+        # Check if matured
+        now = datetime.now(timezone.utc)
+        unlock_date = datetime.fromisoformat(vault['unlock_date'].replace('Z', '+00:00'))
+        
+        if now < unlock_date:
+            raise HTTPException(status_code=400, detail="Vault not yet matured. Use early-unlock endpoint instead.")
+        
+        # Calculate total earnings
+        apy = vault['apy'] / 100
+        lock_days = vault['lock_days']
+        principal = vault['amount_locked']
+        earnings = principal * apy * (lock_days / 365)
+        total_return = principal + earnings
+        
+        # Add to wallet
+        currency = vault['currency']
+        wallet_balance = await db.crypto_balances.find_one({
+            "user_id": user_id,
+            "currency": currency
+        })
+        
+        if wallet_balance:
+            await db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$inc": {"balance": total_return}}
+            )
+        else:
+            await db.crypto_balances.insert_one({
+                "user_id": user_id,
+                "currency": currency,
+                "balance": total_return,
+                "locked_balance": 0
+            })
+        
+        # Update vault status
+        await db.vaults.update_one(
+            {"vault_id": vault_id},
+            {
+                "$set": {
+                    "status": "redeemed",
+                    "accrued_earnings": earnings,
+                    "redeemed_at": now.isoformat(),
+                    "updated_at": now.isoformat()
+                }
+            }
+        )
+        
+        # Record transaction
+        await db.savings_transactions.insert_one({
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "type": "vault_redeem",
+            "currency": currency,
+            "amount": total_return,
+            "principal": principal,
+            "earnings": earnings,
+            "vault_id": vault_id,
+            "status": "completed",
+            "created_at": now.isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": f"Redeemed vault successfully",
+            "principal": principal,
+            "earnings": earnings,
+            "total_return": total_return,
+            "currency": currency
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error redeeming vault: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/vaults/early-unlock")
+async def early_unlock_vault(request: Request):
+    """Early unlock vault with penalty"""
+    try:
+        data = await request.json()
+        user_id = data.get('user_id')
+        vault_id = data.get('vault_id')
+        
+        # Get vault
+        vault = await db.vaults.find_one({
+            "vault_id": vault_id,
+            "user_id": user_id
+        })
+        
+        if not vault:
+            raise HTTPException(status_code=404, detail="Vault not found")
+        
+        if vault['status'] == 'redeemed':
+            raise HTTPException(status_code=400, detail="Vault already redeemed")
+        
+        # Calculate penalty
+        principal = vault['amount_locked']
+        penalty_percent = vault.get('early_exit_penalty_percent', 50) / 100
+        penalty_amount = principal * penalty_percent
+        amount_returned = principal - penalty_amount
+        
+        # Return to wallet (minus penalty)
+        currency = vault['currency']
+        wallet_balance = await db.crypto_balances.find_one({
+            "user_id": user_id,
+            "currency": currency
+        })
+        
+        if wallet_balance:
+            await db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$inc": {"balance": amount_returned}}
+            )
+        else:
+            await db.crypto_balances.insert_one({
+                "user_id": user_id,
+                "currency": currency,
+                "balance": amount_returned,
+                "locked_balance": 0
+            })
+        
+        # Penalty goes to platform
+        admin_balance = await db.crypto_balances.find_one({
+            "user_id": PLATFORM_CONFIG["admin_wallet_id"],
+            "currency": currency
+        })
+        
+        if admin_balance:
+            await db.crypto_balances.update_one(
+                {"user_id": PLATFORM_CONFIG["admin_wallet_id"], "currency": currency},
+                {"$inc": {"balance": penalty_amount}}
+            )
+        else:
+            await db.crypto_balances.insert_one({
+                "user_id": PLATFORM_CONFIG["admin_wallet_id"],
+                "currency": currency,
+                "balance": penalty_amount,
+                "locked_balance": 0
+            })
+        
+        # Update vault
+        now = datetime.now(timezone.utc)
+        await db.vaults.update_one(
+            {"vault_id": vault_id},
+            {
+                "$set": {
+                    "status": "early_exit",
+                    "penalty_applied": penalty_amount,
+                    "amount_returned": amount_returned,
+                    "redeemed_at": now.isoformat(),
+                    "updated_at": now.isoformat()
+                }
+            }
+        )
+        
+        # Record transaction
+        await db.savings_transactions.insert_one({
+            "transaction_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "type": "vault_early_exit",
+            "currency": currency,
+            "amount": amount_returned,
+            "principal": principal,
+            "penalty": penalty_amount,
+            "vault_id": vault_id,
+            "status": "completed",
+            "created_at": now.isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": f"Early exit completed",
+            "principal": principal,
+            "penalty": penalty_amount,
+            "amount_returned": amount_returned,
+            "currency": currency
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in early vault unlock: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/savings/calculator")
+async def calculate_earnings(request: Request):
+    """Calculate estimated earnings for savings calculator"""
+    try:
+        data = await request.json()
+        currency = data.get('currency')
+        amount = float(data.get('amount', 0))
+        product_type = data.get('product_type', 'flexible')
+        lock_days = int(data.get('lock_days', 30))
+        
+        if amount <= 0:
+            return {
+                "success": True,
+                "earnings": {
+                    "daily": 0,
+                    "monthly": 0,
+                    "total_at_maturity": 0,
+                    "apy": 0
+                }
+            }
+        
+        # Get product
+        if product_type == 'flexible':
+            product = await db.savings_products.find_one({
+                "product_type": "flexible",
+                "currency": currency,
+                "is_active": True
+            })
+        else:
+            product = await db.savings_products.find_one({
+                "product_type": "vault",
+                "lock_days": lock_days,
+                "is_active": True
+            })
+        
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        apy = product['apy_max'] / 100
+        
+        # Calculate earnings
+        daily_earnings = amount * (apy / 365)
+        monthly_earnings = daily_earnings * 30
+        
+        if product_type == 'vault':
+            total_at_maturity = amount * apy * (lock_days / 365)
+        else:
+            total_at_maturity = monthly_earnings
+        
+        return {
+            "success": True,
+            "earnings": {
+                "daily": round(daily_earnings, 8),
+                "monthly": round(monthly_earnings, 8),
+                "total_at_maturity": round(total_at_maturity, 8),
+                "apy": product['apy_max'],
+                "currency": currency
+            }
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error calculating earnings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/savings/history/{user_id}")
+async def get_savings_history(user_id: str):
+    """Get savings transaction history"""
+    try:
+        transactions_cursor = db.savings_transactions.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(100)
+        
+        transactions = await transactions_cursor.to_list(100)
+        
+        return {
+            "success": True,
+            "transactions": transactions
+        }
+    except Exception as e:
+        logger.error(f"Error fetching savings history: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Include the API router in the main FastAPI app
+# This registers ALL endpoints defined above with the /api prefix
 app.include_router(api_router)
 
 
@@ -28699,4 +29579,5 @@ async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
     except Exception as e:
         logger.error(f"Error getting OHLCV data: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
