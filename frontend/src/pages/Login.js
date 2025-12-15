@@ -63,8 +63,10 @@ export default function Login() {
     setLoading(true);
 
     try {
+      console.log('Login attempt with:', { email: formData.email, API });
       // USE OLD AUTH ENDPOINT FOR NOW (working)
       const response = await axios.post(`${API}/api/auth/login`, formData);
+      console.log('Login response:', response.data);
       
       if (response.data.success) {
         // Check if 2FA is required
