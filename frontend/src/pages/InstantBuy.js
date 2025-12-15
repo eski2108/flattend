@@ -5,8 +5,8 @@ import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
 import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat, ChevronDown, Clock, Lock } from 'lucide-react';
 
-// Import crypto emojis from utils
-import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
+// Import crypto icons (symbols, not emojis) from utils
+import { getCryptoIcon, getCryptoColor } from '@/utils/cryptoIcons';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
