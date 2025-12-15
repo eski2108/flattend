@@ -1,19 +1,33 @@
 /**
- * Get 3D glossy crypto logo from cryptologos.cc
- * These are the SAME 3D PNG icons used in the footer
- * NOT flat SVGs - these have depth, gradients, and glossy app-style look
+ * Get crypto logo - 3D PNG first, fallback to SVG
+ * Covers all 483 cryptocurrency icons
  */
 
 /**
- * Get the 3D PNG logo path for a cryptocurrency
+ * Get the logo path for a cryptocurrency
  * @param {string} symbol - The cryptocurrency symbol (e.g., 'BTC', 'ETH')
- * @returns {string} The local 3D PNG logo path
+ * @returns {string} The local logo path (PNG or SVG)
  */
 export function getCoinLogo(symbol) {
   if (!symbol) return '/crypto-icons/3d/btc.png';
   
   const cleanSymbol = symbol.toLowerCase().trim();
+  
+  // Try 3D PNG first (197 major coins)
+  // If PNG doesn't exist, img tag will handle onError and we'll use SVG fallback
   return `/crypto-icons/3d/${cleanSymbol}.png`;
 }
 
+/**
+ * Get SVG fallback logo
+ * @param {string} symbol - The cryptocurrency symbol
+ * @returns {string} The SVG logo path
+ */
+export function getCoinLogoSVG(symbol) {
+  if (!symbol) return '/crypto-icons/btc.svg';
+  const cleanSymbol = symbol.toLowerCase().trim();
+  return `/crypto-icons/${cleanSymbol}.svg`;
+}
+
 export default getCoinLogo;
+export { getCoinLogoSVG };
