@@ -73,8 +73,10 @@ export default function Wallet() {
                             objectFit: 'contain'
                           }}
                           onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.parentElement.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #000">${bal.currency?.substring(0, 2) || 'CR'}</span>`;
+                            // Fallback to SVG if PNG doesn't exist
+                            const svgPath = `/crypto-icons/${bal.currency.toLowerCase()}.svg`;
+                            e.target.onerror = null; // Prevent infinite loop
+                            e.target.src = svgPath;
                           }}
                         />
                       </div>
