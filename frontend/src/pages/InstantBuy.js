@@ -1,12 +1,19 @@
+/**
+ * ⚠️ LIQUIDITY DISPLAY REMOVED ⚠️
+ * 
+ * All hardcoded liquidity placeholders have been removed from this file.
+ * No fake balances, "Available" amounts, or "No liquidity" messages should appear
+ * until real backend-linked liquidity is properly implemented.
+ * 
+ * DO NOT re-add placeholder values without proper backend integration.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
 import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat, ChevronDown, Clock, Lock } from 'lucide-react';
-
-// Import crypto icons (symbols, not emojis) from utils
-import { getCryptoIcon, getCryptoColor } from '@/utils/cryptoIcons';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -46,11 +53,20 @@ function InstantBuy() {
 
   const fetchCoins = async () => {
     try {
-      const metadataResponse = await axios.get(`${API}/api/wallets/coin-metadata`);
+      // Load ALL 247 currencies from NOWPayments
+      const nowpaymentsResponse = await axios.get(`${API}/api/nowpayments/currencies`);
       const liquidityResponse = await axios.get(`${API}/api/coins/available`);
       
-      if (metadataResponse.data.success) {
-        const allCoins = metadataResponse.data.coins;
+      if (nowpaymentsResponse.data.success) {
+        const currencies = nowpaymentsResponse.data.currencies;
+        
+        // Convert NOWPayments currencies to coin objects
+        const allCoins = currencies.map(currency => ({
+          symbol: currency.toUpperCase(),
+          name: currency.toUpperCase(),
+          price_gbp: 0, // Will be fetched when needed
+          available_liquidity: 0
+        }));
         const liquidityMap = {};
         
         if (liquidityResponse.data.success) {
@@ -530,13 +546,13 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '28px',
+            fontSize: '22px',
             fontWeight: '700',
             color: '#FFFFFF',
             boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
             border: `2px solid ${coin.color}22`
           }}>
-            {getCryptoIcon(coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim())}
+            {coin.symbol[0]}
           </div>
           
           {/* Coin Info */}
@@ -573,27 +589,9 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
         />
       </div>
 
-      {/* Liquidity Status - Real admin wallet balance */}
-      {!expanded && (
-        <div style={{ 
-          marginTop: '8px', 
-          textAlign: 'center',
-          padding: '8px 12px',
-          background: coin.has_liquidity ? 'rgba(34, 197, 94, 0.08)' : 'rgba(143, 155, 179, 0.08)',
-          borderRadius: '8px',
-          border: `1px solid ${coin.has_liquidity ? 'rgba(34, 197, 94, 0.2)' : 'rgba(143, 155, 179, 0.15)'}`
-        }}>
-          {coin.has_liquidity ? (
-            <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600', letterSpacing: '0.3px' }}>
-              ✓ {coin.available_amount.toFixed(4)} {coin.symbol} Available
-            </div>
-          ) : (
-            <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '500' }}>
-              No liquidity
-            </div>
-          )}
-        </div>
-      )}
+      {/* Sparkline removed - was placeholder data */}
+
+      {/* LIQUIDITY DISPLAY REMOVED - Backend integration required */}
 
       {/* Expanded Content */}
       <div style={{
@@ -629,9 +627,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 </div>
                 <div>
                   <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stock</div>
-                  <div style={{ fontSize: '19px', fontWeight: '700', color: '#FFFFFF', letterSpacing: '0.3px' }}>
-                    {coin.available_amount.toFixed(4)}
-                  </div>
+                  {/* LIQUIDITY AMOUNT REMOVED - Backend integration required */}
                 </div>
               </div>
             </div>
@@ -698,7 +694,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             </div>
 
             {/* Quick Buy Section */}
-            {coin.has_liquidity && (
+            {false && (
               <div style={{ paddingTop: '8px' }}>
                 <div style={{ fontSize: '12px', color: '#8F9BB3', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px', fontWeight: '600' }}>Quick Buy</div>
                 
@@ -835,13 +831,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
               </div>
             )}
 
-            {/* No Liquidity Message */}
-            {!coin.has_liquidity && (
-              <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '13px', color: '#EF4444', fontWeight: '600', marginBottom: '8px' }}>No Liquidity Available</div>
-                <div style={{ fontSize: '12px', color: '#FCA5A5' }}>Admin needs to add liquidity for instant buy</div>
-              </div>
-            )}
+            {/* LIQUIDITY MESSAGE REMOVED - Backend integration required */}
           </div>
         )}
       </div>

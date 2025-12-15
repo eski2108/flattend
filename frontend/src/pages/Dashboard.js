@@ -21,9 +21,6 @@ import {
   IoStar
 } from 'react-icons/io5';
 
-// Import crypto icons (symbols, not emojis) from utils
-import { getCryptoIcon, getCryptoColor } from '@/utils/cryptoIcons';
-
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function Dashboard() {
@@ -95,9 +92,7 @@ export default function Dashboard() {
         }
       });
       if (assetsRes.data.success) {
-        // Filter out zero balances and only show top 5
-        const nonZeroAssets = (assetsRes.data.balances || []).filter(asset => asset.total_balance > 0);
-        setTopAssets(nonZeroAssets.slice(0, 5));
+        setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
       }
       
       // Load recent transactions (with cache busting + headers)
@@ -158,11 +153,11 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div style={{
+        minHeight: '100vh',
         background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '60px 20px'
+        justifyContent: 'center'
       }}>
         <div style={{ textAlign: 'center', color: '#00F0FF' }}>
           <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
@@ -174,8 +169,9 @@ export default function Dashboard() {
 
   return (
     <div style={{
+      minHeight: '100vh',
       background: 'linear-gradient(180deg, #020618 0%, #071327 100%)',
-      paddingBottom: 0
+      paddingBottom: '60px'
     }}>
         <div style={{ padding: isMobile ? '16px' : '24px' }}>
           <div style={{ maxWidth: '1800px', margin: '0 auto' }}>
@@ -707,16 +703,15 @@ export default function Dashboard() {
                             width: '40px',
                             height: '40px',
                             borderRadius: '50%',
-                            background: `linear-gradient(135deg, ${getCryptoColor(asset.currency)}, ${getCryptoColor(asset.currency)}DD)`,
+                            background: 'linear-gradient(135deg, #00F0FF, #0080FF)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '20px',
+                            fontSize: '14px',
                             fontWeight: '700',
-                            color: '#FFFFFF',
-                            boxShadow: `0 0 15px ${getCryptoColor(asset.currency)}66`
+                            color: '#000000'
                           }}>
-                            {getCryptoIcon(asset.currency)}
+                            {asset.currency?.substring(0, 2) || 'CR'}
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
