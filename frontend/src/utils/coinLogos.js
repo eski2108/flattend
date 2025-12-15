@@ -18,16 +18,4 @@ export function getCoinLogo(symbol) {
   return `/crypto-icons/3d/${cleanSymbol}.png`;
 }
 
-/**
- * Get SVG fallback logo
- * @param {string} symbol - The cryptocurrency symbol
- * @returns {string} The SVG logo path
- */
-export function getCoinLogoSVG(symbol) {
-  if (!symbol) return '/crypto-icons/btc.svg';
-  const cleanSymbol = symbol.toLowerCase().trim();
-  return `/crypto-icons/${cleanSymbol}.svg`;
-}
-
 export default getCoinLogo;
-export { getCoinLogoSVG };
