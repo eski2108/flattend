@@ -561,8 +561,11 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 objectFit: 'contain'
               }}
               onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #FFF">${coin.symbol[0]}</span>`;
+                // Fallback to SVG if PNG doesn't exist
+                const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim().toLowerCase();
+                const svgPath = `/crypto-icons/${cleanSymbol}.svg`;
+                e.target.onerror = null;
+                e.target.src = svgPath;
               }}
             />
           </div>
