@@ -1,6 +1,6 @@
 # ✅ DEPLOYMENT COMPLETE - JWT AUTHENTICATION LIVE
 
-**Preview URL:** https://earn-rewards-21.preview.emergentagent.com  
+**Preview URL:** https://neon-finance-5.preview.emergentagent.com  
 **Deployment Date:** December 11, 2025 22:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -66,7 +66,7 @@
 
 ## 🎯 HOW TO TEST
 
-1. Go to: https://earn-rewards-21.preview.emergentagent.com
+1. Go to: https://neon-finance-5.preview.emergentagent.com
 2. Login: aby@test.com / test123
 3. Navigate to: P2P → Merchant Center
 4. Verify: "My Active Ads" shows 2 BTC/GBP ads with prices
@@ -110,5 +110,5 @@
 
 **Deployed by:** CoinHubX Engineering  
 **Deployment Time:** December 11, 2025 22:45 UTC  
-**Preview Link:** https://earn-rewards-21.preview.emergentagent.com  
+**Preview Link:** https://neon-finance-5.preview.emergentagent.com  
 **Status:** ✅ LIVE

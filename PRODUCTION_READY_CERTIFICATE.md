@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://earn-rewards-21.preview.emergentagent.com`
-- Backend API: `https://earn-rewards-21.preview.emergentagent.com/api`
+- Frontend: `https://neon-finance-5.preview.emergentagent.com`
+- Backend API: `https://neon-finance-5.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

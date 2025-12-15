@@ -416,10 +416,10 @@ class WalletService:
 
 ```bash
 # 1. Test wallet service endpoints
-curl https://earn-rewards-21.preview.emergentagent.com/api/wallet/balance/test_user_123/BTC
+curl https://neon-finance-5.preview.emergentagent.com/api/wallet/balance/test_user_123/BTC
 
 # 2. Test P2P offers listing
-curl https://earn-rewards-21.preview.emergentagent.com/api/p2p/offers?ad_type=sell&crypto_currency=BTC
+curl https://neon-finance-5.preview.emergentagent.com/api/p2p/offers?ad_type=sell&crypto_currency=BTC
 
 # 3. Run comprehensive backend test
 python3 /app/p2p_10_point_verification.py
@@ -470,7 +470,7 @@ python3 /app/p2p_10_point_verification.py
 
 1. Check wallet service endpoints are accessible:
    ```bash
-   curl https://earn-rewards-21.preview.emergentagent.com/api/wallet/balance/test_user/BTC
+   curl https://neon-finance-5.preview.emergentagent.com/api/wallet/balance/test_user/BTC
    ```
 
 2. Verify wallet service is initialized:

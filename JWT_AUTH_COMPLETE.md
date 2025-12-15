@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://earn-rewards-21.preview.emergentagent.com
+**Live URL:** https://neon-finance-5.preview.emergentagent.com
 
 ---
 

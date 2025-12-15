@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://earn-rewards-21.preview.emergentagent.com
+https://neon-finance-5.preview.emergentagent.com
 
 ### Test Route
 
-`https://earn-rewards-21.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://neon-finance-5.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

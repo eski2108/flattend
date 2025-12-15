@@ -220,7 +220,7 @@ webpack compiled successfully
 
 ## Next Steps
 
-1. **Login to the site** at https://earn-rewards-21.preview.emergentagent.com/login
+1. **Login to the site** at https://neon-finance-5.preview.emergentagent.com/login
    - Email: gads21083@gmail.com
    - Password: 123456789
 

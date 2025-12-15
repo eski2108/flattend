@@ -18,7 +18,7 @@
   - Revenue breakdowns
 
 ### **2. Complete Business Dashboard**
-**URL:** https://earn-rewards-21.preview.emergentagent.com/admin/business
+**URL:** https://neon-finance-5.preview.emergentagent.com/admin/business
 
 **9 Comprehensive Tabs:**
 
@@ -225,7 +225,7 @@
 ## 🚀 HOW TO USE THE BUSINESS DASHBOARD
 
 ### **Access:**
-1. Go to: https://earn-rewards-21.preview.emergentagent.com/admin/login
+1. Go to: https://neon-finance-5.preview.emergentagent.com/admin/login
 2. Login with:
    - Email: `info@coinhubx.net`
    - Password: `Admin123!`
@@ -331,9 +331,9 @@
 **Admin Code:** CRYPTOLEND_ADMIN_2025  
 
 **Access URLs:**
-- Login: https://earn-rewards-21.preview.emergentagent.com/admin/login
-- Business Dashboard: https://earn-rewards-21.preview.emergentagent.com/admin/business
-- Earnings Dashboard: https://earn-rewards-21.preview.emergentagent.com/admin/earnings
+- Login: https://neon-finance-5.preview.emergentagent.com/admin/login
+- Business Dashboard: https://neon-finance-5.preview.emergentagent.com/admin/business
+- Earnings Dashboard: https://neon-finance-5.preview.emergentagent.com/admin/earnings
 
 ---
 

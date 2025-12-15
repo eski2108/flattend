@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://earn-rewards-21.preview.emergentagent.com
-P2P Page:     https://earn-rewards-21.preview.emergentagent.com/p2p
-Backend API:  https://earn-rewards-21.preview.emergentagent.com/api
+Frontend:     https://neon-finance-5.preview.emergentagent.com
+P2P Page:     https://neon-finance-5.preview.emergentagent.com/p2p
+Backend API:  https://neon-finance-5.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS
