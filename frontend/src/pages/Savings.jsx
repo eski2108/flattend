@@ -337,13 +337,7 @@ export default function SavingsPage() {
                     height: '72px',
                     WebkitTapHighlightColor: 'transparent'
                   }}
-                  onTouchStart={() => {
-                    alert(`TOUCH: ${coin.currency}`);
-                    setSelectedCoin(coin.currency);
-                    setShowDepositModal(true);
-                  }}
                   onClick={() => {
-                    alert(`CLICK: ${coin.currency}`);
                     setSelectedCoin(coin.currency);
                     setShowDepositModal(true);
                   }}
