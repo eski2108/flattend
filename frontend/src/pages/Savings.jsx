@@ -397,14 +397,21 @@ export default function Savings() {
             </button>
           </div>
         ) : (
-          <div style={{ marginTop: '24px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 229, 255, 0.01) 100%)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.04)',
+            overflow: 'hidden',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+          }}>
             <div style={{
-              fontSize: '14px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              marginBottom: '12px',
-              padding: '0 20px'
-            }}>Your Savings</div>
+              fontSize: '16px',
+              color: '#FFFFFF',
+              fontWeight: '600',
+              marginBottom: '0px',
+              padding: '24px 24px 16px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.04)'
+            }}>Your Savings Portfolio</div>
             
             {savingsAssets.map((asset, idx) => {
               const currency = asset.currency || asset.asset || 'BTC';
