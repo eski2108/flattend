@@ -104,7 +104,7 @@ const AdminSupportSettings = lazy(() => import("@/pages/AdminSupportSettings"));
 import ReferralsPage from "@/pages/ReferralsPage";
 import ReferralsPageNew from "@/pages/ReferralsPageNew";
 const ReferralLinkGenerator = lazy(() => import("@/pages/ReferralLinkGenerator"));
-const SavingsDashboard = lazy(() => import("@/pages/SavingsDashboard"));
+const SavingsVault = lazy(() => import("@/pages/SavingsVault"));
 const SavingsPage = lazy(() => import("@/pages/Savings"));
 const SavingsHistory = lazy(() => import("@/pages/SavingsHistory"));
 const PortfolioPage = lazy(() => import("@/pages/PortfolioPageEnhanced"));
