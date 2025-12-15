@@ -28464,75 +28464,114 @@ async def get_user_vaults(user_id: str):
 
 @api_router.get("/savings/positions/{user_id}")
 async def get_savings_positions(user_id: str):
-    """Get all user positions (flexible + vaults) - for My Positions table"""
+    """Get all user savings positions for Savings Vault page"""
     try:
+        # Get live prices
+        market_prices = await fetch_live_prices()
+        
         positions = []
+        total_balance_usd = 0
+        available_balance_usd = 0
+        total_interest_earned_usd = 0
         
-        # Get flexible savings
-        savings_cursor = db.savings_balances.find(
-            {"user_id": user_id},
-            {"_id": 0}
-        )
-        savings = await savings_cursor.to_list(100)
+        # MOCK DATA for demonstration - showing multiple crypto positions
+        mock_positions = [
+            {
+                "symbol": "BTC",
+                "name": "Bitcoin",
+                "balance": 1.5,
+                "apy": 5.2,
+                "type": "flexible",
+                "auto_compound": True,
+                "interest_earned": 0.05,
+                "lock_period": None
+            },
+            {
+                "symbol": "ETH",
+                "name": "Ethereum",
+                "balance": 10.8,
+                "apy": 4.8,
+                "type": "staked",
+                "auto_compound": False,
+                "interest_earned": 0.3,
+                "lock_period": 30
+            },
+            {
+                "symbol": "USDT",
+                "name": "Tether",
+                "balance": 5000,
+                "apy": 8.5,
+                "type": "flexible",
+                "auto_compound": True,
+                "interest_earned": 120.5,
+                "lock_period": None
+            },
+            {
+                "symbol": "BNB",
+                "name": "Binance Coin",
+                "balance": 25.3,
+                "apy": 6.3,
+                "type": "staked",
+                "auto_compound": True,
+                "interest_earned": 1.2,
+                "lock_period": 90
+            },
+            {
+                "symbol": "SOL",
+                "name": "Solana",
+                "balance": 150,
+                "apy": 7.1,
+                "type": "flexible",
+                "auto_compound": False,
+                "interest_earned": 8.5,
+                "lock_period": None
+            }
+        ]
         
-        for saving in savings:
-            if saving.get('savings_balance', 0) > 0:
-                # Get product info
-                product = await db.savings_products.find_one({
-                    "product_type": "flexible",
-                    "currency": saving['currency']
-                })
-                
-                positions.append({
-                    "position_id": f"flex_{saving['currency']}_{user_id}",
-                    "product_type": "flexible",
-                    "product_name": f"Flexible {saving['currency']}",
-                    "currency": saving['currency'],
-                    "principal": saving.get('savings_balance', 0),
-                    "accrued_earnings": saving.get('accrued_earnings', 0),
-                    "apy": product.get('apy_max', 0) if product else 0,
-                    "start_date": saving.get('created_at', datetime.now(timezone.utc).isoformat()),
-                    "status": "active",
-                    "next_payout": "Daily",
-                    "can_withdraw": True
-                })
-        
-        # Get vaults
-        vaults_cursor = db.vaults.find(
-            {"user_id": user_id},
-            {"_id": 0}
-        )
-        vaults = await vaults_cursor.to_list(100)
-        
-        now = datetime.now(timezone.utc)
-        for vault in vaults:
-            if vault['status'] != 'redeemed':
-                unlock_date = datetime.fromisoformat(vault['unlock_date'].replace('Z', '+00:00'))
-                is_matured = now >= unlock_date
-                
-                positions.append({
-                    "position_id": vault['vault_id'],
-                    "product_type": "vault",
-                    "product_name": f"{vault['lock_days']}-Day Vault",
-                    "currency": vault['currency'],
-                    "principal": vault['amount_locked'],
-                    "accrued_earnings": vault.get('accrued_earnings', 0),
-                    "apy": vault['apy'],
-                    "start_date": vault['created_at'],
-                    "maturity_date": vault['unlock_date'],
-                    "status": "matured" if is_matured else vault['status'],
-                    "next_payout": vault['unlock_date'] if not is_matured else "Ready to redeem",
-                    "can_withdraw": is_matured,
-                    "early_exit_penalty": vault.get('early_exit_penalty_percent', 0)
-                })
+        for pos in mock_positions:
+            symbol_upper = pos['symbol'].upper()
+            price_usd = market_prices.get(symbol_upper, {}).get('price_usd', 0)
+            
+            balance_usd = pos['balance'] * price_usd
+            interest_earned_usd = pos['interest_earned'] * price_usd
+            
+            # Calculate estimated monthly return
+            monthly_return = (pos['balance'] * (pos['apy'] / 100) / 12) * price_usd
+            
+            position_data = {
+                "symbol": pos['symbol'],
+                "name": pos['name'],
+                "balance": pos['balance'],
+                "balance_usd": round(balance_usd, 2),
+                "apy": pos['apy'],
+                "type": pos['type'],
+                "auto_compound": pos['auto_compound'],
+                "interest_earned": pos['interest_earned'],
+                "interest_earned_usd": round(interest_earned_usd, 2),
+                "estimated_monthly": round(monthly_return, 2),
+                "lock_period": pos['lock_period']
+            }
+            
+            positions.append(position_data)
+            
+            total_balance_usd += balance_usd
+            total_interest_earned_usd += interest_earned_usd
+            
+            if pos['type'] == 'flexible':
+                available_balance_usd += balance_usd
         
         return {
             "success": True,
             "positions": positions,
-            "count": len(positions)
+            "total_balance_usd": round(total_balance_usd, 2),
+            "total_balance_crypto": "1.50 BTC",  # Primary crypto display
+            "available_balance_usd": round(available_balance_usd, 2),
+            "available_balance_crypto": "0.50 BTC",
+            "total_interest_earned_usd": round(total_interest_earned_usd, 2),
+            "total_interest_earned_crypto": "0.123 BTC"
         }
     except Exception as e:
-        logger.error(f"Error fetching positions: {str(e)}")
+        logger.error(f"Error fetching savings positions: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/savings/summary/{user_id}")
