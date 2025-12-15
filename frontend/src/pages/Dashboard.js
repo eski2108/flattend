@@ -21,40 +21,8 @@ import {
   IoStar
 } from 'react-icons/io5';
 
-// Import crypto SVG icons
-import btcIcon from '@/assets/coins/btc.svg';
-import ethIcon from '@/assets/coins/eth.svg';
-import usdtIcon from '@/assets/coins/usdt.svg';
-import usdcIcon from '@/assets/coins/usdc.svg';
-import bnbIcon from '@/assets/coins/bnb.svg';
-import solIcon from '@/assets/coins/sol.svg';
-import xrpIcon from '@/assets/coins/xrp.svg';
-import adaIcon from '@/assets/coins/ada.svg';
-import dogeIcon from '@/assets/coins/doge.svg';
-import dotIcon from '@/assets/coins/dot.svg';
-import maticIcon from '@/assets/coins/matic.svg';
-import ltcIcon from '@/assets/coins/ltc.svg';
-import linkIcon from '@/assets/coins/link.svg';
-import avaxIcon from '@/assets/coins/avax.svg';
-import trxIcon from '@/assets/coins/trx.svg';
-
-const COIN_SVG_ICONS = {
-  'BTC': btcIcon,
-  'ETH': ethIcon,
-  'USDT': usdtIcon,
-  'USDC': usdcIcon,
-  'BNB': bnbIcon,
-  'SOL': solIcon,
-  'XRP': xrpIcon,
-  'ADA': adaIcon,
-  'DOGE': dogeIcon,
-  'DOT': dotIcon,
-  'MATIC': maticIcon,
-  'LTC': ltcIcon,
-  'LINK': linkIcon,
-  'AVAX': avaxIcon,
-  'TRX': trxIcon
-};
+// Import crypto emojis from utils
+import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
