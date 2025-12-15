@@ -530,13 +530,13 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '32px',
+            fontSize: '28px',
             fontWeight: '700',
             color: '#FFFFFF',
             boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
             border: `2px solid ${coin.color}22`
           }}>
-            {getCryptoEmoji(coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim())}
+            {getCryptoIcon(coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim())}
           </div>
           
           {/* Coin Info */}
