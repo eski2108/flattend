@@ -20,6 +20,7 @@ import {
   IoTime,
   IoStar
 } from 'react-icons/io5';
+import { getCoinLogo } from '@/utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
