@@ -346,7 +346,17 @@ export default function SavingsPage() {
                     setShowDepositModal(true);
                   }}
                 >
-                  <img src={getCoinLogo(coin.currency)} alt="" style={{width: '36px', height: '36px', borderRadius: '50%'}} />
+                  <img 
+                    src={getCoinLogo(coin.currency)} 
+                    alt={coin.currency}
+                    style={{width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover'}}
+                    onError={(e) => {
+                      e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${coin.currency.toLowerCase()}.png`;
+                      e.target.onerror = (err) => {
+                        err.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iIzM0OEFBNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj4kPC90ZXh0Pjwvc3ZnPg==';
+                      };
+                    }}
+                  />
                   <div style={{flex: 1}}>
                     <div style={{fontSize: '15px', fontWeight: 700, color: '#EAF0FF'}}>{coin.currency}</div>
                     <div style={{fontSize: '13px', color: 'rgba(234, 240, 255, 0.72)'}}>Tap to deposit</div>
