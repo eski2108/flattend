@@ -1,11 +1,16 @@
 /**
- * Get real cryptocurrency logo from cryptologos.cc
+ * Get real cryptocurrency logo from multiple sources
  * @param {string} symbol - Coin symbol (BTC, ETH, etc.)
  * @returns {string} - Path to logo image
  */
 export const getCoinLogo = (symbol) => {
-  const upperSymbol = symbol?.toUpperCase();
-  return `/crypto-logos/${upperSymbol?.toLowerCase() || 'btc'}.png`;
+  if (!symbol) return 'https://cryptologos.cc/logos/bitcoin-btc-logo.png';
+  
+  const upperSymbol = symbol.toUpperCase();
+  const lowerSymbol = symbol.toLowerCase();
+  
+  // Try CryptoCompare first (has most coins)
+  return `https://www.cryptocompare.com/media/37746251/${lowerSymbol}.png`;
 };
 
 /**
