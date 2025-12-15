@@ -7453,7 +7453,7 @@ async def login_user(login_req: LoginRequest, request: Request):
     logger.info(f"🔍 DEBUG: Email bytes: {login_req.email.encode()}")
     
     # Find user
-    user = await db.user_accounts.find_one({"email": login_req.email}, {"_id": 0})
+    user = await db.users.find_one({"email": login_req.email}, {"_id": 0})
     if not user:
         logger.info(f"User not found: {login_req.email}")
         # Log failed attempt
