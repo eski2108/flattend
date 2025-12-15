@@ -11428,57 +11428,70 @@ async def remove_trading_liquidity(request: dict):
 @api_router.get("/instant-buy/available-coins")
 @api_router.get("/coins/available")
 async def get_available_coins_for_instant_buy():
-    """Get list of coins with available admin liquidity for Instant Buy/Sell"""
+    """Get ALL 236 NowPayments coins for Instant Buy/Sell"""
     try:
-        # Get REAL admin liquidity from admin_liquidity_wallets collection
-        admin_wallets = await db.admin_liquidity_wallets.find(
-            {"available": {"$gt": 0}},
-            {"_id": 0}
-        ).to_list(100)
+        # Get ALL coins from NowPayments via coin-metadata endpoint
+        if 'nowpayments' in globals() and nowpayments:
+            all_currencies = nowpayments.get_available_currencies()
+        else:
+            import httpx
+            import os
+            api_key = os.getenv("NOWPAYMENTS_API_KEY")
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    "https://api.nowpayments.io/v1/currencies",
+                    headers={"x-api-key": api_key},
+                    timeout=10
+                )
+                all_currencies = response.json().get("currencies", [])
         
-        # Get monetization settings for markup
+        # Get admin liquidity for the coins we have
+        admin_wallets = await db.admin_liquidity_wallets.find({}, {"_id": 0}).to_list(500)
+        liquidity_map = {w["currency"]: w.get("available", 0) for w in admin_wallets}
+        
+        # Get monetization settings
         settings = await db.monetization_settings.find_one(
             {"setting_id": "default_monetization"},
             {"_id": 0}
         )
-        
         default_markup = settings.get("admin_sell_spread_percent", 3.0) if settings else 3.0
         
-        # Get live prices in GBP
+        # Get live prices
         from live_pricing import get_all_live_prices
         live_prices_gbp = await get_all_live_prices("gbp")
         
-        # Format response with coin info and prices
+        # Build coins list for ALL NowPayments currencies
         available_coins = []
-        for wallet in admin_wallets:
-            currency = wallet.get("currency")
-            available_amount = wallet.get("available", 0)
+        for np_currency in all_currencies:
+            # Extract symbol
+            symbol = np_currency.upper()
+            for suffix in ["TRC20", "ERC20", "BSC", "MAINNET", "POLYGON", "ARBITRUM", "OPTIMISM", "CELO", "BASE", "SOL"]:
+                if symbol.endswith(suffix):
+                    symbol = symbol[:-(len(suffix))]
+                    break
+            if len(symbol) > 10:
+                symbol = symbol[:6]
             
-            if available_amount <= 0 or currency == "GBP":
-                continue
+            # Get liquidity (0 if not available)
+            available_amount = liquidity_map.get(symbol, 0)
             
-            # Get live market price (already in GBP)
-            price_gbp = live_prices_gbp.get(currency, 0)
-            
-            if price_gbp <= 0:
-                logger.warning(f"No price available for {currency}, skipping")
-                continue
-            
-            # Apply markup for user buy price
-            user_buy_price = price_gbp * (1 + default_markup / 100)
+            # Get price (0 if not available)
+            price_gbp = live_prices_gbp.get(symbol, 0)
+            user_buy_price = price_gbp * (1 + default_markup / 100) if price_gbp > 0 else 0
             
             available_coins.append({
-                "symbol": currency,
+                "symbol": symbol,
+                "nowpayments_code": np_currency,
                 "available_amount": available_amount,
                 "price_gbp": user_buy_price,
                 "market_price_gbp": price_gbp,
                 "markup_percent": default_markup,
-                "max_order_gbp": available_amount * user_buy_price,
+                "max_order_gbp": available_amount * user_buy_price if user_buy_price > 0 else 0,
                 "min_order_gbp": 10.0,
-                "is_active": True
+                "is_active": available_amount > 0 and price_gbp > 0
             })
         
-        logger.info(f"📊 Instant Buy: Returning {len(available_coins)} coins with REAL liquidity")
+        logger.info(f"📊 Instant Buy: Returning ALL {len(available_coins)} NowPayments coins")
         
         return {
             "success": True,
