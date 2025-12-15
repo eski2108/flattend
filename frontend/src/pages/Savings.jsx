@@ -323,8 +323,9 @@ export default function SavingsPage() {
             .filter(coin => coin.currency.toLowerCase().includes(searchQuery.toLowerCase()))
             .map((coin, index) => {
               return (
-                <div
+                <button
                   key={index}
+                  type="button"
                   style={{
                     background: 'rgba(16, 22, 38, 0.72)',
                     border: '1px solid rgba(120, 170, 255, 0.14)',
@@ -335,20 +336,23 @@ export default function SavingsPage() {
                     gap: '12px',
                     cursor: 'pointer',
                     height: '72px',
-                    WebkitTapHighlightColor: 'transparent'
+                    WebkitTapHighlightColor: 'transparent',
+                    width: '100%',
+                    textAlign: 'left'
                   }}
                   onClick={() => {
+                    console.log('CLICKED:', coin.currency);
                     setSelectedCoin(coin.currency);
                     setShowDepositModal(true);
                   }}
                 >
-                  <img src={getCoinLogo(coin.currency)} alt="" style={{width: '36px', height: '36px', borderRadius: '50%', pointerEvents: 'none'}} />
-                  <div style={{flex: 1, pointerEvents: 'none'}}>
+                  <img src={getCoinLogo(coin.currency)} alt="" style={{width: '36px', height: '36px', borderRadius: '50%'}} />
+                  <div style={{flex: 1}}>
                     <div style={{fontSize: '15px', fontWeight: 700, color: '#EAF0FF'}}>{coin.currency}</div>
                     <div style={{fontSize: '13px', color: 'rgba(234, 240, 255, 0.72)'}}>Tap to deposit</div>
                   </div>
-                  <IoArrowForward size={20} style={{color: 'rgba(234,240,255,0.5)', pointerEvents: 'none'}} />
-                </div>
+                  <IoArrowForward size={20} style={{color: 'rgba(234,240,255,0.5)'}} />
+                </button>
               );
             })}
         </div>
