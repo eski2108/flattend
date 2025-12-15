@@ -547,13 +547,24 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '22px',
-            fontWeight: '700',
-            color: '#FFFFFF',
+            overflow: 'hidden',
             boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
-            border: `2px solid ${coin.color}22`
+            border: `2px solid ${coin.color}22`,
+            padding: '4px'
           }}>
-            {coin.symbol[0]}
+            <img 
+              src={getCoinLogo(coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim())} 
+              alt={coin.symbol}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #FFF">${coin.symbol[0]}</span>`;
+              }}
+            />
           </div>
           
           {/* Coin Info */}
