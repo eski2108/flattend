@@ -211,7 +211,10 @@ from live_market_data_service import get_live_market_service
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db_name = os.environ.get('DB_NAME', 'coin_hub_x')
+db = client[db_name]
+
+logger.info(f"🔵 DATABASE CONNECTED: {db_name}")
 
 # Environment flag for staging vs production
 IS_STAGING = os.getenv('IS_STAGING', 'false').lower() == 'true'
