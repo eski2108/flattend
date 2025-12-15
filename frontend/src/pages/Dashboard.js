@@ -708,11 +708,22 @@ export default function Dashboard() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '14px',
-                            fontWeight: '700',
-                            color: '#000000'
+                            overflow: 'hidden',
+                            padding: '2px'
                           }}>
-                            {asset.currency?.substring(0, 2) || 'CR'}
+                            <img 
+                              src={getCoinLogo(asset.currency)} 
+                              alt={asset.currency}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain'
+                              }}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.innerHTML = `<span style="font-size: 14px; font-weight: 700; color: #000">${asset.currency?.substring(0, 2) || 'CR'}</span>`;
+                              }}
+                            />
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
