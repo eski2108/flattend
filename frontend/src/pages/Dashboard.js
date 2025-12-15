@@ -720,10 +720,16 @@ export default function Dashboard() {
                                 objectFit: 'contain'
                               }}
                               onError={(e) => {
-                                // Fallback to SVG if PNG doesn't exist
-                                const svgPath = `/crypto-icons/${asset.currency.toLowerCase()}.svg`;
-                                e.target.onerror = null;
-                                e.target.src = svgPath;
+                                // Try SVG fallback first
+                                if (!e.target.dataset.triedSvg) {
+                                  e.target.dataset.triedSvg = 'true';
+                                  e.target.src = `/crypto-icons/${asset.currency.toLowerCase()}.svg`;
+                                } else {
+                                  // Final fallback: show first letter
+                                  e.target.style.display = 'none';
+                                  const letter = asset.currency?.substring(0, 1) || '?';
+                                  e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #00F0FF, #7B2CFF); border-radius: 50%; font-size: 16px; font-weight: 700; color: #FFF;">${letter}</div>`;
+                                }
                               }}
                             />
                           </div>
