@@ -336,43 +336,64 @@ export default function Savings() {
           </div>
         </div>
 
-        {/* EMPTY STATE OR ASSET LIST */}
+        {/* PREMIUM EMPTY STATE OR ASSET LIST */}
         {!hasSavings ? (
           <div style={{
-            padding: '80px 20px',
-            textAlign: 'center'
+            padding: '60px 20px',
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.01) 0%, rgba(0, 229, 255, 0.01) 100%)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.03)'
           }}>
             <div style={{
-              fontSize: '48px',
-              marginBottom: '16px',
-              opacity: 0.3
+              width: '80px',
+              height: '80px',
+              margin: '0 auto 24px',
+              background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 197, 215, 0.05))',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '32px',
+              border: '1px solid rgba(0, 229, 255, 0.1)'
             }}>📈</div>
             <div style={{
-              fontSize: '16px',
+              fontSize: '18px',
               color: '#FFFFFF',
               fontWeight: '600',
               marginBottom: '8px'
-            }}>No assets in savings yet</div>
+            }}>Start Your Savings Journey</div>
             <div style={{
               fontSize: '14px',
               color: '#8FA3C8',
-              marginBottom: '24px'
-            }}>Transfer crypto from your wallet to start earning passive yield</div>
+              marginBottom: '32px',
+              maxWidth: '400px',
+              margin: '0 auto 32px'
+            }}>Transfer crypto from your wallet to earn competitive yields with our secure savings products</div>
             <button
               onClick={handleStartSaving}
               style={{
-                padding: '12px 32px',
+                padding: '14px 36px',
                 background: 'linear-gradient(135deg, #00E5FF, #00C5D7)',
                 border: 'none',
-                borderRadius: '24px',
+                borderRadius: '28px',
                 color: '#FFFFFF',
                 fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(0, 229, 255, 0.3)'
+                boxShadow: '0 6px 20px rgba(0, 229, 255, 0.25)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 229, 255, 0.35)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 229, 255, 0.25)';
               }}
             >
-              Start Saving
+              Transfer from Wallet
             </button>
           </div>
         ) : (
