@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoEye, IoEyeOff, IoChevronForward } from 'react-icons/io5';
+import { IoEye, IoEyeOff, IoChevronForward, IoAdd } from 'react-icons/io5';
 import { getCoinLogo } from '../utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -12,7 +12,6 @@ export default function Savings() {
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
   
-  // REAL DATA FROM BACKEND ONLY
   const [totalSavings, setTotalSavings] = useState(0);
   const [availableToWithdraw, setAvailableToWithdraw] = useState(0);
   const [totalInterestEarned, setTotalInterestEarned] = useState(0);
@@ -54,10 +53,6 @@ export default function Savings() {
     }
   };
 
-  const handleStartSaving = () => {
-    navigate('/savings/deposit');
-  };
-
   if (loading) {
     return (
       <div style={{
@@ -72,7 +67,7 @@ export default function Savings() {
           fontSize: '20px',
           color: '#00E5FF',
           fontWeight: '600'
-        }}>Loading Savings...</div>
+        }}>Loading...</div>
       </div>
     );
   }
@@ -83,17 +78,16 @@ export default function Savings() {
     <div style={{
       background: '#060B1A',
       fontFamily: 'Inter, sans-serif',
-      minHeight: '100vh',
       paddingBottom: 0
     }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', paddingBottom: 0 }}>
-        {/* HEADER */}
+        
+        {/* HEADER - Same as Wallet */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '32px',
-          paddingTop: '20px'
+          marginBottom: '32px'
         }}>
           <div>
             <h1 style={{
@@ -110,323 +104,124 @@ export default function Savings() {
             }}>Earn passive yield on your crypto</p>
           </div>
           <button
-            onClick={handleStartSaving}
+            onClick={() => navigate('/savings/deposit')}
             style={{
               padding: '10px 20px',
-              background: 'linear-gradient(135deg, #00E5FF, #00C5D7)',
-              border: 'none',
-              borderRadius: '24px',
-              color: '#FFFFFF',
+              background: 'transparent',
+              border: '1.5px solid #00E5FF',
+              borderRadius: '12px',
+              color: '#00E5FF',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0, 229, 255, 0.25)',
-              transition: 'all 0.2s ease'
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.3s ease'
             }}
           >
+            <IoAdd size={18} />
             Transfer from Wallet
           </button>
         </div>
 
-        {/* VERIFICATION BANNER - REMOVE AFTER CONFIRMING */}
+        {/* BALANCE AREA - FLAT, NO CARD - Same as Wallet */}
         <div style={{
-          background: 'linear-gradient(135deg, #FF0000, #FF6600)',
-          color: '#FFFFFF',
-          padding: '16px',
-          textAlign: 'center',
-          fontSize: '24px',
-          fontWeight: '700',
-          marginBottom: '16px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 20px rgba(255, 0, 0, 0.5)'
+          padding: '24px 20px 20px',
+          marginBottom: '20px'
         }}>
-          ⚠️ NEW DESIGN LOADED - VERSION 2.0 ⚠️
-        </div>
-
-        {/* PREMIUM SAVINGS SUMMARY CARD */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.03) 0%, rgba(0, 197, 215, 0.02) 100%)',
-          borderRadius: '20px',
-          border: '1px solid rgba(0, 229, 255, 0.08)',
-          boxShadow: `
-            0 0 40px rgba(0, 229, 255, 0.06),
-            0 8px 32px rgba(0, 0, 0, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.02)
-          `,
-          padding: '32px',
-          marginBottom: '32px',
-          position: 'relative',
-          overflow: 'hidden',
-          transition: 'all 0.3s ease'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = `
-            0 0 60px rgba(0, 229, 255, 0.1),
-            0 12px 48px rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.03)
-          `;
-          e.currentTarget.style.transform = 'translateY(-2px)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = `
-            0 0 40px rgba(0, 229, 255, 0.06),
-            0 8px 32px rgba(0, 0, 0, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.02)
-          `;
-          e.currentTarget.style.transform = 'translateY(0px)';
-        }}
-        >
-          {/* Subtle glow overlay */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.3), transparent)'
-          }} />
-          
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '48px'
+            gap: '12px',
+            marginBottom: '8px'
           }}>
-            {/* Total Savings */}
             <div style={{
-              flex: 1,
-              textAlign: 'center',
-              position: 'relative'
-            }}>
-              <div style={{
+              fontSize: '11px',
+              color: '#8FA3C8',
+              fontWeight: '500',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>Total Savings Value</div>
+            <button
+              onClick={() => setBalanceVisible(!balanceVisible)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#8FA3C8',
+                cursor: 'pointer',
+                padding: '2px',
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '12px'
-              }}>
-                <div style={{
-                  fontSize: '11px',
-                  color: '#8FA3C8',
-                  fontWeight: '600',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>Total Savings</div>
-                <button
-                  onClick={() => setBalanceVisible(!balanceVisible)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#8FA3C8',
-                    cursor: 'pointer',
-                    padding: '4px',
-                    borderRadius: '6px',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(0, 229, 255, 0.1)';
-                    e.currentTarget.style.color = '#00E5FF';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'none';
-                    e.currentTarget.style.color = '#8FA3C8';
-                  }}
-                >
-                  {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
-                </button>
-              </div>
-              <div style={{
-                fontSize: '32px',
-                fontWeight: '700',
-                color: '#FFFFFF',
-                marginBottom: '4px',
-                textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
-              }}>
-                {balanceVisible ? `£${totalSavings.toFixed(2)}` : '••••••'}
-              </div>
-              <div style={{
-                fontSize: '12px',
-                color: '#6B7A99',
-                fontWeight: '500'
-              }}>Portfolio Value</div>
+                alignItems: 'center'
+              }}
+            >
+              {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
+            </button>
+          </div>
+          <div style={{
+            fontSize: '40px',
+            fontWeight: '700',
+            color: '#FFFFFF',
+            lineHeight: '1',
+            marginBottom: '8px'
+          }}>
+            {balanceVisible ? `£${totalSavings.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '••••••'}
+          </div>
+          <div style={{
+            display: 'flex',
+            gap: '24px',
+            fontSize: '14px'
+          }}>
+            <div>
+              <span style={{ color: '#8FA3C8' }}>Available: </span>
+              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                {balanceVisible ? `£${availableToWithdraw.toFixed(2)}` : '•••'}
+              </span>
             </div>
-
-            {/* Subtle Divider */}
-            <div style={{
-              width: '1px',
-              height: '80px',
-              background: 'linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.15), transparent)',
-              position: 'relative'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '3px',
-                height: '3px',
-                background: '#00E5FF',
-                borderRadius: '50%',
-                boxShadow: '0 0 8px rgba(0, 229, 255, 0.6)'
-              }} />
-            </div>
-
-            {/* Available to Withdraw */}
-            <div style={{
-              flex: 1,
-              textAlign: 'center'
-            }}>
-              <div style={{
-                fontSize: '11px',
-                color: '#8FA3C8',
-                fontWeight: '600',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '12px'
-              }}>Available</div>
-              <div style={{
-                fontSize: '32px',
-                fontWeight: '700',
-                color: '#FFFFFF',
-                marginBottom: '4px',
-                textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
-              }}>
-                {balanceVisible ? `£${availableToWithdraw.toFixed(2)}` : '••••••'}
-              </div>
-              <div style={{
-                fontSize: '12px',
-                color: '#6B7A99',
-                fontWeight: '500'
-              }}>Ready to withdraw</div>
-            </div>
-
-            {/* Subtle Divider */}
-            <div style={{
-              width: '1px',
-              height: '80px',
-              background: 'linear-gradient(180deg, transparent, rgba(22, 199, 132, 0.15), transparent)',
-              position: 'relative'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '3px',
-                height: '3px',
-                background: '#16C784',
-                borderRadius: '50%',
-                boxShadow: '0 0 8px rgba(22, 199, 132, 0.6)'
-              }} />
-            </div>
-
-            {/* Total Interest Earned */}
-            <div style={{
-              flex: 1,
-              textAlign: 'center'
-            }}>
-              <div style={{
-                fontSize: '11px',
-                color: '#8FA3C8',
-                fontWeight: '600',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '12px'
-              }}>Total Earned</div>
-              <div style={{
-                fontSize: '32px',
-                fontWeight: '700',
-                color: '#16C784',
-                marginBottom: '4px',
-                textShadow: '0 2px 8px rgba(22, 199, 132, 0.2)'
-              }}>
-                {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '••••••'}
-              </div>
-              <div style={{
-                fontSize: '12px',
-                color: '#6B7A99',
-                fontWeight: '500'
-              }}>Lifetime earnings</div>
+            <div>
+              <span style={{ color: '#8FA3C8' }}>Interest Earned: </span>
+              <span style={{ color: '#16C784', fontWeight: '600' }}>
+                {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '•••'}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* PREMIUM EMPTY STATE OR ASSET LIST */}
+        {/* SAVINGS ASSETS */}
         {!hasSavings ? (
           <div style={{
             padding: '60px 20px',
             textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.01) 0%, rgba(0, 229, 255, 0.01) 100%)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.03)'
+            color: '#8FA3C8'
           }}>
-            <div style={{
-              width: '80px',
-              height: '80px',
-              margin: '0 auto 24px',
-              background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 197, 215, 0.05))',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '32px',
-              border: '1px solid rgba(0, 229, 255, 0.1)'
-            }}>📈</div>
-            <div style={{
-              fontSize: '18px',
-              color: '#FFFFFF',
-              fontWeight: '600',
-              marginBottom: '8px'
-            }}>Start Your Savings Journey</div>
-            <div style={{
-              fontSize: '14px',
-              color: '#8FA3C8',
-              marginBottom: '32px',
-              maxWidth: '400px',
-              margin: '0 auto 32px'
-            }}>Transfer crypto from your wallet to earn competitive yields with our secure savings products</div>
+            <p style={{ fontSize: '14px', margin: '0 0 16px 0' }}>
+              No assets earning yield yet
+            </p>
             <button
-              onClick={handleStartSaving}
+              onClick={() => navigate('/savings/deposit')}
               style={{
-                padding: '14px 36px',
-                background: 'linear-gradient(135deg, #00E5FF, #00C5D7)',
+                padding: '10px 24px',
+                background: '#0047D9',
                 border: 'none',
-                borderRadius: '28px',
+                borderRadius: '12px',
                 color: '#FFFFFF',
-                fontSize: '15px',
+                fontSize: '14px',
                 fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 6px 20px rgba(0, 229, 255, 0.25)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 229, 255, 0.35)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 229, 255, 0.25)';
+                cursor: 'pointer'
               }}
             >
-              Transfer from Wallet
+              Start Earning
             </button>
           </div>
         ) : (
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 229, 255, 0.01) 100%)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.04)',
-            overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
-          }}>
+          <div>
             <div style={{
-              fontSize: '16px',
-              color: '#FFFFFF',
-              fontWeight: '600',
-              marginBottom: '0px',
-              padding: '24px 24px 16px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.04)'
-            }}>Your Savings Portfolio</div>
+              fontSize: '14px',
+              color: '#8FA3C8',
+              fontWeight: '500',
+              marginBottom: '12px',
+              padding: '0 20px'
+            }}>Your Savings</div>
             
             {savingsAssets.map((asset, idx) => {
               const currency = asset.currency || asset.asset || 'BTC';
@@ -443,21 +238,14 @@ export default function Savings() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '18px 24px',
+                    padding: '14px 20px',
                     background: 'transparent',
-                    borderBottom: idx === savingsAssets.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.04)',
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    position: 'relative'
+                    transition: 'background 0.15s'
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(90deg, rgba(0, 229, 255, 0.03), rgba(0, 197, 215, 0.02))';
-                    e.currentTarget.style.transform = 'translateX(4px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.transform = 'translateX(0px)';
-                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
                   <div style={{
                     display: 'flex',
@@ -475,8 +263,8 @@ export default function Savings() {
                       }}
                       onError={(e) => {
                         e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${currency.toLowerCase()}.png`;
-                        e.target.onerror = (err) => {
-                          err.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyMCIgZmlsbD0iIzAwRTVGRiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj4kPC90ZXh0Pjwvc3ZnPg==';
+                        e.target.onerror = () => {
+                          e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyMCIgZmlsbD0iIzAwRTVGRiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj4kPC90ZXh0Pjwvc3ZnPg==';
                         };
                       }}
                     />
@@ -491,67 +279,42 @@ export default function Savings() {
                         fontSize: '13px',
                         color: '#6B7A99',
                         fontWeight: '400'
-                      }}>Saving</div>
+                      }}>{amount.toFixed(8)}</div>
                     </div>
                   </div>
 
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '16px',
-                    flex: 1,
-                    justifyContent: 'center'
+                    gap: '32px'
                   }}>
-                    <div style={{ textAlign: 'center' }}>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{
+                        fontSize: '13px',
+                        color: '#16C784',
+                        fontWeight: '600',
+                        marginBottom: '2px'
+                      }}>
+                        {apy.toFixed(1)}% APY
+                      </div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#8FA3C8'
+                      }}>
+                        +£{interestEarned.toFixed(2)} earned
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: 'right' }}>
                       <div style={{
                         fontSize: '15px',
                         fontWeight: '600',
                         color: '#FFFFFF'
                       }}>
-                        {amount.toFixed(8)} {currency}
-                      </div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#8FA3C8',
-                        marginTop: '2px'
-                      }}>
                         £{gbpValue.toFixed(2)}
                       </div>
                     </div>
-                    <div style={{
-                      padding: '4px 10px',
-                      background: 'rgba(22, 199, 132, 0.15)',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#16C784'
-                    }}>
-                      {apy.toFixed(1)}% APY
-                    </div>
-                  </div>
 
-                  <div style={{
-                    textAlign: 'right',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
-                  }}>
-                    <div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#16C784',
-                        fontWeight: '600'
-                      }}>
-                        +£{interestEarned.toFixed(2)}
-                      </div>
-                      <div style={{
-                        fontSize: '12px',
-                        color: '#8FA3C8',
-                        marginTop: '2px'
-                      }}>
-                        Interest
-                      </div>
-                    </div>
                     <IoChevronForward size={18} style={{ color: '#6B7A99' }} />
                   </div>
                 </div>
