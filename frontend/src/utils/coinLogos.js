@@ -37,21 +37,29 @@ export const getCoinLogo = (symbol) => {
  * @param {number} size - Size in pixels (default 28)
  * @returns {JSX} - Image element
  */
-export const CoinLogo = ({ symbol, size = 28, style = {} }) => (
-  <img
-    src={getCoinLogo(symbol)}
-    alt={symbol}
-    style={{
-      width: `${size}px`,
-      height: `${size}px`,
-      objectFit: 'contain',
-      ...style
-    }}
-    onError={(e) => {
-      // Fallback to a default coin icon if logo not found
-      e.target.style.display = 'none';
-    }}
-  />
-);
+export const CoinLogo = ({ symbol, size = 28, style = {} }) => {
+  const handleError = (e) => {
+    // Fallback to cryptocurrency.link icons
+    e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${symbol?.toLowerCase() || 'btc'}.png`;
+    e.target.onerror = (err) => {
+      // Final fallback - generic coin icon
+      err.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iIzM0OEFBNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj4kPC90ZXh0Pjwvc3ZnPg==';
+    };
+  };
+  
+  return (
+    <img
+      src={getCoinLogo(symbol)}
+      alt={symbol}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        objectFit: 'contain',
+        ...style
+      }}
+      onError={handleError}
+    />
+  );
+};
 
 export default getCoinLogo;
