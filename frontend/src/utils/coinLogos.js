@@ -1,16 +1,15 @@
 /**
- * Get real cryptocurrency logo from multiple sources
+ * Get real cryptocurrency logo from multiple sources with fallback
  * @param {string} symbol - Coin symbol (BTC, ETH, etc.)
  * @returns {string} - Path to logo image
  */
 export const getCoinLogo = (symbol) => {
-  if (!symbol) return 'https://cryptologos.cc/logos/bitcoin-btc-logo.png';
+  if (!symbol) return 'https://raw.githubusercontent.com/ErikThiart/cryptocurrency-icons/master/32/bitcoin.png';
   
-  const upperSymbol = symbol.toUpperCase();
   const lowerSymbol = symbol.toLowerCase();
   
-  // Try CryptoCompare first (has most coins)
-  return `https://www.cryptocompare.com/media/37746251/${lowerSymbol}.png`;
+  // Use cryptocurrency-icons GitHub repo - has 2000+ coins
+  return `https://raw.githubusercontent.com/ErikThiart/cryptocurrency-icons/master/32/${lowerSymbol}.png`;
 };
 
 /**
