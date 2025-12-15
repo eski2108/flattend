@@ -128,6 +128,21 @@ export default function Savings() {
           </button>
         </div>
 
+        {/* VERIFICATION BANNER - REMOVE AFTER CONFIRMING */}
+        <div style={{
+          background: 'linear-gradient(135deg, #FF0000, #FF6600)',
+          color: '#FFFFFF',
+          padding: '16px',
+          textAlign: 'center',
+          fontSize: '24px',
+          fontWeight: '700',
+          marginBottom: '16px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 20px rgba(255, 0, 0, 0.5)'
+        }}>
+          ⚠️ NEW DESIGN LOADED - VERSION 2.0 ⚠️
+        </div>
+
         {/* PREMIUM SAVINGS SUMMARY CARD */}
         <div style={{
           background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.03) 0%, rgba(0, 197, 215, 0.02) 100%)',
