@@ -4,12 +4,31 @@
  * @returns {string} - Path to logo image
  */
 export const getCoinLogo = (symbol) => {
-  if (!symbol) return 'https://raw.githubusercontent.com/ErikThiart/cryptocurrency-icons/master/32/bitcoin.png';
+  if (!symbol) return 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029';
   
+  const upperSymbol = symbol.toUpperCase();
   const lowerSymbol = symbol.toLowerCase();
   
-  // Use cryptocurrency-icons GitHub repo - has 2000+ coins
-  return `https://raw.githubusercontent.com/ErikThiart/cryptocurrency-icons/master/32/${lowerSymbol}.png`;
+  // Map of special cases
+  const specialMappings = {
+    'USDT': 'tether',
+    'USDC': 'usd-coin',
+    'BNB': 'bnb',
+    'MATIC': 'polygon',
+    'WBTC': 'wrapped-bitcoin',
+    'DAI': 'multi-collateral-dai',
+    'SHIB': 'shiba-inu',
+    'UNI': 'uniswap',
+    'LINK': 'chainlink',
+    'AVAX': 'avalanche',
+    'ATOM': 'cosmos',
+    'XRP': 'xrp'
+  };
+  
+  const coinName = specialMappings[upperSymbol] || lowerSymbol;
+  
+  // Use CryptoLogos.cc - most reliable
+  return `https://cryptologos.cc/logos/${coinName}-${lowerSymbol}-logo.png?v=029`;
 };
 
 /**
