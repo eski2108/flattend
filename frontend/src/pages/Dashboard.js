@@ -21,8 +21,8 @@ import {
   IoStar
 } from 'react-icons/io5';
 
-// Import crypto emojis from utils
-import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
+// Import crypto icons (symbols, not emojis) from utils
+import { getCryptoIcon, getCryptoColor } from '@/utils/cryptoIcons';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
