@@ -19225,28 +19225,63 @@ except Exception as e:
 @api_router.get("/wallets/coin-metadata")
 async def get_wallet_coin_metadata():
     """
-    Get metadata for all supported coins (PUBLIC ENDPOINT)
+    Get metadata for ALL supported coins from NowPayments (PUBLIC ENDPOINT)
     Returns coin configuration for dynamic wallet rendering
     Used by frontend to generate wallet UI automatically
     """
     try:
-        # Get all enabled coins from database
-        coins = await db.supported_coins.find(
+        # Fetch ALL currencies from NowPayments
+        try:
+            nowpayments_response = requests.get(
+                "https://api.nowpayments.io/v1/currencies",
+                headers={"x-api-key": NOWPAYMENTS_API_KEY},
+                timeout=10
+            )
+            nowpayments_currencies = nowpayments_response.json().get("currencies", [])
+            logger.info(f"✅ Fetched {len(nowpayments_currencies)} currencies from NowPayments")
+        except Exception as e:
+            logger.error(f"❌ Failed to fetch NowPayments currencies: {e}")
+            nowpayments_currencies = []
+        
+        # Get all enabled coins from database (for custom settings)
+        db_coins = await db.supported_coins.find(
             {"enabled": True},
             {"_id": 0}
-        ).to_list(100)
+        ).to_list(500)
         
-        # If no coins in DB, use default SUPPORTED_CRYPTOCURRENCIES
-        if not coins:
+        # Create a mapping of DB coins for quick lookup
+        db_coins_map = {coin["symbol"]: coin for coin in db_coins}
+        
+        # If NowPayments returned currencies, use those as the source of truth
+        if nowpayments_currencies:
             coins = []
-            for symbol, info in SUPPORTED_CRYPTOCURRENCIES.items():
+            for np_currency in nowpayments_currencies:
+                # Convert NowPayments currency code to symbol (uppercase first part)
+                symbol = np_currency.upper().replace("TRC20", "").replace("ERC20", "").replace("BSC", "").replace("MAINNET", "").replace("POLYGON", "").replace("ARBITRUM", "").replace("OPTIMISM", "").replace("SOL", "").replace("C", "").strip()[:10]
+                
+                # Check if we have custom settings in DB
+                db_coin = db_coins_map.get(symbol, {})
+                
                 coins.append({
-                    "symbol": symbol,
-                    "name": info["name"],
-                    "network": info["network"],
-                    "decimals": info["decimals"],
+                    "symbol": symbol if symbol else np_currency.upper()[:6],
+                    "name": db_coin.get("name", symbol),
+                    "network": db_coin.get("network", f"{symbol} Network"),
+                    "decimals": db_coin.get("decimals", 8),
+                    "nowpayments_code": np_currency,
                     "enabled": True
                 })
+        else:
+            # Fallback to DB coins if NowPayments fails
+            coins = db_coins if db_coins else []
+            for symbol, info in SUPPORTED_CRYPTOCURRENCIES.items():
+                if symbol not in db_coins_map:
+                    coins.append({
+                        "symbol": symbol,
+                        "name": info["name"],
+                        "network": info["network"],
+                        "decimals": info["decimals"],
+                        "enabled": True
+                    })
         
         # Define coin colors matching premium design spec
         COIN_COLORS = {
