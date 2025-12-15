@@ -19256,8 +19256,17 @@ async def get_wallet_coin_metadata():
         if nowpayments_currencies:
             coins = []
             for np_currency in nowpayments_currencies:
-                # Convert NowPayments currency code to symbol (uppercase first part)
-                symbol = np_currency.upper().replace("TRC20", "").replace("ERC20", "").replace("BSC", "").replace("MAINNET", "").replace("POLYGON", "").replace("ARBITRUM", "").replace("OPTIMISM", "").replace("SOL", "").replace("C", "").strip()[:10]
+                # Extract clean symbol from NowPayments code
+                # Remove network suffixes but keep the base symbol
+                symbol = np_currency.upper()
+                for suffix in ["TRC20", "ERC20", "BSC", "MAINNET", "POLYGON", "ARBITRUM", "OPTIMISM", "CELO", "BASE", "SOL"]:
+                    if symbol.endswith(suffix):
+                        symbol = symbol[:-(len(suffix))]
+                        break
+                
+                # Fallback: use first 3-6 characters if symbol is too long
+                if len(symbol) > 10:
+                    symbol = symbol[:6]
                 
                 # Check if we have custom settings in DB
                 db_coin = db_coins_map.get(symbol, {})
@@ -19265,7 +19274,7 @@ async def get_wallet_coin_metadata():
                 coins.append({
                     "symbol": symbol if symbol else np_currency.upper()[:6],
                     "name": db_coin.get("name", symbol),
-                    "network": db_coin.get("network", f"{symbol} Network"),
+                    "network": db_coin.get("network", np_currency),
                     "decimals": db_coin.get("decimals", 8),
                     "nowpayments_code": np_currency,
                     "enabled": True
