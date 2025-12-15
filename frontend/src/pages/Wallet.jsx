@@ -52,9 +52,36 @@ export default function Wallet() {
               {balances.map((bal) => (
                 <div key={bal.currency} className="swap-theme-card" style={{ padding: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <p className="swap-theme-text-secondary" style={{ fontSize: '14px', marginBottom: '4px' }}>{bal.currency}</p>
-                      <h3 className="swap-theme-accent" style={{ fontSize: '24px', fontWeight: '700' }}>{bal.balance}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #00F0FF, #0080FF)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden',
+                        padding: '4px'
+                      }}>
+                        <img 
+                          src={getCoinLogo(bal.currency)} 
+                          alt={bal.currency}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain'
+                          }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #000">${bal.currency?.substring(0, 2) || 'CR'}</span>`;
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <p className="swap-theme-text-secondary" style={{ fontSize: '14px', marginBottom: '4px' }}>{bal.currency}</p>
+                        <h3 className="swap-theme-accent" style={{ fontSize: '24px', fontWeight: '700' }}>{bal.balance}</h3>
+                      </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button className="swap-theme-button" style={{ padding: '8px 16px' }}>Deposit</button>
