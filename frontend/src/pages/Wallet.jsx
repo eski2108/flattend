@@ -61,10 +61,12 @@ export default function Wallet() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '28px',
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#FFFFFF',
                         boxShadow: `0 0 15px ${getCryptoColor(bal.currency)}66`
                       }}>
-                        {getCryptoEmoji(bal.currency)}
+                        {getCryptoIcon(bal.currency)}
                       </div>
                       <div>
                         <p className="swap-theme-text-secondary" style={{ fontSize: '14px', marginBottom: '4px' }}>{bal.currency}</p>
