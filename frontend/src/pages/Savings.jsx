@@ -428,14 +428,21 @@ export default function Savings() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '14px 20px',
+                    padding: '18px 24px',
                     background: 'transparent',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    borderBottom: idx === savingsAssets.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.04)',
                     cursor: 'pointer',
-                    transition: 'background 0.15s'
+                    transition: 'all 0.2s ease',
+                    position: 'relative'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(90deg, rgba(0, 229, 255, 0.03), rgba(0, 197, 215, 0.02))';
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.transform = 'translateX(0px)';
+                  }}
                 >
                   <div style={{
                     display: 'flex',
