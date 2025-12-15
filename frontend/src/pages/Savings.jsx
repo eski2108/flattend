@@ -2,68 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Savings.css';
-import { 
-  IoEye, 
-  IoEyeOff, 
-  IoChevronDown, 
-  IoChevronUp,
-  IoWallet,
-  IoAdd,
-  IoRemove,
-  IoArrowForward,
-  IoTrendingUp,
-  IoTime,
-  IoFilter,
-  IoSwapHorizontal
-} from 'react-icons/io5';
-import { getCoinLogo } from '../utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function Savings() {
+const Savings = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [balanceVisible, setBalanceVisible] = useState(true);
-  const [expandedAsset, setExpandedAsset] = useState(null);
-  const [chartRange, setChartRange] = useState('30d');
-  const [sortBy, setSortBy] = useState('name');
-  const [filters, setFilters] = useState({ active: false, flexible: false, staked: false });
-  
-  // Real backend data
-  const [totalSavings, setTotalSavings] = useState(0);
-  const [availableToTransfer, setAvailableToTransfer] = useState(0);
+  const [positions, setPositions] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [availableBalance, setAvailableBalance] = useState(0);
   const [totalInterestEarned, setTotalInterestEarned] = useState(0);
-  const [savingsAssets, setSavingsAssets] = useState([]);
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [sortBy, setSortBy] = useState('name');
+  const [filterActive, setFilterActive] = useState(false);
+  const [filterType, setFilterType] = useState('all');
+  const [selectedWallet, setSelectedWallet] = useState('main');
+  const [graphPeriod, setGraphPeriod] = useState('30d');
 
   useEffect(() => {
-    const userData = localStorage.getItem('cryptobank_user');
-    if (!userData) {
-      navigate('/login');
-      return;
-    }
-    const parsedUser = JSON.parse(userData);
-    setUser(parsedUser);
-    loadSavingsData(parsedUser.user_id);
-  }, [navigate]);
+    loadSavingsData();
+  }, []);
 
-  const loadSavingsData = async (userId) => {
-    setLoading(true);
+  const loadSavingsData = async () => {
     try {
-      const [summaryRes, positionsRes] = await Promise.all([
-        axios.get(`${API}/api/savings/summary/${userId}`).catch(() => ({ data: { success: false } })),
-        axios.get(`${API}/api/savings/positions/${userId}`).catch(() => ({ data: { success: false, positions: [] } }))
-      ]);
-
-      if (summaryRes.data.success && summaryRes.data.summary) {
-        const summary = summaryRes.data.summary;
-        setTotalSavings(summary.total_value_gbp || 0);
-        setAvailableToTransfer(summary.available_balance_gbp || 0);
-        setTotalInterestEarned(summary.total_earnings || 0);
-      }
-
-      if (positionsRes.data.success && positionsRes.data.positions) {
-        setSavingsAssets(positionsRes.data.positions);
+      setLoading(true);
+      const userId = localStorage.getItem('user_id');
+      
+      // Get user's savings positions
+      const response = await axios.get(`${API}/api/savings/positions/${userId}`);
+      
+      if (response.data.success) {
+        const data = response.data;
+        setPositions(data.positions || []);
+        setTotalBalance(data.total_balance_usd || 0);
+        setAvailableBalance(data.available_balance_usd || 0);
+        setTotalInterestEarned(data.total_interest_earned_usd || 0);
       }
     } catch (error) {
       console.error('Error loading savings:', error);
@@ -72,268 +45,278 @@ export default function Savings() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="savings-container">
-        <div className="loading-text">Loading Savings Vault...</div>
-      </div>
-    );
-  }
+  const toggleCard = (index) => {
+    setExpandedCard(expandedCard === index ? null : index);
+  };
 
-  const hasSavings = savingsAssets.length > 0;
+  const handleToggleFlexibleStaked = (index, newType) => {
+    // Handle toggle
+    console.log('Toggle flexible/staked', index, newType);
+  };
+
+  const handleToggleAutoCompound = (index) => {
+    // Handle auto-compound toggle
+    console.log('Toggle auto-compound', index);
+  };
 
   return (
-    <div className="savings-container">
-      <div className="savings-content">
+    <div className="savings-vault">
+      {/* PAGE HEADER */}
+      <header className="savings-header">
+        <h1 className="savings-title">Savings Vault</h1>
         
-        {/* HEADER */}
-        <div className="savings-header">
-          <h1 className="savings-title neon-glow-blue">Savings Vault</h1>
-          <div className="header-actions">
-            <button className="wallet-selector">
-              <IoWallet size={18} />
-              <span>Main Wallet</span>
-              <IoChevronDown size={16} />
-            </button>
-            <button 
-              className="transfer-button neon-glow-button"
-              onClick={() => navigate('/savings/deposit')}
-            >
-              Transfer from Wallet
-            </button>
+        <div className="header-actions">
+          {/* Wallet Selector */}
+          <div className="wallet-selector">
+            <span>Wallet: {selectedWallet}</span>
+            <span className="dropdown-arrow">▼</span>
+          </div>
+          
+          {/* Transfer Button */}
+          <button className="transfer-button">
+            Transfer from Wallet
+          </button>
+        </div>
+      </header>
+
+      {/* SUMMARY CARDS */}
+      <div className="summary-cards">
+        {/* Total Balance Card */}
+        <div className="summary-card">
+          <div className="card-label">Total Balance</div>
+          <div className="card-value">${totalBalance.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot"></span>
+            <span className="live-text">Live</span>
           </div>
         </div>
 
-        {/* TOP SUMMARY CARDS - Glassmorphic */}
-        <div className="summary-grid">
-          {/* Total Balance */}
-          <div className="summary-card glass-card">
-            <div className="summary-label">
-              <span>Total Balance</span>
-              <span className="live-indicator">
-                <span className="live-dot pulse-animation" />
-                Live
-              </span>
-            </div>
-            <div className="summary-value">
-              {balanceVisible ? `£${totalSavings.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '••••••'}
-            </div>
-            <div className="summary-crypto">≈ 0.000 BTC</div>
-            <button onClick={() => setBalanceVisible(!balanceVisible)} className="eye-button">
-              {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
-            </button>
-          </div>
-
-          {/* Available to Transfer */}
-          <div className="summary-card glass-card">
-            <div className="summary-label">
-              <span>Available to Transfer</span>
-              <span className="live-indicator">
-                <span className="live-dot pulse-animation" />
-                Live
-              </span>
-            </div>
-            <div className="summary-value">
-              {balanceVisible ? `£${availableToTransfer.toFixed(2)}` : '••••••'}
-            </div>
-            <div className="summary-crypto">≈ 0.000 BTC</div>
-          </div>
-
-          {/* Interest Earned */}
-          <div className="summary-card glass-card green-accent">
-            <div className="summary-label">
-              <span>Interest Earned to Date</span>
-              <span className="live-indicator">
-                <span className="live-dot pulse-animation" />
-                Live
-              </span>
-            </div>
-            <div className="summary-value green-text">
-              {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '••••••'}
-            </div>
-            <div className="summary-crypto green-text">≈ 0.000 BTC</div>
+        {/* Available to Transfer Card */}
+        <div className="summary-card">
+          <div className="card-label">Available to Transfer</div>
+          <div className="card-value">${availableBalance.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot"></span>
+            <span className="live-text">Live</span>
           </div>
         </div>
 
-        {/* REFERRAL BANNER */}
-        <div className="referral-banner glass-card purple-glow" onClick={() => {}}>
-          <span>Invite friends, earn more</span>
-          <IoArrowForward size={20} />
+        {/* Interest Earned Card */}
+        <div className="summary-card">
+          <div className="card-label">Interest Earned to Date</div>
+          <div className="card-value">${totalInterestEarned.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot"></span>
+            <span className="live-text">Live</span>
+          </div>
         </div>
+      </div>
 
-        {/* YOUR SAVINGS SECTION */}
-        {!hasSavings ? (
-          <div className="empty-state glass-card">
-            <div className="empty-icon">
-              <IoTrendingUp size={64} />
-            </div>
-            <h3 className="empty-title">No assets earning yet</h3>
-            <p className="empty-text">Transfer crypto from your wallet to start earning yield</p>
-            <button 
-              className="empty-button neon-glow-button"
-              onClick={() => navigate('/savings/deposit')}
-            >
-              Start Earning
+      {/* REFERRAL BANNER */}
+      <div className="referral-banner">
+        <span className="referral-text">Invite friends, earn more ➜</span>
+      </div>
+
+      {/* SORTING & FILTERS */}
+      <div className="controls-bar">
+        <div className="sort-control">
+          <span>Sort: {sortBy}</span>
+          <span className="dropdown-arrow">▼</span>
+        </div>
+        
+        <div className="filter-controls">
+          <button 
+            className={`filter-btn ${filterActive ? 'active' : ''}`}
+            onClick={() => setFilterActive(!filterActive)}
+          >
+            Active {filterActive && '✓'}
+          </button>
+          <button 
+            className={`filter-btn ${filterType === 'flexible' ? 'active' : ''}`}
+            onClick={() => setFilterType(filterType === 'flexible' ? 'all' : 'flexible')}
+          >
+            Flexible
+          </button>
+          <button 
+            className={`filter-btn ${filterType === 'staked' ? 'active' : ''}`}
+            onClick={() => setFilterType(filterType === 'staked' ? 'all' : 'staked')}
+          >
+            Staked
+          </button>
+        </div>
+      </div>
+
+      {/* YOUR SAVINGS - PORTFOLIO LIST */}
+      <div className="portfolio-section">
+        <h2 className="section-title">Your Savings</h2>
+        
+        {loading ? (
+          <div className="loading-state">Loading your savings...</div>
+        ) : positions.length === 0 ? (
+          <div className="empty-state">
+            <p>You don't have any savings yet.</p>
+            <button className="transfer-button" onClick={() => navigate('/wallet')}>
+              Start Saving Now
             </button>
           </div>
         ) : (
-          <div className="portfolio-section">
-            {/* Sort & Filter Controls */}
-            <div className="controls-bar">
-              <div className="sort-control">
-                <IoSwapHorizontal size={16} />
-                <span>Sort: Token Name</span>
-                <IoChevronDown size={14} />
-              </div>
-              <div className="filter-control">
-                <IoFilter size={16} />
-                <span>Filters</span>
-              </div>
-            </div>
-
-            <h2 className="section-title">Your Savings</h2>
-            
-            {savingsAssets.map((asset, idx) => {
-              const currency = asset.currency || asset.asset || 'BTC';
-              const amount = parseFloat(asset.amount || asset.balance || 0);
-              const gbpValue = parseFloat(asset.value_gbp || asset.balance_gbp || 0);
-              const apy = parseFloat(asset.apy || 5.0);
-              const interestEarned = parseFloat(asset.interest_earned || asset.earnings || 0);
-              const monthlyEst = (amount * (apy / 100)) / 12;
-              const isExpanded = expandedAsset === idx;
-
-              return (
-                <div key={idx} className={`asset-card glass-card ${isExpanded ? 'expanded' : ''}`}>
-                  {/* Collapsed View */}
-                  <div 
-                    className="asset-header"
-                    onClick={() => setExpandedAsset(isExpanded ? null : idx)}
-                  >
-                    <div className="asset-info">
-                      <img
-                        src={getCoinLogo(currency)}
-                        alt={currency}
-                        className="asset-icon"
-                        onError={(e) => {
-                          e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${currency.toLowerCase()}.png`;
-                        }}
-                      />
-                      <div>
-                        <div className="asset-name">{currency}</div>
-                        <div className="asset-balance">{amount.toFixed(8)}</div>
-                      </div>
-                    </div>
-
-                    <div className="asset-middle">
-                      <div className="asset-stat">
-                        <span className="stat-label">APY:</span>
-                        <span className="stat-value green-text">{apy.toFixed(1)}%</span>
-                      </div>
-                      <div className="asset-stat">
-                        <span className="stat-label">Interest:</span>
-                        <span className="stat-value green-text">£{interestEarned.toFixed(2)}</span>
-                      </div>
-                      <div className="asset-stat">
-                        <span className="stat-label">Est. Monthly:</span>
-                        <span className="stat-value">{monthlyEst.toFixed(8)} {currency}</span>
-                      </div>
-                    </div>
-
-                    <div className="asset-right">
-                      <div className="asset-fiat">£{gbpValue.toFixed(2)}</div>
-                      <div className="toggles-row">
-                        <div className="toggle-pill">
-                          <button className="pill-option active">Flexible</button>
-                          <button className="pill-option">Staked</button>
-                        </div>
-                        <div className="auto-compound-toggle">
-                          <label className="toggle-switch">
-                            <input type="checkbox" />
-                            <span className="toggle-slider"></span>
-                          </label>
-                          <span className="toggle-label">Auto-Compound</span>
-                        </div>
-                      </div>
-                      {isExpanded ? <IoChevronUp size={20} /> : <IoChevronDown size={20} />}
+          <div className="token-cards">
+            {positions.map((position, index) => (
+              <div 
+                key={index} 
+                className={`token-card ${expandedCard === index ? 'expanded' : ''}`}
+              >
+                {/* COLLAPSED VIEW */}
+                <div className="card-header" onClick={() => toggleCard(index)}>
+                  <div className="token-info">
+                    <div className="token-icon">{position.symbol.substring(0, 1)}</div>
+                    <div className="token-name">
+                      {position.name} ({position.symbol})
                     </div>
                   </div>
+                  
+                  <div className="token-stats">
+                    <div className="balance">
+                      {position.balance} {position.symbol}
+                      <span className="fiat-value">≈ ${position.balance_usd}</span>
+                    </div>
+                    
+                    <div className="apy-info">
+                      <span className="apy-label">APY:</span>
+                      <span className="apy-value">{position.apy}%</span>
+                    </div>
+                    
+                    <div className="interest-earned">
+                      Interest: {position.interest_earned} {position.symbol}
+                    </div>
+                    
+                    <div className="est-monthly">
+                      Est. Monthly: ~${position.estimated_monthly}
+                    </div>
+                  </div>
+                  
+                  <div className="card-toggles">
+                    <div className="flexible-staked-toggle">
+                      <button 
+                        className={position.type === 'flexible' ? 'active' : ''}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFlexibleStaked(index, 'flexible');
+                        }}
+                      >
+                        Flexible
+                      </button>
+                      <button 
+                        className={position.type === 'staked' ? 'active' : ''}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFlexibleStaked(index, 'staked');
+                        }}
+                      >
+                        Staked
+                      </button>
+                    </div>
+                    
+                    <div className="auto-compound-toggle">
+                      <label>
+                        Auto-Compound
+                        <input 
+                          type="checkbox" 
+                          checked={position.auto_compound}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleToggleAutoCompound(index);
+                          }}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="expand-arrow">
+                    {expandedCard === index ? '▲' : '▼'}
+                  </div>
+                </div>
 
-                  {/* Expanded View */}
-                  {isExpanded && (
-                    <div className="asset-expanded">
-                      {/* Chart Range Toggle */}
-                      <div className="chart-controls">
-                        <button
-                          className={chartRange === '30d' ? 'chart-btn active' : 'chart-btn'}
-                          onClick={() => setChartRange('30d')}
+                {/* EXPANDED VIEW */}
+                {expandedCard === index && (
+                  <div className="card-expanded">
+                    {/* Graph Section */}
+                    <div className="graph-section">
+                      <div className="graph-controls">
+                        <button 
+                          className={graphPeriod === '30d' ? 'active' : ''}
+                          onClick={() => setGraphPeriod('30d')}
                         >
                           30D
                         </button>
-                        <button
-                          className={chartRange === '90d' ? 'chart-btn active' : 'chart-btn'}
-                          onClick={() => setChartRange('90d')}
+                        <button 
+                          className={graphPeriod === '90d' ? 'active' : ''}
+                          onClick={() => setGraphPeriod('90d')}
                         >
                           90D
                         </button>
                       </div>
-
-                      {/* Chart Placeholder */}
-                      <div className="chart-area glass-inner">
-                        <div className="chart-placeholder">
-                          <IoTrendingUp size={32} className="green-text" style={{opacity: 0.3}} />
-                          <span className="chart-label">Interest Earned ({currency})</span>
+                      
+                      <div className="earnings-graph">
+                        {/* Placeholder for graph */}
+                        <div className="graph-placeholder">
+                          <svg width="100%" height="100" viewBox="0 0 600 100">
+                            <path 
+                              d="M 0 80 L 100 70 L 200 50 L 300 40 L 400 45 L 500 30 L 600 20" 
+                              stroke="#00FF85" 
+                              strokeWidth="2" 
+                              fill="none"
+                            />
+                          </svg>
                         </div>
                       </div>
-
-                      {/* Action Buttons */}
-                      <div className="action-buttons">
-                        <button className="action-btn outline">
-                          <IoRemove size={18} />
-                          Withdraw
-                        </button>
-                        <button className="action-btn filled neon-glow-button">
-                          <IoAdd size={18} />
-                          Add
-                        </button>
-                      </div>
-
-                      {/* Lock Period Selectors */}
-                      <div className="lock-periods">
-                        <span className="lock-label">Lock Period:</span>
-                        <button className="lock-btn">7d</button>
-                        <button className="lock-btn active">30d</button>
-                        <button className="lock-btn">90d</button>
-                      </div>
-
-                      {/* Interest History Link */}
-                      <button className="history-link">
-                        <IoTime size={16} />
-                        <span>Interest History</span>
-                      </button>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+
+                    {/* Action Buttons */}
+                    <div className="action-buttons">
+                      <button className="action-btn withdraw-btn">Withdraw</button>
+                      <button className="action-btn add-btn">Add</button>
+                    </div>
+
+                    {/* Lock-up Period Selectors (if staked) */}
+                    {position.type === 'staked' && (
+                      <div className="lockup-selectors">
+                        <button className="lockup-btn">7d</button>
+                        <button className="lockup-btn active">30d</button>
+                        <button className="lockup-btn">90d</button>
+                      </div>
+                    )}
+
+                    {/* Interest History Link */}
+                    <div className="interest-history-link">
+                      <button>📑 Interest History</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="mobile-nav">
-        <div className="nav-tab">
-          <IoWallet size={24} />
-          <span>Wallet</span>
-        </div>
-        <div className="nav-tab active">
-          <IoTrendingUp size={24} />
-          <span>Savings</span>
-        </div>
-        <div className="nav-tab">
-          <IoChevronDown size={24} />
-          <span>Settings</span>
-        </div>
+      {/* MOBILE FOOTER */}
+      <div className="mobile-footer">
+        <button className="footer-tab" onClick={() => navigate('/wallet')}>
+          <span className="tab-icon">💰</span>
+          <span className="tab-label">Wallet</span>
+        </button>
+        <button className="footer-tab active">
+          <span className="tab-icon">💲</span>
+          <span className="tab-label">Savings</span>
+        </button>
+        <button className="footer-tab" onClick={() => navigate('/settings')}>
+          <span className="tab-icon">⚙️</span>
+          <span className="tab-label">Settings</span>
+        </button>
       </div>
     </div>
   );
-}
+};
+
+export default Savings;
