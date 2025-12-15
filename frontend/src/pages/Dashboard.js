@@ -711,12 +711,12 @@ export default function Dashboard() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '24px',
+                            fontSize: '20px',
                             fontWeight: '700',
                             color: '#FFFFFF',
                             boxShadow: `0 0 15px ${getCryptoColor(asset.currency)}66`
                           }}>
-                            {getCryptoEmoji(asset.currency)}
+                            {getCryptoIcon(asset.currency)}
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
