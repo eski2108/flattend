@@ -1,19 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { IoEye, IoEyeOff, IoChevronForward, IoAdd } from 'react-icons/io5';
+import { 
+  IoEye, 
+  IoEyeOff, 
+  IoChevronDown, 
+  IoChevronUp,
+  IoWallet,
+  IoAdd,
+  IoRemove,
+  IoArrowForward,
+  IoTrendingUp,
+  IoTime
+} from 'react-icons/io5';
 import { getCoinLogo } from '../utils/coinLogos';
 
 const API = process.env.REACT_APP_BACKEND_URL;
+
+// EXACT COLORS FROM SPEC
+const COLORS = {
+  background: '#0E0F1A',
+  cardBg: '#151626',
+  neonBlue: '#00F0FF',
+  neonGreen: '#00FF85',
+  purpleAccent: '#A64EFF',
+  textPrimary: '#FFFFFF',
+  textSecondary: '#B5B5B5'
+};
 
 export default function Savings() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [expandedAsset, setExpandedAsset] = useState(null);
+  const [chartRange, setChartRange] = useState('30d');
   
   const [totalSavings, setTotalSavings] = useState(0);
-  const [availableToWithdraw, setAvailableToWithdraw] = useState(0);
+  const [availableToTransfer, setAvailableToTransfer] = useState(0);
   const [totalInterestEarned, setTotalInterestEarned] = useState(0);
   const [savingsAssets, setSavingsAssets] = useState([]);
 
@@ -39,7 +63,7 @@ export default function Savings() {
       if (summaryRes.data.success && summaryRes.data.summary) {
         const summary = summaryRes.data.summary;
         setTotalSavings(summary.total_value_gbp || 0);
-        setAvailableToWithdraw(summary.available_balance_gbp || 0);
+        setAvailableToTransfer(summary.available_balance_gbp || 0);
         setTotalInterestEarned(summary.total_earnings || 0);
       }
 
@@ -55,19 +79,8 @@ export default function Savings() {
 
   if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: '#060B1A',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'Inter, sans-serif'
-      }}>
-        <div style={{
-          fontSize: '20px',
-          color: '#00E5FF',
-          fontWeight: '600'
-        }}>Loading...</div>
+      <div style={styles.loadingContainer}>
+        <div style={styles.loadingText}>Loading Savings Vault...</div>
       </div>
     );
   }
@@ -75,153 +88,104 @@ export default function Savings() {
   const hasSavings = savingsAssets.length > 0;
 
   return (
-    <div style={{
-      background: '#060B1A',
-      fontFamily: 'Inter, sans-serif',
-      paddingBottom: 0
-    }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', paddingBottom: 0 }}>
+    <div style={styles.container}>
+      <div style={styles.contentWrapper}>
         
-        {/* HEADER - Same as Wallet */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px'
-        }}>
+        {/* HEADER - Neon Title with Wallet Selector and Transfer Button */}
+        <div style={styles.header}>
           <div>
-            <h1 style={{
-              fontSize: '36px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              margin: '0 0 8px 0'
-            }}>Savings Vault</h1>
-            <p style={{
-              fontSize: '14px',
-              color: '#8FA3BF',
-              margin: 0,
-              fontWeight: '400'
-            }}>Earn passive yield on your crypto</p>
+            <h1 style={styles.neonTitle}>Savings Vault</h1>
           </div>
-          <button
-            onClick={() => navigate('/savings/deposit')}
-            style={{
-              padding: '10px 20px',
-              background: 'transparent',
-              border: '1.5px solid #00E5FF',
-              borderRadius: '12px',
-              color: '#00E5FF',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <IoAdd size={18} />
-            Transfer from Wallet
-          </button>
+          <div style={styles.headerActions}>
+            <button style={styles.walletSelector}>
+              <IoWallet size={18} />
+              <span>Main Wallet</span>
+              <IoChevronDown size={16} />
+            </button>
+            <button 
+              style={styles.transferButton}
+              onClick={() => navigate('/savings/deposit')}
+            >
+              Transfer from Wallet
+            </button>
+          </div>
         </div>
 
-        {/* BALANCE AREA - FLAT, NO CARD - Same as Wallet */}
-        <div style={{
-          padding: '24px 20px 20px',
-          marginBottom: '20px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '8px'
-          }}>
-            <div style={{
-              fontSize: '11px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>Total Savings Value</div>
+        {/* TOP SUMMARY CARDS - Glassmorphic Design */}
+        <div style={styles.summaryGrid}>
+          {/* Total Balance */}
+          <div style={styles.summaryCard}>
+            <div style={styles.summaryLabel}>
+              <span>Total Balance</span>
+              <span style={styles.liveIndicator}>
+                <span style={styles.liveDot} />
+                Live
+              </span>
+            </div>
+            <div style={styles.summaryValue}>
+              {balanceVisible ? `£${totalSavings.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '••••••'}
+            </div>
             <button
               onClick={() => setBalanceVisible(!balanceVisible)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#8FA3C8',
-                cursor: 'pointer',
-                padding: '2px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
+              style={styles.eyeButton}
             >
               {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
             </button>
           </div>
-          <div style={{
-            fontSize: '40px',
-            fontWeight: '700',
-            color: '#FFFFFF',
-            lineHeight: '1',
-            marginBottom: '8px'
-          }}>
-            {balanceVisible ? `£${totalSavings.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '••••••'}
-          </div>
-          <div style={{
-            display: 'flex',
-            gap: '24px',
-            fontSize: '14px'
-          }}>
-            <div>
-              <span style={{ color: '#8FA3C8' }}>Available: </span>
-              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                {balanceVisible ? `£${availableToWithdraw.toFixed(2)}` : '•••'}
+
+          {/* Available to Transfer */}
+          <div style={styles.summaryCard}>
+            <div style={styles.summaryLabel}>
+              <span>Available to Transfer</span>
+              <span style={styles.liveIndicator}>
+                <span style={styles.liveDot} />
+                Live
               </span>
             </div>
-            <div>
-              <span style={{ color: '#8FA3C8' }}>Interest Earned: </span>
-              <span style={{ color: '#16C784', fontWeight: '600' }}>
-                {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '•••'}
+            <div style={styles.summaryValue}>
+              {balanceVisible ? `£${availableToTransfer.toFixed(2)}` : '••••••'}
+            </div>
+          </div>
+
+          {/* Interest Earned */}
+          <div style={{...styles.summaryCard, ...styles.summaryCardGreen}}>
+            <div style={styles.summaryLabel}>
+              <span>Interest Earned to Date</span>
+              <span style={styles.liveIndicator}>
+                <span style={styles.liveDot} />
+                Live
               </span>
+            </div>
+            <div style={{...styles.summaryValue, color: COLORS.neonGreen}}>
+              {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '••••••'}
             </div>
           </div>
         </div>
 
-        {/* SAVINGS ASSETS */}
+        {/* REFERRAL BANNER */}
+        <div style={styles.referralBanner}>
+          <span>Invite friends, earn more</span>
+          <IoArrowForward size={20} />
+        </div>
+
+        {/* YOUR SAVINGS SECTION */}
         {!hasSavings ? (
-          <div style={{
-            padding: '60px 20px',
-            textAlign: 'center',
-            color: '#8FA3C8'
-          }}>
-            <p style={{ fontSize: '14px', margin: '0 0 16px 0' }}>
-              No assets earning yield yet
-            </p>
-            <button
+          <div style={styles.emptyState}>
+            <div style={styles.emptyIcon}>
+              <IoTrendingUp size={64} />
+            </div>
+            <h3 style={styles.emptyTitle}>No assets earning yet</h3>
+            <p style={styles.emptyText}>Transfer crypto from your wallet to start earning yield</p>
+            <button 
+              style={styles.emptyButton}
               onClick={() => navigate('/savings/deposit')}
-              style={{
-                padding: '10px 24px',
-                background: '#0047D9',
-                border: 'none',
-                borderRadius: '12px',
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
             >
               Start Earning
             </button>
           </div>
         ) : (
-          <div>
-            <div style={{
-              fontSize: '14px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              marginBottom: '12px',
-              padding: '0 20px'
-            }}>Your Savings</div>
+          <div style={styles.portfolioSection}>
+            <h2 style={styles.sectionTitle}>Your Savings</h2>
             
             {savingsAssets.map((asset, idx) => {
               const currency = asset.currency || asset.asset || 'BTC';
@@ -229,94 +193,105 @@ export default function Savings() {
               const gbpValue = parseFloat(asset.value_gbp || asset.balance_gbp || 0);
               const apy = parseFloat(asset.apy || 5.0);
               const interestEarned = parseFloat(asset.interest_earned || asset.earnings || 0);
+              const isExpanded = expandedAsset === idx;
 
               return (
-                <div
-                  key={idx}
-                  onClick={() => navigate(`/savings/asset/${currency.toLowerCase()}`)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '14px 20px',
-                    background: 'transparent',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    cursor: 'pointer',
-                    transition: 'background 0.15s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    flex: 1
-                  }}>
-                    <img
-                      src={getCoinLogo(currency)}
-                      alt={currency}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%'
-                      }}
-                      onError={(e) => {
-                        e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${currency.toLowerCase()}.png`;
-                        e.target.onerror = () => {
-                          e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyMCIgZmlsbD0iIzAwRTVGRiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj4kPC90ZXh0Pjwvc3ZnPg==';
-                        };
-                      }}
-                    />
-                    <div>
-                      <div style={{
-                        fontSize: '15px',
-                        fontWeight: '600',
-                        color: '#FFFFFF',
-                        marginBottom: '2px'
-                      }}>{currency}</div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#6B7A99',
-                        fontWeight: '400'
-                      }}>{amount.toFixed(8)}</div>
+                <div key={idx} style={styles.assetCard}>
+                  {/* Collapsed View */}
+                  <div 
+                    style={styles.assetHeader}
+                    onClick={() => setExpandedAsset(isExpanded ? null : idx)}
+                  >
+                    <div style={styles.assetInfo}>
+                      <img
+                        src={getCoinLogo(currency)}
+                        alt={currency}
+                        style={styles.assetIcon}
+                        onError={(e) => {
+                          e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${currency.toLowerCase()}.png`;
+                        }}
+                      />
+                      <div>
+                        <div style={styles.assetName}>{currency}</div>
+                        <div style={styles.assetBalance}>{amount.toFixed(8)}</div>
+                      </div>
                     </div>
+
+                    <div style={styles.assetStats}>
+                      <div style={styles.assetStat}>
+                        <span style={styles.assetStatLabel}>APY:</span>
+                        <span style={{...styles.assetStatValue, color: COLORS.neonGreen}}>
+                          {apy.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div style={styles.assetStat}>
+                        <span style={styles.assetStatLabel}>Interest:</span>
+                        <span style={{...styles.assetStatValue, color: COLORS.neonGreen}}>
+                          £{interestEarned.toFixed(2)}
+                        </span>
+                      </div>
+                      <div style={styles.assetStat}>
+                        <span style={styles.assetStatValue}>£{gbpValue.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    {isExpanded ? <IoChevronUp size={20} /> : <IoChevronDown size={20} />}
                   </div>
 
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '32px'
-                  }}>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#16C784',
-                        fontWeight: '600',
-                        marginBottom: '2px'
-                      }}>
-                        {apy.toFixed(1)}% APY
+                  {/* Expanded View */}
+                  {isExpanded && (
+                    <div style={styles.assetExpanded}>
+                      {/* Chart Range Toggle */}
+                      <div style={styles.chartToggle}>
+                        <button
+                          style={chartRange === '30d' ? styles.chartButtonActive : styles.chartButton}
+                          onClick={() => setChartRange('30d')}
+                        >
+                          30D
+                        </button>
+                        <button
+                          style={chartRange === '90d' ? styles.chartButtonActive : styles.chartButton}
+                          onClick={() => setChartRange('90d')}
+                        >
+                          90D
+                        </button>
                       </div>
-                      <div style={{
-                        fontSize: '12px',
-                        color: '#8FA3C8'
-                      }}>
-                        +£{interestEarned.toFixed(2)} earned
-                      </div>
-                    </div>
 
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{
-                        fontSize: '15px',
-                        fontWeight: '600',
-                        color: '#FFFFFF'
-                      }}>
-                        £{gbpValue.toFixed(2)}
+                      {/* Placeholder Chart */}
+                      <div style={styles.chartPlaceholder}>
+                        <IoTrendingUp size={32} style={{color: COLORS.neonGreen, opacity: 0.3}} />
+                        <span style={{color: COLORS.textSecondary, fontSize: '14px'}}>
+                          {chartRange} Earnings Chart
+                        </span>
                       </div>
-                    </div>
 
-                    <IoChevronForward size={18} style={{ color: '#6B7A99' }} />
-                  </div>
+                      {/* Actions */}
+                      <div style={styles.assetActions}>
+                        <button style={styles.actionButtonOutline}>
+                          <IoRemove size={18} />
+                          Withdraw
+                        </button>
+                        <button style={styles.actionButton}>
+                          <IoAdd size={18} />
+                          Add
+                        </button>
+                      </div>
+
+                      {/* Lock Period Selectors */}
+                      <div style={styles.lockPeriods}>
+                        <span style={{fontSize: '14px', color: COLORS.textSecondary}}>Lock Period:</span>
+                        <button style={styles.lockButton}>7d</button>
+                        <button style={{...styles.lockButton, ...styles.lockButtonActive}}>30d</button>
+                        <button style={styles.lockButton}>90d</button>
+                      </div>
+
+                      {/* Interest History Link */}
+                      <button style={styles.historyLink}>
+                        <IoTime size={16} />
+                        <span>Interest History</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -326,3 +301,403 @@ export default function Savings() {
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    background: COLORS.background,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    color: COLORS.textPrimary,
+    paddingBottom: '60px'
+  },
+  loadingContainer: {
+    minHeight: '100vh',
+    background: COLORS.background,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  loadingText: {
+    fontSize: '20px',
+    color: COLORS.neonBlue,
+    fontWeight: '600',
+    textShadow: `0 0 20px ${COLORS.neonBlue}`
+  },
+  contentWrapper: {
+    maxWidth: '1400px',
+    margin: '0 auto',
+    padding: '24px 20px'
+  },
+  
+  // HEADER
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '40px',
+    flexWrap: 'wrap',
+    gap: '20px'
+  },
+  neonTitle: {
+    fontSize: '48px',
+    fontWeight: '700',
+    color: COLORS.neonBlue,
+    textShadow: `0 0 30px ${COLORS.neonBlue}, 0 0 60px ${COLORS.neonBlue}`,
+    margin: 0,
+    animation: 'neonPulse 3s ease-in-out infinite'
+  },
+  headerActions: {
+    display: 'flex',
+    gap: '16px',
+    alignItems: 'center'
+  },
+  walletSelector: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px 16px',
+    background: 'rgba(0, 240, 255, 0.1)',
+    border: `1px solid ${COLORS.neonBlue}`,
+    borderRadius: '12px',
+    color: COLORS.neonBlue,
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  },
+  transferButton: {
+    padding: '12px 24px',
+    background: `linear-gradient(135deg, ${COLORS.neonBlue}, ${COLORS.purpleAccent})`,
+    border: 'none',
+    borderRadius: '12px',
+    color: COLORS.textPrimary,
+    fontSize: '14px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    boxShadow: `0 0 20px ${COLORS.neonBlue}`,
+    transition: 'all 0.3s ease'
+  },
+
+  // SUMMARY CARDS
+  summaryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '20px',
+    marginBottom: '32px'
+  },
+  summaryCard: {
+    background: `linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(166, 78, 255, 0.05))`,
+    backdropFilter: 'blur(10px)',
+    border: `1px solid rgba(0, 240, 255, 0.2)`,
+    borderRadius: '16px',
+    padding: '24px',
+    position: 'relative',
+    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 240, 255, 0.1)`,
+    transition: 'all 0.3s ease'
+  },
+  summaryCardGreen: {
+    background: `linear-gradient(135deg, rgba(0, 255, 133, 0.05), rgba(0, 240, 255, 0.05))`,
+    border: `1px solid rgba(0, 255, 133, 0.2)`,
+    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 255, 133, 0.1)`
+  },
+  summaryLabel: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    fontSize: '12px',
+    color: COLORS.textSecondary,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    marginBottom: '12px'
+  },
+  liveIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    color: COLORS.neonGreen,
+    fontSize: '11px'
+  },
+  liveDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    background: COLORS.neonGreen,
+    boxShadow: `0 0 10px ${COLORS.neonGreen}`,
+    animation: 'pulse 2s ease-in-out infinite'
+  },
+  summaryValue: {
+    fontSize: '32px',
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: '8px',
+    textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)'
+  },
+  eyeButton: {
+    position: 'absolute',
+    top: '24px',
+    right: '24px',
+    background: 'transparent',
+    border: 'none',
+    color: COLORS.textSecondary,
+    cursor: 'pointer',
+    padding: '4px',
+    borderRadius: '6px',
+    transition: 'all 0.2s ease'
+  },
+
+  // REFERRAL BANNER
+  referralBanner: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '16px 24px',
+    background: `linear-gradient(135deg, rgba(166, 78, 255, 0.1), rgba(0, 240, 255, 0.1))`,
+    border: `1px solid ${COLORS.purpleAccent}`,
+    borderRadius: '16px',
+    marginBottom: '32px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '600',
+    color: COLORS.purpleAccent,
+    boxShadow: `0 0 30px rgba(166, 78, 255, 0.3)`,
+    transition: 'all 0.3s ease'
+  },
+
+  // EMPTY STATE
+  emptyState: {
+    textAlign: 'center',
+    padding: '80px 20px',
+    background: `linear-gradient(135deg, rgba(21, 22, 38, 0.6), rgba(14, 15, 26, 0.8))`,
+    borderRadius: '20px',
+    border: `1px solid rgba(0, 240, 255, 0.1)`
+  },
+  emptyIcon: {
+    width: '120px',
+    height: '120px',
+    margin: '0 auto 24px',
+    background: `linear-gradient(135deg, ${COLORS.neonBlue}, ${COLORS.purpleAccent})`,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: `0 0 40px ${COLORS.neonBlue}`
+  },
+  emptyTitle: {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: '12px'
+  },
+  emptyText: {
+    fontSize: '16px',
+    color: COLORS.textSecondary,
+    marginBottom: '32px',
+    maxWidth: '500px',
+    margin: '0 auto 32px'
+  },
+  emptyButton: {
+    padding: '14px 40px',
+    background: `linear-gradient(135deg, ${COLORS.neonBlue}, ${COLORS.purpleAccent})`,
+    border: 'none',
+    borderRadius: '12px',
+    color: COLORS.textPrimary,
+    fontSize: '16px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    boxShadow: `0 0 30px ${COLORS.neonBlue}`,
+    transition: 'all 0.3s ease'
+  },
+
+  // PORTFOLIO SECTION
+  portfolioSection: {
+    marginTop: '40px'
+  },
+  sectionTitle: {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: '20px'
+  },
+
+  // ASSET CARDS
+  assetCard: {
+    background: `linear-gradient(135deg, rgba(21, 22, 38, 0.8), rgba(14, 15, 26, 0.9))`,
+    backdropFilter: 'blur(10px)',
+    border: `1px solid rgba(0, 240, 255, 0.15)`,
+    borderRadius: '16px',
+    marginBottom: '16px',
+    overflow: 'hidden',
+    transition: 'all 0.3s ease'
+  },
+  assetHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '20px 24px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  assetInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    flex: 1
+  },
+  assetIcon: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '50%',
+    boxShadow: `0 0 20px rgba(0, 240, 255, 0.3)`
+  },
+  assetName: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: '4px'
+  },
+  assetBalance: {
+    fontSize: '14px',
+    color: COLORS.textSecondary
+  },
+  assetStats: {
+    display: 'flex',
+    gap: '32px',
+    alignItems: 'center'
+  },
+  assetStat: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  },
+  assetStatLabel: {
+    fontSize: '12px',
+    color: COLORS.textSecondary
+  },
+  assetStatValue: {
+    fontSize: '16px',
+    fontWeight: '600',
+    color: COLORS.textPrimary
+  },
+
+  // EXPANDED VIEW
+  assetExpanded: {
+    padding: '0 24px 24px',
+    borderTop: `1px solid rgba(0, 240, 255, 0.1)`,
+    paddingTop: '24px'
+  },
+  chartToggle: {
+    display: 'flex',
+    gap: '12px',
+    marginBottom: '16px'
+  },
+  chartButton: {
+    padding: '8px 20px',
+    background: 'transparent',
+    border: `1px solid ${COLORS.textSecondary}`,
+    borderRadius: '8px',
+    color: COLORS.textSecondary,
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  chartButtonActive: {
+    padding: '8px 20px',
+    background: COLORS.neonBlue,
+    border: `1px solid ${COLORS.neonBlue}`,
+    borderRadius: '8px',
+    color: COLORS.background,
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    boxShadow: `0 0 20px ${COLORS.neonBlue}`
+  },
+  chartPlaceholder: {
+    height: '200px',
+    background: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: '12px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '12px',
+    marginBottom: '24px',
+    border: `1px solid rgba(0, 240, 255, 0.1)`
+  },
+  assetActions: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px',
+    marginBottom: '20px'
+  },
+  actionButton: {
+    padding: '12px 24px',
+    background: `linear-gradient(135deg, ${COLORS.neonBlue}, ${COLORS.purpleAccent})`,
+    border: 'none',
+    borderRadius: '10px',
+    color: COLORS.textPrimary,
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    boxShadow: `0 0 20px ${COLORS.neonBlue}`,
+    transition: 'all 0.3s ease'
+  },
+  actionButtonOutline: {
+    padding: '12px 24px',
+    background: 'transparent',
+    border: `1px solid ${COLORS.neonBlue}`,
+    borderRadius: '10px',
+    color: COLORS.neonBlue,
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    transition: 'all 0.3s ease'
+  },
+  lockPeriods: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '20px'
+  },
+  lockButton: {
+    padding: '8px 16px',
+    background: 'transparent',
+    border: `1px solid ${COLORS.textSecondary}`,
+    borderRadius: '8px',
+    color: COLORS.textSecondary,
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  lockButtonActive: {
+    background: COLORS.purpleAccent,
+    border: `1px solid ${COLORS.purpleAccent}`,
+    color: COLORS.textPrimary,
+    boxShadow: `0 0 15px ${COLORS.purpleAccent}`
+  },
+  historyLink: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px 16px',
+    background: 'transparent',
+    border: 'none',
+    borderRadius: '8px',
+    color: COLORS.neonBlue,
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  }
+};
