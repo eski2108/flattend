@@ -90,7 +90,10 @@ export default function Login() {
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
+      const errorMsg = error.response?.data?.detail || error.response?.data?.message || error.message || 'Login failed. Please try again.';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
