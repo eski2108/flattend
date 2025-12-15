@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://savings-app-12.preview.emergentagent.com/api
-- **Frontend App**: https://savings-app-12.preview.emergentagent.com
+- **Backend API**: https://earn-rewards-21.preview.emergentagent.com/api
+- **Frontend App**: https://earn-rewards-21.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

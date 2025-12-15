@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://savings-app-12.preview.emergentagent.com/#/trading
+**Live URL:** https://earn-rewards-21.preview.emergentagent.com/#/trading
 
 ---
 

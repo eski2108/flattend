@@ -10,7 +10,7 @@ import uuid
 import time
 from datetime import datetime
 
-BASE_URL = "https://savings-app-12.preview.emergentagent.com/api"
+BASE_URL = "https://earn-rewards-21.preview.emergentagent.com/api"
 
 def log_step(step, message, success=True):
     status = "✅" if success else "❌"
@@ -204,7 +204,7 @@ def main():
         print("=" * 60)
         print(f"🆔 DISPUTE ID: {dispute_id}")
         print(f"📧 Email sent to: info@coinhubx.net")
-        print(f"🔗 Admin URL: https://savings-app-12.preview.emergentagent.com/admin/disputes/{dispute_id}")
+        print(f"🔗 Admin URL: https://earn-rewards-21.preview.emergentagent.com/admin/disputes/{dispute_id}")
         print("\n✅ Email should contain:")
         print("   - Improved red button (table-based HTML)")
         print("   - Highlighted yellow box with copyable link")

@@ -343,7 +343,7 @@ cat /app/frontend/src/components/TraderStats.js | head -20
 **Testing:**
 Visit P2P marketplace and verify trader stats are displayed on seller cards with real data from backend.
 
-**URL:** `https://savings-app-12.preview.emergentagent.com/p2p`
+**URL:** `https://earn-rewards-21.preview.emergentagent.com/p2p`
 
 ---
 

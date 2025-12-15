@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://savings-app-12.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://earn-rewards-21.preview.emergentagent.com"

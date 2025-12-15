@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://savings-app-12.preview.emergentagent.com/api"
+BACKEND_URL = "https://earn-rewards-21.preview.emergentagent.com/api"
 
 def test_sendgrid_comprehensive():
     """Comprehensive SendGrid email verification test"""

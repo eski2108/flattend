@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://savings-app-12.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://earn-rewards-21.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

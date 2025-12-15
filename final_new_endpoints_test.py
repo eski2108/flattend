@@ -3,7 +3,7 @@
 COMPREHENSIVE BACKEND API ENDPOINT VERIFICATION - ALL NEW FEATURES
 Test all newly implemented backend endpoints with proper user setup.
 
-**Backend URL:** https://savings-app-12.preview.emergentagent.com/api
+**Backend URL:** https://earn-rewards-21.preview.emergentagent.com/api
 
 **TEST COVERAGE:**
 1. P2P Notification Endpoints (3 endpoints)
@@ -22,7 +22,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://savings-app-12.preview.emergentagent.com/api"
+BASE_URL = "https://earn-rewards-21.preview.emergentagent.com/api"
 
 class ComprehensiveNewEndpointsTester:
     def __init__(self):

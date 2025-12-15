@@ -10,7 +10,7 @@ Tests the specific critical endpoints mentioned in the review request.
 4. SendGrid Email Verification - Test email verification flow with updated SendGrid API key
 5. All core P2P, Swap, Express Buy endpoints that exist
 
-**Backend URL:** https://savings-app-12.preview.emergentagent.com/api
+**Backend URL:** https://earn-rewards-21.preview.emergentagent.com/api
 """
 
 import requests
@@ -21,7 +21,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://savings-app-12.preview.emergentagent.com/api"
+BASE_URL = "https://earn-rewards-21.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

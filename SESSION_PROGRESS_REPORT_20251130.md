@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://savings-app-12.preview.emergentagent.com/api/admin/fees/test
+$ curl https://earn-rewards-21.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://savings-app-12.preview.emergentagent.com/api/admin/fees/all
+$ curl https://earn-rewards-21.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

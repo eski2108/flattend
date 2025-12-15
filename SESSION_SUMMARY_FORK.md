@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://savings-app-12.preview.emergentagent.com
+https://earn-rewards-21.preview.emergentagent.com
 
 ---
 

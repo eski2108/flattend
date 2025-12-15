@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://savings-app-12.preview.emergentagent.com/login
-2. Visit marketplace: https://savings-app-12.preview.emergentagent.com/p2p
+1. Login at: https://earn-rewards-21.preview.emergentagent.com/login
+2. Visit marketplace: https://earn-rewards-21.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

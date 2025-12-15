@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://savings-app-12.preview.emergentagent.com/api
+https://earn-rewards-21.preview.emergentagent.com/api
 ```
 
 This means:

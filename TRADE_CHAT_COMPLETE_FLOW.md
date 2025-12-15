@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://savings-app-12.preview.emergentagent.com
+**Test it now at:** https://earn-rewards-21.preview.emergentagent.com
