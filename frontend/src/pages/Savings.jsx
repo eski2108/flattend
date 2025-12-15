@@ -128,111 +128,211 @@ export default function Savings() {
           </button>
         </div>
 
-        {/* SAVINGS SUMMARY STRIP */}
+        {/* PREMIUM SAVINGS SUMMARY CARD */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '16px',
-          marginBottom: '32px'
-        }}>
-          {/* Total Savings */}
+          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.03) 0%, rgba(0, 197, 215, 0.02) 100%)',
+          borderRadius: '20px',
+          border: '1px solid rgba(0, 229, 255, 0.08)',
+          boxShadow: `
+            0 0 40px rgba(0, 229, 255, 0.06),
+            0 8px 32px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.02)
+          `,
+          padding: '32px',
+          marginBottom: '32px',
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = `
+            0 0 60px rgba(0, 229, 255, 0.1),
+            0 12px 48px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.03)
+          `;
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = `
+            0 0 40px rgba(0, 229, 255, 0.06),
+            0 8px 32px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.02)
+          `;
+          e.currentTarget.style.transform = 'translateY(0px)';
+        }}
+        >
+          {/* Subtle glow overlay */}
           <div style={{
-            padding: '20px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(0, 229, 255, 0.1)'
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.3), transparent)'
+          }} />
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '48px'
           }}>
+            {/* Total Savings */}
             <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '8px'
+              flex: 1,
+              textAlign: 'center',
+              position: 'relative'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '12px'
+              }}>
+                <div style={{
+                  fontSize: '11px',
+                  color: '#8FA3C8',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}>Total Savings</div>
+                <button
+                  onClick={() => setBalanceVisible(!balanceVisible)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#8FA3C8',
+                    cursor: 'pointer',
+                    padding: '4px',
+                    borderRadius: '6px',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(0, 229, 255, 0.1)';
+                    e.currentTarget.style.color = '#00E5FF';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'none';
+                    e.currentTarget.style.color = '#8FA3C8';
+                  }}
+                >
+                  {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
+                </button>
+              </div>
+              <div style={{
+                fontSize: '32px',
+                fontWeight: '700',
+                color: '#FFFFFF',
+                marginBottom: '4px',
+                textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+              }}>
+                {balanceVisible ? `£${totalSavings.toFixed(2)}` : '••••••'}
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#6B7A99',
+                fontWeight: '500'
+              }}>Portfolio Value</div>
+            </div>
+
+            {/* Subtle Divider */}
+            <div style={{
+              width: '1px',
+              height: '80px',
+              background: 'linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.15), transparent)',
+              position: 'relative'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '3px',
+                height: '3px',
+                background: '#00E5FF',
+                borderRadius: '50%',
+                boxShadow: '0 0 8px rgba(0, 229, 255, 0.6)'
+              }} />
+            </div>
+
+            {/* Available to Withdraw */}
+            <div style={{
+              flex: 1,
+              textAlign: 'center'
             }}>
               <div style={{
                 fontSize: '11px',
                 color: '#8FA3C8',
-                fontWeight: '500',
+                fontWeight: '600',
                 textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>Total Savings</div>
-              <button
-                onClick={() => setBalanceVisible(!balanceVisible)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#8FA3C8',
-                  cursor: 'pointer',
-                  padding: '2px'
-                }}
-              >
-                {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
-              </button>
+                letterSpacing: '1px',
+                marginBottom: '12px'
+              }}>Available</div>
+              <div style={{
+                fontSize: '32px',
+                fontWeight: '700',
+                color: '#FFFFFF',
+                marginBottom: '4px',
+                textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+              }}>
+                {balanceVisible ? `£${availableToWithdraw.toFixed(2)}` : '••••••'}
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#6B7A99',
+                fontWeight: '500'
+              }}>Ready to withdraw</div>
             </div>
-            <div style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#FFFFFF'
-            }}>
-              {balanceVisible ? `£${totalSavings.toFixed(2)}` : '••••••'}
-            </div>
-          </div>
 
-          {/* Available */}
-          <div style={{
-            padding: '20px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(138, 92, 246, 0.1)'
-          }}>
+            {/* Subtle Divider */}
             <div style={{
-              fontSize: '11px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              marginBottom: '8px'
-            }}>Available</div>
-            <div style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#FFFFFF'
+              width: '1px',
+              height: '80px',
+              background: 'linear-gradient(180deg, transparent, rgba(22, 199, 132, 0.15), transparent)',
+              position: 'relative'
             }}>
-              {balanceVisible ? `£${availableToWithdraw.toFixed(2)}` : '••••••'}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '3px',
+                height: '3px',
+                background: '#16C784',
+                borderRadius: '50%',
+                boxShadow: '0 0 8px rgba(22, 199, 132, 0.6)'
+              }} />
             </div>
-            <div style={{
-              fontSize: '12px',
-              color: '#8FA3C8',
-              marginTop: '4px'
-            }}>Ready to withdraw</div>
-          </div>
 
-          {/* Total Interest */}
-          <div style={{
-            padding: '20px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(22, 199, 132, 0.15)'
-          }}>
+            {/* Total Interest Earned */}
             <div style={{
-              fontSize: '11px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              marginBottom: '8px'
-            }}>Total Interest Earned</div>
-            <div style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#16C784'
+              flex: 1,
+              textAlign: 'center'
             }}>
-              {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '••••••'}
+              <div style={{
+                fontSize: '11px',
+                color: '#8FA3C8',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '12px'
+              }}>Total Earned</div>
+              <div style={{
+                fontSize: '32px',
+                fontWeight: '700',
+                color: '#16C784',
+                marginBottom: '4px',
+                textShadow: '0 2px 8px rgba(22, 199, 132, 0.2)'
+              }}>
+                {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '••••••'}
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#6B7A99',
+                fontWeight: '500'
+              }}>Lifetime earnings</div>
             </div>
-            <div style={{
-              fontSize: '12px',
-              color: '#8FA3C8',
-              marginTop: '4px'
-            }}>Lifetime earnings</div>
           </div>
         </div>
 
