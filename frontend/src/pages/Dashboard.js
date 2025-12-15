@@ -707,28 +707,16 @@ export default function Dashboard() {
                             width: '40px',
                             height: '40px',
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #00F0FF, #0080FF)',
+                            background: `linear-gradient(135deg, ${getCryptoColor(asset.currency)}, ${getCryptoColor(asset.currency)}DD)`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '14px',
+                            fontSize: '24px',
                             fontWeight: '700',
-                            color: '#000000',
-                            overflow: 'hidden'
+                            color: '#FFFFFF',
+                            boxShadow: `0 0 15px ${getCryptoColor(asset.currency)}66`
                           }}>
-                            {COIN_SVG_ICONS[asset.currency] ? (
-                              <img 
-                                src={COIN_SVG_ICONS[asset.currency]}
-                                alt={asset.currency}
-                                style={{
-                                  width: '28px',
-                                  height: '28px',
-                                  objectFit: 'contain'
-                                }}
-                              />
-                            ) : (
-                              asset.currency?.substring(0, 2) || 'CR'
-                            )}
+                            {getCryptoEmoji(asset.currency)}
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
