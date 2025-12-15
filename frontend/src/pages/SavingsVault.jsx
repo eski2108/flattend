@@ -1,52 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'sonner';
-import { IoEye, IoEyeOff, IoChevronForward } from 'react-icons/io5';
 import { getCoinLogo } from '@/utils/coinLogos';
+import './SavingsVault.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function SavingsVault() {
+const SavingsVault = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [balanceVisible, setBalanceVisible] = useState(true);
-  
-  // REAL DATA FROM BACKEND
-  const [totalSavings, setTotalSavings] = useState(0);
-  const [availableToWithdraw, setAvailableToWithdraw] = useState(0);
+  const [positions, setPositions] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [totalBalanceCrypto, setTotalBalanceCrypto] = useState('0.00 BTC');
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [availableBalanceCrypto, setAvailableBalanceCrypto] = useState('0.00 BTC');
   const [totalInterestEarned, setTotalInterestEarned] = useState(0);
-  const [savingsAssets, setSavingsAssets] = useState([]);
+  const [totalInterestCrypto, setTotalInterestCrypto] = useState('0.00 BTC');
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [sortBy, setSortBy] = useState('name');
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const [filterActive, setFilterActive] = useState(false);
+  const [filterFlexible, setFilterFlexible] = useState(false);
+  const [filterStaked, setFilterStaked] = useState(false);
+  const [selectedWallet, setSelectedWallet] = useState('Main');
+  const [showWalletMenu, setShowWalletMenu] = useState(false);
+  const [graphPeriod, setGraphPeriod] = useState({});
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState(null);
+  const [showReferralBanner, setShowReferralBanner] = useState(true);
 
   useEffect(() => {
-    const userData = localStorage.getItem('cryptobank_user');
-    if (!userData) {
-      navigate('/login');
-      return;
-    }
-    const parsedUser = JSON.parse(userData);
-    setUser(parsedUser);
-    loadSavingsData(parsedUser.user_id);
-  }, [navigate]);
+    loadSavingsData();
+  }, []);
 
-  const loadSavingsData = async (userId) => {
-    setLoading(true);
+  const loadSavingsData = async () => {
     try {
-      const [summaryRes, positionsRes] = await Promise.all([
-        axios.get(`${API}/api/savings/summary/${userId}`).catch(() => ({ data: { success: false } })),
-        axios.get(`${API}/api/savings/positions/${userId}`).catch(() => ({ data: { success: false, positions: [] } }))
-      ]);
-
-      if (summaryRes.data.success && summaryRes.data.summary) {
-        const summary = summaryRes.data.summary;
-        setTotalSavings(summary.total_value_gbp || 0);
-        setAvailableToWithdraw(summary.available_balance_gbp || 0);
-        setTotalInterestEarned(summary.total_earnings || 0);
-      }
-
-      if (positionsRes.data.success && positionsRes.data.positions) {
-        setSavingsAssets(positionsRes.data.positions);
+      setLoading(true);
+      const userId = localStorage.getItem('user_id');
+      
+      const response = await axios.get(`${API}/api/savings/positions/${userId}`);
+      
+      if (response.data.success) {
+        const data = response.data;
+        setPositions(data.positions || []);
+        setTotalBalance(data.total_balance_usd || 0);
+        setTotalBalanceCrypto(data.total_balance_crypto || '0.00 BTC');
+        setAvailableBalance(data.available_balance_usd || 0);
+        setAvailableBalanceCrypto(data.available_balance_crypto || '0.00 BTC');
+        setTotalInterestEarned(data.total_interest_earned_usd || 0);
+        setTotalInterestCrypto(data.total_interest_earned_crypto || '0.123 BTC');
+        
+        // Initialize graph periods
+        const periods = {};
+        data.positions?.forEach((pos, idx) => {
+          periods[idx] = '30d';
+        });
+        setGraphPeriod(periods);
       }
     } catch (error) {
       console.error('Error loading savings:', error);
@@ -55,382 +67,474 @@ export default function SavingsVault() {
     }
   };
 
-  const handleStartSaving = () => {
-    navigate('/savings/deposit');
+  const toggleCard = (index) => {
+    setExpandedCard(expandedCard === index ? null : index);
   };
 
-  if (loading) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: '#060B1A',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'Inter, sans-serif'
-      }}>
-        <div style={{
-          fontSize: '20px',
-          color: '#00E5FF',
-          fontWeight: '600'
-        }}>Loading Savings...</div>
-      </div>
-    );
-  }
+  const handleSort = (criteria) => {
+    setSortBy(criteria);
+    setShowSortMenu(false);
+    // Sort positions
+    const sorted = [...positions].sort((a, b) => {
+      if (criteria === 'name') return a.symbol.localeCompare(b.symbol);
+      if (criteria === 'apy') return (b.apy || 0) - (a.apy || 0);
+      if (criteria === 'earned') return (b.interest_earned_usd || 0) - (a.interest_earned_usd || 0);
+      if (criteria === 'balance') return (b.balance_usd || 0) - (a.balance_usd || 0);
+      return 0;
+    });
+    setPositions(sorted);
+  };
 
-  const hasSavings = savingsAssets.length > 0;
+  const getFilteredPositions = () => {
+    let filtered = positions;
+    
+    if (filterActive) {
+      filtered = filtered.filter(p => p.balance > 0);
+    }
+    
+    if (filterFlexible && !filterStaked) {
+      filtered = filtered.filter(p => p.type === 'flexible');
+    } else if (filterStaked && !filterFlexible) {
+      filtered = filtered.filter(p => p.type === 'staked');
+    }
+    
+    return filtered;
+  };
+
+  const handleToggleFlexibleStaked = async (index, newType) => {
+    console.log('Toggle type', index, newType);
+    // API call here
+  };
+
+  const handleToggleAutoCompound = async (index) => {
+    console.log('Toggle auto-compound', index);
+    // API call here
+  };
+
+  const handleLockPeriodChange = async (index, period) => {
+    console.log('Change lock period', index, period);
+    // API call here
+  };
+
+  const filteredPositions = getFilteredPositions();
 
   return (
-    <div style={{
-      background: '#060B1A',
-      fontFamily: 'Inter, sans-serif',
-      minHeight: '100vh',
-      paddingBottom: 0
-    }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', paddingBottom: 0 }}>
-        {/* HEADER - Same as Wallet */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px'
-        }}>
-          <div>
-            <h1 style={{
-              fontSize: '36px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              margin: '0 0 8px 0'
-            }}>Savings Vault</h1>
-            <p style={{
-              fontSize: '14px',
-              color: '#8FA3BF',
-              margin: 0,
-              fontWeight: '400'
-            }}>Earn passive yield on your crypto</p>
+    <div className="savings-vault-container">
+      {/* PAGE HEADER */}
+      <header className="savings-vault-header">
+        <h1 className="savings-vault-title">Savings Vault</h1>
+        
+        <div className="header-actions">
+          {/* Wallet Selector Dropdown */}
+          <div className="wallet-selector-dropdown">
+            <button 
+              className="wallet-selector-btn"
+              onClick={() => setShowWalletMenu(!showWalletMenu)}
+            >
+              <span className="wallet-label">Wallet: {selectedWallet}</span>
+              <span className="dropdown-arrow">▼</span>
+            </button>
+            
+            {showWalletMenu && (
+              <div className="wallet-dropdown-menu">
+                <div className="dropdown-item" onClick={() => { setSelectedWallet('Main'); setShowWalletMenu(false); }}>Main Wallet</div>
+                <div className="dropdown-item" onClick={() => { setSelectedWallet('Trading'); setShowWalletMenu(false); }}>Trading Wallet</div>
+                <div className="dropdown-item" onClick={() => { setSelectedWallet('Savings'); setShowWalletMenu(false); }}>Savings Wallet</div>
+              </div>
+            )}
           </div>
-          <button
-            onClick={handleStartSaving}
-            style={{
-              padding: '10px 20px',
-              background: 'linear-gradient(135deg, #00E5FF, #00C5D7)',
-              border: 'none',
-              borderRadius: '24px',
-              color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0, 229, 255, 0.25)',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 229, 255, 0.35)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 229, 255, 0.25)';
-            }}
+          
+          {/* Transfer from Wallet Button */}
+          <button 
+            className="transfer-from-wallet-btn"
+            onClick={() => setShowTransferModal(true)}
           >
             Transfer from Wallet
           </button>
         </div>
+      </header>
 
-        {/* SAVINGS SUMMARY STRIP - Compact, flat */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '16px',
-          marginBottom: '32px',
-          padding: '0'
-        }}>
-          {/* Total Savings */}
-          <div style={{
-            padding: '20px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(0, 229, 255, 0.1)'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '8px'
-            }}>
-              <div style={{
-                fontSize: '11px',
-                color: '#8FA3C8',
-                fontWeight: '500',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>Total Savings</div>
-              <button
-                onClick={() => setBalanceVisible(!balanceVisible)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#8FA3C8',
-                  cursor: 'pointer',
-                  padding: '2px',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                {balanceVisible ? <IoEye size={16} /> : <IoEyeOff size={16} />}
-              </button>
-            </div>
-            <div style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#FFFFFF'
-            }}>
-              {balanceVisible ? `£${totalSavings.toFixed(2)}` : '••••••'}
-            </div>
-          </div>
-
-          {/* Available */}
-          <div style={{
-            padding: '20px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(138, 92, 246, 0.1)'
-          }}>
-            <div style={{
-              fontSize: '11px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              marginBottom: '8px'
-            }}>Available</div>
-            <div style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#FFFFFF'
-            }}>
-              {balanceVisible ? `£${availableToWithdraw.toFixed(2)}` : '••••••'}
-            </div>
-            <div style={{
-              fontSize: '12px',
-              color: '#8FA3C8',
-              marginTop: '4px'
-            }}>Ready to withdraw</div>
-          </div>
-
-          {/* Total Interest */}
-          <div style={{
-            padding: '20px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(22, 199, 132, 0.15)'
-          }}>
-            <div style={{
-              fontSize: '11px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              marginBottom: '8px'
-            }}>Total Interest Earned</div>
-            <div style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#16C784'
-            }}>
-              {balanceVisible ? `£${totalInterestEarned.toFixed(2)}` : '••••••'}
-            </div>
-            <div style={{
-              fontSize: '12px',
-              color: '#8FA3C8',
-              marginTop: '4px'
-            }}>Lifetime earnings</div>
+      {/* SUMMARY CARDS - 3 cards in a row */}
+      <div className="summary-cards-section">
+        {/* Card 1: Total Balance */}
+        <div className="summary-card glassmorphic-card">
+          <div className="card-icon-bg wallet-icon"></div>
+          <div className="card-label">Total Balance</div>
+          <div className="card-value-main">{totalBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{totalBalanceCrypto.split(' ')[1]}</span></div>
+          <div className="card-value-fiat">≈ ${totalBalance.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot pulsing"></span>
+            <span className="live-text">Live</span>
           </div>
         </div>
 
-        {/* EMPTY STATE OR ASSET LIST */}
-        {!hasSavings ? (
-          // EMPTY STATE - Minimal, centered
-          <div style={{
-            padding: '80px 20px',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              fontSize: '48px',
-              marginBottom: '16px',
-              opacity: 0.3
-            }}>📈</div>
-            <div style={{
-              fontSize: '16px',
-              color: '#FFFFFF',
-              fontWeight: '600',
-              marginBottom: '8px'
-            }}>No assets in savings yet</div>
-            <div style={{
-              fontSize: '14px',
-              color: '#8FA3C8',
-              marginBottom: '24px',
-              maxWidth: '400px',
-              margin: '0 auto 24px'
-            }}>Transfer crypto from your wallet to start earning passive yield</div>
-            <button
-              onClick={handleStartSaving}
-              style={{
-                padding: '12px 32px',
-                background: 'linear-gradient(135deg, #00E5FF, #00C5D7)',
-                border: 'none',
-                borderRadius: '24px',
-                color: '#FFFFFF',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(0, 229, 255, 0.3)'
-              }}
-            >
-              Start Saving
+        {/* Card 2: Available to Transfer */}
+        <div className="summary-card glassmorphic-card">
+          <div className="card-icon-bg unlock-icon"></div>
+          <div className="card-label">Available to Transfer</div>
+          <div className="card-value-main">{availableBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{availableBalanceCrypto.split(' ')[1]}</span></div>
+          <div className="card-value-fiat">≈ ${availableBalance.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot pulsing"></span>
+            <span className="live-text">Live</span>
+          </div>
+        </div>
+
+        {/* Card 3: Interest Earned to Date */}
+        <div className="summary-card glassmorphic-card">
+          <div className="card-icon-bg interest-icon"></div>
+          <div className="card-label">Interest Earned to Date</div>
+          <div className="card-value-main">{totalInterestCrypto.split(' ')[0]} <span className="crypto-symbol">{totalInterestCrypto.split(' ')[1]}</span> Earned</div>
+          <div className="card-value-fiat">≈ ${totalInterestEarned.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot pulsing"></span>
+            <span className="live-text">Live</span>
+          </div>
+        </div>
+      </div>
+
+      {/* REFERRAL BANNER */}
+      {showReferralBanner && (
+        <div className="referral-banner glassmorphic-card purple-accent">
+          <span className="referral-text">Invite friends, earn more ➜</span>
+          <button 
+            className="dismiss-banner-btn"
+            onClick={() => setShowReferralBanner(false)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* SORTING & FILTERS BAR */}
+      <div className="controls-toolbar">
+        {/* Sort By Dropdown */}
+        <div className="sort-control">
+          <button 
+            className="sort-btn"
+            onClick={() => setShowSortMenu(!showSortMenu)}
+          >
+            <span className="sort-label">Sort: </span>
+            <span className="sort-value">{sortBy === 'name' ? 'Token Name' : sortBy === 'apy' ? 'APY' : sortBy === 'earned' ? 'Total Earned' : 'Balance'}</span>
+            <span className="dropdown-arrow">▼</span>
+          </button>
+          
+          {showSortMenu && (
+            <div className="sort-dropdown-menu">
+              <div className="dropdown-item" onClick={() => handleSort('name')}>Token Name</div>
+              <div className="dropdown-item" onClick={() => handleSort('apy')}>APY (High to Low)</div>
+              <div className="dropdown-item" onClick={() => handleSort('earned')}>Total Earned</div>
+              <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance</div>
+            </div>
+          )}
+        </div>
+        
+        {/* Filter Toggles */}
+        <div className="filter-toggles">
+          <button 
+            className={`filter-toggle-btn ${filterActive ? 'active' : ''}`}
+            onClick={() => setFilterActive(!filterActive)}
+          >
+            Active {filterActive && '✓'}
+          </button>
+          <button 
+            className={`filter-toggle-btn ${filterFlexible ? 'active' : ''}`}
+            onClick={() => setFilterFlexible(!filterFlexible)}
+          >
+            Flexible {filterFlexible && '✓'}
+          </button>
+          <button 
+            className={`filter-toggle-btn ${filterStaked ? 'active' : ''}`}
+            onClick={() => setFilterStaked(!filterStaked)}
+          >
+            Staked {filterStaked && '✓'}
+          </button>
+        </div>
+        
+        <div className="visible-count">{filteredPositions.length}/{positions.length} assets shown</div>
+      </div>
+
+      {/* YOUR SAVINGS - PORTFOLIO LIST */}
+      <div className="portfolio-list-section">
+        <h2 className="section-heading">Your Savings</h2>
+        
+        {loading ? (
+          <div className="loading-state">Loading your savings...</div>
+        ) : filteredPositions.length === 0 ? (
+          <div className="empty-state glassmorphic-card">
+            <p>You don't have any savings yet.</p>
+            <button className="transfer-from-wallet-btn" onClick={() => navigate('/wallet')}>
+              Start Saving Now
             </button>
           </div>
         ) : (
-          // SAVINGS ASSET LIST - Flat list matching Wallet
-          <div style={{ marginTop: '24px' }}>
-            <div style={{
-              fontSize: '14px',
-              color: '#8FA3C8',
-              fontWeight: '500',
-              marginBottom: '12px',
-              padding: '0 20px'
-            }}>Your Savings</div>
-            
-            {savingsAssets.map((asset, idx) => {
-              const currency = asset.currency || asset.asset || 'BTC';
-              const amount = parseFloat(asset.amount || asset.balance || 0);
-              const gbpValue = parseFloat(asset.value_gbp || asset.balance_gbp || 0);
-              const apy = parseFloat(asset.apy || 5.0);
-              const interestEarned = parseFloat(asset.interest_earned || asset.earnings || 0);
-
-              return (
-                <div
-                  key={idx}
-                  onClick={() => navigate(`/savings/asset/${currency.toLowerCase()}`)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '14px 20px',
-                    background: 'transparent',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    cursor: 'pointer',
-                    transition: 'background 0.15s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  {/* LEFT: ICON + NAME */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    flex: 1
-                  }}>
-                    <img
-                      src={getCoinLogo(currency)}
-                      alt={currency}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%'
-                      }}
-                      onError={(e) => {
-                        e.target.src = `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${currency.toLowerCase()}.png`;
-                        e.target.onerror = (err) => {
-                          err.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyMCIgZmlsbD0iIzAwRTVGRiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj4kPC90ZXh0Pjwvc3ZnPg==';
-                        };
-                      }}
-                    />
-                    <div>
-                      <div style={{
-                        fontSize: '15px',
-                        fontWeight: '600',
-                        color: '#FFFFFF',
-                        marginBottom: '2px'
-                      }}>{currency}</div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#6B7A99',
-                        fontWeight: '400'
-                      }}>Saving</div>
+          <div className="token-cards-list">
+            {filteredPositions.map((position, index) => (
+              <div 
+                key={index} 
+                className={`token-card glassmorphic-card ${expandedCard === index ? 'expanded' : ''}`}
+              >
+                {/* COLLAPSED VIEW - Card Header */}
+                <div className="token-card-header">
+                  <div className="token-identity">
+                    <div className="token-icon-circle">
+                      <img 
+                        src={getCoinLogo(position.symbol)} 
+                        alt={position.symbol}
+                        onError={(e) => {
+                          if (!e.target.dataset.triedSvg) {
+                            e.target.dataset.triedSvg = 'true';
+                            e.target.src = `/crypto-icons/${position.symbol.toLowerCase()}.svg`;
+                          } else {
+                            e.target.style.display = 'none';
+                            const letter = position.symbol?.substring(0, 1) || '?';
+                            e.target.parentElement.innerHTML = `<div class="fallback-icon">${letter}</div>`;
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="token-name-label">
+                      {position.name || position.symbol} ({position.symbol})
                     </div>
                   </div>
-
-                  {/* CENTER: AMOUNT + APY */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '16px',
-                    flex: 1,
-                    justifyContent: 'center'
-                  }}>
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{
-                        fontSize: '15px',
-                        fontWeight: '600',
-                        color: '#FFFFFF'
-                      }}>
-                        {amount.toFixed(8)} {currency}
-                      </div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#8FA3C8',
-                        marginTop: '2px'
-                      }}>
-                        £{gbpValue.toFixed(2)}
-                      </div>
+                  
+                  <div className="token-balance-info">
+                    <div className="balance-primary">{position.balance || '0.000'} {position.symbol}</div>
+                    <div className="balance-fiat">≈ ${position.balance_usd || '0.00'}</div>
+                  </div>
+                  
+                  <div className="token-apy-section">
+                    <span className="apy-label">APY</span>
+                    <span className="apy-value">{position.apy || 0}%</span>
+                  </div>
+                  
+                  <div className="token-interest-earned">
+                    <span className="earned-label">Interest earned:</span>
+                    <span className="earned-value">{position.interest_earned || '0.00'} {position.symbol}</span>
+                  </div>
+                  
+                  <div className="token-est-monthly">
+                    <span className="monthly-label">Est. Monthly:</span>
+                    <span className="monthly-value">~${position.estimated_monthly || '0.00'}</span>
+                  </div>
+                  
+                  <div className="token-toggles-section">
+                    {/* Flexible/Staked Segmented Control */}
+                    <div className="flexible-staked-control">
+                      <button 
+                        className={`toggle-segment ${position.type === 'flexible' ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFlexibleStaked(index, 'flexible');
+                        }}
+                      >
+                        Flexible
+                      </button>
+                      <button 
+                        className={`toggle-segment ${position.type === 'staked' ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFlexibleStaked(index, 'staked');
+                        }}
+                      >
+                        Staked
+                      </button>
                     </div>
-                    <div style={{
-                      padding: '4px 10px',
-                      background: 'rgba(22, 199, 132, 0.15)',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#16C784'
-                    }}>
-                      {apy.toFixed(1)}% APY
+                    
+                    {/* Auto-Compound Flip Switch */}
+                    <div className="auto-compound-switch">
+                      <label className="switch-label">
+                        <span className="switch-text">Auto-Compound</span>
+                        <input 
+                          type="checkbox" 
+                          className="switch-input"
+                          checked={position.auto_compound || false}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleToggleAutoCompound(index);
+                          }}
+                        />
+                        <span className="switch-slider"></span>
+                      </label>
                     </div>
                   </div>
-
-                  {/* RIGHT: INTEREST + ARROW */}
-                  <div style={{
-                    textAlign: 'right',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
-                  }}>
-                    <div>
-                      <div style={{
-                        fontSize: '13px',
-                        color: '#16C784',
-                        fontWeight: '600'
-                      }}>
-                        +£{interestEarned.toFixed(2)}
-                      </div>
-                      <div style={{
-                        fontSize: '12px',
-                        color: '#8FA3C8',
-                        marginTop: '2px'
-                      }}>
-                        Interest
-                      </div>
-                    </div>
-                    <IoChevronForward size={18} style={{ color: '#6B7A99' }} />
-                  </div>
+                  
+                  <button 
+                    className="expand-collapse-btn"
+                    onClick={() => toggleCard(index)}
+                  >
+                    {expandedCard === index ? '▲' : '▼'}
+                  </button>
                 </div>
-              );
-            })}
+
+                {/* EXPANDED VIEW */}
+                {expandedCard === index && (
+                  <div className="token-card-expanded">
+                    {/* 30d/90d Earnings Graph */}
+                    <div className="earnings-graph-section">
+                      <div className="graph-period-toggle">
+                        <button 
+                          className={`period-btn ${(graphPeriod[index] || '30d') === '30d' ? 'active' : ''}`}
+                          onClick={() => setGraphPeriod({...graphPeriod, [index]: '30d'})}
+                        >
+                          30D
+                        </button>
+                        <button 
+                          className={`period-btn ${(graphPeriod[index] || '30d') === '90d' ? 'active' : ''}`}
+                          onClick={() => setGraphPeriod({...graphPeriod, [index]: '90d'})}
+                        >
+                          90D
+                        </button>
+                      </div>
+                      
+                      <div className="graph-container">
+                        <div className="graph-label">Interest Earned ({position.symbol})</div>
+                        <svg className="earnings-chart" viewBox="0 0 600 100" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" style={{stopColor: '#00FF85', stopOpacity: 0.3}} />
+                              <stop offset="100%" style={{stopColor: '#00FF85', stopOpacity: 0}} />
+                            </linearGradient>
+                          </defs>
+                          <path 
+                            className="earnings-line"
+                            d="M 0 80 L 100 70 L 200 50 L 300 40 L 400 45 L 500 30 L 600 20" 
+                            stroke="#00FF85" 
+                            strokeWidth="2" 
+                            fill="none"
+                          />
+                          <path 
+                            d="M 0 100 L 0 80 L 100 70 L 200 50 L 300 40 L 400 45 L 500 30 L 600 20 L 600 100 Z" 
+                            fill={`url(#grad-${index})`}
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons - Withdraw & Add */}
+                    <div className="action-buttons-row">
+                      <button 
+                        className="action-btn withdraw-btn"
+                        onClick={() => {
+                          setSelectedPosition(position);
+                          setShowWithdrawModal(true);
+                        }}
+                      >
+                        Withdraw
+                      </button>
+                      <button 
+                        className="action-btn add-btn"
+                        onClick={() => {
+                          setSelectedPosition(position);
+                          setShowAddModal(true);
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+
+                    {/* Lock-up Period Selectors (only show if staked) */}
+                    {position.type === 'staked' && (
+                      <div className="lockup-period-selectors">
+                        <button 
+                          className={`lockup-pill ${position.lock_period === 7 ? 'active' : ''}`}
+                          onClick={() => handleLockPeriodChange(index, 7)}
+                        >
+                          7d
+                        </button>
+                        <button 
+                          className={`lockup-pill ${position.lock_period === 30 ? 'active' : ''}`}
+                          onClick={() => handleLockPeriodChange(index, 30)}
+                        >
+                          30d
+                        </button>
+                        <button 
+                          className={`lockup-pill ${position.lock_period === 90 ? 'active' : ''}`}
+                          onClick={() => handleLockPeriodChange(index, 90)}
+                        >
+                          90d
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Interest History Link/Button */}
+                    <button 
+                      className="interest-history-btn"
+                      onClick={() => {
+                        setSelectedPosition(position);
+                        setShowHistoryModal(true);
+                      }}
+                    >
+                      📑 Interest History
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
+
+      {/* MOBILE FOOTER - Only visible on mobile */}
+      <div className="mobile-bottom-nav">
+        <button className="nav-tab" onClick={() => navigate('/wallet')}>
+          <span className="tab-icon">💰</span>
+          <span className="tab-label">Wallet</span>
+        </button>
+        <button className="nav-tab active">
+          <span className="tab-icon">💲</span>
+          <span className="tab-label">Savings</span>
+        </button>
+        <button className="nav-tab" onClick={() => navigate('/settings')}>
+          <span className="tab-icon">⚙️</span>
+          <span className="tab-label">Settings</span>
+        </button>
+      </div>
+
+      {/* MODALS */}
+      {showTransferModal && (
+        <div className="modal-overlay" onClick={() => setShowTransferModal(false)}>
+          <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
+            <h3>Transfer from Wallet</h3>
+            <button className="modal-close-btn" onClick={() => setShowTransferModal(false)}>✕</button>
+            <p>Transfer funds into your Savings Vault</p>
+          </div>
+        </div>
+      )}
+
+      {showWithdrawModal && (
+        <div className="modal-overlay" onClick={() => setShowWithdrawModal(false)}>
+          <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
+            <h3>Withdraw {selectedPosition?.symbol}</h3>
+            <button className="modal-close-btn" onClick={() => setShowWithdrawModal(false)}>✕</button>
+            <p>Withdraw from your savings</p>
+          </div>
+        </div>
+      )}
+
+      {showAddModal && (
+        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+          <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
+            <h3>Add {selectedPosition?.symbol}</h3>
+            <button className="modal-close-btn" onClick={() => setShowAddModal(false)}>✕</button>
+            <p>Add more to your savings</p>
+          </div>
+        </div>
+      )}
+
+      {showHistoryModal && (
+        <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
+          <div className="modal-content glassmorphic-card modal-large" onClick={(e) => e.stopPropagation()}>
+            <h3>Interest History - {selectedPosition?.symbol}</h3>
+            <button className="modal-close-btn" onClick={() => setShowHistoryModal(false)}>✕</button>
+            <div className="history-list">
+              <p>No interest history yet</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default SavingsVault;
