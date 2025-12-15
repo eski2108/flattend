@@ -1416,7 +1416,7 @@ async def update_user_profile(update_data: dict):
             raise HTTPException(status_code=400, detail="user_id is required")
         
         # Find user
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -1436,13 +1436,13 @@ async def update_user_profile(update_data: dict):
             raise HTTPException(status_code=400, detail="No valid fields to update")
         
         # Update user
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": user_id},
             {"$set": update_fields}
         )
         
         # Get updated user
-        updated_user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         
         logger.info(f"User profile updated: {user_id}")
         
@@ -1688,7 +1688,7 @@ async def mark_as_paid(request: LegacyMarkAsPaidRequest):
     
     # Send email to seller (respects user settings)
     try:
-        seller = await db.user_accounts.find_one({"wallet_address": buy_order["seller_address"]}, {"_id": 0})
+        seller = await db.users.find_one({"wallet_address": buy_order["seller_address"]}, {"_id": 0})
         if seller:
             user_settings = seller.get('security', {})
             if user_settings.get('login_email_alerts_enabled', True):
@@ -1754,7 +1754,7 @@ async def release_crypto(request: LegacyReleaseCryptoRequest):
     
     # Send email to buyer (respects user settings)
     try:
-        buyer = await db.user_accounts.find_one({"wallet_address": buy_order["buyer_address"]}, {"_id": 0})
+        buyer = await db.users.find_one({"wallet_address": buy_order["buyer_address"]}, {"_id": 0})
         if buyer:
             user_settings = buyer.get('security', {})
             if user_settings.get('login_email_alerts_enabled', True):
@@ -2060,7 +2060,7 @@ async def get_marketplace_offers(crypto_currency: Optional[str] = None):
         # Enrich with seller info
         enriched_offers = []
         for offer in offers:
-            seller = await db.user_accounts.find_one({"user_id": offer.get("seller_id")}, {"_id": 0})
+            seller = await db.users.find_one({"user_id": offer.get("seller_id")}, {"_id": 0})
             if seller:
                 offer["seller_username"] = seller.get("full_name") or seller.get("email", "Unknown")
                 offer["seller_rating"] = seller.get("rating", 0)
@@ -2098,7 +2098,7 @@ async def get_p2p_stats():
         total_volume_24h = volume_24h[0]["total"] if volume_24h else 0
         
         # Count unique users
-        total_users = await db.user_accounts.count_documents({})
+        total_users = await db.users.count_documents({})
         
         # Calculate average completion time from completed trades
         completed_trades = await db.p2p_trades.find({
@@ -2911,7 +2911,7 @@ async def get_p2p_config():
 async def get_user_seller_link(user_id: str):
     """Get user's personal seller link"""
     try:
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -2937,7 +2937,7 @@ async def get_user_seller_link(user_id: str):
 # DUPLICATE: async def get_seller_profile(user_id: str):
     """Get seller profile with stats"""
     # Get user account
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="Seller not found")
     
@@ -3117,7 +3117,7 @@ async def get_trade_details(trade_id: str, user_id: Optional[str] = Query(None))
     seller_response = await get_seller_profile(trade["seller_id"])
     
     # Get buyer info
-    buyer = await db.user_accounts.find_one({"user_id": trade["buyer_id"]}, {"_id": 0})
+    buyer = await db.users.find_one({"user_id": trade["buyer_id"]}, {"_id": 0})
     buyer_name = buyer.get("full_name", "Anonymous") if buyer else "Anonymous"
     
     # Get payment method details
@@ -3185,14 +3185,14 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
     total_fee = taker_fee + express_fee
     
     # Check for buyer's referrer
-    buyer = await db.user_accounts.find_one({"user_id": request.buyer_id}, {"_id": 0})
+    buyer = await db.users.find_one({"user_id": request.buyer_id}, {"_id": 0})
     referrer_id = buyer.get("referrer_id") if buyer else None
     referrer_commission = 0.0
     admin_fee = total_fee
     commission_percent = 0.0
     
     if referrer_id:
-        referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+        referrer = await db.users.find_one({"user_id": referrer_id}, {"_id": 0})
         referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
         
         if referrer_tier == "golden":
@@ -3399,7 +3399,7 @@ async def release_crypto_from_escrow_OLD(request: ReleaseCryptoRequest):
     base_fee_percent = monetization_settings.get("p2p_seller_fee_percent", 3.0)
     
     # Check seller level and apply fee reduction
-    seller = await db.user_accounts.find_one({"user_id": trade["seller_id"]}, {"_id": 0, "seller_level": 1})
+    seller = await db.users.find_one({"user_id": trade["seller_id"]}, {"_id": 0, "seller_level": 1})
     seller_level = seller.get("seller_level", "bronze") if seller else "bronze"
     
     # Apply level-based fee reduction
@@ -3794,7 +3794,7 @@ async def get_trade_attachment(filename: str):
 async def create_trader_profile(user_id: str):
     """Convert a regular user into a trader"""
     # Check if user exists
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -4002,7 +4002,7 @@ async def create_p2p_express_order(order_data: Dict):
     wallet_service = get_wallet_service()
     
     # Get user info for referral
-    user = await db.user_accounts.find_one({"user_id": order_data["user_id"]}, {"_id": 0})
+    user = await db.users.find_one({"user_id": order_data["user_id"]}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -4340,7 +4340,7 @@ async def get_manual_mode_adverts(
             continue
         
         # Get user info for display name
-        user = await db.user_accounts.find_one(
+        user = await db.users.find_one(
             {"user_id": advert['trader_id']},
             {"_id": 0, "email": 1, "user_id": 1}
         )
@@ -5471,7 +5471,7 @@ async def admin_get_all_trader_badges():
 async def admin_get_all_users():
     """Get all users for admin management"""
     try:
-        users = await db.user_accounts.find(
+        users = await db.users.find(
             {},
             {"_id": 0, "password_hash": 0, "salt": 0}
         ).sort("created_at", -1).to_list(1000)
@@ -5500,7 +5500,7 @@ async def admin_update_user_tier(request: dict):
             raise HTTPException(status_code=400, detail="Invalid tier. Must be standard, vip, or golden")
         
         # Update user tier
-        result = await db.user_accounts.update_one(
+        result = await db.users.update_one(
             {"user_id": user_id},
             {"$set": {"referral_tier": tier, "tier_updated_at": datetime.now(timezone.utc).isoformat()}}
         )
@@ -6380,7 +6380,7 @@ async def verify_email(token: str):
     """Verify user email with token"""
     from fastapi.responses import HTMLResponse, RedirectResponse
     
-    user = await db.user_accounts.find_one({"verification_token": token}, {"_id": 0})
+    user = await db.users.find_one({"verification_token": token}, {"_id": 0})
     
     if not user:
         # Show error page
@@ -6408,7 +6408,7 @@ async def verify_email(token: str):
         return HTMLResponse(content=html_content, status_code=400)
     
     # Update user as verified
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"verification_token": token},
         {
             "$set": {"email_verified": True},
@@ -6540,7 +6540,7 @@ async def send_otp_for_action(request: dict):
     
     try:
         # Get user's phone number
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -6572,7 +6572,7 @@ async def verify_otp_for_action(request: dict):
     
     try:
         # Get user's phone number
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -6603,7 +6603,7 @@ async def resend_otp_for_action(request: dict):
     
     try:
         # Get user's phone number
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -6635,7 +6635,7 @@ async def complete_phone_signup(request: dict):
     
     try:
         # Check if user already exists
-        existing = await db.user_accounts.find_one({"phone": phone_number})
+        existing = await db.users.find_one({"phone": phone_number})
         if existing:
             # Return existing user
             token_data = {
@@ -6672,7 +6672,7 @@ async def complete_phone_signup(request: dict):
             "role": "user"
         }
         
-        await db.user_accounts.insert_one(user)
+        await db.users.insert_one(user)
         
         # Generate JWT token
         token_data = {
@@ -6718,11 +6718,11 @@ async def store_emergent_session(request: dict):
     picture = user_data.get("picture")
     
     # Check if user exists by email
-    existing_user = await db.user_accounts.find_one({"email": email})
+    existing_user = await db.users.find_one({"email": email})
     
     if not existing_user:
         # Create new user account
-        await db.user_accounts.insert_one({
+        await db.users.insert_one({
             "user_id": user_id,
             "email": email,
             "full_name": name,
@@ -6867,7 +6867,7 @@ async def google_callback(code: str = None, error: str = None):
             logger.info(f"✅ Google OAuth user info received: {user_email}")
             
             # Check if user exists
-            existing_user = await db.user_accounts.find_one({"email": user_email}, {"_id": 0})
+            existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
             
             if existing_user:
                 # User exists - generate token and redirect to login callback page
@@ -6924,7 +6924,7 @@ async def complete_google_signup(request: dict):
         raise HTTPException(status_code=400, detail="All fields are required")
     
     # Check if username is taken
-    existing_username = await db.user_accounts.find_one({"username": username}, {"_id": 0})
+    existing_username = await db.users.find_one({"username": username}, {"_id": 0})
     if existing_username:
         raise HTTPException(status_code=400, detail="Username already taken")
     
@@ -6944,7 +6944,7 @@ async def complete_google_signup(request: dict):
         "wallet_address": None
     }
     
-    await db.user_accounts.insert_one(user_account)
+    await db.users.insert_one(user_account)
     
     # Generate referral code
     referral_code = f"{full_name[:4].upper()}{user_id[:4].upper()}"
@@ -6974,7 +6974,7 @@ async def complete_google_signup(request: dict):
     }
     
     # Mark email as verified
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"verification_token": token},
         {"$set": {"email_verified": True}, "$unset": {"verification_token": ""}}
     )
@@ -7103,7 +7103,7 @@ async def register_user(request: RegisterRequest, req: Request):
         )
     
     # Check if email already exists
-    existing = await db.user_accounts.find_one({"email": request.email}, {"_id": 0})
+    existing = await db.users.find_one({"email": request.email}, {"_id": 0})
     if existing:
         # Log failed signup attempt
         await security_logger.log_signup_attempt(
@@ -7199,7 +7199,7 @@ async def register_user(request: RegisterRequest, req: Request):
         except Exception as ref_error:
             logger.error(f"❌ Error processing referral code: {str(ref_error)}")
     
-    await db.user_accounts.insert_one(account_dict)
+    await db.users.insert_one(account_dict)
     
     # Send phone verification via Twilio Verify
     try:
@@ -7345,7 +7345,7 @@ async def verify_phone(request: dict):
         raise HTTPException(status_code=400, detail="Email and code required")
     
     # Get user
-    user = await db.user_accounts.find_one({"email": email})
+    user = await db.users.find_one({"email": email})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -7370,7 +7370,7 @@ async def verify_phone(request: dict):
             
             if verification_check.status == 'approved':
                 # Mark phone as verified
-                await db.user_accounts.update_one(
+                await db.users.update_one(
                     {"user_id": user["user_id"]},
                     {"$set": {"phone_verified": True, "email_verified": True}}
                 )
@@ -7399,7 +7399,7 @@ async def verify_phone(request: dict):
                 raise HTTPException(status_code=400, detail="Verification code expired")
             
             # Mark phone as verified
-            await db.user_accounts.update_one(
+            await db.users.update_one(
                 {"user_id": user["user_id"]},
                 {"$set": {"phone_verified": True, "email_verified": True}}
             )
@@ -7487,7 +7487,7 @@ async def login_user(login_req: LoginRequest, request: Request):
             password_valid = True
             # Password correct, migrate to bcrypt
             new_hash = password_hasher.hash_password(login_req.password)
-            await db.user_accounts.update_one(
+            await db.users.update_one(
                 {"email": login_req.email},
                 {"$set": {"password_hash": new_hash}}
             )
@@ -7550,7 +7550,7 @@ async def login_user(login_req: LoginRequest, request: Request):
     token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
     
     # Update last login
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"email": login_req.email},
         {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
     )
@@ -7625,7 +7625,7 @@ async def login_with_2fa(request: dict, req: Request):
         raise HTTPException(status_code=401, detail="Invalid 2FA code")
     
     # Get user
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -7648,7 +7648,7 @@ async def login_with_2fa(request: dict, req: Request):
     token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
     
     # Update last login
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"user_id": user_id},
         {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
     )
@@ -7692,7 +7692,7 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
             detail=f"Too many password reset attempts. Please try again in {wait_time} seconds."
         )
     
-    user = await db.user_accounts.find_one({"email": request.email}, {"_id": 0})
+    user = await db.users.find_one({"email": request.email}, {"_id": 0})
     if not user:
         # Don't reveal if email exists
         return {"success": True, "message": "If email exists, reset link will be sent"}
@@ -7701,7 +7701,7 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
     reset_token = secrets.token_urlsafe(32)
     reset_expires = datetime.now(timezone.utc) + timedelta(hours=1)
     
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"email": request.email},
         {
             "$set": {
@@ -7756,7 +7756,7 @@ async def reset_password(request: ResetPasswordRequest):
     """Reset password with token"""
     from security import password_hasher
     
-    user = await db.user_accounts.find_one({"reset_token": request.reset_token}, {"_id": 0})
+    user = await db.users.find_one({"reset_token": request.reset_token}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     
@@ -7770,7 +7770,7 @@ async def reset_password(request: ResetPasswordRequest):
     password_hash = password_hasher.hash_password(request.new_password)
     
     # Update password and clear reset token
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"reset_token": request.reset_token},
         {
             "$set": {"password_hash": password_hash},
@@ -7816,7 +7816,7 @@ async def admin_login(request: AdminLoginRequest, req: Request):
         raise HTTPException(status_code=403, detail="Invalid admin code")
     
     # Find user and verify password
-    user = await db.user_accounts.find_one({"email": request.email}, {"_id": 0})
+    user = await db.users.find_one({"email": request.email}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
@@ -7832,7 +7832,7 @@ async def admin_login(request: AdminLoginRequest, req: Request):
         if stored_hash == sha256_hash:
             # Password correct, migrate to bcrypt
             new_hash = password_hasher.hash_password(request.password)
-            await db.user_accounts.update_one(
+            await db.users.update_one(
                 {"email": request.email},
                 {"$set": {"password_hash": new_hash}}
             )
@@ -7845,7 +7845,7 @@ async def admin_login(request: AdminLoginRequest, req: Request):
     
     # Ensure user has admin role
     if user.get("role") != "admin":
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"email": request.email},
             {"$set": {"role": "admin"}}
         )
@@ -7879,7 +7879,7 @@ async def admin_login(request: AdminLoginRequest, req: Request):
 async def get_all_customers():
     """Get all registered customers (buyers and lenders)"""
     # Get all user accounts
-    accounts = await db.user_accounts.find(
+    accounts = await db.users.find(
         {"role": {"$ne": "admin"}},
         {"_id": 0, "password_hash": 0, "reset_token": 0}
     ).to_list(1000)
@@ -7943,7 +7943,7 @@ async def restore_backup(backup_name: str):
 async def get_admin_customers():
     """Get all customers for admin dashboard"""
     # Get all user accounts
-    accounts = await db.user_accounts.find(
+    accounts = await db.users.find(
         {"role": {"$ne": "admin"}},
         {"_id": 0, "password_hash": 0, "reset_token": 0}
     ).to_list(10000)
@@ -8027,7 +8027,7 @@ async def get_admin_customers():
 async def get_admin_dashboard_stats():
     """Get comprehensive platform statistics for admin"""
     # User stats
-    total_users = await db.user_accounts.count_documents({"role": "user"})
+    total_users = await db.users.count_documents({"role": "user"})
     wallet_users = await db.users.count_documents({})
     
     # Transaction stats
@@ -8107,7 +8107,7 @@ async def send_broadcast_message(request: dict):
         raise HTTPException(status_code=400, detail="Title and content are required")
     
     # Get all users
-    users = await db.user_accounts.find(
+    users = await db.users.find(
         {"role": "user", "email_verified": True},
         {"_id": 0, "user_id": 1, "email": 1, "full_name": 1}
     ).to_list(10000)
@@ -8186,7 +8186,7 @@ async def send_broadcast_message(request: dict):
 async def get_customer_analytics():
     """Get customer source analytics"""
     # Get all users with registration source tracking
-    users = await db.user_accounts.find(
+    users = await db.users.find(
         {"role": "user"},
         {"_id": 0, "user_id": 1, "email": 1, "created_at": 1, "referral_code_used": 1}
     ).to_list(10000)
@@ -8531,7 +8531,7 @@ async def activate_golden_referral(request: dict):
         raise HTTPException(status_code=400, detail="user_id required")
     
     # Check if user exists
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -8544,7 +8544,7 @@ async def activate_golden_referral(request: dict):
         }
     
     # Activate Golden Referral
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"user_id": user_id},
         {
             "$set": {
@@ -8588,7 +8588,7 @@ async def deactivate_golden_referral(request: dict):
         raise HTTPException(status_code=400, detail="user_id required")
     
     # Check if user exists
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -8601,7 +8601,7 @@ async def deactivate_golden_referral(request: dict):
         }
     
     # Deactivate Golden Referral
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"user_id": user_id},
         {
             "$set": {
@@ -8639,7 +8639,7 @@ async def get_golden_referral_users():
     Get list of all users with Golden Referral VIP tier (Admin Only)
     """
     # Find all users with golden_referral = True
-    golden_users = await db.user_accounts.find(
+    golden_users = await db.users.find(
         {"golden_referral": True},
         {"_id": 0, "user_id": 1, "email": 1, "full_name": 1, "golden_referral_activated_at": 1, "golden_referral_activated_by": 1}
     ).to_list(1000)
@@ -8695,7 +8695,7 @@ async def search_users_for_golden_referral(email: str = None, user_id: str = Non
         query["user_id"] = user_id
     
     # Find users
-    users = await db.user_accounts.find(
+    users = await db.users.find(
         query,
         {"_id": 0, "user_id": 1, "email": 1, "full_name": 1, "golden_referral": 1}
     ).limit(20).to_list(20)
@@ -9529,7 +9529,7 @@ async def execute_swap_OLD(request: dict):
     
     # Send email notification (respects user settings)
     try:
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         if user:
             user_settings = user.get('security', {})
             if user_settings.get('login_email_alerts_enabled', True):
@@ -12067,7 +12067,7 @@ async def express_buy_execute(request: dict):
         spread_profit = sold_value - market_value
         
         # Check for buyer's referrer
-        buyer = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        buyer = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         referrer_id = buyer.get("referrer_id") if buyer else None
         referrer_commission = 0.0
         admin_spread_profit = spread_profit
@@ -12076,7 +12076,7 @@ async def express_buy_execute(request: dict):
         if referrer_id:
             from centralized_fee_system import get_fee_manager
             fee_manager = get_fee_manager(db)
-            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer = await db.users.find_one({"user_id": referrer_id}, {"_id": 0})
             referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
             
             if referrer_tier == "golden":
@@ -12504,8 +12504,8 @@ async def mock_kyc_verification(request: dict):
     """Mock KYC verification for testing"""
     user_id = request.get("user_id")
     
-    # Get user from user_accounts to copy basic info
-    user_account = await db.user_accounts.find_one({"user_id": user_id})
+    # Get user from users to copy basic info
+    user_account = await db.users.find_one({"user_id": user_id})
     
     user_data = {
         "user_id": user_id,
@@ -12600,7 +12600,7 @@ async def initiate_deposit(request: InitiateDepositRequest):
         raise HTTPException(status_code=400, detail="Amount must be greater than 0")
     
     # Get user info for email
-    user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -12778,7 +12778,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
         raise HTTPException(status_code=400, detail="Amount must be greater than 0")
     
     # Get user info for email
-    user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -13484,7 +13484,7 @@ async def apply_referral_code(request: ApplyReferralCodeRequest, req: Request):
         raise HTTPException(status_code=400, detail="User already used a referral code")
     
     # Get referred user's IP and user agent for anti-abuse detection
-    referred_user = await db.user_accounts.find_one(
+    referred_user = await db.users.find_one(
         {"user_id": request.referred_user_id},
         {"_id": 0, "ip_address": 1, "user_agent": 1}
     )
@@ -13560,7 +13560,7 @@ async def apply_referral_code(request: ApplyReferralCodeRequest, req: Request):
     )
     
     # Update referred user record
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"user_id": request.referred_user_id},
         {
             "$set": {
@@ -13623,8 +13623,8 @@ async def admin_search_users_for_golden(email: str = None, user_id: str = None):
         if user_id:
             query["user_id"] = user_id
         
-        # Search in user_accounts collection first, then fallback to users
-        user = await db.user_accounts.find_one(query, {"_id": 0})
+        # Search in users collection first, then fallback to users
+        user = await db.users.find_one(query, {"_id": 0})
         
         if not user:
             # Try users collection as fallback
@@ -13808,8 +13808,8 @@ async def get_referral_dashboard(user_id: str = None):
     if not code_data:
         logger.info(f"No referral code found for user {user_id}, creating one...")
         
-        # Get user's name from either user_accounts or users collection
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        # Get user's name from either users or users collection
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             user = await db.users.find_one({"user_id": user_id})
         
@@ -13879,7 +13879,7 @@ async def get_referral_dashboard(user_id: str = None):
     
     referred_list = []
     for ref in referred_users:
-        referred_user = await db.user_accounts.find_one(
+        referred_user = await db.users.find_one(
             {"user_id": ref["referred_user_id"]},
             {"_id": 0, "full_name": 1, "email": 1}
         )
@@ -13916,7 +13916,7 @@ async def get_user_referral_commissions(user_id: str):
     """Get all referral commissions for a user"""
     try:
         # Get user's account to determine tier
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         tier = user.get("referral_tier", "standard") if user else "standard"
         
         # Get all commissions where this user is the referrer
@@ -14000,7 +14000,7 @@ async def check_and_award_referral_bonus(user_id: str, top_up_amount: float, cur
     bonus_currency = "GBP"  # or USDT/USD equivalent
     
     # Get referred user info
-    referred_user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0, "full_name": 1})
+    referred_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "full_name": 1})
     referred_name = referred_user.get("full_name", "Unknown") if referred_user else "Unknown"
     
     # DEDUCT £20 from platform wallet first
@@ -14114,7 +14114,7 @@ async def check_and_award_referral_bonus(user_id: str, top_up_amount: float, cur
     
     # Send email notification
     try:
-        referrer = await db.user_accounts.find_one(
+        referrer = await db.users.find_one(
             {"user_id": relationship["referrer_user_id"]}, 
             {"_id": 0, "email": 1, "full_name": 1, "security": 1}
         )
@@ -14162,7 +14162,7 @@ async def process_referral_commission(
         }
     
     # Check referrer's commission tier (includes Golden Referral and paid upgrades)
-    referrer = await db.user_accounts.find_one(
+    referrer = await db.users.find_one(
         {"user_id": relationship["referrer_user_id"]}, 
         {"_id": 0, "golden_referral": 1}
     )
@@ -14192,7 +14192,7 @@ async def process_referral_commission(
         return {"success": True, "message": "No commission to pay"}
     
     # Get referred user info for notification
-    referred_user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0, "email": 1, "full_name": 1})
+    referred_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "email": 1, "full_name": 1})
     referred_name = referred_user.get("full_name", "Unknown") if referred_user else "Unknown"
     
     # Create commission record with detailed info
@@ -14269,7 +14269,7 @@ async def process_referral_commission(
     
     # Send email to referrer about commission
     try:
-        referrer = await db.user_accounts.find_one(
+        referrer = await db.users.find_one(
             {"user_id": relationship["referrer_user_id"]}, 
             {"_id": 0, "email": 1, "full_name": 1, "security": 1}
         )
@@ -14312,7 +14312,7 @@ async def create_private_referral_code(user_id: str):
         }
     
     # Get user info
-    user = await db.user_accounts.find_one({"user_id": user_id})
+    user = await db.users.find_one({"user_id": user_id})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -14352,7 +14352,7 @@ async def create_public_referral_code(user_id: str):
         }
     
     # Get user info
-    user = await db.user_accounts.find_one({"user_id": user_id})
+    user = await db.users.find_one({"user_id": user_id})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -14519,7 +14519,7 @@ async def check_and_pay_referral_bonus(referred_user_id: str, deposit_amount_gbp
         )
         
         # Credit user balance (assume USDT for now, £1 = $1.30 approx)
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": referrer_id},
             {"$inc": {"balance_USDT": 13.0}}  # £10 ~= $13 USDT
         )
@@ -14907,7 +14907,7 @@ async def get_deposit_instructions(currency: str):
 async def submit_deposit(request: DepositRequest):
     """User submits deposit for admin verification"""
     # Check if user exists
-    user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -14967,7 +14967,7 @@ async def create_withdrawal_request_new(request: WithdrawalRequestNew):
 # DUPLICATE: async def request_withdrawal(request: WithdrawalRequest):
     """User requests withdrawal (requires admin approval)"""
     # Get user
-    user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -15005,7 +15005,7 @@ async def create_withdrawal_request_new(request: WithdrawalRequestNew):
     await db.withdrawal_requests.insert_one(withdrawal)
     
     # Deduct from user balance immediately (hold in pending)
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"user_id": request.user_id},
         {"$inc": {balance_key: -total_needed}}
     )
@@ -15064,7 +15064,7 @@ async def approve_deposit(request: AdminDepositApproval):
     if request.approved:
         # Credit user balance
         balance_key = f"balance_{deposit['currency']}"
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": deposit["user_id"]},
             {"$inc": {balance_key: deposit["amount"]}}
         )
@@ -15137,7 +15137,7 @@ async def approve_withdrawal(request: AdminWithdrawalApproval):
         # Rejected - refund the user
         balance_key = f"balance_{withdrawal['currency']}"
         total_refund = withdrawal["amount"] + withdrawal["fee"]
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": withdrawal["user_id"]},
             {"$inc": {balance_key: total_refund}}
         )
@@ -15268,7 +15268,7 @@ async def send_support_message(request: dict):
         admin_config = await db.admin_settings.find_one({"setting_key": "support_emails"})
         if admin_config and admin_config.get("emails"):
             # Get user info
-            user = await db.user_accounts.find_one({"user_id": user_id}, {"email": 1, "full_name": 1, "_id": 0})
+            user = await db.users.find_one({"user_id": user_id}, {"email": 1, "full_name": 1, "_id": 0})
             
             # Send email to all configured admin emails
             from sendgrid import SendGridAPIClient
@@ -15556,7 +15556,7 @@ async def convert_currency(request: dict):
 @api_router.get("/user/{user_id}/currency-preference")
 async def get_user_currency_preference(user_id: str):
     """Get user's preferred currency"""
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -15577,7 +15577,7 @@ async def set_user_currency_preference(user_id: str, request: dict):
     if currency not in SUPPORTED_CURRENCIES:
         raise HTTPException(status_code=400, detail="Invalid currency code")
     
-    await db.user_accounts.update_one(
+    await db.users.update_one(
         {"user_id": user_id},
         {"$set": {"preferred_currency": currency}}
     )
@@ -17022,7 +17022,7 @@ async def assign_golden_tier(request: dict):
     """Get complete referral dashboard data"""
     try:
         # Get user account
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             return {"success": False, "message": "User not found"}
         
@@ -17031,7 +17031,7 @@ async def assign_golden_tier(request: dict):
         total_earnings = sum(c.get("commission_amount", 0) for c in commissions)
         
         # Get referred users count
-        referred_users = await db.user_accounts.find({"referred_by": user_id}).to_list(1000)
+        referred_users = await db.users.find({"referred_by": user_id}).to_list(1000)
         
         # Earnings by fee type
         fee_breakdown = {}
@@ -21325,7 +21325,7 @@ async def get_security_settings(request: Request):
             raise HTTPException(status_code=401, detail="User ID not found in token")
         
         # Get user settings
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0, "security": 1})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "security": 1})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -21775,7 +21775,7 @@ async def update_security_settings(request: Request, data: dict):
         # Update settings
         login_email_alerts_enabled = data.get('login_email_alerts_enabled')
         if login_email_alerts_enabled is not None:
-            await db.user_accounts.update_one(
+            await db.users.update_one(
                 {"user_id": user_id},
                 {"$set": {"security.login_email_alerts_enabled": login_email_alerts_enabled}}
             )
@@ -21794,7 +21794,7 @@ async def update_security_settings(request: Request, data: dict):
 async def check_seller_requirements(user_id: str):
     """Check if user meets all requirements to become a seller"""
     # Check user account
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -24034,7 +24034,7 @@ async def get_my_seller_link(request: Request):
         
         # Get user info from correct collection
         logger.info(f"Looking for user_id: {user_id}")
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         logger.info(f"Found user: {user is not None}")
         
         if not user:
@@ -24296,7 +24296,7 @@ async def verify_seller(request: VerifySellerRequest):
         price_gbp = settings.get("seller_verification_price", 25.0)
         
         # Check if already verified
-        user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
         if user and user.get("is_verified_seller"):
             raise HTTPException(status_code=400, detail="You are already a verified seller.")
         
@@ -24326,7 +24326,7 @@ async def verify_seller(request: VerifySellerRequest):
         )
         
         # Grant verification badge
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": request.user_id},
             {
                 "$set": {
@@ -24377,7 +24377,7 @@ async def upgrade_seller_level(request: UpgradeSellerLevelRequest):
             raise HTTPException(status_code=400, detail="Invalid level. Must be 'silver' or 'gold'.")
         
         # Check current level
-        user = await db.user_accounts.find_one({"user_id": request.user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
         current_level = user.get("seller_level", "bronze") if user else "bronze"
         
         if current_level == request.target_level.lower():
@@ -24409,7 +24409,7 @@ async def upgrade_seller_level(request: UpgradeSellerLevelRequest):
         )
         
         # Upgrade seller level
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": request.user_id},
             {
                 "$set": {
@@ -24655,14 +24655,14 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
         )
         
         # Check for referrer
-        user = await db.user_accounts.find_one({"user_id": request.from_user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": request.from_user_id}, {"_id": 0})
         referrer_id = user.get("referrer_id") if user else None
         referrer_commission = 0.0
         admin_fee = fee_amount
         commission_percent = 0.0
         
         if referrer_id:
-            referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+            referrer = await db.users.find_one({"user_id": referrer_id}, {"_id": 0})
             referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
             
             if referrer_tier == "golden":
@@ -25838,7 +25838,7 @@ async def get_referral_analytics():
         total_referrals = await db.referrals.count_documents({})
         
         # Active referrals (users who actually signed up)
-        active_referrals = await db.user_accounts.count_documents({
+        active_referrals = await db.users.count_documents({
             "referral_code_used": {"$exists": True, "$ne": None}
         })
         
@@ -26414,14 +26414,14 @@ async def calculate_and_apply_fee(
     amount_after_fee = amount - fee_amount
     
     # Check if user has referrer
-    user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     referrer_id = user.get("referrer_id") if user else None
     referrer_commission = 0.0
     admin_fee = fee_amount
     
     if referrer_id:
         # Get referrer tier
-        referrer = await db.user_accounts.find_one({"user_id": referrer_id}, {"_id": 0})
+        referrer = await db.users.find_one({"user_id": referrer_id}, {"_id": 0})
         referrer_tier = referrer.get("referral_tier", "standard") if referrer else "standard"
         
         if referrer_tier == "golden":
@@ -26512,7 +26512,7 @@ async def get_user_referral_dashboard(user_id: str):
     """
     try:
         # Get user info
-        user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0})
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -26523,7 +26523,7 @@ async def get_user_referral_dashboard(user_id: str):
             import random
             import string
             referral_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-            await db.user_accounts.update_one(
+            await db.users.update_one(
                 {"user_id": user_id},
                 {"$set": {"referral_code": referral_code}}
             )
@@ -26533,7 +26533,7 @@ async def get_user_referral_dashboard(user_id: str):
         referral_link = f"{frontend_url}/register?ref={referral_code}"
         
         # Get all users referred by this user
-        referred_users = await db.user_accounts.find({
+        referred_users = await db.users.find({
             "referrer_id": user_id
         }, {"_id": 0, "user_id": 1, "email": 1, "created_at": 1}).to_list(1000)
         
@@ -27918,7 +27918,7 @@ async def open_trade_dispute(request: dict):
         # Get seller payment details if user is buyer
         if trade.get("buyer_id") == user_id:
             seller_id = trade.get("seller_id")
-            seller = await db.user_accounts.find_one({"user_id": seller_id}, {"_id": 0, "payment_details": 1})
+            seller = await db.users.find_one({"user_id": seller_id}, {"_id": 0, "payment_details": 1})
             if seller and seller.get("payment_details"):
                 trade["seller_payment_details"] = seller["payment_details"]
         
@@ -29123,7 +29123,7 @@ async def request_email_change(request: dict):
             raise HTTPException(status_code=400, detail="Missing required fields")
         
         # Get user
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -29132,7 +29132,7 @@ async def request_email_change(request: dict):
             raise HTTPException(status_code=401, detail="Incorrect password")
         
         # Check if email already in use
-        existing = await db.user_accounts.find_one({"email": new_email})
+        existing = await db.users.find_one({"email": new_email})
         if existing:
             raise HTTPException(status_code=400, detail="Email already in use")
         
@@ -29180,7 +29180,7 @@ async def change_password(request: dict):
             raise HTTPException(status_code=400, detail="Missing required fields")
         
         # Get user
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -29192,7 +29192,7 @@ async def change_password(request: dict):
         new_password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
         # Update password
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": user_id},
             {"$set": {"password": new_password_hash}}
         )
@@ -29210,7 +29210,7 @@ async def change_password(request: dict):
 async def get_2fa_status(user_id: str):
     """Check if 2FA is enabled"""
     try:
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -29228,7 +29228,7 @@ async def setup_2fa(request: dict):
         import pyotp
         
         user_id = request.get("user_id")
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -29279,7 +29279,7 @@ async def enable_2fa(request: dict):
         backup_codes = [str(uuid.uuid4())[:8].upper() for _ in range(8)]
         
         # Enable 2FA
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": user_id},
             {
                 "$set": {
@@ -29314,7 +29314,7 @@ async def disable_2fa(request: dict):
         code = request.get("code")
         
         # Get user
-        user = await db.user_accounts.find_one({"user_id": user_id})
+        user = await db.users.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -29329,7 +29329,7 @@ async def disable_2fa(request: dict):
                 raise HTTPException(status_code=400, detail="Invalid 2FA code")
         
         # Disable 2FA
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": user_id},
             {
                 "$set": {"two_factor_enabled": False},
@@ -29395,7 +29395,7 @@ async def update_language(request: dict):
         user_id = request.get("user_id")
         language = request.get("language")
         
-        await db.user_accounts.update_one(
+        await db.users.update_one(
             {"user_id": user_id},
             {"$set": {"language": language}}
         )
