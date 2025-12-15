@@ -251,7 +251,7 @@ function App() {
               <Route path="/fees" element={<Fees />} />
               <Route path="/payment-methods" element={<PaymentMethods />} />
               <Route path="/wallet" element={<WalletPage />} />
-              <Route path="/savings" element={<SavingsDashboard />} />
+              <Route path="/savings" element={<SavingsVault />} />
               <Route path="/savings/deposit" element={<SavingsPage />} />
               <Route path="/savings/withdraw" element={<SavingsPage />} />
               <Route path="/savings/history" element={<SavingsHistory />} />
