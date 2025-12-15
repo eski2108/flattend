@@ -19230,17 +19230,24 @@ async def get_wallet_coin_metadata():
     Used by frontend to generate wallet UI automatically
     """
     try:
-        # Fetch ALL currencies from NowPayments
+        # Fetch ALL currencies from NowPayments using the nowpayments service
         try:
-            import httpx
-            async with httpx.AsyncClient() as client:
-                nowpayments_response = await client.get(
-                    "https://api.nowpayments.io/v1/currencies",
-                    headers={"x-api-key": NOWPAYMENTS_API_KEY},
-                    timeout=10
-                )
-                nowpayments_currencies = nowpayments_response.json().get("currencies", [])
+            if 'nowpayments' in globals() and nowpayments:
+                nowpayments_currencies = nowpayments.get_available_currencies()
                 logger.info(f"✅ Fetched {len(nowpayments_currencies)} currencies from NowPayments")
+            else:
+                # Fallback to direct API call
+                import os
+                import httpx
+                api_key = os.getenv("NOWPAYMENTS_API_KEY")
+                async with httpx.AsyncClient() as client:
+                    nowpayments_response = await client.get(
+                        "https://api.nowpayments.io/v1/currencies",
+                        headers={"x-api-key": api_key},
+                        timeout=10
+                    )
+                    nowpayments_currencies = nowpayments_response.json().get("currencies", [])
+                    logger.info(f"✅ Fetched {len(nowpayments_currencies)} currencies from NowPayments (direct API)")
         except Exception as e:
             logger.error(f"❌ Failed to fetch NowPayments currencies: {e}")
             nowpayments_currencies = []
