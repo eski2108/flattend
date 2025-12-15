@@ -720,8 +720,10 @@ export default function Dashboard() {
                                 objectFit: 'contain'
                               }}
                               onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.parentElement.innerHTML = `<span style="font-size: 14px; font-weight: 700; color: #000">${asset.currency?.substring(0, 2) || 'CR'}</span>`;
+                                // Fallback to SVG if PNG doesn't exist
+                                const svgPath = `/crypto-icons/${asset.currency.toLowerCase()}.svg`;
+                                e.target.onerror = null;
+                                e.target.src = svgPath;
                               }}
                             />
                           </div>
