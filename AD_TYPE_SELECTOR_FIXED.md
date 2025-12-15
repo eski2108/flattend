@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://savingsflow.preview.emergentagent.com
+**Preview URL:** https://savings-app-12.preview.emergentagent.com

@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://savingsflow.preview.emergentagent.com
+**Live URL:** https://savings-app-12.preview.emergentagent.com
 
 ---
 

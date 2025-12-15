@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
+BASE_URL = "https://savings-app-12.preview.emergentagent.com/api"
 
 def test_fee_tracking():
     print("\n" + "="*60)

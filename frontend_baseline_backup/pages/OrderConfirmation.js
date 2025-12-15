@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { ArrowLeft, Shield, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://savingsflow.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://savings-app-12.preview.emergentagent.com';
 
 function OrderConfirmation() {
   const navigate = useNavigate();

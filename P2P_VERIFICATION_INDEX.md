@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://savingsflow.preview.emergentagent.com
-- Backend API: https://savingsflow.preview.emergentagent.com/api
-- P2P Marketplace: https://savingsflow.preview.emergentagent.com/p2p
+- Frontend: https://savings-app-12.preview.emergentagent.com
+- Backend API: https://savings-app-12.preview.emergentagent.com/api
+- P2P Marketplace: https://savings-app-12.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

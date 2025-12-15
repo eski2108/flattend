@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
+BASE_URL = "https://savings-app-12.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

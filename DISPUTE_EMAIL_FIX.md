@@ -47,7 +47,7 @@ def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float
 
 **Before:**
 ```html
-<a href="https://savingsflow.preview.emergentagent.com/admin/disputes" 
+<a href="https://savings-app-12.preview.emergentagent.com/admin/disputes" 
    style="...">
     Go to Admin Panel
 </a>
@@ -55,7 +55,7 @@ def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float
 
 **After:**
 ```html
-<a href="https://savingsflow.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+<a href="https://savings-app-12.preview.emergentagent.com/admin/disputes/{dispute_id}" 
    style="...">
     View Dispute Details →
 </a>

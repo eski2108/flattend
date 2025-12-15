@@ -113,7 +113,7 @@ class NOWPaymentsService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://savingsflow.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://savings-app-12.preview.emergentagent.com')
             
             payload = {
                 "price_amount": price_amount,
@@ -265,7 +265,7 @@ class NOWPaymentsService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://savingsflow.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://savings-app-12.preview.emergentagent.com')
             
             payload = {
                 "price_amount": float(price_amount),

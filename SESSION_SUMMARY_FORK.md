@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://savingsflow.preview.emergentagent.com
+https://savings-app-12.preview.emergentagent.com
 
 ---
 

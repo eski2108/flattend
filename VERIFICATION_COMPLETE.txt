@@ -5,7 +5,7 @@
 Date: December 9, 2024
 Time: 15:41 UTC
 Environment: Production Preview
-URL: https://savingsflow.preview.emergentagent.com
+URL: https://savings-app-12.preview.emergentagent.com
 
 ================================================================================
                             SERVICE STATUS
@@ -166,7 +166,7 @@ The CoinHubX platform has been successfully updated with the following fixes:
                          LIVE PREVIEW ACCESS
 ================================================================================
 
-URL: https://savingsflow.preview.emergentagent.com
+URL: https://savings-app-12.preview.emergentagent.com
 
 Test Deposit: /#/deposit/btc
 Test Trading: /#/trading

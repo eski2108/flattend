@@ -8,7 +8,7 @@
     <div id="result"></div>
     
     <script>
-        fetch('https://savingsflow.preview.emergentagent.com/api/p2p/marketplace/offers')
+        fetch('https://savings-app-12.preview.emergentagent.com/api/p2p/marketplace/offers')
             .then(r => r.json())
             .then(data => {
                 document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';

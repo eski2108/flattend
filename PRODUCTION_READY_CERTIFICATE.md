@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://savingsflow.preview.emergentagent.com`
-- Backend API: `https://savingsflow.preview.emergentagent.com/api`
+- Frontend: `https://savings-app-12.preview.emergentagent.com`
+- Backend API: `https://savings-app-12.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

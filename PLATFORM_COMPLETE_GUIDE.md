@@ -235,7 +235,7 @@
 - Frontend: Port 3000 (supervised)
 - MongoDB: Port 27017
 - Nginx proxy
-- Live URL: https://savingsflow.preview.emergentagent.com
+- Live URL: https://savings-app-12.preview.emergentagent.com
 
 ---
 
@@ -409,7 +409,7 @@ Your platform rivals Binance P2P in functionality and design. All core features 
 3. Build mobile app APK
 4. Launch and start marketing!
 
-**Live URL:** https://savingsflow.preview.emergentagent.com
+**Live URL:** https://savings-app-12.preview.emergentagent.com
 
 ---
 

@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://savingsflow.preview.emergentagent.com
+**URL:** https://savings-app-12.preview.emergentagent.com
 
 **Services Status:**
 ```bash

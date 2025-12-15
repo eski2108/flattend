@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://savingsflow.preview.emergentagent.com
+https://savings-app-12.preview.emergentagent.com
 
 ### Test Route
 
-`https://savingsflow.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://savings-app-12.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -17,7 +17,7 @@
 3. **Alternative**: Use email verification instead for now
 
 **How to Test:**
-1. Go to: https://savingsflow.preview.emergentagent.com/auth
+1. Go to: https://savings-app-12.preview.emergentagent.com/auth
 2. Click "Continue with Phone Number"
 3. Enter: +44 7808184311 (your verified number)
 4. You SHOULD receive SMS now
@@ -35,19 +35,19 @@
 2. Click on your OAuth 2.0 Client ID
 3. Under "Authorized redirect URIs", ADD:
    ```
-   https://savingsflow.preview.emergentagent.com/api/auth/google/callback
+   https://savings-app-12.preview.emergentagent.com/api/auth/google/callback
    ```
 4. Save changes
 5. Wait 5 minutes for Google to propagate changes
 
 **Current Configuration:**
 - Client ID: `823558232364-e4b48l01o9frh6vbltic2633fn3pgs0o.apps.googleusercontent.com`
-- Redirect URI: `https://savingsflow.preview.emergentagent.com/api/auth/google/callback`
+- Redirect URI: `https://savings-app-12.preview.emergentagent.com/api/auth/google/callback`
 
 **How to Test:**
 1. Open browser DevTools (F12)
 2. Go to Console tab
-3. Go to: https://savingsflow.preview.emergentagent.com/auth
+3. Go to: https://savings-app-12.preview.emergentagent.com/auth
 4. Click "Continue with Google"
 5. Check console for errors
 6. The page should redirect to Google sign-in
@@ -56,7 +56,7 @@
 
 ### Test Twilio SMS (Backend)
 ```bash
-curl -X POST "https://savingsflow.preview.emergentagent.com/api/auth/phone/send-otp" \
+curl -X POST "https://savings-app-12.preview.emergentagent.com/api/auth/phone/send-otp" \
   -H "Content-Type: application/json" \
   -d '{"phone_number": "+447808184311"}'
 ```
@@ -65,7 +65,7 @@ Expected: `{"success":true,"message":"OTP sent successfully","status":"pending"}
 
 ### Test Google OAuth URL Generation
 ```bash
-curl "https://savingsflow.preview.emergentagent.com/api/auth/google"
+curl "https://savings-app-12.preview.emergentagent.com/api/auth/google"
 ```
 
 Expected: Should return `auth_url` starting with `https://accounts.google.com/o/oauth2/v2/auth?...`

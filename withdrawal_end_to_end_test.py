@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Test Configuration
-BASE_URL = "https://savingsflow.preview.emergentagent.com/api"
+BASE_URL = "https://savings-app-12.preview.emergentagent.com/api"
 TEST_USER_EMAIL = "withdrawal_test@demo.com"
 TEST_USER_PASSWORD = "Test123!"
 ADMIN_USER_EMAIL = "admin_test@demo.com"

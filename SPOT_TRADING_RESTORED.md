@@ -182,7 +182,7 @@ payment_methods: {
 - ✅ `/api/coins/available` - Available coins for instant buy
 
 **Environment Variable:**
-- ✅ Set in Vercel: `REACT_APP_BACKEND_URL = https://savingsflow.preview.emergentagent.com`
+- ✅ Set in Vercel: `REACT_APP_BACKEND_URL = https://savings-app-12.preview.emergentagent.com`
 
 ---
 

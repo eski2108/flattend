@@ -331,7 +331,7 @@ The Dual Currency Input System has been:
 - ✅ Responsive: Works on all screens
 
 ### User Can Now
-1. Navigate to https://savingsflow.preview.emergentagent.com/p2p-express
+1. Navigate to https://savings-app-12.preview.emergentagent.com/p2p-express
 2. Enter any amount in GBP (or select another currency)
 3. See instant BTC conversion
 4. Review rate and fees
