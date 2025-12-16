@@ -9809,6 +9809,25 @@ async def execute_swap_OLD(request: dict):
         upsert=True
     )
     
+    # ═══════════════════════════════════════════════════════════════
+    # LOG SWAP FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
+    # ═══════════════════════════════════════════════════════════════
+    await db.admin_revenue.insert_one({
+        "revenue_id": str(uuid.uuid4()),
+        "source": "swap_fee",
+        "revenue_type": "SWAP_EXCHANGE",
+        "currency": from_currency,
+        "amount": swap_fee_crypto,
+        "amount_gbp": swap_fee_gbp,
+        "user_id": user_id,
+        "related_transaction_id": None,  # Will be set below
+        "fee_percentage": swap_fee_percent,
+        "referral_commission_paid": 0.0,
+        "net_profit": swap_fee_crypto,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "description": f"Swap fee ({swap_fee_percent}%) from {from_currency} to {to_currency}"
+    })
+    
     # Record swap transaction (internal record includes fee details)
     swap_id = str(uuid.uuid4())
     swap_record = {
