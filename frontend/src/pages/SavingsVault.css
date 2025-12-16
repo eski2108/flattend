@@ -564,7 +564,7 @@
 .token-cards-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .token-card {
