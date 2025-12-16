@@ -501,14 +501,17 @@ def main():
     print("🌱 CoinHubX Database Seeding Script")
     print("="*60)
     
-    # Run all seeders
-    seed_admin_settings()
-    seed_platform_settings()
-    seed_fee_configuration()
-    seed_admin_liquidity_wallets()
-    seed_savings_products()
-    seed_referral_tiers()
-    create_database_indexes()
+    # Run all seeders - COMPLETE LIST
+    seed_admin_settings()          # Platform config, admin code
+    seed_platform_settings()       # Feature flags
+    seed_fee_configuration()       # Fee percentages
+    seed_monetization_settings()   # Advanced monetization (boosts, seller levels)
+    seed_admin_liquidity_wallets() # Wallets for instant buy/sell
+    seed_savings_products()        # Staking products
+    seed_referral_tiers()          # Referral commission tiers
+    seed_supported_coins()         # Coins for trading/swaps
+    seed_cms_settings()            # Marketplace display settings
+    create_database_indexes()      # Performance indexes
     
     # Optional: Create admin user
     create_admin = input("\n❓ Create admin user? (y/n): ").lower().strip()
@@ -518,13 +521,37 @@ def main():
     print("\n" + "="*60)
     print("✅ Database seeding complete!")
     print("="*60)
+    
+    print("\n📊 What was created:")
+    print("  ✅ admin_settings - Platform config, support emails, admin code")
+    print("  ✅ platform_settings - Feature flags, trading limits")
+    print("  ✅ fee_configuration - All fee percentages")
+    print("  ✅ monetization_settings - Boosts, seller levels, payment fees")
+    print("  ✅ admin_liquidity_wallets - 9 currency wallets (need liquidity)")
+    print("  ✅ savings_products - 35 staking products")
+    print("  ✅ referral_tiers - Standard/VIP/Golden tiers")
+    print("  ✅ supported_coins - 14 cryptocurrencies")
+    print("  ✅ cms_settings - Marketplace display config")
+    print("  ✅ Database indexes - 20+ performance indexes")
+    
     print("\n📝 Next steps:")
     print("  1. Log into admin panel and add liquidity to wallets")
     print("  2. Configure payment methods for P2P")
-    print("  3. Set up NOWPayments webhook URL")
+    print("  3. Set up NOWPayments webhook URL:")
+    print("     https://yourdomain.com/api/nowpayments/webhook")
     print("  4. Test user registration and login")
-    print("\n🔐 Admin Panel: https://yourdomain.com/admin/login")
+    print("  5. Test instant buy (requires admin liquidity)")
+    
+    print("\n🔐 Admin Panel Access:")
+    print("   URL: https://yourdomain.com/admin/login")
     print("   Admin Code: CRYPTOLEND_ADMIN_2025")
+    print("   Default Admin: admin@coinhubx.net / Admin123!")
+    
+    print("\n⚠️  IMPORTANT:")
+    print("   - Change admin password immediately")
+    print("   - Add BTC/ETH/USDT liquidity for instant buy")
+    print("   - Configure SendGrid for emails to work")
+    print("   - Configure NOWPayments for crypto deposits")
 
 
 if __name__ == "__main__":
