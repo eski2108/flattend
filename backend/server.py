@@ -26543,7 +26543,7 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         # Format by_fee_type for frontend
         by_fee_type_list = []
         for fee_type, data in by_fee_type.items():
-            percentage = (data["total_revenue"] / total_revenue_crypto * 100) if total_revenue_crypto > 0 else 0
+            percentage = (data["total_revenue"] / total_revenue_gbp * 100) if total_revenue_gbp > 0 else 0
             by_fee_type_list.append({
                 "fee_type": fee_type,
                 "total_revenue": data["total_revenue"],
