@@ -1,0 +1,86 @@
+/**
+ * ========================================
+ * 🔒 LOCKED STYLES - DO NOT MODIFY
+ * ========================================
+ * 
+ * 3D Coin Logo Styles - Premium Look
+ * 
+ * LOCKED BY: CoinHubX Master Engineer
+ * DATE: December 2025
+ * 
+ * These styles ensure ALL coin logos have:
+ * - Strong 3D depth effect
+ * - Heavy shadows
+ * - Bright highlights
+ * - Cyan glow
+ * - Consistent premium appearance
+ * 
+ * DO NOT CHANGE WITHOUT APPROVAL
+ * ========================================
+ */
+
+/* 3D Badge Container */
+.coin-3d-badge {
+  border-radius: 50%;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(100, 120, 180, 0.4) 0%, transparent 50%),
+    linear-gradient(145deg, #3a4065 0%, #1a1f35 40%, #0a0f1a 100%);
+  border: 2px solid rgba(0, 229, 255, 0.4);
+  box-shadow: 
+    inset 0 4px 8px rgba(255,255,255,0.15),
+    inset 0 -4px 8px rgba(0,0,0,0.5),
+    0 4px 8px rgba(0,0,0,0.4),
+    0 8px 24px rgba(0,0,0,0.6),
+    0 0 30px rgba(0,229,255,0.35),
+    0 0 60px rgba(0,229,255,0.2),
+    0 0 100px rgba(0,229,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* 3D Image Effect */
+.coin-3d-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: 
+    drop-shadow(0 2px 4px rgba(0,0,0,0.8))
+    drop-shadow(0 4px 8px rgba(0,0,0,0.6))
+    drop-shadow(0 8px 16px rgba(0,0,0,0.4))
+    drop-shadow(0 0 8px rgba(0,255,200,0.4))
+    drop-shadow(0 0 16px rgba(0,229,255,0.3));
+  border-radius: 50%;
+  transform: translateZ(0);
+}
+
+/* Hover Effect - More Glow */
+.coin-3d-badge:hover {
+  box-shadow: 
+    inset 0 4px 8px rgba(255,255,255,0.2),
+    inset 0 -4px 8px rgba(0,0,0,0.5),
+    0 4px 8px rgba(0,0,0,0.4),
+    0 8px 24px rgba(0,0,0,0.6),
+    0 0 40px rgba(0,229,255,0.5),
+    0 0 80px rgba(0,229,255,0.3),
+    0 0 120px rgba(0,229,255,0.15);
+  transform: translateY(-2px);
+}
+
+/* Placeholder Text */
+.coin-3d-placeholder {
+  font-weight: 800;
+  color: #00E5FF;
+  text-transform: uppercase;
+  text-shadow: 
+    0 2px 4px rgba(0,0,0,0.9),
+    0 4px 8px rgba(0,0,0,0.6),
+    0 0 20px rgba(0,229,255,0.8),
+    0 0 40px rgba(0,229,255,0.5),
+    0 0 60px rgba(0,229,255,0.3);
+  letter-spacing: -1px;
+}
