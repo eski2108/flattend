@@ -293,8 +293,8 @@ const SavingsVault = () => {
             Total Interest Earned
             <span className="info-tooltip" title="Lifetime interest earned across all your savings accounts">ⓘ</span>
           </div>
-          <div className="card-value-main">{totalInterestCrypto.split(' ')[0]} <span className="crypto-symbol">{totalInterestCrypto.split(' ')[1]}</span></div>
-          <div className="card-value-fiat">≈ ${totalInterestEarned.toFixed(2)}</div>
+          <div className="card-value-main">{totalInterestEarned.toFixed(2)} <span className="crypto-symbol">USD</span></div>
+          <div className="card-value-fiat">{totalInterestCrypto || 'Mixed Assets'}</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
