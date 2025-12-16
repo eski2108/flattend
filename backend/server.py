@@ -343,6 +343,11 @@ PLATFORM_CONFIG = {
     "admin_liquidity_spread_percent": 0.0,
     "express_liquidity_profit_percent": 0.0,
     
+    # CARD PAYMENT FEES (for future Guardarian/Stripe integration)
+    "card_purchase_fee_percent": 3.5,
+    "card_processing_fee_percent": 2.9,
+    "card_fixed_fee_gbp": 0.30,
+    
     # REFERRAL COMMISSIONS
     "referral_standard_commission_percent": 20.0,
     "referral_golden_commission_percent": 50.0,
