@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 class ComprehensiveE2ETest:
-    def __init__(self, base_url="https://neon-finance-5.preview.emergentagent.com"):
+    def __init__(self, base_url="https://neon-vault-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.session = requests.Session()
         self.session.headers.update({'Content-Type': 'application/json'})

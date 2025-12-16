@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://neon-finance-5.preview.emergentagent.com/api
-- **Frontend App**: https://neon-finance-5.preview.emergentagent.com
+- **Backend API**: https://neon-vault-1.preview.emergentagent.com/api
+- **Frontend App**: https://neon-vault-1.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

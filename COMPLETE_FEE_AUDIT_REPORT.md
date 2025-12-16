@@ -277,7 +277,7 @@ mongosh coinhubx --eval '
 ### Via API:
 ```bash
 # Total platform revenue
-curl https://neon-finance-5.preview.emergentagent.com/api/admin/platform-stats
+curl https://neon-vault-1.preview.emergentagent.com/api/admin/platform-stats
 ```
 
 ---

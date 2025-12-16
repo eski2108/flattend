@@ -13,7 +13,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://neon-finance-5.preview.emergentagent.com/api"
+BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
 
 def test_trading_issues():
     print("🔍 FOCUSED SPOT TRADING ISSUE ANALYSIS")

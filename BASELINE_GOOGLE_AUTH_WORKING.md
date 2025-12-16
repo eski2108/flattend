@@ -96,10 +96,10 @@ const userId = response.data.user_id; // ✅ FIXED
 
 **Required Settings:**
 - **Authorized JavaScript origins:**  
-  `https://neon-finance-5.preview.emergentagent.com`
+  `https://neon-vault-1.preview.emergentagent.com`
 
 - **Authorized redirect URIs:**  
-  `https://neon-finance-5.preview.emergentagent.com/api/auth/google/callback`
+  `https://neon-vault-1.preview.emergentagent.com/api/auth/google/callback`
 
 **Note:** User must update these when domain goes live.
 
@@ -192,7 +192,7 @@ git diff baseline-google-auth-working
 # Google OAuth
 GOOGLE_CLIENT_ID="823558232364-e4b48l01o9frh6vbltic2633fn3pgs0o.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET="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"
-FRONTEND_URL="https://neon-finance-5.preview.emergentagent.com"
+FRONTEND_URL="https://neon-vault-1.preview.emergentagent.com"
 
 # Twilio SMS
 TWILIO_ACCOUNT_SID="ACb6973de80cd7a54c9180a8827719013b"
@@ -210,7 +210,7 @@ DB_NAME="test_database"
 
 ### Frontend (.env)
 ```bash
-REACT_APP_BACKEND_URL=https://neon-finance-5.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://neon-vault-1.preview.emergentagent.com
 ```
 
 ---

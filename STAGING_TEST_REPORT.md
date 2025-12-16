@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://neon-finance-5.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://neon-vault-1.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

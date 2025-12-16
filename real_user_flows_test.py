@@ -6,7 +6,7 @@ Testing the three critical user flows as requested:
 2. COMPLETE P2P CRYPTO TRADING FLOW
 3. CRYPTO DEPOSIT & WITHDRAWAL
 
-Backend URL: https://neon-finance-5.preview.emergentagent.com/api
+Backend URL: https://neon-vault-1.preview.emergentagent.com/api
 SendGrid API Key: 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
 """
 
@@ -17,7 +17,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://neon-finance-5.preview.emergentagent.com/api"
+BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
 SENDGRID_API_KEY = "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"
 
 class RealUserFlowTester:

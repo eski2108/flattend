@@ -13,7 +13,7 @@ Tests the actual available endpoints for P2P escrow system functionality.
 - GET /api/admin/internal-balances
 - GET /api/p2p/manual-mode/adverts
 
-**Backend URL:** https://neon-finance-5.preview.emergentagent.com/api
+**Backend URL:** https://neon-vault-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -24,7 +24,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://neon-finance-5.preview.emergentagent.com/api"
+BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
 
 class P2PEscrowTargetedTester:
     def __init__(self):

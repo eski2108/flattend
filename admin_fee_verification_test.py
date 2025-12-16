@@ -8,7 +8,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://neon-finance-5.preview.emergentagent.com/api"
+BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
 
 def log_test(message, success=None):
     """Log test results with timestamp"""

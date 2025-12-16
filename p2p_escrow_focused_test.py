@@ -10,7 +10,7 @@ Tests the critical P2P escrow balance system integration as requested in review.
 4. Admin Internal Balance Tracking
 5. Complete Trade Flow Testing
 
-**Backend URL:** https://neon-finance-5.preview.emergentagent.com/api
+**Backend URL:** https://neon-vault-1.preview.emergentagent.com/api
 """
 
 import requests
@@ -20,7 +20,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://neon-finance-5.preview.emergentagent.com/api"
+BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
 
 class P2PEscrowFocusedTester:
     def __init__(self):

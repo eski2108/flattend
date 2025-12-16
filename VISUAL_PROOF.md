@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://neon-finance-5.preview.emergentagent.com/admin/disputes/dispute_123
+https://neon-vault-1.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://neon-finance-5.preview.emergentagent.com/admin/disputes/dispute_123
 
 ### ✅ AFTER (FIXED)
 ```
-https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://neon-vault-1.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://neon-finance-5.preview.emergentagent.com/`
+2. Browser loads: `https://neon-vault-1.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/dispute_123
 
 #### ❌ BEFORE
 ```html
-<a href="https://neon-finance-5.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://neon-vault-1.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://neon-vault-1.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/dispute_123
 
 #### ❌ BEFORE
 ```
-https://neon-finance-5.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://neon-vault-1.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://neon-vault-1.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 
 #### ❌ BEFORE
 ```html
-<a href="https://neon-finance-5.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://neon-vault-1.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://neon-finance-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://neon-vault-1.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

@@ -1,7 +1,7 @@
 # CREATE AD PAGE - PREMIUM STYLING IMPLEMENTATION
 
 **Date:** December 12, 2025 00:45 UTC  
-**Preview URL:** https://neon-finance-5.preview.emergentagent.com  
+**Preview URL:** https://neon-vault-1.preview.emergentagent.com  
 **Status:** PREMIUM STYLING DEPLOYED
 
 ---
@@ -207,7 +207,7 @@ gap: 0.5rem
 
 **Test URL:**
 ```
-https://neon-finance-5.preview.emergentagent.com/#/p2p/create-ad
+https://neon-vault-1.preview.emergentagent.com/#/p2p/create-ad
 ```
 
 **Test Credentials:**

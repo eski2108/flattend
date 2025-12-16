@@ -12,7 +12,7 @@
 
 ### Test the System Now:
 
-1. **Navigate to:** https://neon-finance-5.preview.emergentagent.com
+1. **Navigate to:** https://neon-vault-1.preview.emergentagent.com
 2. **Login with:**
    - Email: `aby@test.com`
    - Password: `test123`
@@ -115,7 +115,7 @@ Status:
 - **Framework:** FastAPI
 - **Database:** MongoDB Atlas (Motor async driver)
 - **Port:** 8001 (internal)
-- **External URL:** https://neon-finance-5.preview.emergentagent.com/api
+- **External URL:** https://neon-vault-1.preview.emergentagent.com/api
 
 ### Frontend Stack:
 - **Framework:** React
@@ -277,7 +277,7 @@ MONGO_URL=mongodb+srv://coinhubx:mummy1231123@cluster0.ctczzad.mongodb.net/
 DB_NAME=coinhubx_production
 
 # Frontend (.env)
-REACT_APP_BACKEND_URL=https://neon-finance-5.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://neon-vault-1.preview.emergentagent.com
 ```
 
 ### Database Location:
@@ -324,7 +324,7 @@ For issues or questions:
 **Implementation Completed:** 2025-12-11 21:46 UTC  
 **All Tests:** PASSING  
 **System Status:** PRODUCTION-READY (with auth middleware)  
-**Test URL:** https://neon-finance-5.preview.emergentagent.com  
+**Test URL:** https://neon-vault-1.preview.emergentagent.com  
 **Test User:** aby@test.com / test123
 
 ✅ **READY FOR USER ACCEPTANCE TESTING**

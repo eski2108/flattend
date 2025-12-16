@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://neon-finance-5.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://neon-vault-1.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {
