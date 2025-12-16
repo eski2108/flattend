@@ -8123,12 +8123,12 @@ async def admin_login(request: AdminLoginRequest, req: Request):
             detail=f"Too many admin login attempts. Please try again in {wait_time} seconds."
         )
     
-    # SECURITY: Only allow specific admin email
-    AUTHORIZED_ADMIN_EMAIL = "info@coinhubx.net"
+    # SECURITY: Only allow specific admin emails
+    AUTHORIZED_ADMIN_EMAILS = ["info@coinhubx.net", "abs.1@outlook.com"]
     ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
     
     # Check if email is authorized
-    if request.email != AUTHORIZED_ADMIN_EMAIL:
+    if request.email not in AUTHORIZED_ADMIN_EMAILS:
         raise HTTPException(status_code=403, detail="Unauthorized admin access")
     
     # Verify admin code
