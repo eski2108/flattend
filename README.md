@@ -4,6 +4,47 @@
 
 ---
 
+# ⚠️ ENVIRONMENT SETUP (ENV) – REQUIRED ⚠️
+
+## 🚨 THIS PROJECT WILL NOT RUN WITHOUT ENV CONFIGURATION 🚨
+
+**Before running this project, you MUST configure environment variables:**
+
+### Backend Setup (REQUIRED)
+```bash
+cd backend
+cp .env.example .env
+nano .env  # Fill in all required values
+```
+
+### Frontend Setup (REQUIRED)
+```bash
+cd frontend
+cp .env.example .env
+nano .env  # Fill in backend URL
+```
+
+### Required Variables Summary
+
+| Variable | Location | Where to Get |
+|----------|----------|--------------|
+| `MONGO_URL` | backend/.env | [MongoDB Atlas](https://cloud.mongodb.com) |
+| `JWT_SECRET` | backend/.env | Generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SENDGRID_API_KEY` | backend/.env | [SendGrid](https://sendgrid.com) |
+| `NOWPAYMENTS_API_KEY` | backend/.env | [NOWPayments](https://nowpayments.io) |
+| `REACT_APP_BACKEND_URL` | frontend/.env | Your backend URL |
+
+### Security Notice
+- ✅ `.env.example` files are committed (templates only)
+- ❌ `.env` files are **NOT** committed (contain secrets)
+- ❌ **NO secrets are stored in GitHub**
+
+### Full Documentation
+- 📖 **Backend:** [`backend/ENV_SETUP.md`](./backend/ENV_SETUP.md)
+- 📖 **Template:** [`backend/.env.example`](./backend/.env.example)
+
+---
+
 ## 📋 Quick Links
 
 - **🏗️ [System Architecture](docs/ARCHITECTURE.md)** - Complete system overview
