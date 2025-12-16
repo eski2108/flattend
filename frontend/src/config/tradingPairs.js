@@ -80,17 +80,28 @@ export const generateTradingPairs = (backendPrices = {}) => {
 };
 
 /**
- * Get coin logo URL
+ * Get coin logo URL - Uses unified logo system
  * @param {string} coinSymbol - Coin symbol (e.g., 'BTC')
  * @returns {string} Logo URL
  */
 export const getCoinLogoUrl = (coinSymbol) => {
+  // Import getCoinLogo from utils if needed, or use inline logic
+  const clean = coinSymbol?.toLowerCase().replace(/ERC20|TRC20|BEP20|MAINNET|BSC|-.*$/gi, '').trim();
+  
+  // Local logos (fastest)
+  const LOCAL_LOGOS = ['ada', 'atom', 'avax', 'bch', 'bnb', 'btc', 'dai', 'doge', 'dot', 'eth', 'link', 'ltc', 'matic', 'sol', 'trx', 'uni', 'usdc', 'usdt', 'xlm', 'xrp', 'shib'];
+  if (LOCAL_LOGOS.includes(clean)) {
+    return `/crypto-logos/${clean}.png`;
+  }
+  
+  // CoinGecko fallback
   const geckoId = COINGECKO_IDS[coinSymbol];
   if (geckoId) {
-    return `https://assets.coingecko.com/coins/images/${geckoId}/large/${coinSymbol.toLowerCase()}.png`;
+    return `https://assets.coingecko.com/coins/images/${geckoId}/small/${clean}.png`;
   }
-  // Fallback to DeFiLlama
-  return `https://coins.llama.fi/icons/currencies/${coinSymbol.toLowerCase()}.png`;
+  
+  // CoinCap CDN fallback
+  return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
 };
 
 /**
