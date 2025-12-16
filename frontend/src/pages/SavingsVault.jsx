@@ -443,6 +443,13 @@ const SavingsVault = () => {
                       <span className="notice-value">{position.lock_period || 30} Days</span>
                     </div>
                     
+                    {position.type !== 'flexible' && (
+                      <div className="countdown-timer">
+                        <span className="countdown-label">Days Remaining:</span>
+                        <span className="countdown-value">23 Days</span>
+                      </div>
+                    )}
+                    
                     {/* Auto-Compound Flip Switch */}
                     <div className="auto-compound-switch">
                       <label className="switch-label">
