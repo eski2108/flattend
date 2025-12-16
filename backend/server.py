@@ -4842,20 +4842,25 @@ async def create_savings_deposit_new(request: dict):
                 {"user_id": user_id, "currency": coin},
                 {"$set": {
                     "savings_balance": new_balance,
+                    "lock_start_time": start_date.isoformat(),
+                    "unlock_time": unlock_date.isoformat(),
                     "updated_at": start_date.isoformat()
                 }}
             )
         else:
-            # Create new
+            # Create new - DATABASE FIELDS FOR OPTION A
             await db.savings_balances.insert_one({
                 "user_id": user_id,
                 "currency": coin,
                 "savings_balance": amount,
-                "accrued_earnings": 0,
+                "accrued_earnings": 0,  # Interest calculated on backend
                 "type": "staked",
                 "lock_period": notice_period,
+                "lock_start_time": start_date.isoformat(),  # LOCK START TIME
+                "unlock_time": unlock_date.isoformat(),     # UNLOCK TIME
                 "entry_price": entry_price,
                 "deposit_timestamp": int(start_date.timestamp()),
+                "apy": apy,
                 "created_at": start_date.isoformat(),
                 "auto_compound": True
             })
