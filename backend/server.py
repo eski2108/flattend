@@ -319,6 +319,7 @@ PLATFORM_CONFIG = {
     
     # WITHDRAWAL & DEPOSIT
     "withdrawal_fee_percent": 1.0,
+    "withdraw_fee_percent": 1.0,  # Alias for compatibility
     "network_withdrawal_fee_percent": 1.0,
     "fiat_withdrawal_fee_percent": 1.0,
     "deposit_fee_percent": 0.0,
