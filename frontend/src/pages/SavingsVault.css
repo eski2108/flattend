@@ -880,10 +880,11 @@
 }
 
 .lockup-pill.active {
-  background: #A64EFF;
+  background: linear-gradient(135deg, #A64EFF, #7B2CFF);
   border-color: #A64EFF;
   color: #FFFFFF;
-  box-shadow: 0 0 16px rgba(166, 78, 255, 0.4);
+  box-shadow: 0 0 20px rgba(166, 78, 255, 0.6);
+  font-weight: 700;
 }
 
 /* Interest History Button */
