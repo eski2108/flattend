@@ -391,7 +391,11 @@ const SavingsVault = () => {
 
       {/* REFERRAL BANNER */}
       {showReferralBanner && (
-        <div className="referral-banner glassmorphic-card purple-accent">
+        <div 
+          className="referral-banner glassmorphic-card purple-accent clickable"
+          onClick={() => navigate('/referrals')}
+          style={{ cursor: 'pointer' }}
+        >
           <div className="referral-content">
             <span className="referral-icon">🎁</span>
             <div className="referral-text-section">
@@ -402,7 +406,7 @@ const SavingsVault = () => {
           </div>
           <button 
             className="dismiss-banner-btn"
-            onClick={() => setShowReferralBanner(false)}
+            onClick={(e) => { e.stopPropagation(); setShowReferralBanner(false); }}
           >
             ✕
           </button>
