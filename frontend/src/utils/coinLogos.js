@@ -31,7 +31,7 @@ const COINGECKO_IDS = {
   snx: 'havven', crv: 'curve-dao-token', ldo: 'lido-dao',
   inj: 'injective-protocol', imx: 'immutable-x', floki: 'floki',
   ape: 'apecoin', axs: 'axie-infinity', enj: 'enjincoin',
-  gala: 'gala', chz: 'chiliz', 1inch: '1inch', sushi: 'sushi',
+  gala: 'gala', chz: 'chiliz', 'oneinch': '1inch', sushi: 'sushi',
   comp: 'compound-governance-token', bal: 'balancer', yfi: 'yearn-finance',
   cake: 'pancakeswap-token', rune: 'thorchain', zec: 'zcash',
   eos: 'eos', xem: 'nem', neo: 'neo', waves: 'waves', dash: 'dash',
