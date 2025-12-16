@@ -5036,16 +5036,23 @@ async def withdraw_from_savings(request: dict):
             "timestamp": current_time.isoformat()
         })
         
+        # Calculate actual amount user receives
+        net_amount_to_user = amount - penalty_on_principal
+        
         return {
             "success": True,
-            "message": "Withdrawal completed",
+            "message": "Withdrawal completed" if not is_early else "Early withdrawal completed with penalties",
             "withdrawal": {
                 "coin": coin,
-                "amount": amount,
+                "requested_amount": amount,
                 "early_withdrawal": is_early,
-                "penalty_applied": penalty_amount,
+                "penalty_on_principal": penalty_on_principal,
+                "forfeited_interest": forfeited_interest,
+                "total_platform_profit": total_platform_profit,
                 "penalty_percentage": penalty_percentage * 100,
-                "net_amount": amount - penalty_amount
+                "net_amount_to_user": net_amount_to_user,
+                "lock_period": lock_period_days,
+                "unlock_time": unlock_time.isoformat() if is_early else None
             }
         }
     except Exception as e:
