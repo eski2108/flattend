@@ -925,9 +925,22 @@ const SavingsVault = () => {
                         className={`coin-option-card ${selectedCoin === coin.symbol ? 'selected' : ''}`}
                         onClick={() => setSelectedCoin(coin.symbol)}
                       >
-                        <img src={getCoinLogo(coin.symbol)} alt={coin.symbol} className="coin-option-logo" />
+                        <div className="coin-option-logo-wrapper">
+                          <img 
+                            src={getCoinLogo(coin.symbol)} 
+                            alt={coin.symbol} 
+                            className="coin-option-logo"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                          <div className="coin-emoji-fallback" style={{display: 'none'}}>
+                            {coin.emoji}
+                          </div>
+                        </div>
                         <div className="coin-option-info">
-                          <span className="coin-option-symbol">{coin.emoji} {coin.symbol}</span>
+                          <span className="coin-option-symbol">{coin.symbol}</span>
                           <span className="coin-option-name">{coin.name}</span>
                         </div>
                       </div>
