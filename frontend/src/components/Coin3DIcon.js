@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { cleanSymbol, LOCAL_LOGOS } from '@/utils/coinLogos';
 
 /**
- * 3D Coin Icon Component
+ * 3D Coin Icon Component - PREMIUM LOOK
  * 
  * RULES:
  * 1. Top coins: Local 3D PNGs
- * 2. All other coins: NOWPayments SVG (they have most altcoins)
+ * 2. All other coins: NOWPayments SVG
  * 3. Fallback: CoinCap CDN
- * 4. Last resort: Styled placeholder
- * 
- * UNIFORM 3D CSS EFFECT on ALL logos
+ * 4. STRONG 3D CSS effect on ALL logos - NO FLAT ICONS
  */
 const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const [fallbackStage, setFallbackStage] = useState(0);
@@ -35,8 +33,8 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
         // CoinCap CDN
         return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
       case 3:
-        // CryptoCompare as last CDN attempt
-        return `https://www.cryptocompare.com/media/37746238/${clean}.png`;
+        // CoinGecko thumb
+        return `https://assets.coingecko.com/coins/images/1/thumb/${clean}.png`;
       default:
         return null;
     }
@@ -52,40 +50,59 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   
   const imgSrc = getImageSrc();
   
-  // UNIFORM 3D BADGE STYLE - Applied to ALL logos
+  // STRONG 3D BADGE - Gradient + Multiple Shadows + Glow
   const badgeStyle = {
     width: `${size}px`,
     height: `${size}px`,
+    minWidth: `${size}px`,
+    minHeight: `${size}px`,
     borderRadius: '50%',
-    background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.15)',
+    background: 'linear-gradient(145deg, #3a4065 0%, #1a1f35 50%, #0d1220 100%)',
+    border: '1.5px solid rgba(0, 229, 255, 0.2)',
+    boxShadow: `
+      inset 0 3px 6px rgba(255,255,255,0.1),
+      inset 0 -3px 6px rgba(0,0,0,0.4),
+      0 6px 20px rgba(0,0,0,0.5),
+      0 0 25px rgba(0,229,255,0.2),
+      0 0 50px rgba(0,229,255,0.1)
+    `,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: `${Math.floor(size * 0.12)}px`,
+    padding: `${Math.floor(size * 0.15)}px`,
     overflow: 'hidden',
     flexShrink: 0,
+    position: 'relative',
     ...style
   };
   
-  // UNIFORM 3D CSS EFFECT - Same drop-shadow + glow for ALL
+  // STRONG 3D IMAGE EFFECT - Heavy drop shadows + glow
   const imgStyle = {
     width: '100%',
     height: '100%',
     objectFit: 'contain',
-    filter: 'drop-shadow(0 6px 10px rgba(0,0,0,0.45)) drop-shadow(0 0 10px rgba(0,255,200,0.25))',
-    borderRadius: '50%'
+    filter: `
+      drop-shadow(0 4px 8px rgba(0,0,0,0.6))
+      drop-shadow(0 8px 16px rgba(0,0,0,0.4))
+      drop-shadow(0 0 12px rgba(0,255,200,0.3))
+    `,
+    borderRadius: '50%',
+    transform: 'translateZ(0)' // GPU acceleration
   };
   
-  // Placeholder style - same 3D treatment for consistency
+  // Placeholder with same 3D treatment
   const placeholderStyle = {
-    fontSize: `${Math.floor(size * 0.4)}px`,
-    fontWeight: '700',
+    fontSize: `${Math.floor(size * 0.42)}px`,
+    fontWeight: '800',
     color: '#00E5FF',
     textTransform: 'uppercase',
-    textShadow: '0 2px 4px rgba(0,0,0,0.5), 0 0 15px rgba(0,229,255,0.5)',
-    letterSpacing: '-0.5px'
+    textShadow: `
+      0 2px 4px rgba(0,0,0,0.8),
+      0 4px 8px rgba(0,0,0,0.4),
+      0 0 20px rgba(0,229,255,0.6),
+      0 0 40px rgba(0,229,255,0.3)
+    `,
+    letterSpacing: '-1px'
   };
   
   return (
