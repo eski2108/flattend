@@ -31,6 +31,12 @@ const SavingsVault = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  
+  // Modal state for deposit flow
+  const [depositStep, setDepositStep] = useState(1); // 1-5 steps
+  const [selectedCoin, setSelectedCoin] = useState('');
+  const [depositAmount, setDepositAmount] = useState('');
+  const [selectedNoticePeriod, setSelectedNoticePeriod] = useState(30);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [showReferralBanner, setShowReferralBanner] = useState(true);
 
