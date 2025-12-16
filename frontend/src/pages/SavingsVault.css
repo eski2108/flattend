@@ -312,15 +312,16 @@
 }
 
 .live-dot {
-  width: 8px;
-  height: 8px;
-  background: #00FF85;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  box-shadow: 0 0 8px #00FF85;
+  background: #00FF85;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(0, 255, 133, 0.8), 0 0 16px rgba(0, 255, 133, 0.4);
 }
 
 .live-dot.pulsing {
-  animation: live-pulse 2s ease-in-out infinite;
+  animation: pulse-dot 2s ease-in-out infinite;
 }
 
 @keyframes live-pulse {
