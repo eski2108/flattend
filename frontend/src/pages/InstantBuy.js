@@ -563,13 +563,19 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 borderRadius: '50%'
               }}
               onError={(e) => {
-                // Try CoinGecko as fallback
-                const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase();
-                if (!e.target.dataset.triedGecko) {
-                  e.target.dataset.triedGecko = 'true';
-                  e.target.src = `https://assets.coingecko.com/coins/images/1/small/${cleanSymbol}.png`;
-                } else {
-                  // Final fallback - styled letter
+                const cleanSym = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE/gi, '').trim().toLowerCase();
+                // Try CoinCap CDN
+                if (!e.target.dataset.tried1) {
+                  e.target.dataset.tried1 = 'true';
+                  e.target.src = `https://assets.coincap.io/assets/icons/${cleanSym}@2x.png`;
+                }
+                // Try CryptoCompare
+                else if (!e.target.dataset.tried2) {
+                  e.target.dataset.tried2 = 'true';
+                  e.target.src = `https://www.cryptocompare.com/media/37746251/${cleanSym}.png`;
+                }
+                // Final fallback - styled letter
+                else {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #00E5FF; text-shadow: 0 0 10px rgba(0,229,255,0.4);">${coin.symbol.charAt(0)}</span>`;
                 }
