@@ -707,10 +707,105 @@ const SavingsVault = () => {
       {/* MODALS */}
       {showTransferModal && (
         <div className="modal-overlay" onClick={() => setShowTransferModal(false)}>
-          <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content glassmorphic-card modal-large" onClick={(e) => e.stopPropagation()}>
             <h3>Add to Savings</h3>
-            <button className="modal-close-btn" onClick={() => setShowTransferModal(false)}>✕</button>
-            <p>Open a new notice account deposit. Choose your notice period to start earning.</p>
+            <button className="modal-close-btn" onClick={() => {setShowTransferModal(false); setDepositStep(1);}}>✕</button>
+            
+            <div className="deposit-flow-steps">
+              <div className={`step-indicator ${depositStep >= 1 ? 'active' : ''} ${depositStep > 1 ? 'completed' : ''}`}>1</div>
+              <div className="step-line"></div>
+              <div className={`step-indicator ${depositStep >= 2 ? 'active' : ''} ${depositStep > 2 ? 'completed' : ''}`}>2</div>
+              <div className="step-line"></div>
+              <div className={`step-indicator ${depositStep >= 3 ? 'active' : ''} ${depositStep > 3 ? 'completed' : ''}`}>3</div>
+              <div className="step-line"></div>
+              <div className={`step-indicator ${depositStep >= 4 ? 'active' : ''} ${depositStep > 4 ? 'completed' : ''}`}>4</div>
+              <div className="step-line"></div>
+              <div className={`step-indicator ${depositStep >= 5 ? 'active' : ''}`}>5</div>
+            </div>
+            
+            {depositStep === 1 && (
+              <div className="deposit-step">
+                <h4>Step 1: Select Wallet Source</h4>
+                <select className="deposit-input" defaultValue="main">
+                  <option value="main">Wallet: Main</option>
+                </select>
+                <button className="modal-cta-btn" onClick={() => setDepositStep(2)}>Next</button>
+              </div>
+            )}
+            
+            {depositStep === 2 && (
+              <div className="deposit-step">
+                <h4>Step 2: Select Coin</h4>
+                <select className="deposit-input" value={selectedCoin} onChange={(e) => setSelectedCoin(e.target.value)}>
+                  <option value="">Choose coin...</option>
+                  <option value="BTC">Bitcoin (BTC)</option>
+                  <option value="ETH">Ethereum (ETH)</option>
+                  <option value="USDT">Tether (USDT)</option>
+                  <option value="BNB">Binance Coin (BNB)</option>
+                  <option value="SOL">Solana (SOL)</option>
+                </select>
+                <button className="modal-cta-btn" onClick={() => setDepositStep(3)} disabled={!selectedCoin}>Next</button>
+              </div>
+            )}
+            
+            {depositStep === 3 && (
+              <div className="deposit-step">
+                <h4>Step 3: Enter Amount</h4>
+                <input 
+                  type="number" 
+                  className="deposit-input" 
+                  placeholder="0.00"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                />
+                <button className="modal-secondary-btn" onClick={() => setDepositAmount('1.0')}>Max</button>
+                <button className="modal-cta-btn" onClick={() => setDepositStep(4)} disabled={!depositAmount}>Next</button>
+              </div>
+            )}
+            
+            {depositStep === 4 && (
+              <div className="deposit-step">
+                <h4>Step 4: Select Notice Period</h4>
+                <div className="notice-selector-mini">
+                  <button className={`notice-mini-btn ${selectedNoticePeriod === 30 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(30)}>30 Days (5.2% APY)</button>
+                  <button className={`notice-mini-btn ${selectedNoticePeriod === 60 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(60)}>60 Days (6.8% APY)</button>
+                  <button className={`notice-mini-btn ${selectedNoticePeriod === 90 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(90)}>90 Days (8.5% APY)</button>
+                </div>
+                <button className="modal-cta-btn" onClick={() => setDepositStep(5)}>Next</button>
+              </div>
+            )}
+            
+            {depositStep === 5 && (
+              <div className="deposit-step">
+                <h4>Step 5: Confirm Summary</h4>
+                <div className="summary-box">
+                  <div className="summary-row"><span>Amount:</span><span>{depositAmount} {selectedCoin}</span></div>
+                  <div className="summary-row"><span>Notice Period:</span><span>{selectedNoticePeriod} days</span></div>
+                  <div className="summary-row"><span>Estimated APY:</span><span className="success-text">{selectedNoticePeriod === 30 ? '5.2%' : selectedNoticePeriod === 60 ? '6.8%' : '8.5%'}</span></div>
+                  <div className="summary-row"><span>Unlock Date:</span><span>{new Date(Date.now() + selectedNoticePeriod * 24 * 60 * 60 * 1000).toLocaleDateString()}</span></div>
+                  <div className="summary-row"><span>Early Withdrawal Penalty:</span><span className="danger-text">{selectedNoticePeriod === 30 ? '2%' : selectedNoticePeriod === 60 ? '3.5%' : '5%'} of interest</span></div>
+                </div>
+                <button className="modal-cta-btn" onClick={async () => {
+                  try {
+                    const userId = localStorage.getItem('user_id');
+                    const response = await axios.post(`${API}/api/savings/deposit`, {
+                      user_id: userId,
+                      coin: selectedCoin,
+                      amount: parseFloat(depositAmount),
+                      notice_period: selectedNoticePeriod
+                    });
+                    if (response.data.success) {
+                      alert('Deposit created successfully!');
+                      setShowTransferModal(false);
+                      setDepositStep(1);
+                      loadSavingsData();
+                    }
+                  } catch (error) {
+                    alert('Deposit failed: ' + error.message);
+                  }
+                }}>Confirm Deposit</button>
+              </div>
+            )}
           </div>
         </div>
       )}
