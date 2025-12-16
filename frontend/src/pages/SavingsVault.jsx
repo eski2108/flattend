@@ -812,18 +812,64 @@ const SavingsVault = () => {
       {showWithdrawModal && (
         <div className="modal-overlay" onClick={() => setShowWithdrawModal(false)}>
           <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
-            <h3>Withdraw {selectedPosition?.symbol}</h3>
+            <h3>Withdraw from Savings</h3>
             <button className="modal-close-btn" onClick={() => setShowWithdrawModal(false)}>✕</button>
-            <div className="modal-warning-box">
-              <span className="modal-warning-icon">⚠️</span>
-              <div className="modal-warning-content">
-                <p className="modal-warning-title">Early Withdrawal Penalty</p>
-                <p className="modal-warning-text">
-                  Withdrawing before your notice period ends will result in a penalty of {selectedPosition?.lock_period === 30 ? '2%' : selectedPosition?.lock_period === 60 ? '3.5%' : '5%'} of your deposit.
-                </p>
+            
+            {selectedPosition && selectedPosition.type !== 'flexible' && (
+              <div className="modal-warning-box">
+                <span className="modal-warning-icon">⚠️</span>
+                <div className="modal-warning-content">
+                  <p className="modal-warning-title">Early Withdrawal Penalty</p>
+                  <p className="modal-warning-text">
+                    Withdrawing before your notice period ends will forfeit {selectedPosition?.lock_period === 30 ? '2%' : selectedPosition?.lock_period === 60 ? '3.5%' : '5%'} of earned interest. Your principal remains safe.
+                  </p>
+                </div>
               </div>
+            )}
+            
+            <div className="withdraw-form">
+              <label>Amount to withdraw</label>
+              <input 
+                type="number" 
+                className="deposit-input" 
+                placeholder={`Max: ${selectedPosition?.balance || 0} ${selectedPosition?.symbol || ''}`}
+                max={selectedPosition?.balance || 0}
+              />
+              <button className="modal-secondary-btn" onClick={(e) => {
+                const input = e.target.previousElementSibling;
+                input.value = selectedPosition?.balance || 0;
+              }}>Max</button>
+              
+              <button className="modal-cta-btn" onClick={async (e) => {
+                try {
+                  const amount = parseFloat(e.target.parentElement.querySelector('input').value);
+                  if (!amount || amount <= 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                  }
+                  
+                  const userId = localStorage.getItem('user_id');
+                  const response = await axios.post(`${API}/api/savings/withdraw`, {
+                    user_id: userId,
+                    coin: selectedPosition.symbol,
+                    amount: amount
+                  });
+                  
+                  if (response.data.success) {
+                    const withdrawal = response.data.withdrawal;
+                    if (withdrawal.penalty_applied > 0) {
+                      alert(`Withdrawal completed. Penalty applied: ${withdrawal.penalty_applied.toFixed(6)} ${selectedPosition.symbol} (${withdrawal.penalty_percentage.toFixed(1)}%)`);
+                    } else {
+                      alert('Withdrawal completed successfully!');
+                    }
+                    setShowWithdrawModal(false);
+                    loadSavingsData();
+                  }
+                } catch (error) {
+                  alert('Withdrawal failed: ' + (error.response?.data?.detail || error.message));
+                }
+              }}>Confirm Withdrawal</button>
             </div>
-            <p>Request withdrawal from notice account. If withdrawn before notice period ends, penalties apply.</p>
           </div>
         </div>
       )}
