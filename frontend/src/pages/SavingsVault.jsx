@@ -263,8 +263,8 @@ const SavingsVault = () => {
             Locked Balance
             <span className="info-tooltip" title="Funds currently in notice period. Early withdrawal will incur penalty.">ⓘ</span>
           </div>
-          <div className="card-value-main">{lockedBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{lockedBalanceCrypto.split(' ')[1]}</span></div>
-          <div className="card-value-fiat">≈ ${lockedBalance.toFixed(2)}</div>
+          <div className="card-value-main">{lockedBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
+          <div className="card-value-fiat">{lockedBalanceCrypto || 'Mixed Assets'}</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
