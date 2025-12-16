@@ -116,12 +116,15 @@ const SavingsVault = () => {
       // Calculate totals
       const totalBal = demoPositions.reduce((sum, p) => sum + p.balance_usd, 0);
       const totalInterest = demoPositions.reduce((sum, p) => sum + p.interest_earned_usd, 0);
+      const lockedBal = demoPositions.filter(p => p.type === 'staked').reduce((sum, p) => sum + p.balance_usd, 0);
       const availableBal = demoPositions.filter(p => p.type === 'flexible').reduce((sum, p) => sum + p.balance_usd, 0);
       
       setTotalBalance(totalBal);
       setTotalBalanceCrypto('1.50 BTC');
+      setLockedBalance(lockedBal);
+      setLockedBalanceCrypto('0.98 BTC');
       setAvailableBalance(availableBal);
-      setAvailableBalanceCrypto('1.50 BTC');
+      setAvailableBalanceCrypto('0.52 BTC');
       setTotalInterestEarned(totalInterest);
       setTotalInterestCrypto('0.123 BTC');
       
