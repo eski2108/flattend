@@ -91,28 +91,29 @@ class ReferralEngine:
                        f"Fee: £{fee_amount} | Tier: {referrer_tier} | "
                        f"Commission: £{commission_amount} ({commission_rate*100}%)")
             
-            # 4. Credit commission to referrer's wallet
-            referrer_wallet = await self.db.wallets.find_one({
-                "user_id": referrer_id,
+            # 4. Credit commission to referrer's TRADER BALANCE (main wallet system)
+            referrer_balance = await self.db.trader_balances.find_one({
+                "trader_id": referrer_id,
                 "currency": currency
             })
             
-            if referrer_wallet:
-                new_balance = referrer_wallet.get("total_balance", 0) + commission_amount
-                await self.db.wallets.update_one(
-                    {"user_id": referrer_id, "currency": currency},
+            if referrer_balance:
+                await self.db.trader_balances.update_one(
+                    {"trader_id": referrer_id, "currency": currency},
                     {
+                        "$inc": {
+                            "total_balance": commission_amount,
+                            "available_balance": commission_amount
+                        },
                         "$set": {
-                            "total_balance": new_balance,
-                            "available_balance": new_balance,
                             "updated_at": datetime.now(timezone.utc)
                         }
                     }
                 )
             else:
-                # Create wallet if doesn't exist
-                await self.db.wallets.insert_one({
-                    "user_id": referrer_id,
+                # Create trader balance if doesn't exist
+                await self.db.trader_balances.insert_one({
+                    "trader_id": referrer_id,
                     "currency": currency,
                     "total_balance": commission_amount,
                     "available_balance": commission_amount,
