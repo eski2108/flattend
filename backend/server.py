@@ -9315,6 +9315,55 @@ async def resolve_dispute_final(request: dict):
         
         action = f"Crypto returned to seller. Dispute fee of £{dispute_fee:.2f} charged to buyer."
     
+    # Send notifications (in-app)
+    try:
+        from p2p_notification_service import get_notification_service
+        notification_service = get_notification_service()
+        winning_party = trade["buyer_id"] if resolution == "release_to_buyer" else trade["seller_id"]
+        await notification_service.notify_dispute_resolved(
+            trade_id=trade["trade_id"],
+            buyer_id=trade["buyer_id"],
+            seller_id=trade["seller_id"],
+            resolution=admin_notes,
+            winner="buyer" if resolution == "release_to_buyer" else "seller"
+        )
+    except Exception as notif_error:
+        logger.warning(f"⚠️ In-app notification failed: {str(notif_error)}")
+    
+    # 📧 Send EMAIL notifications
+    try:
+        from email_service import get_email_service
+        email_service = get_email_service()
+        
+        buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
+        seller = await db.users.find_one({"user_id": trade["seller_id"]})
+        
+        winning_party_role = "buyer" if resolution == "release_to_buyer" else "seller"
+        
+        if buyer:
+            await email_service.send_dispute_notification(
+                user_email=buyer.get("email"),
+                user_name=buyer.get("full_name", "User"),
+                trade_id=trade["trade_id"],
+                dispute_id=dispute_id,
+                resolution=f"Dispute resolved in favor of {winning_party_role}. {action}",
+                is_winner=(resolution == "release_to_buyer")
+            )
+            logger.info(f"📧 Dispute resolution email sent to buyer {buyer.get('email')}")
+        
+        if seller:
+            await email_service.send_dispute_notification(
+                user_email=seller.get("email"),
+                user_name=seller.get("full_name", "User"),
+                trade_id=trade["trade_id"],
+                dispute_id=dispute_id,
+                resolution=f"Dispute resolved in favor of {winning_party_role}. {action}",
+                is_winner=(resolution == "return_to_seller")
+            )
+            logger.info(f"📧 Dispute resolution email sent to seller {seller.get('email')}")
+    except Exception as email_error:
+        logger.warning(f"⚠️ Email notification failed: {str(email_error)}")
+    
     return {
         "success": True,
         "message": f"Dispute resolved: {action}",
