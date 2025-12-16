@@ -269,7 +269,14 @@ const SavingsVault = () => {
       {/* REFERRAL BANNER */}
       {showReferralBanner && (
         <div className="referral-banner glassmorphic-card purple-accent">
-          <span className="referral-text">Invite friends, earn more ➜</span>
+          <div className="referral-content">
+            <span className="referral-icon">🎁</span>
+            <div className="referral-text-section">
+              <span className="referral-title">Invite friends, earn more</span>
+              <span className="referral-subtitle">Get 10% of your referrals' interest earnings as bonus rewards</span>
+            </div>
+            <span className="referral-arrow">→</span>
+          </div>
           <button 
             className="dismiss-banner-btn"
             onClick={() => setShowReferralBanner(false)}
