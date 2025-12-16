@@ -9343,10 +9343,9 @@ async def resolve_dispute_final(request: dict):
             await email_service.send_dispute_notification(
                 user_email=buyer.get("email"),
                 user_name=buyer.get("full_name", "User"),
-                trade_id=trade["trade_id"],
-                dispute_id=dispute_id,
-                resolution=f"Dispute resolved in favor of {winning_party_role}. {action}",
-                is_winner=(resolution == "release_to_buyer")
+                action="resolved",
+                order_id=trade["trade_id"],
+                resolution=f"Dispute resolved in favor of {winning_party_role}. {action}"
             )
             logger.info(f"📧 Dispute resolution email sent to buyer {buyer.get('email')}")
         
@@ -9354,10 +9353,9 @@ async def resolve_dispute_final(request: dict):
             await email_service.send_dispute_notification(
                 user_email=seller.get("email"),
                 user_name=seller.get("full_name", "User"),
-                trade_id=trade["trade_id"],
-                dispute_id=dispute_id,
-                resolution=f"Dispute resolved in favor of {winning_party_role}. {action}",
-                is_winner=(resolution == "return_to_seller")
+                action="resolved",
+                order_id=trade["trade_id"],
+                resolution=f"Dispute resolved in favor of {winning_party_role}. {action}"
             )
             logger.info(f"📧 Dispute resolution email sent to seller {seller.get('email')}")
     except Exception as email_error:
