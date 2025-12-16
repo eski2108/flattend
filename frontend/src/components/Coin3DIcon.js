@@ -6,16 +6,16 @@ import { cleanSymbol, LOCAL_LOGOS } from '@/utils/coinLogos';
  * 🔒 LOCKED - DO NOT MODIFY WITHOUT APPROVAL
  * ========================================
  * 
- * 3D Coin Icon Component - PREMIUM STYLING
+ * 3D Coin Icon - ULTRA PREMIUM STYLING
  * 
- * RULES:
- * 1. Every coin has unique logo (local PNG or NOWPayments CDN)
- * 2. ALL logos have STRONG 3D effect - depth, shadow, highlight, glow
- * 3. NO flat icons allowed
- * 4. Consistent premium look across entire app
+ * - TRUE 3D effect with depth + bevel
+ * - INTENSE glow that makes coins POP
+ * - Every coin has unique logo
+ * - Consistent across Wallet + Instant Buy
  * 
- * LOCKED BY: CoinHubX Master Engineer
- * DATE: December 2025
+ * DO NOT TOUCH TRADING PAGE
+ * 
+ * LOCKED: December 2025
  */
 const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const [fallbackStage, setFallbackStage] = useState(0);
@@ -24,7 +24,6 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const clean = cleanSymbol(symbol);
   const lowerSymbol = symbol?.toLowerCase() || 'btc';
   
-  // Fallback chain: Local PNG → NOWPayments → CoinCap → Placeholder
   const getImageSrc = () => {
     switch (fallbackStage) {
       case 0:
@@ -54,7 +53,7 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const imgSrc = getImageSrc();
   
   // ========================================
-  // 🔒 LOCKED 3D BADGE STYLE - PREMIUM LOOK
+  // 🔒 ULTRA 3D BADGE - INTENSE GLOW + BEVEL
   // ========================================
   const badgeStyle = {
     width: `${size}px`,
@@ -62,67 +61,71 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     minWidth: `${size}px`,
     minHeight: `${size}px`,
     borderRadius: '50%',
-    // Deep gradient for 3D depth
+    // TRUE 3D gradient with bevel effect
     background: `
-      radial-gradient(ellipse at 30% 20%, rgba(100, 120, 180, 0.4) 0%, transparent 50%),
-      linear-gradient(145deg, #3a4065 0%, #1a1f35 40%, #0a0f1a 100%)
+      radial-gradient(ellipse at 25% 15%, rgba(150, 180, 255, 0.5) 0%, transparent 40%),
+      radial-gradient(ellipse at 75% 85%, rgba(0, 0, 0, 0.6) 0%, transparent 40%),
+      linear-gradient(160deg, #4a5080 0%, #252a45 30%, #151a2e 60%, #0a0e1a 100%)
     `,
-    // Glowing cyan border
-    border: '2px solid rgba(0, 229, 255, 0.4)',
-    // STRONG 3D shadows + GLOW
+    // STRONG glowing border
+    border: '2.5px solid rgba(0, 229, 255, 0.6)',
+    // ULTRA INTENSE shadows + glow
     boxShadow: `
-      inset 0 4px 8px rgba(255,255,255,0.15),
-      inset 0 -4px 8px rgba(0,0,0,0.5),
-      0 4px 8px rgba(0,0,0,0.4),
-      0 8px 24px rgba(0,0,0,0.6),
-      0 0 30px rgba(0,229,255,0.35),
-      0 0 60px rgba(0,229,255,0.2),
-      0 0 100px rgba(0,229,255,0.1)
+      inset 0 6px 12px rgba(255,255,255,0.25),
+      inset 0 -6px 12px rgba(0,0,0,0.7),
+      inset 2px 0 8px rgba(255,255,255,0.1),
+      inset -2px 0 8px rgba(0,0,0,0.3),
+      0 4px 8px rgba(0,0,0,0.5),
+      0 8px 20px rgba(0,0,0,0.7),
+      0 0 20px rgba(0,229,255,0.6),
+      0 0 40px rgba(0,229,255,0.5),
+      0 0 60px rgba(0,229,255,0.4),
+      0 0 80px rgba(0,229,255,0.25)
     `,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: `${Math.floor(size * 0.15)}px`,
+    padding: `${Math.floor(size * 0.14)}px`,
     overflow: 'hidden',
     flexShrink: 0,
     position: 'relative',
-    // Smooth animation
     transition: 'all 0.3s ease',
     ...style
   };
   
   // ========================================
-  // 🔒 LOCKED 3D IMAGE STYLE - STRONG EFFECT
+  // 🔒 ULTRA 3D IMAGE - DEEP SHADOWS + GLOW
   // ========================================
   const imgStyle = {
     width: '100%',
     height: '100%',
     objectFit: 'contain',
-    // HEAVY drop shadows for 3D depth + GLOW
     filter: `
-      drop-shadow(0 2px 4px rgba(0,0,0,0.8))
-      drop-shadow(0 4px 8px rgba(0,0,0,0.6))
-      drop-shadow(0 8px 16px rgba(0,0,0,0.4))
-      drop-shadow(0 0 8px rgba(0,255,200,0.4))
-      drop-shadow(0 0 16px rgba(0,229,255,0.3))
+      drop-shadow(0 2px 3px rgba(0,0,0,0.9))
+      drop-shadow(0 4px 6px rgba(0,0,0,0.7))
+      drop-shadow(0 6px 12px rgba(0,0,0,0.5))
+      drop-shadow(0 0 6px rgba(0,255,220,0.6))
+      drop-shadow(0 0 12px rgba(0,229,255,0.5))
+      drop-shadow(0 0 20px rgba(0,229,255,0.35))
     `,
     borderRadius: '50%',
     transform: 'translateZ(0)'
   };
   
   // ========================================
-  // 🔒 LOCKED PLACEHOLDER STYLE
+  // 🔒 PLACEHOLDER - SAME 3D TREATMENT
   // ========================================
   const placeholderStyle = {
     fontSize: `${Math.floor(size * 0.42)}px`,
-    fontWeight: '800',
+    fontWeight: '900',
     color: '#00E5FF',
     textTransform: 'uppercase',
     textShadow: `
-      0 2px 4px rgba(0,0,0,0.9),
-      0 4px 8px rgba(0,0,0,0.6),
-      0 0 20px rgba(0,229,255,0.8),
-      0 0 40px rgba(0,229,255,0.5),
+      0 2px 4px rgba(0,0,0,1),
+      0 4px 8px rgba(0,0,0,0.8),
+      0 0 15px rgba(0,229,255,1),
+      0 0 30px rgba(0,229,255,0.8),
+      0 0 45px rgba(0,229,255,0.5),
       0 0 60px rgba(0,229,255,0.3)
     `,
     letterSpacing: '-1px'
