@@ -156,7 +156,28 @@ class ReferralEngine:
                 upsert=True
             )
             
-            logger.info(f"✅ Referral commission processed: £{commission_amount} to {referrer_id}")
+            # ═══════════════════════════════════════════════════════════════
+            # LOG PLATFORM'S NET SHARE TO ADMIN REVENUE (AFTER REFERRAL CUT)
+            # ═══════════════════════════════════════════════════════════════
+            await self.db.admin_revenue.insert_one({
+                "revenue_id": str(uuid.uuid4()),
+                "source": f"referral_net_share_{fee_type.lower()}",
+                "revenue_type": "PLATFORM_NET_REVENUE",
+                "currency": currency,
+                "amount": platform_share,
+                "original_fee": fee_amount,
+                "referral_commission_paid": commission_amount,
+                "user_id": user_id,
+                "referrer_id": referrer_id,
+                "referrer_tier": referrer_tier,
+                "related_transaction_id": related_transaction_id,
+                "fee_percentage": commission_rate * 100,
+                "net_profit": platform_share,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "description": f"Platform net revenue from {fee_type} after {commission_rate*100}% referral commission"
+            })
+            
+            logger.info(f"✅ Referral commission processed: £{commission_amount} to {referrer_id} | Platform net: £{platform_share}")
             
             return {
                 "success": True,
