@@ -16337,12 +16337,27 @@ async def update_platform_fee(request: dict):
         raise HTTPException(status_code=400, detail="fee_type and value required")
     
     valid_fee_types = [
-        "p2p_trade_fee_percent",
-        "withdraw_fee_percent",
-        "deposit_fee_percent",
-        "borrow_fee_percent",
-        "repay_fee_percent",
-        "liquidation_fee_percent"
+        # P2P MARKETPLACE FEES
+        "p2p_maker_fee_percent", "p2p_taker_fee_percent", "p2p_express_fee_percent",
+        "dispute_fee_percent", "dispute_fee_fixed_gbp", "p2p_trade_fee_percent",
+        # TRADING FEES
+        "instant_buy_fee_percent", "instant_sell_fee_percent", "swap_fee_percent",
+        "spot_trading_fee_percent", "trading_fee_percent",
+        # WITHDRAWAL & DEPOSIT
+        "withdrawal_fee_percent", "withdraw_fee_percent", "network_withdrawal_fee_percent",
+        "fiat_withdrawal_fee_percent", "deposit_fee_percent",
+        # CARD PAYMENT FEES
+        "card_purchase_fee_percent", "card_processing_fee_percent", "card_fixed_fee_gbp",
+        # REFERRAL
+        "referral_standard_commission_percent", "referral_golden_commission_percent",
+        # SAVINGS & STAKING
+        "savings_stake_fee_percent", "early_unstake_penalty_percent",
+        # INTERNAL TRANSFERS
+        "vault_transfer_fee_percent", "cross_wallet_transfer_fee_percent",
+        # LIQUIDITY
+        "admin_liquidity_spread_percent", "express_liquidity_profit_percent",
+        # LEGACY
+        "borrow_fee_percent", "repay_fee_percent", "liquidation_fee_percent"
     ]
     
     if fee_type not in valid_fee_types:
