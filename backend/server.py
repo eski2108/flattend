@@ -3273,6 +3273,24 @@ async def mark_trade_as_paid(request: MarkPaidRequest):
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
+        # ═══════════════════════════════════════════════════════════════
+        # LOG P2P TAKER FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
+        # ═══════════════════════════════════════════════════════════════
+        await db.admin_revenue.insert_one({
+            "revenue_id": str(uuid.uuid4()),
+            "source": "p2p_taker_fee",
+            "revenue_type": "P2P_TRADING",
+            "currency": fiat_currency,
+            "amount": taker_fee,
+            "user_id": request.buyer_id,
+            "related_transaction_id": request.trade_id,
+            "fee_percentage": taker_fee_percent,
+            "referral_commission_paid": referrer_commission,
+            "net_profit": admin_fee,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "description": f"P2P Taker fee ({taker_fee_percent}%) from trade {request.trade_id}"
+        })
+        
         # Log express fee separately if present
         if express_fee > 0:
             await db.fee_transactions.insert_one({
