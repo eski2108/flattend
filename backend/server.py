@@ -4810,9 +4810,15 @@ async def create_savings_deposit_new(request: dict):
         notice_period = request.get('notice_period', 30)
         
         # Get current price from CoinGecko
-        coin_id = get_coingecko_id(coin)
-        coin_data = await get_coingecko_market_data(coin_id)
-        entry_price = coin_data.get('current_price', 0) if coin_data else 0
+        try:
+            coin_id = get_coingecko_id(coin)
+            coin_data = await get_coingecko_market_data(coin_id)
+            entry_price = coin_data.get('current_price', 0) if coin_data else 0
+        except Exception as price_error:
+            logger.warning(f"Failed to get price for {coin}: {price_error}")
+            # Use fallback prices
+            fallback_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0}
+            entry_price = fallback_prices.get(coin, 0)
         
         # Calculate unlock date
         from datetime import datetime, timedelta, timezone
