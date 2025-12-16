@@ -1,7 +1,7 @@
 /**
  * Crypto Logo Utility
  * 1. Local-first: /public/crypto-logos/{symbol}.png
- * 2. Fallback: CoinGecko image URL
+ * 2. Fallback: CoinCap CDN (works for most coins)
  * 3. CSS makes all logos look "3D" with drop-shadow + glow
  */
 
@@ -12,30 +12,16 @@ const LOCAL_LOGOS = [
   'shib', 'sidus', 'sol', 'tfuel', 'trx', 'uni', 'usdc', 'usdt', 'vlx', 'xlm', 'xrp', 'zent'
 ];
 
-// CoinGecko ID mapping for common coins
-const COINGECKO_IDS = {
-  'btc': 'bitcoin', 'eth': 'ethereum', 'usdt': 'tether', 'usdc': 'usd-coin',
-  'bnb': 'binancecoin', 'xrp': 'ripple', 'ada': 'cardano', 'doge': 'dogecoin',
-  'sol': 'solana', 'dot': 'polkadot', 'matic': 'matic-network', 'ltc': 'litecoin',
-  'shib': 'shiba-inu', 'trx': 'tron', 'avax': 'avalanche-2', 'link': 'chainlink',
-  'atom': 'cosmos', 'uni': 'uniswap', 'xlm': 'stellar', 'near': 'near',
-  'pepe': 'pepe', 'tfuel': 'theta-fuel', 'om': 'mantra-dao', 'icx': 'icon',
-  'vlx': 'velas', 'fil': 'filecoin', 'ftm': 'fantom', 'algo': 'algorand',
-  'aave': 'aave', 'mkr': 'maker', 'grt': 'the-graph', 'sand': 'the-sandbox',
-  'mana': 'decentraland', 'axs': 'axie-infinity', 'theta': 'theta-token',
-  'xtz': 'tezos', 'xmr': 'monero', 'eos': 'eos', 'iota': 'iota', 'neo': 'neo'
-};
-
-// Clean symbol
+// Clean symbol - remove network suffixes
 const cleanSymbol = (symbol) => {
   if (!symbol) return 'btc';
   return symbol
-    .replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|-.*$/gi, '')
+    .replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE|-.*$/gi, '')
     .trim()
     .toLowerCase();
 };
 
-// Get coin logo - local first, then CoinGecko
+// Get coin logo - local first, then CoinCap CDN
 const getCoinLogo = (symbol) => {
   const clean = cleanSymbol(symbol);
   
@@ -44,16 +30,20 @@ const getCoinLogo = (symbol) => {
     return `/crypto-logos/${clean}.png`;
   }
   
-  // CoinGecko fallback
-  const geckoId = COINGECKO_IDS[clean] || clean;
-  return `https://assets.coingecko.com/coins/images/1/small/${geckoId}.png`;
+  // CoinCap CDN - works for most coins
+  return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
 };
 
-// Alternative - CoinGecko direct
+// Alternative CDN - CryptoCompare
 const getCoinLogoAlt = (symbol) => {
   const clean = cleanSymbol(symbol);
-  const geckoId = COINGECKO_IDS[clean] || clean;
-  return `https://assets.coingecko.com/coins/images/1/small/${geckoId}.png`;
+  return `https://www.cryptocompare.com/media/37746251/${clean}.png`;
+};
+
+// Third fallback - CoinMarketCap static
+const getCoinLogoFallback = (symbol) => {
+  const clean = cleanSymbol(symbol).toUpperCase();
+  return `https://s2.coinmarketcap.com/static/img/coins/64x64/${clean}.png`;
 };
 
 // Generic fallback
