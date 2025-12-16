@@ -1028,32 +1028,38 @@
 
 .price-info-section {
   display: flex;
-  gap: 32px;
+  gap: 24px;
   margin-bottom: 20px;
-  padding: 16px;
-  background: #151626;
-  border-radius: 8px;
+  padding: 16px 20px;
+  background: rgba(21, 22, 38, 0.5);
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .price-info-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  flex: 1;
 }
 
 .price-label {
-  font-size: 11px;
+  font-size: 10px;
   color: #B5B5B5;
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .price-value {
-  font-size: 16px;
+  font-size: 18px;
   color: #FFFFFF;
   font-weight: 700;
+}
+
+.price-value.secondary {
+  color: #B5B5B5;
+  font-size: 16px;
 }
 
 .price-value.positive {
