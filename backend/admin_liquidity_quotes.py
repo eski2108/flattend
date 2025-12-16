@@ -21,6 +21,12 @@ from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
 
+# Import referral engine for commission processing
+try:
+    from referral_engine import get_referral_engine
+except ImportError:
+    get_referral_engine = None
+
 # Minimum spreads to guarantee profit
 MIN_SELL_SPREAD = 0.5  # Admin must sell at least 0.5% above market
 MIN_BUY_SPREAD = -0.5  # Admin must buy at least 0.5% below market (negative)
