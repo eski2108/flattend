@@ -3,9 +3,10 @@
  * 
  * Priority Order:
  * 1. LOCAL PNG: /public/crypto-logos/{symbol}.png (fastest, ~30 core coins)
- * 2. COINGECKO: https://assets.coingecko.com/coins/images/{id}/small/{symbol}.png
- * 3. COINCAP CDN: https://assets.coincap.io/assets/icons/{symbol}@2x.png
- * 4. TEXT FALLBACK: Styled letter with same 3D effect
+ * 2. NOWPAYMENTS SVG: https://nowpayments.io/images/coins/{symbol}.svg (has ALL 247+ coins)
+ * 3. COINGECKO: https://assets.coingecko.com/coins/images/{id}/small/{symbol}.png
+ * 4. COINCAP CDN: https://assets.coincap.io/assets/icons/{symbol}@2x.png
+ * 5. TEXT FALLBACK: Styled letter with same 3D effect (LAST RESORT ONLY)
  * 
  * CSS 3D Effect applied via filter + badge wrapper
  */
