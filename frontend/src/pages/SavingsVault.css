@@ -569,8 +569,9 @@
 }
 
 .token-card {
-  padding: 24px;
+  padding: 20px 24px;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .token-card:hover {
