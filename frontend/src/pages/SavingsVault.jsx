@@ -47,6 +47,19 @@ const SavingsVault = () => {
     loadAvailableCoins();
   }, []);
 
+  // Emoji mapping for coins
+  const getCoinEmoji = (symbol) => {
+    const emojiMap = {
+      'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶',
+      'XRP': '✖️', 'SOL': '☀️', 'LTC': '🌕', 'DOGE': '🐶', 'ADA': '🌐',
+      'MATIC': '🔷', 'TRX': '🔺', 'DOT': '🎯', 'AVAX': '🏔️', 'XLM': '⭐',
+      'BCH': '💚', 'SHIB': '🐾', 'TON': '🔵', 'DAI': '🟡', 'LINK': '🔗',
+      'ATOM': '⚛️', 'XMR': '🕶️', 'FIL': '📁', 'UNI': '🦄', 'ETC': '🟢',
+      'ALGO': '◯', 'VET': '♦️', 'WBTC': '🔄'
+    };
+    return emojiMap[symbol.toUpperCase()] || '💰';
+  };
+
   const loadAvailableCoins = async () => {
     try {
       setLoadingCoins(true);
@@ -57,7 +70,8 @@ const SavingsVault = () => {
         // Convert NowPayments format to our format
         const coinList = currencies.map(symbol => ({
           symbol: symbol.toUpperCase(),
-          name: symbol.charAt(0).toUpperCase() + symbol.slice(1)
+          name: symbol.charAt(0).toUpperCase() + symbol.slice(1),
+          emoji: getCoinEmoji(symbol)
         }));
         setAvailableCoins(coinList);
         console.log(`✅ Loaded ${coinList.length} coins from NowPayments`);
