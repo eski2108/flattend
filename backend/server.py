@@ -9332,8 +9332,7 @@ async def resolve_dispute_final(request: dict):
     
     # 📧 Send EMAIL notifications
     try:
-        from email_service import get_email_service
-        email_service = get_email_service()
+        from email_service import email_service
         
         buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
         seller = await db.users.find_one({"user_id": trade["seller_id"]})
