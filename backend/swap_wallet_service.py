@@ -416,6 +416,26 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
+        # ═══════════════════════════════════════════════════════════════
+        # LOG SWAP FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
+        # ═══════════════════════════════════════════════════════════════
+        await db.admin_revenue.insert_one({
+            "revenue_id": str(uuid.uuid4()),
+            "source": "swap_fee",
+            "revenue_type": "SWAP_EXCHANGE",
+            "currency": from_currency,
+            "amount": swap_fee_crypto,
+            "amount_gbp": swap_fee_gbp,
+            "user_id": user_id,
+            "related_transaction_id": swap_id,
+            "fee_percentage": swap_fee_percent,
+            "referral_commission_paid": referrer_commission,
+            "net_profit": admin_fee,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "description": f"Swap fee ({swap_fee_percent}%) from {from_currency} to {to_currency}"
+        })
+        logger.info(f"✅ SWAP FEE logged to admin_revenue: {admin_fee} {from_currency}")
+        
         logger.info(f"✅ Swap completed: {user_id} swapped {from_amount} {from_currency} → {to_amount} {to_currency}, Fee: {swap_fee_crypto} {from_currency} (Admin: {admin_fee}, Referrer: {referrer_commission})")
         
         return {
