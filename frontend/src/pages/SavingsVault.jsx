@@ -654,6 +654,15 @@ const SavingsVault = () => {
           <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
             <h3>Withdraw {selectedPosition?.symbol}</h3>
             <button className="modal-close-btn" onClick={() => setShowWithdrawModal(false)}>✕</button>
+            <div className="modal-warning-box">
+              <span className="modal-warning-icon">⚠️</span>
+              <div className="modal-warning-content">
+                <p className="modal-warning-title">Early Withdrawal Penalty</p>
+                <p className="modal-warning-text">
+                  Withdrawing before your notice period ends will result in a penalty of {selectedPosition?.lock_period === 30 ? '2%' : selectedPosition?.lock_period === 60 ? '3.5%' : '5%'} of your deposit.
+                </p>
+              </div>
+            </div>
             <p>Request withdrawal from notice account. If withdrawn before notice period ends, penalties apply.</p>
           </div>
         </div>
