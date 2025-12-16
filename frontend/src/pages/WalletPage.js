@@ -559,7 +559,7 @@ export default function WalletPage() {
                     gap: '12px',
                     flex: 1
                   }}>
-                    <CoinIcon symbol={asset.currency} logoUrl={asset.logoUrl} size={40} />
+                    <CoinIcon symbol={asset.currency} size={40} />
                     <div>
                       <div style={{
                         fontSize: '15px',
