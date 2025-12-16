@@ -50,6 +50,25 @@ const SavingsVault = () => {
   const loadAvailableCoins = async () => {
     try {
       setLoadingCoins(true);
+      // Try NowPayments first for 230+ coins
+      const nowPaymentsResponse = await axios.get(`${API}/api/nowpayments/currencies`);
+      if (nowPaymentsResponse.data.success && nowPaymentsResponse.data.currencies) {
+        const currencies = nowPaymentsResponse.data.currencies;
+        // Convert NowPayments format to our format
+        const coinList = currencies.map(symbol => ({
+          symbol: symbol.toUpperCase(),
+          name: symbol.charAt(0).toUpperCase() + symbol.slice(1)
+        }));
+        setAvailableCoins(coinList);
+        console.log(`✅ Loaded ${coinList.length} coins from NowPayments`);
+        return;
+      }
+    } catch (error) {
+      console.error('NowPayments fetch failed, trying backend fallback:', error);
+    }
+    
+    // Fallback to backend supported cryptocurrencies
+    try {
       const response = await axios.get(`${API}/api/supported/cryptocurrencies`);
       if (response.data.success) {
         const cryptos = response.data.cryptocurrencies;
@@ -58,10 +77,11 @@ const SavingsVault = () => {
           name: cryptos[symbol].name
         }));
         setAvailableCoins(coinList);
+        console.log(`✅ Loaded ${coinList.length} coins from backend`);
       }
     } catch (error) {
       console.error('Error loading coins:', error);
-      // Fallback to default list if API fails
+      // Final fallback to default list
       setAvailableCoins([
         { symbol: 'BTC', name: 'Bitcoin' },
         { symbol: 'ETH', name: 'Ethereum' },
@@ -78,6 +98,7 @@ const SavingsVault = () => {
         { symbol: 'LINK', name: 'Chainlink' },
         { symbol: 'AVAX', name: 'Avalanche' }
       ]);
+      console.log('✅ Using fallback coin list');
     } finally {
       setLoadingCoins(false);
     }
