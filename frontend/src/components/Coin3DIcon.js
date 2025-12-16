@@ -1,61 +1,57 @@
-import React, { useState, useCallback } from 'react';
-import { getCoinLogo, getCoinLogoAlt, getCoinLogoFallback, getCoinLogoFallback2, cleanSymbol } from '@/utils/coinLogos';
+import React, { useState } from 'react';
+import { cleanSymbol, LOCAL_LOGOS, COINGECKO_IDS } from '@/utils/coinLogos';
 
 /**
  * 3D Coin Icon Component
  * 
- * Fallback chain (5 stages before text):
- * 1. Local PNG (/crypto-logos/{symbol}.png) or NOWPayments
- * 2. NOWPayments SVG (has ALL 247+ coins)
- * 3. CoinGecko image
- * 4. CoinCap CDN
- * 5. NOWPayments with cleaned symbol
- * 6. Styled text placeholder (LAST RESORT)
- * 
- * CSS 3D Effect:
- * - Gradient badge background
- * - Drop shadows
- * - Subtle glow
+ * RULES:
+ * 1. Top coins: Local 3D PNGs
+ * 2. All other coins: CoinGecko CDN ONLY
+ * 3. Uniform CSS 3D effect on ALL logos
+ * 4. Placeholder if CDN fails
  */
 const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const [fallbackStage, setFallbackStage] = useState(0);
-  const [showTextFallback, setShowTextFallback] = useState(false);
+  const [showPlaceholder, setShowPlaceholder] = useState(false);
   
   const clean = cleanSymbol(symbol);
+  const geckoId = COINGECKO_IDS[clean] || clean;
   
-  // Get current image source based on fallback stage - 5 fallbacks before text!
-  const getImageSrc = useCallback(() => {
-    switch (fallbackStage) {
-      case 0:
-        return getCoinLogo(symbol);
-      case 1:
-        // NOWPayments with original symbol
-        return `https://nowpayments.io/images/coins/${symbol?.toLowerCase()}.svg`;
-      case 2:
-        // NOWPayments with cleaned symbol
-        return `https://nowpayments.io/images/coins/${clean}.svg`;
-      case 3:
-        return getCoinLogoFallback(symbol);
-      case 4:
-        return getCoinLogoFallback2(symbol);
-      default:
-        return null;
+  // Get image source based on fallback stage
+  const getImageSrc = () => {
+    // Stage 0: Local PNG for top coins, CoinGecko for others
+    if (fallbackStage === 0) {
+      if (LOCAL_LOGOS.includes(clean)) {
+        return `/crypto-logos/${clean}.png`;
+      }
+      return `https://assets.coingecko.com/coins/images/1/large/${geckoId}.png`;
     }
-  }, [fallbackStage, symbol, clean]);
+    // Stage 1: CoinGecko small image
+    if (fallbackStage === 1) {
+      return `https://assets.coingecko.com/coins/images/1/small/${geckoId}.png`;
+    }
+    // Stage 2: CoinGecko thumb
+    if (fallbackStage === 2) {
+      return `https://assets.coingecko.com/coins/images/1/thumb/${geckoId}.png`;
+    }
+    // Stage 3: Try with clean symbol directly
+    if (fallbackStage === 3) {
+      return `https://assets.coingecko.com/coins/images/1/small/${clean}.png`;
+    }
+    return null;
+  };
   
   const handleError = () => {
-    if (fallbackStage < 4) {
+    if (fallbackStage < 3) {
       setFallbackStage(prev => prev + 1);
     } else {
-      // All 5 image sources failed, show text
-      setShowTextFallback(true);
+      setShowPlaceholder(true);
     }
   };
   
   const imgSrc = getImageSrc();
-  const displaySymbol = cleanSymbol(symbol)?.toUpperCase() || '?';
   
-  // Badge wrapper with 3D effect
+  // UNIFORM 3D BADGE STYLE - Applied to ALL logos
   const badgeStyle = {
     width: `${size}px`,
     height: `${size}px`,
@@ -72,7 +68,7 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     ...style
   };
   
-  // Image style with 3D filter
+  // UNIFORM 3D CSS EFFECT - Same for local AND CDN logos
   const imgStyle = {
     width: '100%',
     height: '100%',
@@ -81,29 +77,29 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     borderRadius: '50%'
   };
   
-  // Text fallback style
-  const textStyle = {
-    fontSize: `${Math.floor(size * 0.38)}px`,
+  // Placeholder style - same 3D treatment
+  const placeholderStyle = {
+    fontSize: `${Math.floor(size * 0.4)}px`,
     fontWeight: '700',
     color: '#00E5FF',
     textTransform: 'uppercase',
-    textShadow: '0 0 10px rgba(0,229,255,0.5)',
+    textShadow: '0 2px 4px rgba(0,0,0,0.5), 0 0 15px rgba(0,229,255,0.5)',
     letterSpacing: '-0.5px'
   };
   
   return (
     <div style={badgeStyle}>
-      {!showTextFallback && imgSrc ? (
+      {!showPlaceholder && imgSrc ? (
         <img
           src={imgSrc}
-          alt={displaySymbol}
+          alt={clean.toUpperCase()}
           onError={handleError}
           style={imgStyle}
           loading="lazy"
         />
       ) : (
-        <span style={textStyle}>
-          {displaySymbol.slice(0, 2)}
+        <span style={placeholderStyle}>
+          {clean.slice(0, 2).toUpperCase()}
         </span>
       )}
     </div>
