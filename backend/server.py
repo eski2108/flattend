@@ -1097,6 +1097,24 @@ async def withdraw(request: WithdrawRequest):
     tx_dict['timestamp'] = tx_dict['timestamp'].isoformat()
     await db.transactions.insert_one(tx_dict)
     
+    # ═══════════════════════════════════════════════════════════════
+    # LOG WITHDRAWAL FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
+    # ═══════════════════════════════════════════════════════════════
+    if fee > 0:
+        await db.admin_revenue.insert_one({
+            "revenue_id": str(uuid.uuid4()),
+            "source": "withdrawal_fee",
+            "revenue_type": "WITHDRAWAL_FEE",
+            "currency": "GBP",
+            "amount": fee,
+            "user_id": request.wallet_address,
+            "fee_percentage": PLATFORM_CONFIG["withdraw_fee_percent"],
+            "withdrawal_amount": request.amount,
+            "net_profit": fee,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "description": f"Withdrawal fee ({PLATFORM_CONFIG['withdraw_fee_percent']}%) on {request.amount}"
+        })
+    
     return {
         "success": True,
         "amount": request.amount,
