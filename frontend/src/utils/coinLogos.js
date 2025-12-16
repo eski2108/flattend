@@ -79,7 +79,7 @@ const cleanSymbol = (symbol) => {
 };
 
 /**
- * Get coin logo URL - Local first, then CoinGecko, then CoinCap
+ * Get coin logo URL - Local first, then NOWPayments (has ALL coins)
  * @param {string} symbol - Coin symbol (e.g., 'BTC', 'ETH')
  * @returns {string} Logo URL
  */
@@ -93,14 +93,8 @@ const getCoinLogo = (symbol) => {
     return `/crypto-logos/${clean}.png`;
   }
   
-  // 2. COINGECKO (if we have the ID)
-  const geckoId = COINGECKO_IDS[clean];
-  if (geckoId) {
-    return `https://assets.coingecko.com/coins/images/${geckoId}/small/${clean}.png`;
-  }
-  
-  // 3. COINCAP CDN (works for most coins)
-  return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
+  // 2. NOWPAYMENTS SVG - They have ALL 247+ coins!
+  return `https://nowpayments.io/images/coins/${symbol.toLowerCase()}.svg`;
 };
 
 /**
