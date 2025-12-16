@@ -238,9 +238,33 @@ const SavingsVault = () => {
             
             {showWalletMenu && (
               <div className="wallet-dropdown-menu">
-                <div className="dropdown-item" onClick={() => { setSelectedWallet('Main'); setShowWalletMenu(false); }}>Main Wallet</div>
-                <div className="dropdown-item" onClick={() => { setSelectedWallet('Trading'); setShowWalletMenu(false); }}>Trading Wallet</div>
-                <div className="dropdown-item" onClick={() => { setSelectedWallet('Savings'); setShowWalletMenu(false); }}>Savings Wallet</div>
+                <div 
+                  className={`dropdown-item ${selectedWallet === 'Main' ? 'active' : ''}`}
+                  onClick={() => { 
+                    navigate('/wallet');
+                    setShowWalletMenu(false); 
+                  }}
+                >
+                  Main Wallet
+                </div>
+                <div 
+                  className={`dropdown-item ${selectedWallet === 'Trading' ? 'active' : ''}`}
+                  onClick={() => { 
+                    navigate('/trading');
+                    setShowWalletMenu(false); 
+                  }}
+                >
+                  Trading Wallet
+                </div>
+                <div 
+                  className={`dropdown-item ${selectedWallet === 'Savings' ? 'active' : ''}`}
+                  onClick={() => { 
+                    setSelectedWallet('Savings');
+                    setShowWalletMenu(false); 
+                  }}
+                >
+                  Savings Wallet (Current)
+                </div>
               </div>
             )}
           </div>
