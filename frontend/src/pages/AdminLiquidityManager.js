@@ -365,6 +365,64 @@ const AdminLiquidityManager = () => {
               </button>
             </div>
           )}
+          
+          {/* 🔄 SYNC NOW BUTTON - Pull real balances from NOWPayments */}
+          {nowpaymentsEnabled && (
+            <div style={{ 
+              marginTop: '20px',
+              padding: '20px',
+              background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 240, 255, 0.1))',
+              border: '2px solid #00FF88',
+              borderRadius: '12px'
+            }}>
+              <h4 style={{ color: '#00FF88', marginBottom: '10px', fontSize: '16px' }}>
+                🔄 Sync Real NOWPayments Balances
+              </h4>
+              <p style={{ color: '#8E9BAE', fontSize: '13px', marginBottom: '15px' }}>
+                Pull your actual crypto holdings from NOWPayments and update all liquidity wallets instantly.
+              </p>
+              <button
+                onClick={async () => {
+                  setUpdating(true);
+                  setMessage({ type: '', text: '' });
+                  try {
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/liquidity/sync-nowpayments`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                      setMessage({ type: 'success', text: `✅ ${data.message}` });
+                      fetchLiquidity(); // Refresh the liquidity display
+                    } else {
+                      setMessage({ type: 'error', text: `❌ ${data.message}` });
+                    }
+                  } catch (error) {
+                    setMessage({ type: 'error', text: '❌ Sync failed - check console' });
+                    console.error('Sync error:', error);
+                  }
+                  setUpdating(false);
+                  setTimeout(() => setMessage({ type: '', text: '' }), 8000);
+                }}
+                disabled={updating}
+                style={{
+                  padding: '15px 40px',
+                  background: 'linear-gradient(135deg, #00FF88, #00D9FF)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#000',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: updating ? 'not-allowed' : 'pointer',
+                  opacity: updating ? 0.6 : 1,
+                  boxShadow: '0 0 20px rgba(0, 255, 136, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {updating ? '⏳ SYNCING...' : '🔄 SYNC NOW - Pull Real Balances'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 🚫 Recent Liquidity Blocks */}
