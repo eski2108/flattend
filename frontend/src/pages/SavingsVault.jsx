@@ -336,7 +336,10 @@ const SavingsVault = () => {
 
       {/* YOUR SAVINGS - PORTFOLIO LIST */}
       <div className="portfolio-list-section">
-        <h2 className="section-heading">Your Savings</h2>
+        <div className="section-header-with-description">
+          <h2 className="section-heading">Your Savings</h2>
+          <p className="section-description">Manage your crypto savings positions and track your earnings in real-time</p>
+        </div>
         
         {loading ? (
           <div className="loading-state">Loading your savings...</div>
