@@ -24,25 +24,45 @@ const COIN_COLORS = {
   MATIC: '#8247E5'
 };
 
-// CoinIcon component - uses CDN icons with generic fallback
-const CoinIcon = ({ symbol, logoUrl, size = 40 }) => {
+// 3D CoinIcon component - uses local 3D PNG logos from /crypto-logos/
+const CoinIcon = ({ symbol, size = 40 }) => {
   const [imgError, setImgError] = useState(false);
   
-  // If CDN icon fails, use generic crypto icon
-  const fallbackUrl = getGenericCoinIcon();
+  // Use local 3D logos that match the footer
+  const logoUrl = `/crypto-logos/${symbol?.toLowerCase()}.png`;
   
   return (
-    <img
-      src={imgError ? fallbackUrl : logoUrl}
-      alt={symbol}
-      onError={() => setImgError(true)}
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: '50%',
-        background: imgError ? 'rgba(255,255,255,0.1)' : 'transparent'
-      }}
-    />
+    <div style={{
+      width: `${size}px`,
+      height: `${size}px`,
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: imgError ? 'rgba(255,255,255,0.1)' : 'transparent',
+      overflow: 'hidden'
+    }}>
+      {!imgError ? (
+        <img
+          src={logoUrl}
+          alt={symbol}
+          onError={() => setImgError(true)}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain'
+          }}
+        />
+      ) : (
+        <span style={{
+          fontSize: `${size * 0.5}px`,
+          fontWeight: '700',
+          color: '#00E5FF'
+        }}>
+          {symbol?.charAt(0) || '?'}
+        </span>
+      )}
+    </div>
   );
 };
 
