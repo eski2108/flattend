@@ -159,7 +159,7 @@
 
 .transfer-from-wallet-btn:hover {
   background: rgba(0, 240, 255, 0.1);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.25);
   transform: translateY(-1px);
 }
 
