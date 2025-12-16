@@ -285,6 +285,10 @@ const SavingsVault = () => {
             <button className="select-notice-btn primary">Select</button>
           </div>
         </div>
+        
+        <p className="notice-terms-footer">
+          Early withdrawal from notice accounts will forfeit a percentage of earned interest. No principal is lost.
+        </p>
       </div>
 
       {/* REFERRAL BANNER */}
