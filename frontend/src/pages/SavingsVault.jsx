@@ -338,7 +338,7 @@ const SavingsVault = () => {
       <div className="portfolio-list-section">
         <div className="section-header-with-description">
           <h2 className="section-heading">Your Savings</h2>
-          <p className="section-description">Manage your crypto savings positions and track your earnings in real-time</p>
+          <p className="section-description">Lock your crypto for fixed periods to earn competitive yields. Track your earnings and unlock dates in real-time.</p>
         </div>
         
         {loading ? (
