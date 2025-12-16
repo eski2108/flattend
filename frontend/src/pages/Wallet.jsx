@@ -2,81 +2,112 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '@/components/Layout';
-import getCoinLogo from '../utils/coinLogos';
 import '../styles/globalSwapTheme.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Emoji mapping for coins - SAME AS SAVINGS VAULT
+// MASSIVE emoji map - covers ALL coins
+const COIN_EMOJI_MAP = {
+  // Top cryptos
+  'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶',
+  'XRP': '✖️', 'SOL': '☀️', 'ADA': '🌐', 'DOGE': '🐶', 'TRX': '🔺',
+  'DOT': '🎯', 'MATIC': '🔷', 'LTC': '🌕', 'SHIB': '🐕', 'AVAX': '🏔️',
+  'LINK': '🔗', 'ATOM': '⚛️', 'UNI': '🦄', 'XLM': '⭐', 'XMR': '🕶️',
+  'BCH': '💚', 'TON': '🔵', 'DAI': '🟡', 'ETC': '🟢', 'FIL': '📁',
+  'VET': '♦️', 'ALGO': '◯', 'WBTC': '🔄', 'NEAR': '🌈', 'ICP': '∞',
+  'PLX': '💎', 'NWC': '🌐', 'CHR': '⚡', 'GBP': '💷',
+  
+  // Meme coins
+  'PEPE': '🐸', 'FLOKI': '🐕', 'BONK': '💥', 'WIF': '🧢', 'MEME': '😂',
+  'LEASH': '🦴', 'ELON': '🚀', 'BABYDOGE': '🐶', 'KISHU': '🐕', 
+  
+  // Stablecoins
+  'BUSD': '💵', 'TUSD': '💵', 'USDP': '💲', 'GUSD': '🏦', 'USDD': '💵',
+  'FRAX': '🏛️', 'LUSD': '💵', 'SUSD': '💵',
+  
+  // DeFi tokens
+  'AAVE': '👻', 'COMP': '🏛️', 'MKR': '👑', 'SNX': '⚡', 'CRV': '🌊',
+  'SUSHI': '🍣', 'CAKE': '🎂', '1INCH': '🦄', 'BAL': '⚖️', 'YFI': '💎',
+  'RUNE': '⚔️', 'ALPHA': '🐺', 'CREAM': '🍦', 'BADGER': '🦡',
+  
+  // Gaming/Metaverse
+  'AXS': '🎮', 'SAND': '🏖️', 'MANA': '🌍', 'ENJ': '🎮', 'GALA': '🎪',
+  'IMX': '🎮', 'GODS': '⚔️', 'SUPER': '🦸', 'STARL': '🌟', 'RACA': '🎨',
+  
+  // Layer 2 & Scaling
+  'ARB': '🔷', 'OP': '🔴', 'LRC': '⭕', 'ZK': '🔐', 'METIS': '⚡',
+  
+  // Exchange tokens
+  'FTT': '📈', 'OKB': '⭕', 'HT': '🔥', 'KCS': '🎯', 'GT': '🎯',
+  'CRO': '💎', 'LEO': '🦁', 'WOO': '🌊', 'MX': '💹',
+  
+  // AI & Tech
+  'FET': '🤖', 'AGIX': '🧠', 'OCEAN': '🌊', 'GRT': '📊', 'RENDER': '🎨',
+  'INJ': '💉', 'RNDR': '🎬', 'PAAL': '🤖',
+  
+  // Privacy coins
+  'DASH': '💸', 'ZEC': '🔒', 'DCR': '🔐', 'SC': '☁️',
+  
+  // Other major coins
+  'APT': '🔷', 'SUI': '💧', 'SEI': '⚡', 'TIA': '🌌',
+  'KUJI': '🌪️', 'LUNA': '🌙', 'LUNC': '🌑', 'UST': '💵', 'USTC': '💵',
+  
+  // Specific tokens
+  'MEW': '😺', 'USDR': '💲', 'USDTMATIC': '💵', 'USDCBSC': '💲',
+  'SHIBBSC': '🐕', 'AVAXC': '🏔️', 'BERA': '🐻', 'RVN': '🦅',
+  'WOLFERC20': '🐺', 'GUARD': '🛡️', 'AWEBASE': '⚡', 'USDTSOL': '💵',
+  'WETH': '◆', 'WBNB': '🔶', 'WMATIC': '🔷',
+  
+  // Others
+  'FTM': '👻', 'ONE': '1️⃣', 'HBAR': '♾️', 'THETA': '📺',
+  'TFUEL': '⛽', 'EGLD': '⚡', 'FLOW': '🌊', 'ROSE': '🌹',
+  'KDA': '⛓️', 'KLAY': '🎮', 'MINA': '🔐', 'ZIL': '⚡'
+};
+
+// Get emoji for ANY coin - always returns something
 const getCoinEmoji = (symbol) => {
-  const emojiMap = {
-    // Top cryptos
-    'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶',
-    'XRP': '✖️', 'SOL': '☀️', 'ADA': '🌐', 'DOGE': '🐶', 'TRX': '🔺',
-    'DOT': '🎯', 'MATIC': '🔷', 'LTC': '🌕', 'SHIB': '🐕', 'AVAX': '🏔️',
-    'LINK': '🔗', 'ATOM': '⚛️', 'UNI': '🦄', 'XLM': '⭐', 'XMR': '🕶️',
-    'BCH': '💚', 'TON': '🔵', 'DAI': '🟡', 'ETC': '🟢', 'FIL': '📁',
-    'VET': '♦️', 'ALGO': '◯', 'WBTC': '🔄', 'NEAR': '🌈', 'ICP': '∞',
-    
-    // Meme coins
-    'PEPE': '🐸', 'FLOKI': '🐕', 'BONK': '💥', 'WIF': '🧢', 'MEME': '😂',
-    'LEASH': '🦴', 'ELON': '🚀', 'BABYDOGE': '🐶', 'KISHU': '🐕', 
-    
-    // Stablecoins
-    'BUSD': '💵', 'TUSD': '💵', 'USDP': '💲', 'GUSD': '🏦', 'USDD': '💵',
-    'FRAX': '🏛️', 'LUSD': '💵', 'SUSD': '💵',
-    
-    // DeFi tokens
-    'AAVE': '👻', 'COMP': '🏛️', 'MKR': '👑', 'SNX': '⚡', 'CRV': '🌊',
-    'SUSHI': '🍣', 'CAKE': '🎂', '1INCH': '🦄', 'BAL': '⚖️', 'YFI': '💎',
-    'RUNE': '⚔️', 'ALPHA': '🐺', 'CREAM': '🍦', 'BADGER': '🦡',
-    
-    // Gaming/Metaverse
-    'AXS': '🎮', 'SAND': '🏖️', 'MANA': '🌍', 'ENJ': '🎮', 'GALA': '🎪',
-    'IMX': '🎮', 'GODS': '⚔️', 'SUPER': '🦸', 'STARL': '🌟', 'RACA': '🎨',
-    
-    // Layer 2 & Scaling
-    'ARB': '🔷', 'OP': '🔴', 'LRC': '⭕', 'ZK': '🔐', 'METIS': '⚡',
-    
-    // Exchange tokens
-    'FTT': '📈', 'OKB': '⭕', 'HT': '🔥', 'KCS': '🎯', 'GT': '🎯',
-    'CRO': '💎', 'LEO': '🦁', 'WOO': '🌊', 'MX': '💹',
-    
-    // AI & Tech
-    'FET': '🤖', 'AGIX': '🧠', 'OCEAN': '🌊', 'GRT': '📊', 'RENDER': '🎨',
-    'INJ': '💉', 'RNDR': '🎬', 'PAAL': '🤖',
-    
-    // Privacy coins
-    'DASH': '💸', 'ZEC': '🔒', 'DCR': '🔐', 'SC': '☁️',
-    
-    // Other major coins
-    'APT': '🔷', 'SUI': '💧', 'SEI': '⚡', 'TIA': '🌌',
-    'KUJI': '🌪️', 'LUNA': '🌙', 'LUNC': '🌑', 'UST': '💵', 'USTC': '💵',
-    
-    // Specific tokens
-    'MEW': '😺', 'USDR': '💲', 'USDTMATIC': '💵', 'USDCBSC': '💲',
-    'SHIBBSC': '🐕', 'AVAXC': '🏔️', 'BERA': '🐻', 'RVN': '🦅',
-    'WOLFERC20': '🐺', 'GUARD': '🛡️', 'AWEBASE': '⚡', 'USDTSOL': '💵',
-    'WETH': '◆', 'WBNB': '🔶', 'WMATIC': '🔷',
-    
-    // Others
-    'FTM': '👻', 'ONE': '1️⃣', 'HBAR': '♾️', 'THETA': '📺',
-    'TFUEL': '⛽', 'EGLD': '⚡', 'FLOW': '🌊', 'ROSE': '🌹',
-    'KDA': '⛓️', 'KLAY': '🎮', 'MINA': '🔐', 'ZIL': '⚡'
-  };
-  
+  if (!symbol) return '💎';
   const upperSymbol = symbol.toUpperCase();
-  if (emojiMap[upperSymbol]) return emojiMap[upperSymbol];
   
-  // Partial matches
+  // Direct match
+  if (COIN_EMOJI_MAP[upperSymbol]) return COIN_EMOJI_MAP[upperSymbol];
+  
+  // Partial matches for variants
   if (upperSymbol.includes('USDT')) return '💵';
   if (upperSymbol.includes('USDC')) return '💲';
   if (upperSymbol.includes('BTC')) return '₿';
   if (upperSymbol.includes('ETH')) return '◆';
   if (upperSymbol.includes('SHIB')) return '🐕';
   if (upperSymbol.includes('DOGE')) return '🐶';
+  if (upperSymbol.includes('BNB')) return '🔶';
+  if (upperSymbol.includes('SOL')) return '☀️';
+  if (upperSymbol.includes('MATIC')) return '🔷';
+  if (upperSymbol.includes('AVAX')) return '🏔️';
   
+  // Default
   return '💎';
+};
+
+// CoinIcon component - ALWAYS shows emoji, no PNG loading
+const CoinIcon = ({ symbol }) => {
+  const emoji = getCoinEmoji(symbol);
+  
+  return (
+    <div style={{
+      width: '48px',
+      height: '48px',
+      borderRadius: '50%',
+      background: 'linear-gradient(135deg, rgba(19, 215, 255, 0.25), rgba(122, 60, 255, 0.25))',
+      border: '2px solid rgba(19, 215, 255, 0.4)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '26px',
+      boxShadow: '0 0 15px rgba(19, 215, 255, 0.3)'
+    }}>
+      {emoji}
+    </div>
+  );
 };
 
 export default function Wallet() {
