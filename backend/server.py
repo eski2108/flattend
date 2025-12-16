@@ -28663,15 +28663,20 @@ async def get_savings_positions(user_id: str):
             if position_data['type'] == 'flexible':
                 available_balance_usd += balance_usd
         
+        # Calculate locked balance
+        locked_balance_usd = total_balance_usd - available_balance_usd
+        
         return {
             "success": True,
             "positions": positions,
             "total_balance_usd": round(total_balance_usd, 2),
-            "total_balance_crypto": "1.50 BTC",  # Primary crypto display
+            "total_balance_crypto": f"{round(positions[0]['balance'], 2)} {positions[0]['symbol']}" if positions else "0.00 BTC",
+            "locked_balance_usd": round(locked_balance_usd, 2),
+            "locked_balance_crypto": "0.00 BTC",
             "available_balance_usd": round(available_balance_usd, 2),
-            "available_balance_crypto": "0.50 BTC",
+            "available_balance_crypto": "0.00 BTC",
             "total_interest_earned_usd": round(total_interest_earned_usd, 2),
-            "total_interest_earned_crypto": "0.123 BTC"
+            "total_interest_earned_crypto": "0.00 BTC"
         }
     except Exception as e:
         logger.error(f"Error fetching savings positions: {str(e)}")
