@@ -266,7 +266,7 @@ const SavingsVault = () => {
             <button className="select-notice-btn">Select</button>
           </div>
 
-          <div className="notice-option-card highlighted">
+          <div className="notice-option-card highlighted" onClick={() => console.log('90 day selected')}>
             <div className="best-value-badge">Best Value</div>
             <div className="notice-option-header">
               <span className="notice-days">90 Days</span>
@@ -274,15 +274,15 @@ const SavingsVault = () => {
             </div>
             <div className="notice-option-details">
               <div className="notice-detail-item">
-                <span className="detail-label">Early Withdrawal Penalty:</span>
-                <span className="detail-value">5% of deposit</span>
+                <span className="detail-label">Early Withdrawal:</span>
+                <span className="detail-value penalty-text">5% interest penalty</span>
               </div>
               <div className="notice-detail-item">
-                <span className="detail-label">Next Unlock Date:</span>
+                <span className="detail-label">Next Unlock:</span>
                 <span className="detail-value">Mar 16, 2025</span>
               </div>
             </div>
-            <button className="select-notice-btn primary">Select 90 Days</button>
+            <button className="select-notice-btn primary">Select</button>
           </div>
         </div>
       </div>
