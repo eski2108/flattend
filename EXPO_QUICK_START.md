@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://coin-icon-fixer.preview.emergentagent.com/api
+https://quickstart-27.preview.emergentagent.com/api
 ```
 
 This means:

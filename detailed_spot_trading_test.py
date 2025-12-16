@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://coin-icon-fixer.preview.emergentagent.com"
+BACKEND_URL = "https://quickstart-27.preview.emergentagent.com"
 TEST_USER_ID = "test_user_123"
 
 def log_test(test_name, status, details=""):

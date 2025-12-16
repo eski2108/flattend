@@ -130,7 +130,7 @@ To complete the file locking:
 **Build Completed:** December 9, 2024
 **Frontend Restarted:** Yes
 **Services Status:** All running
-**Live URL:** https://coin-icon-fixer.preview.emergentagent.com
+**Live URL:** https://quickstart-27.preview.emergentagent.com
 
 ---
 

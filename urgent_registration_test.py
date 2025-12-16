@@ -22,7 +22,7 @@ import time
 from datetime import datetime, timezone
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://coin-icon-fixer.preview.emergentagent.com"
+BACKEND_URL = "https://quickstart-27.preview.emergentagent.com"
 
 class UrgentRegistrationTester:
     """Urgent Registration Endpoint Tester"""

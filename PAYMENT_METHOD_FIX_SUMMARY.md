@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://coin-icon-fixer.preview.emergentagent.com
+https://quickstart-27.preview.emergentagent.com
 
 ### Test Route
 
-`https://coin-icon-fixer.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://quickstart-27.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

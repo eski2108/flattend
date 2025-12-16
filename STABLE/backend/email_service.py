@@ -194,7 +194,7 @@ class EmailService:
                                 <table cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
-                                            <a href="https://coin-icon-fixer.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
+                                            <a href="https://quickstart-27.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
                                                target="_blank"
                                                style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
                                                 🚨 RESOLVE DISPUTE NOW →
@@ -213,7 +213,7 @@ class EmailService:
                         </p>
                         <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
                             <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-                                https://coin-icon-fixer.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+                                https://quickstart-27.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                             </p>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
@@ -224,7 +224,7 @@ class EmailService:
                     <!-- Alternative Text Link (if button doesn't work) -->
                     <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
                         Button not working? Click here: 
-                        <a href="https://coin-icon-fixer.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
+                        <a href="https://quickstart-27.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
                            style="color: #EF4444; font-weight: bold; text-decoration: underline;">
                             Open Dispute #{dispute_id}
                         </a>
@@ -1159,7 +1159,7 @@ def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, f
             <p style="color: #FFA500;"><strong>⚠️ Action Required:</strong></p>
             <p>Please verify the payment in your bank account and release the crypto.</p>
             
-            <a href="https://coin-icon-fixer.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://quickstart-27.preview.emergentagent.com/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #22C55E, #16A34A); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Order
             </a>
@@ -1191,7 +1191,7 @@ def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, 
             
             <p>The {crypto} has been added to your wallet. You can now use or withdraw it.</p>
             
-            <a href="https://coin-icon-fixer.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://quickstart-27.preview.emergentagent.com/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #00C6FF, #0096CC); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Receipt
             </a>
@@ -1227,7 +1227,7 @@ def p2p_dispute_opened_email(trade_id: str, crypto_amount: float, crypto: str, r
                 <li>Provide any evidence (screenshots, receipts) in the chat</li>
             </ul>
             
-            <a href="https://coin-icon-fixer.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://quickstart-27.preview.emergentagent.com/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #EF4444, #DC2626); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Dispute
             </a>
@@ -1265,7 +1265,7 @@ def p2p_admin_dispute_alert(trade_id: str, crypto_amount: float, crypto: str, bu
                 <li>Resolve dispute in admin panel</li>
             </ul>
             
-            <a href="https://coin-icon-fixer.preview.emergentagent.com/admin/disputes" 
+            <a href="https://quickstart-27.preview.emergentagent.com/admin/disputes" 
                style="display: inline-block; background: linear-gradient(135deg, #FFA500, #FF8C00); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 Go to Admin Panel
             </a>

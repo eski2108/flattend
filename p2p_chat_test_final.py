@@ -23,7 +23,7 @@ Tests the complete P2P trade chat system with buyer-seller flow as requested:
 - POST /api/p2p/create-trade (should auto-create system message)
 - POST /api/p2p/mark-paid (should auto-create system messages)
 
-**Backend URL:** https://coin-icon-fixer.preview.emergentagent.com/api
+**Backend URL:** https://quickstart-27.preview.emergentagent.com/api
 """
 
 import requests
@@ -33,7 +33,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
+BASE_URL = "https://quickstart-27.preview.emergentagent.com/api"
 
 # Test Users for P2P Chat Testing
 BUYER_USER = {

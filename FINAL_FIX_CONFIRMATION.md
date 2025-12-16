@@ -77,7 +77,7 @@
 
 ## 📊 LIVE PREVIEW STATUS
 
-**URL**: https://coin-icon-fixer.preview.emergentagent.com
+**URL**: https://quickstart-27.preview.emergentagent.com
 
 **Build Information**:
 - Latest Build Hash: Deployed Dec 9, 2024 08:55 UTC

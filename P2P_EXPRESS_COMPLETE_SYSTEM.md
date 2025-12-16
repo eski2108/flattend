@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://coin-icon-fixer.preview.emergentagent.com/p2p-express
+https://quickstart-27.preview.emergentagent.com/p2p-express
 
 ---
 

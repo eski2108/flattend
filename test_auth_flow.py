@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
+BASE_URL = "https://quickstart-27.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

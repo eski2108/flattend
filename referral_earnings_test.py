@@ -28,7 +28,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://coin-icon-fixer.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://quickstart-27.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class ReferralEarningsTest:

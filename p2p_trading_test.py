@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
+BASE_URL = "https://quickstart-27.preview.emergentagent.com/api"
 
 # Test Users
 BUYER_USER = {

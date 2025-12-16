@@ -149,7 +149,7 @@
 
 ## How to Test
 
-1. **Go to:** https://coin-icon-fixer.preview.emergentagent.com/settings
+1. **Go to:** https://quickstart-27.preview.emergentagent.com/settings
 2. **Log in with:** admin@coinhubx.net / test123
 3. **Test each button:**
    - Click every button

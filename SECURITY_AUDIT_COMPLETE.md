@@ -19,7 +19,7 @@
 
 ### 4. CORS Hardening
 - **Before**: CORS_ORIGINS=* (allowed all origins)
-- **After**: CORS_ORIGINS=https://coinhubx.net,https://coin-icon-fixer.preview.emergentagent.com
+- **After**: CORS_ORIGINS=https://coinhubx.net,https://quickstart-27.preview.emergentagent.com
 - **Status**: ✅ FIXED
 
 ### 5. Console.log Removal (Frontend)

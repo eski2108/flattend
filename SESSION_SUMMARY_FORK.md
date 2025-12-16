@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://coin-icon-fixer.preview.emergentagent.com
+https://quickstart-27.preview.emergentagent.com
 
 ---
 

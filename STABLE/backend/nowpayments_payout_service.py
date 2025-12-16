@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://coin-icon-fixer.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://quickstart-27.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://coin-icon-fixer.preview.emergentagent.com
-- Backend API: https://coin-icon-fixer.preview.emergentagent.com/api
-- P2P Marketplace: https://coin-icon-fixer.preview.emergentagent.com/p2p
+- Frontend: https://quickstart-27.preview.emergentagent.com
+- Backend API: https://quickstart-27.preview.emergentagent.com/api
+- P2P Marketplace: https://quickstart-27.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

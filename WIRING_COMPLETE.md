@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://coin-icon-fixer.preview.emergentagent.com/api
-- **Frontend App**: https://coin-icon-fixer.preview.emergentagent.com
+- **Backend API**: https://quickstart-27.preview.emergentagent.com/api
+- **Frontend App**: https://quickstart-27.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

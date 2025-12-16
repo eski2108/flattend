@@ -150,7 +150,7 @@ Once built, you can distribute the APK by:
 
 1. **Backend URL:** The app is configured to connect to:
    ```
-   https://coin-icon-fixer.preview.emergentagent.com/api
+   https://quickstart-27.preview.emergentagent.com/api
    ```
 
 2. **Permissions:** The app requests:
