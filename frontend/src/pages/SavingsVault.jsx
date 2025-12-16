@@ -524,18 +524,18 @@ const SavingsVault = () => {
                       </div>
                       
                       <div className="graph-container">
-                        <div className="graph-label">Interest Earned ({position.symbol})</div>
+                        <div className="graph-label">Price Movement (30D)</div>
                         <svg className="earnings-chart" viewBox="0 0 600 100" preserveAspectRatio="none">
                           <defs>
                             <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" style={{stopColor: '#00FF85', stopOpacity: 0.3}} />
-                              <stop offset="100%" style={{stopColor: '#00FF85', stopOpacity: 0}} />
+                              <stop offset="0%" style={{stopColor: position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D4F', stopOpacity: 0.3}} />
+                              <stop offset="100%" style={{stopColor: position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D4F', stopOpacity: 0}} />
                             </linearGradient>
                           </defs>
                           <path 
                             className="earnings-line"
                             d="M 0 80 L 100 70 L 200 50 L 300 40 L 400 45 L 500 30 L 600 20" 
-                            stroke="#00FF85" 
+                            stroke={position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D4F'}
                             strokeWidth="2" 
                             fill="none"
                           />
