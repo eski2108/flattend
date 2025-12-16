@@ -27475,6 +27475,75 @@ async def get_all_admin_liquidity():
             "error": str(e)
         }
 
+@api_router.post("/admin/liquidity/sync-nowpayments")
+async def sync_nowpayments_to_liquidity():
+    """
+    🔄 SYNC REAL NOWPAYMENTS BALANCES TO ADMIN LIQUIDITY WALLETS
+    This pulls your actual crypto holdings from NOWPayments and updates the database
+    """
+    try:
+        from nowpayments_integration import get_nowpayments_service
+        
+        nowpayments = get_nowpayments_service()
+        balances_data = nowpayments.get_account_balances()
+        
+        if not balances_data["success"]:
+            return {
+                "success": False,
+                "message": f"Failed to fetch NOWPayments balances: {balances_data.get('error', 'Unknown error')}",
+                "synced": []
+            }
+        
+        synced_wallets = []
+        
+        for balance in balances_data["balances"]:
+            currency = balance["currency"].upper()
+            real_balance = float(balance["balance"])
+            pending = float(balance.get("pending", 0))
+            
+            # Update admin_liquidity_wallets with real NOWPayments balance
+            await db.admin_liquidity_wallets.update_one(
+                {"currency": currency},
+                {
+                    "$set": {
+                        "balance": real_balance,
+                        "available": real_balance,
+                        "pending": pending,
+                        "nowpayments_synced": True,
+                        "last_sync": datetime.now(timezone.utc).isoformat(),
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    },
+                    "$setOnInsert": {
+                        "reserved": 0,
+                        "created_at": datetime.now(timezone.utc).isoformat()
+                    }
+                },
+                upsert=True
+            )
+            
+            synced_wallets.append({
+                "currency": currency,
+                "balance": real_balance,
+                "pending": pending
+            })
+        
+        logger.info(f"✅ Synced {len(synced_wallets)} wallets from NOWPayments")
+        
+        return {
+            "success": True,
+            "message": f"Successfully synced {len(synced_wallets)} wallets from NOWPayments",
+            "synced": synced_wallets,
+            "sync_time": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ NOWPayments sync error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e),
+            "synced": []
+        }
+
 @api_router.post("/admin/liquidity/update")
 async def update_admin_liquidity(request: dict):
     """Update admin liquidity balance"""
