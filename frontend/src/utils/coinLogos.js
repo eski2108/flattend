@@ -3,27 +3,22 @@
  * 🔒 LOCKED - DO NOT MODIFY WITHOUT APPROVAL
  * ========================================
  * 
- * Coin Logo Utility
  * SOURCE: IconScout 3D Crypto Icons
- * 
- * RULES:
- * 1. ONLY local 3D-rendered logos
- * 2. NO CDN, NO random downloads
- * 3. Placeholder for missing coins
- * 
  * LOCKED: December 2025
  */
 
-// 81 coins with REAL 3D logos from IconScout
+// 93 coins with REAL 3D logos
 const LOCAL_LOGOS = [
-  'aave', 'ada', 'algo', 'ape', 'aptos', 'arb', 'atom', 'avax', 'axs', 'bch',
-  'beam', 'bnb', 'bonk', 'btc', 'cake', 'chz', 'comp', 'crv', 'dai', 'dash',
-  'doge', 'dogs', 'dot', 'eos', 'eth', 'fet', 'fil', 'floki', 'flow', 'ftm',
-  'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'imx', 'inj', 'jto', 'jup',
-  'kaspa', 'ldo', 'link', 'ltc', 'mana', 'matic', 'mina', 'mkr', 'mnt', 'near',
-  'neo', 'not', 'ondo', 'op', 'pepe', 'pyth', 'rndr', 'rune', 'sand', 'sei',
-  'shib', 'sol', 'stx', 'sui', 'sushi', 'theta', 'tia', 'ton', 'trump', 'trx',
-  'uni', 'usdc', 'usdt', 'vet', 'waves', 'wif', 'wld', 'xlm', 'xmr', 'xrp', 'zec'
+  'aave', 'ada', 'algo', 'ape', 'aptos', 'arb', 'atom', 'avax', 'axs', 'bad',
+  'bch', 'beam', 'bnb', 'bonk', 'btc', 'cake', 'chz', 'comp', 'crv', 'ctsi',
+  'dai', 'dash', 'doge', 'dogs', 'dot', 'eos', 'eth', 'fet', 'fil', 'floki',
+  'flow', 'ftm', 'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'icx', 'id',
+  'imx', 'inj', 'jto', 'jup', 'kaspa', 'ldo', 'link', 'ltc', 'mana', 'matic',
+  'mina', 'mkr', 'mnt', 'near', 'neo', 'not', 'nwc', 'om', 'ondo', 'op',
+  'pepe', 'pew', 'pyth', 'rndr', 'rune', 'sand', 'sei', 'shib', 'sidus', 'sol',
+  'stx', 'sui', 'sushi', 'tfuel', 'theta', 'tia', 'ton', 'trump', 'trx', 'tusd',
+  'uni', 'usdc', 'usdt', 'vet', 'vlx', 'waves', 'wif', 'wld', 'xlm', 'xmr',
+  'xrp', 'zec', 'zent'
 ];
 
 const cleanSymbol = (symbol) => {
