@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://finance-check-5.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
 
 # Test Users for dispute
 DISPUTE_BUYER = {

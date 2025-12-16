@@ -199,7 +199,7 @@
     }
   ],
   "test_metadata": {
-    "backend_url": "https://finance-check-5.preview.emergentagent.com/api",
+    "backend_url": "https://crypto-logo-update.preview.emergentagent.com/api",
     "test_timestamp": "2025-12-05T07:54:21.982935+00:00",
     "test_type": "corrected_backend_test"
   }

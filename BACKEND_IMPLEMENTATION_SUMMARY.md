@@ -212,7 +212,7 @@ curl http://localhost:8001/api/trader/stats/{actual_user_id}
 
 **External URL:**
 ```bash
-curl https://finance-check-5.preview.emergentagent.com/api/trader/stats/{user_id}
+curl https://crypto-logo-update.preview.emergentagent.com/api/trader/stats/{user_id}
 ```
 
 ---

@@ -55,14 +55,14 @@ Dispute detail page shows two footers at the bottom.
 
 ### 1. Email Link:
 **Subject:** "🚨 SIMPLE LINK (No Button) - Dispute Alert"
-**Link:** https://finance-check-5.preview.emergentagent.com/admin/disputes/dispute_b00092eeb2ec
+**Link:** https://crypto-logo-update.preview.emergentagent.com/admin/disputes/dispute_b00092eeb2ec
 
 ✅ Link is a simple blue underlined hyperlink
 ✅ Should be clickable on ALL email clients
 ✅ No button = No compatibility issues
 
 ### 2. Dispute Page:
-**URL:** https://finance-check-5.preview.emergentagent.com/admin/disputes/dispute_b00092eeb2ec
+**URL:** https://crypto-logo-update.preview.emergentagent.com/admin/disputes/dispute_b00092eeb2ec
 
 ✅ Page loads correctly
 ✅ Shows dispute details
@@ -107,17 +107,17 @@ Dispute detail page shows two footers at the bottom.
 
 **Dispute Page:**
 ```
-https://finance-check-5.preview.emergentagent.com/admin/disputes/dispute_b00092eeb2ec
+https://crypto-logo-update.preview.emergentagent.com/admin/disputes/dispute_b00092eeb2ec
 ```
 
 **Buyer Stats API:**
 ```
-https://finance-check-5.preview.emergentagent.com/api/trader/stats/test_buyer_126c3d09
+https://crypto-logo-update.preview.emergentagent.com/api/trader/stats/test_buyer_126c3d09
 ```
 
 **Seller Stats API:**
 ```
-https://finance-check-5.preview.emergentagent.com/api/trader/stats/test_seller_e2eb054b
+https://crypto-logo-update.preview.emergentagent.com/api/trader/stats/test_seller_e2eb054b
 ```
 
 ---

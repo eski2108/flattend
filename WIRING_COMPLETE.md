@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://finance-check-5.preview.emergentagent.com/api
-- **Frontend App**: https://finance-check-5.preview.emergentagent.com
+- **Backend API**: https://crypto-logo-update.preview.emergentagent.com/api
+- **Frontend App**: https://crypto-logo-update.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

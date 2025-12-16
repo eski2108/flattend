@@ -128,7 +128,7 @@ $ curl -s "http://localhost:8001/api/prices/live" | python3 -m json.tool
 - Response time: ~50ms (using cache)
 
 ### Test 2: Swap Page Market Prices Widget
-**URL:** `https://finance-check-5.preview.emergentagent.com/swap-crypto`
+**URL:** `https://crypto-logo-update.preview.emergentagent.com/swap-crypto`
 
 **Result:** ✅ PASS
 - BTC shows $91,495.00 (+1.13%) ✅
@@ -201,7 +201,7 @@ As requested, **NO VISUAL/LAYOUT CHANGES** were made. Only data connections were
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview
-**URL:** https://finance-check-5.preview.emergentagent.com/swap-crypto
+**URL:** https://crypto-logo-update.preview.emergentagent.com/swap-crypto
 
 **Services:**
 - ✅ Backend: Running (supervisor)

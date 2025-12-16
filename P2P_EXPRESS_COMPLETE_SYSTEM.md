@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://finance-check-5.preview.emergentagent.com/p2p-express
+https://crypto-logo-update.preview.emergentagent.com/p2p-express
 
 ---
 

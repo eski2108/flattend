@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://finance-check-5.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://crypto-logo-update.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://finance-check-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://finance-check-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 📧 URLs found in dispute email template:
 
-1. https://finance-check-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://finance-check-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://finance-check-5.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://finance-check-5.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

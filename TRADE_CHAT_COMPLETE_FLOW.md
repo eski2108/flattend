@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://finance-check-5.preview.emergentagent.com
+**Test it now at:** https://crypto-logo-update.preview.emergentagent.com

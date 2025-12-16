@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://finance-check-5.preview.emergentagent.com
+**URL:** https://crypto-logo-update.preview.emergentagent.com
 
 **Services Status:**
 ```bash

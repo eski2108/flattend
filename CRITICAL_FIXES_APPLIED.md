@@ -257,7 +257,7 @@ if current_price > 0 and high_24h > 0:  # Both are guaranteed to be numbers
 ### On Live Preview:
 
 1. **Can you log in now?**
-   - Go to: https://finance-check-5.preview.emergentagent.com/
+   - Go to: https://crypto-logo-update.preview.emergentagent.com/
    - Try logging in with your credentials
    - Should work without errors
 
@@ -326,7 +326,7 @@ if current_price > 0 and high_24h > 0:  # Both are guaranteed to be numbers
    - Wait 5 minutes for fresh data
 
 3. **Check if backend is responding:**
-   - Try this URL: https://finance-check-5.preview.emergentagent.com/api/health
+   - Try this URL: https://crypto-logo-update.preview.emergentagent.com/api/health
    - Should show: `{"status":"healthy"}`
 
 ---

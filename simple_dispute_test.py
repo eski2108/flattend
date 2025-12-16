@@ -18,7 +18,7 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-BACKEND_URL = "https://finance-check-5.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
 
 async def create_dispute_test():
     """Create a dispute and verify email is sent"""
