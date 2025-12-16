@@ -222,10 +222,10 @@
 }
 
 .summary-card {
-  padding: 18px;
+  padding: 20px;
   position: relative;
   transition: all 0.3s ease;
-  min-height: 130px;
+  min-height: 145px;
 }
 
 .summary-card:hover {
