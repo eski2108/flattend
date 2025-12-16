@@ -23,6 +23,7 @@ import bcrypt
 import asyncio
 import random
 import time
+import httpx
 
 # Production performance and error logging
 from performance_logger import log_performance, log_error, log_info, log_warning, logger
@@ -30,6 +31,10 @@ from background_tasks import task_queue, send_email_background, update_prices_ba
 
 # Redis Caching Service for Performance
 from cache_service import cache, PRICE_CACHE_TTL, price_cache_key
+
+# CoinGecko API Configuration
+COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
+COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
 
 # JWT Configuration
 JWT_SECRET = os.getenv('JWT_SECRET', 'cryptolend-secret-key-change-in-production-2025')
