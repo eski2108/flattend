@@ -24,75 +24,11 @@ const COIN_COLORS = {
   MATIC: '#8247E5'
 };
 
-// 3D CoinIcon with CSS effect - local first, CoinGecko fallback
-const CoinIcon = ({ symbol, size = 40 }) => {
-  const [imgSrc, setImgSrc] = useState(getCoinLogo(symbol));
-  const [showFallback, setShowFallback] = useState(false);
-  
-  const [fallbackStage, setFallbackStage] = useState(0);
-  
-  const handleError = () => {
-    const lowerSym = symbol?.toLowerCase();
-    const clean = symbol?.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE|-.*$/gi, '').trim().toLowerCase();
-    
-    if (fallbackStage === 0) {
-      // Try NOWPayments SVG - they have ALL coins
-      setImgSrc(`https://nowpayments.io/images/coins/${lowerSym}.svg`);
-      setFallbackStage(1);
-    } else if (fallbackStage === 1) {
-      // Try local PNG
-      setImgSrc(`/crypto-logos/${clean}.png`);
-      setFallbackStage(2);
-    } else if (fallbackStage === 2) {
-      // Try CoinCap CDN
-      setImgSrc(`https://assets.coincap.io/assets/icons/${clean}@2x.png`);
-      setFallbackStage(3);
-    } else {
-      // Show text fallback (should rarely happen now)
-      setShowFallback(true);
-    }
-  };
-  
-  return (
-    <div style={{
-      width: `${size}px`,
-      height: `${size}px`,
-      borderRadius: '50%',
-      background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
-      border: '1px solid rgba(255,255,255,0.1)',
-      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4), 0 0 15px rgba(0,229,255,0.1)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: `${size * 0.1}px`,
-      overflow: 'hidden'
-    }}>
-      {!showFallback ? (
-        <img
-          src={imgSrc}
-          alt={symbol}
-          onError={handleError}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4)) drop-shadow(0 0 8px rgba(0,255,200,0.15))',
-            borderRadius: '50%'
-          }}
-        />
-      ) : (
-        <span style={{
-          fontSize: `${size * 0.4}px`,
-          fontWeight: '700',
-          color: '#00E5FF',
-          textShadow: '0 0 10px rgba(0,229,255,0.4)'
-        }}>
-          {symbol?.charAt(0) || '?'}
-        </span>
-      )}
-    </div>
-  );
-};
+// Import the unified 3D Coin Icon component
+import Coin3DIcon from '@/components/Coin3DIcon';
+
+// Alias for backwards compatibility
+const CoinIcon = ({ symbol, size = 40 }) => <Coin3DIcon symbol={symbol} size={size} />;
 
 export default function WalletPage() {
   const navigate = useNavigate();
