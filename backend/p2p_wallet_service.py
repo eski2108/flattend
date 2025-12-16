@@ -488,7 +488,7 @@ async def p2p_release_crypto_with_wallet(
             logger.error(f"❌ Failed to update merchant stats: {str(stats_error)}")
             # Don't fail the trade if stats update fails
         
-        # Send notifications
+        # Send notifications (in-app)
         try:
             from p2p_notification_service import get_notification_service
             notification_service = get_notification_service()
@@ -502,6 +502,40 @@ async def p2p_release_crypto_with_wallet(
             )
         except Exception as notif_error:
             logger.error(f"Failed to send release notification: {str(notif_error)}")
+        
+        # 📧 Send EMAIL notifications
+        try:
+            from email_service import get_email_service
+            email_service = get_email_service()
+            
+            # Get user details for email
+            buyer = await db.users.find_one({"user_id": buyer_id})
+            seller = await db.users.find_one({"user_id": seller_id})
+            
+            if buyer and seller:
+                # Email to buyer
+                await email_service.send_p2p_crypto_released(
+                    user_email=buyer.get("email"),
+                    user_name=buyer.get("full_name", "Buyer"),
+                    trade_id=trade_id,
+                    crypto_amount=amount_to_buyer,
+                    crypto_currency=currency,
+                    is_buyer=True
+                )
+                logger.info(f"📧 Release email sent to buyer {buyer.get('email')}")
+                
+                # Email to seller
+                await email_service.send_p2p_crypto_released(
+                    user_email=seller.get("email"),
+                    user_name=seller.get("full_name", "Seller"),
+                    trade_id=trade_id,
+                    crypto_amount=crypto_amount,
+                    crypto_currency=currency,
+                    is_buyer=False
+                )
+                logger.info(f"📧 Release email sent to seller {seller.get('email')}")
+        except Exception as email_error:
+            logger.warning(f"⚠️ Email notification failed: {str(email_error)}")
         
         return {
             "success": True,
