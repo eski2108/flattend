@@ -6,17 +6,24 @@
 
 ## YOU MUST SOURCE PROPER 3D-RENDERED CRYPTO LOGO PACKS FROM THESE PLACES ONLY:
 
-### 1. ENVATO ELEMENTS
+### 1. ICONSCOUT (PRIMARY)
+URL: https://iconscout.com/3d-icons/crypto
+Search: **"3D Crypto Coin Icons"** or **"Crypto 3D Icon Pack"**
+- 52,000+ Crypto 3D Icons available
+- PNG format, transparent background
+- Filter by "Coin 3D Icons" or "Crypto Symbol"
+
+### 2. ENVATO ELEMENTS
 Search exactly: **"3D Crypto Coin Icons"**
 Download the full pack (PNG or WebP, transparent).
 These packs usually contain 100–300 coins with consistent lighting.
 
-### 2. UI8
+### 3. UI8
 Search: **"3D Crypto Icons"**
 These are premium, professionally rendered packs.
 Download once, reuse locally.
 
-### 3. CREATIVE MARKET
+### 4. CREATIVE MARKET
 Search: **"3D Cryptocurrency Icons"**
 Same rule: PNG/WebP, transparent background, consistent angle.
 
