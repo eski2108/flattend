@@ -26569,10 +26569,10 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         return {
             "success": True,
             "summary": {
-                "total_revenue_gbp": total_revenue_crypto,
-                "net_revenue_gbp": total_revenue_crypto - total_referral_paid_crypto,
-                "referral_commissions_paid_gbp": total_referral_paid_crypto,
-                "total_transactions": len(fee_transactions)
+                "total_revenue_gbp": total_revenue_gbp,
+                "net_revenue_gbp": total_revenue_gbp - total_referral_paid_gbp,
+                "referral_commissions_paid_gbp": total_referral_paid_gbp,
+                "total_transactions": len(revenue_records)
             },
             "by_fee_type": by_fee_type_list,
             "by_currency": by_currency_list,
