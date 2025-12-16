@@ -75,6 +75,7 @@ const SavingsVault = () => {
           emoji: getCoinEmoji(symbol)
         }));
         setAvailableCoins(coinList);
+        setLoadingCoins(false);  // FIX: SET TO FALSE HERE
         console.log(`✅ Loaded ${coinList.length} coins from NowPayments`);
         return;
       }
