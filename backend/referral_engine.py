@@ -122,12 +122,14 @@ class ReferralEngine:
                     "updated_at": datetime.now(timezone.utc)
                 })
             
-            # 5. Log commission
+            # 5. Log commission (with BOTH field names for dashboard compatibility)
             commission_record = {
                 "commission_id": str(uuid.uuid4()),
                 "referrer_id": referrer_id,
+                "referrer_user_id": referrer_id,  # Dashboard queries this field
                 "referred_user_id": user_id,
                 "fee_type": fee_type,
+                "transaction_type": fee_type,  # Dashboard also queries this
                 "fee_amount": fee_amount,
                 "commission_rate": commission_rate,
                 "commission_amount": commission_amount,
@@ -140,6 +142,29 @@ class ReferralEngine:
             }
             
             await self.db.referral_commissions.insert_one(commission_record)
+            
+            # 6. Update referral_stats for the referrer (dashboard totals)
+            await self.db.referral_stats.update_one(
+                {"user_id": referrer_id},
+                {
+                    "$inc": {
+                        "lifetime_commission_earned": commission_amount,
+                        "total_fees_generated_by_network": fee_amount
+                    },
+                    "$set": {"last_commission_at": datetime.now(timezone.utc).isoformat()}
+                },
+                upsert=True
+            )
+            
+            # 7. Update referral_earnings by currency
+            await self.db.referral_earnings.update_one(
+                {"user_id": referrer_id, "currency": currency},
+                {
+                    "$inc": {"total_earned": commission_amount},
+                    "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
+                },
+                upsert=True
+            )
             
             # 6. Update platform revenue tracking
             platform_share = fee_amount - commission_amount
