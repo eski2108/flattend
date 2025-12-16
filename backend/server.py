@@ -10052,6 +10052,25 @@ async def open_trading_position(request: dict):
         }
         await db.fee_transactions.insert_one(fee_record)
         
+        # ═══════════════════════════════════════════════════════════════
+        # LOG SPOT TRADING FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
+        # ═══════════════════════════════════════════════════════════════
+        await db.admin_revenue.insert_one({
+            "revenue_id": str(uuid.uuid4()),
+            "source": "spot_trading_fee",
+            "revenue_type": "TRADING_FEE",
+            "currency": "GBP",
+            "amount": fee_amount,
+            "user_id": user_id,
+            "fee_percentage": PLATFORM_CONFIG.get("spot_trading_fee_percent", 3.0),
+            "position_id": position_id,
+            "pair": pair,
+            "side": side,
+            "net_profit": fee_amount,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "description": f"Spot trading fee ({PLATFORM_CONFIG.get('spot_trading_fee_percent', 3.0)}%) on {pair} {side}"
+        })
+        
         # Handle referral commission
         if user.get("referred_by"):
             referrer_id = user["referred_by"]
