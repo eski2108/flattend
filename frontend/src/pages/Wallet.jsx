@@ -7,6 +7,78 @@ import '../styles/globalSwapTheme.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// Emoji mapping for coins - SAME AS SAVINGS VAULT
+const getCoinEmoji = (symbol) => {
+  const emojiMap = {
+    // Top cryptos
+    'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶',
+    'XRP': '✖️', 'SOL': '☀️', 'ADA': '🌐', 'DOGE': '🐶', 'TRX': '🔺',
+    'DOT': '🎯', 'MATIC': '🔷', 'LTC': '🌕', 'SHIB': '🐕', 'AVAX': '🏔️',
+    'LINK': '🔗', 'ATOM': '⚛️', 'UNI': '🦄', 'XLM': '⭐', 'XMR': '🕶️',
+    'BCH': '💚', 'TON': '🔵', 'DAI': '🟡', 'ETC': '🟢', 'FIL': '📁',
+    'VET': '♦️', 'ALGO': '◯', 'WBTC': '🔄', 'NEAR': '🌈', 'ICP': '∞',
+    
+    // Meme coins
+    'PEPE': '🐸', 'FLOKI': '🐕', 'BONK': '💥', 'WIF': '🧢', 'MEME': '😂',
+    'LEASH': '🦴', 'ELON': '🚀', 'BABYDOGE': '🐶', 'KISHU': '🐕', 
+    
+    // Stablecoins
+    'BUSD': '💵', 'TUSD': '💵', 'USDP': '💲', 'GUSD': '🏦', 'USDD': '💵',
+    'FRAX': '🏛️', 'LUSD': '💵', 'SUSD': '💵',
+    
+    // DeFi tokens
+    'AAVE': '👻', 'COMP': '🏛️', 'MKR': '👑', 'SNX': '⚡', 'CRV': '🌊',
+    'SUSHI': '🍣', 'CAKE': '🎂', '1INCH': '🦄', 'BAL': '⚖️', 'YFI': '💎',
+    'RUNE': '⚔️', 'ALPHA': '🐺', 'CREAM': '🍦', 'BADGER': '🦡',
+    
+    // Gaming/Metaverse
+    'AXS': '🎮', 'SAND': '🏖️', 'MANA': '🌍', 'ENJ': '🎮', 'GALA': '🎪',
+    'IMX': '🎮', 'GODS': '⚔️', 'SUPER': '🦸', 'STARL': '🌟', 'RACA': '🎨',
+    
+    // Layer 2 & Scaling
+    'ARB': '🔷', 'OP': '🔴', 'LRC': '⭕', 'ZK': '🔐', 'METIS': '⚡',
+    
+    // Exchange tokens
+    'FTT': '📈', 'OKB': '⭕', 'HT': '🔥', 'KCS': '🎯', 'GT': '🎯',
+    'CRO': '💎', 'LEO': '🦁', 'WOO': '🌊', 'MX': '💹',
+    
+    // AI & Tech
+    'FET': '🤖', 'AGIX': '🧠', 'OCEAN': '🌊', 'GRT': '📊', 'RENDER': '🎨',
+    'INJ': '💉', 'RNDR': '🎬', 'PAAL': '🤖',
+    
+    // Privacy coins
+    'DASH': '💸', 'ZEC': '🔒', 'DCR': '🔐', 'SC': '☁️',
+    
+    // Other major coins
+    'APT': '🔷', 'SUI': '💧', 'SEI': '⚡', 'TIA': '🌌',
+    'KUJI': '🌪️', 'LUNA': '🌙', 'LUNC': '🌑', 'UST': '💵', 'USTC': '💵',
+    
+    // Specific tokens
+    'MEW': '😺', 'USDR': '💲', 'USDTMATIC': '💵', 'USDCBSC': '💲',
+    'SHIBBSC': '🐕', 'AVAXC': '🏔️', 'BERA': '🐻', 'RVN': '🦅',
+    'WOLFERC20': '🐺', 'GUARD': '🛡️', 'AWEBASE': '⚡', 'USDTSOL': '💵',
+    'WETH': '◆', 'WBNB': '🔶', 'WMATIC': '🔷',
+    
+    // Others
+    'FTM': '👻', 'ONE': '1️⃣', 'HBAR': '♾️', 'THETA': '📺',
+    'TFUEL': '⛽', 'EGLD': '⚡', 'FLOW': '🌊', 'ROSE': '🌹',
+    'KDA': '⛓️', 'KLAY': '🎮', 'MINA': '🔐', 'ZIL': '⚡'
+  };
+  
+  const upperSymbol = symbol.toUpperCase();
+  if (emojiMap[upperSymbol]) return emojiMap[upperSymbol];
+  
+  // Partial matches
+  if (upperSymbol.includes('USDT')) return '💵';
+  if (upperSymbol.includes('USDC')) return '💲';
+  if (upperSymbol.includes('BTC')) return '₿';
+  if (upperSymbol.includes('ETH')) return '◆';
+  if (upperSymbol.includes('SHIB')) return '🐕';
+  if (upperSymbol.includes('DOGE')) return '🐶';
+  
+  return '💎';
+};
+
 export default function Wallet() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
