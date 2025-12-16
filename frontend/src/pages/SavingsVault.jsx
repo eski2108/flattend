@@ -473,6 +473,17 @@ const SavingsVault = () => {
                     <span className="monthly-value">~${position.estimated_monthly || '0.00'}</span>
                   </div>
                   
+                  <div className="token-sparkline">
+                    <svg width="80" height="30" viewBox="0 0 80 30">
+                      <path
+                        d="M 0 20 L 20 18 L 40 15 L 60 12 L 80 10"
+                        stroke={position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D6D'}
+                        strokeWidth="2"
+                        fill="none"
+                      />
+                    </svg>
+                  </div>
+                  
                   <div className="token-status-badge">
                     <span className={`status-badge ${position.type === 'flexible' ? 'available' : 'locked'}`}>
                       {position.type === 'flexible' ? 'Available' : 'Locked'}
