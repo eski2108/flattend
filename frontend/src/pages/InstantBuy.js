@@ -563,18 +563,24 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 borderRadius: '50%'
               }}
               onError={(e) => {
-                const cleanSym = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE/gi, '').trim().toLowerCase();
-                // Try CoinCap CDN
+                // NOWPayments has ALL coins - try with lowercase
                 if (!e.target.dataset.tried1) {
                   e.target.dataset.tried1 = 'true';
-                  e.target.src = `https://assets.coincap.io/assets/icons/${cleanSym}@2x.png`;
+                  e.target.src = `https://nowpayments.io/images/coins/${coin.symbol.toLowerCase()}.svg`;
                 }
-                // Try CryptoCompare
+                // Try local PNG
                 else if (!e.target.dataset.tried2) {
                   e.target.dataset.tried2 = 'true';
-                  e.target.src = `https://www.cryptocompare.com/media/37746251/${cleanSym}.png`;
+                  const cleanSym = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE/gi, '').trim().toLowerCase();
+                  e.target.src = `/crypto-logos/${cleanSym}.png`;
                 }
-                // Final fallback - styled letter
+                // Try CoinCap
+                else if (!e.target.dataset.tried3) {
+                  e.target.dataset.tried3 = 'true';
+                  const cleanSym = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE/gi, '').trim().toLowerCase();
+                  e.target.src = `https://assets.coincap.io/assets/icons/${cleanSym}@2x.png`;
+                }
+                // Final fallback - styled letter (should never reach here)
                 else {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #00E5FF; text-shadow: 0 0 10px rgba(0,229,255,0.4);">${coin.symbol.charAt(0)}</span>`;
