@@ -100,35 +100,34 @@ const getCoinLogo = (symbol) => {
 /**
  * Get alternative logo URL (for fallback chain)
  * @param {string} symbol - Coin symbol
- * @returns {string} Alternative logo URL
+ * @returns {string} Alternative logo URL - NOWPayments SVG
  */
 const getCoinLogoAlt = (symbol) => {
-  const clean = cleanSymbol(symbol);
-  
-  // Try CoinCap if primary was local
-  if (LOCAL_LOGOS.includes(clean)) {
-    return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
-  }
-  
-  // Try CoinGecko small image
-  const geckoId = COINGECKO_IDS[clean];
-  if (geckoId) {
-    return `https://assets.coingecko.com/coins/images/${geckoId}/thumb/${clean}.png`;
-  }
-  
-  // Final CDN attempt
-  return `https://cryptologos.cc/logos/${clean}-${clean}-logo.png`;
+  // NOWPayments has ALL coins - use as primary fallback
+  return `https://nowpayments.io/images/coins/${symbol.toLowerCase()}.svg`;
 };
 
 /**
- * Get third fallback logo URL
+ * Get third fallback logo URL - CoinGecko
  * @param {string} symbol - Coin symbol  
  * @returns {string} Third fallback logo URL
  */
 const getCoinLogoFallback = (symbol) => {
   const clean = cleanSymbol(symbol);
-  // CryptoLogos.cc as final attempt
-  return `https://cryptologos.cc/logos/${clean}-${clean}-logo.png`;
+  const geckoId = COINGECKO_IDS[clean];
+  if (geckoId) {
+    return `https://assets.coingecko.com/coins/images/${geckoId}/small/${clean}.png`;
+  }
+  // CoinCap CDN
+  return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
+};
+
+/**
+ * Get fourth fallback - CoinCap
+ */
+const getCoinLogoFallback2 = (symbol) => {
+  const clean = cleanSymbol(symbol);
+  return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
 };
 
 // Generic fallback
