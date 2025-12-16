@@ -161,6 +161,7 @@ export {
   getCoinLogo, 
   getCoinLogoAlt, 
   getCoinLogoFallback,
+  getCoinLogoFallback2,
   getGenericCoinIcon, 
   COIN_LOGO_3D_STYLE, 
   COIN_BADGE_STYLE, 
