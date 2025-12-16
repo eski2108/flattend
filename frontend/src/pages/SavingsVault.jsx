@@ -376,7 +376,7 @@ const SavingsVault = () => {
       <div className="portfolio-list-section">
         <div className="section-header-with-description">
           <h2 className="section-heading">Your Savings</h2>
-          <p className="section-description">View your notice account deposits. Each asset shows your chosen notice period, earnings, and next available withdrawal date.</p>
+          <p className="section-description">Monitor your locked funds. Each row shows amount, APY, interest earned, and profit/loss since deposit.</p>
         </div>
         
         {loading ? (
