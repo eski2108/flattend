@@ -16,8 +16,51 @@ nano .env  # or use any editor
 # 4. Install dependencies
 pip install -r requirements.txt
 
-# 5. Run the server
+# 5. Seed the database (REQUIRED for first run)
+python seed_database.py
+
+# 6. Run the server
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+```
+
+---
+
+## 🗄️ Database Seeding (REQUIRED)
+
+**The backend requires certain default records to function.**
+
+Run the seeding script after configuring your `.env`:
+
+```bash
+python seed_database.py
+```
+
+This creates:
+- ✅ Admin settings (platform name, emails, admin code)
+- ✅ Platform settings (feature flags, limits)
+- ✅ Fee configuration (all fee percentages)
+- ✅ Admin liquidity wallets (for instant buy/sell)
+- ✅ Savings products (staking options)
+- ✅ Referral tier configuration
+- ✅ Database indexes (performance optimization)
+- ✅ Optional: Admin user account
+
+### What Gets Created
+
+| Collection | Purpose |
+|------------|---------|
+| `admin_settings` | Platform name, support emails, admin code |
+| `platform_settings` | Feature flags, trading limits |
+| `fee_configuration` | All fee percentages |
+| `admin_liquidity_wallets` | Wallets for instant buy/sell liquidity |
+| `savings_products` | Staking products with APY rates |
+| `referral_tiers` | Commission rates per tier |
+
+### Admin Access After Seeding
+
+```
+Admin Panel: https://yourdomain.com/admin/login
+Admin Code: CRYPTOLEND_ADMIN_2025
 ```
 
 ---
