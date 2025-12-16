@@ -11,4 +11,6 @@ const getCoinLogo = (symbol) => {
   return `/crypto-logos/${lowerSymbol}.png`;
 };
 
+// Export as both default AND named to fix import issues
+export { getCoinLogo };
 export default getCoinLogo;
