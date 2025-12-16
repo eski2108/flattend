@@ -4975,28 +4975,66 @@ async def withdraw_from_savings(request: dict):
                 }}
             )
         
-        # Log withdrawal transaction
+        # ═══════════════════════════════════════════════════════════════
+        # CRITICAL: CREDIT ADMIN/BUSINESS BALANCE WITH PLATFORM PROFIT
+        # ═══════════════════════════════════════════════════════════════
+        if total_platform_profit > 0:
+            # Credit admin liquidity balance
+            admin_balance = await db.wallet_balances.find_one({
+                "user_id": "ADMIN_LIQUIDITY",
+                "currency": coin
+            })
+            
+            if admin_balance:
+                new_admin_balance = admin_balance.get('balance', 0) + total_platform_profit
+                await db.wallet_balances.update_one(
+                    {"user_id": "ADMIN_LIQUIDITY", "currency": coin},
+                    {"$set": {
+                        "balance": new_admin_balance,
+                        "updated_at": current_time.isoformat()
+                    }}
+                )
+            else:
+                # Create admin balance if doesn't exist
+                await db.wallet_balances.insert_one({
+                    "user_id": "ADMIN_LIQUIDITY",
+                    "currency": coin,
+                    "balance": total_platform_profit,
+                    "created_at": current_time.isoformat(),
+                    "updated_at": current_time.isoformat()
+                })
+            
+            # Log to admin revenue table for dashboard
+            await db.admin_revenue.insert_one({
+                "source": "savings_early_withdrawal_penalty",
+                "revenue_type": "OPTION_A_PENALTY",
+                "currency": coin,
+                "penalty_on_principal": penalty_on_principal,
+                "forfeited_interest": forfeited_interest,
+                "total_amount": total_platform_profit,
+                "user_id": user_id,
+                "lock_period": lock_period_days,
+                "penalty_percentage": penalty_percentage,
+                "timestamp": current_time.isoformat(),
+                "description": f"OPTION A: {penalty_percentage*100}% principal fine + 100% interest forfeit"
+            })
+        
+        # Log withdrawal transaction with full details
         await db.savings_transactions.insert_one({
             "user_id": user_id,
             "currency": coin,
             "type": "withdrawal",
             "amount": amount,
             "early_withdrawal": is_early,
-            "penalty_amount": penalty_amount,
+            "penalty_on_principal": penalty_on_principal,
+            "forfeited_interest": forfeited_interest,
+            "total_penalty": total_platform_profit,
             "penalty_percentage": penalty_percentage,
+            "lock_period": lock_period_days,
+            "unlock_time": unlock_time.isoformat(),
+            "withdrawal_time": current_time.isoformat(),
             "timestamp": current_time.isoformat()
         })
-        
-        # If penalty, log to business revenue
-        if penalty_amount > 0:
-            await db.admin_revenue.insert_one({
-                "source": "savings_penalty",
-                "currency": coin,
-                "amount": penalty_amount,
-                "user_id": user_id,
-                "timestamp": current_time.isoformat(),
-                "description": f"Early withdrawal penalty ({penalty_percentage*100}%)"
-            })
         
         return {
             "success": True,
