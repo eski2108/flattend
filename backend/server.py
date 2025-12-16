@@ -16270,17 +16270,58 @@ async def get_admin_external_wallets():
 
 @api_router.get("/admin/fee-settings")
 async def get_fee_settings():
-    """Get current platform fee settings"""
+    """Get ALL platform fee settings - comprehensive list"""
     try:
         return {
             "success": True,
             "fees": {
-                "p2p_trade_fee_percent": PLATFORM_CONFIG["p2p_trade_fee_percent"],
-                "withdraw_fee_percent": PLATFORM_CONFIG["withdraw_fee_percent"],
-                "deposit_fee_percent": PLATFORM_CONFIG["deposit_fee_percent"],
-                "borrow_fee_percent": PLATFORM_CONFIG["borrow_fee_percent"],
-                "repay_fee_percent": PLATFORM_CONFIG["repay_fee_percent"],
-                "liquidation_fee_percent": PLATFORM_CONFIG["liquidation_fee_percent"]
+                # P2P MARKETPLACE FEES
+                "p2p_maker_fee_percent": PLATFORM_CONFIG.get("p2p_maker_fee_percent", 1.0),
+                "p2p_taker_fee_percent": PLATFORM_CONFIG.get("p2p_taker_fee_percent", 1.0),
+                "p2p_express_fee_percent": PLATFORM_CONFIG.get("p2p_express_fee_percent", 2.0),
+                "dispute_fee_percent": PLATFORM_CONFIG.get("dispute_fee_percent", 2.0),
+                "dispute_fee_fixed_gbp": PLATFORM_CONFIG.get("dispute_fee_fixed_gbp", 2.0),
+                "p2p_trade_fee_percent": PLATFORM_CONFIG.get("p2p_trade_fee_percent", 1.0),
+                
+                # TRADING FEES
+                "instant_buy_fee_percent": PLATFORM_CONFIG.get("instant_buy_fee_percent", 3.0),
+                "instant_sell_fee_percent": PLATFORM_CONFIG.get("instant_sell_fee_percent", 2.0),
+                "swap_fee_percent": PLATFORM_CONFIG.get("swap_fee_percent", 1.5),
+                "spot_trading_fee_percent": PLATFORM_CONFIG.get("spot_trading_fee_percent", 3.0),
+                "trading_fee_percent": PLATFORM_CONFIG.get("trading_fee_percent", 0.1),
+                
+                # WITHDRAWAL & DEPOSIT FEES
+                "withdrawal_fee_percent": PLATFORM_CONFIG.get("withdrawal_fee_percent", 1.0),
+                "withdraw_fee_percent": PLATFORM_CONFIG.get("withdraw_fee_percent", 1.0),
+                "network_withdrawal_fee_percent": PLATFORM_CONFIG.get("network_withdrawal_fee_percent", 1.0),
+                "fiat_withdrawal_fee_percent": PLATFORM_CONFIG.get("fiat_withdrawal_fee_percent", 1.0),
+                "deposit_fee_percent": PLATFORM_CONFIG.get("deposit_fee_percent", 0.0),
+                
+                # CARD PAYMENT FEES (for future integration)
+                "card_purchase_fee_percent": PLATFORM_CONFIG.get("card_purchase_fee_percent", 3.5),
+                "card_processing_fee_percent": PLATFORM_CONFIG.get("card_processing_fee_percent", 2.9),
+                "card_fixed_fee_gbp": PLATFORM_CONFIG.get("card_fixed_fee_gbp", 0.30),
+                
+                # REFERRAL COMMISSION RATES
+                "referral_standard_commission_percent": PLATFORM_CONFIG.get("referral_standard_commission_percent", 20.0),
+                "referral_golden_commission_percent": PLATFORM_CONFIG.get("referral_golden_commission_percent", 50.0),
+                
+                # SAVINGS & STAKING FEES
+                "savings_stake_fee_percent": PLATFORM_CONFIG.get("savings_stake_fee_percent", 0.5),
+                "early_unstake_penalty_percent": PLATFORM_CONFIG.get("early_unstake_penalty_percent", 3.0),
+                
+                # INTERNAL TRANSFER FEES
+                "vault_transfer_fee_percent": PLATFORM_CONFIG.get("vault_transfer_fee_percent", 0.5),
+                "cross_wallet_transfer_fee_percent": PLATFORM_CONFIG.get("cross_wallet_transfer_fee_percent", 0.25),
+                
+                # LIQUIDITY & SPREAD
+                "admin_liquidity_spread_percent": PLATFORM_CONFIG.get("admin_liquidity_spread_percent", 0.0),
+                "express_liquidity_profit_percent": PLATFORM_CONFIG.get("express_liquidity_profit_percent", 0.0),
+                
+                # LEGACY
+                "borrow_fee_percent": PLATFORM_CONFIG.get("borrow_fee_percent", 1.0),
+                "repay_fee_percent": PLATFORM_CONFIG.get("repay_fee_percent", 0.3),
+                "liquidation_fee_percent": PLATFORM_CONFIG.get("liquidation_fee_percent", 10.0)
             }
         }
     except Exception as e:
