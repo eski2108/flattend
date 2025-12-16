@@ -174,10 +174,12 @@ const SavingsVault = () => {
         {/* Card 1: Total Savings */}
         <div className="summary-card glassmorphic-card">
           <div className="card-icon-bg wallet-icon"></div>
-          <div className="card-label">Total Savings</div>
+          <div className="card-label">
+            Total Balance
+            <span className="info-tooltip" title="Total value of all your savings deposits plus earned interest">ⓘ</span>
+          </div>
           <div className="card-value-main">{totalBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{totalBalanceCrypto.split(' ')[1]}</span></div>
           <div className="card-value-fiat">≈ ${totalBalance.toFixed(2)}</div>
-          <div className="card-subtext">All deposits + interest earned</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
