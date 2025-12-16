@@ -217,8 +217,7 @@ async def p2p_create_trade_with_wallet(
         
         # 📧 Send EMAIL notifications for escrow locked
         try:
-            from email_service import get_email_service
-            email_service = get_email_service()
+            from email_service import email_service
             
             # Get user details
             buyer = await db.users.find_one({"user_id": buyer_id})
@@ -542,8 +541,7 @@ async def p2p_release_crypto_with_wallet(
         
         # 📧 Send EMAIL notifications
         try:
-            from email_service import get_email_service
-            email_service = get_email_service()
+            from email_service import email_service
             
             # Get user details for email
             buyer = await db.users.find_one({"user_id": buyer_id})
@@ -664,8 +662,7 @@ async def p2p_cancel_trade_with_wallet(
         
         # 📧 Send EMAIL notifications
         try:
-            from email_service import get_email_service
-            email_service = get_email_service()
+            from email_service import email_service
             
             buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
             seller = await db.users.find_one({"user_id": seller_id})
