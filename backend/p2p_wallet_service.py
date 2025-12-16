@@ -188,7 +188,7 @@ async def p2p_create_trade_with_wallet(
                 {"$set": {"crypto_amount": new_amount}}
             )
         
-        # Send notifications
+        # Send notifications (in-app)
         try:
             from p2p_notification_service import get_notification_service
             notification_service = get_notification_service()
@@ -213,8 +213,45 @@ async def p2p_create_trade_with_wallet(
                 crypto_currency=sell_order["crypto_currency"]
             )
         except Exception as notif_error:
-            logger.error(f"Failed to send notifications: {str(notif_error)}")
-            # Don't fail the trade if notifications fail
+            logger.error(f"Failed to send in-app notifications: {str(notif_error)}")
+        
+        # 📧 Send EMAIL notifications for escrow locked
+        try:
+            from email_service import get_email_service
+            email_service = get_email_service()
+            
+            # Get user details
+            buyer = await db.users.find_one({"user_id": buyer_id})
+            seller = await db.users.find_one({"user_id": sell_order["seller_id"]})
+            
+            if buyer and seller:
+                # Email to buyer - trade created
+                await email_service.send_p2p_order_created(
+                    user_email=buyer.get("email"),
+                    user_name=buyer.get("full_name", "Buyer"),
+                    trade_id=trade_id,
+                    crypto_amount=crypto_amount,
+                    crypto_currency=sell_order["crypto_currency"],
+                    fiat_amount=fiat_amount,
+                    fiat_currency=sell_order["fiat_currency"],
+                    is_buyer=True
+                )
+                logger.info(f"📧 Trade created email sent to buyer {buyer.get('email')}")
+                
+                # Email to seller - trade created, crypto locked
+                await email_service.send_p2p_order_created(
+                    user_email=seller.get("email"),
+                    user_name=seller.get("full_name", "Seller"),
+                    trade_id=trade_id,
+                    crypto_amount=crypto_amount,
+                    crypto_currency=sell_order["crypto_currency"],
+                    fiat_amount=fiat_amount,
+                    fiat_currency=sell_order["fiat_currency"],
+                    is_buyer=False
+                )
+                logger.info(f"📧 Escrow locked email sent to seller {seller.get('email')}")
+        except Exception as email_error:
+            logger.warning(f"⚠️ Email notification failed: {str(email_error)}")
         
         logger.info(f"✅ P2P trade created: {trade_id}")
         
