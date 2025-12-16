@@ -740,8 +740,17 @@ const SavingsVault = () => {
                   <option value="BTC">Bitcoin (BTC)</option>
                   <option value="ETH">Ethereum (ETH)</option>
                   <option value="USDT">Tether (USDT)</option>
+                  <option value="USDC">USD Coin (USDC)</option>
                   <option value="BNB">Binance Coin (BNB)</option>
                   <option value="SOL">Solana (SOL)</option>
+                  <option value="XRP">Ripple (XRP)</option>
+                  <option value="ADA">Cardano (ADA)</option>
+                  <option value="DOGE">Dogecoin (DOGE)</option>
+                  <option value="DOT">Polkadot (DOT)</option>
+                  <option value="MATIC">Polygon (MATIC)</option>
+                  <option value="LTC">Litecoin (LTC)</option>
+                  <option value="LINK">Chainlink (LINK)</option>
+                  <option value="AVAX">Avalanche (AVAX)</option>
                 </select>
                 <button className="modal-cta-btn" onClick={() => setDepositStep(3)} disabled={!selectedCoin}>Next</button>
               </div>
