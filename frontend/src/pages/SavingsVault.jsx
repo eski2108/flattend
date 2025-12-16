@@ -778,36 +778,26 @@ const SavingsVault = () => {
             {depositStep === 2 && (
               <div className="deposit-step">
                 <h4>Step 2: Select Coin</h4>
-                <div className="coin-grid">
-                  {[
-                    { symbol: 'BTC', name: 'Bitcoin' },
-                    { symbol: 'ETH', name: 'Ethereum' },
-                    { symbol: 'USDT', name: 'Tether' },
-                    { symbol: 'USDC', name: 'USD Coin' },
-                    { symbol: 'BNB', name: 'Binance Coin' },
-                    { symbol: 'SOL', name: 'Solana' },
-                    { symbol: 'XRP', name: 'Ripple' },
-                    { symbol: 'ADA', name: 'Cardano' },
-                    { symbol: 'DOGE', name: 'Dogecoin' },
-                    { symbol: 'DOT', name: 'Polkadot' },
-                    { symbol: 'MATIC', name: 'Polygon' },
-                    { symbol: 'LTC', name: 'Litecoin' },
-                    { symbol: 'LINK', name: 'Chainlink' },
-                    { symbol: 'AVAX', name: 'Avalanche' }
-                  ].map(coin => (
-                    <div 
-                      key={coin.symbol}
-                      className={`coin-option-card ${selectedCoin === coin.symbol ? 'selected' : ''}`}
-                      onClick={() => setSelectedCoin(coin.symbol)}
-                    >
-                      <img src={getCoinLogo(coin.symbol)} alt={coin.symbol} className="coin-option-logo" />
-                      <div className="coin-option-info">
-                        <span className="coin-option-symbol">{coin.symbol}</span>
-                        <span className="coin-option-name">{coin.name}</span>
+                <p className="step-subtitle">{availableCoins.length} cryptocurrencies available</p>
+                {loadingCoins ? (
+                  <div className="loading-coins">Loading coins...</div>
+                ) : (
+                  <div className="coin-grid">
+                    {availableCoins.map(coin => (
+                      <div 
+                        key={coin.symbol}
+                        className={`coin-option-card ${selectedCoin === coin.symbol ? 'selected' : ''}`}
+                        onClick={() => setSelectedCoin(coin.symbol)}
+                      >
+                        <img src={getCoinLogo(coin.symbol)} alt={coin.symbol} className="coin-option-logo" />
+                        <div className="coin-option-info">
+                          <span className="coin-option-symbol">{coin.symbol}</span>
+                          <span className="coin-option-name">{coin.name}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
                 <button className="modal-cta-btn" onClick={() => setDepositStep(3)} disabled={!selectedCoin}>Next</button>
               </div>
             )}
