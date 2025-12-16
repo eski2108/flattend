@@ -274,6 +274,135 @@ def seed_referral_tiers():
     print("  ✅ Referral tiers created")
 
 
+def seed_monetization_settings():
+    """Create monetization settings (fees, boosts, seller levels)"""
+    print("\n📋 Seeding monetization_settings...")
+    
+    existing = db.monetization_settings.find_one({"setting_id": "default_monetization"})
+    if existing:
+        print("  ⏭️ Monetization settings already exist, skipping")
+        return
+    
+    monetization = {
+        "setting_id": "default_monetization",
+        
+        # Trading Fees
+        "instant_buy_fee_percent": 1.5,
+        "instant_sell_fee_percent": 1.0,
+        "crypto_swap_fee_percent": 2.5,
+        "p2p_express_fee_percent": 1.5,
+        "p2p_trade_fee_percent": 1.0,
+        "p2p_seller_fee_percent": 3.0,
+        "buyer_express_fee_percent": 1.0,
+        "admin_sell_spread_percent": 3.0,
+        "crypto_withdrawal_fee_percent": 1.0,
+        "crypto_deposit_fee_percent": 0.0,
+        
+        # Payment Method Fees
+        "payment_method_fees": {
+            "paypal": 2.0,
+            "cashapp": 1.0,
+            "revolut": 0.5,
+            "bank_transfer": 0.0,
+            "faster_payments": 0.0
+        },
+        
+        # Boosted Listings
+        "boost_1h_price": 10.0,
+        "boost_6h_price": 20.0,
+        "boost_24h_price": 50.0,
+        
+        # Seller Levels
+        "seller_verification_price": 25.0,
+        "seller_silver_upgrade_price": 20.0,
+        "seller_gold_upgrade_price": 50.0,
+        "silver_fee_reduction_percent": 0.5,
+        "gold_fee_reduction_percent": 1.0,
+        
+        # Referral Upgrades
+        "referral_tier_30_percent_price": 20.0,
+        "referral_tier_40_percent_price": 40.0,
+        "referral_commission_percent": 20.0,
+        
+        # Other
+        "early_withdrawal_penalty_percent": 4.0,
+        "staking_admin_fee_percent": 10.0,
+        "admin_liquidity_spread_percent": 0.25,
+        "dispute_penalty_gbp": 10.0,
+        "p2p_dispute_fee_gbp": 1.50,
+        
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    db.monetization_settings.insert_one(monetization)
+    print("  ✅ Monetization settings created")
+
+
+def seed_supported_coins():
+    """Create supported coins for trading/swaps"""
+    print("\n📋 Seeding supported_coins...")
+    
+    existing_count = db.supported_coins.count_documents({})
+    if existing_count > 0:
+        print(f"  ⏭️ {existing_count} supported coins already exist, skipping")
+        return
+    
+    coins = [
+        {"symbol": "BTC", "name": "Bitcoin", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.0001, "min_withdraw": 0.0001, "decimals": 8},
+        {"symbol": "ETH", "name": "Ethereum", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.001, "min_withdraw": 0.001, "decimals": 8},
+        {"symbol": "USDT", "name": "Tether", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 1.0, "min_withdraw": 1.0, "decimals": 6},
+        {"symbol": "USDC", "name": "USD Coin", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 1.0, "min_withdraw": 1.0, "decimals": 6},
+        {"symbol": "SOL", "name": "Solana", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.01, "min_withdraw": 0.01, "decimals": 8},
+        {"symbol": "XRP", "name": "Ripple", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 1.0, "min_withdraw": 1.0, "decimals": 6},
+        {"symbol": "ADA", "name": "Cardano", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 1.0, "min_withdraw": 1.0, "decimals": 6},
+        {"symbol": "DOGE", "name": "Dogecoin", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 10.0, "min_withdraw": 10.0, "decimals": 8},
+        {"symbol": "LTC", "name": "Litecoin", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.01, "min_withdraw": 0.01, "decimals": 8},
+        {"symbol": "BNB", "name": "BNB", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.01, "min_withdraw": 0.01, "decimals": 8},
+        {"symbol": "MATIC", "name": "Polygon", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 1.0, "min_withdraw": 1.0, "decimals": 8},
+        {"symbol": "DOT", "name": "Polkadot", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.1, "min_withdraw": 0.1, "decimals": 8},
+        {"symbol": "AVAX", "name": "Avalanche", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 0.1, "min_withdraw": 0.1, "decimals": 8},
+        {"symbol": "TRX", "name": "TRON", "enabled": True, "swap_enabled": True, "trading_enabled": True, "deposit_enabled": True, "withdraw_enabled": True, "min_deposit": 10.0, "min_withdraw": 10.0, "decimals": 6},
+    ]
+    
+    for coin in coins:
+        coin["coin_id"] = str(uuid.uuid4())
+        coin["created_at"] = datetime.now(timezone.utc)
+    
+    db.supported_coins.insert_many(coins)
+    print(f"  ✅ Created {len(coins)} supported coins")
+
+
+def seed_cms_settings():
+    """Create CMS settings for marketplace display"""
+    print("\n📋 Seeding cms_settings...")
+    
+    existing = db.cms_settings.find_one({"setting_type": "marketplace"})
+    if existing:
+        print("  ⏭️ CMS settings already exist, skipping")
+        return
+    
+    cms_settings = {
+        "setting_type": "marketplace",
+        "display": {
+            "show_seller_rating": True,
+            "show_completion_rate": True,
+            "show_trade_count": True,
+            "show_response_time": True,
+            "default_sort": "price_low"
+        },
+        "limits": {
+            "min_trade_amount_gbp": 10,
+            "max_trade_amount_gbp": 10000,
+            "max_listings_per_seller": 10
+        },
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    db.cms_settings.insert_one(cms_settings)
+    print("  ✅ CMS settings created")
+
+
 def create_database_indexes():
     """Create indexes for performance"""
     print("\n📋 Creating database indexes...")
