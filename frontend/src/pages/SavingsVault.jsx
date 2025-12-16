@@ -275,13 +275,13 @@ const SavingsVault = () => {
             className={`filter-toggle-btn ${filterFlexible ? 'active' : ''}`}
             onClick={() => setFilterFlexible(!filterFlexible)}
           >
-            Flexible {filterFlexible && '✓'}
+            30 Day {filterFlexible && '✓'}
           </button>
           <button 
             className={`filter-toggle-btn ${filterStaked ? 'active' : ''}`}
             onClick={() => setFilterStaked(!filterStaked)}
           >
-            Staked {filterStaked && '✓'}
+            60/90 Day {filterStaked && '✓'}
           </button>
         </div>
         
