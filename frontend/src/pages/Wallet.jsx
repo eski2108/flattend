@@ -169,7 +169,7 @@ export default function Wallet() {
                       <CoinIcon symbol={bal.currency} />
                       <div>
                         <p className="swap-theme-text-secondary" style={{ fontSize: '14px', marginBottom: '4px' }}>{bal.currency}</p>
-                        <h3 className="swap-theme-accent" style={{ fontSize: '24px', fontWeight: '700' }}>{bal.balance}</h3>
+                        <h3 className="swap-theme-accent" style={{ fontSize: '24px', fontWeight: '700' }}>{parseFloat(bal.balance || bal.total_balance || 0).toFixed(8)}</h3>
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
