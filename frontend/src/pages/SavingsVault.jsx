@@ -590,7 +590,7 @@ const SavingsVault = () => {
           <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
             <h3>Withdraw {selectedPosition?.symbol}</h3>
             <button className="modal-close-btn" onClick={() => setShowWithdrawModal(false)}>✕</button>
-            <p>Withdraw from your savings</p>
+            <p>Unlock and withdraw your crypto. Early withdrawal may incur penalties.</p>
           </div>
         </div>
       )}
