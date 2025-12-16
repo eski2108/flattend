@@ -1,33 +1,29 @@
 /**
- * Get crypto logo from jsDelivr CDN - cryptocurrency-icons package
- * Has proper SVG icons for ALL major coins
- * Fallback chain: CDN color SVG -> CDN black SVG -> generic icon
+ * Get crypto logo from CoinCap CDN
+ * Has proper PNG icons for ALL major coins (238+)
+ * URL format: https://assets.coincap.io/assets/icons/{symbol}@2x.png
  */
 
-// CDN base URL for cryptocurrency-icons package
-const CDN_BASE = 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1';
+// CoinCap CDN - has icons for virtually ALL coins
+const COINCAP_CDN = 'https://assets.coincap.io/assets/icons';
+
+// Fallback CDN (cryptocurrency-icons) for generic icon
+const FALLBACK_CDN = 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color';
 
 const getCoinLogo = (symbol) => {
-  if (!symbol) return `${CDN_BASE}/svg/color/btc.svg`;
+  if (!symbol) return `${COINCAP_CDN}/btc@2x.png`;
   
   const lowerSymbol = symbol.toLowerCase();
   
-  // Return CDN URL for the colored SVG icon
-  return `${CDN_BASE}/svg/color/${lowerSymbol}.svg`;
+  // Return CoinCap CDN URL for the icon
+  return `${COINCAP_CDN}/${lowerSymbol}@2x.png`;
 };
 
-// Get black/white version if needed
-const getCoinLogoBlack = (symbol) => {
-  if (!symbol) return `${CDN_BASE}/svg/black/btc.svg`;
-  const lowerSymbol = symbol.toLowerCase();
-  return `${CDN_BASE}/svg/black/${lowerSymbol}.svg`;
-};
-
-// Generic fallback icon URL
+// Generic fallback icon URL (cryptocurrency-icons generic)
 const getGenericCoinIcon = () => {
-  return `${CDN_BASE}/svg/color/generic.svg`;
+  return `${FALLBACK_CDN}/generic.svg`;
 };
 
 // Export as both default AND named to fix import issues
-export { getCoinLogo, getCoinLogoBlack, getGenericCoinIcon };
+export { getCoinLogo, getGenericCoinIcon };
 export default getCoinLogo;
