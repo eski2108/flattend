@@ -1707,6 +1707,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 16px;
+  /* FIX: Remove black tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  outline: none;
 }
 
 .modal-cta-btn:hover {
