@@ -256,65 +256,298 @@ export default function AdminFees() {
           </div>
         )}
 
-        {/* Fee Settings */}
+        {/* ============ P2P MARKETPLACE FEES ============ */}
         <div className="fee-settings-section">
           <div className="section-header">
             <h2>
               <IoSettings size={24} />
-              Platform Fee Settings
+              🤝 P2P Marketplace Fees
             </h2>
           </div>
-
           <div className="fee-settings-grid">
             <div className="fee-card">
               <div className="fee-card-header">
-                <div className="fee-name">P2P Trade Fee</div>
-                <div className="fee-value">{feeSettings.p2p_trade_fee_percent || 1}%</div>
+                <div className="fee-name">P2P Maker Fee</div>
+                <div className="fee-value">{feeSettings.p2p_maker_fee_percent || 1}%</div>
               </div>
-              <div className="fee-description">Collected from seller on each P2P trade</div>
-              <button 
-                className="edit-fee-btn"
-                onClick={() => {
-                  setEditFeeData({ fee_type: 'p2p_trade_fee_percent', value: feeSettings.p2p_trade_fee_percent || 1 });
-                  setEditFeeModal(true);
-                }}
-              >
-                Edit
-              </button>
+              <div className="fee-description">Fee for sellers creating listings</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'p2p_maker_fee_percent', value: feeSettings.p2p_maker_fee_percent || 1 }); setEditFeeModal(true); }}>Edit</button>
             </div>
-
             <div className="fee-card">
               <div className="fee-card-header">
-                <div className="fee-name">Withdrawal Fee</div>
-                <div className="fee-value">{feeSettings.withdraw_fee_percent || 1}%</div>
+                <div className="fee-name">P2P Taker Fee</div>
+                <div className="fee-value">{feeSettings.p2p_taker_fee_percent || 1}%</div>
               </div>
-              <div className="fee-description">Applied on crypto withdrawals</div>
-              <button 
-                className="edit-fee-btn"
-                onClick={() => {
-                  setEditFeeData({ fee_type: 'withdraw_fee_percent', value: feeSettings.withdraw_fee_percent || 1 });
-                  setEditFeeModal(true);
-                }}
-              >
-                Edit
-              </button>
+              <div className="fee-description">Fee for buyers accepting trades</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'p2p_taker_fee_percent', value: feeSettings.p2p_taker_fee_percent || 1 }); setEditFeeModal(true); }}>Edit</button>
             </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">P2P Express Fee</div>
+                <div className="fee-value">{feeSettings.p2p_express_fee_percent || 2}%</div>
+              </div>
+              <div className="fee-description">Express buy premium fee</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'p2p_express_fee_percent', value: feeSettings.p2p_express_fee_percent || 2 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Dispute Fee</div>
+                <div className="fee-value">{feeSettings.dispute_fee_percent || 2}%</div>
+              </div>
+              <div className="fee-description">Fee charged for opening disputes</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'dispute_fee_percent', value: feeSettings.dispute_fee_percent || 2 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Dispute Fixed Fee</div>
+                <div className="fee-value">£{feeSettings.dispute_fee_fixed_gbp || 2}</div>
+              </div>
+              <div className="fee-description">Fixed GBP fee for disputes</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'dispute_fee_fixed_gbp', value: feeSettings.dispute_fee_fixed_gbp || 2 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
 
+        {/* ============ TRADING FEES ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              📈 Trading Fees
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Instant Buy Fee</div>
+                <div className="fee-value">{feeSettings.instant_buy_fee_percent || 3}%</div>
+              </div>
+              <div className="fee-description">Fee for instant crypto purchases</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'instant_buy_fee_percent', value: feeSettings.instant_buy_fee_percent || 3 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Instant Sell Fee</div>
+                <div className="fee-value">{feeSettings.instant_sell_fee_percent || 2}%</div>
+              </div>
+              <div className="fee-description">Fee for instant crypto sales</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'instant_sell_fee_percent', value: feeSettings.instant_sell_fee_percent || 2 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Swap Fee</div>
+                <div className="fee-value">{feeSettings.swap_fee_percent || 1.5}%</div>
+              </div>
+              <div className="fee-description">Fee for crypto-to-crypto swaps</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'swap_fee_percent', value: feeSettings.swap_fee_percent || 1.5 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Spot Trading Fee</div>
+                <div className="fee-value">{feeSettings.spot_trading_fee_percent || 3}%</div>
+              </div>
+              <div className="fee-description">Fee for spot trading</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'spot_trading_fee_percent', value: feeSettings.spot_trading_fee_percent || 3 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">General Trading Fee</div>
+                <div className="fee-value">{feeSettings.trading_fee_percent || 0.1}%</div>
+              </div>
+              <div className="fee-description">Base trading fee</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'trading_fee_percent', value: feeSettings.trading_fee_percent || 0.1 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ WITHDRAWAL & DEPOSIT FEES ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              💰 Withdrawal & Deposit Fees
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Crypto Withdrawal Fee</div>
+                <div className="fee-value">{feeSettings.withdrawal_fee_percent || 1}%</div>
+              </div>
+              <div className="fee-description">Fee on crypto withdrawals</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'withdrawal_fee_percent', value: feeSettings.withdrawal_fee_percent || 1 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Network Fee</div>
+                <div className="fee-value">{feeSettings.network_withdrawal_fee_percent || 1}%</div>
+              </div>
+              <div className="fee-description">Blockchain network fee markup</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'network_withdrawal_fee_percent', value: feeSettings.network_withdrawal_fee_percent || 1 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Fiat Withdrawal Fee</div>
+                <div className="fee-value">{feeSettings.fiat_withdrawal_fee_percent || 1}%</div>
+              </div>
+              <div className="fee-description">Fee on fiat/GBP withdrawals</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'fiat_withdrawal_fee_percent', value: feeSettings.fiat_withdrawal_fee_percent || 1 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
             <div className="fee-card">
               <div className="fee-card-header">
                 <div className="fee-name">Deposit Fee</div>
-                <div className="fee-value">{feeSettings.deposit_fee_percent || 0.5}%</div>
+                <div className="fee-value">{feeSettings.deposit_fee_percent || 0}%</div>
               </div>
-              <div className="fee-description">Optional deposit fee</div>
-              <button 
-                className="edit-fee-btn"
-                onClick={() => {
-                  setEditFeeData({ fee_type: 'deposit_fee_percent', value: feeSettings.deposit_fee_percent || 0.5 });
-                  setEditFeeModal(true);
-                }}
-              >
-                Edit
-              </button>
+              <div className="fee-description">Fee on deposits (usually 0)</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'deposit_fee_percent', value: feeSettings.deposit_fee_percent || 0 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ CARD PAYMENT FEES (Future) ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              💳 Card Payment Fees
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Card Purchase Fee</div>
+                <div className="fee-value">{feeSettings.card_purchase_fee_percent || 3.5}%</div>
+              </div>
+              <div className="fee-description">Fee for card-based crypto purchases</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'card_purchase_fee_percent', value: feeSettings.card_purchase_fee_percent || 3.5 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Card Processing Fee</div>
+                <div className="fee-value">{feeSettings.card_processing_fee_percent || 2.9}%</div>
+              </div>
+              <div className="fee-description">Payment processor markup</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'card_processing_fee_percent', value: feeSettings.card_processing_fee_percent || 2.9 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Card Fixed Fee</div>
+                <div className="fee-value">£{feeSettings.card_fixed_fee_gbp || 0.30}</div>
+              </div>
+              <div className="fee-description">Fixed fee per card transaction</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'card_fixed_fee_gbp', value: feeSettings.card_fixed_fee_gbp || 0.30 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ REFERRAL FEES ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              👥 Referral Commission Rates
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Standard Referral</div>
+                <div className="fee-value">{feeSettings.referral_standard_commission_percent || 20}%</div>
+              </div>
+              <div className="fee-description">Commission for standard referrers</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'referral_standard_commission_percent', value: feeSettings.referral_standard_commission_percent || 20 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Golden Referral</div>
+                <div className="fee-value">{feeSettings.referral_golden_commission_percent || 50}%</div>
+              </div>
+              <div className="fee-description">Commission for golden tier referrers</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'referral_golden_commission_percent', value: feeSettings.referral_golden_commission_percent || 50 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ SAVINGS & STAKING FEES ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              🏦 Savings & Staking Fees
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Savings Stake Fee</div>
+                <div className="fee-value">{feeSettings.savings_stake_fee_percent || 0.5}%</div>
+              </div>
+              <div className="fee-description">Fee on staking deposits</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'savings_stake_fee_percent', value: feeSettings.savings_stake_fee_percent || 0.5 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Early Unstake Penalty</div>
+                <div className="fee-value">{feeSettings.early_unstake_penalty_percent || 3}%</div>
+              </div>
+              <div className="fee-description">Penalty for early withdrawal</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'early_unstake_penalty_percent', value: feeSettings.early_unstake_penalty_percent || 3 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ INTERNAL TRANSFER FEES ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              🔄 Internal Transfer Fees
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Vault Transfer Fee</div>
+                <div className="fee-value">{feeSettings.vault_transfer_fee_percent || 0.5}%</div>
+              </div>
+              <div className="fee-description">Fee for vault-to-wallet transfers</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'vault_transfer_fee_percent', value: feeSettings.vault_transfer_fee_percent || 0.5 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Cross-Wallet Fee</div>
+                <div className="fee-value">{feeSettings.cross_wallet_transfer_fee_percent || 0.25}%</div>
+              </div>
+              <div className="fee-description">Fee for internal wallet transfers</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'cross_wallet_transfer_fee_percent', value: feeSettings.cross_wallet_transfer_fee_percent || 0.25 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ LIQUIDITY SPREAD ============ */}
+        <div className="fee-settings-section">
+          <div className="section-header">
+            <h2>
+              <IoSettings size={24} />
+              📊 Liquidity & Spread Settings
+            </h2>
+          </div>
+          <div className="fee-settings-grid">
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Admin Liquidity Spread</div>
+                <div className="fee-value">{feeSettings.admin_liquidity_spread_percent || 0}%</div>
+              </div>
+              <div className="fee-description">Price spread on admin liquidity</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'admin_liquidity_spread_percent', value: feeSettings.admin_liquidity_spread_percent || 0 }); setEditFeeModal(true); }}>Edit</button>
+            </div>
+            <div className="fee-card">
+              <div className="fee-card-header">
+                <div className="fee-name">Express Liquidity Profit</div>
+                <div className="fee-value">{feeSettings.express_liquidity_profit_percent || 0}%</div>
+              </div>
+              <div className="fee-description">Profit margin on express trades</div>
+              <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'express_liquidity_profit_percent', value: feeSettings.express_liquidity_profit_percent || 0 }); setEditFeeModal(true); }}>Edit</button>
             </div>
           </div>
         </div>
