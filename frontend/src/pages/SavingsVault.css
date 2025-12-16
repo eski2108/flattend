@@ -1108,31 +1108,21 @@
 /* Action Buttons */
 .action-buttons-row {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
 .action-btn {
   flex: 1;
-  padding: 14px 24px;
-  border-radius: 10px;
+  padding: 12px 20px;
+  border-radius: 8px;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 2px solid;
   background: transparent;
-}
-
-.withdraw-btn {
-  border-color: #00F0FF;
-  color: #00F0FF;
-}
-
-.withdraw-btn:hover {
-  background: rgba(0, 240, 255, 0.15);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-  transform: translateY(-2px);
+  white-space: nowrap;
 }
 
 .add-btn {
@@ -1144,6 +1134,35 @@
   background: rgba(0, 255, 133, 0.15);
   box-shadow: 0 0 20px rgba(0, 255, 133, 0.4);
   transform: translateY(-2px);
+}
+
+.withdraw-btn {
+  border-color: #00F0FF;
+  color: #00F0FF;
+}
+
+.withdraw-btn:hover:not(:disabled) {
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.withdraw-btn:disabled {
+  border-color: #FF4444;
+  color: #FF4444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.details-btn {
+  border-color: #B5B5B5;
+  color: #B5B5B5;
+}
+
+.details-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
 }
 
 /* Lock-up Period Selectors */
