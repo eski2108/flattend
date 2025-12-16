@@ -166,34 +166,7 @@ export default function Wallet() {
                 <div key={bal.currency} className="swap-theme-card" style={{ padding: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #00F0FF, #0080FF)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        padding: '4px'
-                      }}>
-                        <img 
-                          src={getCoinLogo(bal.currency)} 
-                          alt={bal.currency}
-                          data-emoji={getCoinEmoji(bal.currency)}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain'
-                          }}
-                          onError={(e) => {
-                            // Show EMOJI in 3D-style circle if PNG doesn't exist
-                            e.target.style.display = 'none';
-                            const emoji = e.target.dataset.emoji || '💎';
-                            e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(19, 215, 255, 0.2), rgba(122, 60, 255, 0.2)); border: 1px solid rgba(19, 215, 255, 0.3); border-radius: 50%; font-size: 28px; font-weight: 600;">${emoji}</div>`;
-                          }}
-                        />
-                      </div>
+                      <CoinIcon symbol={bal.currency} />
                       <div>
                         <p className="swap-theme-text-secondary" style={{ fontSize: '14px', marginBottom: '4px' }}>{bal.currency}</p>
                         <h3 className="swap-theme-accent" style={{ fontSize: '24px', fontWeight: '700' }}>{bal.balance}</h3>
