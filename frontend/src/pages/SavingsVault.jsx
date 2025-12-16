@@ -380,12 +380,32 @@ const SavingsVault = () => {
         </div>
         
         {loading ? (
-          <div className="loading-state">Loading your savings...</div>
+          <div className="loading-state">
+            <div className="skeleton-card"></div>
+            <div className="skeleton-card"></div>
+            <div className="skeleton-card"></div>
+          </div>
         ) : filteredPositions.length === 0 ? (
-          <div className="empty-state glassmorphic-card">
-            <p>You don't have any savings yet.</p>
-            <button className="transfer-from-wallet-btn" onClick={() => navigate('/wallet')}>
-              Start Saving Now
+          <div className="empty-state-card glassmorphic-card">
+            <div className="empty-state-icon">🏦</div>
+            <h3 className="empty-state-title">Start Earning with Notice Accounts</h3>
+            <p className="empty-state-description">Lock your crypto for 30, 60, or 90 days to earn guaranteed interest.</p>
+            <div className="empty-state-steps">
+              <div className="step-item">
+                <span className="step-number">1</span>
+                <span className="step-text">Choose lock period above</span>
+              </div>
+              <div className="step-item">
+                <span className="step-number">2</span>
+                <span className="step-text">Transfer from wallet</span>
+              </div>
+              <div className="step-item">
+                <span className="step-number">3</span>
+                <span className="step-text">Start earning interest</span>
+              </div>
+            </div>
+            <button className="empty-state-cta" onClick={() => setShowTransferModal(true)}>
+              Add to Savings
             </button>
           </div>
         ) : (
