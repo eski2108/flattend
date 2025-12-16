@@ -435,6 +435,7 @@
   font-size: 18px;
   font-weight: 700;
   color: #00FF85;
+  text-shadow: 0 0 12px rgba(0, 255, 133, 0.6);
 }
 
 .notice-option-details {
