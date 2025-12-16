@@ -192,7 +192,10 @@ const SavingsVault = () => {
     <div className="savings-vault-container">
       {/* PAGE HEADER */}
       <header className="savings-vault-header">
-        <h1 className="savings-vault-title">Savings Vault</h1>
+        <div className="header-title-section">
+          <h1 className="savings-vault-title">Savings Vault</h1>
+          <p className="savings-vault-subtitle">Earn competitive yields on your crypto assets. Watch your savings grow in real-time.</p>
+        </div>
         
         <div className="header-actions">
           {/* Wallet Selector Dropdown */}
