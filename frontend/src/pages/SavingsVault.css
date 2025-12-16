@@ -296,6 +296,13 @@
   font-weight: 500;
 }
 
+.card-subtext {
+  font-size: 11px;
+  color: #B5B5B5;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
 /* Live Indicator */
 .live-indicator {
   position: absolute;
