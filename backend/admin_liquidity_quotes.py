@@ -368,20 +368,99 @@ class AdminLiquidityQuoteService:
             upsert=True
         )
         
+        # Calculate profit breakdown
+        market_price = quote["market_price_at_quote"]
+        spread_percent = quote["spread_percent"]
+        fee_amount = quote.get("fee_amount", 0)
+        
+        # Spread profit = difference between locked price and market price
+        spread_profit_gbp = (quote["locked_price"] - market_price) * crypto_amount
+        
+        transaction_id = str(uuid.uuid4())
+        
         # Log transaction
         await self.db.admin_liquidity_transactions.insert_one({
-            "transaction_id": str(uuid.uuid4()),
+            "transaction_id": transaction_id,
             "quote_id": quote["quote_id"],
             "user_id": user_id,
             "type": "admin_sell",
             "crypto_currency": crypto_currency,
             "crypto_amount": crypto_amount,
             "locked_price": quote["locked_price"],
-            "market_price_at_quote": quote["market_price_at_quote"],
-            "spread_percent": quote["spread_percent"],
+            "market_price_at_quote": market_price,
+            "spread_percent": spread_percent,
+            "spread_profit_gbp": spread_profit_gbp,
+            "fee_amount_gbp": fee_amount,
             "total_gbp": total_cost,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
+        
+        # ═══════════════════════════════════════════════════════════════════════
+        # CREDIT SPREAD PROFIT TO ADMIN REVENUE (BUSINESS DASHBOARD)
+        # ═══════════════════════════════════════════════════════════════════════
+        await self.db.admin_revenue.insert_one({
+            "revenue_id": str(uuid.uuid4()),
+            "source": "instant_buy_spread",
+            "revenue_type": "SPREAD_PROFIT",
+            "currency": "GBP",
+            "amount": spread_profit_gbp,
+            "crypto_currency": crypto_currency,
+            "crypto_amount": crypto_amount,
+            "market_price": market_price,
+            "locked_price": quote["locked_price"],
+            "spread_percent": spread_percent,
+            "user_id": user_id,
+            "related_transaction_id": transaction_id,
+            "quote_id": quote["quote_id"],
+            "net_profit": spread_profit_gbp,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "description": f"Spread profit from Instant Buy: {spread_percent}% markup on {crypto_amount} {crypto_currency}"
+        })
+        
+        # ═══════════════════════════════════════════════════════════════════════
+        # CREDIT EXPRESS FEE TO ADMIN REVENUE
+        # ═══════════════════════════════════════════════════════════════════════
+        if fee_amount > 0:
+            await self.db.admin_revenue.insert_one({
+                "revenue_id": str(uuid.uuid4()),
+                "source": "instant_buy_fee",
+                "revenue_type": "FEE_REVENUE",
+                "currency": "GBP",
+                "amount": fee_amount,
+                "fee_percent": quote.get("fee_percent", 1.0),
+                "crypto_currency": crypto_currency,
+                "user_id": user_id,
+                "related_transaction_id": transaction_id,
+                "quote_id": quote["quote_id"],
+                "net_profit": fee_amount,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "description": f"Express fee from Instant Buy: {quote.get('fee_percent', 1.0)}% on {crypto_currency}"
+            })
+            
+            # ═══════════════════════════════════════════════════════════════════
+            # PROCESS REFERRAL COMMISSION ON THE FEE (NOT ON SPREAD)
+            # ═══════════════════════════════════════════════════════════════════
+            try:
+                if get_referral_engine:
+                    referral_engine = get_referral_engine()
+                    if referral_engine:
+                        await referral_engine.process_referral_commission(
+                            user_id=user_id,
+                            fee_amount=fee_amount,
+                            fee_type="INSTANT_BUY",
+                            currency="GBP",
+                            related_transaction_id=transaction_id,
+                            metadata={
+                                "crypto_currency": crypto_currency,
+                                "crypto_amount": crypto_amount,
+                                "quote_id": quote["quote_id"]
+                            }
+                        )
+                        logger.info(f"✅ Referral commission processed for Instant Buy fee £{fee_amount}")
+            except Exception as ref_err:
+                logger.warning(f"⚠️ Referral commission failed for Instant Buy: {ref_err}")
+        
+        logger.info(f"✅ Instant Buy revenue logged: Spread £{spread_profit_gbp:.2f} + Fee £{fee_amount:.2f} = Total £{spread_profit_gbp + fee_amount:.2f}")
     
     async def _execute_sell(self, user_id: str, quote: Dict):
         """Execute user SELL (admin buys crypto)"""
