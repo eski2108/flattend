@@ -88,7 +88,8 @@ const SavingsVault = () => {
         const cryptos = response.data.cryptocurrencies;
         const coinList = Object.keys(cryptos).map(symbol => ({
           symbol: symbol,
-          name: cryptos[symbol].name
+          name: cryptos[symbol].name,
+          emoji: getCoinEmoji(symbol)
         }));
         setAvailableCoins(coinList);
         console.log(`✅ Loaded ${coinList.length} coins from backend`);
@@ -97,20 +98,20 @@ const SavingsVault = () => {
       console.error('Error loading coins:', error);
       // Final fallback to default list
       setAvailableCoins([
-        { symbol: 'BTC', name: 'Bitcoin' },
-        { symbol: 'ETH', name: 'Ethereum' },
-        { symbol: 'USDT', name: 'Tether' },
-        { symbol: 'USDC', name: 'USD Coin' },
-        { symbol: 'BNB', name: 'Binance Coin' },
-        { symbol: 'SOL', name: 'Solana' },
-        { symbol: 'XRP', name: 'Ripple' },
-        { symbol: 'ADA', name: 'Cardano' },
-        { symbol: 'DOGE', name: 'Dogecoin' },
-        { symbol: 'DOT', name: 'Polkadot' },
-        { symbol: 'MATIC', name: 'Polygon' },
-        { symbol: 'LTC', name: 'Litecoin' },
-        { symbol: 'LINK', name: 'Chainlink' },
-        { symbol: 'AVAX', name: 'Avalanche' }
+        { symbol: 'BTC', name: 'Bitcoin', emoji: '₿' },
+        { symbol: 'ETH', name: 'Ethereum', emoji: '◆' },
+        { symbol: 'USDT', name: 'Tether', emoji: '💵' },
+        { symbol: 'USDC', name: 'USD Coin', emoji: '💲' },
+        { symbol: 'BNB', name: 'Binance Coin', emoji: '🔶' },
+        { symbol: 'SOL', name: 'Solana', emoji: '☀️' },
+        { symbol: 'XRP', name: 'Ripple', emoji: '✖️' },
+        { symbol: 'ADA', name: 'Cardano', emoji: '🌐' },
+        { symbol: 'DOGE', name: 'Dogecoin', emoji: '🐶' },
+        { symbol: 'DOT', name: 'Polkadot', emoji: '🎯' },
+        { symbol: 'MATIC', name: 'Polygon', emoji: '🔷' },
+        { symbol: 'LTC', name: 'Litecoin', emoji: '🌕' },
+        { symbol: 'LINK', name: 'Chainlink', emoji: '🔗' },
+        { symbol: 'AVAX', name: 'Avalanche', emoji: '🏔️' }
       ]);
       console.log('✅ Using fallback coin list');
     } finally {
