@@ -538,7 +538,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
       {/* Coin Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '18px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-          {/* 3D Coin Icon with CSS effect - Local first, CoinGecko fallback */}
+          {/* 3D Coin Icon with CSS effect - 5 fallbacks before showing text */}
           <div style={{
             width: '52px',
             height: '52px',
@@ -564,17 +564,29 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
               }}
               onError={(e) => {
                 const clean = cleanSymbol(coin.symbol);
-                // Try CoinGecko/CoinCap fallback
+                const lowerSym = coin.symbol.toLowerCase();
+                
+                // 1. Try NOWPayments SVG with original symbol
                 if (!e.target.dataset.tried1) {
                   e.target.dataset.tried1 = 'true';
-                  e.target.src = getCoinLogoAlt(coin.symbol);
+                  e.target.src = `https://nowpayments.io/images/coins/${lowerSym}.svg`;
                 }
-                // Try third fallback
+                // 2. Try NOWPayments SVG with cleaned symbol
                 else if (!e.target.dataset.tried2) {
                   e.target.dataset.tried2 = 'true';
+                  e.target.src = `https://nowpayments.io/images/coins/${clean}.svg`;
+                }
+                // 3. Try CoinGecko/CoinCap
+                else if (!e.target.dataset.tried3) {
+                  e.target.dataset.tried3 = 'true';
                   e.target.src = getCoinLogoFallback(coin.symbol);
                 }
-                // Final fallback - styled letter
+                // 4. Try CoinCap CDN
+                else if (!e.target.dataset.tried4) {
+                  e.target.dataset.tried4 = 'true';
+                  e.target.src = getCoinLogoFallback2(coin.symbol);
+                }
+                // 5. Final fallback - styled letter (LAST RESORT)
                 else {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #00E5FF; text-shadow: 0 0 10px rgba(0,229,255,0.4);">${clean.charAt(0).toUpperCase()}</span>`;
