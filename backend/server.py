@@ -4800,6 +4800,88 @@ async def create_savings_deposit(request: dict):
         logger.error(f"Create savings deposit error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/savings/deposit")
+async def create_savings_deposit(request: dict):
+    """Create a new savings deposit"""
+    try:
+        user_id = request.get('user_id')
+        coin = request.get('coin')
+        amount = request.get('amount')
+        notice_period = request.get('notice_period', 30)
+        
+        # Get current price from CoinGecko
+        coin_id = get_coingecko_id(coin)
+        coin_data = await get_coingecko_market_data(coin_id)
+        entry_price = coin_data.get('current_price', 0) if coin_data else 0
+        
+        # Calculate unlock date
+        from datetime import datetime, timedelta, timezone
+        start_date = datetime.now(timezone.utc)
+        unlock_date = start_date + timedelta(days=notice_period)
+        
+        # Determine APY based on notice period
+        apy_map = {30: 5.2, 60: 6.8, 90: 8.5}
+        apy = apy_map.get(notice_period, 5.2)
+        
+        # Create or update savings balance
+        existing = await db.savings_balances.find_one({
+            "user_id": user_id,
+            "currency": coin
+        })
+        
+        if existing:
+            # Update existing
+            new_balance = existing.get('savings_balance', 0) + amount
+            await db.savings_balances.update_one(
+                {"user_id": user_id, "currency": coin},
+                {"$set": {
+                    "savings_balance": new_balance,
+                    "updated_at": start_date.isoformat()
+                }}
+            )
+        else:
+            # Create new
+            await db.savings_balances.insert_one({
+                "user_id": user_id,
+                "currency": coin,
+                "savings_balance": amount,
+                "accrued_earnings": 0,
+                "type": "staked",
+                "lock_period": notice_period,
+                "entry_price": entry_price,
+                "deposit_timestamp": int(start_date.timestamp()),
+                "created_at": start_date.isoformat(),
+                "auto_compound": True
+            })
+        
+        # Log transaction
+        await db.savings_transactions.insert_one({
+            "user_id": user_id,
+            "currency": coin,
+            "type": "deposit",
+            "amount": amount,
+            "notice_period": notice_period,
+            "apy": apy,
+            "entry_price": entry_price,
+            "unlock_date": unlock_date.isoformat(),
+            "timestamp": start_date.isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": "Deposit created successfully",
+            "deposit": {
+                "coin": coin,
+                "amount": amount,
+                "notice_period": notice_period,
+                "apy": apy,
+                "unlock_date": unlock_date.isoformat()
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error creating savings deposit: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/savings/transfer")
 async def transfer_to_savings(request: dict):
     """Transfer funds between Wallet and Savings via wallet service"""
