@@ -84,17 +84,6 @@ export default function Wallet() {
   const [user, setUser] = useState(null);
   const [balances, setBalances] = useState([]);
 
-  useEffect(() => {
-    const userData = localStorage.getItem('cryptobank_user');
-    if (!userData) {
-      navigate('/login');
-      return;
-    }
-    const parsedUser = JSON.parse(userData);
-    setUser(parsedUser);
-    loadBalances(parsedUser.user_id);
-  }, []);
-
   const loadBalances = async (userId) => {
     try {
       // Get ALL 236 NowPayments coins
