@@ -41,7 +41,7 @@
   font-weight: 700;
   color: #00F0FF;
   letter-spacing: 1px;
-  text-shadow: 0 0 20px #00F0FF88;
+  text-shadow: 0 0 30px rgba(0, 240, 255, 0.8), 0 0 60px rgba(0, 240, 255, 0.4);
   animation: neon-sign-pulse 3s ease-in-out infinite;
   margin: 0;
 }
