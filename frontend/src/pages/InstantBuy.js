@@ -561,16 +561,15 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 objectFit: 'contain'
               }}
               onError={(e) => {
-                // Try SVG fallback first
-                if (!e.target.dataset.triedSvg) {
-                  e.target.dataset.triedSvg = 'true';
-                  const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim().toLowerCase();
-                  e.target.src = `/crypto-icons/${cleanSymbol}.svg`;
-                } else {
-                  // Final fallback: show first letter in colored circle
-                  e.target.style.display = 'none';
-                  const letter = coin.symbol?.substring(0, 1) || '?';
-                  e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #00F0FF, #7B2CFF); border-radius: 50%; font-size: 24px; font-weight: 700; color: #FFF;">${letter}</div>`;
+                // Try cryptocurrency-icons CDN as fallback
+                if (!e.target.dataset.triedCdn) {
+                  e.target.dataset.triedCdn = 'true';
+                  const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase();
+                  e.target.src = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${cleanSymbol}.svg`;
+                } else if (!e.target.dataset.triedGeneric) {
+                  // Final fallback: generic crypto icon (NOT a letter)
+                  e.target.dataset.triedGeneric = 'true';
+                  e.target.src = getGenericCoinIcon();
                 }
               }}
             />
