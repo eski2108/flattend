@@ -531,17 +531,8 @@ const SavingsVault = () => {
                       </div>
                     </div>
 
-                    {/* Action Buttons - Withdraw & Add */}
+                    {/* Action Buttons */}
                     <div className="action-buttons-row">
-                      <button 
-                        className="action-btn withdraw-btn"
-                        onClick={() => {
-                          setSelectedPosition(position);
-                          setShowWithdrawModal(true);
-                        }}
-                      >
-                        Withdraw
-                      </button>
                       <button 
                         className="action-btn add-btn"
                         onClick={() => {
@@ -549,7 +540,26 @@ const SavingsVault = () => {
                           setShowAddModal(true);
                         }}
                       >
-                        Add
+                        Add to Savings
+                      </button>
+                      <button 
+                        className="action-btn withdraw-btn"
+                        onClick={() => {
+                          setSelectedPosition(position);
+                          setShowWithdrawModal(true);
+                        }}
+                        disabled={position.type !== 'flexible'}
+                      >
+                        {position.type === 'flexible' ? 'Request Withdrawal' : 'Locked - Penalty Applies'}
+                      </button>
+                      <button 
+                        className="action-btn details-btn"
+                        onClick={() => {
+                          setSelectedPosition(position);
+                          setShowHistoryModal(true);
+                        }}
+                      >
+                        View Details
                       </button>
                     </div>
 
