@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://walletfix.preview.emergentagent.com
+**Preview URL:** https://coin-icon-fixer.preview.emergentagent.com

@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://walletfix.preview.emergentagent.com
+**URL:** https://coin-icon-fixer.preview.emergentagent.com
 
 **Services Status:**
 ```bash

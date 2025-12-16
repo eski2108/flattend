@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://walletfix.preview.emergentagent.com
+https://coin-icon-fixer.preview.emergentagent.com
 
 ---
 

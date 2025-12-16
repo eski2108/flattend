@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://walletfix.preview.emergentagent.com
-P2P Page:     https://walletfix.preview.emergentagent.com/p2p
-Backend API:  https://walletfix.preview.emergentagent.com/api
+Frontend:     https://coin-icon-fixer.preview.emergentagent.com
+P2P Page:     https://coin-icon-fixer.preview.emergentagent.com/p2p
+Backend API:  https://coin-icon-fixer.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

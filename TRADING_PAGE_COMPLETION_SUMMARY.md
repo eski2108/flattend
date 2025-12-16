@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://walletfix.preview.emergentagent.com/#/trading
+**Live URL:** https://coin-icon-fixer.preview.emergentagent.com/#/trading
 
 ---
 

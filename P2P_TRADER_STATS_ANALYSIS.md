@@ -444,7 +444,7 @@ const TraderStats = ({ userId }) => {
 **Verification:**
 - Email template in `/app/backend/email_service.py` line 1270:
   ```html
-  <a href="https://walletfix.preview.emergentagent.com/admin/disputes/{dispute_id}">
+  <a href="https://coin-icon-fixer.preview.emergentagent.com/admin/disputes/{dispute_id}">
   ```
 - Backend code in `/app/backend/server.py` line 23820:
   ```python

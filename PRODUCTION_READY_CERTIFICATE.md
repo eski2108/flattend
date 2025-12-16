@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://walletfix.preview.emergentagent.com`
-- Backend API: `https://walletfix.preview.emergentagent.com/api`
+- Frontend: `https://coin-icon-fixer.preview.emergentagent.com`
+- Backend API: `https://coin-icon-fixer.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

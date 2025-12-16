@@ -7,7 +7,7 @@ This script tests the payment flow endpoints with minimal setup:
 2. Tests Admin payment marking with mock data
 3. Tests Seller payout with mock balance
 
-Backend URL: https://walletfix.preview.emergentagent.com
+Backend URL: https://coin-icon-fixer.preview.emergentagent.com
 """
 
 import requests
@@ -18,7 +18,7 @@ from datetime import datetime, timezone, timedelta
 import sys
 
 # Configuration
-BACKEND_URL = "https://walletfix.preview.emergentagent.com/api"
+BACKEND_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
 
 def print_section(title):
     """Print a formatted section header"""

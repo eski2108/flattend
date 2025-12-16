@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://walletfix.preview.emergentagent.com"
+BACKEND_URL = "https://coin-icon-fixer.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 class CoinHubXTester:

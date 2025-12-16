@@ -14,7 +14,7 @@ from decimal import Decimal
 import sys
 
 # Configuration
-BASE_URL = "https://walletfix.preview.emergentagent.com/api"
+BASE_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
 TEST_USER_A = {
     "email": "gads21083@gmail.com",
     "password": "123456789"

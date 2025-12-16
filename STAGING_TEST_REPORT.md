@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://walletfix.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://coin-icon-fixer.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

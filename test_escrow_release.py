@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://walletfix.preview.emergentagent.com/api"
+BASE_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
 
 print("🔍 TESTING THE 9% FAILED ENDPOINTS WITH CORRECT PARAMETERS\n")
 print("=" * 60)

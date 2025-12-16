@@ -43,7 +43,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://walletfix.preview.emergentagent.com/api"
+BASE_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
 
 # Test credentials from review request
 EXISTING_USER = {

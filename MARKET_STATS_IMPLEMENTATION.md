@@ -195,6 +195,6 @@ The advanced market stats module has been implemented with:
 - ✅ No placeholder or fake values
 - ⚠️ **Awaiting backend API integration for real market data**
 
-**Live URL:** https://walletfix.preview.emergentagent.com/#/trading
+**Live URL:** https://coin-icon-fixer.preview.emergentagent.com/#/trading
 
 **Status:** Ready for backend integration. Frontend code complete and deployed.

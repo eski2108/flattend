@@ -100,7 +100,7 @@
 
 ### Test P2P Express (Instant Buy):
 
-1. Go to https://walletfix.preview.emergentagent.com/p2p-express
+1. Go to https://coin-icon-fixer.preview.emergentagent.com/p2p-express
 2. If redirected to login, login first: gads21083@gmail.com / 123456789
 3. Enter amount: £30
 4. Click "Buy Now"

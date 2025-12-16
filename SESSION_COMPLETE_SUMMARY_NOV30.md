@@ -209,7 +209,7 @@ The testing agent reported this bug, but code inspection shows the routing is co
 - ❌ Frontend: Not needed (hot reload active)
 
 **Environment:**
-- ✅ Production Preview URL: https://walletfix.preview.emergentagent.com
+- ✅ Production Preview URL: https://coin-icon-fixer.preview.emergentagent.com
 - ✅ Backend: Running on port 8001
 - ✅ Frontend: Running on port 3000
 - ✅ MongoDB: Connected

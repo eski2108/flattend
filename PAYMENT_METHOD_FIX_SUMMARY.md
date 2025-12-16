@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://walletfix.preview.emergentagent.com
+https://coin-icon-fixer.preview.emergentagent.com
 
 ### Test Route
 
-`https://walletfix.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://coin-icon-fixer.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

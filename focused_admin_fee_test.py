@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://walletfix.preview.emergentagent.com/api"
+BACKEND_URL = "https://coin-icon-fixer.preview.emergentagent.com/api"
 
 class FocusedAdminFeeTest:
     def __init__(self):
