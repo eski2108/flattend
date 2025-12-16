@@ -381,7 +381,10 @@ const SavingsVault = () => {
         </div>
         
         <div className="notice-info-section">
-          <button className="notice-info-btn">
+          <button 
+            className="notice-info-btn"
+            onClick={() => setShowNoticeRulesModal(true)}
+          >
             <span className="info-icon">ⓘ</span> Notice Rules & Early Withdrawal
           </button>
           <p className="notice-terms-footer">
