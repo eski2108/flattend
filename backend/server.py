@@ -12518,6 +12518,47 @@ async def express_buy_execute(request: dict):
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
+        # ═══════════════════════════════════════════════════════════════════════
+        # LOG EXPRESS BUY TO ADMIN REVENUE (BUSINESS DASHBOARD)
+        # ═══════════════════════════════════════════════════════════════════════
+        # Log spread profit
+        if admin_spread_profit > 0:
+            await db.admin_revenue.insert_one({
+                "revenue_id": str(uuid.uuid4()),
+                "source": "express_buy_spread",
+                "revenue_type": "SPREAD_PROFIT",
+                "currency": "GBP",
+                "amount": admin_spread_profit,
+                "crypto_currency": crypto_currency,
+                "crypto_amount": crypto_amount,
+                "spread_percent": admin_sell_spread_percent,
+                "user_id": user_id,
+                "net_profit": admin_spread_profit,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "description": f"Spread profit from Express Buy: {admin_sell_spread_percent}% on {crypto_amount} {crypto_currency}"
+            })
+        
+        # Log fee revenue (after referral commission deducted)
+        if express_admin_fee > 0:
+            await db.admin_revenue.insert_one({
+                "revenue_id": str(uuid.uuid4()),
+                "source": "express_buy_fee",
+                "revenue_type": "FEE_REVENUE",
+                "currency": "GBP",
+                "amount": express_admin_fee,
+                "fee_percent": express_fee_percent,
+                "crypto_currency": crypto_currency,
+                "user_id": user_id,
+                "referrer_id": referrer_id,
+                "referrer_commission_paid": express_referrer_commission,
+                "original_fee": express_fee_fiat,
+                "net_profit": express_admin_fee,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "description": f"Express Buy fee (after referral): {express_fee_percent}% on {crypto_currency}"
+            })
+        
+        logger.info(f"✅ Express Buy revenue logged to admin_revenue: Spread £{admin_spread_profit:.2f} + Fee £{express_admin_fee:.2f}")
+        
         # Record transaction
         trade_id = str(uuid.uuid4())
         await db.express_buy_transactions.insert_one({
