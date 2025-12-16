@@ -549,7 +549,7 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
             overflow: 'hidden'
           }}>
             <img 
-              src={`/crypto-logos/${coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase()}.png`}
+              src={getCoinLogo(coin.symbol)}
               alt={coin.symbol}
               style={{
                 width: '100%',
@@ -557,9 +557,16 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 objectFit: 'contain'
               }}
               onError={(e) => {
-                // Fallback to first letter if 3D logo not found
-                e.target.style.display = 'none';
-                e.target.parentElement.innerHTML = `<span style="font-size: 24px; font-weight: 700; color: ${coin.color}">${coin.symbol.charAt(0)}</span>`;
+                // Try CoinCap CDN as fallback
+                const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase();
+                if (!e.target.dataset.triedCdn) {
+                  e.target.dataset.triedCdn = 'true';
+                  e.target.src = `https://assets.coincap.io/assets/icons/${cleanSymbol}@2x.png`;
+                } else {
+                  // Final fallback - letter
+                  e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = `<span style="font-size: 24px; font-weight: 700; color: ${coin.color}">${coin.symbol.charAt(0)}</span>`;
+                }
               }}
             />
           </div>
