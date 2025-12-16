@@ -487,11 +487,12 @@
   background: linear-gradient(135deg, #00F0FF, #00B8D4);
   border-color: #00F0FF;
   color: #0E0F1A;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
 }
 
 .select-notice-btn.primary:hover {
   background: linear-gradient(135deg, #00F0FF, #00D4E6);
-  box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), 0 4px 16px rgba(0, 240, 255, 0.4);
 }
 
 .notice-terms-footer {
