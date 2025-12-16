@@ -39,6 +39,49 @@ const SavingsVault = () => {
   const [selectedNoticePeriod, setSelectedNoticePeriod] = useState(30);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [showReferralBanner, setShowReferralBanner] = useState(true);
+  const [availableCoins, setAvailableCoins] = useState([]);
+  const [loadingCoins, setLoadingCoins] = useState(false);
+
+  useEffect(() => {
+    loadSavingsData();
+    loadAvailableCoins();
+  }, []);
+
+  const loadAvailableCoins = async () => {
+    try {
+      setLoadingCoins(true);
+      const response = await axios.get(`${API}/api/supported/cryptocurrencies`);
+      if (response.data.success) {
+        const cryptos = response.data.cryptocurrencies;
+        const coinList = Object.keys(cryptos).map(symbol => ({
+          symbol: symbol,
+          name: cryptos[symbol].name
+        }));
+        setAvailableCoins(coinList);
+      }
+    } catch (error) {
+      console.error('Error loading coins:', error);
+      // Fallback to default list if API fails
+      setAvailableCoins([
+        { symbol: 'BTC', name: 'Bitcoin' },
+        { symbol: 'ETH', name: 'Ethereum' },
+        { symbol: 'USDT', name: 'Tether' },
+        { symbol: 'USDC', name: 'USD Coin' },
+        { symbol: 'BNB', name: 'Binance Coin' },
+        { symbol: 'SOL', name: 'Solana' },
+        { symbol: 'XRP', name: 'Ripple' },
+        { symbol: 'ADA', name: 'Cardano' },
+        { symbol: 'DOGE', name: 'Dogecoin' },
+        { symbol: 'DOT', name: 'Polkadot' },
+        { symbol: 'MATIC', name: 'Polygon' },
+        { symbol: 'LTC', name: 'Litecoin' },
+        { symbol: 'LINK', name: 'Chainlink' },
+        { symbol: 'AVAX', name: 'Avalanche' }
+      ]);
+    } finally {
+      setLoadingCoins(false);
+    }
+  };
 
   useEffect(() => {
     loadSavingsData();
