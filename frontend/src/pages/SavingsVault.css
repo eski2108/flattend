@@ -230,11 +230,11 @@
 
 .summary-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(0, 240, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 240, 255, 0.4);
 }
 
 .summary-card:hover::before {
-  background: linear-gradient(135deg, #00F0FF88, #7B2CFF88);
+  background: linear-gradient(135deg, #00F0FF, #7B2CFF);
 }
 
 /* Card Icons (Background) */
