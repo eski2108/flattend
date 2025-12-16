@@ -719,8 +719,8 @@
 }
 
 .token-card:hover {
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 240, 255, 0.5);
-  transform: translateY(-2px);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45), 0 0 24px rgba(0, 240, 255, 0.25);
+  transform: translateY(-1px);
   border-color: rgba(0, 240, 255, 0.65);
 }
 
