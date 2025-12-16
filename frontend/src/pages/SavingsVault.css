@@ -669,6 +669,30 @@
   color: #00FF85;
 }
 
+.token-pnl-section {
+  min-width: 180px;
+  font-size: 13px;
+}
+
+.pnl-label {
+  color: #B5B5B5;
+  margin-right: 6px;
+  font-weight: 500;
+}
+
+.pnl-value {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.pnl-value.positive {
+  color: #00FF85;
+}
+
+.pnl-value.negative {
+  color: #FF4444;
+}
+
 .token-interest-earned,
 .token-est-monthly {
   font-size: 13px;
