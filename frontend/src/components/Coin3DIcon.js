@@ -11,18 +11,19 @@ import React from 'react';
  * LOCKED: December 2025
  */
 
-// 93 coins with REAL 3D logos from IconScout
+// 107 coins with REAL 3D logos from IconScout
 const COINS_WITH_3D_LOGOS = [
   'aave', 'ada', 'algo', 'ape', 'aptos', 'arb', 'atom', 'avax', 'axs', 'bad',
-  'bch', 'beam', 'bnb', 'bonk', 'btc', 'cake', 'chz', 'comp', 'crv', 'ctsi',
-  'dai', 'dash', 'doge', 'dogs', 'dot', 'eos', 'eth', 'fet', 'fil', 'floki',
-  'flow', 'ftm', 'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'icx', 'id',
-  'imx', 'inj', 'jto', 'jup', 'kaspa', 'ldo', 'link', 'ltc', 'mana', 'matic',
-  'mina', 'mkr', 'mnt', 'near', 'neo', 'not', 'nwc', 'om', 'ondo', 'op',
-  'pepe', 'pew', 'pyth', 'rndr', 'rune', 'sand', 'sei', 'shib', 'sidus', 'sol',
-  'stx', 'sui', 'sushi', 'tfuel', 'theta', 'tia', 'ton', 'trump', 'trx', 'tusd',
-  'uni', 'usdc', 'usdt', 'vet', 'vlx', 'waves', 'wif', 'wld', 'xlm', 'xmr',
-  'xrp', 'zec', 'zent'
+  'bazed', 'bch', 'beam', 'bel', 'bnb', 'bonk', 'btc', 'cake', 'cfx', 'chr',
+  'chz', 'comp', 'cro', 'crv', 'cspr', 'ctsi', 'cvc', 'dai', 'dash', 'doge',
+  'dogs', 'dot', 'egld', 'eos', 'eth', 'fet', 'fil', 'fitfi', 'floki', 'flow',
+  'fluf', 'ftm', 'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'icx', 'id',
+  'imx', 'inj', 'jto', 'jup', 'kaia', 'kaspa', 'kiba', 'ldo', 'link', 'ltc',
+  'mana', 'matic', 'mina', 'mkr', 'mnt', 'near', 'neo', 'not', 'nwc', 'om',
+  'ondo', 'op', 'pepe', 'pew', 'pyth', 'rndr', 'rune', 'sand', 'sei', 'shib',
+  'sidus', 'sol', 'stx', 'sui', 'sun', 'sushi', 'tfuel', 'theta', 'tia', 'ton',
+  'trump', 'trx', 'tusd', 'uni', 'usdc', 'usdt', 'vet', 'vlx', 'waves', 'wif',
+  'wld', 'xdc', 'xlm', 'xmr', 'xrp', 'zec', 'zent'
 ];
 
 const cleanSymbol = (symbol) => {
@@ -41,6 +42,7 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     ? `/assets/coins/3d/${clean}.png`
     : '/assets/coins/3d/placeholder.svg';
   
+  // REDUCED GLOW - more subtle
   const badgeStyle = {
     width: `${size}px`,
     height: `${size}px`,
@@ -48,12 +50,11 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     minHeight: `${size}px`,
     borderRadius: '50%',
     background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
-    border: '2px solid rgba(0, 229, 255, 0.5)',
+    border: '1.5px solid rgba(0, 229, 255, 0.3)',
     boxShadow: `
-      0 0 15px rgba(0,229,255,0.6),
-      0 0 30px rgba(0,229,255,0.4),
-      0 0 45px rgba(0,229,255,0.2),
-      0 4px 15px rgba(0,0,0,0.5)
+      0 0 8px rgba(0,229,255,0.3),
+      0 0 16px rgba(0,229,255,0.15),
+      0 2px 8px rgba(0,0,0,0.4)
     `,
     display: 'flex',
     alignItems: 'center',

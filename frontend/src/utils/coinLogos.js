@@ -7,18 +7,19 @@
  * LOCKED: December 2025
  */
 
-// 93 coins with REAL 3D logos
+// 107 coins with REAL 3D logos
 const LOCAL_LOGOS = [
   'aave', 'ada', 'algo', 'ape', 'aptos', 'arb', 'atom', 'avax', 'axs', 'bad',
-  'bch', 'beam', 'bnb', 'bonk', 'btc', 'cake', 'chz', 'comp', 'crv', 'ctsi',
-  'dai', 'dash', 'doge', 'dogs', 'dot', 'eos', 'eth', 'fet', 'fil', 'floki',
-  'flow', 'ftm', 'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'icx', 'id',
-  'imx', 'inj', 'jto', 'jup', 'kaspa', 'ldo', 'link', 'ltc', 'mana', 'matic',
-  'mina', 'mkr', 'mnt', 'near', 'neo', 'not', 'nwc', 'om', 'ondo', 'op',
-  'pepe', 'pew', 'pyth', 'rndr', 'rune', 'sand', 'sei', 'shib', 'sidus', 'sol',
-  'stx', 'sui', 'sushi', 'tfuel', 'theta', 'tia', 'ton', 'trump', 'trx', 'tusd',
-  'uni', 'usdc', 'usdt', 'vet', 'vlx', 'waves', 'wif', 'wld', 'xlm', 'xmr',
-  'xrp', 'zec', 'zent'
+  'bazed', 'bch', 'beam', 'bel', 'bnb', 'bonk', 'btc', 'cake', 'cfx', 'chr',
+  'chz', 'comp', 'cro', 'crv', 'cspr', 'ctsi', 'cvc', 'dai', 'dash', 'doge',
+  'dogs', 'dot', 'egld', 'eos', 'eth', 'fet', 'fil', 'fitfi', 'floki', 'flow',
+  'fluf', 'ftm', 'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'icx', 'id',
+  'imx', 'inj', 'jto', 'jup', 'kaia', 'kaspa', 'kiba', 'ldo', 'link', 'ltc',
+  'mana', 'matic', 'mina', 'mkr', 'mnt', 'near', 'neo', 'not', 'nwc', 'om',
+  'ondo', 'op', 'pepe', 'pew', 'pyth', 'rndr', 'rune', 'sand', 'sei', 'shib',
+  'sidus', 'sol', 'stx', 'sui', 'sun', 'sushi', 'tfuel', 'theta', 'tia', 'ton',
+  'trump', 'trx', 'tusd', 'uni', 'usdc', 'usdt', 'vet', 'vlx', 'waves', 'wif',
+  'wld', 'xdc', 'xlm', 'xmr', 'xrp', 'zec', 'zent'
 ];
 
 const cleanSymbol = (symbol) => {
