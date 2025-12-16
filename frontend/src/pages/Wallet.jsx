@@ -149,6 +149,7 @@ export default function Wallet() {
                         <img 
                           src={getCoinLogo(bal.currency)} 
                           alt={bal.currency}
+                          data-emoji={getCoinEmoji(bal.currency)}
                           style={{
                             width: '100%',
                             height: '100%',
@@ -157,7 +158,7 @@ export default function Wallet() {
                           onError={(e) => {
                             // Show EMOJI in 3D-style circle if PNG doesn't exist
                             e.target.style.display = 'none';
-                            const emoji = getCoinEmoji(bal.currency);
+                            const emoji = e.target.dataset.emoji || '💎';
                             e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(19, 215, 255, 0.2), rgba(122, 60, 255, 0.2)); border: 1px solid rgba(19, 215, 255, 0.3); border-radius: 50%; font-size: 28px; font-weight: 600;">${emoji}</div>`;
                           }}
                         />
