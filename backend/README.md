@@ -2,14 +2,52 @@
 
 FastAPI-based backend for the CoinHubX cryptocurrency exchange platform.
 
+---
+
+# ⚠️ ENVIRONMENT SETUP (ENV) – REQUIRED ⚠️
+
+## 🚨 THIS PROJECT WILL NOT RUN WITHOUT ENV CONFIGURATION 🚨
+
+**Before running this project, you MUST:**
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Fill in ALL required variables** (see table below)
+
+3. **Read the full setup guide:** [`ENV_SETUP.md`](./ENV_SETUP.md)
+
+---
+
+### Required Environment Variables
+
+| Variable | Service | Where to Get |
+|----------|---------|-------------|
+| `MONGO_URL` | MongoDB Atlas | [cloud.mongodb.com](https://cloud.mongodb.com) |
+| `DB_NAME` | MongoDB | Your database name |
+| `JWT_SECRET` | Security | Generate: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `SENDGRID_API_KEY` | Email | [sendgrid.com](https://app.sendgrid.com/settings/api_keys) |
+| `NOWPAYMENTS_API_KEY` | Crypto Payments | [nowpayments.io](https://account.nowpayments.io) |
+
+### Security Notice
+
+- ✅ `.env.example` is committed (template only, no secrets)
+- ❌ `.env` is **NOT** committed (contains your secrets)
+- ❌ **NO secrets are stored in GitHub**
+- 📖 Full documentation: [`ENV_SETUP.md`](./ENV_SETUP.md)
+
+---
+
 ## Quick Start
 
 ```bash
-# 1. Copy environment template
+# 1. Copy environment template (REQUIRED)
 cp .env.example .env
 
-# 2. Fill in your environment variables (see ENV_SETUP.md for details)
-nano .env
+# 2. Fill in your environment variables
+nano .env  # Edit with your values from ENV_SETUP.md
 
 # 3. Install dependencies
 pip install -r requirements.txt
@@ -18,21 +56,18 @@ pip install -r requirements.txt
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
 ```
 
+---
+
 ## Documentation
 
-- **[ENV_SETUP.md](./ENV_SETUP.md)** - Complete environment configuration guide
-- **[.env.example](./.env.example)** - Environment variable template
+| File | Description |
+|------|-------------|
+| [`.env.example`](./.env.example) | Environment variable template (copy to `.env`) |
+| [`ENV_SETUP.md`](./ENV_SETUP.md) | Complete environment configuration guide |
+| [`ESCROW_FLOW.md`](./ESCROW_FLOW.md) | P2P escrow system documentation |
+| [`FEE_SYSTEM.md`](./FEE_SYSTEM.md) | Fee structure and revenue tracking |
 
-## Environment Variables
-
-See [ENV_SETUP.md](./ENV_SETUP.md) for complete documentation.
-
-**Minimum required:**
-- `MONGO_URL` - MongoDB connection string
-- `DB_NAME` - Database name
-- `JWT_SECRET` - JWT signing secret
-- `SENDGRID_API_KEY` - Email service
-- `NOWPAYMENTS_API_KEY` - Crypto payments
+---
 
 ## API Endpoints
 
@@ -58,20 +93,26 @@ All endpoints are prefixed with `/api`
 - `POST /api/p2p/trade` - Create P2P trade
 - `POST /api/p2p/escrow/release` - Release escrow
 
+---
+
 ## Tech Stack
 
 - **Framework:** FastAPI
-- **Database:** MongoDB
+- **Database:** MongoDB Atlas
 - **Email:** SendGrid
 - **Payments:** NOWPayments
 - **SMS/2FA:** Twilio
 - **Auth:** JWT + Google OAuth
+
+---
 
 ## Health Check
 
 ```bash
 curl http://localhost:8001/api/health
 ```
+
+---
 
 ## License
 
