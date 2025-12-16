@@ -26445,7 +26445,7 @@ async def get_referral_analytics():
 
 @api_router.get("/admin/revenue/dashboard")
 async def get_admin_revenue_dashboard(timeframe: str = "all"):
-    """Get comprehensive revenue dashboard - matches frontend expectations exactly"""
+    """Get comprehensive revenue dashboard from admin_revenue collection"""
     try:
         from datetime import datetime, timedelta, timezone
         
@@ -26460,13 +26460,11 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         else:  # all
             start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
         
-        # Get ALL fee transactions with details
-        # Handle both string timestamps and datetime objects
-        fee_transactions = await db.transaction_history.find(
-            {
-                "fee_amount": {"$exists": True, "$gt": 0}
-            }
-        ).to_list(10000)
+        # ═══════════════════════════════════════════════════════════════
+        # PRIMARY SOURCE: admin_revenue collection (where all fees are logged)
+        # ═══════════════════════════════════════════════════════════════
+        revenue_records = await db.admin_revenue.find({}).to_list(10000)
+        logger.info(f"🔍 Found {len(revenue_records)} admin_revenue records")
         
         logger.info(f"🔍 Found {len(fee_transactions)} fee transactions")
         
