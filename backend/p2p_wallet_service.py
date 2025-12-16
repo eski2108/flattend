@@ -228,12 +228,12 @@ async def p2p_create_trade_with_wallet(
                 await email_service.send_p2p_order_created(
                     user_email=buyer.get("email"),
                     user_name=buyer.get("full_name", "Buyer"),
-                    trade_id=trade_id,
-                    crypto_amount=crypto_amount,
-                    crypto_currency=sell_order["crypto_currency"],
+                    order_id=trade_id,
+                    role="buyer",
+                    amount=crypto_amount,
+                    coin=sell_order["crypto_currency"],
                     fiat_amount=fiat_amount,
-                    fiat_currency=sell_order["fiat_currency"],
-                    is_buyer=True
+                    fiat_currency=sell_order["fiat_currency"]
                 )
                 logger.info(f"📧 Trade created email sent to buyer {buyer.get('email')}")
                 
@@ -241,12 +241,12 @@ async def p2p_create_trade_with_wallet(
                 await email_service.send_p2p_order_created(
                     user_email=seller.get("email"),
                     user_name=seller.get("full_name", "Seller"),
-                    trade_id=trade_id,
-                    crypto_amount=crypto_amount,
-                    crypto_currency=sell_order["crypto_currency"],
+                    order_id=trade_id,
+                    role="seller",
+                    amount=crypto_amount,
+                    coin=sell_order["crypto_currency"],
                     fiat_amount=fiat_amount,
-                    fiat_currency=sell_order["fiat_currency"],
-                    is_buyer=False
+                    fiat_currency=sell_order["fiat_currency"]
                 )
                 logger.info(f"📧 Escrow locked email sent to seller {seller.get('email')}")
         except Exception as email_error:
