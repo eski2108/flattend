@@ -534,7 +534,7 @@ const SavingsVault = () => {
           <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
             <h3>Add to Savings</h3>
             <button className="modal-close-btn" onClick={() => setShowTransferModal(false)}>✕</button>
-            <p>Lock your crypto to start earning guaranteed yields</p>
+            <p>Open a new notice account deposit. Choose your notice period to start earning.</p>
           </div>
         </div>
       )}
