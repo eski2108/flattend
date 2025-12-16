@@ -290,7 +290,7 @@ const SavingsVault = () => {
                 <span className="detail-value">Mar 16, 2025</span>
               </div>
             </div>
-            <button className="select-notice-btn primary">Select</button>
+            <button className="select-notice-btn primary">Lock Funds</button>
           </div>
         </div>
         
