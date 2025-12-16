@@ -12,6 +12,8 @@ const SavingsVault = () => {
   const [positions, setPositions] = useState([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [totalBalanceCrypto, setTotalBalanceCrypto] = useState('0.00 BTC');
+  const [lockedBalance, setLockedBalance] = useState(0);
+  const [lockedBalanceCrypto, setLockedBalanceCrypto] = useState('0.00 BTC');
   const [availableBalance, setAvailableBalance] = useState(0);
   const [availableBalanceCrypto, setAvailableBalanceCrypto] = useState('0.00 BTC');
   const [totalInterestEarned, setTotalInterestEarned] = useState(0);
