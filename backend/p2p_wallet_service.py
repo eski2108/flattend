@@ -648,6 +648,54 @@ async def p2p_cancel_trade_with_wallet(
                 {"$inc": {"crypto_amount": crypto_amount}}
             )
         
+        # Send notifications (in-app)
+        try:
+            from p2p_notification_service import get_notification_service
+            notification_service = get_notification_service()
+            await notification_service.notify_trade_cancelled(
+                trade_id=trade_id,
+                buyer_id=trade["buyer_id"],
+                seller_id=seller_id,
+                cancelled_by="buyer" if user_id == trade["buyer_id"] else "seller",
+                reason=reason
+            )
+        except Exception as notif_error:
+            logger.warning(f"⚠️ In-app notification failed: {str(notif_error)}")
+        
+        # 📧 Send EMAIL notifications
+        try:
+            from email_service import get_email_service
+            email_service = get_email_service()
+            
+            buyer = await db.users.find_one({"user_id": trade["buyer_id"]})
+            seller = await db.users.find_one({"user_id": seller_id})
+            
+            if buyer and seller:
+                # Email to buyer
+                await email_service.send_p2p_order_cancelled(
+                    user_email=buyer.get("email"),
+                    user_name=buyer.get("full_name", "Buyer"),
+                    trade_id=trade_id,
+                    crypto_amount=crypto_amount,
+                    crypto_currency=currency,
+                    reason=reason,
+                    cancelled_by="buyer" if user_id == trade["buyer_id"] else "seller"
+                )
+                
+                # Email to seller
+                await email_service.send_p2p_order_cancelled(
+                    user_email=seller.get("email"),
+                    user_name=seller.get("full_name", "Seller"),
+                    trade_id=trade_id,
+                    crypto_amount=crypto_amount,
+                    crypto_currency=currency,
+                    reason=reason,
+                    cancelled_by="buyer" if user_id == trade["buyer_id"] else "seller"
+                )
+                logger.info(f"📧 Cancellation emails sent for trade {trade_id}")
+        except Exception as email_error:
+            logger.warning(f"⚠️ Email notification failed: {str(email_error)}")
+        
         logger.info(f"✅ P2P trade cancelled: {trade_id}")
         
         return {
