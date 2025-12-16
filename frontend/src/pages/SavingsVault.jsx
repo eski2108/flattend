@@ -486,18 +486,24 @@ const SavingsVault = () => {
                     {/* Price Information */}
                     <div className="price-info-section">
                       <div className="price-info-item">
-                        <span className="price-label">Entry Price:</span>
-                        <span className="price-value">${position.entry_price || 'N/A'}</span>
+                        <span className="price-label">Current Price</span>
+                        <span className="price-value">${position.current_price || 'Loading...'}</span>
                       </div>
                       <div className="price-info-item">
-                        <span className="price-label">Current Price:</span>
-                        <span className="price-value">${position.current_price || 'N/A'}</span>
-                      </div>
-                      <div className="price-info-item">
-                        <span className="price-label">P&L Value:</span>
-                        <span className={`price-value ${position.pnl_usd >= 0 ? 'positive' : 'negative'}`}>
-                          ${position.pnl_usd >= 0 ? '+' : ''}{position.pnl_usd || '0.00'}
+                        <span className="price-label">P/L (Unrealised)</span>
+                        <span className={`price-value ${position.pnl_percentage >= 0 ? 'positive' : 'negative'}`}>
+                          {position.pnl_percentage >= 0 ? '↑' : '↓'} {position.pnl_percentage >= 0 ? '+' : ''}{position.pnl_percentage || '0.00'}%
                         </span>
+                      </div>
+                      <div className="price-info-item">
+                        <span className="price-label">P/L Value</span>
+                        <span className={`price-value ${position.pnl_usd >= 0 ? 'positive' : 'negative'}`}>
+                          {position.pnl_usd >= 0 ? '+' : ''}${position.pnl_usd || '0.00'}
+                        </span>
+                      </div>
+                      <div className="price-info-item">
+                        <span className="price-label">Entry Price</span>
+                        <span className="price-value secondary">${position.entry_price || 'N/A'}</span>
                       </div>
                     </div>
                     
