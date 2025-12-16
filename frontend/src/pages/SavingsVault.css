@@ -908,6 +908,28 @@
   font-weight: 700;
 }
 
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  border-radius: 8px;
+}
+
+.countdown-label {
+  font-size: 12px;
+  color: #B5B5B5;
+  font-weight: 500;
+}
+
+.countdown-value {
+  font-size: 14px;
+  color: #FF4444;
+  font-weight: 700;
+}
+
 /* Auto-Compound Flip Switch */
 .auto-compound-switch {
   display: flex;
