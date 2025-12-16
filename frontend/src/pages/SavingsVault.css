@@ -58,7 +58,7 @@
   font-weight: 700;
   color: var(--accent);
   letter-spacing: 1px;
-  text-shadow: 0 0 30px rgba(0, 240, 255, 0.8), 0 0 60px rgba(0, 240, 255, 0.4);
+  text-shadow: 0 0 30px rgba(19, 215, 255, 0.6), 0 0 60px rgba(19, 215, 255, 0.3);
   animation: neon-sign-pulse 3s ease-in-out infinite;
   margin: 0;
 }
