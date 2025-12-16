@@ -356,26 +356,10 @@ const SavingsVault = () => {
                   </div>
                   
                   <div className="token-toggles-section">
-                    {/* Flexible/Staked Segmented Control */}
-                    <div className="flexible-staked-control">
-                      <button 
-                        className={`toggle-segment ${position.type === 'flexible' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleFlexibleStaked(index, 'flexible');
-                        }}
-                      >
-                        Flexible
-                      </button>
-                      <button 
-                        className={`toggle-segment ${position.type === 'staked' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleFlexibleStaked(index, 'staked');
-                        }}
-                      >
-                        Staked
-                      </button>
+                    {/* Notice Period Display */}
+                    <div className="notice-period-display">
+                      <span className="notice-label">Notice Period:</span>
+                      <span className="notice-value">{position.lock_period || 30} Days</span>
                     </div>
                     
                     {/* Auto-Compound Flip Switch */}
