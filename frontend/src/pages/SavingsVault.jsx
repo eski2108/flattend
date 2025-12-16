@@ -600,7 +600,7 @@ const SavingsVault = () => {
           <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
             <h3>Add {selectedPosition?.symbol}</h3>
             <button className="modal-close-btn" onClick={() => setShowAddModal(false)}>✕</button>
-            <p>Add more to your savings</p>
+            <p>Lock additional crypto to increase your earnings</p>
           </div>
         </div>
       )}
