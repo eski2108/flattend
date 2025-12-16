@@ -956,7 +956,7 @@
 }
 
 .token-pnl-section {
-  min-width: 180px;
+  min-width: 140px;
   font-size: 13px;
 }
 
@@ -973,9 +973,35 @@
 
 .pnl-value.positive {
   color: #00FF85;
+  text-shadow: 0 0 10px rgba(0, 255, 133, 0.4);
 }
 
 .pnl-value.negative {
+  color: #FF4D6D;
+  text-shadow: 0 0 10px rgba(255, 77, 109, 0.4);
+}
+
+.token-24h-section {
+  min-width: 100px;
+  font-size: 12px;
+}
+
+.h24-label {
+  color: #B5B5B5;
+  margin-right: 6px;
+  font-weight: 500;
+}
+
+.h24-value {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.h24-value.positive {
+  color: #00FF85;
+}
+
+.h24-value.negative {
   color: #FF4D6D;
 }
 
