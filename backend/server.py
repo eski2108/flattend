@@ -28585,82 +28585,74 @@ async def get_savings_positions(user_id: str):
         available_balance_usd = 0
         total_interest_earned_usd = 0
         
-        # MOCK DATA for demonstration - showing multiple crypto positions
-        mock_positions = [
-            {
-                "symbol": "BTC",
-                "name": "Bitcoin",
-                "balance": 1.5,
-                "apy": 5.2,
-                "type": "flexible",
-                "auto_compound": True,
-                "interest_earned": 0.05,
-                "lock_period": None
-            },
-            {
-                "symbol": "ETH",
-                "name": "Ethereum",
-                "balance": 10.8,
-                "apy": 4.8,
-                "type": "staked",
-                "auto_compound": False,
-                "interest_earned": 0.3,
-                "lock_period": 30
-            },
-            {
-                "symbol": "USDT",
-                "name": "Tether",
-                "balance": 5000,
-                "apy": 8.5,
-                "type": "flexible",
-                "auto_compound": True,
-                "interest_earned": 120.5,
-                "lock_period": None
-            },
-            {
-                "symbol": "BNB",
-                "name": "Binance Coin",
-                "balance": 25.3,
-                "apy": 6.3,
-                "type": "staked",
-                "auto_compound": True,
-                "interest_earned": 1.2,
-                "lock_period": 90
-            },
-            {
-                "symbol": "SOL",
-                "name": "Solana",
-                "balance": 150,
-                "apy": 7.1,
-                "type": "flexible",
-                "auto_compound": False,
-                "interest_earned": 8.5,
-                "lock_period": None
-            }
-        ]
+        # Get user's savings positions from database
+        savings_cursor = db.savings_balances.find({"user_id": user_id})
+        savings_list = await savings_cursor.to_list(100)
         
-        for pos in mock_positions:
-            symbol_upper = pos['symbol'].upper()
-            price_usd = market_prices.get(symbol_upper, {}).get('price_usd', 0)
+        for saving in savings_list:
+            if saving.get('savings_balance', 0) <= 0:
+                continue
             
-            balance_usd = pos['balance'] * price_usd
-            interest_earned_usd = pos['interest_earned'] * price_usd
+            symbol = saving['currency']
+            balance = saving.get('savings_balance', 0)
+            coin_id = get_coingecko_id(symbol)
             
-            # Calculate estimated monthly return
-            monthly_return = (pos['balance'] * (pos['apy'] / 100) / 12) * price_usd
+            # Get current price from CoinGecko
+            current_price = await get_coingecko_price(coin_id)
+            if not current_price:
+                # Fallback to internal market prices
+                current_price = market_prices.get(symbol.upper(), {}).get('price_usd', 0)
+            
+            # Get entry price (stored when deposit was made)
+            entry_price = saving.get('entry_price', current_price)
+            entry_timestamp = saving.get('deposit_timestamp', int(time.time()))
+            
+            # If no entry price stored, try to get historical price
+            if not entry_price or entry_price == 0:
+                entry_price = await get_coingecko_historical_price(coin_id, entry_timestamp)
+                if not entry_price:
+                    entry_price = current_price
+            
+            # Calculate P&L
+            balance_usd = balance * current_price
+            entry_value_usd = balance * entry_price
+            
+            pnl_usd = balance_usd - entry_value_usd
+            pnl_percentage = ((current_price - entry_price) / entry_price * 100) if entry_price > 0 else 0
+            pnl_crypto = pnl_usd / current_price if current_price > 0 else 0
+            
+            # Get interest earned
+            interest_earned = saving.get('accrued_earnings', 0)
+            interest_earned_usd = interest_earned * current_price
+            
+            # Get APY from product
+            product = await db.savings_products.find_one({
+                "currency": symbol,
+                "product_type": "flexible"
+            })
+            apy = product.get('apy_max', 5.0) if product else 5.0
+            
+            # Calculate estimated monthly
+            monthly_return = (balance * (apy / 100) / 12) * current_price
             
             position_data = {
-                "symbol": pos['symbol'],
-                "name": pos['name'],
-                "balance": pos['balance'],
+                "symbol": symbol,
+                "name": saving.get('name', symbol),
+                "balance": balance,
                 "balance_usd": round(balance_usd, 2),
-                "apy": pos['apy'],
-                "type": pos['type'],
-                "auto_compound": pos['auto_compound'],
-                "interest_earned": pos['interest_earned'],
+                "entry_price": round(entry_price, 2),
+                "current_price": round(current_price, 2),
+                "pnl_percentage": round(pnl_percentage, 2),
+                "pnl_usd": round(pnl_usd, 2),
+                "pnl_crypto": round(pnl_crypto, 6),
+                "apy": apy,
+                "type": saving.get('type', 'flexible'),
+                "auto_compound": saving.get('auto_compound', False),
+                "interest_earned": interest_earned,
                 "interest_earned_usd": round(interest_earned_usd, 2),
                 "estimated_monthly": round(monthly_return, 2),
-                "lock_period": pos['lock_period']
+                "lock_period": saving.get('lock_period', None),
+                "deposit_timestamp": entry_timestamp
             }
             
             positions.append(position_data)
@@ -28668,7 +28660,7 @@ async def get_savings_positions(user_id: str):
             total_balance_usd += balance_usd
             total_interest_earned_usd += interest_earned_usd
             
-            if pos['type'] == 'flexible':
+            if position_data['type'] == 'flexible':
                 available_balance_usd += balance_usd
         
         return {
