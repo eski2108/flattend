@@ -691,32 +691,26 @@
 }
 
 /* Flexible/Staked Segmented Control */
-.flexible-staked-control {
+.notice-period-display {
   display: flex;
-  border: 1px solid rgba(0, 240, 255, 0.4);
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(166, 78, 255, 0.1);
+  border: 1px solid rgba(166, 78, 255, 0.3);
   border-radius: 8px;
-  overflow: hidden;
 }
 
-.toggle-segment {
-  background: transparent;
-  border: none;
-  padding: 8px 18px;
+.notice-label {
+  font-size: 12px;
   color: #B5B5B5;
-  font-size: 13px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.toggle-segment:hover {
-  background: rgba(0, 240, 255, 0.1);
-}
-
-.toggle-segment.active {
-  background: #00F0FF;
-  color: #0E0F1A;
-  font-weight: 600;
+.notice-value {
+  font-size: 14px;
+  color: #A64EFF;
+  font-weight: 700;
 }
 
 /* Auto-Compound Flip Switch */
