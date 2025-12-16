@@ -28683,6 +28683,7 @@ async def get_savings_positions(user_id: str):
                 "balance_usd": round(balance_usd, 2),
                 "entry_price": round(entry_price, 2),
                 "current_price": round(current_price, 2),
+                "price_change_24h": round(price_change_24h, 2),
                 "pnl_percentage": round(pnl_percentage, 2),
                 "pnl_usd": round(pnl_usd, 2),
                 "pnl_crypto": round(pnl_crypto, 6),
