@@ -14,7 +14,8 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import CHXButton from '@/components/CHXButton';
 import { Zap, Loader, Search, ArrowDownLeft, ArrowUpRight, Repeat, ChevronDown, Clock, Lock } from 'lucide-react';
-import { getCoinLogo, getCoinLogoAlt, getCoinLogoFallback, getCoinLogoFallback2, cleanSymbol } from '@/utils/coinLogos';
+import { cleanSymbol, LOCAL_LOGOS, COINGECKO_IDS } from '@/utils/coinLogos';
+import Coin3DIcon from '@/components/Coin3DIcon';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
