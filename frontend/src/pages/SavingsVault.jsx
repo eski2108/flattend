@@ -244,7 +244,7 @@ const SavingsVault = () => {
         <p className="notice-selector-description">Select how long you want to lock your deposit. Longer periods earn higher APY.</p>
         
         <div className="notice-period-options">
-          <div className="notice-option-card" onClick={() => console.log('30 day selected')}>
+          <div className={`notice-option-card ${selectedNoticePeriod === 30 ? 'selected' : ''}`}>
             <div className="notice-option-header">
               <span className="notice-days">30 Days</span>
               <span className="notice-apy">5.2% APY</span>
@@ -259,7 +259,7 @@ const SavingsVault = () => {
                 <span className="detail-value">Jan 15, 2025</span>
               </div>
             </div>
-            <button className="select-notice-btn">Lock Funds</button>
+            <button className="select-notice-btn" onClick={() => {setSelectedNoticePeriod(30); setShowTransferModal(true);}}>Lock Funds</button>
           </div>
 
           <div className="notice-option-card" onClick={() => console.log('60 day selected')}>
