@@ -7778,7 +7778,22 @@ async def login_user(login_req: LoginRequest, request: Request):
     
     # Verify password - handle both old SHA256 and new bcrypt hashes
     from security import password_hasher
-    stored_hash = user["password_hash"]
+    
+    # Handle users without password_hash (e.g., OAuth users, incomplete registrations)
+    stored_hash = user.get("password_hash") or user.get("password")
+    if not stored_hash:
+        logger.error(f"No password hash found for user {login_req.email}")
+        await security_logger.log_login_attempt(
+            user_id=user.get("user_id", "unknown"),
+            email=login_req.email,
+            success=False,
+            ip_address=client_ip,
+            user_agent=user_agent,
+            device_fingerprint=device_fingerprint,
+            failure_reason="No password set - possibly OAuth user"
+        )
+        raise HTTPException(status_code=401, detail="Invalid credentials. If you registered with Google, please use Google Sign In.")
+    
     logger.info(f"🔍 DEBUG: Stored hash: {stored_hash[:20]}... (length: {len(stored_hash)})")
     
     password_valid = False
