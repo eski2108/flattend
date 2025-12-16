@@ -7,10 +7,12 @@
 .savings-vault-container {
   background: #0E0F1A;
   min-height: 100vh;
-  padding: 20px;
+  padding: 24px 32px;
   color: #FFFFFF;
   font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* ============================================
