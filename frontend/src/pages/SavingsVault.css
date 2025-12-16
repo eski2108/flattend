@@ -256,6 +256,21 @@
   margin-bottom: 10px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-tooltip {
+  font-size: 13px;
+  color: #00F0FF;
+  cursor: help;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.info-tooltip:hover {
+  opacity: 1;
 }
 
 .card-value-main {
