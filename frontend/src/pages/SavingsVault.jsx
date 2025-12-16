@@ -456,6 +456,13 @@ const SavingsVault = () => {
                     </span>
                   </div>
                   
+                  <div className="token-24h-section">
+                    <span className="h24-label">24h:</span>
+                    <span className={`h24-value ${position.price_change_24h >= 0 ? 'positive' : 'negative'}`}>
+                      {position.price_change_24h >= 0 ? '+' : ''}{position.price_change_24h || 0}%
+                    </span>
+                  </div>
+                  
                   <div className="token-interest-earned">
                     <span className="earned-label">Interest earned:</span>
                     <span className="earned-value">{position.interest_earned || '0.00'} {position.symbol}</span>
