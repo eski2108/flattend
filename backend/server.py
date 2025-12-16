@@ -3501,6 +3501,24 @@ async def release_crypto_from_escrow_OLD(request: ReleaseCryptoRequest):
     fee_dict['trade_id'] = request.trade_id
     await db.crypto_transactions.insert_one(fee_dict)
     
+    # ═══════════════════════════════════════════════════════════════
+    # LOG P2P MAKER FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
+    # ═══════════════════════════════════════════════════════════════
+    await db.admin_revenue.insert_one({
+        "revenue_id": str(uuid.uuid4()),
+        "source": "p2p_maker_fee",
+        "revenue_type": "P2P_TRADING",
+        "currency": trade["crypto_currency"],
+        "amount": platform_fee,
+        "user_id": trade["seller_id"],
+        "related_transaction_id": request.trade_id,
+        "fee_percentage": trade_fee_percent,
+        "referral_commission_paid": 0.0,  # Will be updated if referral exists
+        "net_profit": platform_fee,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "description": f"P2P Maker fee ({trade_fee_percent}%) from trade {request.trade_id}"
+    })
+    
     # Process referral commission using centralized engine
     try:
         referral_engine = get_referral_engine()
