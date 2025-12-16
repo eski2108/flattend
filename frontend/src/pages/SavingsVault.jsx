@@ -232,12 +232,12 @@ const SavingsVault = () => {
         </div>
       </header>
 
-      {/* SUMMARY CARDS - 3 cards in a row */}
+      {/* SUMMARY CARDS - 4 cards in a row */}
       <div className="summary-cards-section">
-        {/* Card 1: Total Balance */}
+        {/* Card 1: Total Savings */}
         <div className="summary-card glassmorphic-card">
           <div className="card-icon-bg wallet-icon"></div>
-          <div className="card-label">Total Balance</div>
+          <div className="card-label">Total Savings</div>
           <div className="card-value-main">{totalBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{totalBalanceCrypto.split(' ')[1]}</span></div>
           <div className="card-value-fiat">≈ ${totalBalance.toFixed(2)}</div>
           <div className="live-indicator">
@@ -246,10 +246,22 @@ const SavingsVault = () => {
           </div>
         </div>
 
-        {/* Card 2: Available to Transfer */}
+        {/* Card 2: Locked Balance */}
+        <div className="summary-card glassmorphic-card">
+          <div className="card-icon-bg lock-icon"></div>
+          <div className="card-label">Locked Balance</div>
+          <div className="card-value-main">{lockedBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{lockedBalanceCrypto.split(' ')[1]}</span></div>
+          <div className="card-value-fiat">≈ ${lockedBalance.toFixed(2)}</div>
+          <div className="live-indicator">
+            <span className="live-dot pulsing"></span>
+            <span className="live-text">Live</span>
+          </div>
+        </div>
+
+        {/* Card 3: Available to Withdraw */}
         <div className="summary-card glassmorphic-card">
           <div className="card-icon-bg unlock-icon"></div>
-          <div className="card-label">Available to Transfer</div>
+          <div className="card-label">Available to Withdraw</div>
           <div className="card-value-main">{availableBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{availableBalanceCrypto.split(' ')[1]}</span></div>
           <div className="card-value-fiat">≈ ${availableBalance.toFixed(2)}</div>
           <div className="live-indicator">
@@ -258,10 +270,10 @@ const SavingsVault = () => {
           </div>
         </div>
 
-        {/* Card 3: Interest Earned to Date */}
+        {/* Card 4: Total Interest Earned */}
         <div className="summary-card glassmorphic-card">
           <div className="card-icon-bg interest-icon"></div>
-          <div className="card-label">Interest Earned to Date</div>
+          <div className="card-label">Total Interest Earned</div>
           <div className="card-value-main">{totalInterestCrypto.split(' ')[0]} <span className="crypto-symbol">{totalInterestCrypto.split(' ')[1]}</span> Earned</div>
           <div className="card-value-fiat">≈ ${totalInterestEarned.toFixed(2)}</div>
           <div className="live-indicator">
