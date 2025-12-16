@@ -48,17 +48,83 @@ const SavingsVault = () => {
     loadAvailableCoins();
   }, []);
 
-  // Emoji mapping for coins
+  // Emoji mapping for coins - COMPREHENSIVE LIST
   const getCoinEmoji = (symbol) => {
     const emojiMap = {
+      // Top cryptos
       'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶',
-      'XRP': '✖️', 'SOL': '☀️', 'LTC': '🌕', 'DOGE': '🐶', 'ADA': '🌐',
-      'MATIC': '🔷', 'TRX': '🔺', 'DOT': '🎯', 'AVAX': '🏔️', 'XLM': '⭐',
-      'BCH': '💚', 'SHIB': '🐾', 'TON': '🔵', 'DAI': '🟡', 'LINK': '🔗',
-      'ATOM': '⚛️', 'XMR': '🕶️', 'FIL': '📁', 'UNI': '🦄', 'ETC': '🟢',
-      'ALGO': '◯', 'VET': '♦️', 'WBTC': '🔄'
+      'XRP': '✖️', 'SOL': '☀️', 'ADA': '🌐', 'DOGE': '🐶', 'TRX': '🔺',
+      'DOT': '🎯', 'MATIC': '🔷', 'LTC': '🌕', 'SHIB': '🐕', 'AVAX': '🏔️',
+      'LINK': '🔗', 'ATOM': '⚛️', 'UNI': '🦄', 'XLM': '⭐', 'XMR': '🕶️',
+      'BCH': '💚', 'TON': '🔵', 'DAI': '🟡', 'ETC': '🟢', 'FIL': '📁',
+      'VET': '♦️', 'ALGO': '◯', 'WBTC': '🔄', 'NEAR': '🌈', 'ICP': '∞',
+      
+      // Meme coins
+      'PEPE': '🐸', 'FLOKI': '🐕', 'BONK': '💥', 'WIF': '🧢', 'MEME': '😂',
+      'LEASH': '🦴', 'ELON': '🚀', 'BABYDOGE': '🐶', 'KISHU': '🐕', 
+      
+      // Stablecoins
+      'BUSD': '💵', 'TUSD': '💵', 'USDP': '💲', 'GUSD': '🏦', 'USDD': '💵',
+      'FRAX': '🏛️', 'LUSD': '💵', 'SUSD': '💵',
+      
+      // DeFi tokens
+      'AAVE': '👻', 'COMP': '🏛️', 'MKR': '👑', 'SNX': '⚡', 'CRV': '🌊',
+      'SUSHI': '🍣', 'CAKE': '🎂', '1INCH': '🦄', 'BAL': '⚖️', 'YFI': '💎',
+      'RUNE': '⚔️', 'ALPHA': '🐺', 'CREAM': '🍦', 'BADGER': '🦡',
+      
+      // Gaming/Metaverse
+      'AXS': '🎮', 'SAND': '🏖️', 'MANA': '🌍', 'ENJ': '🎮', 'GALA': '🎪',
+      'IMX': '🎮', 'GODS': '⚔️', 'SUPER': '🦸', 'STARL': '🌟', 'RACA': '🎨',
+      
+      // Layer 2 & Scaling
+      'ARB': '🔷', 'OP': '🔴', 'LRC': '⭕', 'ZK': '🔐', 'METIS': '⚡',
+      
+      // Exchange tokens
+      'FTT': '📈', 'OKB': '⭕', 'HT': '🔥', 'KCS': '🎯', 'GT': '🎯',
+      'CRO': '💎', 'LEO': '🦁', 'WOO': '🌊', 'MX': '💹',
+      
+      // AI & Tech
+      'FET': '🤖', 'AGIX': '🧠', 'OCEAN': '🌊', 'GRT': '📊', 'RENDER': '🎨',
+      'INJ': '💉', 'RNDR': '🎬', 'PAAL': '🤖',
+      
+      // Privacy coins
+      'DASH': '💸', 'ZEC': '🔒', 'DCR': '🔐', 'SC': '☁️',
+      
+      // Other major coins
+      'APT': '🔷', 'ARB': '🔵', 'OP': '🔴', 'SUI': '💧', 'SEI': '⚡',
+      'TIA': '🌌', 'INJ': '💉', 'RUNE': '⚔️', 'OSMO': '🌊', 'KUJI': '🌪️',
+      'LUNA': '🌙', 'LUNC': '🌑', 'UST': '💵', 'USTC': '💵',
+      
+      // Specific tokens from your list
+      'MEW': '😺', 'USDR': '💲', 'USDTMATIC': '💵', 'USDCBSC': '💲',
+      'SHIBBSC': '🐕', 'AVAXC': '🏔️', 'BERA': '🐻', 'RVN': '🦅',
+      'WOLFERC20': '🐺', 'GUARD': '🛡️', 'AWEBASE': '⚡', 'USDTSOL': '💵',
+      'VET': '💎', 'WETH': '◆', 'WBNB': '🔶', 'WMATIC': '🔷',
+      
+      // Base/Chain specific
+      'BASE': '🔵', 'ARB': '🔷', 'OP': '🔴', 'ZKSYNC': '🔐',
+      'POLYGON': '🔷', 'ARBITRUM': '🔷', 'OPTIMISM': '🔴',
+      
+      // Others
+      'FTM': '👻', 'ONE': '1️⃣', 'HBAR': '♾️', 'THETA': '📺',
+      'TFUEL': '⛽', 'EGLD': '⚡', 'FLOW': '🌊', 'ROSE': '🌹',
+      'KDA': '⛓️', 'KLAY': '🎮', 'MINA': '🔐', 'ZIL': '⚡'
     };
-    return emojiMap[symbol.toUpperCase()] || '💰';
+    
+    // Try exact match first
+    const upperSymbol = symbol.toUpperCase();
+    if (emojiMap[upperSymbol]) return emojiMap[upperSymbol];
+    
+    // Try partial matches for wrapped/chain-specific tokens
+    if (upperSymbol.includes('USDT')) return '💵';
+    if (upperSymbol.includes('USDC')) return '💲';
+    if (upperSymbol.includes('BTC')) return '₿';
+    if (upperSymbol.includes('ETH')) return '◆';
+    if (upperSymbol.includes('SHIB')) return '🐕';
+    if (upperSymbol.includes('DOGE')) return '🐶';
+    
+    // Default fallback
+    return '💎';
   };
 
   const loadAvailableCoins = async () => {
