@@ -224,6 +224,69 @@ const SavingsVault = () => {
         </div>
       </div>
 
+      {/* NOTICE ACCOUNT SELECTOR */}
+      <div className="notice-selector-section glassmorphic-card">
+        <h3 className="notice-selector-title">Choose Notice Period</h3>
+        <p className="notice-selector-description">Select how long you want to lock your deposit. Longer periods earn higher APY.</p>
+        
+        <div className="notice-period-options">
+          <div className="notice-option-card">
+            <div className="notice-option-header">
+              <span className="notice-days">30 Days</span>
+              <span className="notice-apy">5.2% APY</span>
+            </div>
+            <div className="notice-option-details">
+              <div className="notice-detail-item">
+                <span className="detail-label">Early Withdrawal Penalty:</span>
+                <span className="detail-value">2% of deposit</span>
+              </div>
+              <div className="notice-detail-item">
+                <span className="detail-label">Next Unlock Date:</span>
+                <span className="detail-value">Jan 15, 2025</span>
+              </div>
+            </div>
+            <button className="select-notice-btn">Select 30 Days</button>
+          </div>
+
+          <div className="notice-option-card">
+            <div className="notice-option-header">
+              <span className="notice-days">60 Days</span>
+              <span className="notice-apy">6.8% APY</span>
+            </div>
+            <div className="notice-option-details">
+              <div className="notice-detail-item">
+                <span className="detail-label">Early Withdrawal Penalty:</span>
+                <span className="detail-value">3.5% of deposit</span>
+              </div>
+              <div className="notice-detail-item">
+                <span className="detail-label">Next Unlock Date:</span>
+                <span className="detail-value">Feb 14, 2025</span>
+              </div>
+            </div>
+            <button className="select-notice-btn">Select 60 Days</button>
+          </div>
+
+          <div className="notice-option-card highlighted">
+            <div className="best-value-badge">Best Value</div>
+            <div className="notice-option-header">
+              <span className="notice-days">90 Days</span>
+              <span className="notice-apy">8.5% APY</span>
+            </div>
+            <div className="notice-option-details">
+              <div className="notice-detail-item">
+                <span className="detail-label">Early Withdrawal Penalty:</span>
+                <span className="detail-value">5% of deposit</span>
+              </div>
+              <div className="notice-detail-item">
+                <span className="detail-label">Next Unlock Date:</span>
+                <span className="detail-value">Mar 16, 2025</span>
+              </div>
+            </div>
+            <button className="select-notice-btn primary">Select 90 Days</button>
+          </div>
+        </div>
+      </div>
+
       {/* REFERRAL BANNER */}
       {showReferralBanner && (
         <div className="referral-banner glassmorphic-card purple-accent">
