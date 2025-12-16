@@ -262,7 +262,7 @@ const SavingsVault = () => {
             <button className="select-notice-btn" onClick={() => {setSelectedNoticePeriod(30); setShowTransferModal(true);}}>Lock Funds</button>
           </div>
 
-          <div className="notice-option-card" onClick={() => console.log('60 day selected')}>
+          <div className={`notice-option-card ${selectedNoticePeriod === 60 ? 'selected' : ''}`}>
             <div className="notice-option-header">
               <span className="notice-days">60 Days</span>
               <span className="notice-apy">6.8% APY</span>
@@ -277,7 +277,7 @@ const SavingsVault = () => {
                 <span className="detail-value">Feb 14, 2025</span>
               </div>
             </div>
-            <button className="select-notice-btn">Lock Funds</button>
+            <button className="select-notice-btn" onClick={() => {setSelectedNoticePeriod(60); setShowTransferModal(true);}}>Lock Funds</button>
           </div>
 
           <div className="notice-option-card highlighted" onClick={() => console.log('90 day selected')}>
