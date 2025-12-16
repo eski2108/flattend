@@ -217,12 +217,12 @@ const SavingsVault = () => {
             )}
           </div>
           
-          {/* Transfer from Wallet Button */}
+          {/* Add to Savings Button */}
           <button 
             className="transfer-from-wallet-btn"
             onClick={() => setShowTransferModal(true)}
           >
-            Transfer from Wallet
+            Add to Savings
           </button>
         </div>
       </header>
