@@ -994,6 +994,65 @@ const SavingsVault = () => {
           </div>
         </div>
       )}
+
+      {/* NOTICE RULES MODAL */}
+      {showNoticeRulesModal && (
+        <div className="modal-overlay" onClick={() => setShowNoticeRulesModal(false)}>
+          <div className="modal-content glassmorphic-card modal-large" onClick={(e) => e.stopPropagation()}>
+            <h3>Notice Rules & Early Withdrawal Penalties</h3>
+            <button className="modal-close-btn" onClick={() => setShowNoticeRulesModal(false)}>✕</button>
+            
+            <div className="notice-rules-content" style={{ padding: '20px 0', lineHeight: '1.8' }}>
+              <h4 style={{ color: 'var(--accent)', marginTop: '0' }}>How Notice Accounts Work</h4>
+              <p>When you deposit into a savings vault, you choose a <strong>notice period</strong> (30, 60, or 90 days). Your funds are locked for this duration to earn higher interest.</p>
+              
+              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Interest Rates</h4>
+              <ul>
+                <li><strong>30-day lock:</strong> 5.2% APY</li>
+                <li><strong>60-day lock:</strong> 6.8% APY</li>
+                <li><strong>90-day lock:</strong> 8.5% APY</li>
+              </ul>
+              
+              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Early Withdrawal Penalties (OPTION A)</h4>
+              <p style={{ color: '#ff6b6b', fontWeight: 600 }}>If you withdraw before the lock period ends:</p>
+              <ul>
+                <li><strong>30-day lock:</strong> 2% penalty on principal + forfeit 100% interest</li>
+                <li><strong>60-day lock:</strong> 3.5% penalty on principal + forfeit 100% interest</li>
+                <li><strong>90-day lock:</strong> 5% penalty on principal + forfeit 100% interest</li>
+              </ul>
+              
+              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Important Notes</h4>
+              <ul>
+                <li>✅ Your principal is <strong>NEVER lost</strong> (you only pay a small percentage)</li>
+                <li>✅ Penalty is taken from the withdrawal amount, not your total balance</li>
+                <li>✅ After the lock period ends, withdraw anytime without penalty</li>
+                <li>✅ Interest is calculated daily and paid at maturity</li>
+              </ul>
+              
+              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Example</h4>
+              <div style={{ background: 'rgba(19, 215, 255, 0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                <p><strong>Scenario:</strong> You deposit 1 BTC in a 30-day lock</p>
+                <p><strong>After 15 days:</strong> You earned 0.05 BTC interest</p>
+                <p><strong>Early withdrawal:</strong></p>
+                <ul style={{ marginLeft: '20px' }}>
+                  <li>Penalty: 1 BTC × 2% = 0.02 BTC</li>
+                  <li>Forfeit interest: 0.05 BTC</li>
+                  <li><strong>You receive:</strong> 0.98 BTC</li>
+                  <li><strong>Platform keeps:</strong> 0.07 BTC (penalty + interest)</li>
+                </ul>
+              </div>
+            </div>
+            
+            <button 
+              className="modal-cta-btn" 
+              onClick={() => setShowNoticeRulesModal(false)}
+              style={{ marginTop: '24px' }}
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
