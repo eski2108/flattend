@@ -41,6 +41,7 @@ const SavingsVault = () => {
   const [showReferralBanner, setShowReferralBanner] = useState(true);
   const [availableCoins, setAvailableCoins] = useState([]);
   const [loadingCoins, setLoadingCoins] = useState(false);
+  const [showNoticeRulesModal, setShowNoticeRulesModal] = useState(false);
 
   useEffect(() => {
     loadSavingsData();
