@@ -203,6 +203,7 @@ const SavingsVault = () => {
           <div className="card-label">Available to Withdraw</div>
           <div className="card-value-main">{availableBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{availableBalanceCrypto.split(' ')[1]}</span></div>
           <div className="card-value-fiat">≈ ${availableBalance.toFixed(2)}</div>
+          <div className="card-subtext">After notice period ends</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
