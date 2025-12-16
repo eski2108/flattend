@@ -1653,8 +1653,23 @@
 
 .deposit-step h4 {
   font-size: 18px;
+  font-weight: 700;
   color: var(--text);
+  margin-bottom: 8px;
+}
+
+.step-subtitle {
+  font-size: 13px;
+  color: var(--muted);
   margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.loading-coins {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .deposit-input {
