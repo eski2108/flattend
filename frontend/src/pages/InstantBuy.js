@@ -561,13 +561,14 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 objectFit: 'contain'
               }}
               onError={(e) => {
-                // Try cryptocurrency-icons CDN as fallback
-                if (!e.target.dataset.triedCdn) {
-                  e.target.dataset.triedCdn = 'true';
-                  const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase();
-                  e.target.src = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${cleanSymbol}.svg`;
+                // Fallback chain: CoinCap -> crypto-icons CDN -> generic icon
+                const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim();
+                
+                if (!e.target.dataset.triedAlt) {
+                  e.target.dataset.triedAlt = 'true';
+                  e.target.src = getCoinLogoAlt(cleanSymbol);
                 } else if (!e.target.dataset.triedGeneric) {
-                  // Final fallback: generic crypto icon (NOT a letter)
+                  // Final fallback: bold generic crypto icon
                   e.target.dataset.triedGeneric = 'true';
                   e.target.src = getGenericCoinIcon();
                 }
