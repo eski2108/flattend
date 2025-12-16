@@ -26040,9 +26040,34 @@ async def get_portfolio_holdings(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ██████████████████████████████████████████████████████████████████████████████████
+# ███                                                                            ███
+# ███   🔒 CRITICAL NOWPAYMENTS INTEGRATION - DO NOT MODIFY OR REMOVE 🔒       ███
+# ███                                                                            ███
+# ███   THIS ENDPOINT PROVIDES 238+ CRYPTOCURRENCIES FROM NOWPAYMENTS API       ███
+# ███   IT IS CONNECTED TO THE SAVINGS VAULT MODAL FOR COIN SELECTION           ███
+# ███                                                                            ███
+# ███   ⚠️  WARNING: REMOVING THIS WILL BREAK THE SAVINGS VAULT FEATURE  ⚠️     ███
+# ███   ⚠️  WARNING: DO NOT CHANGE THE ENDPOINT URL OR RESPONSE FORMAT  ⚠️     ███
+# ███                                                                            ███
+# ███   PROTECTED BY: User requirement - locked 16 Dec 2024                     ███
+# ███                                                                            ███
+# ██████████████████████████████████████████████████████████████████████████████████
 @api_router.get("/nowpayments/currencies")
 async def get_nowpayments_currencies():
-    """Get full list of available currencies from NOWPayments"""
+    """
+    🔒 LOCKED ENDPOINT - DO NOT MODIFY 🔒
+    
+    Get full list of available currencies from NOWPayments (238+ coins)
+    Used by: Savings Vault modal coin selection
+    
+    ⚠️ CRITICAL: This endpoint must always return:
+    {
+        "success": true,
+        "currencies": [...],  # Array of currency symbols
+        "count": 238          # Total count
+    }
+    """
     try:
         import httpx
         
