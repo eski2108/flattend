@@ -4888,6 +4888,105 @@ async def create_savings_deposit_new(request: dict):
         logger.error(f"Error creating savings deposit: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/savings/withdraw")
+async def withdraw_from_savings(request: dict):
+    """Withdraw from savings with early withdrawal penalty if applicable"""
+    try:
+        user_id = request.get('user_id')
+        coin = request.get('coin')
+        amount = request.get('amount')
+        
+        # Get savings balance
+        savings = await db.savings_balances.find_one({
+            "user_id": user_id,
+            "currency": coin
+        })
+        
+        if not savings:
+            raise HTTPException(status_code=404, detail="Savings position not found")
+        
+        if savings.get('savings_balance', 0) < amount:
+            raise HTTPException(status_code=400, detail="Insufficient savings balance")
+        
+        # Check if early withdrawal (within lock period)
+        from datetime import datetime, timezone
+        current_time = datetime.now(timezone.utc)
+        deposit_time = datetime.fromtimestamp(savings.get('deposit_timestamp', 0), timezone.utc)
+        lock_period_days = savings.get('lock_period', 30)
+        unlock_time = deposit_time + timedelta(days=lock_period_days)
+        
+        penalty_amount = 0
+        penalty_percentage = 0
+        is_early = current_time < unlock_time
+        
+        if is_early:
+            # Calculate penalty based on lock period
+            penalty_map = {30: 0.02, 60: 0.035, 90: 0.05}
+            penalty_percentage = penalty_map.get(lock_period_days, 0.02)
+            
+            # Penalty is % of interest earned, not principal
+            interest_earned = savings.get('accrued_earnings', 0)
+            penalty_amount = interest_earned * penalty_percentage
+        
+        # Update savings balance
+        new_balance = savings.get('savings_balance', 0) - amount
+        new_interest = max(0, savings.get('accrued_earnings', 0) - penalty_amount)
+        
+        if new_balance <= 0:
+            # Remove position entirely
+            await db.savings_balances.delete_one({
+                "user_id": user_id,
+                "currency": coin
+            })
+        else:
+            await db.savings_balances.update_one(
+                {"user_id": user_id, "currency": coin},
+                {"$set": {
+                    "savings_balance": new_balance,
+                    "accrued_earnings": new_interest,
+                    "updated_at": current_time.isoformat()
+                }}
+            )
+        
+        # Log withdrawal transaction
+        await db.savings_transactions.insert_one({
+            "user_id": user_id,
+            "currency": coin,
+            "type": "withdrawal",
+            "amount": amount,
+            "early_withdrawal": is_early,
+            "penalty_amount": penalty_amount,
+            "penalty_percentage": penalty_percentage,
+            "timestamp": current_time.isoformat()
+        })
+        
+        # If penalty, log to business revenue
+        if penalty_amount > 0:
+            await db.admin_revenue.insert_one({
+                "source": "savings_penalty",
+                "currency": coin,
+                "amount": penalty_amount,
+                "user_id": user_id,
+                "timestamp": current_time.isoformat(),
+                "description": f"Early withdrawal penalty ({penalty_percentage*100}%)"
+            })
+        
+        return {
+            "success": True,
+            "message": "Withdrawal completed",
+            "withdrawal": {
+                "coin": coin,
+                "amount": amount,
+                "early_withdrawal": is_early,
+                "penalty_applied": penalty_amount,
+                "penalty_percentage": penalty_percentage * 100,
+                "net_amount": amount - penalty_amount
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error withdrawing from savings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/savings/transfer")
 async def transfer_to_savings(request: dict):
     """Transfer funds between Wallet and Savings via wallet service"""
