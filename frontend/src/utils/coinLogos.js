@@ -81,5 +81,5 @@ const COIN_BADGE_STYLE = (size = 40) => ({
 });
 
 // Export as both default AND named to fix import issues
-export { getCoinLogo, getCoinLogoAlt, getGenericCoinIcon };
+export { getCoinLogo, getCoinLogoAlt, getGenericCoinIcon, COIN_LOGO_3D_STYLE, COIN_BADGE_STYLE, cleanSymbol };
 export default getCoinLogo;
