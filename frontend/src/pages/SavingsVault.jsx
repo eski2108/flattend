@@ -41,102 +41,39 @@ const SavingsVault = () => {
   const loadSavingsData = async () => {
     try {
       setLoading(true);
+      const userId = localStorage.getItem('user_id');
       
-      // DEMO DATA - Full implementation for UI demonstration
-      const demoPositions = [
-        {
-          symbol: 'BTC',
-          name: 'Bitcoin',
-          balance: 1.5,
-          balance_usd: 195000,
-          apy: 5.2,
-          type: 'flexible',
-          auto_compound: true,
-          interest_earned: 0.05,
-          interest_earned_usd: 6500,
-          estimated_monthly: 812.50,
-          lock_period: null
-        },
-        {
-          symbol: 'ETH',
-          name: 'Ethereum',
-          balance: 10.8,
-          balance_usd: 43200,
-          apy: 4.8,
-          type: 'staked',
-          auto_compound: false,
-          interest_earned: 0.3,
-          interest_earned_usd: 1200,
-          estimated_monthly: 172.80,
-          lock_period: 30
-        },
-        {
-          symbol: 'USDT',
-          name: 'Tether',
-          balance: 5000,
-          balance_usd: 5000,
-          apy: 8.5,
-          type: 'flexible',
-          auto_compound: true,
-          interest_earned: 120.5,
-          interest_earned_usd: 120.50,
-          estimated_monthly: 35.42,
-          lock_period: null
-        },
-        {
-          symbol: 'BNB',
-          name: 'Binance Coin',
-          balance: 25.3,
-          balance_usd: 15180,
-          apy: 6.3,
-          type: 'staked',
-          auto_compound: true,
-          interest_earned: 1.2,
-          interest_earned_usd: 720,
-          estimated_monthly: 79.70,
-          lock_period: 90
-        },
-        {
-          symbol: 'SOL',
-          name: 'Solana',
-          balance: 150,
-          balance_usd: 30000,
-          apy: 7.1,
-          type: 'flexible',
-          auto_compound: false,
-          interest_earned: 8.5,
-          interest_earned_usd: 1700,
-          estimated_monthly: 177.50,
-          lock_period: null
-        }
-      ];
+      if (!userId) {
+        console.error('No user_id found');
+        setLoading(false);
+        return;
+      }
       
-      setPositions(demoPositions);
+      // REAL BACKEND CALL
+      const response = await axios.get(`${API}/api/savings/positions/${userId}`);
       
-      // Calculate totals
-      const totalBal = demoPositions.reduce((sum, p) => sum + p.balance_usd, 0);
-      const totalInterest = demoPositions.reduce((sum, p) => sum + p.interest_earned_usd, 0);
-      const lockedBal = demoPositions.filter(p => p.type === 'staked').reduce((sum, p) => sum + p.balance_usd, 0);
-      const availableBal = demoPositions.filter(p => p.type === 'flexible').reduce((sum, p) => sum + p.balance_usd, 0);
-      
-      setTotalBalance(totalBal);
-      setTotalBalanceCrypto('1.50 BTC');
-      setLockedBalance(lockedBal);
-      setLockedBalanceCrypto('0.98 BTC');
-      setAvailableBalance(availableBal);
-      setAvailableBalanceCrypto('0.52 BTC');
-      setTotalInterestEarned(totalInterest);
-      setTotalInterestCrypto('0.123 BTC');
-      
-      // Initialize graph periods
-      const periods = {};
-      demoPositions.forEach((pos, idx) => {
-        periods[idx] = '30d';
-      });
-      setGraphPeriod(periods);
-      
+      if (response.data.success) {
+        const data = response.data;
+        setPositions(data.positions || []);
+        setTotalBalance(data.total_balance_usd || 0);
+        setTotalBalanceCrypto(data.total_balance_crypto || '0.00 BTC');
+        setLockedBalance(data.locked_balance_usd || 0);
+        setLockedBalanceCrypto(data.locked_balance_crypto || '0.00 BTC');
+        setAvailableBalance(data.available_balance_usd || 0);
+        setAvailableBalanceCrypto(data.available_balance_crypto || '0.00 BTC');
+        setTotalInterestEarned(data.total_interest_earned_usd || 0);
+        setTotalInterestCrypto(data.total_interest_earned_crypto || '0.00 BTC');
+        
+        // Initialize graph periods
+        const periods = {};
+        data.positions?.forEach((pos, idx) => {
+          periods[idx] = '30d';
+        });
+        setGraphPeriod(periods);
+      }
     } catch (error) {
       console.error('Error loading savings:', error);
+      setPositions([]);
     } finally {
       setLoading(false);
     }
