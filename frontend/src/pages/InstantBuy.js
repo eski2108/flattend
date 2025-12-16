@@ -538,14 +538,18 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
       {/* Coin Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '18px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-          {/* 3D Coin Icon - Same as footer */}
+          {/* 3D Coin Icon with CSS effect */}
           <div style={{
             width: '52px',
             height: '52px',
             borderRadius: '50%',
+            background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4), 0 0 15px rgba(0,229,255,0.1)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: '5px',
             overflow: 'hidden'
           }}>
             <img 
@@ -554,18 +558,20 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4)) drop-shadow(0 0 8px rgba(0,255,200,0.15))',
+                borderRadius: '50%'
               }}
               onError={(e) => {
-                // Try CoinCap CDN as fallback
+                // Try CoinGecko as fallback
                 const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase();
-                if (!e.target.dataset.triedCdn) {
-                  e.target.dataset.triedCdn = 'true';
-                  e.target.src = `https://assets.coincap.io/assets/icons/${cleanSymbol}@2x.png`;
+                if (!e.target.dataset.triedGecko) {
+                  e.target.dataset.triedGecko = 'true';
+                  e.target.src = `https://assets.coingecko.com/coins/images/1/small/${cleanSymbol}.png`;
                 } else {
-                  // Final fallback - letter
+                  // Final fallback - styled letter
                   e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = `<span style="font-size: 24px; font-weight: 700; color: ${coin.color}">${coin.symbol.charAt(0)}</span>`;
+                  e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #00E5FF; text-shadow: 0 0 10px rgba(0,229,255,0.4);">${coin.symbol.charAt(0)}</span>`;
                 }
               }}
             />
