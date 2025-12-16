@@ -1,10 +1,16 @@
 /**
- * Get 3D crypto logo from local /crypto-logos/ folder
- * These are the same high-quality 3D PNGs used in the footer
- * DO NOT use CDN or SVG logos - use local 3D PNGs only
+ * Get 3D crypto logo - local first, then CoinCap CDN fallback
+ * Local logos in /crypto-logos/ are high-quality 3D PNGs
+ * CoinCap CDN provides good quality logos for all other coins
  */
 
-// Get 3D coin logo - uses local PNG files (same as footer)
+// Local 3D logos we have
+const LOCAL_3D_LOGOS = [
+  'ada', 'atom', 'avax', 'bch', 'bnb', 'btc', 'dai', 'doge', 'dot', 
+  'eth', 'link', 'ltc', 'matic', 'shib', 'sol', 'trx', 'uni', 'usdc', 'usdt', 'xrp'
+];
+
+// Get 3D coin logo - local PNG if available, else CoinCap CDN
 const getCoinLogo = (symbol) => {
   if (!symbol) return '/crypto-logos/btc.png';
   
@@ -14,16 +20,26 @@ const getCoinLogo = (symbol) => {
     .trim()
     .toLowerCase();
   
-  // Return local 3D PNG logo
-  return `/crypto-logos/${cleanSymbol}.png`;
+  // Use local 3D PNG if we have it
+  if (LOCAL_3D_LOGOS.includes(cleanSymbol)) {
+    return `/crypto-logos/${cleanSymbol}.png`;
+  }
+  
+  // Fallback to CoinCap CDN (good quality)
+  return `https://assets.coincap.io/assets/icons/${cleanSymbol}@2x.png`;
 };
 
-// Alternative - same as main (we only use local 3D PNGs)
+// Alternative CDN for fallback
 const getCoinLogoAlt = (symbol) => {
-  return getCoinLogo(symbol);
+  if (!symbol) return '/crypto-logos/btc.png';
+  const cleanSymbol = symbol
+    .replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|-.*$/gi, '')
+    .trim()
+    .toLowerCase();
+  return `https://assets.coincap.io/assets/icons/${cleanSymbol}@2x.png`;
 };
 
-// Generic fallback - returns BTC logo
+// Generic fallback - BTC logo
 const getGenericCoinIcon = () => {
   return '/crypto-logos/btc.png';
 };
