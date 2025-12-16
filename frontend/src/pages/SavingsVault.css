@@ -341,14 +341,15 @@
    ============================================ */
 
 .referral-banner {
-  padding: 24px 32px;
-  margin-bottom: 40px;
+  padding: 20px 28px;
+  margin-bottom: 32px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
+  box-shadow: 0 4px 16px rgba(166, 78, 255, 0.2);
 }
 
 .referral-banner.purple-accent::before {
