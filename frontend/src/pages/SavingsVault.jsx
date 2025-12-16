@@ -190,6 +190,7 @@ const SavingsVault = () => {
           <div className="card-label">Locked Balance</div>
           <div className="card-value-main">{lockedBalanceCrypto.split(' ')[0]} <span className="crypto-symbol">{lockedBalanceCrypto.split(' ')[1]}</span></div>
           <div className="card-value-fiat">≈ ${lockedBalance.toFixed(2)}</div>
+          <div className="card-subtext">In notice period</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
