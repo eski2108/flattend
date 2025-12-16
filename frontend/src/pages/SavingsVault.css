@@ -410,8 +410,14 @@
 }
 
 .notice-option-card.highlighted {
-  border-color: rgba(0, 240, 255, 0.65);
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 240, 255, 0.6);
+  border-color: rgba(19, 215, 255, 0.65);
+  box-shadow: 0 0 0 1px rgba(19,215,255,.18), 0 12px 40px rgba(0,0,0,.45), 0 0 22px rgba(19,215,255,.10);
+}
+
+.notice-option-card.selected {
+  border-color: rgba(19, 215, 255, 0.8);
+  box-shadow: 0 0 0 2px rgba(19,215,255,.4), 0 12px 40px rgba(0,0,0,.45), 0 0 30px rgba(19,215,255,.3);
+  background: rgba(19, 215, 255, 0.05);
 }
 
 .penalty-text {
