@@ -9231,6 +9231,9 @@ async def resolve_dispute_final(request: dict):
         logger.warning(f"⚠️ Failed to credit admin dispute fee: {str(admin_error)}")
     
     # Log to fee_transactions
+    referrer_commission = commission_result.get("commission_amount", 0) if commission_result["success"] else 0
+    admin_net_fee = dispute_fee - referrer_commission
+    
     await db.fee_transactions.insert_one({
         "user_id": losing_party,
         "transaction_type": "dispute",
@@ -9238,14 +9241,35 @@ async def resolve_dispute_final(request: dict):
         "amount": trade_value_gbp,
         "fee_amount": dispute_fee,
         "fee_percent": dispute_fee_percent,
-        "admin_fee": dispute_fee,
-        "referrer_commission": commission_result.get("commission_amount", 0) if commission_result["success"] else 0,
+        "admin_fee": admin_net_fee,
+        "referrer_commission": referrer_commission,
         "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
         "currency": "GBP",
         "reference_id": dispute_id,
         "trade_id": trade["trade_id"],
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
+    
+    # 💰 LOG TO ADMIN_REVENUE for unified revenue tracking
+    await db.admin_revenue.insert_one({
+        "revenue_id": str(uuid.uuid4()),
+        "source": "dispute_fee",
+        "revenue_type": "DISPUTE_FEE",
+        "currency": "GBP",
+        "amount": admin_net_fee,
+        "gross_fee": dispute_fee,
+        "referral_commission_paid": referrer_commission,
+        "referrer_id": commission_result.get("referrer_id") if commission_result["success"] else None,
+        "user_id": losing_party,
+        "fee_percentage": dispute_fee_percent,
+        "dispute_id": dispute_id,
+        "trade_id": trade["trade_id"],
+        "resolution": resolution,
+        "net_profit": admin_net_fee,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "description": f"Dispute fee from trade {trade['trade_id']} - {resolution}"
+    })
+    logger.info(f"💰 Logged dispute fee to admin_revenue: £{admin_net_fee}")
     
     # Update trade based on resolution
     if resolution == "release_to_buyer":
