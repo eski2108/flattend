@@ -26556,7 +26556,7 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         by_currency_list = []
         for currency, data in by_currency.items():
             price_gbp = crypto_prices_gbp.get(currency, 1)
-            percentage = (data["total_revenue"] * price_gbp / total_revenue_crypto * 100) if total_revenue_crypto > 0 else 0
+            percentage = (data["total_revenue"] * price_gbp / total_revenue_gbp * 100) if total_revenue_gbp > 0 else 0
             by_currency_list.append({
                 "currency": currency,
                 "total_revenue": data["total_revenue"],
