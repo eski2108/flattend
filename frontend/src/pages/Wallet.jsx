@@ -170,10 +170,10 @@ export default function Wallet() {
                               e.target.dataset.triedSvg = 'true';
                               e.target.src = `/crypto-icons/${bal.currency.toLowerCase()}.svg`;
                             } else {
-                              // Final fallback: show first letter in colored circle
+                              // Final fallback: show EMOJI in colored circle
                               e.target.style.display = 'none';
-                              const letter = bal.currency?.substring(0, 1) || '?';
-                              e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #00F0FF, #7B2CFF); border-radius: 50%; font-size: 20px; font-weight: 700; color: #FFF;">${letter}</div>`;
+                              const emoji = getCoinEmoji(bal.currency);
+                              e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(19, 215, 255, 0.2), rgba(122, 60, 255, 0.2)); border: 1px solid rgba(19, 215, 255, 0.3); border-radius: 50%; font-size: 24px;">${emoji}</div>`;
                             }
                           }}
                         />
