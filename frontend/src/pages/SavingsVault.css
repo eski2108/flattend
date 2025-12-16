@@ -518,12 +518,23 @@
   margin-bottom: 120px;
 }
 
+.section-header-with-description {
+  margin-bottom: 24px;
+}
+
 .section-heading {
   font-size: 28px;
   font-weight: 600;
   color: #FFFFFF;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   letter-spacing: 0.5px;
+}
+
+.section-description {
+  font-size: 15px;
+  font-weight: 400;
+  color: #B5B5B5;
+  margin: 0;
 }
 
 .loading-state {
