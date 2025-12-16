@@ -451,6 +451,27 @@ async def p2p_release_crypto_with_wallet(
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
+        # 💰 LOG TO ADMIN_REVENUE for unified revenue tracking
+        import uuid
+        await db.admin_revenue.insert_one({
+            "revenue_id": str(uuid.uuid4()),
+            "source": "p2p_maker_fee",
+            "revenue_type": "P2P_FEE",
+            "currency": currency,
+            "amount": admin_fee,
+            "gross_fee": platform_fee,
+            "referral_commission_paid": referrer_commission,
+            "referrer_id": referrer_id,
+            "user_id": seller_id,
+            "buyer_id": buyer_id,
+            "fee_percentage": fee_percent,
+            "trade_id": trade_id,
+            "net_profit": admin_fee,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "description": f"P2P Maker fee ({fee_percent}%) from {crypto_amount} {currency} trade"
+        })
+        logger.info(f"💰 Logged P2P fee to admin_revenue: {admin_fee} {currency}")
+        
         logger.info(f"✅ P2P trade completed: {trade_id}, Fee: {platform_fee} {currency} (Admin: {admin_fee}, Referrer: {referrer_commission})")
         
         # 🔒 LOCKED: Update Merchant Statistics
