@@ -115,6 +115,17 @@ export default function Wallet() {
     }
   };
 
+  useEffect(() => {
+    const userData = localStorage.getItem('cryptobank_user');
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    const parsedUser = JSON.parse(userData);
+    setUser(parsedUser);
+    loadBalances(parsedUser.user_id);
+  }, []);
+
   return (
     <Layout>
       <div className="swap-theme-page">
