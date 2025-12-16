@@ -743,6 +743,18 @@
   color: var(--text);
   margin-bottom: 8px;
   letter-spacing: 0.5px;
+  position: relative;
+  padding-top: 20px;
+}
+
+.section-heading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.35), transparent);
 }
 
 .section-description {
