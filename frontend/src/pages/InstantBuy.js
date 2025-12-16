@@ -539,62 +539,8 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
       {/* Coin Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '18px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-          {/* 3D Coin Icon with CSS effect - 5 fallbacks before showing text */}
-          <div style={{
-            width: '52px',
-            height: '52px',
-            borderRadius: '50%',
-            background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4), 0 0 15px rgba(0,229,255,0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '5px',
-            overflow: 'hidden'
-          }}>
-            <img 
-              src={getCoinLogo(coin.symbol)}
-              alt={coin.symbol}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4)) drop-shadow(0 0 8px rgba(0,255,200,0.15))',
-                borderRadius: '50%'
-              }}
-              onError={(e) => {
-                const clean = cleanSymbol(coin.symbol);
-                const lowerSym = coin.symbol.toLowerCase();
-                
-                // 1. Try NOWPayments SVG with original symbol
-                if (!e.target.dataset.tried1) {
-                  e.target.dataset.tried1 = 'true';
-                  e.target.src = `https://nowpayments.io/images/coins/${lowerSym}.svg`;
-                }
-                // 2. Try NOWPayments SVG with cleaned symbol
-                else if (!e.target.dataset.tried2) {
-                  e.target.dataset.tried2 = 'true';
-                  e.target.src = `https://nowpayments.io/images/coins/${clean}.svg`;
-                }
-                // 3. Try CoinGecko/CoinCap
-                else if (!e.target.dataset.tried3) {
-                  e.target.dataset.tried3 = 'true';
-                  e.target.src = getCoinLogoFallback(coin.symbol);
-                }
-                // 4. Try CoinCap CDN
-                else if (!e.target.dataset.tried4) {
-                  e.target.dataset.tried4 = 'true';
-                  e.target.src = getCoinLogoFallback2(coin.symbol);
-                }
-                // 5. Final fallback - styled letter (LAST RESORT)
-                else {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = `<span style="font-size: 22px; font-weight: 700; color: #00E5FF; text-shadow: 0 0 10px rgba(0,229,255,0.4);">${clean.charAt(0).toUpperCase()}</span>`;
-                }
-              }}
-            />
-          </div>
+          {/* UNIFIED 3D Coin Icon - Local for top coins, CoinGecko CDN for others */}
+          <Coin3DIcon symbol={coin.symbol} size={52} />
           
           {/* Coin Info */}
           <div style={{ textAlign: 'left', flex: 1 }}>
