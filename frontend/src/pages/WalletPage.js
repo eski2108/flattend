@@ -29,13 +29,20 @@ const CoinIcon = ({ symbol, size = 40 }) => {
   const [imgSrc, setImgSrc] = useState(getCoinLogo(symbol));
   const [showFallback, setShowFallback] = useState(false);
   
+  const [fallbackStage, setFallbackStage] = useState(0);
+  
   const handleError = () => {
-    // Try CoinGecko CDN
-    const clean = symbol?.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|-.*$/gi, '').trim().toLowerCase();
-    const geckoUrl = `https://assets.coingecko.com/coins/images/1/small/${clean}.png`;
-    if (imgSrc !== geckoUrl) {
-      setImgSrc(geckoUrl);
+    const clean = symbol?.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE|-.*$/gi, '').trim().toLowerCase();
+    if (fallbackStage === 0) {
+      // Try CoinCap CDN
+      setImgSrc(`https://assets.coincap.io/assets/icons/${clean}@2x.png`);
+      setFallbackStage(1);
+    } else if (fallbackStage === 1) {
+      // Try CryptoCompare
+      setImgSrc(`https://www.cryptocompare.com/media/37746251/${clean}.png`);
+      setFallbackStage(2);
     } else {
+      // Show text fallback
       setShowFallback(true);
     }
   };
