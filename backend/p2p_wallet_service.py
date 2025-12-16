@@ -552,10 +552,9 @@ async def p2p_release_crypto_with_wallet(
                 await email_service.send_p2p_crypto_released(
                     user_email=buyer.get("email"),
                     user_name=buyer.get("full_name", "Buyer"),
-                    trade_id=trade_id,
-                    crypto_amount=amount_to_buyer,
-                    crypto_currency=currency,
-                    is_buyer=True
+                    order_id=trade_id,
+                    amount=amount_to_buyer,
+                    coin=currency
                 )
                 logger.info(f"📧 Release email sent to buyer {buyer.get('email')}")
                 
@@ -563,10 +562,9 @@ async def p2p_release_crypto_with_wallet(
                 await email_service.send_p2p_crypto_released(
                     user_email=seller.get("email"),
                     user_name=seller.get("full_name", "Seller"),
-                    trade_id=trade_id,
-                    crypto_amount=crypto_amount,
-                    crypto_currency=currency,
-                    is_buyer=False
+                    order_id=trade_id,
+                    amount=crypto_amount,
+                    coin=currency
                 )
                 logger.info(f"📧 Release email sent to seller {seller.get('email')}")
         except Exception as email_error:
