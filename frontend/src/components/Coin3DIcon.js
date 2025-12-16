@@ -1,14 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { getCoinLogo, getCoinLogoAlt, getCoinLogoFallback, cleanSymbol } from '@/utils/coinLogos';
+import { getCoinLogo, getCoinLogoAlt, getCoinLogoFallback, getCoinLogoFallback2, cleanSymbol } from '@/utils/coinLogos';
 
 /**
  * 3D Coin Icon Component
  * 
- * Fallback chain:
- * 1. Local PNG (/crypto-logos/{symbol}.png)
- * 2. CoinGecko image
- * 3. CoinCap CDN
- * 4. Styled text placeholder
+ * Fallback chain (5 stages before text):
+ * 1. Local PNG (/crypto-logos/{symbol}.png) or NOWPayments
+ * 2. NOWPayments SVG (has ALL 247+ coins)
+ * 3. CoinGecko image
+ * 4. CoinCap CDN
+ * 5. NOWPayments with cleaned symbol
+ * 6. Styled text placeholder (LAST RESORT)
  * 
  * CSS 3D Effect:
  * - Gradient badge background
@@ -19,25 +21,33 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const [fallbackStage, setFallbackStage] = useState(0);
   const [showTextFallback, setShowTextFallback] = useState(false);
   
-  // Get current image source based on fallback stage
+  const clean = cleanSymbol(symbol);
+  
+  // Get current image source based on fallback stage - 5 fallbacks before text!
   const getImageSrc = useCallback(() => {
     switch (fallbackStage) {
       case 0:
         return getCoinLogo(symbol);
       case 1:
-        return getCoinLogoAlt(symbol);
+        // NOWPayments with original symbol
+        return `https://nowpayments.io/images/coins/${symbol?.toLowerCase()}.svg`;
       case 2:
+        // NOWPayments with cleaned symbol
+        return `https://nowpayments.io/images/coins/${clean}.svg`;
+      case 3:
         return getCoinLogoFallback(symbol);
+      case 4:
+        return getCoinLogoFallback2(symbol);
       default:
         return null;
     }
-  }, [fallbackStage, symbol]);
+  }, [fallbackStage, symbol, clean]);
   
   const handleError = () => {
-    if (fallbackStage < 2) {
+    if (fallbackStage < 4) {
       setFallbackStage(prev => prev + 1);
     } else {
-      // All image sources failed, show text
+      // All 5 image sources failed, show text
       setShowTextFallback(true);
     }
   };
