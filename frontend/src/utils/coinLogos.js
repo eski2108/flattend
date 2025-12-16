@@ -4,20 +4,26 @@
  * ========================================
  * 
  * Coin Logo Utility
+ * SOURCE: IconScout 3D Crypto Icons
  * 
  * RULES:
- * 1. ONLY local 3D-rendered logos from /assets/coins/3d/
+ * 1. ONLY local 3D-rendered logos
  * 2. NO CDN, NO random downloads
  * 3. Placeholder for missing coins
  * 
  * LOCKED: December 2025
  */
 
-// Coins with REAL 3D-rendered logos
+// 81 coins with REAL 3D logos from IconScout
 const LOCAL_LOGOS = [
-  'ada', 'atom', 'bch', 'bnb', 'btc', 'dai', 'doge', 'dot', 
-  'eth', 'link', 'ltc', 'matic', 'shib', 'sol', 'trx', 'uni', 
-  'usdc', 'usdt', 'xrp'
+  'aave', 'ada', 'algo', 'ape', 'aptos', 'arb', 'atom', 'avax', 'axs', 'bch',
+  'beam', 'bnb', 'bonk', 'btc', 'cake', 'chz', 'comp', 'crv', 'dai', 'dash',
+  'doge', 'dogs', 'dot', 'eos', 'eth', 'fet', 'fil', 'floki', 'flow', 'ftm',
+  'gala', 'gmx', 'hbar', 'hmstr', 'hnt', 'icp', 'imx', 'inj', 'jto', 'jup',
+  'kaspa', 'ldo', 'link', 'ltc', 'mana', 'matic', 'mina', 'mkr', 'mnt', 'near',
+  'neo', 'not', 'ondo', 'op', 'pepe', 'pyth', 'rndr', 'rune', 'sand', 'sei',
+  'shib', 'sol', 'stx', 'sui', 'sushi', 'theta', 'tia', 'ton', 'trump', 'trx',
+  'uni', 'usdc', 'usdt', 'vet', 'waves', 'wif', 'wld', 'xlm', 'xmr', 'xrp', 'zec'
 ];
 
 const cleanSymbol = (symbol) => {
