@@ -345,7 +345,7 @@
    ============================================ */
 
 .referral-banner {
-  padding: 20px 28px;
+  padding: 16px 24px;
   margin-bottom: 32px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -353,7 +353,6 @@
   align-items: center;
   justify-content: space-between;
   position: relative;
-  box-shadow: 0 4px 16px rgba(166, 78, 255, 0.2);
 }
 
 .referral-banner.purple-accent::before {
