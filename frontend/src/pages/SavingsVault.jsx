@@ -230,22 +230,22 @@ const SavingsVault = () => {
         <p className="notice-selector-description">Select how long you want to lock your deposit. Longer periods earn higher APY.</p>
         
         <div className="notice-period-options">
-          <div className="notice-option-card">
+          <div className="notice-option-card" onClick={() => console.log('30 day selected')}>
             <div className="notice-option-header">
               <span className="notice-days">30 Days</span>
               <span className="notice-apy">5.2% APY</span>
             </div>
             <div className="notice-option-details">
               <div className="notice-detail-item">
-                <span className="detail-label">Early Withdrawal Penalty:</span>
-                <span className="detail-value">2% of deposit</span>
+                <span className="detail-label">Early Withdrawal:</span>
+                <span className="detail-value penalty-text">2% interest penalty</span>
               </div>
               <div className="notice-detail-item">
-                <span className="detail-label">Next Unlock Date:</span>
+                <span className="detail-label">Next Unlock:</span>
                 <span className="detail-value">Jan 15, 2025</span>
               </div>
             </div>
-            <button className="select-notice-btn">Select 30 Days</button>
+            <button className="select-notice-btn">Select</button>
           </div>
 
           <div className="notice-option-card">
