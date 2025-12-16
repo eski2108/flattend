@@ -1394,6 +1394,12 @@
   border: 2px solid;
   background: transparent;
   white-space: nowrap;
+  /* FIX: Remove black tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  outline: none;
 }
 
 .add-btn {
