@@ -538,6 +538,16 @@ const SavingsVault = () => {
                       </div>
                     </div>
 
+                    {/* Early Withdrawal Warning */}
+                    {position.type !== 'flexible' && (
+                      <div className="early-withdrawal-warning">
+                        <span className="warning-icon">⚠️</span>
+                        <span className="warning-text">
+                          Early withdrawal penalty: {position.lock_period === 30 ? '2%' : position.lock_period === 60 ? '3.5%' : '5%'} of deposit will be forfeited
+                        </span>
+                      </div>
+                    )}
+                    
                     {/* Action Buttons */}
                     <div className="action-buttons-row">
                       <button 
