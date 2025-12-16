@@ -235,6 +235,14 @@ backend:
     stuck_count: 1
     priority: "high"
     needs_retesting: false
+
+  - task: "Wallet Page Button Audit - Buy Button Fix & Complete Testing"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/WalletPage.js"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
