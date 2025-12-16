@@ -414,6 +414,7 @@
   border-radius: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  box-shadow: 0 0 16px rgba(166, 78, 255, 0.6), 0 0 32px rgba(166, 78, 255, 0.3);
 }
 
 .notice-option-header {
