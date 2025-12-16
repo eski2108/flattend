@@ -345,6 +345,14 @@ const SavingsVault = () => {
                     <span className="apy-value">{position.apy || 0}%</span>
                   </div>
                   
+                  <div className="token-pnl-section">
+                    <span className="pnl-label">P&L:</span>
+                    <span className={`pnl-value ${position.pnl_percentage >= 0 ? 'positive' : 'negative'}`}>
+                      {position.pnl_percentage >= 0 ? '+' : ''}{position.pnl_percentage || 0}%
+                      {' '}({position.pnl_percentage >= 0 ? '+' : ''}{position.pnl_crypto || '0.000'} {position.symbol})
+                    </span>
+                  </div>
+                  
                   <div className="token-interest-earned">
                     <span className="earned-label">Interest earned:</span>
                     <span className="earned-value">{position.interest_earned || '0.00'} {position.symbol}</span>
