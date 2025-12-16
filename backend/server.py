@@ -9830,6 +9830,14 @@ async def execute_swap_OLD(request: dict):
     
     # Record swap transaction (internal record includes fee details)
     swap_id = str(uuid.uuid4())
+    
+    # Update admin_revenue with swap_id
+    await db.admin_revenue.update_one(
+        {"source": "swap_fee", "user_id": user_id, "related_transaction_id": None},
+        {"$set": {"related_transaction_id": swap_id}},
+        sort=[("timestamp", -1)]
+    )
+    
     swap_record = {
         "swap_id": swap_id,
         "user_id": user_id,
