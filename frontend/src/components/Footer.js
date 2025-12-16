@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoFlash, IoLogoGithub as Github, IoLogoTwitter as Twitter, IoMail } from 'react-icons/io5';
+import Coin3DIcon from '@/components/Coin3DIcon';
 
 export default function Footer() {
   const navigate = useNavigate();
