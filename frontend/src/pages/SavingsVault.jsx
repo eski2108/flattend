@@ -430,6 +430,12 @@ const SavingsVault = () => {
                     <span className="monthly-value">~${position.estimated_monthly || '0.00'}</span>
                   </div>
                   
+                  <div className="token-status-badge">
+                    <span className={`status-badge ${position.type === 'flexible' ? 'available' : 'locked'}`}>
+                      {position.type === 'flexible' ? 'Available' : 'Locked'}
+                    </span>
+                  </div>
+                  
                   <div className="token-toggles-section">
                     {/* Notice Period Display */}
                     <div className="notice-period-display">
