@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://neon-vault-1.preview.emergentagent.com`
-- Backend API: `https://neon-vault-1.preview.emergentagent.com/api`
+- Frontend: `https://walletfix.preview.emergentagent.com`
+- Backend API: `https://walletfix.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

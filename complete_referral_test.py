@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Backend URL
-BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
+BASE_URL = "https://walletfix.preview.emergentagent.com/api"
 
 def test_complete_referral_system():
     """Test complete referral system"""

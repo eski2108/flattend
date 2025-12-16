@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://neon-vault-1.preview.emergentagent.com
+**URL:** https://walletfix.preview.emergentagent.com
 
 **Services Status:**
 ```bash

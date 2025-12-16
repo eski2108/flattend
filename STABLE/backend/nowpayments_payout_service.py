@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://neon-vault-1.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://walletfix.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

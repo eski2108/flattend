@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://neon-vault-1.preview.emergentagent.com
+https://walletfix.preview.emergentagent.com
 
 ---
 

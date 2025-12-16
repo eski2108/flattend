@@ -30,7 +30,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://neon-vault-1.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://walletfix.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class FinancialEngineTest:

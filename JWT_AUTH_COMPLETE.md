@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://neon-vault-1.preview.emergentagent.com
+**Live URL:** https://walletfix.preview.emergentagent.com
 
 ---
 

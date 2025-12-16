@@ -11,7 +11,7 @@ Tests the actual implemented backend endpoints based on the review priorities:
 5. Crypto Bank API Endpoints
 6. Email Service Integration
 
-**Backend URL:** https://neon-vault-1.preview.emergentagent.com/api
+**Backend URL:** https://walletfix.preview.emergentagent.com/api
 """
 
 import requests
@@ -22,7 +22,7 @@ from datetime import datetime
 import uuid
 
 # Configuration
-BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
+BASE_URL = "https://walletfix.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USERS = [

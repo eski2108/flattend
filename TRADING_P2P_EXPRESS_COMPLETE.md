@@ -504,8 +504,8 @@ $ curl http://localhost:8001/api/prices/live | jq '.prices.BTC.price_usd'
 ```
 
 **Pages Accessible:**
-- ✅ https://neon-vault-1.preview.emergentagent.com/trading
-- ✅ https://neon-vault-1.preview.emergentagent.com/p2p-express
+- ✅ https://walletfix.preview.emergentagent.com/trading
+- ✅ https://walletfix.preview.emergentagent.com/p2p-express
 
 ---
 

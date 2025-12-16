@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timezone
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://neon-vault-1.preview.emergentagent.com"
+BACKEND_URL = "https://walletfix.preview.emergentagent.com"
 
 async def test_registration_fix():
     """Test registration with correct field names"""

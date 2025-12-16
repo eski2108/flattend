@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://neon-vault-1.preview.emergentagent.com/api"
+BASE_URL = "https://walletfix.preview.emergentagent.com/api"
 
 print("🏆 PHASE 2: TRADER BADGE SYSTEM TESTING")
 print("=" * 70)

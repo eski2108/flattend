@@ -20,7 +20,7 @@ Go to: https://console.cloud.google.com
 Add these exact URLs:
 ```
 http://localhost:3000/auth/google/callback
-https://neon-vault-1.preview.emergentagent.com/auth/google/callback
+https://walletfix.preview.emergentagent.com/auth/google/callback
 ```
 
 (Add your custom domain if you have one)

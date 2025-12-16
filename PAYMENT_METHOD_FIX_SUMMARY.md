@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://neon-vault-1.preview.emergentagent.com
+https://walletfix.preview.emergentagent.com
 
 ### Test Route
 
-`https://neon-vault-1.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://walletfix.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 
