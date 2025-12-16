@@ -32,17 +32,23 @@ const CoinIcon = ({ symbol, size = 40 }) => {
   const [fallbackStage, setFallbackStage] = useState(0);
   
   const handleError = () => {
+    const lowerSym = symbol?.toLowerCase();
     const clean = symbol?.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|OP|BASE|-.*$/gi, '').trim().toLowerCase();
+    
     if (fallbackStage === 0) {
-      // Try CoinCap CDN
-      setImgSrc(`https://assets.coincap.io/assets/icons/${clean}@2x.png`);
+      // Try NOWPayments SVG - they have ALL coins
+      setImgSrc(`https://nowpayments.io/images/coins/${lowerSym}.svg`);
       setFallbackStage(1);
     } else if (fallbackStage === 1) {
-      // Try CryptoCompare
-      setImgSrc(`https://www.cryptocompare.com/media/37746251/${clean}.png`);
+      // Try local PNG
+      setImgSrc(`/crypto-logos/${clean}.png`);
       setFallbackStage(2);
+    } else if (fallbackStage === 2) {
+      // Try CoinCap CDN
+      setImgSrc(`https://assets.coincap.io/assets/icons/${clean}@2x.png`);
+      setFallbackStage(3);
     } else {
-      // Show text fallback
+      // Show text fallback (should rarely happen now)
       setShowFallback(true);
     }
   };
