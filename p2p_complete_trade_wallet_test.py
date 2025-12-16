@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://money-trail-4.preview.emergentagent.com/api"
+BASE_URL = "https://finance-check-5.preview.emergentagent.com/api"
 
 # Test credentials as specified in the request
 BUYER_EMAIL = "buyer_proof@test.com"

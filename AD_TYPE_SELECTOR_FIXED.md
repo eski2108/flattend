@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://money-trail-4.preview.emergentagent.com
+**Preview URL:** https://finance-check-5.preview.emergentagent.com

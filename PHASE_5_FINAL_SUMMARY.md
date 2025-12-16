@@ -41,7 +41,7 @@
 
 ## 🔍 SCREENSHOT VERIFICATION
 
-**URL:** `https://money-trail-4.preview.emergentagent.com/p2p`
+**URL:** `https://finance-check-5.preview.emergentagent.com/p2p`
 
 **Visible Elements:**
 1. ✅ P2P Marketplace header
@@ -101,7 +101,7 @@ curl http://localhost:8001/api/trader/stats/test_user_nonexistent
 **Result:** ✅ Returns valid JSON with all 14 metrics
 
 ### **Frontend Integration Test:**
-**URL:** `https://money-trail-4.preview.emergentagent.com/p2p`  
+**URL:** `https://finance-check-5.preview.emergentagent.com/p2p`  
 **Result:** ✅ P2P cards display real trader stats from API
 
 ### **Zero Values Test:**

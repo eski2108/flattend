@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://money-trail-4.preview.emergentagent.com`
-- Backend API: `https://money-trail-4.preview.emergentagent.com/api`
+- Frontend: `https://finance-check-5.preview.emergentagent.com`
+- Backend API: `https://finance-check-5.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

@@ -20,7 +20,7 @@ Go to: https://console.cloud.google.com
 Add these exact URLs:
 ```
 http://localhost:3000/auth/google/callback
-https://money-trail-4.preview.emergentagent.com/auth/google/callback
+https://finance-check-5.preview.emergentagent.com/auth/google/callback
 ```
 
 (Add your custom domain if you have one)

@@ -252,12 +252,12 @@ Offers created: 2
 To test the complete P2P flow:
 
 Step 1: Login
-Visit: https://money-trail-4.preview.emergentagent.com/login
+Visit: https://finance-check-5.preview.emergentagent.com/login
 Email: p2ptest@test.com
 Password: test1234
 
 Step 2: View Marketplace
-Navigate to: https://money-trail-4.preview.emergentagent.com/p2p
+Navigate to: https://finance-check-5.preview.emergentagent.com/p2p
 Verify filters work
 Check coin selector
 Click Become a Seller button

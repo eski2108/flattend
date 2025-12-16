@@ -1,6 +1,6 @@
 # ✅ ALL CHANGES DEPLOYED TO PREVIEW
 
-**Preview URL:** https://money-trail-4.preview.emergentagent.com  
+**Preview URL:** https://finance-check-5.preview.emergentagent.com  
 **Deployment Time:** December 11, 2025 23:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -86,7 +86,7 @@
 
 1. **Navigate to Preview:**
    ```
-   https://money-trail-4.preview.emergentagent.com
+   https://finance-check-5.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -139,10 +139,10 @@
 sudo supervisorctl status
 
 # Test preview URL
-curl https://money-trail-4.preview.emergentagent.com
+curl https://finance-check-5.preview.emergentagent.com
 
 # Test API health
-curl https://money-trail-4.preview.emergentagent.com/api/health
+curl https://finance-check-5.preview.emergentagent.com/api/health
 
 # All return 200 OK ✅
 ```
@@ -183,7 +183,7 @@ curl https://money-trail-4.preview.emergentagent.com/api/health
 
 **All changes are LIVE at:**
 ```
-https://money-trail-4.preview.emergentagent.com
+https://finance-check-5.preview.emergentagent.com
 ```
 
 **Test Account:**

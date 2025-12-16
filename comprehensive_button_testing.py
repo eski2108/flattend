@@ -18,7 +18,7 @@ Tests all buttons systematically as requested in review:
 5. Test Savings Vault buttons
 6. Test all other critical page buttons
 
-**Backend URL:** https://money-trail-4.preview.emergentagent.com/api
+**Backend URL:** https://finance-check-5.preview.emergentagent.com/api
 """
 
 import requests
@@ -28,7 +28,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://money-trail-4.preview.emergentagent.com/api"
+BASE_URL = "https://finance-check-5.preview.emergentagent.com/api"
 
 # Test credentials provided by user
 LOGIN_CREDENTIALS = {

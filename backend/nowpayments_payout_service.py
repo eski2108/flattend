@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://money-trail-4.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://finance-check-5.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

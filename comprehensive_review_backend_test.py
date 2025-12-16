@@ -14,7 +14,7 @@ Tests all critical backend systems as specifically requested in the review:
 **Focus Areas:** Recently fixed login/auth, platform wallet, chat system
 **Database State:** Empty (0 users) - verify registration creates users properly
 
-**Backend URL:** https://money-trail-4.preview.emergentagent.com/api
+**Backend URL:** https://finance-check-5.preview.emergentagent.com/api
 """
 
 import requests
@@ -25,7 +25,7 @@ from datetime import datetime
 import uuid
 
 # Configuration
-BASE_URL = "https://money-trail-4.preview.emergentagent.com/api"
+BASE_URL = "https://finance-check-5.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USERS = [

@@ -14,7 +14,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://money-trail-4.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://finance-check-5.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

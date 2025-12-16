@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://money-trail-4.preview.emergentagent.com"
+BACKEND_URL = "https://finance-check-5.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test data

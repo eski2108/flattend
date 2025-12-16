@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://money-trail-4.preview.emergentagent.com/api"
+BASE_URL = "https://finance-check-5.preview.emergentagent.com/api"
 
 print("🏆 PHASE 2: TRADER BADGE SYSTEM TESTING")
 print("=" * 70)

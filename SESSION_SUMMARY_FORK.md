@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://money-trail-4.preview.emergentagent.com
+https://finance-check-5.preview.emergentagent.com
 
 ---
 
