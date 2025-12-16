@@ -735,23 +735,36 @@ const SavingsVault = () => {
             {depositStep === 2 && (
               <div className="deposit-step">
                 <h4>Step 2: Select Coin</h4>
-                <select className="deposit-input" value={selectedCoin} onChange={(e) => setSelectedCoin(e.target.value)}>
-                  <option value="">Choose coin...</option>
-                  <option value="BTC">Bitcoin (BTC)</option>
-                  <option value="ETH">Ethereum (ETH)</option>
-                  <option value="USDT">Tether (USDT)</option>
-                  <option value="USDC">USD Coin (USDC)</option>
-                  <option value="BNB">Binance Coin (BNB)</option>
-                  <option value="SOL">Solana (SOL)</option>
-                  <option value="XRP">Ripple (XRP)</option>
-                  <option value="ADA">Cardano (ADA)</option>
-                  <option value="DOGE">Dogecoin (DOGE)</option>
-                  <option value="DOT">Polkadot (DOT)</option>
-                  <option value="MATIC">Polygon (MATIC)</option>
-                  <option value="LTC">Litecoin (LTC)</option>
-                  <option value="LINK">Chainlink (LINK)</option>
-                  <option value="AVAX">Avalanche (AVAX)</option>
-                </select>
+                <div className="coin-grid">
+                  {[
+                    { symbol: 'BTC', name: 'Bitcoin' },
+                    { symbol: 'ETH', name: 'Ethereum' },
+                    { symbol: 'USDT', name: 'Tether' },
+                    { symbol: 'USDC', name: 'USD Coin' },
+                    { symbol: 'BNB', name: 'Binance Coin' },
+                    { symbol: 'SOL', name: 'Solana' },
+                    { symbol: 'XRP', name: 'Ripple' },
+                    { symbol: 'ADA', name: 'Cardano' },
+                    { symbol: 'DOGE', name: 'Dogecoin' },
+                    { symbol: 'DOT', name: 'Polkadot' },
+                    { symbol: 'MATIC', name: 'Polygon' },
+                    { symbol: 'LTC', name: 'Litecoin' },
+                    { symbol: 'LINK', name: 'Chainlink' },
+                    { symbol: 'AVAX', name: 'Avalanche' }
+                  ].map(coin => (
+                    <div 
+                      key={coin.symbol}
+                      className={`coin-option-card ${selectedCoin === coin.symbol ? 'selected' : ''}`}
+                      onClick={() => setSelectedCoin(coin.symbol)}
+                    >
+                      <img src={getCoinLogo(coin.symbol)} alt={coin.symbol} className="coin-option-logo" />
+                      <div className="coin-option-info">
+                        <span className="coin-option-symbol">{coin.symbol}</span>
+                        <span className="coin-option-name">{coin.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <button className="modal-cta-btn" onClick={() => setDepositStep(3)} disabled={!selectedCoin}>Next</button>
               </div>
             )}
