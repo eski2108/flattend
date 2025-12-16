@@ -417,10 +417,9 @@ const SavingsVault = () => {
                   </div>
                   
                   <div className="token-pnl-section">
-                    <span className="pnl-label">P&L:</span>
+                    <span className="pnl-label">P/L:</span>
                     <span className={`pnl-value ${position.pnl_percentage >= 0 ? 'positive' : 'negative'}`}>
-                      {position.pnl_percentage >= 0 ? '+' : ''}{position.pnl_percentage || 0}%
-                      {' '}({position.pnl_percentage >= 0 ? '+' : ''}{position.pnl_crypto || '0.000'} {position.symbol})
+                      {position.pnl_percentage >= 0 ? '↑ +' : '↓ '}{position.pnl_percentage || 0}%
                     </span>
                   </div>
                   
