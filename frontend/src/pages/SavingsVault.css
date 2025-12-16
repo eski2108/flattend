@@ -3,6 +3,23 @@
    Implementing EVERY detail from specification
    ============================================ */
 
+/* CSS VARIABLES - COLOR SYSTEM */
+:root {
+  --bg-0: #070B17;
+  --bg-1: #0A1228;
+  --card: #0C1633;
+  --card-2: #0A1024;
+  --border: #163A5F;
+  --border-glow: #1FE1FF;
+  --accent: #13D7FF;
+  --accent-2: #7A3CFF;
+  --gold: #C9A227;
+  --text: #EAF2FF;
+  --muted: #95A7C8;
+  --success: #20E3B2;
+  --danger: #FF4D6D;
+}
+
 /* BASE CONTAINER - Deep Space Navy Background */
 .savings-vault-container {
   background: #0E0F1A;
