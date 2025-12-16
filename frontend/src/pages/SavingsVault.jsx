@@ -11,13 +11,13 @@ const SavingsVault = () => {
   const [loading, setLoading] = useState(true);
   const [positions, setPositions] = useState([]);
   const [totalBalance, setTotalBalance] = useState(0);
-  const [totalBalanceCrypto, setTotalBalanceCrypto] = useState('0.00 BTC');
+  const [totalBalanceCrypto, setTotalBalanceCrypto] = useState('');
   const [lockedBalance, setLockedBalance] = useState(0);
-  const [lockedBalanceCrypto, setLockedBalanceCrypto] = useState('0.00 BTC');
+  const [lockedBalanceCrypto, setLockedBalanceCrypto] = useState('');
   const [availableBalance, setAvailableBalance] = useState(0);
-  const [availableBalanceCrypto, setAvailableBalanceCrypto] = useState('0.00 BTC');
+  const [availableBalanceCrypto, setAvailableBalanceCrypto] = useState('');
   const [totalInterestEarned, setTotalInterestEarned] = useState(0);
-  const [totalInterestCrypto, setTotalInterestCrypto] = useState('0.00 BTC');
+  const [totalInterestCrypto, setTotalInterestCrypto] = useState('');
   const [expandedCard, setExpandedCard] = useState(null);
   const [sortBy, setSortBy] = useState('name');
   const [showSortMenu, setShowSortMenu] = useState(false);
