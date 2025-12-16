@@ -4,10 +4,11 @@
  * CoinCap CDN provides good quality logos for all other coins
  */
 
-// Local 3D logos we have
+// Local 3D logos we have (stored in /public/crypto-logos/)
 const LOCAL_3D_LOGOS = [
   'ada', 'atom', 'avax', 'bch', 'bnb', 'btc', 'dai', 'doge', 'dot', 
-  'eth', 'link', 'ltc', 'matic', 'shib', 'sol', 'trx', 'uni', 'usdc', 'usdt', 'xrp'
+  'eth', 'icx', 'link', 'ltc', 'matic', 'near', 'nwc', 'om', 'pepe', 
+  'shib', 'sidus', 'sol', 'tfuel', 'trx', 'uni', 'usdc', 'usdt', 'vlx', 'xlm', 'xrp', 'zent'
 ];
 
 // Get 3D coin logo - local PNG if available, else CoinCap CDN
