@@ -24,40 +24,55 @@ const COIN_COLORS = {
   MATIC: '#8247E5'
 };
 
-// 3D CoinIcon component - uses local 3D PNG logos from /crypto-logos/
+// 3D CoinIcon with CSS effect - local first, CoinGecko fallback
 const CoinIcon = ({ symbol, size = 40 }) => {
-  const [imgError, setImgError] = useState(false);
+  const [imgSrc, setImgSrc] = useState(getCoinLogo(symbol));
+  const [showFallback, setShowFallback] = useState(false);
   
-  // Use local 3D logos that match the footer
-  const logoUrl = `/crypto-logos/${symbol?.toLowerCase()}.png`;
+  const handleError = () => {
+    // Try CoinGecko CDN
+    const clean = symbol?.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB|-.*$/gi, '').trim().toLowerCase();
+    const geckoUrl = `https://assets.coingecko.com/coins/images/1/small/${clean}.png`;
+    if (imgSrc !== geckoUrl) {
+      setImgSrc(geckoUrl);
+    } else {
+      setShowFallback(true);
+    }
+  };
   
   return (
     <div style={{
       width: `${size}px`,
       height: `${size}px`,
       borderRadius: '50%',
+      background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4), 0 0 15px rgba(0,229,255,0.1)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: imgError ? 'rgba(255,255,255,0.1)' : 'transparent',
+      padding: `${size * 0.1}px`,
       overflow: 'hidden'
     }}>
-      {!imgError ? (
+      {!showFallback ? (
         <img
-          src={logoUrl}
+          src={imgSrc}
           alt={symbol}
-          onError={() => setImgError(true)}
+          onError={handleError}
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'contain'
+            objectFit: 'contain',
+            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4)) drop-shadow(0 0 8px rgba(0,255,200,0.15))',
+            borderRadius: '50%'
           }}
         />
       ) : (
         <span style={{
-          fontSize: `${size * 0.5}px`,
+          fontSize: `${size * 0.4}px`,
           fontWeight: '700',
-          color: '#00E5FF'
+          color: '#00E5FF',
+          textShadow: '0 0 10px rgba(0,229,255,0.4)'
         }}>
           {symbol?.charAt(0) || '?'}
         </span>
