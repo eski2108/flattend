@@ -338,13 +338,13 @@
    ============================================ */
 
 .referral-banner {
-  padding: 22px 32px;
+  padding: 24px 32px;
   margin-bottom: 40px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   position: relative;
 }
 
@@ -357,11 +357,40 @@
   box-shadow: 0 8px 32px rgba(166, 78, 255, 0.4);
 }
 
-.referral-text {
+.referral-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.referral-icon {
+  font-size: 32px;
+}
+
+.referral-text-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.referral-title {
   font-size: 18px;
   font-weight: 600;
   color: #FFFFFF;
   letter-spacing: 0.5px;
+}
+
+.referral-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: #B5B5B5;
+}
+
+.referral-arrow {
+  font-size: 24px;
+  color: #A64EFF;
+  font-weight: 700;
 }
 
 .dismiss-banner-btn {
