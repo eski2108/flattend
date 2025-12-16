@@ -1,18 +1,21 @@
 /**
  * Crypto Logo Utility
- * 1. Local-first: /public/crypto-logos/{symbol}.png
- * 2. Fallback: CoinCap CDN (works for most coins)
- * 3. CSS makes all logos look "3D" with drop-shadow + glow
+ * PRIMARY: NOWPayments SVG logos (has ALL 360+ coins)
+ * FALLBACK: Local PNG, then CoinCap CDN
+ * CSS makes all logos look "3D" with drop-shadow + glow
  */
 
-// Local logos we have
+// NOWPayments logo base URL - HAS ALL COINS
+const NOWPAYMENTS_LOGO_URL = 'https://nowpayments.io/images/coins';
+
+// Local logos we have (for offline/faster loading)
 const LOCAL_LOGOS = [
   'ada', 'atom', 'avax', 'bch', 'bnb', 'btc', 'dai', 'doge', 'dot', 
   'eth', 'icx', 'link', 'ltc', 'matic', 'near', 'nwc', 'om', 'pepe', 
   'shib', 'sidus', 'sol', 'tfuel', 'trx', 'uni', 'usdc', 'usdt', 'vlx', 'xlm', 'xrp', 'zent'
 ];
 
-// Clean symbol - remove network suffixes
+// Clean symbol for local logos only
 const cleanSymbol = (symbol) => {
   if (!symbol) return 'btc';
   return symbol
@@ -21,29 +24,29 @@ const cleanSymbol = (symbol) => {
     .toLowerCase();
 };
 
-// Get coin logo - local first, then CoinCap CDN
+// Get coin logo - NOWPayments first (has ALL coins), then local, then CDN
 const getCoinLogo = (symbol) => {
-  const clean = cleanSymbol(symbol);
+  if (!symbol) return `${NOWPAYMENTS_LOGO_URL}/btc.svg`;
   
-  // Local logo if available
+  // Use NOWPayments SVG - they have EVERY coin
+  const lowerSymbol = symbol.toLowerCase();
+  return `${NOWPAYMENTS_LOGO_URL}/${lowerSymbol}.svg`;
+};
+
+// Alternative - Local PNG
+const getCoinLogoAlt = (symbol) => {
+  const clean = cleanSymbol(symbol);
   if (LOCAL_LOGOS.includes(clean)) {
     return `/crypto-logos/${clean}.png`;
   }
-  
-  // CoinCap CDN - works for most coins
+  // Fallback to CoinCap
   return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
 };
 
-// Alternative CDN - CryptoCompare
-const getCoinLogoAlt = (symbol) => {
-  const clean = cleanSymbol(symbol);
-  return `https://www.cryptocompare.com/media/37746251/${clean}.png`;
-};
-
-// Third fallback - CoinMarketCap static
+// Third fallback - CoinCap CDN
 const getCoinLogoFallback = (symbol) => {
-  const clean = cleanSymbol(symbol).toUpperCase();
-  return `https://s2.coinmarketcap.com/static/img/coins/64x64/${clean}.png`;
+  const clean = cleanSymbol(symbol);
+  return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
 };
 
 // Generic fallback
