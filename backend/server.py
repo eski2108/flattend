@@ -28467,9 +28467,115 @@ async def get_user_vaults(user_id: str):
         logger.error(f"Error fetching vaults: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ============================================
+# COINGECKO PRICE FUNCTIONS
+# ============================================
+
+async def get_coingecko_price(coin_id: str) -> Optional[float]:
+    """Get current price from CoinGecko API"""
+    cache_key = f"coingecko_price:{coin_id}"
+    
+    # Check cache first
+    cached = await cache.get(cache_key)
+    if cached:
+        return float(cached)
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{COINGECKO_API_URL}/simple/price",
+                params={"ids": coin_id, "vs_currencies": "usd"},
+                timeout=10.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                if coin_id in data and "usd" in data[coin_id]:
+                    price = data[coin_id]["usd"]
+                    # Cache for 60 seconds
+                    await cache.set(cache_key, str(price), expire=COINGECKO_CACHE_TTL)
+                    return price
+    except Exception as e:
+        logger.error(f"CoinGecko price fetch failed for {coin_id}: {str(e)}")
+    
+    return None
+
+async def get_coingecko_historical_price(coin_id: str, timestamp: int) -> Optional[float]:
+    """Get historical price from CoinGecko at specific timestamp"""
+    try:
+        # Convert timestamp to date format (DD-MM-YYYY)
+        from datetime import datetime
+        date = datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y")
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{COINGECKO_API_URL}/coins/{coin_id}/history",
+                params={"date": date},
+                timeout=15.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                if "market_data" in data and "current_price" in data["market_data"]:
+                    return data["market_data"]["current_price"].get("usd")
+    except Exception as e:
+        logger.error(f"CoinGecko historical price fetch failed for {coin_id}: {str(e)}")
+    
+    return None
+
+async def get_coingecko_market_chart(coin_id: str, days: int = 30) -> Optional[List]:
+    """Get market chart data from CoinGecko"""
+    cache_key = f"coingecko_chart:{coin_id}:{days}"
+    
+    # Check cache
+    cached = await cache.get(cache_key)
+    if cached:
+        import json
+        return json.loads(cached)
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{COINGECKO_API_URL}/coins/{coin_id}/market_chart",
+                params={"vs_currency": "usd", "days": days},
+                timeout=15.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                prices = data.get("prices", [])
+                # Cache for 5 minutes
+                import json
+                await cache.set(cache_key, json.dumps(prices), expire=300)
+                return prices
+    except Exception as e:
+        logger.error(f"CoinGecko market chart fetch failed for {coin_id}: {str(e)}")
+    
+    return None
+
+# Symbol to CoinGecko ID mapping
+SYMBOL_TO_COINGECKO = {
+    "BTC": "bitcoin",
+    "ETH": "ethereum",
+    "USDT": "tether",
+    "BNB": "binancecoin",
+    "SOL": "solana",
+    "USDC": "usd-coin",
+    "XRP": "ripple",
+    "ADA": "cardano",
+    "DOGE": "dogecoin",
+    "TRX": "tron",
+    "MATIC": "matic-network",
+    "DOT": "polkadot",
+    "LTC": "litecoin",
+    "AVAX": "avalanche-2",
+    "LINK": "chainlink",
+}
+
+def get_coingecko_id(symbol: str) -> str:
+    """Convert symbol to CoinGecko ID"""
+    return SYMBOL_TO_COINGECKO.get(symbol.upper(), symbol.lower())
+
 @api_router.get("/savings/positions/{user_id}")
 async def get_savings_positions(user_id: str):
-    """Get all user savings positions for Savings Vault page"""
+    """Get all user savings positions for Savings Vault page with P&L"""
     try:
         # Get live prices
         market_prices = await fetch_live_prices()
