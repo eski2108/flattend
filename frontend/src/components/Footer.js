@@ -279,7 +279,7 @@ export default function Footer() {
             alignItems: 'center',
             gap: '1.5rem'
           }}>
-            {['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'MATIC', 'LTC', 'LINK', 'AVAX'].map(coin => (
+            {['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'MATIC', 'LTC', 'LINK', 'AVAX', 'ATOM', 'UNI', 'TRX', 'SHIB'].map(coin => (
               <div key={coin} style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -291,30 +291,7 @@ export default function Footer() {
               onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
               onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
               >
-                <div style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3), 0 0 12px rgba(0,229,255,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '4px'
-                }}>
-                  <img 
-                    src={`/crypto-logos/${coin.toLowerCase()}.png`}
-                    alt={coin}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain',
-                      filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.4)) drop-shadow(0 0 6px rgba(0,255,200,0.12))',
-                      borderRadius: '50%'
-                    }}
-                  />
-                </div>
+                <Coin3DIcon symbol={coin} size={36} />
                 <span style={{ color: '#888', fontSize: '11px', fontWeight: '600' }}>{coin}</span>
               </div>
             ))}
