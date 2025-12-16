@@ -578,9 +578,9 @@ const SavingsVault = () => {
       {showTransferModal && (
         <div className="modal-overlay" onClick={() => setShowTransferModal(false)}>
           <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
-            <h3>Transfer from Wallet</h3>
+            <h3>Add to Savings</h3>
             <button className="modal-close-btn" onClick={() => setShowTransferModal(false)}>✕</button>
-            <p>Transfer funds into your Savings Vault</p>
+            <p>Lock your crypto to start earning guaranteed yields</p>
           </div>
         </div>
       )}
