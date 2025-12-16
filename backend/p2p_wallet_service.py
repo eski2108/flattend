@@ -666,26 +666,22 @@ async def p2p_cancel_trade_with_wallet(
             seller = await db.users.find_one({"user_id": seller_id})
             
             if buyer and seller:
+                cancellation_reason = f"{reason} (Cancelled by {'buyer' if user_id == trade['buyer_id'] else 'seller'})"
+                
                 # Email to buyer
                 await email_service.send_p2p_order_cancelled(
                     user_email=buyer.get("email"),
                     user_name=buyer.get("full_name", "Buyer"),
-                    trade_id=trade_id,
-                    crypto_amount=crypto_amount,
-                    crypto_currency=currency,
-                    reason=reason,
-                    cancelled_by="buyer" if user_id == trade["buyer_id"] else "seller"
+                    order_id=trade_id,
+                    reason=cancellation_reason
                 )
                 
                 # Email to seller
                 await email_service.send_p2p_order_cancelled(
                     user_email=seller.get("email"),
                     user_name=seller.get("full_name", "Seller"),
-                    trade_id=trade_id,
-                    crypto_amount=crypto_amount,
-                    crypto_currency=currency,
-                    reason=reason,
-                    cancelled_by="buyer" if user_id == trade["buyer_id"] else "seller"
+                    order_id=trade_id,
+                    reason=cancellation_reason
                 )
                 logger.info(f"📧 Cancellation emails sent for trade {trade_id}")
         except Exception as email_error:
