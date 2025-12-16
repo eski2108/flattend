@@ -165,16 +165,10 @@ export default function Wallet() {
                             objectFit: 'contain'
                           }}
                           onError={(e) => {
-                            // Try SVG fallback first
-                            if (!e.target.dataset.triedSvg) {
-                              e.target.dataset.triedSvg = 'true';
-                              e.target.src = `/crypto-icons/${bal.currency.toLowerCase()}.svg`;
-                            } else {
-                              // Final fallback: show EMOJI in colored circle
-                              e.target.style.display = 'none';
-                              const emoji = getCoinEmoji(bal.currency);
-                              e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(19, 215, 255, 0.2), rgba(122, 60, 255, 0.2)); border: 1px solid rgba(19, 215, 255, 0.3); border-radius: 50%; font-size: 24px;">${emoji}</div>`;
-                            }
+                            // Show EMOJI in 3D-style circle if PNG doesn't exist
+                            e.target.style.display = 'none';
+                            const emoji = getCoinEmoji(bal.currency);
+                            e.target.parentElement.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(19, 215, 255, 0.2), rgba(122, 60, 255, 0.2)); border: 1px solid rgba(19, 215, 255, 0.3); border-radius: 50%; font-size: 28px; font-weight: 600;">${emoji}</div>`;
                           }}
                         />
                       </div>
