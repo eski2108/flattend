@@ -4801,7 +4801,7 @@ async def create_savings_deposit(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/savings/deposit")
-async def create_savings_deposit(request: dict):
+async def create_savings_deposit_new(request: dict):
     """Create a new savings deposit"""
     try:
         user_id = request.get('user_id')
