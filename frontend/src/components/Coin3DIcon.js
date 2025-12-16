@@ -1,44 +1,45 @@
 import React, { useState } from 'react';
-import { cleanSymbol, LOCAL_LOGOS, COINGECKO_IDS } from '@/utils/coinLogos';
+import { cleanSymbol, LOCAL_LOGOS } from '@/utils/coinLogos';
 
 /**
  * 3D Coin Icon Component
  * 
  * RULES:
  * 1. Top coins: Local 3D PNGs
- * 2. All other coins: CoinGecko CDN ONLY
- * 3. Uniform CSS 3D effect on ALL logos
- * 4. Placeholder if CDN fails
+ * 2. All other coins: NOWPayments SVG (they have most altcoins)
+ * 3. Fallback: CoinCap CDN
+ * 4. Last resort: Styled placeholder
+ * 
+ * UNIFORM 3D CSS EFFECT on ALL logos
  */
 const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
   const [fallbackStage, setFallbackStage] = useState(0);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   
   const clean = cleanSymbol(symbol);
-  const geckoId = COINGECKO_IDS[clean] || clean;
+  const lowerSymbol = symbol?.toLowerCase() || 'btc';
   
   // Get image source based on fallback stage
   const getImageSrc = () => {
-    // Stage 0: Local PNG for top coins, CoinGecko for others
-    if (fallbackStage === 0) {
-      if (LOCAL_LOGOS.includes(clean)) {
-        return `/crypto-logos/${clean}.png`;
-      }
-      return `https://assets.coingecko.com/coins/images/1/large/${geckoId}.png`;
+    switch (fallbackStage) {
+      case 0:
+        // Local PNG for top coins, NOWPayments for others
+        if (LOCAL_LOGOS.includes(clean)) {
+          return `/crypto-logos/${clean}.png`;
+        }
+        return `https://nowpayments.io/images/coins/${lowerSymbol}.svg`;
+      case 1:
+        // NOWPayments with cleaned symbol
+        return `https://nowpayments.io/images/coins/${clean}.svg`;
+      case 2:
+        // CoinCap CDN
+        return `https://assets.coincap.io/assets/icons/${clean}@2x.png`;
+      case 3:
+        // CryptoCompare as last CDN attempt
+        return `https://www.cryptocompare.com/media/37746238/${clean}.png`;
+      default:
+        return null;
     }
-    // Stage 1: CoinGecko small image
-    if (fallbackStage === 1) {
-      return `https://assets.coingecko.com/coins/images/1/small/${geckoId}.png`;
-    }
-    // Stage 2: CoinGecko thumb
-    if (fallbackStage === 2) {
-      return `https://assets.coingecko.com/coins/images/1/thumb/${geckoId}.png`;
-    }
-    // Stage 3: Try with clean symbol directly
-    if (fallbackStage === 3) {
-      return `https://assets.coingecko.com/coins/images/1/small/${clean}.png`;
-    }
-    return null;
   };
   
   const handleError = () => {
@@ -68,7 +69,7 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     ...style
   };
   
-  // UNIFORM 3D CSS EFFECT - Same for local AND CDN logos
+  // UNIFORM 3D CSS EFFECT - Same drop-shadow + glow for ALL
   const imgStyle = {
     width: '100%',
     height: '100%',
@@ -77,7 +78,7 @@ const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
     borderRadius: '50%'
   };
   
-  // Placeholder style - same 3D treatment
+  // Placeholder style - same 3D treatment for consistency
   const placeholderStyle = {
     fontSize: `${Math.floor(size * 0.4)}px`,
     fontWeight: '700',
