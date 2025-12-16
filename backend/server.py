@@ -28499,6 +28499,43 @@ async def get_coingecko_price(coin_id: str) -> Optional[float]:
     
     return None
 
+async def get_coingecko_market_data(coin_id: str) -> Optional[dict]:
+    """Get current price and 24h change from CoinGecko markets API"""
+    cache_key = f"coingecko_market:{coin_id}"
+    
+    # Check cache
+    cached = await cache.get(cache_key)
+    if cached:
+        import json
+        return json.loads(cached)
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{COINGECKO_API_URL}/coins/markets",
+                params={
+                    "vs_currency": "usd",
+                    "ids": coin_id,
+                    "price_change_percentage": "24h"
+                },
+                timeout=10.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                if data and len(data) > 0:
+                    market_data = {
+                        'current_price': data[0].get('current_price', 0),
+                        'price_change_percentage_24h': data[0].get('price_change_percentage_24h', 0)
+                    }
+                    # Cache for 60 seconds
+                    import json
+                    await cache.set(cache_key, json.dumps(market_data), expire=COINGECKO_CACHE_TTL)
+                    return market_data
+    except Exception as e:
+        logger.error(f"CoinGecko market data fetch failed for {coin_id}: {str(e)}")
+    
+    return None
+
 async def get_coingecko_historical_price(coin_id: str, timestamp: int) -> Optional[float]:
     """Get historical price from CoinGecko at specific timestamp"""
     try:
