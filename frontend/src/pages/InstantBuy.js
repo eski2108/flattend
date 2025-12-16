@@ -538,22 +538,18 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
       {/* Coin Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? '18px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-          {/* Coin Icon */}
+          {/* 3D Coin Icon - Same as footer */}
           <div style={{
             width: '52px',
             height: '52px',
             borderRadius: '50%',
-            background: `linear-gradient(135deg, ${coin.color}, ${coin.color}DD)`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            overflow: 'hidden',
-            boxShadow: `0 0 18px ${coin.color}55, 0 4px 12px ${coin.color}33`,
-            border: `2px solid ${coin.color}22`,
-            padding: '4px'
+            overflow: 'hidden'
           }}>
             <img 
-              src={getCoinLogo(coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON/gi, '').trim())} 
+              src={`/crypto-logos/${coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim().toLowerCase()}.png`}
               alt={coin.symbol}
               style={{
                 width: '100%',
@@ -561,17 +557,9 @@ function CoinCard({ coin, expanded, onToggle, onDeposit, onWithdraw, onSwap, onB
                 objectFit: 'contain'
               }}
               onError={(e) => {
-                // Fallback chain: CoinCap -> crypto-icons CDN -> generic icon
-                const cleanSymbol = coin.symbol.replace(/ERC20|TRC20|BEP20|MAINNET|BSC|ARBITRUM|POLYGON|SOL|ARB/gi, '').trim();
-                
-                if (!e.target.dataset.triedAlt) {
-                  e.target.dataset.triedAlt = 'true';
-                  e.target.src = getCoinLogoAlt(cleanSymbol);
-                } else if (!e.target.dataset.triedGeneric) {
-                  // Final fallback: bold generic crypto icon
-                  e.target.dataset.triedGeneric = 'true';
-                  e.target.src = getGenericCoinIcon();
-                }
+                // Fallback to first letter if 3D logo not found
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = `<span style="font-size: 24px; font-weight: 700; color: ${coin.color}">${coin.symbol.charAt(0)}</span>`;
               }}
             />
           </div>
