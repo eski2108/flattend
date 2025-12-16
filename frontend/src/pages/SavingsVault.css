@@ -1399,6 +1399,39 @@
   color: #00F0FF;
 }
 
+.modal-warning-box {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 2px solid rgba(255, 68, 68, 0.4);
+  border-radius: 10px;
+  margin: 16px 0;
+}
+
+.modal-warning-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.modal-warning-content {
+  flex: 1;
+}
+
+.modal-warning-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FF4444;
+  margin: 0 0 8px 0;
+}
+
+.modal-warning-text {
+  font-size: 14px;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.5;
+}
+
 .history-list {
   max-height: 400px;
   overflow-y: auto;
