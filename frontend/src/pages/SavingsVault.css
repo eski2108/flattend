@@ -490,6 +490,16 @@
   box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4);
 }
 
+.notice-terms-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+  color: #B5B5B5;
+  text-align: center;
+  line-height: 1.5;
+}
+
 .referral-banner {
   padding: 14px 20px;
   margin-bottom: 24px;
