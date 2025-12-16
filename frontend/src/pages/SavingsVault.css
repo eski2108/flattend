@@ -1378,9 +1378,19 @@
     margin-bottom: 24px;
   }
 
+  .header-title-section {
+    width: 100%;
+    text-align: center;
+  }
+
   .savings-vault-title {
     font-size: 32px;
     text-align: center;
+  }
+
+  .savings-vault-subtitle {
+    text-align: center;
+    max-width: 100%;
   }
 
   .header-actions {
@@ -1401,7 +1411,20 @@
   }
 
   .summary-card {
-    padding: 20px;
+    padding: 18px;
+  }
+
+  .notice-selector-section {
+    padding: 20px 16px;
+  }
+
+  .notice-period-options {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .notice-option-card {
+    padding: 16px;
   }
 
   .controls-toolbar {
