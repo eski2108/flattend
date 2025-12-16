@@ -34,6 +34,20 @@
 }
 
 /* ============================================
+   MOBILE FIX - REMOVE BLACK TAP HIGHLIGHTS
+   ============================================ */
+.savings-vault-container button,
+.savings-vault-container .clickable,
+.savings-vault-container [role="button"],
+.savings-vault-container .notice-period-card,
+.savings-vault-container .coin-option-card,
+.savings-vault-container .savings-position-card {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none;
+}
+
+/* ============================================
    PAGE HEADER
    ============================================ */
 
