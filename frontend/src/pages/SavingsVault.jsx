@@ -631,9 +631,8 @@ const SavingsVault = () => {
                           setSelectedPosition(position);
                           setShowWithdrawModal(true);
                         }}
-                        disabled={position.type !== 'flexible'}
                       >
-                        {position.type === 'flexible' ? 'Request Withdrawal' : 'Locked - Penalty Applies'}
+                        {position.type === 'flexible' ? 'Withdraw' : 'Early Withdrawal'}
                       </button>
                       <button 
                         className="action-btn details-btn"
