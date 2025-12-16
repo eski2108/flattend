@@ -28597,11 +28597,15 @@ async def get_savings_positions(user_id: str):
             balance = saving.get('savings_balance', 0)
             coin_id = get_coingecko_id(symbol)
             
-            # Get current price from CoinGecko
-            current_price = await get_coingecko_price(coin_id)
+            # Get current price and 24h change from CoinGecko
+            coin_data = await get_coingecko_market_data(coin_id)
+            current_price = coin_data.get('current_price', 0) if coin_data else 0
+            price_change_24h = coin_data.get('price_change_percentage_24h', 0) if coin_data else 0
+            
             if not current_price:
                 # Fallback to internal market prices
                 current_price = market_prices.get(symbol.upper(), {}).get('price_usd', 0)
+                price_change_24h = 0
             
             # Get entry price (stored when deposit was made)
             entry_price = saving.get('entry_price', current_price)
