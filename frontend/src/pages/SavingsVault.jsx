@@ -122,6 +122,7 @@ const SavingsVault = () => {
 
   useEffect(() => {
     loadSavingsData();
+    loadAvailableCoins();  // LOAD COINS ON PAGE MOUNT
   }, []);
 
   const loadSavingsData = async () => {
