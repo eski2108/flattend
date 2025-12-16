@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://quickstart-27.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://money-trail-4.preview.emergentagent.com"

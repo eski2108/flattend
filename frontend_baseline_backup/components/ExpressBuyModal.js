@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { X, Zap, TrendingUp, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://quickstart-27.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://money-trail-4.preview.emergentagent.com';
 
 const EXPRESS_CRYPTOS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'LTC'];
 

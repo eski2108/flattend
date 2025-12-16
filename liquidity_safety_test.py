@@ -10,7 +10,7 @@ Test Scenarios:
 2. Check Liquidity Events - Query liquidity_events collection for blocked events  
 3. Restore BTC Liquidity - Set BTC admin liquidity back to normal
 
-Backend URL: https://quickstart-27.preview.emergentagent.com
+Backend URL: https://money-trail-4.preview.emergentagent.com
 """
 
 import asyncio
@@ -22,7 +22,7 @@ import os
 import sys
 
 # Configuration
-BACKEND_URL = "https://quickstart-27.preview.emergentagent.com"
+BACKEND_URL = "https://money-trail-4.preview.emergentagent.com"
 MONGO_URL = "mongodb://localhost:27017"
 DB_NAME = "coinhubx"
 

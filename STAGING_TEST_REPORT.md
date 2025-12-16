@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://quickstart-27.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://money-trail-4.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

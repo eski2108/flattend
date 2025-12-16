@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://quickstart-27.preview.emergentagent.com
+https://money-trail-4.preview.emergentagent.com
 
 ### Test Route
 
-`https://quickstart-27.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://money-trail-4.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

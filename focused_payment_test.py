@@ -7,7 +7,7 @@ This script tests the payment flow endpoints with minimal setup:
 2. Tests Admin payment marking with mock data
 3. Tests Seller payout with mock balance
 
-Backend URL: https://quickstart-27.preview.emergentagent.com
+Backend URL: https://money-trail-4.preview.emergentagent.com
 """
 
 import requests
@@ -18,7 +18,7 @@ from datetime import datetime, timezone, timedelta
 import sys
 
 # Configuration
-BACKEND_URL = "https://quickstart-27.preview.emergentagent.com/api"
+BACKEND_URL = "https://money-trail-4.preview.emergentagent.com/api"
 
 def print_section(title):
     """Print a formatted section header"""

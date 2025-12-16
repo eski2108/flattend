@@ -11,7 +11,7 @@ import json
 import time
 
 # Configuration
-BACKEND_URL = "https://quickstart-27.preview.emergentagent.com/api"
+BACKEND_URL = "https://money-trail-4.preview.emergentagent.com/api"
 
 def test_edge_cases():
     """Test edge cases for registration and login"""

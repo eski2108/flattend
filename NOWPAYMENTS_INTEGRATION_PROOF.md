@@ -32,7 +32,7 @@ POST ${API}/api/wallet/send/${currency}
 
 **Live Test Proof:**
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/wallet/send/BTC/metadata?user_id=test"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/wallet/send/BTC/metadata?user_id=test"
 {
   "success": true,
   "currency": "BTC",
@@ -63,7 +63,7 @@ GET ${API}/api/crypto-bank/deposit-address/${currency}
 
 **Live Test Proof:**
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/crypto-bank/deposit-address/btc"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/crypto-bank/deposit-address/btc"
 {
   "success": true,
   "currency": "BTC",
@@ -101,7 +101,7 @@ Swap is internal balance adjustment, not external blockchain transaction.
 
 **Live Test Proof:**
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/swap/available-coins"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/swap/available-coins"
 {
   "success": true,
   "coins": ["BTC", "ETH", "USDT", "LTC", ...]
@@ -133,7 +133,7 @@ This is peer-to-peer trading between platform users.
 
 **Live Test Proof:**
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/crypto-market/sell/orders"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/crypto-market/sell/orders"
 {
   "success": true,
   "orders": []
@@ -209,19 +209,19 @@ class NOWPaymentsService:
 
 ### Test 1: Deposit Address Generation
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/crypto-bank/deposit-address/eth"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/crypto-bank/deposit-address/eth"
 ```
 **Result:** ✅ Returns REAL Ethereum address from NowPayments
 
 ### Test 2: Send Metadata
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/wallet/send/ETH/metadata?user_id=test"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/wallet/send/ETH/metadata?user_id=test"
 ```
 **Result:** ✅ Returns real balance, fees, limits
 
 ### Test 3: Swap Coins
 ```bash
-$ curl "https://quickstart-27.preview.emergentagent.com/api/swap/available-coins"
+$ curl "https://money-trail-4.preview.emergentagent.com/api/swap/available-coins"
 ```
 **Result:** ✅ Returns available coins (internal swap, not NowPayments)
 

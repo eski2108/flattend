@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://quickstart-27.preview.emergentagent.com
-P2P Page:     https://quickstart-27.preview.emergentagent.com/p2p
-Backend API:  https://quickstart-27.preview.emergentagent.com/api
+Frontend:     https://money-trail-4.preview.emergentagent.com
+P2P Page:     https://money-trail-4.preview.emergentagent.com/p2p
+Backend API:  https://money-trail-4.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

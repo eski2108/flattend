@@ -139,7 +139,7 @@ sudo supervisorctl restart frontend
 ```
 
 **Live URL:**
-https://quickstart-27.preview.emergentagent.com/#/trading
+https://money-trail-4.preview.emergentagent.com/#/trading
 
 **Status:** ✅ DEPLOYED TO LIVE PREVIEW
 

@@ -95,7 +95,7 @@ async def setup_demo_traders():
     print("\n✅ Trader profiles created! Now calculating badges...")
     
     # Call API to calculate badges for each
-    BASE_URL = "https://quickstart-27.preview.emergentagent.com/api"
+    BASE_URL = "https://money-trail-4.preview.emergentagent.com/api"
     
     for email, user_id in users.items():
         if user_id:

@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://quickstart-27.preview.emergentagent.com/api
+https://money-trail-4.preview.emergentagent.com/api
 ```
 
 This means:

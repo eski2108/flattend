@@ -18,7 +18,7 @@ HOW TO ACCESS THE DISPUTE:
 ================================================================================
 
 Option 1: Login to Admin Panel
-1. Go to: https://quickstart-27.preview.emergentagent.com/admin/login
+1. Go to: https://money-trail-4.preview.emergentagent.com/admin/login
 2. Login as admin
 3. Navigate to: Disputes section
 4. Find dispute: live_dispute_003
@@ -28,7 +28,7 @@ Backend endpoint: http://localhost:8001/api/admin/disputes/live_dispute_003/reso
 
 Option 3: Frontend Route
 Route exists at: /admin/disputes/:disputeId
-Full URL: https://quickstart-27.preview.emergentagent.com/admin/disputes/live_dispute_003
+Full URL: https://money-trail-4.preview.emergentagent.com/admin/disputes/live_dispute_003
 
 ================================================================================
 WHAT THE ADMIN PAGE SHOULD SHOW:

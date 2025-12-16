@@ -6,7 +6,7 @@ Debug Admin Approval Issue - Test different approval request formats
 import requests
 import json
 
-BASE_URL = "https://quickstart-27.preview.emergentagent.com/api"
+BASE_URL = "https://money-trail-4.preview.emergentagent.com/api"
 ADMIN_USER_EMAIL = "admin_test@demo.com"
 ADMIN_USER_PASSWORD = "Admin123!"
 

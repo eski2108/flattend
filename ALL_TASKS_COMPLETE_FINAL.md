@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://quickstart-27.preview.emergentagent.com
+**URL:** https://money-trail-4.preview.emergentagent.com
 
 **Services Status:**
 ```bash

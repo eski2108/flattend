@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { Zap, ArrowRight, Info, CheckCircle } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://quickstart-27.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://money-trail-4.preview.emergentagent.com';
 
 export default function P2PExpress() {
   const navigate = useNavigate();
