@@ -229,8 +229,8 @@
 
 .summary-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45), 0 0 24px rgba(0, 240, 255, 0.25);
-  border-color: rgba(0, 240, 255, 0.65);
+  box-shadow: 0 0 0 1px rgba(19,215,255,.18), 0 12px 40px rgba(0,0,0,.45), 0 0 18px rgba(19,215,255,.22);
+  border-color: rgba(19, 215, 255, 0.65);
 }
 
 .summary-card:hover::before {
