@@ -827,7 +827,7 @@ const SavingsVault = () => {
                       >
                         <img src={getCoinLogo(coin.symbol)} alt={coin.symbol} className="coin-option-logo" />
                         <div className="coin-option-info">
-                          <span className="coin-option-symbol">{coin.symbol}</span>
+                          <span className="coin-option-symbol">{coin.emoji} {coin.symbol}</span>
                           <span className="coin-option-name">{coin.name}</span>
                         </div>
                       </div>
