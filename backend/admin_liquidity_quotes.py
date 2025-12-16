@@ -631,33 +631,50 @@ class AdminLiquidityQuoteService:
         Get live market price in GBP
         Uses same source as dashboard for consistency
         """
+        # PRIORITY 1: Try database prices first (most reliable)
         try:
-            # Try cached prices first (from price service)
-            from price_service import get_cached_prices
-            
-            prices = await get_cached_prices()
-            crypto_price_usd = prices['crypto_prices'].get(crypto_currency, 0)
-            
-            if crypto_price_usd > 0:
-                # Convert to GBP
-                fx_rates = prices['fx_rates']
-                gbp_rate = fx_rates.get('GBP', 0.79)
-                return crypto_price_usd * gbp_rate
-            
-            # Fallback to database
             currency_doc = await self.db.currencies.find_one(
                 {"symbol": crypto_currency},
                 {"_id": 0}
             )
             
             if currency_doc:
-                return currency_doc.get("gbp_price") or currency_doc.get("current_price", 0)
+                gbp_price = currency_doc.get("gbp_price") or currency_doc.get("current_price", 0)
+                if gbp_price > 0:
+                    logger.info(f"📊 Price for {crypto_currency}: £{gbp_price} (from database)")
+                    return gbp_price
+        except Exception as db_err:
+            logger.warning(f"Database price lookup failed: {db_err}")
+        
+        # PRIORITY 2: Try cached prices from price service
+        try:
+            from price_service import get_cached_prices
             
-            return 0
+            prices = await get_cached_prices()
+            crypto_price_usd = prices['crypto_prices'].get(crypto_currency, 0)
             
-        except Exception as e:
-            logger.error(f"Error fetching market price: {str(e)}")
-            return 0
+            if crypto_price_usd > 0:
+                fx_rates = prices['fx_rates']
+                gbp_rate = fx_rates.get('GBP', 0.79)
+                gbp_price = crypto_price_usd * gbp_rate
+                logger.info(f"📊 Price for {crypto_currency}: £{gbp_price} (from cache)")
+                return gbp_price
+        except Exception as cache_err:
+            logger.warning(f"Cache price lookup failed: {cache_err}")
+        
+        # PRIORITY 3: Hardcoded fallback prices
+        fallback_prices = {
+            "BTC": 69000, "ETH": 2180, "USDT": 0.79, "SOL": 95,
+            "XRP": 1.66, "ADA": 0.32, "DOGE": 0.10, "BNB": 490
+        }
+        
+        if crypto_currency in fallback_prices:
+            price = fallback_prices[crypto_currency]
+            logger.warning(f"⚠️ Using fallback price for {crypto_currency}: £{price}")
+            return price
+        
+        logger.error(f"❌ No price available for {crypto_currency}")
+        return 0
 
 # Singleton instance
 _quote_service = None
