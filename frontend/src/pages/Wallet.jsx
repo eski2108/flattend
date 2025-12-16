@@ -86,32 +86,22 @@ export default function Wallet() {
 
   const loadBalances = async (userId) => {
     try {
-      // Get ALL 236 NowPayments coins
-      const coinsRes = await axios.get(`${API}/api/wallets/coin-metadata`);
-      
-      // Get user's actual balances
+      // Get user's actual balances ONLY
       const balancesRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
       
-      if (coinsRes.data.success) {
-        const allCoins = coinsRes.data.coins || [];
+      if (balancesRes.data && balancesRes.data.balances) {
         const userBalances = balancesRes.data.balances || [];
         
-        // Create a map of user balances
-        const balanceMap = {};
-        userBalances.forEach(bal => {
-          balanceMap[bal.currency] = bal.balance;
-        });
+        // Show ONLY coins the user actually has (balance > 0)
+        const filteredBalances = userBalances.filter(bal => 
+          parseFloat(bal.balance) > 0 || parseFloat(bal.total_balance) > 0
+        );
         
-        // Merge: show ALL coins with their balance (0 if user doesn't have any)
-        const mergedBalances = allCoins.map(coin => ({
-          currency: coin.symbol,
-          balance: balanceMap[coin.symbol] || '0.00'
-        }));
-        
-        setBalances(mergedBalances);
+        setBalances(filteredBalances);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error loading balances:', error);
+      setBalances([]);
     }
   };
 
