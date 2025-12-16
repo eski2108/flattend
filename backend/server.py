@@ -26466,12 +26466,10 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         revenue_records = await db.admin_revenue.find({}).to_list(10000)
         logger.info(f"🔍 Found {len(revenue_records)} admin_revenue records")
         
-        logger.info(f"🔍 Found {len(fee_transactions)} fee transactions")
-        
-        # Filter by timeframe in Python (more reliable)
-        filtered_transactions = []
-        for tx in fee_transactions:
-            tx_timestamp = tx.get("timestamp")
+        # Filter by timeframe
+        filtered_records = []
+        for record in revenue_records:
+            tx_timestamp = record.get("timestamp")
             if tx_timestamp:
                 if isinstance(tx_timestamp, str):
                     try:
@@ -26482,65 +26480,64 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
                     tx_date = tx_timestamp
                 
                 if tx_date >= start_date:
-                    filtered_transactions.append(tx)
+                    filtered_records.append(record)
             else:
-                filtered_transactions.append(tx)  # Include if no timestamp
+                filtered_records.append(record)
         
-        fee_transactions = filtered_transactions
+        revenue_records = filtered_records
         
-        # Aggregate by fee type
+        # Aggregate data
         by_fee_type = {}
         by_currency = {}
-        total_revenue_crypto = 0
-        total_referral_paid_crypto = 0
+        total_revenue_gbp = 0
+        total_referral_paid_gbp = 0
         recent_transactions = []
         
         crypto_prices_gbp = {
-            "BTC": 75000, "ETH": 2765, "USDT": 0.79, "XRP": 0.46,
-            "LTC": 83, "ADA": 0.33, "DOT": 6.16, "DOGE": 0.067,
-            "BNB": 490, "SOL": 166, "MATIC": 0.75, "AVAX": 33, "GBP": 1.0
+            "BTC": 69000, "ETH": 2180, "USDT": 0.79, "XRP": 1.66,
+            "LTC": 83, "ADA": 0.33, "DOT": 6.16, "DOGE": 0.10,
+            "BNB": 490, "SOL": 95, "MATIC": 0.75, "AVAX": 33, "GBP": 1.0
         }
         
-        for tx in fee_transactions:
-            fee_type = tx.get("transaction_type", "Unknown")
-            currency = tx.get("currency", "GBP")
-            admin_fee = tx.get("fee_amount", 0)
-            referrer_commission = tx.get("referrer_commission", 0)
+        for record in revenue_records:
+            source = record.get("source", "Unknown")
+            currency = record.get("currency", "GBP")
+            amount = float(record.get("amount", 0))
+            net_profit = float(record.get("net_profit", amount))
+            referral_paid = float(record.get("referral_commission_paid", 0))
             
+            # Convert to GBP
             price_gbp = crypto_prices_gbp.get(currency, 1)
-            admin_fee_gbp = admin_fee * price_gbp
-            referrer_gbp = referrer_commission * price_gbp
+            amount_gbp = amount * price_gbp if currency != "GBP" else amount
+            net_gbp = net_profit * price_gbp if currency != "GBP" else net_profit
+            referral_gbp = referral_paid * price_gbp if currency != "GBP" else referral_paid
             
-            # By fee type
-            if fee_type not in by_fee_type:
-                by_fee_type[fee_type] = {"total_revenue": 0, "count": 0}
-            by_fee_type[fee_type]["total_revenue"] += admin_fee_gbp
-            by_fee_type[fee_type]["count"] += 1
+            # By source (fee type)
+            if source not in by_fee_type:
+                by_fee_type[source] = {"total_revenue": 0, "count": 0}
+            by_fee_type[source]["total_revenue"] += amount_gbp
+            by_fee_type[source]["count"] += 1
             
             # By currency
             if currency not in by_currency:
-                by_currency[currency] = {
-                    "total_revenue": 0,
-                    "net_revenue": 0,
-                    "referral_paid": 0,
-                    "count": 0
-                }
-            by_currency[currency]["total_revenue"] += admin_fee
-            by_currency[currency]["net_revenue"] += (admin_fee - referrer_commission)
-            by_currency[currency]["referral_paid"] += referrer_commission
+                by_currency[currency] = {"total_revenue": 0, "net_revenue": 0, "referral_paid": 0, "count": 0}
+            by_currency[currency]["total_revenue"] += amount
+            by_currency[currency]["net_revenue"] += net_profit
+            by_currency[currency]["referral_paid"] += referral_paid
             by_currency[currency]["count"] += 1
             
-            total_revenue_crypto += admin_fee_gbp
-            total_referral_paid_crypto += referrer_gbp
+            total_revenue_gbp += amount_gbp
+            total_referral_paid_gbp += referral_gbp
             
-            # Recent transactions (last 10)
+            # Recent transactions
             if len(recent_transactions) < 10:
                 recent_transactions.append({
-                    "fee_type": fee_type,
+                    "fee_type": source,
                     "currency": currency,
-                    "admin_fee": admin_fee,
-                    "referrer_commission": referrer_commission,
-                    "timestamp": tx.get("timestamp")
+                    "admin_fee": amount,
+                    "referrer_commission": referral_paid,
+                    "timestamp": record.get("timestamp"),
+                    "revenue_type": record.get("revenue_type")
                 })
         
         # Format by_fee_type for frontend
