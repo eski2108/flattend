@@ -145,40 +145,21 @@
 
 /* Transfer from Wallet Button */
 .transfer-from-wallet-btn {
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(123, 44, 255, 0.15));
+  background: transparent;
   border: 2px solid #00F0FF;
-  border-radius: 12px;
-  padding: 14px 28px;
+  border-radius: 10px;
+  padding: 12px 24px;
   color: #00F0FF;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.transfer-from-wallet-btn::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.transfer-from-wallet-btn:hover::before {
-  opacity: 1;
 }
 
 .transfer-from-wallet-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
-  border-color: #00F0FF;
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 /* ============================================
