@@ -294,9 +294,14 @@ const SavingsVault = () => {
           </div>
         </div>
         
-        <p className="notice-terms-footer">
-          Early withdrawal from notice accounts will forfeit a percentage of earned interest. No principal is lost.
-        </p>
+        <div className="notice-info-section">
+          <button className="notice-info-btn">
+            <span className="info-icon">ⓘ</span> Notice Rules & Early Withdrawal
+          </button>
+          <p className="notice-terms-footer">
+            Early withdrawal: interest penalty applies. Principal is never lost.
+          </p>
+        </div>
       </div>
 
       {/* REFERRAL BANNER */}
