@@ -123,11 +123,13 @@ export default function PriceTickerEnhanced() {
       background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
       borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
       height: '48px',
+      maxHeight: '48px',
       overflow: 'hidden',
       padding: 0,
       margin: 0,
       boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15)',
-      position: 'relative'
+      position: 'relative',
+      flexShrink: 0
     }}>
       <div style={{
         position: 'absolute',
