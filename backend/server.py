@@ -10152,42 +10152,14 @@ async def execute_swap_OLD(request: dict):
     net_value_gbp = from_value_gbp - swap_fee_gbp
     to_amount = net_value_gbp / to_price
     
-    # Deduct from_currency from user using trader balance system
-    result = await db.trader_balances.update_one(
-        {"trader_id": user_id, "currency": from_currency},
-        {
-            "$inc": {
-                "available_balance": -from_amount,
-                "total_balance": -from_amount
-            },
-            "$set": {
-                "last_updated": datetime.now(timezone.utc).isoformat()
-            }
-        }
-    )
+    # Deduct from_currency from user - SYNCED TO ALL COLLECTIONS
+    debit_success = await sync_debit_balance(user_id, from_currency, from_amount, "swap_from")
     
-    if result.modified_count == 0:
+    if not debit_success:
         raise HTTPException(status_code=500, detail="Failed to deduct balance")
     
-    # Add to_currency to user using trader balance system
-    to_balance = await db.trader_balances.find_one({"trader_id": user_id, "currency": to_currency})
-    
-    if to_balance:
-        await db.trader_balances.update_one(
-            {"trader_id": user_id, "currency": to_currency},
-            {
-                "$inc": {
-                    "available_balance": to_amount,
-                    "total_balance": to_amount
-                },
-                "$set": {
-                    "last_updated": datetime.now(timezone.utc).isoformat()
-                }
-            }
-        )
-    else:
-        # Initialize balance if doesn't exist using trader balance system
-        await initialize_trader_balance(db, user_id, to_currency, to_amount)
+    # Add to_currency to user - SYNCED TO ALL COLLECTIONS
+    await sync_credit_balance(user_id, to_currency, to_amount, "swap_to")
     
     # Add swap fee to admin liquidity wallet (100% goes to admin)
     await db.admin_liquidity_wallets.update_one(
