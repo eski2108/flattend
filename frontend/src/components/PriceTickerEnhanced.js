@@ -141,22 +141,32 @@ export default function PriceTickerEnhanced() {
           height: 48px !important;
           max-height: 48px !important;
           overflow: hidden !important;
+          display: flex !important;
+          flex-wrap: nowrap !important;
         }
         .price-ticker-single .rfm-marquee {
           height: 48px !important;
           max-height: 48px !important;
+          display: flex !important;
+          flex-wrap: nowrap !important;
         }
         .price-ticker-single .rfm-initial-child-container {
           height: 48px !important;
           display: flex !important;
           flex-wrap: nowrap !important;
           align-items: center !important;
+          white-space: nowrap !important;
         }
         .price-ticker-single .rfm-child {
           height: 48px !important;
-          display: flex !important;
+          display: inline-flex !important;
           align-items: center !important;
           white-space: nowrap !important;
+          flex-shrink: 0 !important;
+        }
+        .price-ticker-single .rfm-child > div {
+          display: inline-flex !important;
+          flex-shrink: 0 !important;
         }
       `}</style>
       <div style={{
