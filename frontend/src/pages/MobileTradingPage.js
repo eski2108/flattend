@@ -225,6 +225,40 @@ export default function MobileTradingPage() {
           .main-content {
             padding: 0 !important;
             margin: 0 !important;
+            overflow: hidden !important;
+          }
+          .trading-layout {
+            display: flex;
+            flex-direction: row;
+            height: calc(100vh - 48px);
+            width: 100%;
+            overflow: hidden;
+            background: #020617;
+          }
+          .trading-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+          }
+          .chart-wrap {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            overflow: hidden;
+          }
+          .chart-wrap > *,
+          .chart-wrap iframe {
+            width: 100% !important;
+            height: 100% !important;
+          }
+          .trading-panel {
+            width: 320px;
+            flex: 0 0 320px;
+            overflow-y: auto;
+            background: #0A0F1F;
+            border-left: 1px solid rgba(255,255,255,0.1);
           }
           .tradingview-widget-container,
           .tradingview-widget-container__widget,
@@ -233,27 +267,31 @@ export default function MobileTradingPage() {
             outline: none !important;
             box-shadow: none !important;
             background: transparent !important;
+            width: 100% !important;
+            height: 100% !important;
           }
           .tradingview-widget-copyright {
             display: none !important;
           }
-          /* Reposition chat widget to lower-right with safe spacing */
-          [class*="chat-widget"],
-          [id*="chat-widget"],
-          [class*="ChatWidget"],
-          .tawk-min-container {
-            bottom: 100px !important;
-            right: 16px !important;
-            z-index: 999 !important;
+          @media (max-width: 1024px) {
+            .trading-layout {
+              flex-direction: column;
+              height: auto;
+            }
+            .trading-panel {
+              width: 100%;
+              flex: none;
+              border-left: none;
+              border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .chart-wrap {
+              height: 500px;
+              flex: none;
+            }
           }
         `}
       </style>
-      <div style={{
-        width: '100%',
-        background: '#020617',
-        minHeight: '100vh',
-        paddingBottom: '20px'
-      }}>
+      <div className="trading-layout">
         {/* Header with Back Button */}
         <div style={{
           display: 'flex',
