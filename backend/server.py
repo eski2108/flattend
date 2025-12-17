@@ -10447,7 +10447,7 @@ async def open_trading_position(request: dict):
             "description": f"Spot trading fee ({PLATFORM_CONFIG.get('spot_trading_fee_percent', 3.0)}%) on {pair} {side}"
         })
         
-        # Handle referral commission
+        # Handle referral commission - SYNCED
         if user.get("referred_by"):
             referrer_id = user["referred_by"]
             referrer = await db.users.find_one({"user_id": referrer_id})
@@ -10456,11 +10456,8 @@ async def open_trading_position(request: dict):
                 commission_rate = 0.5 if tier == "golden" else 0.2
                 commission = fee_amount * commission_rate
                 
-                # Add commission to referrer
-                await db.wallets.update_one(
-                    {"user_id": referrer_id},
-                    {"$inc": {"balances.GBP.balance": commission}}
-                )
+                # Add commission to referrer - SYNCED
+                await sync_credit_balance(referrer_id, "GBP", commission, "referral_commission")
                 
                 # Log commission
                 await db.referral_commissions.insert_one({
