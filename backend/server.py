@@ -12968,21 +12968,10 @@ async def boost_offer(request: dict):
             detail=f"Insufficient GBP balance. Need £{boost_cost}, have £{user_balance.get('available_balance', 0) if user_balance else 0}"
         )
     
-    # Deduct boost cost from user's GBP balance
-    result = await db.trader_balances.update_one(
-        {"trader_id": user_id, "currency": "GBP"},
-        {
-            "$inc": {
-                "available_balance": -boost_cost,
-                "total_balance": -boost_cost
-            },
-            "$set": {
-                "last_updated": datetime.now(timezone.utc).isoformat()
-            }
-        }
-    )
+    # Deduct boost cost from user's GBP balance - SYNCED
+    debit_success = await sync_debit_balance(user_id, "GBP", boost_cost, "boost_listing")
     
-    if result.modified_count == 0:
+    if not debit_success:
         raise HTTPException(status_code=500, detail="Failed to deduct balance")
     
     # Calculate boost end date
