@@ -20463,20 +20463,10 @@ async def send_crypto_coin_specific(currency: str, request: dict):
             "updated_at": datetime.now(timezone.utc).isoformat()
         })
         
-        # ===== DEDUCT BALANCE IMMEDIATELY =====
+        # ===== DEDUCT BALANCE IMMEDIATELY - SYNCED =====
         new_available = available_balance - total_needed
-        new_total = balance_doc.get('total_balance', 0) - total_needed
         
-        await db.crypto_balances.update_one(
-            {"user_id": user_id, "currency": currency},
-            {
-                "$set": {
-                    "available_balance": new_available,
-                    "total_balance": new_total,
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                }
-            }
-        )
+        await sync_debit_balance(user_id, currency, total_needed, "send_crypto_withdrawal")
         
         logger.info(f"✅ Balance deducted: {user_id} {currency} new balance = {new_available}")
         
