@@ -10801,19 +10801,8 @@ async def place_trading_order(request: dict):
         }
         await db.fee_transactions.insert_one(fee_record)
         
-        # Credit fee to admin wallet
-        await db.internal_balances.update_one(
-            {"user_id": "PLATFORM_FEES", "currency": "GBP"},
-            {
-                "$inc": {
-                    "balance": fee_amount,
-                    "total_fees": fee_amount,
-                    "trading_fees": fee_amount
-                },
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            },
-            upsert=True
-        )
+        # Credit fee to admin wallet - SYNCED
+        await sync_credit_balance("PLATFORM_FEES", "GBP", fee_amount, "trading_fee")
         
         # Process referral commission
         referral_engine = get_referral_engine()
