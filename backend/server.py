@@ -14678,15 +14678,8 @@ async def check_and_award_referral_bonus(user_id: str, top_up_amount: float, cur
         logger.error(f"❌ Failed to deduct from platform wallet: {str(e)}")
         return {"success": False, "message": "Platform wallet error"}
     
-    # Add £20 to referrer's balance (after successful deduction)
-    await db.crypto_balances.update_one(
-        {"user_id": relationship["referrer_user_id"], "currency": bonus_currency},
-        {
-            "$inc": {"balance": bonus_amount, "available_balance": bonus_amount},
-            "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-        },
-        upsert=True
-    )
+    # Add £20 to referrer's balance (after successful deduction) - SYNCED
+    await sync_credit_balance(relationship["referrer_user_id"], bonus_currency, bonus_amount, "referral_bonus")
     
     # Mark bonus as awarded
     await db.referral_relationships.update_one(
