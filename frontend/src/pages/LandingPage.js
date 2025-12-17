@@ -462,7 +462,7 @@ export default function LandingPage() {
             {/* Stat Box 2: Total Volume - REAL DATA */}
             <StatBox
               icon="💰"
-              number={stats?.total_volume ? (stats.total_volume / 1000).toFixed(1) : '0'}
+              number={stats?.total_volume ? Math.round(stats.total_volume / 1000) : 0}
               suffix="K"
               label="Trading Volume"
               microcopy="Total transaction volume processed"
@@ -471,7 +471,7 @@ export default function LandingPage() {
             {/* Stat Box 3: 100% Escrow */}
             <StatBox
               icon="🛡️"
-              number="100"
+              number={100}
               suffix="%"
               label="Escrow Protected"
               microcopy="Every trade secured with smart escrow"
@@ -480,7 +480,7 @@ export default function LandingPage() {
             {/* Stat Box 4: 24/7 Support */}
             <StatBox
               icon="⚡"
-              number="24"
+              number={24}
               suffix="/7"
               label="Live Support"
               microcopy="Professional mediation team available"
