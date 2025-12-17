@@ -607,6 +607,545 @@
   margin: 0;
 }
 
+/* ============================================
+   PREMIUM LOCKED SAVINGS CARDS - COMPLETE REDESIGN
+   Per detailed UX specification
+   ============================================ */
+
+.locked-savings-section {
+  margin-bottom: 32px;
+}
+
+.locked-savings-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.locked-savings-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.locked-savings-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Early Withdrawal Warning Banner */
+.early-withdrawal-warning {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.early-withdrawal-warning .warning-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.early-withdrawal-warning .warning-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.early-withdrawal-warning .warning-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #FCA5A5;
+}
+
+.early-withdrawal-warning .warning-text {
+  font-size: 13px;
+  color: rgba(252, 165, 165, 0.85);
+  line-height: 1.5;
+}
+
+/* Premium Savings Cards Container */
+.savings-periods-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto 24px auto;
+}
+
+/* Individual Savings Card */
+.savings-card {
+  background: linear-gradient(145deg, rgba(15, 17, 40, 0.95), rgba(10, 12, 30, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.savings-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.savings-card.selected {
+  border: 2px solid #3B82F6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Card Theme Variations */
+.savings-card-30 {
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.savings-card-30:hover {
+  border-color: rgba(102, 126, 234, 0.6);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(102, 126, 234, 0.15);
+}
+
+.savings-card-60 {
+  border-color: rgba(245, 87, 108, 0.3);
+}
+
+.savings-card-60:hover {
+  border-color: rgba(245, 87, 108, 0.6);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(245, 87, 108, 0.15);
+}
+
+.savings-card-90 {
+  border-color: rgba(79, 172, 254, 0.3);
+}
+
+.savings-card-90:hover {
+  border-color: rgba(79, 172, 254, 0.6);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(79, 172, 254, 0.15);
+}
+
+/* Most Popular Card Glow */
+.savings-card.most-popular {
+  z-index: 1;
+}
+
+.most-popular-glow {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 22px;
+  z-index: -1;
+  opacity: 0.12;
+  filter: blur(12px);
+}
+
+/* Popular Badge */
+.popular-badge {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 0 0 10px 10px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.max-returns-badge {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: #0a0e27;
+  padding: 8px 16px;
+  border-radius: 0 0 10px 10px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+}
+
+/* Period Header */
+.savings-card .period-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.savings-card .period-days {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.savings-card-30 .period-days {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.savings-card-60 .period-days {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.savings-card-90 .period-days {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.savings-card .period-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* APY Container */
+.savings-card .apy-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.08);
+  border-radius: 14px;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.savings-card .apy-value {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 42px;
+  line-height: 1;
+  color: #10B981;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.savings-card .apy-percent {
+  font-size: 24px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.savings-card .apy-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: #94A3B8;
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Highest APY emphasis */
+.apy-highest {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+.apy-highest .apy-value {
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+/* Fee Container */
+.savings-card .fee-container {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+  text-align: center;
+}
+
+.savings-card .fee-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.savings-card .fee-icon {
+  color: #DC2626;
+  font-size: 14px;
+}
+
+.savings-card .fee-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #FCA5A5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.savings-card .fee-amount {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  color: #EF4444;
+  line-height: 1;
+}
+
+.savings-card .fee-note {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  color: #F87171;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+/* Lowest fee emphasis */
+.fee-lowest {
+  background: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.fee-lowest .fee-amount {
+  color: #10B981 !important;
+}
+
+.fee-lowest .fee-note {
+  color: #34D399 !important;
+}
+
+/* Tagline */
+.savings-card .tagline-container {
+  text-align: center;
+  margin: 16px 0;
+}
+
+.savings-card .tagline {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  display: inline-block;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Progress Visual */
+.savings-card .progress-visual {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin: 16px 0 8px 0;
+  overflow: hidden;
+}
+
+.savings-card .progress-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.progress-30-day {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  width: 33%;
+}
+
+.progress-60-day {
+  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  width: 66%;
+}
+
+.progress-90-day {
+  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  width: 100%;
+}
+
+.savings-card .time-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  color: #64748B;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* CTA Buttons */
+.savings-card .cta-button {
+  width: 100%;
+  padding: 14px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: 0.3px;
+}
+
+.cta-30-day {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.cta-30-day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+}
+
+.cta-60-day {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.cta-60-day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 87, 108, 0.35);
+}
+
+.cta-90-day {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: #0a0e27;
+}
+
+.cta-90-day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 172, 254, 0.35);
+}
+
+.savings-card .button-icon {
+  font-size: 16px;
+}
+
+/* Calculator Hint */
+.calculator-hint {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.calculator-hint .calculator-icon {
+  font-size: 20px;
+}
+
+.calculator-hint .calculator-text {
+  font-size: 13px;
+  color: #93C5FD;
+  font-weight: 500;
+}
+
+/* Security Footer */
+.security-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.security-footer .security-icon {
+  font-size: 18px;
+}
+
+.security-footer .security-text {
+  font-size: 13px;
+  color: #6EE7B7;
+  font-weight: 500;
+}
+
+.security-footer .notice-rules-btn {
+  background: transparent;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 6px;
+  padding: 6px 14px;
+  color: #6EE7B7;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.security-footer .notice-rules-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .savings-periods-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .savings-periods-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 400px;
+  }
+  
+  .savings-card .period-days {
+    font-size: 40px;
+  }
+  
+  .savings-card .apy-value {
+    font-size: 36px;
+  }
+  
+  .early-withdrawal-warning {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .security-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .locked-savings-title {
+    font-size: 22px;
+  }
+}
+
 .referral-banner {
   padding: 14px 20px;
   margin-bottom: 24px;
