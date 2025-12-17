@@ -492,7 +492,8 @@ export default function MobileTradingPage() {
 
         {/* ORDER TYPE TABS */}
         <div style={{
-          margin: '0 16px 16px 16px',
+          width: '100%',
+          padding: '0 16px 16px 16px',
           display: 'flex',
           gap: '8px'
         }}>
