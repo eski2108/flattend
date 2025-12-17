@@ -10207,22 +10207,8 @@ async def execute_swap_OLD(request: dict):
         upsert=True
     )
     
-    # Also track in admin fee revenue for accounting
-    await db.internal_balances.update_one(
-        {"user_id": "admin_wallet", "currency": from_currency},
-        {
-            "$inc": {
-                "available": swap_fee_crypto,
-                "balance": swap_fee_crypto
-            },
-            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
-            "$setOnInsert": {
-                "reserved": 0,
-                "created_at": datetime.now(timezone.utc).isoformat()
-            }
-        },
-        upsert=True
-    )
+    # Also track in admin fee revenue for accounting - SYNCED
+    await sync_credit_balance("admin_wallet", from_currency, swap_fee_crypto, "swap_fee")
     
     # ═══════════════════════════════════════════════════════════════
     # LOG SWAP FEE TO ADMIN REVENUE (DASHBOARD VISIBILITY)
