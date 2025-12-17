@@ -132,12 +132,17 @@ export default function PriceTickerEnhanced() {
       flexShrink: 0
     }}>
       <style>{`
-        .price-ticker-single .rfm-marquee-container {
+        .price-ticker-single {
+          height: 48px !important;
+          max-height: 48px !important;
+          overflow: hidden !important;
+        }
+        .price-ticker-single > div {
           height: 48px !important;
           overflow: hidden !important;
         }
-        .price-ticker-single .rfm-marquee-container > div:nth-child(2) {
-          display: none !important;
+        .price-ticker-single .rfm-child {
+          height: 48px !important;
         }
       `}</style>
       <div style={{
