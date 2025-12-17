@@ -268,18 +268,61 @@ const SavingsVault = () => {
   };
 
   const handleToggleFlexibleStaked = async (index, newType) => {
-    console.log('Toggle type', index, newType);
-    // API call here
+    try {
+      const position = positions[index];
+      const userId = localStorage.getItem('user_id');
+      const response = await axios.post(`${API}/api/savings/toggle-type`, {
+        user_id: userId,
+        position_id: position.id,
+        new_type: newType
+      });
+      if (response.data.success) {
+        toast.success(`Changed to ${newType} savings`);
+        loadSavingsData();
+      }
+    } catch (error) {
+      console.error('Toggle type error:', error);
+      toast.error('Failed to change savings type');
+    }
   };
 
   const handleToggleAutoCompound = async (index) => {
-    console.log('Toggle auto-compound', index);
-    // API call here
+    try {
+      const position = positions[index];
+      const userId = localStorage.getItem('user_id');
+      const newValue = !position.auto_compound;
+      const response = await axios.post(`${API}/api/savings/auto-compound`, {
+        user_id: userId,
+        position_id: position.id,
+        enabled: newValue
+      });
+      if (response.data.success) {
+        toast.success(`Auto-compound ${newValue ? 'enabled' : 'disabled'}`);
+        loadSavingsData();
+      }
+    } catch (error) {
+      console.error('Auto-compound error:', error);
+      toast.error('Failed to update auto-compound setting');
+    }
   };
 
   const handleLockPeriodChange = async (index, period) => {
-    console.log('Change lock period', index, period);
-    // API call here
+    try {
+      const position = positions[index];
+      const userId = localStorage.getItem('user_id');
+      const response = await axios.post(`${API}/api/savings/change-period`, {
+        user_id: userId,
+        position_id: position.id,
+        new_period: period
+      });
+      if (response.data.success) {
+        toast.success(`Lock period changed to ${period} days`);
+        loadSavingsData();
+      }
+    } catch (error) {
+      console.error('Lock period change error:', error);
+      toast.error('Failed to change lock period');
+    }
   };
 
   const filteredPositions = getFilteredPositions();
