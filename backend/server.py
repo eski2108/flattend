@@ -5342,7 +5342,12 @@ async def get_portfolio_summary(user_id: str):
                 if currency == "GBP":
                     price_gbp = 1
                 elif currency in prices:
-                    price_usd = prices[currency].get("price_usd", 0)
+                    # Handle both formats: {price_usd: X} or just X
+                    price_data = prices[currency]
+                    if isinstance(price_data, dict):
+                        price_usd = price_data.get("price_usd", 0) or price_data.get("usd", 0)
+                    else:
+                        price_usd = float(price_data) if price_data else 0
                     price_gbp = price_usd * 0.79  # USD to GBP conversion
                 
                 available_balance += available * price_gbp
