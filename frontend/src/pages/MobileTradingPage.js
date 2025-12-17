@@ -236,8 +236,8 @@ export default function MobileTradingPage() {
             background: #020617;
           }
           .trading-main {
-            flex: 1;
-            min-width: 0;
+            flex: 1 1 0%;
+            width: calc(100% - 320px);
             display: flex;
             flex-direction: column;
             overflow: hidden;
