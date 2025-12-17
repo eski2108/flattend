@@ -26,7 +26,7 @@ export default function SpotTradingPro() {
   const [tradingFee, setTradingFee] = useState(0.1);
   const [isLoading, setIsLoading] = useState(false);
   const [tradingPairs, setTradingPairs] = useState([]);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
