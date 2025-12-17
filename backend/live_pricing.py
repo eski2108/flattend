@@ -129,10 +129,10 @@ async def fetch_live_prices() -> Dict[str, float]:
             if response.status_code == 200:
                 data = response.json()
                 
-                # Also fetch GBP prices
-                gbp_url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_ids}&vs_currencies=gbp&include_24hr_change=true&include_24hr_vol=true"
-                gbp_response = await client.get(gbp_url)
-                gbp_data = gbp_response.json() if gbp_response.status_code == 200 else {}
+                # Also fetch GBP and EUR prices
+                multi_currency_url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_ids}&vs_currencies=gbp,eur&include_24hr_change=true&include_24hr_vol=true"
+                multi_response = await client.get(multi_currency_url)
+                gbp_data = multi_response.json() if multi_response.status_code == 200 else {}
                 
                 # Convert CoinGecko response to our format with full market data
                 prices = {}
