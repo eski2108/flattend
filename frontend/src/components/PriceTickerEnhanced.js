@@ -192,15 +192,17 @@ export default function PriceTickerEnhanced() {
             100% { transform: translateX(-50%); }
           }
           .ticker-scroll-track {
-            display: flex;
+            display: inline-flex !important;
+            flex-wrap: nowrap !important;
             animation: tickerScroll 30s linear infinite;
-            white-space: nowrap;
+            white-space: nowrap !important;
+            width: max-content !important;
           }
           .ticker-scroll-track:hover {
             animation-play-state: paused;
           }
         `}</style>
-        <div className="ticker-scroll-track" style={{ display: 'flex', alignItems: 'center', height: '48px' }}>
+        <div className="ticker-scroll-track" style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center', height: '48px', whiteSpace: 'nowrap' }}>
         {[...coins, ...coins].map((coin, idx) => {
           const isPositive = coin.change >= 0;
           
