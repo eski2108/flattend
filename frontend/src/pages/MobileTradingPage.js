@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout';
+// Layout is provided by MainLayout wrapper in App.js - no need to import
 import { getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
 import { IoArrowBack, IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
