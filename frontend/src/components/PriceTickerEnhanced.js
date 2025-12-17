@@ -36,6 +36,9 @@ const API = process.env.REACT_APP_BACKEND_URL;
 export default function PriceTickerEnhanced() {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currency, setCurrency] = useState('USD'); // Default to USD
+  const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
+  const [rawPrices, setRawPrices] = useState({});
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -47,15 +50,17 @@ export default function PriceTickerEnhanced() {
         // Fetch live prices
         const pricesResponse = await axios.get(`${API}/api/prices/live`);
         const livePrices = pricesResponse.data?.prices || {};
+        setRawPrices(livePrices);
 
         // Merge data - ONLY include coins that have REAL prices (no random fallbacks)
+        const currencyField = CURRENCIES[currency].field;
         const mergedCoins = nowCoins
           .filter(coin => COIN_EMOJIS[coin.toUpperCase()])
           .map(coin => {
             const symbol = coin.toUpperCase();
             const priceData = livePrices[symbol] || {};
             // Only use real prices - no random fallbacks
-            const price = priceData.price_gbp || 0;
+            const price = priceData[currencyField] || priceData.price_usd || 0;
             const change = priceData.change_24h || 0;
 
             return {
