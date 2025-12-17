@@ -3787,27 +3787,8 @@ async def release_crypto_from_escrow_OLD(request: ReleaseCryptoRequest):
         completed_at=datetime.now(timezone.utc)
     )
     
-    # Track P2P fees separately in internal_balances
-    p2p_fee_wallet = await db.internal_balances.find_one({"currency": trade["crypto_currency"]})
-    
-    if p2p_fee_wallet:
-        await db.internal_balances.update_one(
-            {"currency": trade["crypto_currency"]},
-            {
-                "$inc": {
-                    "p2p_fees": platform_fee,
-                    "total_fees": platform_fee
-                }
-            }
-        )
-    else:
-        await db.internal_balances.insert_one({
-            "currency": trade["crypto_currency"],
-            "p2p_fees": platform_fee,
-            "total_fees": platform_fee,
-            "express_buy_fees": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        })
+    # Track P2P fees - credit to admin/platform - SYNCED
+    await sync_credit_balance(PLATFORM_CONFIG["admin_wallet_id"], trade["crypto_currency"], platform_fee, "p2p_fee")
     
     fee_dict = fee_tx.model_dump()
     fee_dict['created_at'] = fee_dict['created_at'].isoformat()
