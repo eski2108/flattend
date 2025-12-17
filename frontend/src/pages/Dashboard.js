@@ -68,19 +68,22 @@ export default function Dashboard() {
         }
       });
       if (res.data.success) {
-        const value = res.data.current_value || 0;
+        // API returns totalValue, not current_value - support both for compatibility
+        const value = res.data.totalValue || res.data.current_value || 0;
         console.log('🔍 Dashboard API Response:', {
-          current_value: value,
+          totalValue: res.data.totalValue,
+          current_value: res.data.current_value,
+          final_value: value,
           timestamp: new Date().toISOString(),
           url: res.config.url
         });
         console.log(`💰 DASHBOARD PORTFOLIO VALUE: £${value.toFixed(2)}`);
         setTotalValue(value);
         setPortfolioData({
-          change24h: res.data.plPercent || 0, // Use P/L percentage as 24h change
-          totalAssets: 5, // We know user has 5 different assets
-          availableBalance: res.data.current_value || 0,
-          lockedBalance: 0 // No locked balance in current API
+          change24h: res.data.change24h || res.data.plPercent || 0,
+          totalAssets: res.data.totalAssets || 5,
+          availableBalance: res.data.availableBalance || res.data.current_value || value,
+          lockedBalance: res.data.lockedBalance || 0
         });
       }
       
