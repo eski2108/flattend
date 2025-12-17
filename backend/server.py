@@ -10310,12 +10310,8 @@ async def open_trading_position(request: dict):
                 "message": f"Insufficient balance. Required: £{required_margin:.2f}, Available: £{gbp_balance:.2f}"
             }
         
-        # Deduct margin from wallet
-        new_balance = gbp_balance - required_margin
-        await db.wallets.update_one(
-            {"user_id": user_id},
-            {"$set": {"balances.GBP.balance": new_balance, "updated_at": datetime.now(timezone.utc)}}
-        )
+        # Deduct margin from wallet - SYNCED
+        await sync_debit_balance(user_id, "GBP", required_margin, "spot_trading_margin")
         
         # Create position
         position_id = str(uuid.uuid4())
