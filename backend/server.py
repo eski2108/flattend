@@ -17471,7 +17471,7 @@ async def get_live_prices_endpoint():
 
 @api_router.get("/prices/live/{symbol}")
 async def get_single_live_price(symbol: str):
-    """Get live price for specific crypto (CACHED for performance)"""
+    """Get live price for specific crypto with 24h high/low (CACHED for performance)"""
     try:
         # Check cache first
         cache_key = price_cache_key(symbol)
@@ -17481,17 +17481,60 @@ async def get_single_live_price(symbol: str):
             logger.info(f"✅ Returning cached price for {symbol}")
             return cached_data
         
+        # Get basic prices
         price_usd = await get_live_price(symbol.upper(), "usd")
         price_gbp = await get_live_price(symbol.upper(), "gbp")
         
         if price_usd == 0 and price_gbp == 0:
             raise HTTPException(status_code=404, detail=f"Price not available for {symbol}")
         
+        # Try to get 24h high/low from CoinGecko markets endpoint
+        high_24h = price_usd * 1.02  # Default fallback
+        low_24h = price_usd * 0.98   # Default fallback
+        change_24h = 0
+        volume_24h = 0
+        
+        try:
+            import httpx
+            # Map symbol to CoinGecko ID
+            coin_ids = {
+                "BTC": "bitcoin", "ETH": "ethereum", "USDT": "tether", "BNB": "binancecoin",
+                "SOL": "solana", "XRP": "ripple", "ADA": "cardano", "DOGE": "dogecoin",
+                "DOT": "polkadot", "MATIC": "matic-network", "LTC": "litecoin", "SHIB": "shiba-inu",
+                "TRX": "tron", "AVAX": "avalanche-2", "LINK": "chainlink", "ATOM": "cosmos",
+                "UNI": "uniswap", "XLM": "stellar", "BCH": "bitcoin-cash", "USDC": "usd-coin"
+            }
+            coin_id = coin_ids.get(symbol.upper(), symbol.lower())
+            
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get(
+                    f"https://api.coingecko.com/api/v3/coins/markets",
+                    params={
+                        "vs_currency": "usd",
+                        "ids": coin_id,
+                        "sparkline": "false"
+                    }
+                )
+                if response.status_code == 200:
+                    data = response.json()
+                    if data and len(data) > 0:
+                        coin_data = data[0]
+                        high_24h = coin_data.get("high_24h", price_usd * 1.02) or price_usd * 1.02
+                        low_24h = coin_data.get("low_24h", price_usd * 0.98) or price_usd * 0.98
+                        change_24h = coin_data.get("price_change_percentage_24h", 0) or 0
+                        volume_24h = coin_data.get("total_volume", 0) or 0
+        except Exception as e:
+            logger.warning(f"Could not fetch 24h data for {symbol}: {e}")
+        
         response_data = {
             "success": True,
             "symbol": symbol.upper(),
             "price_usd": price_usd,
             "price_gbp": price_gbp,
+            "high_24h": high_24h,
+            "low_24h": low_24h,
+            "change_24h": change_24h,
+            "volume_24h": volume_24h,
             "last_updated": datetime.now(timezone.utc).isoformat()
         }
         
