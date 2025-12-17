@@ -25285,18 +25285,11 @@ async def upgrade_referral_tier(request: UpgradeReferralTierRequest):
                 detail=f"Insufficient balance. You need \u00a3{price_gbp} GBP but have \u00a3{user_balance.get('balance', 0) if user_balance else 0} GBP"
             )
         
-        # Deduct from user wallet
-        await db.internal_balances.update_one(
-            {"user_id": request.user_id, "currency": "GBP"},
-            {"$inc": {"balance": -price_gbp}}
-        )
+        # Deduct from user wallet - SYNCED
+        await sync_debit_balance(request.user_id, "GBP", price_gbp, "referral_tier_upgrade")
         
-        # Add to admin revenue
-        await db.internal_balances.update_one(
-            {"user_id": "ADMIN", "currency": "GBP"},
-            {"$inc": {"referral_upgrade_fees": price_gbp}},
-            upsert=True
-        )
+        # Add to admin revenue - SYNCED
+        await sync_credit_balance("ADMIN", "GBP", price_gbp, "referral_upgrade_fee")
         
         # Upgrade referral tier
         await db.referral_codes.update_one(
