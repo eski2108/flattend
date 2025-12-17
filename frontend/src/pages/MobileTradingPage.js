@@ -832,6 +832,6 @@ export default function MobileTradingPage() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
