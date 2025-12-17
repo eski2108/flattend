@@ -469,78 +469,163 @@ const SavingsVault = () => {
         </div>
       </div>
 
-      {/* NOTICE ACCOUNT SELECTOR */}
-      <div className="notice-selector-section glassmorphic-card">
-        <h3 className="notice-selector-title">Choose Notice Period</h3>
-        <p className="notice-selector-description">Select how long you want to lock your deposit. Longer periods earn higher APY.</p>
-        
-        <div className="notice-period-options">
-          <div className={`notice-option-card ${selectedNoticePeriod === 30 ? 'selected' : ''}`}>
-            <div className="notice-option-header">
-              <span className="notice-days">30 Days</span>
-              <span className="notice-apy">5.2% APY</span>
-            </div>
-            <div className="notice-option-details">
-              <div className="notice-detail-item">
-                <span className="detail-label">Early Withdrawal:</span>
-                <span className="detail-value penalty-text">2% interest penalty</span>
-              </div>
-              <div className="notice-detail-item">
-                <span className="detail-label">Next Unlock:</span>
-                <span className="detail-value">Jan 15, 2025</span>
-              </div>
-            </div>
-            <button className="select-notice-btn" onClick={() => {setSelectedNoticePeriod(30); setShowTransferModal(true);}}>Lock Funds</button>
-          </div>
+      {/* LOCKED SAVINGS SECTION - Premium Redesign */}
+      <div className="locked-savings-section">
+        <div className="locked-savings-header">
+          <h2 className="locked-savings-title">Locked Savings — Earn Higher Rewards</h2>
+          <p className="locked-savings-subtitle">Lock your crypto for a fixed period to earn higher APY. Early withdrawals incur a fee.</p>
+        </div>
 
-          <div className={`notice-option-card ${selectedNoticePeriod === 60 ? 'selected' : ''}`}>
-            <div className="notice-option-header">
-              <span className="notice-days">60 Days</span>
-              <span className="notice-apy">6.8% APY</span>
-            </div>
-            <div className="notice-option-details">
-              <div className="notice-detail-item">
-                <span className="detail-label">Early Withdrawal:</span>
-                <span className="detail-value penalty-text">3.5% interest penalty</span>
-              </div>
-              <div className="notice-detail-item">
-                <span className="detail-label">Next Unlock:</span>
-                <span className="detail-value">Feb 14, 2025</span>
-              </div>
-            </div>
-            <button className="select-notice-btn" onClick={() => {setSelectedNoticePeriod(60); setShowTransferModal(true);}}>Lock Funds</button>
-          </div>
-
-          <div className={`notice-option-card highlighted ${selectedNoticePeriod === 90 ? 'selected' : ''}`}>
-            <div className="best-value-badge">Best Value</div>
-            <div className="notice-option-header">
-              <span className="notice-days">90 Days</span>
-              <span className="notice-apy">8.5% APY</span>
-            </div>
-            <div className="notice-option-details">
-              <div className="notice-detail-item">
-                <span className="detail-label">Early Withdrawal:</span>
-                <span className="detail-value penalty-text">5% interest penalty</span>
-              </div>
-              <div className="notice-detail-item">
-                <span className="detail-label">Next Unlock:</span>
-                <span className="detail-value">Mar 16, 2025</span>
-              </div>
-            </div>
-            <button className="select-notice-btn primary" onClick={() => {setSelectedNoticePeriod(90); setShowTransferModal(true);}}>Lock Funds</button>
+        {/* Early Withdrawal Warning Banner */}
+        <div className="early-withdrawal-warning">
+          <div className="warning-icon">⚠️</div>
+          <div className="warning-content">
+            <span className="warning-title">Early Withdrawal Penalty</span>
+            <span className="warning-text">Withdrawing before the lock period ends will result in a fee (see cards below). Locked funds cannot be withdrawn until the period ends without penalty.</span>
           </div>
         </div>
         
-        <div className="notice-info-section">
+        {/* Premium Lock Period Cards */}
+        <div className="savings-periods-container">
+          {/* Card 1: 30-Day Lock - Purple Theme */}
+          <div className={`savings-card savings-card-30 ${selectedNoticePeriod === 30 ? 'selected' : ''}`}>
+            <div className="period-header">
+              <div className="period-days">30</div>
+              <div className="period-label">DAYS</div>
+            </div>
+            
+            <div className="apy-container">
+              <div className="apy-value">3.5<span className="apy-percent">%</span></div>
+              <div className="apy-label">Annual Percentage Yield</div>
+            </div>
+            
+            <div className="fee-container">
+              <div className="fee-header">
+                <span className="fee-icon">⚠</span>
+                <span className="fee-title">Early Withdrawal</span>
+              </div>
+              <div className="fee-amount">1.5% Fee</div>
+              <div className="fee-note">Deducted from principal</div>
+            </div>
+            
+            <div className="tagline-container">
+              <div className="tagline">💡 Short-term Goals</div>
+            </div>
+            
+            <div className="progress-visual">
+              <div className="progress-fill progress-30-day"></div>
+            </div>
+            <div className="time-label">33% of max term</div>
+            
+            <button 
+              className="cta-button cta-30-day"
+              onClick={() => {setSelectedNoticePeriod(30); setShowTransferModal(true);}}
+            >
+              <span className="button-icon">🔒</span>
+              Lock for 30 Days
+            </button>
+          </div>
+
+          {/* Card 2: 60-Day Lock - Pink Theme (Most Popular) */}
+          <div className={`savings-card savings-card-60 most-popular ${selectedNoticePeriod === 60 ? 'selected' : ''}`}>
+            <div className="popular-badge">⭐ Most Popular</div>
+            <div className="most-popular-glow"></div>
+            
+            <div className="period-header">
+              <div className="period-days">60</div>
+              <div className="period-label">DAYS</div>
+            </div>
+            
+            <div className="apy-container">
+              <div className="apy-value">4.2<span className="apy-percent">%</span></div>
+              <div className="apy-label">Annual Percentage Yield</div>
+            </div>
+            
+            <div className="fee-container">
+              <div className="fee-header">
+                <span className="fee-icon">⚠</span>
+                <span className="fee-title">Early Withdrawal</span>
+              </div>
+              <div className="fee-amount">1.0% Fee</div>
+              <div className="fee-note">Deducted from principal</div>
+            </div>
+            
+            <div className="tagline-container">
+              <div className="tagline">⚖️ Balanced Earnings</div>
+            </div>
+            
+            <div className="progress-visual">
+              <div className="progress-fill progress-60-day"></div>
+            </div>
+            <div className="time-label">66% of max term</div>
+            
+            <button 
+              className="cta-button cta-60-day"
+              onClick={() => {setSelectedNoticePeriod(60); setShowTransferModal(true);}}
+            >
+              <span className="button-icon">🔒</span>
+              Lock for 60 Days
+            </button>
+          </div>
+
+          {/* Card 3: 90-Day Lock - Blue Theme (Maximum Returns) */}
+          <div className={`savings-card savings-card-90 ${selectedNoticePeriod === 90 ? 'selected' : ''}`}>
+            <div className="max-returns-badge">🚀 Maximum Returns</div>
+            
+            <div className="period-header">
+              <div className="period-days">90</div>
+              <div className="period-label">DAYS</div>
+            </div>
+            
+            <div className="apy-container apy-highest">
+              <div className="apy-value">5.0<span className="apy-percent">%</span></div>
+              <div className="apy-label">Annual Percentage Yield</div>
+            </div>
+            
+            <div className="fee-container fee-lowest">
+              <div className="fee-header">
+                <span className="fee-icon">⚠</span>
+                <span className="fee-title">Early Withdrawal</span>
+              </div>
+              <div className="fee-amount">0.5% Fee</div>
+              <div className="fee-note">Lowest penalty rate</div>
+            </div>
+            
+            <div className="tagline-container">
+              <div className="tagline">💎 Maximum Returns</div>
+            </div>
+            
+            <div className="progress-visual">
+              <div className="progress-fill progress-90-day"></div>
+            </div>
+            <div className="time-label">100% - Full term</div>
+            
+            <button 
+              className="cta-button cta-90-day"
+              onClick={() => {setSelectedNoticePeriod(90); setShowTransferModal(true);}}
+            >
+              <span className="button-icon">🔒</span>
+              Lock for 90 Days
+            </button>
+          </div>
+        </div>
+
+        {/* Calculator Hint */}
+        <div className="calculator-hint">
+          <span className="calculator-icon">📊</span>
+          <span className="calculator-text">Example: $1,000 → $1,050 after 90 days at 5% APY (minus any early withdrawal fees)</span>
+        </div>
+
+        {/* Security Footer */}
+        <div className="security-footer">
+          <span className="security-icon">🔒</span>
+          <span className="security-text">Funds are secured and protected. Your principal is never at risk.</span>
           <button 
-            className="notice-info-btn"
+            className="notice-rules-btn"
             onClick={() => setShowNoticeRulesModal(true)}
           >
-            <span className="info-icon">ⓘ</span> Notice Rules & Early Withdrawal
+            View Terms & Conditions
           </button>
-          <p className="notice-terms-footer">
-            Early withdrawal: interest penalty applies. Principal is never lost.
-          </p>
         </div>
       </div>
 
