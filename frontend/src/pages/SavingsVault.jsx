@@ -553,53 +553,55 @@ const SavingsVault = () => {
         </div>
       )}
 
-      {/* SORTING & FILTERS BAR */}
-      <div className="controls-toolbar">
-        {/* Sort By Dropdown */}
-        <div className="sort-control">
-          <button 
-            className="sort-btn"
-            onClick={() => setShowSortMenu(!showSortMenu)}
-          >
-            <span className="sort-label">Sort: </span>
-            <span className="sort-value">{sortBy === 'name' ? 'Token Name' : sortBy === 'apy' ? 'APY' : sortBy === 'earned' ? 'Total Earned' : 'Balance'}</span>
-            <span className="dropdown-arrow">▼</span>
-          </button>
+      {/* SORTING & FILTERS BAR - Only show when user has savings positions */}
+      {positions.length > 0 && (
+        <div className="controls-toolbar">
+          {/* Sort By Dropdown */}
+          <div className="sort-control">
+            <button 
+              className="sort-btn"
+              onClick={() => setShowSortMenu(!showSortMenu)}
+            >
+              <span className="sort-label">Sort: </span>
+              <span className="sort-value">{sortBy === 'name' ? 'Token Name' : sortBy === 'apy' ? 'APY' : sortBy === 'earned' ? 'Total Earned' : 'Balance'}</span>
+              <span className="dropdown-arrow">▼</span>
+            </button>
+            
+            {showSortMenu && (
+              <div className="sort-dropdown-menu">
+                <div className="dropdown-item" onClick={() => handleSort('name')}>Token Name</div>
+                <div className="dropdown-item" onClick={() => handleSort('apy')}>APY (High to Low)</div>
+                <div className="dropdown-item" onClick={() => handleSort('earned')}>Total Earned</div>
+                <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance</div>
+              </div>
+            )}
+          </div>
           
-          {showSortMenu && (
-            <div className="sort-dropdown-menu">
-              <div className="dropdown-item" onClick={() => handleSort('name')}>Token Name</div>
-              <div className="dropdown-item" onClick={() => handleSort('apy')}>APY (High to Low)</div>
-              <div className="dropdown-item" onClick={() => handleSort('earned')}>Total Earned</div>
-              <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance</div>
-            </div>
-          )}
+          {/* Filter Toggles */}
+          <div className="filter-toggles">
+            <button 
+              className={`filter-toggle-btn ${filterActive ? 'active' : ''}`}
+              onClick={() => setFilterActive(!filterActive)}
+            >
+              Active {filterActive && '✓'}
+            </button>
+            <button 
+              className={`filter-toggle-btn ${filterFlexible ? 'active' : ''}`}
+              onClick={() => setFilterFlexible(!filterFlexible)}
+            >
+              30 Day {filterFlexible && '✓'}
+            </button>
+            <button 
+              className={`filter-toggle-btn ${filterStaked ? 'active' : ''}`}
+              onClick={() => setFilterStaked(!filterStaked)}
+            >
+              60/90 Day {filterStaked && '✓'}
+            </button>
+          </div>
+          
+          <div className="visible-count">{filteredPositions.length}/{positions.length} assets shown</div>
         </div>
-        
-        {/* Filter Toggles */}
-        <div className="filter-toggles">
-          <button 
-            className={`filter-toggle-btn ${filterActive ? 'active' : ''}`}
-            onClick={() => setFilterActive(!filterActive)}
-          >
-            Active {filterActive && '✓'}
-          </button>
-          <button 
-            className={`filter-toggle-btn ${filterFlexible ? 'active' : ''}`}
-            onClick={() => setFilterFlexible(!filterFlexible)}
-          >
-            30 Day {filterFlexible && '✓'}
-          </button>
-          <button 
-            className={`filter-toggle-btn ${filterStaked ? 'active' : ''}`}
-            onClick={() => setFilterStaked(!filterStaked)}
-          >
-            60/90 Day {filterStaked && '✓'}
-          </button>
-        </div>
-        
-        <div className="visible-count">{filteredPositions.length}/{positions.length} assets shown</div>
-      </div>
+      )}
 
       {/* YOUR SAVINGS - PORTFOLIO LIST */}
       <div className="portfolio-list-section">
