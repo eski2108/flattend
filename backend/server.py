@@ -13384,14 +13384,8 @@ async def initiate_deposit(request: InitiateDepositRequest):
     tx_dict['completed_at'] = tx_dict['completed_at'].isoformat()
     await db.crypto_transactions.insert_one(tx_dict)
     
-    # Update balance
-    await db.crypto_balances.update_one(
-        {"user_id": request.user_id, "currency": request.currency},
-        {
-            "$inc": {"balance": request.amount},
-            "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-        }
-    )
+    # Update balance - SYNC TO ALL COLLECTIONS
+    await sync_credit_balance(request.user_id, request.currency, request.amount, "deposit")
     
     # REFERRAL BONUS: Check if this deposit/top-up qualifies for £20 bonus
     try:
