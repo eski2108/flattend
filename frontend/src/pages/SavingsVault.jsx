@@ -740,7 +740,18 @@ const SavingsVault = () => {
             </button>
           </div>
         ) : (
-          <div className="token-cards-list">
+          <div className="savings-table-container">
+            {/* Table Header Row */}
+            <div className="savings-table-header">
+              <div className="header-cell asset-col">Asset</div>
+              <div className="header-cell amount-col">Locked Amount</div>
+              <div className="header-cell apy-col">APY</div>
+              <div className="header-cell date-col">End Date</div>
+              <div className="header-cell fee-col">Early Withdrawal Fee</div>
+            </div>
+            
+            {/* Data Rows */}
+            <div className="token-cards-list">
             {filteredPositions.map((position, index) => (
               <div 
                 key={index} 
