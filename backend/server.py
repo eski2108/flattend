@@ -12635,51 +12635,11 @@ async def express_buy_execute(request: dict):
             }
         )
         
-        # STEP 4: Add crypto to buyer's wallet using trader balance system (net amount after fee)
-        buyer_balance = await db.trader_balances.find_one({"trader_id": user_id, "currency": crypto_currency})
+        # STEP 4: Add crypto to buyer's wallet - SYNCED TO ALL COLLECTIONS
+        await sync_credit_balance(user_id, crypto_currency, net_crypto_to_buyer, "admin_liquidity_buy")
         
-        if buyer_balance:
-            await db.trader_balances.update_one(
-                {"trader_id": user_id, "currency": crypto_currency},
-                {
-                    "$inc": {
-                        "available_balance": net_crypto_to_buyer,
-                        "total_balance": net_crypto_to_buyer
-                    },
-                    "$set": {"updated_at": datetime.now(timezone.utc)}
-                }
-            )
-        else:
-            await db.trader_balances.insert_one({
-                "trader_id": user_id,
-                "currency": crypto_currency,
-                "available_balance": net_crypto_to_buyer,
-                "locked_balance": 0,
-                "total_balance": net_crypto_to_buyer,
-                "created_at": datetime.now(timezone.utc),
-                "updated_at": datetime.now(timezone.utc)
-            })
-        
-        # Add 3% fee to admin fee wallet
-        admin_fee_wallet = await db.internal_balances.find_one({"currency": crypto_currency})
-        
-        if admin_fee_wallet:
-            await db.internal_balances.update_one(
-                {"currency": crypto_currency},
-                {
-                    "$inc": {
-                        "express_buy_fees": express_fee_crypto,
-                        "total_fees": express_fee_crypto
-                    }
-                }
-            )
-        else:
-            await db.internal_balances.insert_one({
-                "currency": crypto_currency,
-                "express_buy_fees": express_fee_crypto,
-                "total_fees": express_fee_crypto,
-                "created_at": datetime.now(timezone.utc)
-            })
+        # Add 3% fee to admin fee wallet - SYNCED
+        await sync_credit_balance("PLATFORM_FEES", crypto_currency, express_fee_crypto, "express_buy_fee")
         
         # Calculate admin liquidity spread profit
         market_value = crypto_amount * crypto_price_gbp
