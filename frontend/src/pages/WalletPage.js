@@ -205,7 +205,6 @@ export default function WalletPage() {
                 fontWeight: '400'
               }}>Manage your crypto assets</p>
             </div>
-          </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
