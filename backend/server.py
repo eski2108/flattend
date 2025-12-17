@@ -12597,16 +12597,8 @@ async def express_buy_execute(request: dict):
                 detail=f"Insufficient GBP balance. You need £{fiat_amount:.2f} but have £{user_gbp_balance.get('available_balance', 0) if user_gbp_balance else 0:.2f}"
             )
         
-        await db.trader_balances.update_one(
-            {"trader_id": user_id, "currency": "GBP"},
-            {
-                "$inc": {
-                    "available_balance": -fiat_amount,
-                    "total_balance": -fiat_amount
-                },
-                "$set": {"updated_at": datetime.now(timezone.utc)}
-            }
-        )
+        # Debit GBP from user - SYNCED
+        await sync_debit_balance(user_id, "GBP", fiat_amount, "admin_liquidity_buy")
         
         # STEP 2: Add GBP to admin liquidity wallet
         admin_gbp_wallet = await db.admin_liquidity_wallets.find_one({"currency": "GBP"})
