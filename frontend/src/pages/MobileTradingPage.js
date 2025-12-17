@@ -808,25 +808,6 @@ export default function MobileTradingPage() {
           </div>
         </div>
 
-        {/* FOOTER */}
-        <div style={{
-          background: '#0D1421',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          padding: '16px 24px',
-          marginTop: '24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div style={{ color: '#6B7280', fontSize: '12px' }}>
-            © 2024 CoinHubX. All rights reserved.
-          </div>
-          <div style={{ display: 'flex', gap: '24px' }}>
-            <a href="/terms" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
-            <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Privacy</a>
-            <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
-          </div>
-        </div>
       </div>
     </Layout>
   );
