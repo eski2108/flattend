@@ -11424,17 +11424,8 @@ async def execute_trading_transaction(request: dict):
                     "message": f"Insufficient {base_currency}. Need {amount}, have {user_crypto_available}"
                 }
             
-            # STEP 3: Deduct crypto from user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": base_currency},
-                {
-                    "$inc": {
-                        "available": -amount,
-                        "balance": -amount
-                    },
-                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-                }
-            )
+            # STEP 3: Deduct crypto from user - SYNCED
+            await sync_debit_balance(user_id, base_currency, amount, "trading_sell")
             
             # STEP 4: Add crypto to admin liquidity
             await db.admin_liquidity_wallets.update_one(
@@ -11465,40 +11456,13 @@ async def execute_trading_transaction(request: dict):
                 }
             )
             
-            # STEP 6: Add GBP to user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": quote_currency},
-                {
-                    "$inc": {
-                        "available": net_gbp_to_user,
-                        "balance": net_gbp_to_user
-                    },
-                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
-                    "$setOnInsert": {
-                        "reserved": 0,
-                        "created_at": datetime.now(timezone.utc).isoformat()
-                    }
-                },
-                upsert=True
-            )
+            # STEP 6: Add GBP to user - SYNCED
+            await sync_credit_balance(user_id, quote_currency, net_gbp_to_user, "trading_sell")
         
         # ============================================================
-        # FEE COLLECTION (Goes to admin_wallet, not liquidity)
+        # FEE COLLECTION (Goes to admin_wallet, not liquidity) - SYNCED
         # ============================================================
-        await db.internal_balances.update_one(
-            {"user_id": "admin_wallet", "currency": quote_currency},
-            {
-                "$inc": {
-                    "available": fee_amount,
-                    "balance": fee_amount
-                },
-                "$setOnInsert": {
-                    "reserved": 0,
-                    "created_at": datetime.now(timezone.utc).isoformat()
-                }
-            },
-            upsert=True
-        )
+        await sync_credit_balance("admin_wallet", quote_currency, fee_amount, "trading_fee")
         
         # ============================================================
         # REFERRAL COMMISSION PROCESSING
