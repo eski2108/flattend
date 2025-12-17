@@ -313,7 +313,8 @@ const SavingsVault = () => {
   const handleToggleAutoCompound = async (index) => {
     try {
       const position = positions[index];
-      const userId = localStorage.getItem('user_id');
+      const userId = getUserId();
+      if (!userId) { toast.error('Please log in first'); return; }
       const newValue = !position.auto_compound;
       const response = await axios.post(`${API}/api/savings/auto-compound`, {
         user_id: userId,
