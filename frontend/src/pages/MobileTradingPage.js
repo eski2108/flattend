@@ -228,19 +228,18 @@ export default function MobileTradingPage() {
             overflow: hidden !important;
           }
           .trading-layout {
-            display: flex !important;
-            flex-direction: row !important;
+            display: grid !important;
+            grid-template-columns: 1fr 320px !important;
             height: calc(100vh - 48px);
             width: 100% !important;
             overflow: hidden;
             background: #020617;
           }
           .trading-main {
-            flex: 1 1 auto !important;
-            min-width: 0 !important;
             display: flex !important;
             flex-direction: column !important;
             overflow: hidden;
+            min-width: 0;
           }
           .chart-wrap {
             flex: 1 1 auto !important;
@@ -254,8 +253,6 @@ export default function MobileTradingPage() {
             height: 100% !important;
           }
           .trading-panel {
-            width: 320px;
-            flex: 0 0 320px;
             overflow-y: auto;
             background: #0A0F1F;
             border-left: 1px solid rgba(255,255,255,0.1);
