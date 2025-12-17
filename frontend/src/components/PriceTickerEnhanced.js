@@ -185,15 +185,23 @@ export default function PriceTickerEnhanced() {
         background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)'
       }} />
       
-      <div style={{ height: '48px', maxHeight: '48px', overflow: 'hidden' }}>
-        <Marquee
-          speed={50}
-          gradient={false}
-          pauseOnHover={true}
-          direction="left"
-          style={{ height: '48px', maxHeight: '48px', display: 'flex', alignItems: 'center' }}
-        >
-        {coins.map((coin, idx) => {
+      <div className="ticker-scroll-container" style={{ height: '48px', maxHeight: '48px', overflow: 'hidden', position: 'relative' }}>
+        <style>{`
+          @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .ticker-scroll-track {
+            display: flex;
+            animation: tickerScroll 30s linear infinite;
+            white-space: nowrap;
+          }
+          .ticker-scroll-track:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
+        <div className="ticker-scroll-track" style={{ display: 'flex', alignItems: 'center', height: '48px' }}>
+        {[...coins, ...coins].map((coin, idx) => {
           const isPositive = coin.change >= 0;
           
           return (
@@ -208,7 +216,8 @@ export default function PriceTickerEnhanced() {
                 marginRight: '2rem',
                 borderRadius: '8px',
                 background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)'
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                flexShrink: 0
               }}
             >
               <img 
