@@ -603,13 +603,14 @@ export default function MobileTradingPage() {
                   flex: 1,
                   height: '36px',
                   borderRadius: '10px',
-                  background: inputCurrency === curr ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)' : '#0F172A',
-                  color: inputCurrency === curr ? '#020617' : '#8F9BB3',
-                  border: inputCurrency === curr ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                  background: inputCurrency === curr ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)' : 'linear-gradient(135deg, rgba(15,242,242,0.1) 0%, rgba(0,184,212,0.1) 100%)',
+                  color: inputCurrency === curr ? '#020617' : '#0FF2F2',
+                  border: inputCurrency === curr ? 'none' : '1px solid rgba(15,242,242,0.3)',
                   fontSize: '13px',
                   fontWeight: inputCurrency === curr ? '700' : '600',
                   cursor: 'pointer',
-                  boxShadow: inputCurrency === curr ? '0 0 16px rgba(15,242,242,0.4)' : 'none'
+                  boxShadow: inputCurrency === curr ? '0 0 24px rgba(15,242,242,0.6), 0 0 40px rgba(15,242,242,0.3)' : '0 0 10px rgba(15,242,242,0.2)',
+                  transition: 'all 200ms ease'
                 }}
               >
                 {curr}
