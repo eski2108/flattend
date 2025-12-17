@@ -161,17 +161,27 @@ async def fetch_live_prices() -> Dict[str, float]:
                         # Simple sentiment percentage based on momentum (capped at 100%)
                         sentiment_pct = min(50 + abs(change_24h) * 5, 95)
                         
+                        # Get EUR price
+                        eur_price = gbp_coin_data.get("eur") or 0
+                        eur_high = (eur_price * (high_24h / current_price)) if (current_price > 0 and high_24h > 0) else 0
+                        eur_low = (eur_price * (low_24h / current_price)) if (current_price > 0 and low_24h > 0) else 0
+                        
                         prices[symbol] = {
                             "usd": current_price,
                             "gbp": gbp_price,
+                            "eur": eur_price,
                             "usd_24h_change": change_24h,
                             "gbp_24h_change": gbp_coin_data.get("gbp_24h_change") or 0,
+                            "eur_24h_change": gbp_coin_data.get("eur_24h_change") or 0,
                             "usd_24h_high": high_24h,
                             "gbp_24h_high": gbp_high,
+                            "eur_24h_high": eur_high,
                             "usd_24h_low": low_24h,
                             "gbp_24h_low": gbp_low,
+                            "eur_24h_low": eur_low,
                             "usd_24h_vol": coin.get("total_volume") or 0,
                             "gbp_24h_vol": gbp_coin_data.get("gbp_24h_vol") or 0,
+                            "eur_24h_vol": gbp_coin_data.get("eur_24h_vol") or 0,
                             "market_cap": coin.get("market_cap") or 0,
                             "circulating_supply": coin.get("circulating_supply") or 0,
                             "ath": coin.get("ath") or 0,
