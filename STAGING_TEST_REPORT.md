@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://cryptodash-22.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://trading-rebuild.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

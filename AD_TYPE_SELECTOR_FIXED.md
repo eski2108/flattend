@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://cryptodash-22.preview.emergentagent.com
+**Preview URL:** https://trading-rebuild.preview.emergentagent.com

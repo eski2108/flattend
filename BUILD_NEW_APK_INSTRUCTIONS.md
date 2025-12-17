@@ -14,7 +14,7 @@ The website has ALL the latest features right now:
 
 1. Go to: **https://www.pwabuilder.com/**
 
-2. Enter this URL: **https://cryptodash-22.preview.emergentagent.com**
+2. Enter this URL: **https://trading-rebuild.preview.emergentagent.com**
 
 3. Click "Start" then "Package for Stores"
 

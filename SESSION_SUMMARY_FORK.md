@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://cryptodash-22.preview.emergentagent.com
+https://trading-rebuild.preview.emergentagent.com
 
 ---
 

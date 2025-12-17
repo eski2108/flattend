@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://cryptodash-22.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://trading-rebuild.preview.emergentagent.com"

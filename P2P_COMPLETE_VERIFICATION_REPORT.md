@@ -252,12 +252,12 @@ Offers created: 2
 To test the complete P2P flow:
 
 Step 1: Login
-Visit: https://cryptodash-22.preview.emergentagent.com/login
+Visit: https://trading-rebuild.preview.emergentagent.com/login
 Email: p2ptest@test.com
 Password: test1234
 
 Step 2: View Marketplace
-Navigate to: https://cryptodash-22.preview.emergentagent.com/p2p
+Navigate to: https://trading-rebuild.preview.emergentagent.com/p2p
 Verify filters work
 Check coin selector
 Click Become a Seller button

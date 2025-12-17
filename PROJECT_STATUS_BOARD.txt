@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://cryptodash-22.preview.emergentagent.com  │
-│ Backend API:    https://cryptodash-22.preview.emergentagent.com/api│
+│ Frontend URL:   https://trading-rebuild.preview.emergentagent.com  │
+│ Backend API:    https://trading-rebuild.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘

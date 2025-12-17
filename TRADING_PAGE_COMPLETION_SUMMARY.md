@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://cryptodash-22.preview.emergentagent.com/#/trading
+**Live URL:** https://trading-rebuild.preview.emergentagent.com/#/trading
 
 ---
 

@@ -16,7 +16,7 @@ from typing import Dict, List, Any, Optional
 import time
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://cryptodash-22.preview.emergentagent.com"
+BACKEND_URL = "https://trading-rebuild.preview.emergentagent.com"
 
 class CoinHubXFocusedTester:
     """Focused CoinHubX Backend API Tester"""

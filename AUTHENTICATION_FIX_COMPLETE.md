@@ -137,7 +137,7 @@ To verify the fixes work, follow these steps:
 
 ### Step 2: Register New Account
 ```
-1. Go to: https://cryptodash-22.preview.emergentagent.com/#/register
+1. Go to: https://trading-rebuild.preview.emergentagent.com/#/register
 2. Fill form with unique email
 3. Submit
 4. Watch for toast notification with 6-digit code
@@ -365,5 +365,5 @@ The authentication system is 85% complete. The backend is solid, the UI is beaut
 ---
 
 **Generated:** December 8, 2024 10:10 UTC  
-**Environment:** https://cryptodash-22.preview.emergentagent.com/  
+**Environment:** https://trading-rebuild.preview.emergentagent.com/  
 **Status:** Fixes Implemented, Testing Complete, Issues Documented

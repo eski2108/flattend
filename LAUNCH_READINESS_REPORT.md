@@ -347,7 +347,7 @@ async def withdraw_platform_fees(request: WithdrawRequest):
 2. Google OAuth Client Secret
 3. Confirmation that redirect URIs configured:
    - `http://localhost:3000/auth/google/callback`
-   - `https://cryptodash-22.preview.emergentagent.com/auth/google/callback`
+   - `https://trading-rebuild.preview.emergentagent.com/auth/google/callback`
 
 **Implementation Plan:**
 1. Add Google auth library to backend
@@ -395,7 +395,7 @@ async def withdraw_platform_fees(request: WithdrawRequest):
 
 **Current URLs:**
 - Development: `http://localhost:3000`
-- Preview: `https://cryptodash-22.preview.emergentagent.com`
+- Preview: `https://trading-rebuild.preview.emergentagent.com`
 
 **Test Flow:**
 1. Register with email

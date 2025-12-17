@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://cryptodash-22.preview.emergentagent.com/api"
+BASE_URL = "https://trading-rebuild.preview.emergentagent.com/api"
 
 # Test users
 BUYER_USER = {

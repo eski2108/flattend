@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://cryptodash-22.preview.emergentagent.com
+https://trading-rebuild.preview.emergentagent.com
 
 ### Test Route
 
-`https://cryptodash-22.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://trading-rebuild.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 
