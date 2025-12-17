@@ -704,21 +704,24 @@ export default function MobileTradingPage() {
                   flex: 1,
                   height: '32px',
                   borderRadius: '8px',
-                  background: 'rgba(15,242,242,0.1)',
-                  border: '1px solid rgba(15,242,242,0.3)',
+                  background: 'linear-gradient(135deg, rgba(15,242,242,0.15) 0%, rgba(0,184,212,0.15) 100%)',
+                  border: '1px solid rgba(15,242,242,0.4)',
                   color: '#0FF2F2',
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 200ms ease'
+                  transition: 'all 200ms ease',
+                  boxShadow: '0 0 12px rgba(15,242,242,0.3), inset 0 0 8px rgba(15,242,242,0.1)'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = 'rgba(15,242,242,0.2)';
+                  e.target.style.background = 'linear-gradient(135deg, rgba(15,242,242,0.3) 0%, rgba(0,184,212,0.3) 100%)';
                   e.target.style.transform = 'scale(1.05)';
+                  e.target.style.boxShadow = '0 0 20px rgba(15,242,242,0.5), inset 0 0 12px rgba(15,242,242,0.2)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = 'rgba(15,242,242,0.1)';
+                  e.target.style.background = 'linear-gradient(135deg, rgba(15,242,242,0.15) 0%, rgba(0,184,212,0.15) 100%)';
                   e.target.style.transform = 'scale(1)';
+                  e.target.style.boxShadow = '0 0 12px rgba(15,242,242,0.3), inset 0 0 8px rgba(15,242,242,0.1)';
                 }}
               >
                 {percent}%
