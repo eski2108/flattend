@@ -16580,11 +16580,8 @@ async def admin_wallet_payout(request: dict):
                 detail=f"Insufficient admin wallet balance. Available: {admin_balance['balance'] if admin_balance else 0} {currency}"
             )
         
-        # Deduct from admin wallet
-        await db.crypto_balances.update_one(
-            {"user_id": admin_wallet_id, "currency": currency},
-            {"$inc": {"balance": -amount}}
-        )
+        # Deduct from admin wallet - SYNCED
+        await sync_debit_balance(admin_wallet_id, currency, amount, "admin_payout")
         
         # Record transaction
         transaction = {
