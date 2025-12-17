@@ -20170,19 +20170,8 @@ async def send_crypto_withdrawal(currency: str, request: dict):
             "updated_at": datetime.now(timezone.utc).isoformat()
         })
         
-        # Deduct from available balance immediately
-        new_available = available_balance - total_needed
-        
-        await db.crypto_balances.update_one(
-            {"user_id": user_id, "currency": currency},
-            {
-                "$set": {
-                    "available_balance": new_available,
-                    "total_balance": user_balance_doc.get('total_balance', 0) - total_needed,
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                }
-            }
-        )
+        # Deduct from available balance immediately - SYNCED
+        await sync_debit_balance(user_id, currency, total_needed, "crypto_withdrawal")
         
         # Call NowPayments payout API
         try:
