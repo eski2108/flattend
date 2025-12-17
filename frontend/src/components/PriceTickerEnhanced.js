@@ -204,6 +204,85 @@ export default function PriceTickerEnhanced() {
           );
         })}
       </Marquee>
+      
+      {/* Currency Selector */}
+      <div 
+        style={{
+          position: 'absolute',
+          right: '12px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 10
+        }}
+      >
+        <button
+          onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '6px 12px',
+            background: 'rgba(0, 229, 255, 0.15)',
+            border: '1px solid rgba(0, 229, 255, 0.4)',
+            borderRadius: '6px',
+            color: '#00F0FF',
+            fontSize: '13px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          {CURRENCIES[currency].symbol} {currency}
+          <IoChevronDown style={{ fontSize: '12px' }} />
+        </button>
+        
+        {showCurrencyMenu && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '4px',
+              background: 'rgba(15, 17, 40, 0.98)',
+              border: '1px solid rgba(0, 229, 255, 0.3)',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+              minWidth: '140px'
+            }}
+          >
+            {Object.entries(CURRENCIES).map(([code, data]) => (
+              <button
+                key={code}
+                onClick={() => {
+                  setCurrency(code);
+                  setShowCurrencyMenu(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  padding: '10px 14px',
+                  background: currency === code ? 'rgba(0, 229, 255, 0.15)' : 'transparent',
+                  border: 'none',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  color: currency === code ? '#00F0FF' : '#fff',
+                  fontSize: '13px',
+                  fontWeight: currency === code ? '700' : '500',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span style={{ width: '20px', textAlign: 'center' }}>{data.symbol}</span>
+                <span>{code}</span>
+                <span style={{ marginLeft: 'auto', fontSize: '11px', opacity: 0.6 }}>{data.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
