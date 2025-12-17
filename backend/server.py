@@ -11014,14 +11014,8 @@ async def admin_withdraw(request: dict):
                 detail=f"Insufficient fee balance. Available: {total_fees}, Requested: {amount}"
             )
         
-        # Deduct from fee wallet
-        await db.internal_balances.update_one(
-            {"currency": currency},
-            {
-                "$inc": {"total_fees": -amount},
-                "$set": {"updated_at": datetime.now(timezone.utc)}
-            }
-        )
+        # Deduct from fee wallet - SYNCED
+        await sync_debit_balance("PLATFORM_FEES", currency, amount, "admin_fee_withdrawal")
     
     # Handle Liquidity Wallet Withdrawal
     elif wallet_type == "liquidity_wallet":
