@@ -117,17 +117,6 @@ export default function PriceTickerEnhanced() {
     );
   }
 
-  // Hide duplicate marquee row after render
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const container = document.querySelector('.price-ticker-single .rfm-marquee-container');
-      if (container && container.children.length > 1) {
-        container.children[1].style.display = 'none';
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [coins]);
-
   return (
     <div className="price-ticker-single" style={{
       width: '100%',
