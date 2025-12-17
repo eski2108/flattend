@@ -104,7 +104,7 @@ export default function ChatWidget() {
         style={{
           position: 'fixed',
           bottom: '28px',
-          left: '28px',
+          right: '28px',
           width: window.innerWidth <= 768 ? '48px' : '64px',
           height: window.innerWidth <= 768 ? '48px' : '64px',
           borderRadius: '50%',
