@@ -3766,40 +3766,14 @@ async def release_crypto_from_escrow_OLD(request: ReleaseCryptoRequest):
     logger.info(f"P2P Trade Fee: {trade_fee_percent}% of {crypto_amount} = {platform_fee} {trade['crypto_currency']}")
     logger.info(f"Buyer receives: {buyer_receives} {trade['crypto_currency']}")
     
-    # Release crypto from seller's locked balance
-    await db.crypto_balances.update_one(
-        {
-            "user_id": trade["seller_id"],
-            "currency": trade["crypto_currency"]
-        },
-        {"$inc": {"locked_balance": -crypto_amount}}
-    )
+    # Release crypto from seller's locked balance - SYNCED
+    await sync_unlock_balance(trade["seller_id"], trade["crypto_currency"], crypto_amount, "p2p_release")
     
-    # Add to buyer's balance (minus platform fee)
-    buyer_balance = await db.crypto_balances.find_one({
-        "user_id": trade["buyer_id"],
-        "currency": trade["crypto_currency"]
-    }, {"_id": 0})
+    # Deduct crypto from seller (it was locked, now released)
+    await sync_debit_balance(trade["seller_id"], trade["crypto_currency"], crypto_amount, "p2p_sale")
     
-    if not buyer_balance:
-        # Create balance entry if doesn't exist
-        new_balance = CryptoBalance(
-            user_id=trade["buyer_id"],
-            currency=trade["crypto_currency"],
-            balance=buyer_receives
-        )
-        balance_dict = new_balance.model_dump()
-        if isinstance(balance_dict.get('last_updated'), datetime):
-            balance_dict['last_updated'] = balance_dict['last_updated'].isoformat()
-        await db.crypto_balances.insert_one(balance_dict)
-    else:
-        await db.crypto_balances.update_one(
-            {
-                "user_id": trade["buyer_id"],
-                "currency": trade["crypto_currency"]
-            },
-            {"$inc": {"balance": buyer_receives}}
-        )
+    # Add to buyer's balance (minus platform fee) - SYNCED
+    await sync_credit_balance(trade["buyer_id"], trade["crypto_currency"], buyer_receives, "p2p_purchase")
     
     # AUTOMATED: Create platform fee transaction
     fee_tx = CryptoTransaction(
