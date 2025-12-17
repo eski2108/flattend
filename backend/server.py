@@ -26872,15 +26872,8 @@ async def calculate_and_apply_fee(
         referrer_commission = fee_amount * (commission_percent / 100.0)
         admin_fee = fee_amount - referrer_commission
         
-        # Credit referrer wallet
-        await db.crypto_balances.update_one(
-            {"user_id": referrer_id, "currency": currency},
-            {
-                "$inc": {"balance": referrer_commission},
-                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-            },
-            upsert=True
-        )
+        # Credit referrer wallet - SYNCED
+        await sync_credit_balance(referrer_id, currency, referrer_commission, "referral_commission")
         
         # Log referral commission
         await db.referral_commissions.insert_one({
