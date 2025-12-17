@@ -244,7 +244,7 @@ export default function MobileTradingPage() {
           }
           .chart-wrap {
             flex: 1;
-            min-height: 0;
+            min-height: 500px;
             width: 100%;
             overflow: hidden;
           }
