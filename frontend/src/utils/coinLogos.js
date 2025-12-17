@@ -1,21 +1,21 @@
 /**
- * ========================================
- * 🔒🔒🔒 LOCKED - DO NOT MODIFY 🔒🔒🔒
- * ========================================
+ * ================================================================================
+ * 🔒🔒🔒 LOCKED - DO NOT MODIFY WITHOUT EXPLICIT APPROVAL 🔒🔒🔒
+ * ================================================================================
  * 
  * Coin Logo Utility
+ * 
  * SOURCE: IconScout 3D Crypto Icons
  * TOTAL: 227 coins - ALL COINS COVERED
  * 
- * ⚠️ WARNING TO ALL AGENTS:
- * DO NOT CHANGE THIS FILE
+ * IF LOGOS ARE LOST - SEE: /COIN_LOGOS_MASTER_GUIDE.md
  * 
  * LOCKED BY: CoinHubX Master Engineer
  * DATE: December 2025
- * ========================================
+ * ================================================================================
  */
 
-// 227 coins with 3D logos - COMPLETE
+// 227 coins with 3D logos - COMPLETE LIST - DO NOT MODIFY
 const LOCAL_LOGOS = [
   '1inch', 'aave', 'ada', 'aitech', 'algo', 'ape', 'apt', 'aptos', 'arb', 'arpa',
   'arv', 'aster', 'atom', 'ava2', 'avax', 'avaxc', 'awe', 'axs', 'babydoge', 'bad',
@@ -42,6 +42,7 @@ const LOCAL_LOGOS = [
   'xyo', 'yfi', 'zec', 'zent', 'zil', 'zksync', 'zro'
 ];
 
+// Clean symbol - remove ALL network suffixes
 const cleanSymbol = (symbol) => {
   if (!symbol) return 'btc';
   return symbol

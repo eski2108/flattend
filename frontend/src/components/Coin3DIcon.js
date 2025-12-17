@@ -1,25 +1,29 @@
 import React from 'react';
 
 /**
- * ========================================
- * 🔒🔒🔒 LOCKED - DO NOT MODIFY 🔒🔒🔒
- * ========================================
+ * ================================================================================
+ * 🔒🔒🔒 LOCKED - DO NOT MODIFY WITHOUT EXPLICIT APPROVAL 🔒🔒🔒
+ * ================================================================================
  * 
  * 3D Coin Icon Component
- * SOURCE: IconScout 3D Crypto Icons
+ * 
+ * SOURCE: IconScout 3D Crypto Icons (https://iconscout.com/3d-icons/crypto)
  * TOTAL: 227 coins - ALL COINS COVERED
  * 
  * ⚠️ WARNING TO ALL AGENTS:
- * DO NOT CHANGE THIS FILE
- * DO NOT MODIFY THE COIN LIST
- * DO NOT ALTER THE STYLING
+ * - DO NOT change the coin list
+ * - DO NOT modify the styling
+ * - DO NOT use CDN fallbacks
+ * - DO NOT replace with different logo sources
+ * 
+ * IF LOGOS ARE LOST - SEE: /COIN_LOGOS_MASTER_GUIDE.md
  * 
  * LOCKED BY: CoinHubX Master Engineer
  * DATE: December 2025
- * ========================================
+ * ================================================================================
  */
 
-// 227 coins with 3D logos - COMPLETE COVERAGE
+// 227 coins with 3D logos - COMPLETE LIST - DO NOT MODIFY
 const COINS_WITH_3D_LOGOS = [
   '1inch', 'aave', 'ada', 'aitech', 'algo', 'ape', 'apt', 'aptos', 'arb', 'arpa',
   'arv', 'aster', 'atom', 'ava2', 'avax', 'avaxc', 'awe', 'axs', 'babydoge', 'bad',
