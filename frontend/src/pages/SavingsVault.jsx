@@ -1139,9 +1139,9 @@ const SavingsVault = () => {
               <div className="deposit-step">
                 <h4>Step 4: Select Notice Period</h4>
                 <div className="notice-selector-mini">
-                  <button className={`notice-mini-btn ${selectedNoticePeriod === 30 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(30)}>30 Days (5.2% APY)</button>
-                  <button className={`notice-mini-btn ${selectedNoticePeriod === 60 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(60)}>60 Days (6.8% APY)</button>
-                  <button className={`notice-mini-btn ${selectedNoticePeriod === 90 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(90)}>90 Days (8.5% APY)</button>
+                  <button className={`notice-mini-btn ${selectedNoticePeriod === 30 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(30)}>30 Days (3.5% APY)</button>
+                  <button className={`notice-mini-btn ${selectedNoticePeriod === 60 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(60)}>60 Days (4.2% APY)</button>
+                  <button className={`notice-mini-btn ${selectedNoticePeriod === 90 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(90)}>90 Days (5.0% APY)</button>
                 </div>
                 <button className="modal-cta-btn" onClick={() => setDepositStep(5)}>Next</button>
               </div>
