@@ -3878,15 +3878,9 @@ async def auto_cancel_trade(trade_id: str):
     if not trade or trade["status"] != "pending_payment":
         return
     
-    # Release locked crypto back to seller
+    # Release locked crypto back to seller - SYNCED
     if trade.get("escrow_locked", False):
-        await db.crypto_balances.update_one(
-            {
-                "user_id": trade["seller_id"],
-                "currency": trade["crypto_currency"]
-            },
-            {"$inc": {"locked_balance": -trade["crypto_amount"]}}
-        )
+        await sync_unlock_balance(trade["seller_id"], trade["crypto_currency"], trade["crypto_amount"], "p2p_trade_cancel")
     
     # Update trade status
     await db.trades.update_one(
