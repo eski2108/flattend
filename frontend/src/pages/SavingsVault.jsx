@@ -1084,7 +1084,8 @@ const SavingsVault = () => {
                 </div>
                 <button className="modal-cta-btn" onClick={async () => {
                   try {
-                    const userId = localStorage.getItem('user_id');
+                    const userId = getUserId();
+                    if (!userId) { toast.error('Please log in first'); return; }
                     const response = await axios.post(`${API}/api/savings/deposit`, {
                       user_id: userId,
                       coin: selectedCoin,
