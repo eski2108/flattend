@@ -186,7 +186,7 @@ export default function PriceTickerEnhanced() {
                 fontWeight: '700',
                 color: '#FFFFFF'
               }}>
-                £{coin.price.toFixed(2)}
+                {CURRENCIES[currency].symbol}{coin.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
               </span>
               
               <span style={{
