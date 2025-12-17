@@ -334,7 +334,8 @@ const SavingsVault = () => {
   const handleLockPeriodChange = async (index, period) => {
     try {
       const position = positions[index];
-      const userId = localStorage.getItem('user_id');
+      const userId = getUserId();
+      if (!userId) { toast.error('Please log in first'); return; }
       const response = await axios.post(`${API}/api/savings/change-period`, {
         user_id: userId,
         position_id: position.id,
