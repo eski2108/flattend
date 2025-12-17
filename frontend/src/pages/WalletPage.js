@@ -191,20 +191,19 @@ export default function WalletPage() {
           marginBottom: '32px'
         }}>
           <div>
-            <div>
-              <h1 style={{
-                fontSize: '36px',
-                fontWeight: '700',
-                color: '#FFFFFF',
-                margin: '0 0 8px 0'
-              }}>Wallet</h1>
-              <p style={{
-                fontSize: '14px',
-                color: '#8FA3BF',
-                margin: 0,
-                fontWeight: '400'
-              }}>Manage your crypto assets</p>
-            </div>
+            <h1 style={{
+              fontSize: '36px',
+              fontWeight: '700',
+              color: '#FFFFFF',
+              margin: '0 0 8px 0'
+            }}>Wallet</h1>
+            <p style={{
+              fontSize: '14px',
+              color: '#8FA3BF',
+              margin: 0,
+              fontWeight: '400'
+            }}>Manage your crypto assets</p>
+          </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
