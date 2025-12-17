@@ -293,7 +293,8 @@ const SavingsVault = () => {
   const handleToggleFlexibleStaked = async (index, newType) => {
     try {
       const position = positions[index];
-      const userId = localStorage.getItem('user_id');
+      const userId = getUserId();
+      if (!userId) { toast.error('Please log in first'); return; }
       const response = await axios.post(`${API}/api/savings/toggle-type`, {
         user_id: userId,
         position_id: position.id,
