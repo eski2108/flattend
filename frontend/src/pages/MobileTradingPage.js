@@ -249,12 +249,10 @@ export default function MobileTradingPage() {
         `}
       </style>
       <div style={{
-        maxWidth: '1400px',
         width: '100%',
-        margin: '0 auto',
         background: '#020617',
         minHeight: '100vh',
-        paddingBottom: '80px'
+        paddingBottom: '20px'
       }}>
         {/* Header with Back Button */}
         <div style={{
