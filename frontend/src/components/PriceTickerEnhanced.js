@@ -159,7 +159,8 @@ export default function PriceTickerEnhanced() {
         speed={50}
         gradient={false}
         pauseOnHover={true}
-        style={{ height: '48px', display: 'flex', alignItems: 'center' }}
+        direction="left"
+        style={{ height: '48px', maxHeight: '48px', display: 'flex', alignItems: 'center', overflow: 'hidden' }}
       >
         {coins.map((coin, idx) => {
           const isPositive = coin.change >= 0;
