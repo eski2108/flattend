@@ -1293,7 +1293,7 @@ const SavingsVault = () => {
               <p style={{ color: '#ff6b6b', fontWeight: 600 }}>If you withdraw before the lock period ends:</p>
               <ul>
                 <li><strong>30-day lock:</strong> 2% penalty on principal + forfeit 100% interest</li>
-                <li><strong>60-day lock:</strong> 3.5% penalty on principal + forfeit 100% interest</li>
+                <li><strong>60-day lock:</strong> 1.0% fee deducted from principal</li>
                 <li><strong>90-day lock:</strong> 5% penalty on principal + forfeit 100% interest</li>
               </ul>
               
