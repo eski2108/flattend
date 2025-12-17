@@ -7,6 +7,18 @@ import './SavingsVault.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// Helper to get user_id consistently from localStorage
+const getUserId = () => {
+  const userData = localStorage.getItem('cryptobank_user');
+  if (!userData) return null;
+  try {
+    const user = JSON.parse(userData);
+    return user.user_id || null;
+  } catch {
+    return null;
+  }
+};
+
 const SavingsVault = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
