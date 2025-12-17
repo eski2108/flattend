@@ -25054,18 +25054,11 @@ async def subscribe_arbitrage_alerts(request: SubscribeAlertsRequest):
                 detail=f"Insufficient balance. You need \u00a3{monthly_price} GBP but have \u00a3{user_balance.get('balance', 0) if user_balance else 0} GBP"
             )
         
-        # Deduct from user wallet
-        await db.internal_balances.update_one(
-            {"user_id": request.user_id, "currency": "GBP"},
-            {"$inc": {"balance": -monthly_price}}
-        )
+        # Deduct from user wallet - SYNCED
+        await sync_debit_balance(request.user_id, "GBP", monthly_price, "alert_subscription")
         
-        # Add to admin revenue
-        await db.internal_balances.update_one(
-            {"user_id": "ADMIN", "currency": "GBP"},
-            {"$inc": {"subscription_fees": monthly_price}},
-            upsert=True
-        )
+        # Add to admin revenue - SYNCED
+        await sync_credit_balance("ADMIN", "GBP", monthly_price, "subscription_fee")
         
         # Create/update subscription
         next_billing = datetime.now(timezone.utc) + timedelta(days=30)
