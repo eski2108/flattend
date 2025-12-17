@@ -286,12 +286,9 @@ export default function MobileTradingPage() {
 
         {/* PAIR HEADER - Binance Style */}
         <div style={{
-          margin: '12px 16px 16px 16px',
+          width: '100%',
           padding: '16px',
-          borderRadius: '16px',
-          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-          border: '1px solid rgba(15,242,242,0.15)',
-          boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(15,242,242,0.1)',
+          background: '#0A0F1F',
           display: 'flex',
           alignItems: 'center',
           gap: '14px'
