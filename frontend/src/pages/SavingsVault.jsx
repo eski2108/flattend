@@ -588,6 +588,7 @@ const SavingsVault = () => {
               <div className="fee-header">
                 <span className="fee-icon">⚠</span>
                 <span className="fee-title">Early Withdrawal</span>
+                <span className="tooltip-icon" title="If you withdraw before the lock period ends, this fee is deducted from your principal.">?</span>
               </div>
               <div className="fee-amount">0.5% Fee</div>
               <div className="fee-note">Lowest penalty rate</div>
