@@ -205,19 +205,42 @@ class WalletService:
             new_available = current_available - amount
             new_total = float(wallet.get("total_balance", 0)) - amount
             
-            # Atomic update
+            # Atomic update - SYNC TO ALL BALANCE COLLECTIONS
+            balance_update = {
+                "available_balance": new_available,
+                "total_balance": new_total,
+                "balance": new_available,
+                "last_updated": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+            
             result = await self.db.wallets.update_one(
                 {"user_id": user_id, "currency": currency},
-                {
-                    "$set": {
-                        "available_balance": new_available,
-                        "total_balance": new_total,
-                        "last_updated": datetime.now(timezone.utc)
-                    }
-                }
+                {"$set": balance_update}
             )
             
-            if result.modified_count > 0:
+            # SYNC to internal_balances
+            await self.db.internal_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$set": {**balance_update, "user_id": user_id, "currency": currency}},
+                upsert=True
+            )
+            
+            # SYNC to crypto_balances
+            await self.db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$set": {**balance_update, "user_id": user_id, "currency": currency}},
+                upsert=True
+            )
+            
+            # SYNC to trader_balances
+            await self.db.trader_balances.update_one(
+                {"trader_id": user_id, "currency": currency},
+                {"$set": {**balance_update, "trader_id": user_id, "currency": currency}},
+                upsert=True
+            )
+            
+            if result.modified_count > 0 or result.upserted_id:
                 # Log transaction
                 await self._log_transaction(
                     user_id=user_id,
