@@ -11364,24 +11364,15 @@ async def execute_trading_transaction(request: dict):
                     "message": f"Insufficient {quote_currency}. Need £{total_gbp_required:.2f}, have £{user_gbp_available:.2f}"
                 }
             
-            # STEP 3: Deduct GBP from user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": quote_currency},
-                {
-                    "$inc": {
-                        "available": -total_gbp_required,
-                        "balance": -total_gbp_required
-                    },
-                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-                }
-            )
+            # STEP 3: Deduct GBP from user - SYNCED
+            await sync_debit_balance(user_id, quote_currency, total_gbp_required, "trading_buy")
             
             # STEP 4: Add GBP to admin liquidity (CLOSED SYSTEM - NO MINTING)
             await db.admin_liquidity_wallets.update_one(
                 {"currency": quote_currency},
                 {
                     "$inc": {
-                        "available": gross_gbp,  # Only gross amount, fee goes separate
+                        "available": gross_gbp,
                         "balance": gross_gbp
                     },
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
@@ -11405,22 +11396,8 @@ async def execute_trading_transaction(request: dict):
                 }
             )
             
-            # STEP 6: Add crypto to user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": base_currency},
-                {
-                    "$inc": {
-                        "available": amount,
-                        "balance": amount
-                    },
-                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
-                    "$setOnInsert": {
-                        "reserved": 0,
-                        "created_at": datetime.now(timezone.utc).isoformat()
-                    }
-                },
-                upsert=True
-            )
+            # STEP 6: Add crypto to user - SYNCED
+            await sync_credit_balance(user_id, base_currency, amount, "trading_buy")
         
         # ============================================================
         # SELL LOGIC: User sells crypto for GBP
