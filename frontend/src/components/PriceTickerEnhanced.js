@@ -144,6 +144,13 @@ export default function PriceTickerEnhanced() {
           display: flex !important;
           flex-wrap: nowrap !important;
         }
+        .price-ticker-single .rfm-marquee-container > .rfm-marquee:nth-child(2) {
+          display: none !important;
+          visibility: hidden !important;
+          height: 0 !important;
+          width: 0 !important;
+          overflow: hidden !important;
+        }
         .price-ticker-single .rfm-marquee {
           height: 48px !important;
           max-height: 48px !important;
