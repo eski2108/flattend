@@ -756,6 +756,24 @@ export default function SpotTradingPro() {
         </div>
 
         {/* Amount input removed - buttons moved to top */}
+
+        {/* MOBILE FOOTER */}
+        <div style={{
+          background: '#0D1421',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+          padding: '16px',
+          marginTop: '20px',
+          textAlign: 'center'
+        }}>
+          <div style={{ color: '#6B7280', fontSize: '11px', marginBottom: '8px' }}>
+            © 2024 CoinHubX. All rights reserved.
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+            <a href="/terms" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Terms</a>
+            <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Privacy</a>
+            <a href="/support" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Support</a>
+          </div>
+        </div>
       </div>
     </Layout>
   );
