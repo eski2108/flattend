@@ -1019,6 +1019,7 @@ const SavingsVault = () => {
                 )}
               </div>
             ))}
+            </div>
           </div>
         )}
       </div>
