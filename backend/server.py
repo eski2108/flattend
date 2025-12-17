@@ -13751,39 +13751,11 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
     except Exception as ref_err:
         logger.warning(f"Referral failed for withdrawal: {ref_err}")
     
-    # Update user balance (deduct full amount)
-    await db.crypto_balances.update_one(
-        {"user_id": request.user_id, "currency": request.currency},
-        {
-            "$inc": {"balance": -float(request.amount)},
-            "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-        }
-    )
+    # Update user balance (deduct full amount) - SYNC TO ALL COLLECTIONS
+    await sync_debit_balance(request.user_id, request.currency, float(request.amount), "withdrawal")
     
-    # AUTOMATED: Add fee to admin wallet balance
-    admin_balance = await db.crypto_balances.find_one({
-        "user_id": PLATFORM_CONFIG["admin_wallet_id"],
-        "currency": request.currency
-    })
-    
-    if not admin_balance:
-        # Create admin wallet balance if doesn't exist
-        await db.crypto_balances.insert_one({
-            "user_id": PLATFORM_CONFIG["admin_wallet_id"],
-            "currency": request.currency,
-            "balance": withdrawal_fee,
-            "locked_balance": 0.0,
-            "last_updated": datetime.now(timezone.utc).isoformat()
-        })
-    else:
-        # Increment existing admin balance
-        await db.crypto_balances.update_one(
-            {"user_id": PLATFORM_CONFIG["admin_wallet_id"], "currency": request.currency},
-            {
-                "$inc": {"balance": withdrawal_fee},
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            }
-        )
+    # AUTOMATED: Add fee to admin wallet balance - SYNC TO ALL COLLECTIONS
+    await sync_credit_balance(PLATFORM_CONFIG["admin_wallet_id"], request.currency, withdrawal_fee, "withdrawal_fee")
     
     # REFERRAL SYSTEM: Process INSTANT LIFETIME commission for referrer (20% of ALL fees)
     try:
