@@ -25352,18 +25352,11 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
                 detail=f"Insufficient balance. You need {request.amount} {request.currency} but have {sender_balance.get('balance', 0) if sender_balance else 0} {request.currency}"
             )
         
-        # Deduct from sender
-        await db.internal_balances.update_one(
-            {"user_id": request.from_user_id, "currency": request.currency},
-            {"$inc": {"balance": -request.amount}}
-        )
+        # Deduct from sender - SYNCED
+        await sync_debit_balance(request.from_user_id, request.currency, request.amount, "internal_transfer_out")
         
-        # Add to receiver (net amount after fee)
-        await db.internal_balances.update_one(
-            {"user_id": request.to_user_id, "currency": request.currency},
-            {"$inc": {"balance": net_amount}},
-            upsert=True
-        )
+        # Add to receiver (net amount after fee) - SYNCED
+        await sync_credit_balance(request.to_user_id, request.currency, net_amount, "internal_transfer_in")
         
         # Check for referrer
         user = await db.users.find_one({"user_id": request.from_user_id}, {"_id": 0})
