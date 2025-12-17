@@ -210,8 +210,12 @@ function App() {
               {/* Mobile Trading Routes */}
               <Route path="/markets" element={<MobileMarketSelection />} />
               <Route path="/trading/:symbol" element={<MobileTradingPage />} />
-              {/* Main trading route - SpotTradingPro handles desktop/mobile detection internally */}
-              <Route path="/trading" element={<SpotTradingPro />} />
+              {/* Main trading route - Shows MobileMarketSelection on mobile, SpotTradingPro on desktop */}
+              <Route path="/trading" element={
+                typeof window !== 'undefined' && window.innerWidth <= 768 
+                  ? <MobileMarketSelection /> 
+                  : <SpotTradingPro />
+              } />
               {/* Legacy Routes */}
               <Route path="/spot-trading" element={<SpotTradingPro />} />
               <Route path="/spot-trading-pro" element={<SpotTradingPro />} />
