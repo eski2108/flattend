@@ -185,14 +185,14 @@ export default function PriceTickerEnhanced() {
         background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)'
       }} />
       
-      <Marquee
-        speed={50}
-        gradient={false}
-        pauseOnHover={true}
-        direction="left"
-        autoFill={false}
-        style={{ height: '48px', maxHeight: '48px', display: 'flex', alignItems: 'center', overflow: 'hidden' }}
-      >
+      <div style={{ height: '48px', maxHeight: '48px', overflow: 'hidden' }}>
+        <Marquee
+          speed={50}
+          gradient={false}
+          pauseOnHover={true}
+          direction="left"
+          style={{ height: '48px', maxHeight: '48px', display: 'flex', alignItems: 'center' }}
+        >
         {coins.map((coin, idx) => {
           const isPositive = coin.change >= 0;
           
