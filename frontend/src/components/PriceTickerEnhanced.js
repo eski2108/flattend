@@ -159,6 +159,7 @@ export default function PriceTickerEnhanced() {
         gradient={false}
         pauseOnHover={true}
         direction="left"
+        autoFill={false}
         style={{ height: '48px', maxHeight: '48px', display: 'flex', alignItems: 'center', overflow: 'hidden' }}
       >
         {coins.map((coin, idx) => {
