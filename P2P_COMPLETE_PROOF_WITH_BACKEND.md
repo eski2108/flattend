@@ -27,7 +27,7 @@ Last Updated: 2025-12-04 20:35
 N/A - Pure frontend UI fix
 
 ### USER VISIBLE:
-✅ YES - Go to https://crypto-logo-update.preview.emergentagent.com/instant-buy
+✅ YES - Go to https://wallet-nav-repair.preview.emergentagent.com/instant-buy
 ✅ Expand any coin
 ✅ See proper spacing between Deposit/Withdraw/Swap and Quick Buy buttons
 ✅ No squiggly lines under coins
@@ -43,7 +43,7 @@ N/A - Pure frontend UI fix
 
 **1. Add Favourite**
 ```bash
-curl -X POST https://crypto-logo-update.preview.emergentagent.com/api/p2p/favourites/add \
+curl -X POST https://wallet-nav-repair.preview.emergentagent.com/api/p2p/favourites/add \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test","merchant_id":"seller123"}'
 
@@ -54,7 +54,7 @@ Response:
 
 **2. Remove Favourite**
 ```bash
-curl -X POST https://crypto-logo-update.preview.emergentagent.com/api/p2p/favourites/remove \
+curl -X POST https://wallet-nav-repair.preview.emergentagent.com/api/p2p/favourites/remove \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test","merchant_id":"seller123"}'
 
@@ -65,7 +65,7 @@ Response:
 
 **3. Get Favourites**
 ```bash
-curl https://crypto-logo-update.preview.emergentagent.com/api/p2p/favourites/test
+curl https://wallet-nav-repair.preview.emergentagent.com/api/p2p/favourites/test
 
 Response:
 {"success": true, "favourites": ["seller123", "seller456"]}
@@ -108,7 +108,7 @@ Schema:
 
 **Submit Feedback**
 ```bash
-curl -X POST https://crypto-logo-update.preview.emergentagent.com/api/p2p/trade/proof_trade_123/feedback \
+curl -X POST https://wallet-nav-repair.preview.emergentagent.com/api/p2p/trade/proof_trade_123/feedback \
   -H "Content-Type: application/json" \
   -d '{
     "from_user_id": "testuser_proof",
@@ -123,7 +123,7 @@ Response:
 
 **Get Feedback**
 ```bash
-curl "https://crypto-logo-update.preview.emergentagent.com/api/p2p/trader/seller_proof/feedback"
+curl "https://wallet-nav-repair.preview.emergentagent.com/api/p2p/trader/seller_proof/feedback"
 
 Response:
 {
@@ -233,7 +233,7 @@ async def post_system_message(trade_id: str, message: str):
 
 **1. Block User**
 ```bash
-curl -X POST https://crypto-logo-update.preview.emergentagent.com/api/p2p/block/add \
+curl -X POST https://wallet-nav-repair.preview.emergentagent.com/api/p2p/block/add \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test","blocked_user_id":"baduser"}'
 
@@ -244,7 +244,7 @@ Response:
 
 **2. Unblock User**
 ```bash
-curl -X POST https://crypto-logo-update.preview.emergentagent.com/api/p2p/block/remove \
+curl -X POST https://wallet-nav-repair.preview.emergentagent.com/api/p2p/block/remove \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test","blocked_user_id":"baduser"}'
 
@@ -255,7 +255,7 @@ Response:
 
 **3. Get Blocked List**
 ```bash
-curl https://crypto-logo-update.preview.emergentagent.com/api/p2p/blocked/test
+curl https://wallet-nav-repair.preview.emergentagent.com/api/p2p/blocked/test
 
 Response:
 {"success": true, "blocked": ["baduser", "scammer"]}
@@ -289,7 +289,7 @@ Schema:
 
 **Resolve Dispute**
 ```bash
-curl -X POST https://crypto-logo-update.preview.emergentagent.com/api/admin/p2p/dispute/trade123/resolve \
+curl -X POST https://wallet-nav-repair.preview.emergentagent.com/api/admin/p2p/dispute/trade123/resolve \
   -H "Content-Type: application/json" \
   -d '{
     "admin_id": "admin_user",
@@ -420,7 +420,7 @@ Notifications ARE being created in DB.
 
 <p><strong>⚠️ Action Required:</strong> Please verify payment and release crypto.</p>
 
-<a href="https://crypto-logo-update.preview.emergentagent.com/p2p/order/trade123">View Order</a>
+<a href="https://wallet-nav-repair.preview.emergentagent.com/p2p/order/trade123">View Order</a>
 ```
 
 ### INTEGRATION:
@@ -454,7 +454,7 @@ if seller and seller.get("email"):
 
 **Get Stats**
 ```bash
-curl "https://crypto-logo-update.preview.emergentagent.com/api/admin/p2p/stats?timeframe=week"
+curl "https://wallet-nav-repair.preview.emergentagent.com/api/admin/p2p/stats?timeframe=week"
 
 Response:
 {
@@ -509,7 +509,7 @@ Response:
 - URL: `/admin/p2p`
 
 ### USER VISIBLE:
-✅ YES - Go to https://crypto-logo-update.preview.emergentagent.com/admin/p2p
+✅ YES - Go to https://wallet-nav-repair.preview.emergentagent.com/admin/p2p
 ✅ See full P2P stats dashboard
 ✅ Change timeframe
 ✅ See top merchants

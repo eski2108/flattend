@@ -10,7 +10,7 @@ since the trading system uses internal_balances, not crypto_balances.
 - GBP is only available in internal_balances for trading
 - Need to add GBP balance directly to internal_balances for testing
 
-**Backend URL:** https://crypto-logo-update.preview.emergentagent.com/api
+**Backend URL:** https://wallet-nav-repair.preview.emergentagent.com/api
 """
 
 import requests
@@ -20,7 +20,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
+BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
 
 class SpotTradingInternalBalanceTester:
     def __init__(self):

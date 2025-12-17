@@ -8,7 +8,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
+BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
 
 def log_test(message, success=None):
     """Log test results with timestamp"""

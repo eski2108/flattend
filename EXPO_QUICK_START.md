@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://crypto-logo-update.preview.emergentagent.com/api
+https://wallet-nav-repair.preview.emergentagent.com/api
 ```
 
 This means:

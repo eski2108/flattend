@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://crypto-logo-update.preview.emergentagent.com
+**Live URL:** https://wallet-nav-repair.preview.emergentagent.com
 
 ---
 

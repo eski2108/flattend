@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://crypto-logo-update.preview.emergentagent.com/#/trading
+**Live URL:** https://wallet-nav-repair.preview.emergentagent.com/#/trading
 
 ---
 

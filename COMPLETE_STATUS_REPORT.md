@@ -37,8 +37,8 @@
 **Location**: `/app/frontend/src/pages/TwoFactorSetup.js`
 
 **How to Test**:
-1. Login at: https://crypto-logo-update.preview.emergentagent.com/login
-2. Navigate to: https://crypto-logo-update.preview.emergentagent.com/2fa-setup
+1. Login at: https://wallet-nav-repair.preview.emergentagent.com/login
+2. Navigate to: https://wallet-nav-repair.preview.emergentagent.com/2fa-setup
 3. Click "Enable 2FA"
 4. Scan QR code with Google Authenticator app
 5. Enter 6-digit code
@@ -72,7 +72,7 @@
 - ⚠️ Shows "No liquidity" (admin needs to add liquidity)
 
 ### 6. ✅ URL Configuration - FIXED
-- ✅ Frontend URL: `https://crypto-logo-update.preview.emergentagent.com`
+- ✅ Frontend URL: `https://wallet-nav-repair.preview.emergentagent.com`
 - ✅ Backend URL: Same domain with `/api` prefix
 - ✅ All .env files configured correctly
 - ✅ MongoDB connection working
@@ -90,7 +90,7 @@
 3. Find OAuth Client ID: `823558232364-e4b48l01o9frh6vbltic2633fn3pgs0o`
 4. Add this Authorized Redirect URI:
    ```
-   https://crypto-logo-update.preview.emergentagent.com/api/auth/google/callback
+   https://wallet-nav-repair.preview.emergentagent.com/api/auth/google/callback
    ```
 5. Save changes
 
@@ -222,22 +222,22 @@
 You can manually test these features right now:
 
 1. **Login System** ✅
-   - URL: https://crypto-logo-update.preview.emergentagent.com/login
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/login
    - Use: e2e@final.test / test123
 
 2. **Wallet Page** ✅
    - Should show your balances correctly
 
 3. **2FA Setup** ✅
-   - URL: https://crypto-logo-update.preview.emergentagent.com/2fa-setup
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/2fa-setup
    - Enable 2FA and test with Google Authenticator
 
 4. **Trading Page** ⚠️
-   - URL: https://crypto-logo-update.preview.emergentagent.com/trading
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/trading
    - View charts and UI (order placement may need fixing)
 
 5. **P2P Express** ⚠️
-   - URL: https://crypto-logo-update.preview.emergentagent.com/instant-buy
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/instant-buy
    - UI works, but needs liquidity
 
 ---
@@ -273,5 +273,5 @@ You can manually test these features right now:
 ---
 
 **Generated**: November 30, 2025
-**Environment**: https://crypto-logo-update.preview.emergentagent.com
+**Environment**: https://wallet-nav-repair.preview.emergentagent.com
 **Status**: Core features complete, ready for manual testing and final refinements

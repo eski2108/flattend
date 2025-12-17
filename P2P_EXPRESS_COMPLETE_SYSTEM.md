@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://crypto-logo-update.preview.emergentagent.com/p2p-express
+https://wallet-nav-repair.preview.emergentagent.com/p2p-express
 
 ---
 

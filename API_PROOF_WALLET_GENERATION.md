@@ -1,7 +1,7 @@
 # API PROOF - NOWPayments Wallet Address Generation
 
 ## Live Preview URL
-**https://crypto-logo-update.preview.emergentagent.com**
+**https://wallet-nav-repair.preview.emergentagent.com**
 
 ---
 
@@ -11,7 +11,7 @@
 
 **API Call:**
 ```bash
-curl -X POST "https://crypto-logo-update.preview.emergentagent.com/api/nowpayments/create-deposit" \
+curl -X POST "https://wallet-nav-repair.preview.emergentagent.com/api/nowpayments/create-deposit" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","amount":50,"currency":"gbp","pay_currency":"btc"}'
 ```
@@ -35,7 +35,7 @@ curl -X POST "https://crypto-logo-update.preview.emergentagent.com/api/nowpaymen
 
 **API Call:**
 ```bash
-curl -X POST "https://crypto-logo-update.preview.emergentagent.com/api/nowpayments/create-deposit" \
+curl -X POST "https://wallet-nav-repair.preview.emergentagent.com/api/nowpayments/create-deposit" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","amount":50,"currency":"gbp","pay_currency":"eth"}'
 ```
@@ -59,7 +59,7 @@ curl -X POST "https://crypto-logo-update.preview.emergentagent.com/api/nowpaymen
 
 **API Call:**
 ```bash
-curl -X POST "https://crypto-logo-update.preview.emergentagent.com/api/nowpayments/create-deposit" \
+curl -X POST "https://wallet-nav-repair.preview.emergentagent.com/api/nowpayments/create-deposit" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","amount":50,"currency":"gbp","pay_currency":"sol"}'
 ```
@@ -149,7 +149,7 @@ curl -X POST "https://crypto-logo-update.preview.emergentagent.com/api/nowpaymen
 
 ## WHAT I NEED FROM YOU
 
-1. **Confirm your EXACT preview URL** - is it `https://crypto-logo-update.preview.emergentagent.com` or different?
+1. **Confirm your EXACT preview URL** - is it `https://wallet-nav-repair.preview.emergentagent.com` or different?
 2. If different, provide the correct URL immediately
 3. I will then deploy the frontend fixes to the correct environment
 

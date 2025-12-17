@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
+BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
 
 # Test Users
 BUYER_USER = {

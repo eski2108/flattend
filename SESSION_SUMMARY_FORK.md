@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://crypto-logo-update.preview.emergentagent.com
+https://wallet-nav-repair.preview.emergentagent.com
 
 ---
 

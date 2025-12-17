@@ -286,27 +286,27 @@
 1. **Pending Payment**
    - ID: `ff329694-f5b9-4a84-96f2-19ee6de19d47`
    - Status: `pending_payment`
-   - URL: https://crypto-logo-update.preview.emergentagent.com/order/ff329694-f5b9-4a84-96f2-19ee6de19d47
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/order/ff329694-f5b9-4a84-96f2-19ee6de19d47
 
 2. **Payment Made**
    - ID: `92c3944c-236d-4be8-be49-79db25015dde`
    - Status: `payment_made`
-   - URL: https://crypto-logo-update.preview.emergentagent.com/order/92c3944c-236d-4be8-be49-79db25015dde
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/order/92c3944c-236d-4be8-be49-79db25015dde
 
 3. **Completed**
    - ID: `1f469ded-cafa-4a60-ad6d-cef9cd975e88`
    - Status: `completed`
-   - URL: https://crypto-logo-update.preview.emergentagent.com/order/1f469ded-cafa-4a60-ad6d-cef9cd975e88
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/order/1f469ded-cafa-4a60-ad6d-cef9cd975e88
 
 4. **Cancelled**
    - ID: `8d5bf387-77f9-4303-be0b-deca45552144`
    - Status: `cancelled`
-   - URL: https://crypto-logo-update.preview.emergentagent.com/order/8d5bf387-77f9-4303-be0b-deca45552144
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/order/8d5bf387-77f9-4303-be0b-deca45552144
 
 5. **Disputed**
    - ID: `e53cb182-ef76-4558-9f9c-bdbba1463332`
    - Status: `disputed`
-   - URL: https://crypto-logo-update.preview.emergentagent.com/order/e53cb182-ef76-4558-9f9c-bdbba1463332
+   - URL: https://wallet-nav-repair.preview.emergentagent.com/order/e53cb182-ef76-4558-9f9c-bdbba1463332
 
 **Test Users:**
 - Buyer: test_buyer_123 / testbuyer@test.com / password123

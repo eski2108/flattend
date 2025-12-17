@@ -88,7 +88,7 @@ Tests ALL backend endpoints and features as requested in the comprehensive revie
     - Admin Operations
     - Edge Cases
 
-**Backend URL:** https://crypto-logo-update.preview.emergentagent.com/api
+**Backend URL:** https://wallet-nav-repair.preview.emergentagent.com/api
 """
 
 import requests
@@ -99,7 +99,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
+BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
 
 # Test Users for comprehensive testing
 USERS = {

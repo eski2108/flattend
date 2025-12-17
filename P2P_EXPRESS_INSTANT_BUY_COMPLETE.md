@@ -487,7 +487,7 @@ const cryptoAmount = netAmount / baseRate;
 - ✅ Frontend hot-reloaded
 
 **Page Accessible:**
-- ✅ https://crypto-logo-update.preview.emergentagent.com/p2p-express
+- ✅ https://wallet-nav-repair.preview.emergentagent.com/p2p-express
 
 **API Endpoint:**
 - ✅ POST `/api/p2p/express/create`

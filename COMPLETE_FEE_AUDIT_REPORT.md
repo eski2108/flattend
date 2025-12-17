@@ -277,7 +277,7 @@ mongosh coinhubx --eval '
 ### Via API:
 ```bash
 # Total platform revenue
-curl https://crypto-logo-update.preview.emergentagent.com/api/admin/platform-stats
+curl https://wallet-nav-repair.preview.emergentagent.com/api/admin/platform-stats
 ```
 
 ---

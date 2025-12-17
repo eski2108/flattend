@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://crypto-logo-update.preview.emergentagent.com/api/admin/fees/test
+$ curl https://wallet-nav-repair.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://crypto-logo-update.preview.emergentagent.com/api/admin/fees/all
+$ curl https://wallet-nav-repair.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

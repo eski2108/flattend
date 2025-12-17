@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://crypto-logo-update.preview.emergentagent.com
-- Backend API: https://crypto-logo-update.preview.emergentagent.com/api
-- P2P Marketplace: https://crypto-logo-update.preview.emergentagent.com/p2p
+- Frontend: https://wallet-nav-repair.preview.emergentagent.com
+- Backend API: https://wallet-nav-repair.preview.emergentagent.com/api
+- P2P Marketplace: https://wallet-nav-repair.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

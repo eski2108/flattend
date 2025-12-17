@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-logo-update.preview.emergentagent.com
+**URL:** https://wallet-nav-repair.preview.emergentagent.com
 
 **Services Status:**
 ```bash

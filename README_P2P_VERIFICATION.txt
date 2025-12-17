@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://crypto-logo-update.preview.emergentagent.com
-P2P Page:     https://crypto-logo-update.preview.emergentagent.com/p2p
-Backend API:  https://crypto-logo-update.preview.emergentagent.com/api
+Frontend:     https://wallet-nav-repair.preview.emergentagent.com
+P2P Page:     https://wallet-nav-repair.preview.emergentagent.com/p2p
+Backend API:  https://wallet-nav-repair.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

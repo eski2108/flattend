@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { ArrowDownUp, TrendingUp, Info, RefreshCw, Settings, Zap, Clock, ChevronDown, AlertCircle, CheckCircle, Shield, DollarSign } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-logo-update.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://wallet-nav-repair.preview.emergentagent.com';
 
 const COIN_LOGOS = {
   'BTC': '🟠',

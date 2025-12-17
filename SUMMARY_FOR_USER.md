@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://crypto-logo-update.preview.emergentagent.com/login
-2. Visit marketplace: https://crypto-logo-update.preview.emergentagent.com/p2p
+1. Login at: https://wallet-nav-repair.preview.emergentagent.com/login
+2. Visit marketplace: https://wallet-nav-repair.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

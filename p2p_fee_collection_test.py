@@ -23,7 +23,7 @@ Tests complete P2P trade flow with fee collection integration as requested in re
    - Check currency breakdown
    - Test payout request flow
 
-**Backend URL:** https://crypto-logo-update.preview.emergentagent.com/api
+**Backend URL:** https://wallet-nav-repair.preview.emergentagent.com/api
 """
 
 import requests
@@ -33,7 +33,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
+BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
 
 class P2PFeeCollectionTester:
     def __init__(self):

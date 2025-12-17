@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://crypto-logo-update.preview.emergentagent.com/api"
+BACKEND_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
 
 class CoinSwapTester:
     def __init__(self):

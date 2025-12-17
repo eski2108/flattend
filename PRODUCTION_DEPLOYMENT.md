@@ -1,7 +1,7 @@
 # CoinHubX Production Deployment - LOCKED VERSION
 
 ## Production URL
-**Primary:** https://crypto-logo-update.preview.emergentagent.com
+**Primary:** https://wallet-nav-repair.preview.emergentagent.com
 **Custom Domain (to be configured):** https://coinhubx.net
 
 ## Current Status: STABLE AND LOCKED

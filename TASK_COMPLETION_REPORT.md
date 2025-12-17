@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://crypto-logo-update.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://wallet-nav-repair.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://wallet-nav-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_i
 ```
 📧 URLs found in dispute email template:
 
-1. https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://wallet-nav-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://wallet-nav-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://wallet-nav-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://crypto-logo-update.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://wallet-nav-repair.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

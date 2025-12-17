@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://crypto-logo-update.preview.emergentagent.com
+https://wallet-nav-repair.preview.emergentagent.com
 
 ### Test Route
 
-`https://crypto-logo-update.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://wallet-nav-repair.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

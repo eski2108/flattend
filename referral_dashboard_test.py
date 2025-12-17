@@ -20,7 +20,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 # Backend URL from environment
-BACKEND_URL = "https://crypto-logo-update.preview.emergentagent.com"
+BACKEND_URL = "https://wallet-nav-repair.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test users
