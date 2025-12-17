@@ -20861,28 +20861,11 @@ async def admin_mark_payment_received(request: dict):
         platform_fee = amount * 0.01
         seller_amount = amount - platform_fee
         
-        # Update seller balance
-        await db.crypto_balances.update_one(
-            {"user_id": seller_id},
-            {
-                "$inc": {
-                    f"balances.{currency}": seller_amount,
-                    "total_trades": 1
-                },
-                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-            },
-            upsert=True
-        )
+        # Update seller balance - SYNCED
+        await sync_credit_balance(seller_id, currency, seller_amount, "sale_completed")
         
-        # Collect platform fee
-        await db.crypto_balances.update_one(
-            {"user_id": PLATFORM_FEE_WALLET},
-            {
-                "$inc": {f"balances.{currency}": platform_fee},
-                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-            },
-            upsert=True
-        )
+        # Collect platform fee - SYNCED
+        await sync_credit_balance(PLATFORM_FEE_WALLET, currency, platform_fee, "sale_platform_fee")
         
         # Record transaction
         await db.transactions.insert_one({
