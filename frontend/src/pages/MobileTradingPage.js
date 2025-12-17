@@ -227,35 +227,10 @@ export default function MobileTradingPage() {
             margin: 0 !important;
             overflow: hidden !important;
           }
-          .trading-layout {
-            display: grid !important;
-            grid-template-columns: 1fr 320px !important;
-            height: calc(100vh - 48px);
-            width: 100% !important;
-            overflow: hidden;
+          .trading-page-container {
+            width: 100%;
             background: #020617;
-          }
-          .trading-main {
-            display: flex !important;
-            flex-direction: column !important;
-            overflow: hidden;
-            min-width: 0;
-          }
-          .chart-wrap {
-            flex: 1 1 auto !important;
-            min-height: 500px;
-            width: 100% !important;
-            overflow: hidden;
-          }
-          .chart-wrap > *,
-          .chart-wrap iframe {
-            width: 100% !important;
-            height: 100% !important;
-          }
-          .trading-panel {
-            overflow-y: auto;
-            background: #0A0F1F;
-            border-left: 1px solid rgba(255,255,255,0.1);
+            min-height: 100vh;
           }
           .tradingview-widget-container,
           .tradingview-widget-container__widget,
