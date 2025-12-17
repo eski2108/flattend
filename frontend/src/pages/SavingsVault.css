@@ -2753,3 +2753,33 @@
     padding: 24px;
   }
 }
+/* Savings Table Header */
+.savings-table-container {
+  width: 100%;
+}
+
+.savings-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1.2fr 1.5fr;
+  gap: 16px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px 12px 0 0;
+  margin-bottom: -1px;
+}
+
+.savings-table-header .header-cell {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .savings-table-header {
+    display: none;
+  }
+}
+
