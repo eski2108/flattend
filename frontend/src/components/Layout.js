@@ -321,9 +321,12 @@ export default function Layout({ children }) {
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
         {/* Hide price ticker on spot trading and admin pages */}
-        {!(location.pathname === '/spot-trading' || location.pathname === '/trading' || 
+        {!(location.pathname === '/spot-trading' || 
+           location.pathname === '/trading' || 
+           location.pathname.includes('trading') ||
            location.pathname.startsWith('/admin/disputes') ||
-           location.hash === '#/spot-trading' || location.hash === '#/trading') && <PriceTickerEnhanced />}
+           location.hash === '#/spot-trading' || 
+           location.hash === '#/trading') && <PriceTickerEnhanced />}
         
         <PromoBanner />
         
