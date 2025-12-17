@@ -253,6 +253,7 @@ export default function PriceTickerEnhanced() {
           );
         })}
       </Marquee>
+      </div>
       
     </div>
   );
