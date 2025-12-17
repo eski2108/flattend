@@ -10528,13 +10528,10 @@ async def close_trading_position(request: dict):
         # Net P/L after fee
         net_pnl = pnl - close_fee
         
-        # Return margin + P/L to wallet
+        # Return margin + P/L to wallet - SYNCED
         total_return = position["margin"] + net_pnl
         
-        await db.wallets.update_one(
-            {"user_id": user_id},
-            {"$inc": {"balances.GBP.balance": total_return}, "$set": {"updated_at": datetime.now(timezone.utc)}}
-        )
+        await sync_credit_balance(user_id, "GBP", total_return, "trading_close")
         
         # Update position
         await db.open_positions.update_one(
