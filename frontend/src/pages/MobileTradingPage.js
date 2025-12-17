@@ -249,7 +249,7 @@ export default function MobileTradingPage() {
         `}
       </style>
       <div style={{
-        maxWidth: '1400px',
+        maxWidth: '430px',
         width: '100%',
         margin: '0 auto',
         background: '#020617',
@@ -368,7 +368,7 @@ export default function MobileTradingPage() {
 
         {/* TRADINGVIEW CHART */}
         <div style={{
-          height: '600px',
+          height: '440px',
           margin: '0 16px 16px 16px',
           borderRadius: '18px',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
