@@ -512,16 +512,16 @@ export default function MobileTradingPage() {
               borderRadius: '12px',
               background: orderType === 'market'
                 ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)'
-                : 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-              color: orderType === 'market' ? '#020617' : '#8F9BB3',
-              border: orderType === 'market' ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                : 'linear-gradient(135deg, rgba(15,242,242,0.1) 0%, rgba(0,184,212,0.1) 100%)',
+              color: orderType === 'market' ? '#020617' : '#0FF2F2',
+              border: orderType === 'market' ? 'none' : '1px solid rgba(15,242,242,0.3)',
               fontSize: '14px',
               fontWeight: orderType === 'market' ? '700' : '600',
               cursor: 'pointer',
               transition: 'all 200ms ease',
               boxShadow: orderType === 'market' 
-                ? '0 0 20px rgba(15,242,242,0.5), inset 0 1px 0 rgba(255,255,255,0.2)'
-                : 'none'
+                ? '0 0 30px rgba(15,242,242,0.6), 0 0 50px rgba(15,242,242,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
+                : '0 0 12px rgba(15,242,242,0.2), inset 0 0 8px rgba(15,242,242,0.05)'
             }}
           >
             Market
@@ -534,16 +534,16 @@ export default function MobileTradingPage() {
               borderRadius: '12px',
               background: orderType === 'limit'
                 ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)'
-                : 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-              color: orderType === 'limit' ? '#020617' : '#8F9BB3',
-              border: orderType === 'limit' ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                : 'linear-gradient(135deg, rgba(15,242,242,0.1) 0%, rgba(0,184,212,0.1) 100%)',
+              color: orderType === 'limit' ? '#020617' : '#0FF2F2',
+              border: orderType === 'limit' ? 'none' : '1px solid rgba(15,242,242,0.3)',
               fontSize: '14px',
               fontWeight: orderType === 'limit' ? '700' : '600',
               cursor: 'pointer',
               transition: 'all 200ms ease',
               boxShadow: orderType === 'limit' 
-                ? '0 0 20px rgba(15,242,242,0.5), inset 0 1px 0 rgba(255,255,255,0.2)'
-                : 'none'
+                ? '0 0 30px rgba(15,242,242,0.6), 0 0 50px rgba(15,242,242,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
+                : '0 0 12px rgba(15,242,242,0.2), inset 0 0 8px rgba(15,242,242,0.05)'
             }}
           >
             Limit
