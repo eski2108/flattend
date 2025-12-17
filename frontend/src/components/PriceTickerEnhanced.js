@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { IoTrendingDown, IoTrendingUp } from 'react-icons/io5';
+import { IoTrendingDown, IoTrendingUp, IoChevronDown } from 'react-icons/io5';
 import Marquee from 'react-fast-marquee';
 import axios from 'axios';
+
+// Currency options
+const CURRENCIES = {
+  USD: { symbol: '$', name: 'US Dollar', field: 'price_usd' },
+  GBP: { symbol: '£', name: 'British Pound', field: 'price_gbp' },
+  EUR: { symbol: '€', name: 'Euro', field: 'price_eur' }
+};
 
 const COIN_EMOJIS = {
   'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶', 
