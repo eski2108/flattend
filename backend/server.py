@@ -5305,11 +5305,15 @@ async def transfer_to_savings_OLD(request: dict):
 async def get_portfolio_summary(user_id: str):
     """Get portfolio summary for dashboard - REQUIRED BY FRONTEND"""
     try:
+        logger.info(f"Portfolio request for user: {user_id}")
+        
         # Get wallet balances - check BOTH collections for compatibility
         wallet_balances = await db.wallets.find(
             {"user_id": user_id},
             {"_id": 0}
         ).to_list(100)
+        
+        logger.info(f"Found {len(wallet_balances)} wallets for {user_id}")
         
         # If no balances in wallets, try internal_balances
         if not wallet_balances:
@@ -5317,6 +5321,7 @@ async def get_portfolio_summary(user_id: str):
                 {"user_id": user_id},
                 {"_id": 0}
             ).to_list(100)
+            logger.info(f"Trying internal_balances: {len(wallet_balances)}")
         
         # Get live prices from price_cache (correct collection)
         prices_doc = await db.price_cache.find_one({}, {"_id": 0})
