@@ -7040,6 +7040,53 @@ async def verify_email(token: str):
     return HTMLResponse(content=success_html)
 
 # ============================================================================
+# TWILIO SMS UTILITY
+# ============================================================================
+
+async def send_sms(to_number: str, message: str) -> dict:
+    """Send SMS via Twilio"""
+    try:
+        from twilio.rest import Client
+        
+        account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+        auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+        from_number = os.environ.get('TWILIO_PHONE_NUMBER')
+        
+        if not all([account_sid, auth_token, from_number]):
+            logger.error("Twilio credentials not configured")
+            return {"success": False, "error": "Twilio not configured"}
+        
+        client = Client(account_sid, auth_token)
+        
+        sms = client.messages.create(
+            body=message,
+            from_=from_number,
+            to=to_number
+        )
+        
+        logger.info(f"✅ SMS sent to {to_number}: {sms.sid}")
+        return {"success": True, "sid": sms.sid}
+    except Exception as e:
+        logger.error(f"❌ Failed to send SMS: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+@api_router.post("/sms/send")
+async def api_send_sms(request: dict):
+    """API endpoint to send SMS"""
+    to_number = request.get("to")
+    message = request.get("message")
+    
+    if not to_number or not message:
+        raise HTTPException(status_code=400, detail="'to' and 'message' are required")
+    
+    result = await send_sms(to_number, message)
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "Failed to send SMS"))
+    
+    return result
+
+# ============================================================================
 # PREMIUM ONBOARDING - PHONE VERIFICATION
 # ============================================================================
 
