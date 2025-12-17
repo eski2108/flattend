@@ -249,9 +249,7 @@ export default function MobileTradingPage() {
         `}
       </style>
       <div style={{
-        maxWidth: '430px',
         width: '100%',
-        margin: '0 auto',
         background: '#020617',
         minHeight: '100vh',
         paddingBottom: '80px'
