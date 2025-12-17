@@ -6,7 +6,7 @@ Debug Admin Approval Issue - Test different approval request formats
 import requests
 import json
 
-BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
+BASE_URL = "https://cryptodash-22.preview.emergentagent.com/api"
 ADMIN_USER_EMAIL = "admin_test@demo.com"
 ADMIN_USER_PASSWORD = "Admin123!"
 

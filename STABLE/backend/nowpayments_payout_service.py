@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://wallet-nav-repair.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://cryptodash-22.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

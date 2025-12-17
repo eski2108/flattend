@@ -31,7 +31,7 @@ Tests the complete file attachment system for P2P trade chat as requested in rev
 - Only trade participants can upload files
 - Messages with attachments are returned in message list
 
-**Backend URL:** https://wallet-nav-repair.preview.emergentagent.com/api
+**Backend URL:** https://cryptodash-22.preview.emergentagent.com/api
 """
 
 import requests
@@ -44,7 +44,7 @@ import time
 from PIL import Image
 
 # Configuration
-BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
+BASE_URL = "https://cryptodash-22.preview.emergentagent.com/api"
 
 # Test Users for file attachment testing - create new unique users
 BUYER_USER = {

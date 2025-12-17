@@ -7,7 +7,7 @@
 ## 🎯 STEP 5 NOW COMPLETE
 
 ### Blocked Users Management Page
-**URL**: `https://wallet-nav-repair.preview.emergentagent.com/settings/blocked`
+**URL**: `https://cryptodash-22.preview.emergentagent.com/settings/blocked`
 **File**: `/app/frontend/src/pages/BlockedUsers.js`
 **Route**: Added to `/app/frontend/src/App.js` line 214
 
@@ -72,7 +72,7 @@
 4. **Expected**: Toast "Access denied: User is blocked"
 
 ### Step 5: Check Blocked List ✅ NOW WORKS
-1. Go to `https://wallet-nav-repair.preview.emergentagent.com/settings/blocked`
+1. Go to `https://cryptodash-22.preview.emergentagent.com/settings/blocked`
 2. **Expected**: See list of all blocked users
 3. **Expected**: Each user has red "Unblock" button
 4. **Expected**: Shows user avatar, name, email

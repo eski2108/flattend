@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://wallet-nav-repair.preview.emergentagent.com`
-- Backend API: `https://wallet-nav-repair.preview.emergentagent.com/api`
+- Frontend: `https://cryptodash-22.preview.emergentagent.com`
+- Backend API: `https://cryptodash-22.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

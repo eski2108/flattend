@@ -14,7 +14,7 @@ This HTML file contains your entire app ready to be converted to APK.
 
 ### **Step 2:** Fill in the form:
 - **App Name:** Coin Hub X
-- **Website URL:** https://wallet-nav-repair.preview.emergentagent.com
+- **Website URL:** https://cryptodash-22.preview.emergentagent.com
 - **App Icon:** Upload your logo (optional)
 - **Package Name:** com.coinhubx.app
 
@@ -34,7 +34,7 @@ This HTML file contains your entire app ready to be converted to APK.
 
 ### **Step 2:** Enter your website URL:
 ```
-https://wallet-nav-repair.preview.emergentagent.com
+https://cryptodash-22.preview.emergentagent.com
 ```
 
 ### **Step 3:** Configure:
@@ -58,7 +58,7 @@ https://wallet-nav-repair.preview.emergentagent.com
 
 ### **Step 3:** Create new app:
 - Type: Website to App
-- URL: https://wallet-nav-repair.preview.emergentagent.com
+- URL: https://cryptodash-22.preview.emergentagent.com
 
 ### **Step 4:** Customize:
 - App name
@@ -80,7 +80,7 @@ https://wallet-nav-repair.preview.emergentagent.com
 
 ### **Step 3:** Enter URL:
 ```
-https://wallet-nav-repair.preview.emergentagent.com
+https://cryptodash-22.preview.emergentagent.com
 ```
 
 ### **Step 4:** Customize app

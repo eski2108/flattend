@@ -1,7 +1,7 @@
 # CoinHubX Critical Fixes Completed
 
 **Date:** December 9, 2024  
-**Environment:** https://wallet-nav-repair.preview.emergentagent.com  
+**Environment:** https://cryptodash-22.preview.emergentagent.com  
 **Status:** ✅ ALL FIXES DEPLOYED
 
 ---
@@ -209,7 +209,7 @@
 
 ## 🚀 DEPLOYMENT
 
-**Live URL:** https://wallet-nav-repair.preview.emergentagent.com
+**Live URL:** https://cryptodash-22.preview.emergentagent.com
 
 **Services Status:**
 ```
@@ -264,12 +264,12 @@ mongodb   RUNNING   ✅
 **Testing the Live Preview:**
 
 1. **Deposit Flow:**
-   - Go to: `https://wallet-nav-repair.preview.emergentagent.com/#/deposit/btc`
+   - Go to: `https://cryptodash-22.preview.emergentagent.com/#/deposit/btc`
    - Should load instantly with BTC deposit address
    - Try other coins: `/deposit/eth`, `/deposit/usdt`, `/deposit/sol`
 
 2. **Trading Page:**
-   - Go to: `https://wallet-nav-repair.preview.emergentagent.com/#/trading`
+   - Go to: `https://cryptodash-22.preview.emergentagent.com/#/trading`
    - Open Chrome DevTools (F12)
    - Set device to iPhone SE (375×667)
    - Verify all 494 pairs are scrollable and readable

@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://wallet-nav-repair.preview.emergentagent.com
+https://cryptodash-22.preview.emergentagent.com
 
 ---
 

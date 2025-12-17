@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://wallet-nav-repair.preview.emergentagent.com
-P2P Page:     https://wallet-nav-repair.preview.emergentagent.com/p2p
-Backend API:  https://wallet-nav-repair.preview.emergentagent.com/api
+Frontend:     https://cryptodash-22.preview.emergentagent.com
+P2P Page:     https://cryptodash-22.preview.emergentagent.com/p2p
+Backend API:  https://cryptodash-22.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

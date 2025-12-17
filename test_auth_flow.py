@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://wallet-nav-repair.preview.emergentagent.com/api"
+BASE_URL = "https://cryptodash-22.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

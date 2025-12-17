@@ -168,7 +168,7 @@ You'll get:
 **Version:** 1.0.0
 **Version Code:** 1
 
-**Backend URL:** `https://wallet-nav-repair.preview.emergentagent.com`
+**Backend URL:** `https://cryptodash-22.preview.emergentagent.com`
 - Configured in `/app/mobile/src/config/api.js`
 - All marketplace data from production backend
 - 12 seeded sellers ready

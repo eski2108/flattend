@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://wallet-nav-repair.preview.emergentagent.com
+**URL:** https://cryptodash-22.preview.emergentagent.com
 
 **Services Status:**
 ```bash
