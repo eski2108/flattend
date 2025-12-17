@@ -29831,11 +29831,8 @@ async def create_vault(request: Request):
         if not wallet_balance or wallet_balance.get('balance', 0) < amount:
             raise HTTPException(status_code=400, detail="Insufficient wallet balance")
         
-        # Deduct from wallet
-        await db.crypto_balances.update_one(
-            {"user_id": user_id, "currency": currency},
-            {"$inc": {"balance": -amount}}
-        )
+        # Deduct from wallet - SYNCED
+        await sync_debit_balance(user_id, currency, amount, "vault_lock")
         
         # Create vault
         now = datetime.now(timezone.utc)
