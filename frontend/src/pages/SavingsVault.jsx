@@ -948,10 +948,33 @@ const SavingsVault = () => {
             {depositStep === 1 && (
               <div className="deposit-step">
                 <h4>Step 1: Select Wallet Source</h4>
-                <select className="deposit-input" defaultValue="main">
-                  <option value="main">Wallet: Main</option>
-                </select>
-                <button className="modal-cta-btn" onClick={() => setDepositStep(2)}>Next</button>
+                <p className="step-description">Select which wallet to transfer funds from</p>
+                <div className="wallet-source-options">
+                  <div 
+                    className="wallet-source-card selected"
+                    onClick={() => {}}
+                  >
+                    <span className="wallet-icon">💰</span>
+                    <div className="wallet-info">
+                      <span className="wallet-name">Main Wallet</span>
+                      <span className="wallet-hint">Your primary wallet balance</span>
+                    </div>
+                    <span className="check-mark">✓</span>
+                  </div>
+                </div>
+                <div className="step-actions">
+                  <button 
+                    className="modal-secondary-btn"
+                    onClick={() => {
+                      setShowTransferModal(false);
+                      setDepositStep(1);
+                      navigate('/wallet');
+                    }}
+                  >
+                    Go to Main Wallet
+                  </button>
+                  <button className="modal-cta-btn" onClick={() => setDepositStep(2)}>Next</button>
+                </div>
               </div>
             )}
             
