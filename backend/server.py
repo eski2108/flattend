@@ -29989,44 +29989,12 @@ async def early_unlock_vault(request: Request):
         penalty_amount = principal * penalty_percent
         amount_returned = principal - penalty_amount
         
-        # Return to wallet (minus penalty)
+        # Return to wallet (minus penalty) - SYNCED
         currency = vault['currency']
-        wallet_balance = await db.crypto_balances.find_one({
-            "user_id": user_id,
-            "currency": currency
-        })
+        await sync_credit_balance(user_id, currency, amount_returned, "vault_early_exit")
         
-        if wallet_balance:
-            await db.crypto_balances.update_one(
-                {"user_id": user_id, "currency": currency},
-                {"$inc": {"balance": amount_returned}}
-            )
-        else:
-            await db.crypto_balances.insert_one({
-                "user_id": user_id,
-                "currency": currency,
-                "balance": amount_returned,
-                "locked_balance": 0
-            })
-        
-        # Penalty goes to platform
-        admin_balance = await db.crypto_balances.find_one({
-            "user_id": PLATFORM_CONFIG["admin_wallet_id"],
-            "currency": currency
-        })
-        
-        if admin_balance:
-            await db.crypto_balances.update_one(
-                {"user_id": PLATFORM_CONFIG["admin_wallet_id"], "currency": currency},
-                {"$inc": {"balance": penalty_amount}}
-            )
-        else:
-            await db.crypto_balances.insert_one({
-                "user_id": PLATFORM_CONFIG["admin_wallet_id"],
-                "currency": currency,
-                "balance": penalty_amount,
-                "locked_balance": 0
-            })
+        # Penalty goes to platform - SYNCED
+        await sync_credit_balance(PLATFORM_CONFIG["admin_wallet_id"], currency, penalty_amount, "vault_penalty")
         
         # Update vault
         now = datetime.now(timezone.utc)
