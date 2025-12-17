@@ -208,20 +208,10 @@ const SavingsVault = () => {
   const loadSavingsData = async () => {
     try {
       setLoading(true);
-      
-      // Get user_id from cryptobank_user (same as WalletPage)
-      const userData = localStorage.getItem('cryptobank_user');
-      if (!userData) {
-        console.error('No user data found - not logged in');
-        setLoading(false);
-        return;
-      }
-      
-      const user = JSON.parse(userData);
-      const userId = user.user_id;
+      const userId = getUserId();
       
       if (!userId) {
-        console.error('No user_id found in user data');
+        console.error('No user_id found - user not logged in');
         setLoading(false);
         return;
       }
