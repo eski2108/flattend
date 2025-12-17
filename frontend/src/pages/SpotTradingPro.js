@@ -563,14 +563,14 @@ export default function SpotTradingPro() {
         `}
       </style>
       <div style={{
-        maxWidth: '430px',
+        maxWidth: '100%',
         width: '100%',
         margin: '0 auto',
         marginTop: '0',
         background: '#060C1A',
         minHeight: '100vh',
         fontFamily: 'Inter, sans-serif',
-        padding: '12px 12px 40px 12px'
+        padding: '12px 16px 40px 16px'
       }}>
         {/* 1. FLOATING STATS CARD */}
         <div style={{
