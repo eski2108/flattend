@@ -202,8 +202,8 @@ export default function PriceTickerEnhanced() {
             animation-play-state: paused;
           }
         `}</style>
-        <div className="ticker-scroll-track" style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center', height: '48px', whiteSpace: 'nowrap' }}>
-        {[...coins, ...coins].map((coin, idx) => {
+        <div className="ticker-scroll-track" style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center', height: '48px', whiteSpace: 'nowrap', width: 'max-content' }}>
+        {[...coins, ...coins, ...coins].map((coin, idx) => {
           const isPositive = coin.change >= 0;
           
           return (
