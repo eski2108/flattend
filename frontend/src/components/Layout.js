@@ -320,8 +320,9 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        {/* Hide price ticker only on admin dispute pages */}
-        {!(location.pathname.startsWith('/admin/disputes')) && <PriceTickerEnhanced />}
+        {/* Show price ticker - hide on trading chart pages and admin dispute pages */}
+        {!(location.pathname.startsWith('/admin/disputes') || 
+           location.pathname.startsWith('/trading/')) && <PriceTickerEnhanced />}
         
         <PromoBanner />
         
