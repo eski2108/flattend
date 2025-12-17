@@ -441,7 +441,7 @@ export default function LandingPage() {
             color: '#fff',
             letterSpacing: '-0.5px'
           }}>
-            Trusted Platform Metrics
+            Platform Statistics
           </h2>
           
           <div style={{
@@ -450,7 +450,25 @@ export default function LandingPage() {
             gap: '2rem',
             position: 'relative'
           }}>
-            {/* Stat Box 1: 100% Escrow */}
+            {/* Stat Box 1: Total Users - REAL DATA */}
+            <StatBox
+              icon="👥"
+              number={stats?.total_users || 0}
+              suffix=""
+              label="Registered Users"
+              microcopy="Trusted traders on our platform"
+            />
+            
+            {/* Stat Box 2: Total Volume - REAL DATA */}
+            <StatBox
+              icon="💰"
+              number={stats?.total_volume ? (stats.total_volume / 1000).toFixed(1) : '0'}
+              suffix="K"
+              label="Trading Volume"
+              microcopy="Total transaction volume processed"
+            />
+            
+            {/* Stat Box 3: 100% Escrow */}
             <StatBox
               icon="🛡️"
               number="100"
@@ -459,52 +477,9 @@ export default function LandingPage() {
               microcopy="Every trade secured with smart escrow"
             />
             
-            {/* Stat Box 2: Fast Trades */}
-            <StatBox
-              icon={<svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="url(#statGradient1)" stroke="url(#statGradient1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <defs>
-                  <linearGradient id="statGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#00F0FF" />
-                    <stop offset="100%" stopColor="#A855F7" />
-                  </linearGradient>
-                </defs>
-              </svg>}
-              number="15"
-              suffix=" min"
-              label="Average Trade Time"
-              microcopy="Complete trades in under 15 minutes"
-            />
-            
-            {/* Stat Box 3: Low Fees */}
-            <StatBox
-              icon={<svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="url(#statGradient2)" strokeWidth="2"/>
-                <path d="M12 6V18M9 9H13.5C14.163 9 14.7989 9.26339 15.2678 9.73223C15.7366 10.2011 16 10.837 16 11.5C16 12.163 15.7366 12.7989 15.2678 13.2678C14.7989 13.7366 14.163 14 13.5 14H9" stroke="url(#statGradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <defs>
-                  <linearGradient id="statGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#00F0FF" />
-                    <stop offset="100%" stopColor="#A855F7" />
-                  </linearGradient>
-                </defs>
-              </svg>}
-              number="1"
-              suffix="%"
-              label="Platform Fee"
-              microcopy="Transparent pricing, no hidden charges"
-            />
-            
             {/* Stat Box 4: 24/7 Support */}
             <StatBox
-              icon={<svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z" stroke="url(#statGradient3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <defs>
-                  <linearGradient id="statGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#00F0FF" />
-                    <stop offset="100%" stopColor="#A855F7" />
-                  </linearGradient>
-                </defs>
-              </svg>}
+              icon="⚡"
               number="24"
               suffix="/7"
               label="Live Support"
