@@ -1195,7 +1195,7 @@ const SavingsVault = () => {
                 <div className="modal-warning-content">
                   <p className="modal-warning-title">Early Withdrawal Penalty</p>
                   <p className="modal-warning-text">
-                    Withdrawing before your notice period ends will forfeit {selectedPosition?.lock_period === 30 ? '2%' : selectedPosition?.lock_period === 60 ? '3.5%' : '5%'} of earned interest. Your principal remains safe.
+                    Withdrawing before your notice period ends will incur a {selectedPosition?.lock_period === 30 ? '1.5%' : selectedPosition?.lock_period === 60 ? '1.0%' : '0.5%'} fee deducted from your principal.
                   </p>
                 </div>
               </div>
