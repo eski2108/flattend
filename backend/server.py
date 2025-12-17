@@ -20887,14 +20887,8 @@ async def request_seller_payout(request: dict):
         
         await db.payouts.insert_one(payout_data)
         
-        # Deduct from user balance immediately (hold in escrow)
-        await db.crypto_balances.update_one(
-            {"user_id": user_id},
-            {
-                "$inc": {f"balances.{currency}": -amount},
-                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-            }
-        )
+        # Deduct from user balance immediately (hold in escrow) - SYNCED
+        await sync_debit_balance(user_id, currency, amount, "payout_escrow")
         
         # In production, this would call NOWPayments API to process payout
         # For now, mark as pending and admin can process manually
