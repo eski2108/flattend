@@ -288,7 +288,7 @@ export default function MobileTradingPage() {
         <div style={{
           margin: '12px 16px 16px 16px',
           padding: '16px',
-          borderRadius: '16px',
+          borderRadius: '0',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(15,242,242,0.15)',
           boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(15,242,242,0.1)',
@@ -368,7 +368,7 @@ export default function MobileTradingPage() {
         <div style={{
           height: '440px',
           margin: '0',
-          borderRadius: '18px',
+          borderRadius: '0',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(15,242,242,0.2)',
           boxShadow: '0 0 32px rgba(15,242,242,0.12), inset 0 1px 0 rgba(15,242,242,0.1)',
@@ -390,7 +390,7 @@ export default function MobileTradingPage() {
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(255,255,255,0.1)',
           boxShadow: '0 0 24px rgba(15,242,242,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
-          borderRadius: '16px',
+          borderRadius: '0',
           padding: '16px'
         }}>
           <div style={{ 
@@ -553,7 +553,7 @@ export default function MobileTradingPage() {
           margin: '0',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '18px',
+          borderRadius: '0',
           padding: '18px',
           boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
         }}>
@@ -761,7 +761,7 @@ export default function MobileTradingPage() {
               disabled={isLoading}
               style={{
                 height: '56px',
-                borderRadius: '16px',
+                borderRadius: '0',
                 background: isLoading 
                   ? 'rgba(0,255,148,0.5)'
                   : 'linear-gradient(135deg, #00FF94 0%, #0ACB72 100%)',
@@ -786,7 +786,7 @@ export default function MobileTradingPage() {
               disabled={isLoading}
               style={{
                 height: '56px',
-                borderRadius: '16px',
+                borderRadius: '0',
                 background: isLoading 
                   ? 'rgba(255,75,75,0.5)'
                   : 'linear-gradient(135deg, #FF4B4B 0%, #C22222 100%)',
