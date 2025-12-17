@@ -17480,15 +17480,17 @@ async def get_live_prices_endpoint():
         # Fetch raw price data which now includes 24h change
         all_prices = await fetch_live_prices()
         
-        # Build response with full data
+        # Build response with full data including EUR
         result = {}
         for symbol, data in all_prices.items():
             result[symbol] = {
                 "symbol": symbol,
                 "price_usd": data.get("usd", 0),
                 "price_gbp": data.get("gbp", 0),
+                "price_eur": data.get("eur", 0),
                 "change_24h": data.get("usd_24h_change", 0),  # Use USD change as primary
                 "change_24h_gbp": data.get("gbp_24h_change", 0),
+                "change_24h_eur": data.get("eur_24h_change", 0),
                 "last_updated": datetime.now(timezone.utc).isoformat()
             }
         
