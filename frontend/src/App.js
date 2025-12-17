@@ -207,12 +207,12 @@ function App() {
               <Route path="/defi" element={<DeFiPage />} />
               <Route path="/asset/:symbol" element={<AssetDetailPage />} />
               <Route path="/portfolio" element={<PortfolioPage />} />
-              {/* Mobile Trading Routes - PRIMARY */}
+              {/* Mobile Trading Routes */}
               <Route path="/markets" element={<MobileMarketSelection />} />
               <Route path="/trading/:symbol" element={<MobileTradingPage />} />
-              {/* Main trading route - redirect to markets on mobile */}
-              <Route path="/trading" element={<MobileMarketSelection />} />
-              {/* Desktop Legacy Routes */}
+              {/* Main trading route - SpotTradingPro handles desktop/mobile detection internally */}
+              <Route path="/trading" element={<SpotTradingPro />} />
+              {/* Legacy Routes */}
               <Route path="/spot-trading" element={<SpotTradingPro />} />
               <Route path="/spot-trading-pro" element={<SpotTradingPro />} />
               {/* Removed old trading page route */}
