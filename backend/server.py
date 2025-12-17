@@ -5305,15 +5305,15 @@ async def transfer_to_savings_OLD(request: dict):
 async def get_portfolio_summary(user_id: str):
     """Get portfolio summary for dashboard - REQUIRED BY FRONTEND"""
     try:
-        logger.info(f"Portfolio request for user: {user_id}")
+        logger.info(f"📊 Portfolio request for user: {user_id}")
         
         # Get wallet balances - check BOTH collections for compatibility
         wallet_balances = await db.wallets.find(
             {"user_id": user_id},
             {"_id": 0}
-        ).to_list(100)
+        ).to_list(500)
         
-        logger.info(f"Found {len(wallet_balances)} wallets for {user_id}")
+        logger.info(f"📊 Found {len(wallet_balances)} wallets for {user_id}")
         
         # If no balances in wallets, try internal_balances
         if not wallet_balances:
@@ -5321,13 +5321,26 @@ async def get_portfolio_summary(user_id: str):
                 {"user_id": user_id},
                 {"_id": 0}
             ).to_list(100)
-            logger.info(f"Trying internal_balances: {len(wallet_balances)}")
+            logger.info(f"📊 Trying internal_balances: {len(wallet_balances)}")
         
-        # Get live prices from price_cache (correct collection)
+        # Build prices dictionary from crypto_prices collection
+        # FIXED: crypto_prices has separate documents per coin, not a nested object
+        prices = {}
+        
+        # First try price_cache (nested format)
         prices_doc = await db.price_cache.find_one({}, {"_id": 0})
-        if not prices_doc:
-            prices_doc = await db.crypto_prices.find_one({}, {"_id": 0})
-        prices = prices_doc.get("prices", {}) if prices_doc else {}
+        if prices_doc and prices_doc.get("prices"):
+            prices = prices_doc.get("prices", {})
+            logger.info(f"📊 Loaded {len(prices)} prices from price_cache")
+        else:
+            # Fallback: crypto_prices has {symbol: 'BTC', price_gbp: 69000} format
+            crypto_prices_list = await db.crypto_prices.find({}, {"_id": 0}).to_list(1000)
+            for cp in crypto_prices_list:
+                symbol = cp.get("symbol")
+                if symbol:
+                    # Store price_gbp directly
+                    prices[symbol] = {"price_gbp": cp.get("price_gbp", 0)}
+            logger.info(f"📊 Loaded {len(prices)} prices from crypto_prices collection")
         
         total_value_gbp = 0.0
         total_assets = 0
@@ -5347,18 +5360,29 @@ async def get_portfolio_summary(user_id: str):
                 if currency == "GBP":
                     price_gbp = 1
                 elif currency in prices:
-                    # Handle both formats: {price_usd: X} or just X
+                    # Handle multiple formats
                     price_data = prices[currency]
                     if isinstance(price_data, dict):
-                        price_usd = price_data.get("price_usd", 0) or price_data.get("usd", 0)
+                        # Check for price_gbp first (from crypto_prices)
+                        if "price_gbp" in price_data:
+                            price_gbp = float(price_data.get("price_gbp", 0) or 0)
+                        else:
+                            # price_usd format - convert to GBP
+                            price_usd = price_data.get("price_usd", 0) or price_data.get("usd", 0)
+                            price_gbp = float(price_usd or 0) * 0.79
                     else:
-                        price_usd = float(price_data) if price_data else 0
-                    price_gbp = price_usd * 0.79  # USD to GBP conversion
+                        # Direct number (assume USD)
+                        price_gbp = float(price_data or 0) * 0.79
                 
+                asset_value = (available + locked) * price_gbp
                 available_balance += available * price_gbp
                 locked_balance += locked * price_gbp
+                
+                if asset_value > 0:
+                    logger.info(f"📊 Asset {currency}: {available + locked} x £{price_gbp:.2f} = £{asset_value:.2f}")
         
         total_value = available_balance + locked_balance
+        logger.info(f"📊 Portfolio total for {user_id}: £{total_value:.2f} ({total_assets} assets)")
         
         return {
             "success": True,
@@ -5370,7 +5394,9 @@ async def get_portfolio_summary(user_id: str):
         }
         
     except Exception as e:
-        logger.error(f"Portfolio summary error: {e}")
+        logger.error(f"❌ Portfolio summary error: {e}")
+        import traceback
+        traceback.print_exc()
         return {
             "success": False,
             "totalValue": 0,
