@@ -190,19 +190,35 @@ export default function WalletPage() {
           alignItems: 'center',
           marginBottom: '32px'
         }}>
-          <div>
-            <h1 style={{
-              fontSize: '36px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              margin: '0 0 8px 0'
-            }}>Wallet</h1>
-            <p style={{
-              fontSize: '14px',
-              color: '#8FA3BF',
-              margin: 0,
-              fontWeight: '400'
-            }}>Manage your crypto assets</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Wallet Animation */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{
+                width: '64px',
+                height: '64px',
+                objectFit: 'contain'
+              }}
+            >
+              <source src="/assets/animations/wallet-animation.mp4" type="video/mp4" />
+            </video>
+            <div>
+              <h1 style={{
+                fontSize: '36px',
+                fontWeight: '700',
+                color: '#FFFFFF',
+                margin: '0 0 8px 0'
+              }}>Wallet</h1>
+              <p style={{
+                fontSize: '14px',
+                color: '#8FA3BF',
+                margin: 0,
+                fontWeight: '400'
+              }}>Manage your crypto assets</p>
+            </div>
           </div>
           <button
             onClick={handleRefresh}
