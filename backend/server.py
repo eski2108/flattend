@@ -5428,11 +5428,8 @@ async def transfer_to_savings_OLD(request: dict):
             if not wallet_balance or wallet_balance.get("balance", 0) < amount:
                 return {"success": False, "message": "Insufficient wallet balance"}
             
-            # Deduct from wallet
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": currency},
-                {"$inc": {"balance": -amount}}
-            )
+            # Deduct from wallet - SYNCED
+            await sync_debit_balance(user_id, currency, amount, "spot_to_savings")
             
             # Add to savings
             savings = await db.savings_balances.find_one(
