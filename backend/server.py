@@ -12998,26 +12998,8 @@ async def boost_offer(request: dict):
         }
     )
     
-    # Add boost payment to admin balance
-    admin_balance = await db.internal_balances.find_one({"currency": "GBP"})
-    
-    if admin_balance:
-        await db.internal_balances.update_one(
-            {"currency": "GBP"},
-            {
-                "$inc": {
-                    "boost_fees": boost_cost,
-                    "total_fees": boost_cost
-                }
-            }
-        )
-    else:
-        await db.internal_balances.insert_one({
-            "currency": "GBP",
-            "boost_fees": boost_cost,
-            "total_fees": boost_cost,
-            "created_at": datetime.now(timezone.utc)
-        })
+    # Add boost payment to admin balance - SYNCED
+    await sync_credit_balance("PLATFORM_FEES", "GBP", boost_cost, "boost_fee")
     
     # Record boost transaction
     boost_id = str(uuid.uuid4())
