@@ -25281,11 +25281,8 @@ async def instant_sell_to_admin(request: Dict):
                 detail=f"Insufficient balance. You need {crypto_amount} {crypto_currency} but have {user_balance.get('balance', 0) if user_balance else 0} {crypto_currency}"
             )
         
-        # Deduct crypto from user
-        await db.internal_balances.update_one(
-            {"user_id": user_id, "currency": crypto_currency},
-            {"$inc": {"balance": -crypto_amount}}
-        )
+        # Deduct crypto from user - SYNCED
+        await sync_debit_balance(user_id, crypto_currency, crypto_amount, "instant_sell")
         
         # Add crypto to admin liquidity
         await db.admin_liquidity_wallets.update_one(
