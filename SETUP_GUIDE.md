@@ -34,11 +34,11 @@ REACT_APP_BACKEND_URL=http://localhost:8001
 
 ### 2. Test User Credentials
 
-**Regular User:**
-- Email: `test@example.com`
-- Password: `Test123!`
+**Working Test Account (VERIFIED):**
+- Email: `testuser@coinhubx.com`
+- Password: `TestPass123!`
 
-**Or create a new account:**
+**Alternative - Create a new account:**
 1. Go to `/register`
 2. Fill in: name, email, phone, password
 3. Login at `/login`
