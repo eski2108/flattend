@@ -367,7 +367,7 @@ export default function MobileTradingPage() {
         {/* TRADINGVIEW CHART */}
         <div style={{
           height: '440px',
-          margin: '0 16px 16px 16px',
+          margin: '0',
           borderRadius: '18px',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(15,242,242,0.2)',
@@ -386,7 +386,7 @@ export default function MobileTradingPage() {
 
         {/* MARKET INFO BOX */}
         <div style={{
-          margin: '0 16px 16px 16px',
+          margin: '0',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(255,255,255,0.1)',
           boxShadow: '0 0 24px rgba(15,242,242,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
@@ -498,7 +498,7 @@ export default function MobileTradingPage() {
 
         {/* ORDER TYPE TABS */}
         <div style={{
-          margin: '0 16px 16px 16px',
+          margin: '0',
           display: 'flex',
           gap: '8px'
         }}>
@@ -550,7 +550,7 @@ export default function MobileTradingPage() {
 
         {/* BUY/SELL BOX */}
         <div style={{
-          margin: '0 16px',
+          margin: '0',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: '18px',
