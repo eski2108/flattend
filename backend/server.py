@@ -5329,8 +5329,8 @@ async def get_portfolio_summary(user_id: str):
         
         for balance in wallet_balances:
             currency = balance.get("currency")
-            available = balance.get("balance", 0)
-            locked = balance.get("locked", 0)
+            available = balance.get("available_balance", 0) or balance.get("balance", 0) or balance.get("total_balance", 0)
+            locked = balance.get("locked_balance", 0) or balance.get("locked", 0)
             
             if available > 0 or locked > 0:
                 total_assets += 1
