@@ -27266,6 +27266,93 @@ async def verify_email_2fa_code(request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@api_router.post("/auth/2fa/send-sms-code")
+async def send_sms_2fa_code(request: dict):
+    """Send 2FA code via SMS using Twilio"""
+    try:
+        user_id = request.get("user_id")
+        phone = request.get("phone")
+        
+        if not user_id or not phone:
+            raise HTTPException(status_code=400, detail="user_id and phone required")
+        
+        # Generate 6-digit code
+        import random
+        code = str(random.randint(100000, 999999))
+        
+        # Store code in database with 5 min expiry
+        await db.sms_codes.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "code": code,
+                    "phone": phone,
+                    "created_at": datetime.now(timezone.utc),
+                    "expires_at": datetime.now(timezone.utc) + timedelta(minutes=5),
+                    "verified": False
+                }
+            },
+            upsert=True
+        )
+        
+        # Send SMS via Twilio
+        message = f"Your CoinHubX verification code is: {code}. Valid for 5 minutes."
+        sms_result = await send_sms(phone, message)
+        
+        if sms_result.get("success"):
+            logger.info(f"✅ SMS 2FA code sent to {phone} for user {user_id}")
+            return {"success": True, "message": "Verification code sent to your phone"}
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to send SMS: {sms_result.get('error')}")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending SMS 2FA code: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/auth/2fa/verify-sms")
+async def verify_sms_2fa_code(request: dict):
+    """Verify SMS 2FA code"""
+    try:
+        user_id = request.get("user_id")
+        code = request.get("code")
+        
+        if not user_id or not code:
+            raise HTTPException(status_code=400, detail="user_id and code required")
+        
+        # Find stored code
+        stored = await db.sms_codes.find_one({"user_id": user_id})
+        
+        if not stored:
+            return {"success": False, "error": "No verification code found. Request a new one."}
+        
+        # Check expiry
+        expires_at = stored.get("expires_at")
+        if isinstance(expires_at, str):
+            expires_at = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+        
+        if datetime.now(timezone.utc) > expires_at:
+            return {"success": False, "error": "Code expired. Request a new one."}
+        
+        # Verify code
+        if stored.get("code") == code:
+            # Mark as verified
+            await db.sms_codes.update_one(
+                {"user_id": user_id},
+                {"$set": {"verified": True}}
+            )
+            logger.info(f"✅ SMS 2FA code verified for user {user_id}")
+            return {"success": True, "message": "Phone verified successfully"}
+        else:
+            return {"success": False, "error": "Invalid code"}
+        
+    except Exception as e:
+        logger.error(f"Error verifying SMS code: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.post("/auth/2fa/disable")
 async def disable_2fa(request: dict):
     """Disable 2FA for user"""
