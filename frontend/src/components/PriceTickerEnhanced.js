@@ -41,14 +41,15 @@ export default function PriceTickerEnhanced() {
         const pricesResponse = await axios.get(`${API}/api/prices/live`);
         const livePrices = pricesResponse.data?.prices || {};
 
-        // Merge data
+        // Merge data - ONLY include coins that have REAL prices (no random fallbacks)
         const mergedCoins = nowCoins
           .filter(coin => COIN_EMOJIS[coin.toUpperCase()])
           .map(coin => {
             const symbol = coin.toUpperCase();
             const priceData = livePrices[symbol] || {};
-            const price = priceData.price_gbp || (Math.random() * 1000 + 100);
-            const change = priceData.change_24h || ((Math.random() - 0.5) * 10);
+            // Only use real prices - no random fallbacks
+            const price = priceData.price_gbp || 0;
+            const change = priceData.change_24h || 0;
 
             return {
               symbol,
@@ -57,7 +58,9 @@ export default function PriceTickerEnhanced() {
               price: parseFloat(price),
               change: parseFloat(change)
             };
-          });
+          })
+          // Filter out coins with no price data
+          .filter(coin => coin.price > 0);
 
         // Sort by market cap (BTC, ETH, etc. first)
         const order = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA'];
