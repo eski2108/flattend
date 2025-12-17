@@ -263,104 +263,100 @@ export default function MobileTradingPage() {
           }
         `}
       </style>
-      <div className="trading-layout">
-        {/* MAIN TRADING AREA - CHART */}
-        <div className="trading-main">
-          {/* Top Bar with pair info */}
+      <div className="trading-page-container">
+        {/* Header with Back Button and Pair Info */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '12px 20px',
+          background: '#0A0F1F',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          gap: '16px',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            onClick={() => navigate('/trading')}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#0FF2F2',
+              fontSize: '20px',
+              cursor: 'pointer',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <IoArrowBack />
+          </button>
+          <img
+            src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
+            alt={coinBase}
+            style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+          />
+          <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
+            {coinName} / USD
+          </div>
+          <div style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>
+            ${marketStats.lastPrice > 0 
+              ? marketStats.lastPrice >= 1
+                ? marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                : marketStats.lastPrice.toFixed(6)
+              : '—'}
+          </div>
           <div style={{
+            padding: '6px 12px',
+            borderRadius: '8px',
+            background: marketStats.change24h >= 0 ? 'rgba(0,255,148,0.15)' : 'rgba(255,75,75,0.15)',
             display: 'flex',
             alignItems: 'center',
-            padding: '12px 20px',
-            background: '#0A0F1F',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-            gap: '20px'
+            gap: '4px'
           }}>
-            <button
-              onClick={() => navigate('/trading')}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#0FF2F2',
-                fontSize: '20px',
-                cursor: 'pointer',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <IoArrowBack />
-            </button>
-            <img
-              src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
-              alt={coinBase}
-              style={{ width: '28px', height: '28px', objectFit: 'contain' }}
-            />
-            <div>
-              <div style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>
-                {coinName} / USD
-              </div>
-            </div>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: '#FFFFFF' }}>
-              ${marketStats.lastPrice > 0 
-                ? marketStats.lastPrice >= 1
-                  ? marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                  : marketStats.lastPrice.toFixed(6)
-                : '—'}
-            </div>
-            <div style={{
-              padding: '4px 10px',
-              borderRadius: '6px',
-              background: marketStats.change24h >= 0 ? 'rgba(0,255,148,0.15)' : 'rgba(255,75,75,0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
+            {marketStats.change24h >= 0 ? (
+              <IoTrendingUp style={{ fontSize: '16px', color: '#00FF94' }} />
+            ) : (
+              <IoTrendingDown style={{ fontSize: '16px', color: '#FF4B4B' }} />
+            )}
+            <span style={{
+              fontSize: '14px',
+              fontWeight: '700',
+              color: marketStats.change24h >= 0 ? '#00FF94' : '#FF4B4B'
             }}>
-              {marketStats.change24h >= 0 ? (
-                <IoTrendingUp style={{ fontSize: '14px', color: '#00FF94' }} />
-              ) : (
-                <IoTrendingDown style={{ fontSize: '14px', color: '#FF4B4B' }} />
-              )}
-              <span style={{
-                fontSize: '13px',
-                fontWeight: '700',
-                color: marketStats.change24h >= 0 ? '#00FF94' : '#FF4B4B'
-              }}>
-                {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+              {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+            </span>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '24px', fontSize: '13px' }}>
+            <div>
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h High: </span>
+              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                ${marketStats.high24h >= 1 ? marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.high24h.toFixed(6)}
               </span>
             </div>
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: '24px', fontSize: '12px' }}>
-              <div>
-                <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h High: </span>
-                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                  ${marketStats.high24h >= 1 ? marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.high24h.toFixed(6)}
-                </span>
-              </div>
-              <div>
-                <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Low: </span>
-                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                  ${marketStats.low24h >= 1 ? marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.low24h.toFixed(6)}
-                </span>
-              </div>
-              <div>
-                <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Vol: </span>
-                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                  {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h/1e9).toFixed(2)}B` : `$${(marketStats.volume24h/1e6).toFixed(2)}M`}
-                </span>
-              </div>
+            <div>
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Low: </span>
+              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                ${marketStats.low24h >= 1 ? marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.low24h.toFixed(6)}
+              </span>
             </div>
-          </div>
-
-          {/* CHART - fills remaining space */}
-          <div className="chart-wrap">
-            <div 
-              id="tradingview-chart-mobile" 
-              style={{ width: '100%', height: '100%', background: '#020617' }}
-            ></div>
+            <div>
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Vol: </span>
+              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h/1e9).toFixed(2)}B` : `$${(marketStats.volume24h/1e6).toFixed(2)}M`}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* RIGHT PANEL - Order Form */}
-        <div className="trading-panel" style={{ padding: '16px' }}>
+        {/* TRADINGVIEW CHART - Full Width */}
+        <div style={{ width: '100%', height: '600px', background: '#020617' }}>
+          <div 
+            id="tradingview-chart-mobile" 
+            style={{ width: '100%', height: '100%', background: '#020617' }}
+          ></div>
+        </div>
+
+        {/* MARKET INFO & ORDER FORM - Below Chart */}
+        <div style={{ padding: '16px', background: '#0A0F1F' }}>
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: '1fr 1fr', 
