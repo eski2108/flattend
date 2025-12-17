@@ -459,6 +459,124 @@ async def health_check():
     """Simple health check endpoint"""
     return {"status": "healthy", "service": "coinhubx-backend", "timestamp": datetime.now(timezone.utc).isoformat()}
 
+# ============================================================================
+# BALANCE SYNCHRONIZATION ENDPOINTS
+# Ensures all 4 balance collections stay in sync
+# ============================================================================
+
+@api_router.post("/sync/user-balances/{user_id}")
+async def sync_user_balances(user_id: str):
+    """
+    Synchronize a user's balances across all 4 collections.
+    Takes wallets as source of truth and syncs to internal_balances, crypto_balances, trader_balances.
+    """
+    try:
+        synced_currencies = []
+        
+        # Get all wallets for user (source of truth)
+        wallets = await db.wallets.find({"user_id": user_id}).to_list(500)
+        
+        for wallet in wallets:
+            currency = wallet.get("currency")
+            available = float(wallet.get("available_balance", 0))
+            locked = float(wallet.get("locked_balance", 0))
+            
+            # Skip if no actual balance
+            if available == 0 and locked == 0:
+                continue
+            
+            await sync_balance_update(user_id, currency, available, locked, "manual_sync")
+            synced_currencies.append(currency)
+        
+        logger.info(f"✅ SYNCED balances for {user_id}: {synced_currencies}")
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "synced_currencies": synced_currencies,
+            "total_synced": len(synced_currencies)
+        }
+    except Exception as e:
+        logger.error(f"❌ Sync error for {user_id}: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.post("/sync/all-users")
+async def sync_all_user_balances():
+    """
+    Synchronize ALL user balances across all collections.
+    WARNING: This can be slow for large databases.
+    """
+    try:
+        # Get unique user IDs from wallets
+        pipeline = [
+            {"$group": {"_id": "$user_id"}},
+            {"$limit": 1000}  # Limit to prevent timeout
+        ]
+        user_ids = [doc["_id"] async for doc in db.wallets.aggregate(pipeline)]
+        
+        synced_count = 0
+        for user_id in user_ids:
+            if user_id and user_id != "admin_wallet" and user_id != "PLATFORM_FEES":
+                result = await sync_user_balances(user_id)
+                if result.get("success"):
+                    synced_count += 1
+        
+        logger.info(f"✅ BULK SYNC complete: {synced_count} users synced")
+        
+        return {
+            "success": True,
+            "users_synced": synced_count,
+            "total_users": len(user_ids)
+        }
+    except Exception as e:
+        logger.error(f"❌ Bulk sync error: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/debug/balance-check/{user_id}")
+async def check_balance_sync_status(user_id: str):
+    """
+    Check if a user's balances are in sync across all collections.
+    Returns discrepancies if found.
+    """
+    try:
+        discrepancies = []
+        
+        # Get balances from all 4 collections
+        wallets = {w["currency"]: w async for w in db.wallets.find({"user_id": user_id})}
+        internal = {w["currency"]: w async for w in db.internal_balances.find({"user_id": user_id})}
+        crypto = {w["currency"]: w async for w in db.crypto_balances.find({"user_id": user_id})}
+        trader = {w["currency"]: w async for w in db.trader_balances.find({"trader_id": user_id})}
+        
+        all_currencies = set(list(wallets.keys()) + list(internal.keys()) + list(crypto.keys()) + list(trader.keys()))
+        
+        for currency in all_currencies:
+            w_bal = float(wallets.get(currency, {}).get("available_balance", 0))
+            i_bal = float(internal.get(currency, {}).get("available_balance", 0) or internal.get(currency, {}).get("balance", 0))
+            c_bal = float(crypto.get(currency, {}).get("available_balance", 0) or crypto.get(currency, {}).get("balance", 0))
+            t_bal = float(trader.get(currency, {}).get("available_balance", 0) or trader.get(currency, {}).get("balance", 0))
+            
+            # Check if any significant balance exists and differs
+            balances = [w_bal, i_bal, c_bal, t_bal]
+            if max(balances) > 0 and len(set(balances)) > 1:
+                discrepancies.append({
+                    "currency": currency,
+                    "wallets": w_bal,
+                    "internal_balances": i_bal,
+                    "crypto_balances": c_bal,
+                    "trader_balances": t_bal
+                })
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "in_sync": len(discrepancies) == 0,
+            "discrepancies": discrepancies,
+            "total_currencies": len(all_currencies)
+        }
+    except Exception as e:
+        logger.error(f"❌ Balance check error: {e}")
+        return {"success": False, "error": str(e)}
+
 # Admin Authentication Helper
 async def verify_admin(authorization: str = Header(None)):
     """Verify admin access - simple check for MVP"""
