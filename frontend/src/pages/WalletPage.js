@@ -208,14 +208,15 @@ export default function WalletPage() {
                 loop
                 muted
                 playsInline
+                preload="auto"
+                onLoadedData={(e) => e.target.play()}
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover'
                 }}
-              >
-                <source src="/assets/animations/wallet-animation.mp4" type="video/mp4" />
-              </video>
+                src="/assets/animations/wallet-animation.mp4"
+              />
             </div>
             <div>
               <h1 style={{
