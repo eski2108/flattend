@@ -545,12 +545,9 @@ export default function MobileTradingPage() {
 
         {/* BUY/SELL BOX */}
         <div style={{
-          margin: '0 16px',
-          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '18px',
-          padding: '18px',
-          boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
+          width: '100%',
+          background: '#0A0F1F',
+          padding: '18px'
         }}>
           {/* Balance Display */}
           <div style={{
