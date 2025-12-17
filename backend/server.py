@@ -25377,26 +25377,12 @@ async def internal_wallet_transfer(request: InternalTransferRequest):
             referrer_commission = fee_amount * (commission_percent / 100.0)
             admin_fee = fee_amount - referrer_commission
         
-        # Add admin fee to admin wallet
-        await db.internal_balances.update_one(
-            {"user_id": "admin_wallet", "currency": request.currency},
-            {
-                "$inc": {"balance": admin_fee},
-                "$setOnInsert": {"available": 0, "reserved": 0, "created_at": datetime.now(timezone.utc).isoformat()}
-            },
-            upsert=True
-        )
+        # Add admin fee to admin wallet - SYNCED
+        await sync_credit_balance("admin_wallet", request.currency, admin_fee, "internal_transfer_fee")
         
-        # Add referrer commission if applicable
+        # Add referrer commission if applicable - SYNCED
         if referrer_id and referrer_commission > 0:
-            await db.internal_balances.update_one(
-                {"user_id": referrer_id, "currency": request.currency},
-                {
-                    "$inc": {"balance": referrer_commission},
-                    "$setOnInsert": {"available": 0, "reserved": 0, "created_at": datetime.now(timezone.utc).isoformat()}
-                },
-                upsert=True
-            )
+            await sync_credit_balance(referrer_id, request.currency, referrer_commission, "referral_commission")
             
             # Log referral commission
             await db.referral_commissions.insert_one({
