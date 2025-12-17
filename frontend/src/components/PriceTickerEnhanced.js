@@ -77,15 +77,8 @@ export default function PriceTickerEnhanced() {
         setLoading(false);
       } catch (error) {
         console.error('❌ Failed to fetch ticker data:', error);
-        // Fallback to default coins
-        const fallbackCoins = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'AVAX', 'DOGE', 'TRX', 'DOT', 'MATIC', 'LTC', 'LINK'].map(symbol => ({
-          symbol,
-          icon: COIN_EMOJIS[symbol] || '💎',
-          color: COIN_COLORS[symbol] || '#00C6FF',
-          price: 1000 + Math.random() * 500,
-          change: (Math.random() - 0.5) * 10
-        }));
-        setCoins(fallbackCoins);
+        // Show loading state on error - don't show fake random prices
+        setCoins([]);
         setLoading(false);
       }
     };
