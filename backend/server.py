@@ -25612,20 +25612,12 @@ async def apply_dispute_penalty(request: ApplyDisputePenaltyRequest):
             "currency": "GBP"
         })
         
-        # Deduct penalty (allow negative balance if insufficient)
+        # Deduct penalty (allow negative balance if insufficient) - SYNCED
         current_balance = user_balance.get("balance", 0) if user_balance else 0
-        await db.internal_balances.update_one(
-            {"user_id": request.user_id, "currency": "GBP"},
-            {"$inc": {"balance": -penalty_gbp}},
-            upsert=True
-        )
+        await sync_debit_balance(request.user_id, "GBP", penalty_gbp, "dispute_penalty")
         
-        # Add to admin revenue
-        await db.internal_balances.update_one(
-            {"user_id": "ADMIN", "currency": "GBP"},
-            {"$inc": {"dispute_penalty_fees": penalty_gbp}},
-            upsert=True
-        )
+        # Add to admin revenue - SYNCED
+        await sync_credit_balance("ADMIN", "GBP", penalty_gbp, "dispute_penalty_fee")
         
         # Update dispute record
         await db.disputes.update_one(
