@@ -137,12 +137,13 @@ export default function PriceTickerEnhanced() {
           max-height: 48px !important;
           overflow: hidden !important;
         }
-        .price-ticker-single > div {
+        .price-ticker-single .rfm-marquee-container {
           height: 48px !important;
+          flex-direction: row !important;
           overflow: hidden !important;
         }
-        .price-ticker-single .rfm-child {
-          height: 48px !important;
+        .price-ticker-single .rfm-marquee:nth-child(2) {
+          display: none !important;
         }
       `}</style>
       <div style={{
