@@ -225,6 +225,8 @@ export default function MobileTradingPage() {
           .main-content {
             padding: 0 !important;
             margin: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
           }
           .tradingview-widget-container,
           .tradingview-widget-container__widget,
