@@ -29239,11 +29239,8 @@ async def transfer_to_savings(request: Request):
             if not wallet_balance or wallet_balance.get('balance', 0) < amount:
                 raise HTTPException(status_code=400, detail="Insufficient wallet balance")
             
-            # Deduct from wallet
-            await db.crypto_balances.update_one(
-                {"user_id": user_id, "currency": currency},
-                {"$inc": {"balance": -amount}}
-            )
+            # Deduct from wallet - SYNCED TO ALL COLLECTIONS
+            await sync_debit_balance(user_id, currency, amount, "wallet_to_savings")
             
             # Add to savings
             savings_balance = await db.savings_balances.find_one({
