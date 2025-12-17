@@ -250,182 +250,271 @@ export default function SpotTradingPro() {
     }
   };
 
-  // DESKTOP VERSION (UNCHANGED)
+  // DESKTOP VERSION - FULL PAGE TRADING LAYOUT LIKE BINANCE
   if (!isMobile) {
     return (
       <Layout>
         <div style={{
-          minWidth: '1200px',
           width: '100%',
-          background: '#020618',
+          height: 'calc(100vh - 60px)',
+          background: '#0A0E17',
           padding: '0',
           margin: '0',
-          fontFamily: 'Inter, sans-serif'
+          fontFamily: 'Inter, sans-serif',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
           
-          {/* COMPACT STATS BAR */}
+          {/* TOP BAR - PAIR SELECTOR + STATS */}
           <div style={{
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '10px 12px',
-            background: 'linear-gradient(135deg, rgba(10,22,40,0.6) 0%, rgba(13,27,46,0.6) 100%)',
-            backdropFilter: 'blur(10px)',
-            borderBottom: '1px solid rgba(0,240,255,0.2)'
+            padding: '8px 16px',
+            background: '#0D1421',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            gap: '24px',
+            flexShrink: 0
           }}>
-            <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            {/* PAIR SELECTOR */}
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingRight: '16px' }}>
+              {tradingPairs.slice(0, 8).map(pair => (
+                <button
+                  key={pair.symbol}
+                  onClick={() => setSelectedPair(pair.symbol)}
+                  style={{
+                    background: selectedPair === pair.symbol ? '#1E3A5F' : 'transparent',
+                    border: selectedPair === pair.symbol ? '1px solid #00D4FF' : '1px solid transparent',
+                    color: selectedPair === pair.symbol ? '#00D4FF' : '#8B9AAB',
+                    padding: '6px 14px',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {pair.name}
+                </button>
+              ))}
+            </div>
+            
+            {/* STATS */}
+            <div style={{ display: 'flex', gap: '32px', alignItems: 'center', marginLeft: 'auto' }}>
               <div>
-                <span style={{ fontSize: '10px', color: 'rgba(0,240,255,0.85)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>PRICE:</span>
-                <span style={{ fontSize: '18px', fontWeight: '800', color: '#00F0FF', textShadow: '0 2px 10px rgba(0,240,255,0.4)' }}>${marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                  ${marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
-              <div>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>24H:</span>
-                <span style={{ fontSize: '16px', fontWeight: '800', color: marketStats.change24h >= 0 ? '#00FF7F' : '#FF3B47', textShadow: `0 2px 10px rgba(${marketStats.change24h >= 0 ? '0,255,127' : '255,59,71'},0.5)` }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Change</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: marketStats.change24h >= 0 ? '#00C853' : '#FF5252' }}>
                   {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
                 </span>
               </div>
-              <div>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>HIGH:</span>
-                <span style={{ fontSize: '14px', fontWeight: '700', color: '#7F8CFF', textShadow: '0 2px 8px rgba(127,140,255,0.4)' }}>${marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h High</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>${marketStats.high24h.toLocaleString()}</span>
               </div>
-              <div>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>LOW:</span>
-                <span style={{ fontSize: '14px', fontWeight: '700', color: '#FFC107', textShadow: '0 2px 8px rgba(255,193,7,0.4)' }}>${marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Low</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>${marketStats.low24h.toLocaleString()}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Volume</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
+                  {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h/1e9).toFixed(2)}B` : `$${(marketStats.volume24h/1e6).toFixed(2)}M`}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* MAIN TRADING AREA */}
+          {/* MAIN TRADING AREA - FULL WIDTH */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 350px',
-            gap: '12px',
-            padding: '0 12px 12px 12px',
-            minHeight: '600px'
+            gridTemplateColumns: '1fr 320px',
+            flex: 1,
+            minHeight: 0
           }}>
-            {/* LEFT: CHART */}
+            {/* LEFT: FULL HEIGHT CHART */}
             <div style={{
-              background: 'linear-gradient(135deg, #0A1628 0%, #0D1B2E 100%)',
-              border: '2px solid rgba(0,240,255,0.2)',
-              borderRadius: '12px',
-              padding: '14px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.08)'
+              background: '#0A0E17',
+              borderRight: '1px solid rgba(255,255,255,0.1)',
+              display: 'flex',
+              flexDirection: 'column'
             }}>
-              {/* PAIR SELECTOR - HORIZONTAL SCROLL */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                marginBottom: '12px', 
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                paddingBottom: '8px',
-                scrollbarWidth: 'thin',
-                scrollbarColor: 'rgba(0,240,255,0.3) rgba(0,0,0,0.2)',
-                WebkitOverflowScrolling: 'touch'
-              }}>
-                {tradingPairs.map(pair => (
-                  <button
-                    key={pair.symbol}
-                    onClick={() => setSelectedPair(pair.symbol)}
-                    style={{
-                      background: selectedPair === pair.symbol 
-                        ? 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(0,240,255,0.3))' 
-                        : 'rgba(255,255,255,0.06)',
-                      backdropFilter: 'blur(10px)',
-                      border: selectedPair === pair.symbol 
-                        ? '2px solid rgba(0,240,255,0.6)' 
-                        : '2px solid rgba(255,255,255,0.15)',
-                      color: selectedPair === pair.symbol ? '#00F0FF' : '#FFFFFF',
-                      padding: '10px 18px',
-                      borderRadius: '20px',
-                      fontSize: '13px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s',
-                      textShadow: selectedPair === pair.symbol 
-                        ? '0 0 12px rgba(0,240,255,0.6)' 
-                        : 'none',
-                      boxShadow: selectedPair === pair.symbol 
-                        ? '0 6px 20px rgba(0,240,255,0.3), 0 0 40px rgba(0,240,255,0.15)' 
-                        : '0 2px 8px rgba(0,0,0,0.3)',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                      minWidth: 'fit-content',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
-                    }}
-                  >
-                    {pair.name}
-                  </button>
-                ))}
-              </div>
-
-              {/* TRADINGVIEW CHART */}
-              <div id="tradingview-chart" style={{ width: '100%', height: '550px', background: '#0A1628', borderRadius: '10px', overflow: 'hidden' }}></div>
+              {/* TRADINGVIEW CHART - FILLS AVAILABLE SPACE */}
+              <div id="tradingview-chart" style={{ 
+                width: '100%', 
+                flex: 1,
+                minHeight: '500px',
+                background: '#0A0E17'
+              }}></div>
             </div>
 
-            {/* RIGHT: MINI CHART + MARKET INFO */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* MINI CHART */}
-              <div style={{
-                background: 'linear-gradient(135deg, #0A1628 0%, #0D1B2E 100%)',
-                border: '2px solid rgba(0,240,255,0.2)',
-                borderRadius: '12px',
-                padding: '14px',
-                height: '200px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.08)'
-              }}>
-                <div id="tradingview-mini" style={{ width: '100%', height: '100%' }}></div>
+            {/* RIGHT: ORDER PANEL */}
+            <div style={{ 
+              background: '#0D1421',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '16px'
+            }}>
+              {/* ORDER TYPE TABS */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: orderType === 'market' ? '#1E3A5F' : 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '4px',
+                  color: orderType === 'market' ? '#00D4FF' : '#8B9AAB',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }} onClick={() => setOrderType('market')}>Market</button>
+                <button style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: orderType === 'limit' ? '#1E3A5F' : 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '4px',
+                  color: orderType === 'limit' ? '#00D4FF' : '#8B9AAB',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }} onClick={() => setOrderType('limit')}>Limit</button>
               </div>
 
-              {/* MARKET INFO PANEL */}
-              <div style={{
-                background: 'linear-gradient(135deg, #0A1628 0%, #0D1B2E 100%)',
-                border: '2px solid rgba(0,240,255,0.2)',
-                borderRadius: '12px',
-                padding: '16px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.08)',
-                flex: 1
-              }}>
-                <h3 style={{ color: '#00F0FF', fontSize: '13px', fontWeight: '700', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '1px', textShadow: '0 0 10px rgba(0,240,255,0.3)' }}>Market Info</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>24h Volume</div>
-                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF', textShadow: '0 2px 6px rgba(255,255,255,0.15)' }}>
-                      {marketStats.volume24h >= 1000000000 
-                        ? `$${(marketStats.volume24h / 1000000000).toFixed(2)}B` 
-                        : marketStats.volume24h >= 1000000 
-                        ? `$${(marketStats.volume24h / 1000000).toFixed(2)}M`
-                        : marketStats.volume24h > 0 ? `$${marketStats.volume24h.toLocaleString()}` : '—'
-                      }
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Market Cap</div>
-                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#00E8FF', textShadow: '0 2px 8px rgba(0,232,255,0.3)' }}>
-                      {marketStats.marketCap >= 1000000000 
-                        ? `$${(marketStats.marketCap / 1000000000).toFixed(2)}B` 
-                        : marketStats.marketCap >= 1000000 
-                        ? `$${(marketStats.marketCap / 1000000).toFixed(2)}M`
-                        : marketStats.marketCap > 0 ? `$${marketStats.marketCap.toLocaleString()}` : '—'
-                      }
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Circulating Supply</div>
-                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#00E8FF', textShadow: '0 2px 8px rgba(0,232,255,0.3)' }}>
-                      {marketStats.circulatingSupply >= 1000000 
-                        ? `${(marketStats.circulatingSupply / 1000000).toFixed(2)}M` 
-                        : marketStats.circulatingSupply > 0 ? marketStats.circulatingSupply.toLocaleString() : '—'
-                      }
-                    </div>
-                  </div>
+              {/* BUY SECTION */}
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Amount ({selectedPair.split('/')[0]})</div>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#1A2332',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    color: '#FFFFFF',
+                    fontSize: '14px',
+                    marginBottom: '12px'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  {['25%', '50%', '75%', '100%'].map(pct => (
+                    <button key={pct} style={{
+                      flex: 1,
+                      padding: '6px',
+                      background: '#1A2332',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '4px',
+                      color: '#8B9AAB',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}>{pct}</button>
+                  ))}
+                </div>
+                <button style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #00C853, #00E676)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  marginBottom: '8px'
+                }}>BUY {selectedPair.split('/')[0]}</button>
+              </div>
+
+              {/* SELL SECTION */}
+              <div>
+                <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Amount ({selectedPair.split('/')[0]})</div>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#1A2332',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    color: '#FFFFFF',
+                    fontSize: '14px',
+                    marginBottom: '12px'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  {['25%', '50%', '75%', '100%'].map(pct => (
+                    <button key={pct} style={{
+                      flex: 1,
+                      padding: '6px',
+                      background: '#1A2332',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '4px',
+                      color: '#8B9AAB',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}>{pct}</button>
+                  ))}
+                </div>
+                <button style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #FF5252, #FF1744)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}>SELL {selectedPair.split('/')[0]}</button>
+              </div>
+
+              {/* MARKET INFO */}
+              <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '12px' }}>Market Info</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#8B9AAB', fontSize: '12px' }}>Market Cap</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '12px' }}>
+                    {marketStats.marketCap >= 1e9 ? `$${(marketStats.marketCap/1e9).toFixed(2)}B` : `$${(marketStats.marketCap/1e6).toFixed(2)}M`}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9AAB', fontSize: '12px' }}>Circulating Supply</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '12px' }}>
+                    {marketStats.circulatingSupply >= 1e6 ? `${(marketStats.circulatingSupply/1e6).toFixed(2)}M` : marketStats.circulatingSupply.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* BOTTOM: BUY/SELL PANEL */}
+          {/* FOOTER */}
+          <div style={{
+            background: '#0D1421',
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            padding: '12px 24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexShrink: 0
+          }}>
+            <div style={{ color: '#6B7280', fontSize: '12px' }}>
+              © 2024 CoinHubX. All rights reserved.
+            </div>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <a href="/terms" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
+              <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Privacy</a>
+              <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // MOBILE VERSION
           <div style={{
             background: 'linear-gradient(135deg, rgba(10,22,40,0.95) 0%, rgba(13,27,46,0.95) 100%)',
             backdropFilter: 'blur(15px)',
