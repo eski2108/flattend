@@ -5318,8 +5318,10 @@ async def get_portfolio_summary(user_id: str):
                 {"_id": 0}
             ).to_list(100)
         
-        # Get live prices
-        prices_doc = await db.crypto_prices.find_one({}, {"_id": 0})
+        # Get live prices from price_cache (correct collection)
+        prices_doc = await db.price_cache.find_one({}, {"_id": 0})
+        if not prices_doc:
+            prices_doc = await db.crypto_prices.find_one({}, {"_id": 0})
         prices = prices_doc.get("prices", {}) if prices_doc else {}
         
         total_value_gbp = 0.0
