@@ -25529,19 +25529,11 @@ async def instant_sell_to_admin(request: Dict):
             upsert=True
         )
         
-        # Add net GBP to user
-        await db.internal_balances.update_one(
-            {"user_id": user_id, "currency": "GBP"},
-            {"$inc": {"balance": net_gbp}},
-            upsert=True
-        )
+        # Add net GBP to user - SYNCED
+        await sync_credit_balance(user_id, "GBP", net_gbp, "instant_sell")
         
-        # Collect fee to admin
-        await db.internal_balances.update_one(
-            {"user_id": "ADMIN", "currency": "GBP"},
-            {"$inc": {"instant_sell_fees": fee_gbp}},
-            upsert=True
-        )
+        # Collect fee to admin - SYNCED
+        await sync_credit_balance("ADMIN", "GBP", fee_gbp, "instant_sell_fee")
         
         # Log transaction
         await db.transactions_log.insert_one({
