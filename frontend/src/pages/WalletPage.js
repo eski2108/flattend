@@ -190,21 +190,33 @@ export default function WalletPage() {
           alignItems: 'center',
           marginBottom: '32px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             {/* Wallet Animation */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{
-                width: '64px',
-                height: '64px',
-                objectFit: 'contain'
-              }}
-            >
-              <source src="/assets/animations/wallet-animation.mp4" type="video/mp4" />
-            </video>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '20px',
+              background: 'linear-gradient(145deg, #1a2035, #0d1525)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 20px rgba(0,229,255,0.2), 0 4px 15px rgba(0,0,0,0.3)',
+              overflow: 'hidden'
+            }}>
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              >
+                <source src="/assets/animations/wallet-animation.mp4" type="video/mp4" />
+              </video>
+            </div>
             <div>
               <h1 style={{
                 fontSize: '36px',
