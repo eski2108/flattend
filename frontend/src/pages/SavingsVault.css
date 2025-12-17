@@ -1613,15 +1613,17 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(14, 15, 26, 0.85);
-  backdrop-filter: blur(8px);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(14, 15, 26, 0.92);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 99999;
   animation: modal-fade-in 0.3s ease-out;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 @keyframes modal-fade-in {
