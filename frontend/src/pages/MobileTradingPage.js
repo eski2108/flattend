@@ -225,12 +225,6 @@ export default function MobileTradingPage() {
           .main-content {
             padding: 0 !important;
             margin: 0 !important;
-            overflow: hidden !important;
-          }
-          .trading-page-container {
-            width: 100%;
-            background: #020617;
-            min-height: 100vh;
           }
           .tradingview-widget-container,
           .tradingview-widget-container__widget,
@@ -239,78 +233,123 @@ export default function MobileTradingPage() {
             outline: none !important;
             box-shadow: none !important;
             background: transparent !important;
-            width: 100% !important;
-            height: 100% !important;
           }
           .tradingview-widget-copyright {
             display: none !important;
           }
-          @media (max-width: 1024px) {
-            .trading-layout {
-              flex-direction: column;
-              height: auto;
-            }
-            .trading-panel {
-              width: 100%;
-              flex: none;
-              border-left: none;
-              border-top: 1px solid rgba(255,255,255,0.1);
-            }
-            .chart-wrap {
-              height: 500px;
-              flex: none;
-            }
+          /* Reposition chat widget to lower-right with safe spacing */
+          [class*="chat-widget"],
+          [id*="chat-widget"],
+          [class*="ChatWidget"],
+          .tawk-min-container {
+            bottom: 100px !important;
+            right: 16px !important;
+            z-index: 999 !important;
           }
         `}
       </style>
-      <div className="trading-page-container">
-        {/* Header with Back Button and Pair Info */}
+      <div style={{
+        maxWidth: '1400px',
+        width: '100%',
+        margin: '0 auto',
+        background: '#020617',
+        minHeight: '100vh',
+        paddingBottom: '80px'
+      }}>
+        {/* Header with Back Button */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          padding: '12px 20px',
-          background: '#0A0F1F',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          gap: '16px',
-          flexWrap: 'wrap'
+          padding: '12px 16px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          position: 'sticky',
+          top: 0,
+          background: 'linear-gradient(180deg, #020617 0%, #030A15 100%)',
+          zIndex: 10,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.4)'
         }}>
           <button
-            onClick={() => navigate('/trading')}
+            onClick={() => navigate('/markets')}
             style={{
               background: 'transparent',
               border: 'none',
               color: '#0FF2F2',
-              fontSize: '20px',
+              fontSize: '24px',
               cursor: 'pointer',
-              padding: '4px',
+              padding: '8px',
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
           >
             <IoArrowBack />
           </button>
+        </div>
+
+        {/* PAIR HEADER - Binance Style */}
+        <div style={{
+          margin: '12px 16px 16px 16px',
+          padding: '16px',
+          borderRadius: '16px',
+          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
+          border: '1px solid rgba(15,242,242,0.15)',
+          boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(15,242,242,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px'
+        }}>
+          {/* Official Crypto Logo */}
           <img
             src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
             alt={coinBase}
-            style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+            style={{
+              width: '32px',
+              height: '32px',
+              objectFit: 'contain',
+              marginLeft: '12px',
+              flexShrink: 0
+            }}
           />
-          <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
-            {coinName} / USD
+
+          {/* Pair Info */}
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: '700',
+              color: '#FFFFFF',
+              marginBottom: '4px',
+              letterSpacing: '0.3px'
+            }}>
+              {coinName} / USD
+            </div>
+            <div style={{
+              fontSize: '22px',
+              fontWeight: '800',
+              color: '#FFFFFF',
+              letterSpacing: '-0.5px'
+            }}>
+              ${marketStats.lastPrice > 0 
+                ? marketStats.lastPrice >= 1
+                  ? marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : marketStats.lastPrice.toFixed(6)
+                : '—'}
+            </div>
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>
-            ${marketStats.lastPrice > 0 
-              ? marketStats.lastPrice >= 1
-                ? marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                : marketStats.lastPrice.toFixed(6)
-              : '—'}
-          </div>
+
+          {/* 24h Change Badge */}
           <div style={{
-            padding: '6px 12px',
-            borderRadius: '8px',
-            background: marketStats.change24h >= 0 ? 'rgba(0,255,148,0.15)' : 'rgba(255,75,75,0.15)',
+            padding: '8px 12px',
+            borderRadius: '10px',
+            background: marketStats.change24h >= 0 
+              ? 'rgba(0,255,148,0.15)'
+              : 'rgba(255,75,75,0.15)',
+            border: marketStats.change24h >= 0
+              ? '1px solid rgba(0,255,148,0.3)'
+              : '1px solid rgba(255,75,75,0.3)',
             display: 'flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '4px',
+            flexShrink: 0
           }}>
             {marketStats.change24h >= 0 ? (
               <IoTrendingUp style={{ fontSize: '16px', color: '#00FF94' }} />
@@ -325,38 +364,37 @@ export default function MobileTradingPage() {
               {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
             </span>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '24px', fontSize: '13px' }}>
-            <div>
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h High: </span>
-              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                ${marketStats.high24h >= 1 ? marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.high24h.toFixed(6)}
-              </span>
-            </div>
-            <div>
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Low: </span>
-              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                ${marketStats.low24h >= 1 ? marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.low24h.toFixed(6)}
-              </span>
-            </div>
-            <div>
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Vol: </span>
-              <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
-                {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h/1e9).toFixed(2)}B` : `$${(marketStats.volume24h/1e6).toFixed(2)}M`}
-              </span>
-            </div>
-          </div>
         </div>
 
-        {/* TRADINGVIEW CHART - Full Width */}
-        <div style={{ width: '100%', height: '600px', background: '#020617' }}>
+        {/* TRADINGVIEW CHART */}
+        <div style={{
+          height: '600px',
+          margin: '0 16px 16px 16px',
+          borderRadius: '18px',
+          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
+          border: '1px solid rgba(15,242,242,0.2)',
+          boxShadow: '0 0 32px rgba(15,242,242,0.12), inset 0 1px 0 rgba(15,242,242,0.1)',
+          overflow: 'hidden'
+        }}>
           <div 
             id="tradingview-chart-mobile" 
-            style={{ width: '100%', height: '100%', background: '#020617' }}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              background: 'transparent' 
+            }}
           ></div>
         </div>
 
-        {/* MARKET INFO & ORDER FORM - Below Chart */}
-        <div style={{ padding: '16px', background: '#0A0F1F' }}>
+        {/* MARKET INFO BOX */}
+        <div style={{
+          margin: '0 16px 16px 16px',
+          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          boxShadow: '0 0 24px rgba(15,242,242,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
+          borderRadius: '16px',
+          padding: '16px'
+        }}>
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: '1fr 1fr', 
@@ -462,8 +500,7 @@ export default function MobileTradingPage() {
 
         {/* ORDER TYPE TABS */}
         <div style={{
-          width: '100%',
-          padding: '0 16px 16px 16px',
+          margin: '0 16px 16px 16px',
           display: 'flex',
           gap: '8px'
         }}>
@@ -515,9 +552,12 @@ export default function MobileTradingPage() {
 
         {/* BUY/SELL BOX */}
         <div style={{
-          width: '100%',
-          background: '#0A0F1F',
-          padding: '18px'
+          margin: '0 16px',
+          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '18px',
+          padding: '18px',
+          boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
         }}>
           {/* Balance Display */}
           <div style={{
