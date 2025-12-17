@@ -219,7 +219,7 @@ export default function MobileTradingPage() {
     : 50;
 
   return (
-    <Layout>
+    <>
       <style>
         {`
           .main-content {
