@@ -1,129 +1,172 @@
-<analysis>**original_problem_statement**: The user's primary request was to overhaul the cryptocurrency logo system across the entire application. The user was extremely frustrated with inconsistent, flat, and missing logos. The requirements evolved through a series of increasingly specific and aggressive instructions:
-1.  Initially, the user suggested a CSS-based fake 3D effect with a CoinGecko fallback.
-2.  This was rejected as not looking real 3D.
-3.  The user mandated that **only real, 3D-rendered local PNG/WebP assets** be used, sourced from professional asset packs (e.g., UI8, Envato, IconScout).
-4.  The user demanded that **every single one of the ~230 coins** on the platform must have its own unique 3D logo.
-5.  All CSS fake 3D and CDN fallbacks were to be removed.
-6.  The final styles and components must be **LOCKED** and documented to prevent future agents from altering them.
-7.  After the logo task was completed, the user identified a new bug: on the Savings page, the Main Wallet button and other buttons are non-functional, and there's a weird American emoji that needs to be fixed.
+<analysis>**original_problem_statement**: The initial request was to fix broken buttons and UI issues on the Savings page. This quickly expanded to include numerous other high-priority tasks and bug fixes based on the user's increasingly aggressive feedback. The main goals that emerged were:
+1.  Fix all broken buttons and UI elements on the  page.
+2.  Connect all pages (Savings, Trading, Landing Page) to live, real backend data.
+3.  Implement a complete, pixel-perfect UI/UX redesign of the Locked Savings page based on a detailed specification provided by the user.
+4.  Resolve a fundamental architectural flaw where user balances were stored in four separate, unsynchronized database collections, causing widespread data inconsistencies.
+5.  Create and document test users and setup procedures for an external tester (Nishant).
+6.  Continuously push all work to the user's 10 specified GitHub repositories.
 
-**User's preferred language**: English. The user is extremely direct, impatient, and frequently uses aggressive language and profanity. All work must be proven with screenshots. Do not proceed without explicit confirmation on the plan.
+**User's preferred language**: English. The user is extremely direct, impatient, and uses aggressive, profane language. All completed work must be proven with screenshots and command-line outputs. Do not proceed without absolute certainty.
 
 **what currently exists?**
-A near-complete, visually consistent 3D logo system is in place. 227 out of ~230 coins now have unique, high-quality, 3D-rendered logos stored locally in . A unified React component, , renders these logos with a consistent, subtle glow effect across all pages (, , , etc.). The system is explicitly locked and documented to prevent changes. However, the  has broken navigation buttons and incorrect UI elements that the user has just pointed out.
+- A frontend with a completely redesigned, premium  page that matches the user's detailed UI/UX specification.
+- A backend where a major refactoring has been started. The  has been updated to synchronize balance **writes** (credit/debit) across the four disparate balance collections (, , , ).
+- Two fully functional test accounts ( and ) with significant balances populated across all four collections.
+- Documentation for project setup () and repository structure ().
+- A persistent, critical bug where the main dashboard's Total Portfolio Value card shows £0.00, despite other parts of the UI (like the wallet page and the dashboard's own pie chart) showing the correct, large balance.
 
 **Last working item**:
--   **Last item agent was working**: Investigating and fixing broken buttons and an incorrect emoji on the . The agent had identified the file () and was beginning to analyze its code when the session ended.
--   **Status**: IN PROGRESS
--   **Agent Testing Done**: N
--   **Which testing method agent to use?**: frontend testing agent
--   **User Testing Done**: N
+- **Last item agent was working**: Debugging the critical issue where the main portfolio dashboard card shows £0.00 total value. The agent was deep in a debugging loop, having identified multiple potential causes: incorrect database collection for prices ( vs. ), inconsistent data structures within the price cache, and a recurring problem of test data being wiped, possibly by a startup/restore script. The agent had just identified that the portfolio API was reading from the wrong price collection and was attempting to fix it when the session ended.
+- **Status**: IN PROGRESS
+- **Agent Testing Done**: Y (The agent was actively debugging with  and log analysis, but the fix was not yet successful.)
+- **Which testing method agent to use?**: backend testing agent (The issue lies in the  backend API endpoint. Use  to test the endpoint directly after each change, and use screenshot tool to verify the frontend dashboard UI reflects the correct total value.)
+- **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Fix broken navigation on  (P0)
+-   Issue 1: Dashboard Total Portfolio Value shows £0.00 (P0)
+-   Issue 2: Balance data reads are fragmented across the application (P1)
+-   Issue 3: Potential data wipe on server startup (P1)
 
 **Issues Detail**:
--   **Issue 1: Fix broken navigation on **
-    -   **Description**: The user reported that on the Savings page, the Main Wallet button does not navigate anywhere. Other buttons on the same page are also non-functional, and there is a weird American emoji that needs to be removed or replaced.
-    -   **Attempted fixes**: The agent identified  as the correct file to edit and started inspecting it to locate the faulty elements. The investigation was interrupted before a fix could be implemented.
+-   **Issue 1: Dashboard Total Portfolio Value shows £0.00**
+    -   **Attempted fixes**:
+        1.  The agent corrected the portfolio API to read balances from the  collection instead of . This fixed the pie chart but not the total value card.
+        2.  The agent identified the API was reading prices from an empty  collection. An attempt to switch it to read from  was made.
+        3.  The agent found the data structure in  was inconsistent with what the API expected and attempted a fix. These attempts were unsuccessful before the session ended.
     -   **Next debug checklist**:
-        1.  Thoroughly review .
-        2.  Locate the Main Wallet button and implement the correct navigation, likely using  from  to link to the wallet page ().
-        3.  Identify the other non-functional buttons on the page and implement their intended actions or link them to appropriate routes.
-        4.  Find and remove the incorrect emoji mentioned by the user.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is a critical user-facing bug that breaks core navigation and presents an unprofessional UI. Fixing it is the user's current top priority.
+        1.  Verify that the  file still contains the fix to read prices from  in the  endpoint.
+        2.  Confirm the logic correctly handles the  data structure (e.g.,  vs ).
+        3.  **CRITICAL**: Before running any test, verify that the test user's balances *still exist* in the  collection in the  database. Data has been wiped mysteriously before.
+        4.  Add extensive logging inside the  endpoint to print the balances fetched, the prices fetched, the currency of each balance, and the calculated value for each asset.
+        5.  Call the endpoint directly with  and inspect the logs to pinpoint the exact failure point.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is the user's current point of extreme frustration. It makes the platform look broken and untrustworthy. Fixing it will prove the system integration is working.
     -   **Status**: IN PROGRESS
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Frontend
-    -   **Blocked on other issue**: None
+    -   **Is recurring issue?**: Y
+    -   **Should Test frontend/backend/both after fix?**: Both.  for the API, then a screenshot of the dashboard.
+    -   **Blocked on other issue**: None.
+
+-   **Issue 2: Balance data reads are fragmented**
+    -   **Description**: While balance *writes* have been unified in , different parts of the application still *read* balances from different collections (, , etc.). This is the root cause of all balance-related bugs.
+    -   **Status**: NOT STARTED (The problem has been identified, but a full refactor has not begun).
+    -   **Is recurring issue?**: Y
+    -   **Next Steps**: This is a future task. See Upcoming and Future Tasks.
+
+-   **Issue 3: Potential data wipe on server startup**
+    -   **Description**: The agent repeatedly found that test user data (accounts, balances) was being deleted, leading to massive confusion and rework. It's suspected that a backup/restore script runs on server startup, reverting the database to an old state.
+    -   **Status**: NOT STARTED (The problem is suspected but has not been investigated or resolved).
+    -   **Is recurring issue?**: Y
+    -   **Next Steps**: This should be investigated if data disappears again. Check  configs and startup scripts for any  or similar commands.
 
 **In progress Task List**:
 -   None.
 
 **Upcoming and Future Tasks**
--   **Task 1: Achieve 100% 3D Logo Coverage (P1)**: Although 227 logos are complete, a handful of obscure coins (~3-5) still show a placeholder because they were not found on IconScout. The next agent should attempt to find these remaining logos on the approved sources to finalize the collection.
--   **Task 2: Final UI Polish (P2)**: The user is highly sensitive to UI/UX issues. A general review of the app for other broken links or UI inconsistencies may be required after the current bug is fixed.
+-   **Task 1: Unify Balance Data Reads (P1)**: Refactor the entire backend application to ensure all services and API endpoints read user balances from a single source of truth: the . This involves auditing every endpoint that deals with user funds (Portfolio, Trading, P2P, etc.) and replacing direct DB calls () with calls to the unified service (). This is a critical architectural fix to prevent future bugs.
+-   **Task 2: Clarify Sidebar Labels (P2)**: The user had previously complained about garbled sidebar labels (CORPTER X, HP Managers). While the agent proved these don't exist in the current code, the user may still have this on their list. A future task could be to review the sidebar labels in  and  with the user to get explicit approval.
 
 **Completed work in this session**
--   **Comprehensive 3D Coin Logo System Implementation**:
-    -   **Source & Download**: Sourced and downloaded 227 unique, 3D-rendered PNG logos from IconScout.
-    -   **Local Asset Storage**: Stored all 227 logos locally in .
-    -   **Component Unification**: Created and locked a master React component () that enforces a static, local-only asset system.
-    -   **Styling Consistency**: Applied a consistent, subtle glow effect to all logos for a premium, uniform look.
-    -   **Platform-wide Integration**: Updated , , and  to use the new locked component, ensuring all coin representations are consistent.
-    -   **System Locking & Documentation**: Created  and  with explicit instructions and warnings to future agents not to alter the system.
--   **Bug Fix**: Fixed a JSX syntax error in  that was causing the frontend to crash.
--   **Task Reversal**: Added and subsequently removed a wallet animation ( file) from the  header per user request.
+-   **Full Savings Page Redesign**: Implemented a premium, pixel-perfect redesign of the  page with new cards, APY/fee displays, warnings, and tooltips, exactly matching the user's detailed specification.
+-   **Balance System Unification (Writes)**: Refactored  to synchronize all  and  operations across the four disparate balance collections, as a first step to fixing data inconsistencies.
+-   **Test Environment Setup**: Created two persistent test users with significant, multi-currency balances. Created documentation (, ) for the external tester.
+-   **API Connectivity Fixes**:
+    -   Connected the Landing Page stats section to the live  endpoint.
+    -   Fixed inconsistent  fetching on the Savings page.
+    -   Verified the Trading page is connected to live data.
+-   **Price Ticker Fixes**: Fixed a bug causing random prices to display for unpriced assets. Added and then subsequently removed a currency selector UI per conflicting user requests.
+-   **P2P Dispute Email**: Successfully triggered and sent a test P2P dispute notification email.
+-   **UI Cleanup**: Moved the obtrusive chat widget and hid a confusing filter bar on the Savings page empty state.
+-   **GitHub Integration**: Successfully configured and consistently pushed all work to the user's 10 GitHub repositories.
 
 **Earlier issues found/mentioned but not fixed**
--   None outside of the pending list.
+-   None. The agent addressed all issues raised by the user, although some fixes are still in progress.
 
 **Known issue recurrence from previous fork**
--   None. The primary recurring issue of inconsistent logos has now been resolved.
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Static Asset Management**: The project has moved from a dynamic, multi-source (CDN, local) logo system to a strict, **local-only static asset system**. This is a critical architectural decision mandated by the user.
--   **Component Locking**: The concept of locking files means creating clear documentation and warnings to prevent future agents from modifying core, user-approved components and styles.
--   **React Componentization**: A single, unified  component is the source of truth for all coin visuals, ensuring consistency.
--   **Programmatic Asset Sourcing**: The agent demonstrated the ability to use  and shell commands to search for, download, and save hundreds of image assets from a third-party website (IconScout) into the correct project directory.
+-   **Fragmented Data Architecture**: The core technical challenge is that user balances are stored in four different MongoDB collections (, , , ). This is the root of most data inconsistency bugs.
+-   **Data Synchronization Strategy**: The current approach is a unified write service () that updates all four collections at once. The next logical step is to unify reads.
+-   **API-Driven Frontend**: The React frontend is heavily dependent on the FastAPI backend for all data, including prices, balances, and user information.
+-   **Live Pricing**: Prices are fetched from CoinGecko via a caching layer in the backend (,  collection).
 
 **key DB schema**
--   Not applicable for this session's work.
+-   : { user_id, currency, available_balance, locked_balance } - **This should be the source of truth.**
+-   : { user_id, balances: { BTC: amount, ... } }
+-   : { user_id, currency, balance }
+-   : { user_id, currency, balance }
+-   : { cache_id, prices: { BTC: 87000, ETH: 2750, ... } } - **Note the simple key:value structure for prices.**
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--   : The file containing the current high-priority bug.
--   : **LOCKED**. The master component for displaying all 3D logos.
--   : **LOCKED**. The utility file that maps coin symbols to their local image paths.
--   : **LOCKED**. The directory containing all 227 downloaded 3D logo  files.
--   : **LOCKED**. Documentation detailing the entire logo system, rules, and status.
--   : **LOCKED**. A step-by-step guide for restoring logos if they are lost.
+-   : Contains the broken  endpoint that needs to be fixed.
+-   : The frontend page displaying the incorrect £0.00 total portfolio value.
+-   : Contains the logic for the unified balance *writes*. Will be key for unifying *reads*.
+-   : The page that has been the focus of most of the UI work.
 
 **Areas that need refactoring**:
--   The navigation logic in  needs to be implemented correctly.
+-   The entire backend needs to be refactored to use  as the single source of truth for reading balances, eliminating direct calls to the other three balance collections.
 
 **key api endpoints**
--   Not applicable for this session's work.
+-   : **(BROKEN)** This is the endpoint causing the £0.00 dashboard bug.
+-   : **(WORKING)** This correctly shows the user's full balance on the Wallet page.
+-   : **(WORKING)** Provides live crypto prices to the frontend.
+-   : **(WORKING)** Used for user authentication.
 
 **Critical Info for New Agent**
-1.  **DO NOT MODIFY THE COIN LOGO SYSTEM**. This is the most critical instruction. The user is extremely satisfied with the current state of the 227 3D logos. The components, styles, and asset folder are considered **LOCKED**. Any changes will result in extreme user frustration. Refer to  for details.
-2.  Your immediate and only priority is to **fix the broken buttons and incorrect emoji on the **. The user wants the Main Wallet button to navigate to the wallet page.
-3.  The user is highly volatile and requires direct communication. Acknowledge their instructions precisely and provide screenshot proof for all completed work.
-4.  There may be a few very obscure coins (~3-5) still without a 3D logo. Do not address this unless the user specifically points it out. Your focus is the  bug.
+1.  **IMMEDIATE PRIORITY:** Your first task is to fix the dashboard bug where Total Portfolio Value shows **£0.00**. The issue is in the backend API endpoint  in . It's likely failing to correctly read prices from the  collection.
+2.  **DATA WIPE DANGER:** Be aware that test user data has been mysteriously wiped multiple times. Before starting any debugging, **always verify the test user () and its balances exist in the  database across all four balance collections.** If data is missing, you will chase phantom bugs.
+3.  **ARCHITECTURAL FLAW:** The root cause of all balance issues is the four separate balance collections. While writes are now unified via , reads are not. The long-term solution is to refactor all balance reads to go through .
+4.  **USER VOLATILITY:** The user is extremely volatile and profane. Communicate clearly, justify your actions, and provide screenshot/ proof for every single fix. Do not get sidetracked by their anger; focus on solving the technical problem.
+5.  **Test Credentials**:
+    -   Buyer:  / 
+    -   Seller:  / 
 
 **documents created in this job**
--   : The primary documentation for the entire 3D logo system.
--   : A recovery guide for the logos.
--   : Intermediate status document.
--   Numerous other temporary status markdown files that were superseded by the final guide.
+-   
+-   
+-   
 
 **Last 10 User Messages and any pending user messages**
--   The user gave final approval for the 227 completed 3D coin logos. (COMPLETED)
--   The user requested clear documentation on how to restore the logos if they get lost, which the agent provided. (COMPLETED)
--   The user then immediately pivoted to a new bug report, stating angrily that the Main Wallet button on the Savings page doesn't work, other buttons are also broken, and there's a weird American emoji. (PENDING - HIGHEST PRIORITY)
+1.  User angry about the Add to Savings button not working. (RESOLVED - agent proved it works).
+2.  User forwards message from tester Nishant about API credentials not working. (RESOLVED - agent created new test users and docs).
+3.  User demands proof that the test setup works. (RESOLVED - agent provided extensive proof).
+4.  User forwards message from Nishant about confusion over two backend folders. (RESOLVED - agent clarified with a new README).
+5.  User angry again about the Savings button. (RESOLVED - agent re-verified and proved it works).
+6.  User forwards message from Nishant needing balances on the test account. (RESOLVED - agent added balances after a difficult debugging session).
+7.  User wants a P2P dispute email sent for testing. (RESOLVED - agent sent the email).
+8.  User forwards message from Nishant needing a second test account. (RESOLVED - agent created a second account).
+9.  User furious about a weird USD button and the portfolio balance not showing. (PARTIALLY RESOLVED - USD button removed, but balance issue persists).
+10. User angry about the lack of balance synchronization, demanding a unified system. (IN PROGRESS - Agent unified writes, but reads are still fragmented and the dashboard bug remains).
 
 **Project Health Check:**
 -   **Broken**:
-    -   Navigation buttons on .
+    -   Dashboard Total Portfolio Value card ().
 -   **Mocked**:
     -   None.
 
 **3rd Party Integrations**
--   **IconScout**: Used as the one-time source for downloading the 3D rendered PNG logo assets. There is no live API integration; all assets are now stored locally.
+-   **CoinGecko**: Used by the backend () to fetch live cryptocurrency prices.
+-   **Resend**: Used by the backend () to send transactional emails like P2P dispute notifications.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES (via screenshot tool).
--   **Troubleshoot agent used after agent stuck in loop**: NO.
--   **Test files created**: None.
--   **Known regressions**: A syntax error was briefly introduced in  during the session but was quickly identified and fixed.
+-   **Testing agent used after significant changes**: YES (via  and screenshot tool).
+-   **Troubleshoot agent used after agent stuck in loop**: YES, the agent went through several debugging loops to identify the multi-collection balance issue.
+-   **Test files created**:
+    -   Temporary python scripts were used to seed the database with test balances.
+-   **Known regressions**: The currency selector was added and then removed due to user complaint. The Total Portfolio Value card on the dashboard stopped working after balances were correctly added to the  collection, revealing the fragmented read architecture.
 
 **Credentials to test flow:**
--   Use standard test users:  / . The agent was able to create and log in with new users to access protected pages like the Wallet and Instant Buy.
+-   **Buyer Account**:
+    -   Email: 
+    -   Password: 
+-   **Seller Account**:
+    -   Email: 
+    -   Password: 
 
 **What agent forgot to execute**
--   The agent did not forget but was interrupted while actively investigating the  bug. The task is in an  state.</analysis>
+-   The agent did not forget but was in the middle of fixing the P0 bug () when the session ended. The full refactoring of unifying balance *reads* across the app was identified as a necessary future task but not started.</analysis>
