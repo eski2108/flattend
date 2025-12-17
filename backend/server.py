@@ -10681,29 +10681,11 @@ async def place_trading_order(request: dict):
                     "message": f"Insufficient GBP balance. Required: £{total_with_fee:.2f}, Available: £{gbp_balance:.2f}"
                 }
             
-            # Update GBP wallet (deduct)
-            new_gbp_balance = gbp_balance - total_with_fee
-            await db.wallets.update_one(
-                {"user_id": user_id, "currency": "GBP"},
-                {
-                    "$set": {
-                        "total_balance": new_gbp_balance,
-                        "updated_at": datetime.now(timezone.utc)
-                    }
-                }
-            )
+            # Update GBP wallet (deduct) - SYNCED
+            await sync_debit_balance(user_id, "GBP", total_with_fee, "spot_order_buy")
             
-            # Update crypto wallet (add)
-            new_crypto_balance = crypto_balance + amount
-            await db.wallets.update_one(
-                {"user_id": user_id, "currency": base},
-                {
-                    "$set": {
-                        "total_balance": new_crypto_balance,
-                        "updated_at": datetime.now(timezone.utc)
-                    }
-                }
-            )
+            # Update crypto wallet (add) - SYNCED
+            await sync_credit_balance(user_id, base, amount, "spot_order_buy")
             
         else:  # sell
             # User wants to sell crypto for GBP
@@ -10713,30 +10695,12 @@ async def place_trading_order(request: dict):
                     "message": f"Insufficient {base} balance. Required: {amount}, Available: {crypto_balance}"
                 }
             
-            # Update crypto wallet (deduct)
-            new_crypto_balance = crypto_balance - amount
-            await db.wallets.update_one(
-                {"user_id": user_id, "currency": base},
-                {
-                    "$set": {
-                        "total_balance": new_crypto_balance,
-                        "updated_at": datetime.now(timezone.utc)
-                    }
-                }
-            )
+            # Update crypto wallet (deduct) - SYNCED
+            await sync_debit_balance(user_id, base, amount, "spot_order_sell")
             
-            # Update GBP wallet (add minus fee)
+            # Update GBP wallet (add minus fee) - SYNCED
             received_amount = total_amount - fee_amount
-            new_gbp_balance = gbp_balance + received_amount
-            await db.wallets.update_one(
-                {"user_id": user_id, "currency": "GBP"},
-                {
-                    "$set": {
-                        "total_balance": new_gbp_balance,
-                        "updated_at": datetime.now(timezone.utc)
-                    }
-                }
-            )
+            await sync_credit_balance(user_id, "GBP", received_amount, "spot_order_sell")
         
         # Create trade record
         trade_id = str(uuid.uuid4())
