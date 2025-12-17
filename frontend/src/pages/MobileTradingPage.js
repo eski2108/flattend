@@ -292,136 +292,103 @@ export default function MobileTradingPage() {
         `}
       </style>
       <div className="trading-layout">
-        {/* Header with Back Button */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '12px 16px',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          position: 'sticky',
-          top: 0,
-          background: 'linear-gradient(180deg, #020617 0%, #030A15 100%)',
-          zIndex: 10,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.4)'
-        }}>
-          <button
-            onClick={() => navigate('/markets')}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#0FF2F2',
-              fontSize: '24px',
-              cursor: 'pointer',
-              padding: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <IoArrowBack />
-          </button>
-        </div>
-
-        {/* PAIR HEADER - Binance Style */}
-        <div style={{
-          width: '100%',
-          padding: '16px',
-          background: '#0A0F1F',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '14px'
-        }}>
-          {/* Official Crypto Logo */}
-          <img
-            src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
-            alt={coinBase}
-            style={{
-              width: '32px',
-              height: '32px',
-              objectFit: 'contain',
-              marginLeft: '12px',
-              flexShrink: 0
-            }}
-          />
-
-          {/* Pair Info */}
-          <div style={{ flex: 1 }}>
-            <div style={{
-              fontSize: '16px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              marginBottom: '4px',
-              letterSpacing: '0.3px'
-            }}>
-              {coinName} / USD
+        {/* MAIN TRADING AREA - CHART */}
+        <div className="trading-main">
+          {/* Top Bar with pair info */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 20px',
+            background: '#0A0F1F',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            gap: '20px'
+          }}>
+            <button
+              onClick={() => navigate('/trading')}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#0FF2F2',
+                fontSize: '20px',
+                cursor: 'pointer',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <IoArrowBack />
+            </button>
+            <img
+              src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
+              alt={coinBase}
+              style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+            />
+            <div>
+              <div style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>
+                {coinName} / USD
+              </div>
             </div>
-            <div style={{
-              fontSize: '22px',
-              fontWeight: '800',
-              color: '#FFFFFF',
-              letterSpacing: '-0.5px'
-            }}>
+            <div style={{ fontSize: '20px', fontWeight: '800', color: '#FFFFFF' }}>
               ${marketStats.lastPrice > 0 
                 ? marketStats.lastPrice >= 1
                   ? marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : marketStats.lastPrice.toFixed(6)
                 : '—'}
             </div>
-          </div>
-
-          {/* 24h Change Badge */}
-          <div style={{
-            padding: '8px 12px',
-            borderRadius: '10px',
-            background: marketStats.change24h >= 0 
-              ? 'rgba(0,255,148,0.15)'
-              : 'rgba(255,75,75,0.15)',
-            border: marketStats.change24h >= 0
-              ? '1px solid rgba(0,255,148,0.3)'
-              : '1px solid rgba(255,75,75,0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            flexShrink: 0
-          }}>
-            {marketStats.change24h >= 0 ? (
-              <IoTrendingUp style={{ fontSize: '16px', color: '#00FF94' }} />
-            ) : (
-              <IoTrendingDown style={{ fontSize: '16px', color: '#FF4B4B' }} />
-            )}
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '700',
-              color: marketStats.change24h >= 0 ? '#00FF94' : '#FF4B4B'
+            <div style={{
+              padding: '4px 10px',
+              borderRadius: '6px',
+              background: marketStats.change24h >= 0 ? 'rgba(0,255,148,0.15)' : 'rgba(255,75,75,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
             }}>
-              {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
-            </span>
+              {marketStats.change24h >= 0 ? (
+                <IoTrendingUp style={{ fontSize: '14px', color: '#00FF94' }} />
+              ) : (
+                <IoTrendingDown style={{ fontSize: '14px', color: '#FF4B4B' }} />
+              )}
+              <span style={{
+                fontSize: '13px',
+                fontWeight: '700',
+                color: marketStats.change24h >= 0 ? '#00FF94' : '#FF4B4B'
+              }}>
+                {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+              </span>
+            </div>
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: '24px', fontSize: '12px' }}>
+              <div>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h High: </span>
+                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                  ${marketStats.high24h >= 1 ? marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.high24h.toFixed(6)}
+                </span>
+              </div>
+              <div>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Low: </span>
+                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                  ${marketStats.low24h >= 1 ? marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 2 }) : marketStats.low24h.toFixed(6)}
+                </span>
+              </div>
+              <div>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>24h Vol: </span>
+                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                  {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h/1e9).toFixed(2)}B` : `$${(marketStats.volume24h/1e6).toFixed(2)}M`}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* CHART - fills remaining space */}
+          <div className="chart-wrap">
+            <div 
+              id="tradingview-chart-mobile" 
+              style={{ width: '100%', height: '100%', background: '#020617' }}
+            ></div>
           </div>
         </div>
 
-        {/* TRADINGVIEW CHART */}
-        <div style={{
-          height: '600px',
-          width: '100%',
-          background: '#0A0F1F',
-          overflow: 'hidden'
-        }}>
-          <div 
-            id="tradingview-chart-mobile" 
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              background: 'transparent' 
-            }}
-          ></div>
-        </div>
-
-        {/* MARKET INFO BOX */}
-        <div style={{
-          width: '100%',
-          background: '#0A0F1F',
-          padding: '16px'
-        }}>
+        {/* RIGHT PANEL - Order Form */}
+        <div className="trading-panel" style={{ padding: '16px' }}>
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: '1fr 1fr', 
