@@ -21006,15 +21006,8 @@ async def admin_process_payout(request: dict):
             }
         )
         
-        # Collect withdrawal fee to platform wallet
-        await db.crypto_balances.update_one(
-            {"user_id": PLATFORM_FEE_WALLET},
-            {
-                "$inc": {f"balances.{payout['currency']}": payout['withdrawal_fee']},
-                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-            },
-            upsert=True
-        )
+        # Collect withdrawal fee to platform wallet - SYNCED
+        await sync_credit_balance(PLATFORM_FEE_WALLET, payout['currency'], payout['withdrawal_fee'], "payout_withdrawal_fee")
         
         # Record transaction
         await db.transactions.insert_one({
