@@ -25610,25 +25610,14 @@ async def execute_otc_trade(request: Dict):
                     detail=f"Insufficient balance. You need £{total_cost} GBP"
                 )
             
-            # Deduct GBP from user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": "GBP"},
-                {"$inc": {"balance": -total_cost}}
-            )
+            # Deduct GBP from user - SYNCED
+            await sync_debit_balance(user_id, "GBP", total_cost, "otc_buy")
             
-            # Add crypto to user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": quote["crypto_currency"]},
-                {"$inc": {"balance": quote["crypto_amount"]}},
-                upsert=True
-            )
+            # Add crypto to user - SYNCED
+            await sync_credit_balance(user_id, quote["crypto_currency"], quote["crypto_amount"], "otc_buy")
             
-            # Add fee to admin
-            await db.internal_balances.update_one(
-                {"user_id": "ADMIN", "currency": "GBP"},
-                {"$inc": {"otc_fees": quote["fee_amount_gbp"]}},
-                upsert=True
-            )
+            # Add fee to admin - SYNCED
+            await sync_credit_balance("ADMIN", "GBP", quote["fee_amount_gbp"], "otc_fee")
             
         else:  # sell
             # User sells crypto - Check crypto balance
@@ -25643,25 +25632,14 @@ async def execute_otc_trade(request: Dict):
                     detail=f"Insufficient balance. You need {quote['crypto_amount']} {quote['crypto_currency']}"
                 )
             
-            # Deduct crypto from user
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": quote["crypto_currency"]},
-                {"$inc": {"balance": -quote["crypto_amount"]}}
-            )
+            # Deduct crypto from user - SYNCED
+            await sync_debit_balance(user_id, quote["crypto_currency"], quote["crypto_amount"], "otc_sell")
             
-            # Add GBP to user (after fee)
-            await db.internal_balances.update_one(
-                {"user_id": user_id, "currency": "GBP"},
-                {"$inc": {"balance": quote["total_received_gbp"]}},
-                upsert=True
-            )
+            # Add GBP to user (after fee) - SYNCED
+            await sync_credit_balance(user_id, "GBP", quote["total_received_gbp"], "otc_sell")
             
-            # Add fee to admin
-            await db.internal_balances.update_one(
-                {"user_id": "ADMIN", "currency": "GBP"},
-                {"$inc": {"otc_fees": quote["fee_amount_gbp"]}},
-                upsert=True
-            )
+            # Add fee to admin - SYNCED
+            await sync_credit_balance("ADMIN", "GBP", quote["fee_amount_gbp"], "otc_fee")
         
         # Update quote status
         await db.otc_quotes.update_one(
