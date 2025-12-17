@@ -118,7 +118,7 @@ export default function PriceTickerEnhanced() {
   }
 
   return (
-    <div style={{
+    <div className="price-ticker-single" style={{
       width: '100%',
       background: 'linear-gradient(90deg, rgba(5, 12, 30, 0.98), rgba(28, 21, 64, 0.98))',
       borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
@@ -131,6 +131,15 @@ export default function PriceTickerEnhanced() {
       position: 'relative',
       flexShrink: 0
     }}>
+      <style>{`
+        .price-ticker-single .rfm-marquee-container {
+          height: 48px !important;
+          overflow: hidden !important;
+        }
+        .price-ticker-single .rfm-marquee-container > div:nth-child(2) {
+          display: none !important;
+        }
+      `}</style>
       <div style={{
         position: 'absolute',
         top: 0,
