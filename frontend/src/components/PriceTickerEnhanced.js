@@ -98,7 +98,7 @@ export default function PriceTickerEnhanced() {
     fetchPrices();
     const interval = setInterval(fetchPrices, 30000); // Refresh every 30s
     return () => clearInterval(interval);
-  }, []);
+  }, [currency]); // Re-fetch when currency changes
 
   if (loading || coins.length === 0) {
     return (
