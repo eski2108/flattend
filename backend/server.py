@@ -26897,15 +26897,8 @@ async def calculate_and_apply_fee(
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
     
-    # Credit admin wallet
-    await db.crypto_balances.update_one(
-        {"user_id": "admin_wallet", "currency": currency},
-        {
-            "$inc": {"balance": admin_fee},
-            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
-        },
-        upsert=True
-    )
+    # Credit admin wallet - SYNCED
+    await sync_credit_balance("admin_wallet", currency, admin_fee, "admin_fee_collection")
     
     # Log fee transaction
     await db.fee_transactions.insert_one({
