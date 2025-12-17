@@ -29917,25 +29917,9 @@ async def redeem_vault(request: Request):
         earnings = principal * apy * (lock_days / 365)
         total_return = principal + earnings
         
-        # Add to wallet
+        # Add to wallet - SYNCED
         currency = vault['currency']
-        wallet_balance = await db.crypto_balances.find_one({
-            "user_id": user_id,
-            "currency": currency
-        })
-        
-        if wallet_balance:
-            await db.crypto_balances.update_one(
-                {"user_id": user_id, "currency": currency},
-                {"$inc": {"balance": total_return}}
-            )
-        else:
-            await db.crypto_balances.insert_one({
-                "user_id": user_id,
-                "currency": currency,
-                "balance": total_return,
-                "locked_balance": 0
-            })
+        await sync_credit_balance(user_id, currency, total_return, "vault_redeem")
         
         # Update vault status
         await db.vaults.update_one(
