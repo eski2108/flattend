@@ -5373,8 +5373,14 @@ async def get_portfolio_summary(user_id: str):
 async def get_portfolio_stats(user_id: str):
     """Get complete portfolio statistics with P/L tracking"""
     try:
-        # Get wallet balances
-        wallet_balances = await db.internal_balances.find(
+        # Get wallet balances - check BOTH collections
+        wallet_balances = await db.wallets.find(
+            {"user_id": user_id},
+            {"_id": 0}
+        ).to_list(100)
+        
+        if not wallet_balances:
+            wallet_balances = await db.internal_balances.find(
             {"user_id": user_id},
             {"_id": 0}
         ).to_list(100)
