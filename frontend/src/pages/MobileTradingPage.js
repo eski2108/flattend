@@ -801,7 +801,6 @@ export default function MobileTradingPage() {
             </button>
           </div>
         </div>
-
       </div>
     </Layout>
   );
