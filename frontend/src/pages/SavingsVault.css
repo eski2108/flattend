@@ -1641,10 +1641,15 @@
   padding: 32px;
   position: relative;
   animation: modal-slide-up 0.3s ease-out;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .modal-content.modal-large {
-  max-width: 800px;
+  max-width: 700px;
 }
 
 @keyframes modal-slide-up {
