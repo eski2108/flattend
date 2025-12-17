@@ -8389,3 +8389,21 @@ a[class*="btn"] {
   display: flex !important;
   align-items: center !important;
 }
+
+/* CSS TICKER FIX - SINGLE ROW */
+.ticker-scroll-container {
+  height: 48px !important;
+  max-height: 48px !important;
+  overflow: hidden !important;
+}
+.ticker-scroll-track {
+  display: inline-flex !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  height: 48px !important;
+}
+.ticker-scroll-track > div {
+  display: inline-flex !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
