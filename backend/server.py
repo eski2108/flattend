@@ -4397,21 +4397,8 @@ async def create_p2p_express_order(order_data: Dict):
                 "created_at": datetime.now(timezone.utc).isoformat()
             })
             
-            # Credit fee to admin fee wallet (internal balance)
-            await db.internal_balances.update_one(
-                {"user_id": "PLATFORM_FEES", "currency": "GBP"},
-                {
-                    "$inc": {
-                        "balance": order_data["express_fee"],
-                        "total_fees": order_data["express_fee"],
-                        "p2p_express_fees": order_data["express_fee"]
-                    },
-                    "$set": {
-                        "last_updated": datetime.now(timezone.utc).isoformat()
-                    }
-                },
-                upsert=True
-            )
+            # Credit fee to admin fee wallet (internal balance) - SYNCED
+            await sync_credit_balance("PLATFORM_FEES", "GBP", order_data["express_fee"], "p2p_express_fee")
             
             logger.info(f"✅ Recorded and credited express fee: £{order_data['express_fee']} to admin wallet")
         except Exception as e:
