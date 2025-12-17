@@ -12833,26 +12833,8 @@ async def express_buy_execute(request: dict):
     
     await db.p2p_trades.insert_one(trade_data)
     
-    # Add express fee to admin balance
-    admin_balance = await db.internal_balances.find_one({"currency": offer.get("crypto_currency")})
-    
-    if admin_balance:
-        await db.internal_balances.update_one(
-            {"currency": offer.get("crypto_currency")},
-            {
-                "$inc": {
-                    "express_buy_fees": express_fee_crypto,
-                    "total_fees": express_fee_crypto
-                }
-            }
-        )
-    else:
-        await db.internal_balances.insert_one({
-            "currency": offer.get("crypto_currency"),
-            "express_buy_fees": express_fee_crypto,
-            "total_fees": express_fee_crypto,
-            "created_at": datetime.now(timezone.utc)
-        })
+    # Add express fee to admin balance - SYNCED
+    await sync_credit_balance("PLATFORM_FEES", offer.get("crypto_currency"), express_fee_crypto, "express_buy_fee")
     
     return {
         "success": True,
