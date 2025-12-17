@@ -755,7 +755,7 @@ export default function MobileTradingPage() {
           )}
 
           {/* BUY and SELL Buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
             <button
               onClick={() => handleTrade('buy')}
               disabled={isLoading}
