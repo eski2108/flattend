@@ -5305,11 +5305,18 @@ async def transfer_to_savings_OLD(request: dict):
 async def get_portfolio_summary(user_id: str):
     """Get portfolio summary for dashboard - REQUIRED BY FRONTEND"""
     try:
-        # Get wallet balances
-        wallet_balances = await db.internal_balances.find(
+        # Get wallet balances - check BOTH collections for compatibility
+        wallet_balances = await db.wallets.find(
             {"user_id": user_id},
             {"_id": 0}
         ).to_list(100)
+        
+        # If no balances in wallets, try internal_balances
+        if not wallet_balances:
+            wallet_balances = await db.internal_balances.find(
+                {"user_id": user_id},
+                {"_id": 0}
+            ).to_list(100)
         
         # Get live prices
         prices_doc = await db.crypto_prices.find_one({}, {"_id": 0})
