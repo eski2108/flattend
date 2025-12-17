@@ -235,6 +235,188 @@ initialize_wallet_service(db)
 initialize_referral_engine(db)
 logger.info("✅ Central Wallet Service initialized")
 
+# ============================================================================
+# CRITICAL: UNIFIED BALANCE SYNC UTILITY
+# All balance operations MUST use these functions to stay synchronized
+# across all 4 balance collections: wallets, internal_balances, crypto_balances, trader_balances
+# ============================================================================
+
+async def sync_balance_update(user_id: str, currency: str, available_balance: float, 
+                              locked_balance: float = 0, operation: str = "update"):
+    """
+    MASTER FUNCTION: Sync balance across ALL 4 collections atomically
+    
+    Args:
+        user_id: User identifier
+        currency: Currency code (BTC, ETH, GBP, etc.)
+        available_balance: New available balance
+        locked_balance: New locked balance (default 0)
+        operation: Type of operation for logging
+    """
+    try:
+        total_balance = available_balance + locked_balance
+        timestamp = datetime.now(timezone.utc)
+        
+        balance_data = {
+            "available_balance": available_balance,
+            "locked_balance": locked_balance,
+            "total_balance": total_balance,
+            "balance": available_balance,  # Compatibility field
+            "last_updated": timestamp,
+            "updated_at": timestamp
+        }
+        
+        # 1. Update wallets (primary source of truth)
+        await db.wallets.update_one(
+            {"user_id": user_id, "currency": currency},
+            {"$set": {**balance_data, "user_id": user_id, "currency": currency}},
+            upsert=True
+        )
+        
+        # 2. Sync to internal_balances
+        await db.internal_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {"$set": {**balance_data, "user_id": user_id, "currency": currency}},
+            upsert=True
+        )
+        
+        # 3. Sync to crypto_balances
+        await db.crypto_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {"$set": {**balance_data, "user_id": user_id, "currency": currency}},
+            upsert=True
+        )
+        
+        # 4. Sync to trader_balances (uses trader_id instead of user_id)
+        await db.trader_balances.update_one(
+            {"trader_id": user_id, "currency": currency},
+            {"$set": {**balance_data, "trader_id": user_id, "currency": currency}},
+            upsert=True
+        )
+        
+        logger.info(f"🔄 SYNC: {operation} {user_id}/{currency} = {available_balance} (locked: {locked_balance})")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ SYNC ERROR: {operation} {user_id}/{currency}: {e}")
+        return False
+
+async def sync_credit_balance(user_id: str, currency: str, amount: float, reason: str = "credit"):
+    """Credit (add) to user's balance across all collections"""
+    try:
+        # Get current balance from wallets (source of truth)
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
+        current_available = float(wallet.get("available_balance", 0)) if wallet else 0
+        current_locked = float(wallet.get("locked_balance", 0)) if wallet else 0
+        
+        new_available = current_available + amount
+        
+        await sync_balance_update(user_id, currency, new_available, current_locked, f"CREDIT:{reason}")
+        logger.info(f"💰 CREDITED {amount} {currency} to {user_id} ({reason})")
+        return True
+    except Exception as e:
+        logger.error(f"❌ CREDIT ERROR: {user_id}/{currency}: {e}")
+        return False
+
+async def sync_debit_balance(user_id: str, currency: str, amount: float, reason: str = "debit"):
+    """Debit (subtract) from user's balance across all collections"""
+    try:
+        # Get current balance from wallets (source of truth)
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
+        if not wallet:
+            logger.error(f"❌ DEBIT FAILED: No wallet for {user_id}/{currency}")
+            return False
+            
+        current_available = float(wallet.get("available_balance", 0))
+        current_locked = float(wallet.get("locked_balance", 0))
+        
+        if current_available < amount:
+            logger.error(f"❌ DEBIT FAILED: Insufficient balance. Has {current_available}, needs {amount}")
+            return False
+        
+        new_available = current_available - amount
+        
+        await sync_balance_update(user_id, currency, new_available, current_locked, f"DEBIT:{reason}")
+        logger.info(f"💸 DEBITED {amount} {currency} from {user_id} ({reason})")
+        return True
+    except Exception as e:
+        logger.error(f"❌ DEBIT ERROR: {user_id}/{currency}: {e}")
+        return False
+
+async def sync_lock_balance(user_id: str, currency: str, amount: float, reason: str = "lock"):
+    """Lock balance (move from available to locked) across all collections"""
+    try:
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
+        if not wallet:
+            return False
+            
+        current_available = float(wallet.get("available_balance", 0))
+        current_locked = float(wallet.get("locked_balance", 0))
+        
+        if current_available < amount:
+            return False
+        
+        new_available = current_available - amount
+        new_locked = current_locked + amount
+        
+        await sync_balance_update(user_id, currency, new_available, new_locked, f"LOCK:{reason}")
+        logger.info(f"🔒 LOCKED {amount} {currency} for {user_id} ({reason})")
+        return True
+    except Exception as e:
+        logger.error(f"❌ LOCK ERROR: {user_id}/{currency}: {e}")
+        return False
+
+async def sync_unlock_balance(user_id: str, currency: str, amount: float, reason: str = "unlock"):
+    """Unlock balance (move from locked to available) across all collections"""
+    try:
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
+        if not wallet:
+            return False
+            
+        current_available = float(wallet.get("available_balance", 0))
+        current_locked = float(wallet.get("locked_balance", 0))
+        
+        if current_locked < amount:
+            return False
+        
+        new_available = current_available + amount
+        new_locked = current_locked - amount
+        
+        await sync_balance_update(user_id, currency, new_available, new_locked, f"UNLOCK:{reason}")
+        logger.info(f"🔓 UNLOCKED {amount} {currency} for {user_id} ({reason})")
+        return True
+    except Exception as e:
+        logger.error(f"❌ UNLOCK ERROR: {user_id}/{currency}: {e}")
+        return False
+
+async def sync_release_locked_balance(user_id: str, currency: str, amount: float, to_user_id: str, reason: str = "release"):
+    """Release locked balance to another user (e.g., P2P trade completion)"""
+    try:
+        # Debit from seller's locked balance
+        seller_wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
+        if not seller_wallet:
+            return False
+            
+        seller_available = float(seller_wallet.get("available_balance", 0))
+        seller_locked = float(seller_wallet.get("locked_balance", 0))
+        
+        if seller_locked < amount:
+            return False
+        
+        # Update seller (reduce locked)
+        await sync_balance_update(user_id, currency, seller_available, seller_locked - amount, f"RELEASE_OUT:{reason}")
+        
+        # Credit to buyer
+        await sync_credit_balance(to_user_id, currency, amount, f"RELEASE_IN:{reason}")
+        
+        logger.info(f"🔄 RELEASED {amount} {currency} from {user_id} to {to_user_id} ({reason})")
+        return True
+    except Exception as e:
+        logger.error(f"❌ RELEASE ERROR: {user_id} -> {to_user_id}/{currency}: {e}")
+        return False
+
+logger.info("✅ Unified Balance Sync Utilities initialized")
+
 # Initialize P2P Notification Service
 from p2p_notification_service import initialize_notification_service, get_notification_service
 initialize_notification_service(db)
