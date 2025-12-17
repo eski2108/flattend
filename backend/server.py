@@ -8255,6 +8255,7 @@ async def login_user(login_req: LoginRequest, request: Request):
     }
 
 @api_router.post("/auth/login-with-2fa")
+@api_router.post("/auth/2fa/login-verify")
 async def login_with_2fa(request: dict, req: Request):
     """Complete login after 2FA verification"""
     import jwt
