@@ -19180,18 +19180,10 @@ async def resolve_dispute(dispute_id: str, request: dict):
             upsert=True
         )
         
-        # Release crypto from escrow (if buyer wins)
+        # Release crypto from escrow (if buyer wins) - SYNCED
         if resolution == "release_to_buyer":
             # Update buyer's balance
-            await db.internal_balances.update_one(
-                {"user_id": winner_id},
-                {
-                    "$inc": {
-                        f"balances.{dispute.get('currency', 'BTC')}": dispute.get('amount', 0)
-                    }
-                },
-                upsert=True
-            )
+            await sync_credit_balance(winner_id, dispute.get('currency', 'BTC'), dispute.get('amount', 0), "dispute_release")
             logger.info(f"✅ Released {dispute.get('amount')} {dispute.get('currency')} to buyer {winner_id}")
         
         # Update trade status
