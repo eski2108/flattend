@@ -11728,12 +11728,8 @@ async def place_spot_buy_order(order: SpotTradeOrder):
         }
         await db.spot_trades.insert_one(trade_record)
         
-        # Add fee to admin fee wallet
-        await db.internal_balances.update_one(
-            {"user_id": "admin_wallet", "currency": order.quote},
-            {"$inc": {"available": fee, "balance": fee}},
-            upsert=True
-        )
+        # Add fee to admin fee wallet - SYNCED
+        await sync_credit_balance("admin_wallet", order.quote, fee, "spot_buy_fee")
         
         log_info(f"✅ BUY ORDER COMPLETED: {order.amount} {order.base} for {order.total} {order.quote}")
         
