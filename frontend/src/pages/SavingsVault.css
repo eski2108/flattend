@@ -2783,3 +2783,26 @@
   }
 }
 
+
+/* Tooltip Icon */
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #94A3B8;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 50%;
+  margin-left: 6px;
+  cursor: help;
+  position: relative;
+}
+
+.tooltip-icon:hover {
+  background: rgba(148, 163, 184, 0.4);
+  color: #fff;
+}
+
