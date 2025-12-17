@@ -19620,18 +19620,10 @@ try:
                     "message": payout_result.get('error', 'Failed to create payout')
                 }
             
-            # Deduct from user balance
+            # Deduct from user balance - SYNCED
             new_balance = available_balance - amount
             
-            await db.crypto_balances.update_one(
-                {"user_id": user_id, "currency": currency},
-                {
-                    "$set": {
-                        "total_balance": new_balance,
-                        "updated_at": datetime.now(timezone.utc).isoformat()
-                    }
-                }
-            )
+            await sync_debit_balance(user_id, currency, amount, "payout_withdrawal")
             
             # Record transaction
             await db.transactions.insert_one({
