@@ -478,13 +478,14 @@ export default function AdminDashboard() {
   };
 
     try {
-      const [statsResp, customersResp, configResp, refConfigResp, refEarningsResp, disputesResp] = await Promise.all([
+      const [statsResp, customersResp, configResp, refConfigResp, refEarningsResp, disputesResp, signupsResp] = await Promise.all([
         axios.get(`${API}/api/admin/dashboard-stats`),
         axios.get(`${API}/api/admin/customers`),
         axios.get(`${API}/api/admin/platform-config`),
         axios.get(`${API}/api/admin/referral-config`),
         axios.get(`${API}/api/admin/referral-earnings`),
-        axios.get(`${API}/api/admin/disputes/all`)
+        axios.get(`${API}/api/admin/disputes/all`),
+        axios.get(`${API}/api/admin/recent-signups?limit=20`)
       ]);
       
       fetchLiquidity();
@@ -493,6 +494,10 @@ export default function AdminDashboard() {
       fetchCustomerAnalytics();
       fetchPlatformSettings();
       fetchTradingLiquidity();
+      
+      if (signupsResp.data.success) {
+        setRecentSignups(signupsResp.data.signups);
+      }
       fetchBanners();
 
       if (statsResp.data.success) {
