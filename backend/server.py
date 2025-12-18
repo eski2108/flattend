@@ -30537,3 +30537,89 @@ async def get_payment_methods_list():
 # Include additional endpoints defined after initial router registration
 app.include_router(api_router)
 
+
+
+@api_router.get("/admin/customer-investments")
+async def admin_get_customer_investments(limit: int = 50):
+    """Get customer investment/deposit totals for admin dashboard"""
+    try:
+        # Get all users
+        users = await db.users.find(
+            {},
+            {"_id": 0, "user_id": 1, "email": 1, "full_name": 1, "client_id": 1, "created_at": 1}
+        ).sort("created_at", -1).limit(limit).to_list(limit)
+        
+        customer_data = []
+        
+        for user in users:
+            user_id = user.get("user_id")
+            
+            # Get wallet balances
+            wallets = await db.wallets.find(
+                {"user_id": user_id},
+                {"_id": 0, "currency": 1, "available_balance": 1, "locked_balance": 1}
+            ).to_list(100)
+            
+            # Calculate total balance in USD (approximate)
+            total_balance_usd = 0
+            balances = {}
+            for wallet in wallets:
+                currency = wallet.get("currency", "")
+                available = float(wallet.get("available_balance", 0) or 0)
+                locked = float(wallet.get("locked_balance", 0) or 0)
+                total = available + locked
+                balances[currency] = total
+                
+                # Convert to USD (rough estimates)
+                if currency == "BTC":
+                    total_balance_usd += total * 105000
+                elif currency == "ETH":
+                    total_balance_usd += total * 3900
+                elif currency == "USDT" or currency == "USDC":
+                    total_balance_usd += total
+                elif currency == "GBP":
+                    total_balance_usd += total * 1.27
+                elif currency == "EUR":
+                    total_balance_usd += total * 1.05
+                elif currency == "SOL":
+                    total_balance_usd += total * 200
+                elif currency == "XRP":
+                    total_balance_usd += total * 2.3
+                else:
+                    total_balance_usd += total
+            
+            # Get total deposits
+            deposits = await db.wallet_transactions.find(
+                {"user_id": user_id, "transaction_type": {"$in": ["deposit", "buy", "instant_buy"]}},
+                {"_id": 0, "amount": 1, "currency": 1}
+            ).to_list(1000)
+            
+            total_deposited = sum(float(d.get("amount", 0) or 0) for d in deposits)
+            
+            # Get total trades
+            trades = await db.p2p_trades.count_documents({"$or": [{"buyer_id": user_id}, {"seller_id": user_id}]})
+            
+            customer_data.append({
+                "client_id": user.get("client_id", f"CHX-{user_id[:6].upper()}" if user_id else "N/A"),
+                "user_id": user_id,
+                "email": user.get("email"),
+                "full_name": user.get("full_name"),
+                "total_balance_usd": round(total_balance_usd, 2),
+                "total_deposited": round(total_deposited, 2),
+                "total_trades": trades,
+                "balances": balances,
+                "signup_date": user.get("created_at")
+            })
+        
+        return {
+            "success": True,
+            "customers": customer_data,
+            "count": len(customer_data)
+        }
+    except Exception as e:
+        logger.error(f"Error getting customer investments: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Re-include router to pick up new endpoint
+app.include_router(api_router)
