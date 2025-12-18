@@ -876,6 +876,72 @@ export default function AdminDashboard() {
           )}
         </Card>
 
+        {/* Customer Investments Section */}
+        <Card style={{ 
+          background: 'linear-gradient(135deg, #0A1929 0%, #1a2744 100%)', 
+          border: '1px solid rgba(34, 197, 94, 0.3)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          marginBottom: '2rem'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ color: '#22C55E', fontSize: '20px', fontWeight: '700', margin: 0 }}>
+              💰 Customer Investments
+            </h2>
+            <span style={{ color: '#8F9BB3', fontSize: '14px' }}>
+              Total balance & deposits per customer
+            </span>
+          </div>
+          
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                  <th style={{ color: '#22C55E', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>CLIENT ID</th>
+                  <th style={{ color: '#22C55E', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>NAME</th>
+                  <th style={{ color: '#22C55E', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>EMAIL</th>
+                  <th style={{ color: '#22C55E', padding: '12px 8px', textAlign: 'right', fontSize: '12px', fontWeight: '600' }}>BALANCE (USD)</th>
+                  <th style={{ color: '#22C55E', padding: '12px 8px', textAlign: 'right', fontSize: '12px', fontWeight: '600' }}>DEPOSITED</th>
+                  <th style={{ color: '#22C55E', padding: '12px 8px', textAlign: 'center', fontSize: '12px', fontWeight: '600' }}>TRADES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customerInvestments.slice(0, 15).map((customer, index) => (
+                  <tr key={customer.user_id} style={{ 
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    background: index % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'transparent'
+                  }}>
+                    <td style={{ color: '#FFA500', padding: '12px 8px', fontSize: '13px', fontWeight: '600' }}>
+                      {customer.client_id}
+                    </td>
+                    <td style={{ color: '#E0E0E0', padding: '12px 8px', fontSize: '13px' }}>
+                      {customer.full_name || 'N/A'}
+                    </td>
+                    <td style={{ color: '#E0E0E0', padding: '12px 8px', fontSize: '13px' }}>
+                      {customer.email}
+                    </td>
+                    <td style={{ color: '#22C55E', padding: '12px 8px', fontSize: '13px', textAlign: 'right', fontWeight: '600' }}>
+                      ${customer.total_balance_usd?.toLocaleString() || '0.00'}
+                    </td>
+                    <td style={{ color: '#00F0FF', padding: '12px 8px', fontSize: '13px', textAlign: 'right' }}>
+                      ${customer.total_deposited?.toLocaleString() || '0.00'}
+                    </td>
+                    <td style={{ color: '#A855F7', padding: '12px 8px', fontSize: '13px', textAlign: 'center', fontWeight: '600' }}>
+                      {customer.total_trades || 0}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {customerInvestments.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#8F9BB3' }}>
+              No customer investment data yet.
+            </div>
+          )}
+        </Card>
+
         {/* Commission & Fee Settings */}
         <Card className="commission-settings-card" style={{ marginBottom: '2rem' }}>
           <div className="table-header">
