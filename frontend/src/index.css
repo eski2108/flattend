@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===================================
+   PERFORMANCE & LAYOUT STABILITY
+   =================================== */
+
+/* Prevent layout shift on images and icons */
+img {
+    content-visibility: auto;
+}
+
+/* Stable icon containers - prevent jitter */
+.coin-icon-container,
+[class*="coin-icon"],
+[class*="CoinIcon"] {
+    contain: layout style;
+    aspect-ratio: 1 / 1;
+}
+
+/* Optimize rendering for card lists */
+.asset-list,
+.coin-list,
+.wallet-list {
+    contain: content;
+}
+
+/* GPU acceleration for smooth animations */
+.smooth-transition {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+}
+
 html, body, #root {
     min-height: 0 !important;
     height: auto !important;
