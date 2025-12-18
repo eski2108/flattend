@@ -19030,8 +19030,8 @@ async def upload_dispute_evidence(dispute_id: str, request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# DUPLICATE: @api_router.get("/p2p/disputes/{dispute_id}")
-# DUPLICATE: async def get_dispute(dispute_id: str, user_id: str = Query(None)):
+@api_router.get("/p2p/disputes/{dispute_id}")
+async def get_p2p_dispute_detail(dispute_id: str, user_id: str = Query(None)):
     """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
