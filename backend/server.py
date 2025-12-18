@@ -30623,3 +30623,89 @@ async def admin_get_customer_investments(limit: int = 50):
 
 # Re-include router to pick up new endpoint
 app.include_router(api_router)
+
+
+# ============== UNIFIED DATA LAYER - SINGLE SOURCE OF TRUTH ==============
+# DO NOT DUPLICATE THIS LOGIC - ALL PAGES MUST USE THESE ENDPOINTS
+
+from unified_data_service import get_unified_service
+
+@api_router.get("/unified/user-summary/{user_id}")
+async def get_unified_user_summary(user_id: str):
+    """
+    UNIFIED USER FINANCIAL SUMMARY
+    Single source of truth for user financial data.
+    Used by: User Dashboard, Admin Dashboard, Reports, Disputes
+    """
+    try:
+        service = get_unified_service(db)
+        summary = await service.get_user_financial_summary(user_id)
+        return {"success": True, "data": summary, "source": "unified_data_service"}
+    except Exception as e:
+        logger.error(f"Unified user summary error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/unified/platform-summary")
+async def get_unified_platform_summary():
+    """
+    UNIFIED PLATFORM FINANCIAL SUMMARY
+    Single source of truth for admin platform data.
+    Used by: Admin Dashboard, Reports, Analytics
+    """
+    try:
+        service = get_unified_service(db)
+        summary = await service.get_admin_platform_summary()
+        return {"success": True, "data": summary, "source": "unified_data_service"}
+    except Exception as e:
+        logger.error(f"Unified platform summary error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/unified/all-users-breakdown")
+async def get_unified_all_users_breakdown(limit: int = 100):
+    """
+    UNIFIED ALL USERS FINANCIAL BREAKDOWN
+    Single source of truth for admin customer view.
+    Used by: Admin Dashboard, Customer Management, Reports
+    """
+    try:
+        service = get_unified_service(db)
+        breakdown = await service.get_all_users_financial_breakdown(limit)
+        return {"success": True, "data": breakdown, "count": len(breakdown), "source": "unified_data_service"}
+    except Exception as e:
+        logger.error(f"Unified users breakdown error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/unified/user-summary-by-token")
+async def get_unified_user_summary_by_token(token: str = Header(None, alias="Authorization")):
+    """
+    UNIFIED USER SUMMARY (Authenticated)
+    For logged-in users to get their own summary.
+    """
+    try:
+        if not token:
+            raise HTTPException(status_code=401, detail="No token provided")
+        
+        token_str = token.replace("Bearer ", "") if token.startswith("Bearer ") else token
+        
+        import jwt
+        payload = jwt.decode(token_str, JWT_SECRET, algorithms=["HS256"])
+        user_id = payload.get("user_id")
+        
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        service = get_unified_service(db)
+        summary = await service.get_user_financial_summary(user_id)
+        return {"success": True, "data": summary, "source": "unified_data_service"}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except Exception as e:
+        logger.error(f"Unified user summary by token error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Re-include router for new endpoints
+app.include_router(api_router)
