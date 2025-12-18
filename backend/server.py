@@ -30633,14 +30633,13 @@ from unified_data_service import get_unified_service
 @api_router.get("/unified/user-summary/{user_id}")
 async def get_unified_user_summary(user_id: str):
     """
-    UNIFIED USER FINANCIAL SUMMARY
+    UNIFIED USER FINANCIAL SUMMARY (FAST - <200ms)
     Single source of truth for user financial data.
-    Used by: User Dashboard, Admin Dashboard, Reports, Disputes
     """
     try:
         service = get_unified_service(db)
-        summary = await service.get_user_financial_summary(user_id)
-        return {"success": True, "data": summary, "source": "unified_data_service"}
+        summary = await service.get_user_summary_fast(user_id)
+        return {"success": True, "data": summary, "source": "unified_data_service_v2"}
     except Exception as e:
         logger.error(f"Unified user summary error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -30649,30 +30648,29 @@ async def get_unified_user_summary(user_id: str):
 @api_router.get("/unified/platform-summary")
 async def get_unified_platform_summary():
     """
-    UNIFIED PLATFORM FINANCIAL SUMMARY
+    UNIFIED PLATFORM FINANCIAL SUMMARY (FAST - <500ms, cached)
     Single source of truth for admin platform data.
-    Used by: Admin Dashboard, Reports, Analytics
     """
     try:
         service = get_unified_service(db)
-        summary = await service.get_admin_platform_summary()
-        return {"success": True, "data": summary, "source": "unified_data_service"}
+        summary = await service.get_platform_summary_fast()
+        return {"success": True, "data": summary, "source": "unified_data_service_v2"}
     except Exception as e:
         logger.error(f"Unified platform summary error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @api_router.get("/unified/all-users-breakdown")
-async def get_unified_all_users_breakdown(limit: int = 100):
+async def get_unified_all_users_breakdown(limit: int = 20, offset: int = 0):
     """
-    UNIFIED ALL USERS FINANCIAL BREAKDOWN
+    UNIFIED ALL USERS FINANCIAL BREAKDOWN (FAST - <500ms, paginated)
     Single source of truth for admin customer view.
-    Used by: Admin Dashboard, Customer Management, Reports
+    Hard limit: 50 users max per request.
     """
     try:
         service = get_unified_service(db)
-        breakdown = await service.get_all_users_financial_breakdown(limit)
-        return {"success": True, "data": breakdown, "count": len(breakdown), "source": "unified_data_service"}
+        result = await service.get_users_breakdown_fast(limit=min(limit, 50), offset=offset)
+        return {"success": True, **result, "source": "unified_data_service_v2"}
     except Exception as e:
         logger.error(f"Unified users breakdown error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -30681,7 +30679,7 @@ async def get_unified_all_users_breakdown(limit: int = 100):
 @api_router.get("/unified/user-summary-by-token")
 async def get_unified_user_summary_by_token(token: str = Header(None, alias="Authorization")):
     """
-    UNIFIED USER SUMMARY (Authenticated)
+    UNIFIED USER SUMMARY (Authenticated, FAST)
     For logged-in users to get their own summary.
     """
     try:
@@ -30698,8 +30696,8 @@ async def get_unified_user_summary_by_token(token: str = Header(None, alias="Aut
             raise HTTPException(status_code=401, detail="Invalid token")
         
         service = get_unified_service(db)
-        summary = await service.get_user_financial_summary(user_id)
-        return {"success": True, "data": summary, "source": "unified_data_service"}
+        summary = await service.get_user_summary_fast(user_id)
+        return {"success": True, "data": summary, "source": "unified_data_service_v2"}
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
     except Exception as e:
