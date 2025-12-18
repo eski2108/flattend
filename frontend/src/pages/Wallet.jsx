@@ -1,8 +1,26 @@
+/**
+ * ============================================================================
+ * ⚠️⚠️⚠️ DEPRECATED - DO NOT USE THIS FILE ⚠️⚠️⚠️
+ * ============================================================================
+ * 
+ * This file is DEPRECATED and NOT USED in the application.
+ * The active wallet page is: /app/frontend/src/pages/WalletPage.js
+ * 
+ * The authorized coin icon component is: Coin3DIcon.js
+ * Do NOT copy the CoinIcon pattern from this file.
+ * 
+ * DATE: December 18, 2025
+ * ============================================================================
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '@/components/Layout';
 import '../styles/globalSwapTheme.css';
+
+// ⚠️ DEPRECATED: This file should not be used
+console.warn('⚠️ Wallet.jsx is DEPRECATED. Use WalletPage.js instead.');
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
