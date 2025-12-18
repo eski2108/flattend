@@ -157,7 +157,7 @@ function App() {
         <WalletProvider>
           <div className="App">
             <TestModeBanner />
-            <Toaster position="top-right" richColors />
+            <Toaster position="top-right" />
             <BrowserRouter>
           <Suspense fallback={
             <div style={{ 
