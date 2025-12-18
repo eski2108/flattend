@@ -767,7 +767,7 @@ export default function AdminDashboard() {
           <Card className="admin-stat-card">
             <div className="stat-card-content">
               <div className="stat-icon-admin disputes-icon">
-                <AlertTriangle size={28} />
+                <IoWarning size={28} />
               </div>
               <div className="stat-details-admin">
                 <p className="stat-label-admin">Active Disputes</p>
