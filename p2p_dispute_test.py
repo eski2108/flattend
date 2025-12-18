@@ -11,7 +11,7 @@ Testing the complete P2P dispute flow as requested:
    - reason, description, created_at, status, messages array
 5. Show the EXACT URL: http://localhost:3000/admin/disputes/{FULL_DISPUTE_ID}
 
-Backend URL: https://crypto-2fa-update.preview.emergentagent.com/api
+Backend URL: https://trading-perf-boost.preview.emergentagent.com/api
 """
 
 import asyncio
@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 
 # Configuration
-BACKEND_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
+BACKEND_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
 MONGO_URL = "mongodb://localhost:27017"
 DB_NAME = "coinhubx"
 
@@ -230,7 +230,7 @@ class P2PDisputeTest:
         # As requested: http://localhost:3000/admin/disputes/{FULL_DISPUTE_ID}
         # But we'll also show the actual frontend URL
         localhost_url = f"http://localhost:3000/admin/disputes/{dispute_id}"
-        frontend_url = f"https://crypto-2fa-update.preview.emergentagent.com/admin/disputes/{dispute_id}"
+        frontend_url = f"https://trading-perf-boost.preview.emergentagent.com/admin/disputes/{dispute_id}"
         
         print(f"\n🎯 EXACT URL FOR TESTING DISPUTE DETAIL PAGE:")
         print(f"   Localhost: {localhost_url}")
@@ -415,7 +415,7 @@ class P2PDisputeTest:
                 print(f"🆔 FULL DISPUTE ID: {dispute_id}")
                 print(f"🌐 EXACT URL FOR TESTING:")
                 print(f"   http://localhost:3000/admin/disputes/{dispute_id}")
-                print(f"   https://crypto-2fa-update.preview.emergentagent.com/admin/disputes/{dispute_id}")
+                print(f"   https://trading-perf-boost.preview.emergentagent.com/admin/disputes/{dispute_id}")
                 print(f"\n📋 DISPUTE CONTAINS ALL REQUIRED DATA:")
                 if dispute_data:
                     print(f"   - dispute_id: {dispute_data.get('dispute_id')}")

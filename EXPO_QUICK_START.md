@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://crypto-2fa-update.preview.emergentagent.com/api
+https://trading-perf-boost.preview.emergentagent.com/api
 ```
 
 This means:

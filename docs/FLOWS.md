@@ -153,7 +153,7 @@ await db.nowpayment_deposits.insert_one({
 
 **NOWPayments sends POST request to:**
 ```
-POST https://crypto-2fa-update.preview.emergentagent.com/api/nowpayments/ipn
+POST https://trading-perf-boost.preview.emergentagent.com/api/nowpayments/ipn
 
 Headers:
   x-nowpayments-sig: "hmac_sha512_signature"

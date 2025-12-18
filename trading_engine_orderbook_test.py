@@ -13,7 +13,7 @@ import json
 from datetime import datetime, timezone
 
 # Configuration
-BACKEND_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
+BACKEND_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
 
 class OrderBookTest:
     def __init__(self):

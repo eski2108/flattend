@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://crypto-2fa-update.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://trading-perf-boost.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

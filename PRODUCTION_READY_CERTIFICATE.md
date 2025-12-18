@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://crypto-2fa-update.preview.emergentagent.com`
-- Backend API: `https://crypto-2fa-update.preview.emergentagent.com/api`
+- Frontend: `https://trading-perf-boost.preview.emergentagent.com`
+- Backend API: `https://trading-perf-boost.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

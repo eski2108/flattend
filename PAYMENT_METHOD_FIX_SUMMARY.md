@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://crypto-2fa-update.preview.emergentagent.com
+https://trading-perf-boost.preview.emergentagent.com
 
 ### Test Route
 
-`https://crypto-2fa-update.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://trading-perf-boost.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

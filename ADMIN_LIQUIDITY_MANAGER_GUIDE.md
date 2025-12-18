@@ -2,7 +2,7 @@
 
 ## Access the Page
 
-**URL:** `https://crypto-2fa-update.preview.emergentagent.com/admin/liquidity-manager`
+**URL:** `https://trading-perf-boost.preview.emergentagent.com/admin/liquidity-manager`
 
 ---
 
@@ -154,7 +154,7 @@ Updates a specific currency's balance:
 
 ### "Failed to load liquidity data"
 - Check backend is running: `sudo supervisorctl status backend`
-- Check API endpoint: `curl https://crypto-2fa-update.preview.emergentagent.com/api/admin/liquidity-all`
+- Check API endpoint: `curl https://trading-perf-boost.preview.emergentagent.com/api/admin/liquidity-all`
 - Restart backend if needed: `sudo supervisorctl restart backend`
 
 ### Update button is disabled

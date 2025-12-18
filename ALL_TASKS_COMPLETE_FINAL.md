@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-2fa-update.preview.emergentagent.com
+**URL:** https://trading-perf-boost.preview.emergentagent.com
 
 **Services Status:**
 ```bash

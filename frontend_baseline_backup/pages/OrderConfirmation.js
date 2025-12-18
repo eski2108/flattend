@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import { ArrowLeft, Shield, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-2fa-update.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://trading-perf-boost.preview.emergentagent.com';
 
 function OrderConfirmation() {
   const navigate = useNavigate();

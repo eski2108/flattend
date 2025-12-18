@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://crypto-2fa-update.preview.emergentagent.com
+**Live URL:** https://trading-perf-boost.preview.emergentagent.com
 
 ---
 

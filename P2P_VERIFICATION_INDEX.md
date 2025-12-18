@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://crypto-2fa-update.preview.emergentagent.com
-- Backend API: https://crypto-2fa-update.preview.emergentagent.com/api
-- P2P Marketplace: https://crypto-2fa-update.preview.emergentagent.com/p2p
+- Frontend: https://trading-perf-boost.preview.emergentagent.com
+- Backend API: https://trading-perf-boost.preview.emergentagent.com/api
+- P2P Marketplace: https://trading-perf-boost.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

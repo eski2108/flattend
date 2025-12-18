@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://crypto-2fa-update.preview.emergentagent.com
-P2P Page:     https://crypto-2fa-update.preview.emergentagent.com/p2p
-Backend API:  https://crypto-2fa-update.preview.emergentagent.com/api
+Frontend:     https://trading-perf-boost.preview.emergentagent.com
+P2P Page:     https://trading-perf-boost.preview.emergentagent.com/p2p
+Backend API:  https://trading-perf-boost.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

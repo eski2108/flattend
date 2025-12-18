@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://crypto-2fa-update.preview.emergentagent.com/api
-- **Frontend App**: https://crypto-2fa-update.preview.emergentagent.com
+- **Backend API**: https://trading-perf-boost.preview.emergentagent.com/api
+- **Frontend App**: https://trading-perf-boost.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

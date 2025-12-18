@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
+BASE_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

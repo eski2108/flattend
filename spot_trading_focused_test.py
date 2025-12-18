@@ -13,7 +13,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
+BASE_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
 
 def test_trading_issues():
     print("🔍 FOCUSED SPOT TRADING ISSUE ANALYSIS")

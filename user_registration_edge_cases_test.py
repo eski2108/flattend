@@ -11,7 +11,7 @@ import json
 import time
 
 # Configuration
-BACKEND_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
+BACKEND_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
 
 def test_edge_cases():
     """Test edge cases for registration and login"""

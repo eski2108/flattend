@@ -14,7 +14,7 @@ import time
 from PIL import Image
 
 # Configuration
-BASE_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
+BASE_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
 
 def print_test_header(test_name):
     """Print formatted test header"""

@@ -11,7 +11,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-2fa-update.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://trading-perf-boost.preview.emergentagent.com';
 
 export default function P2PTradingExchange() {
   const navigate = useNavigate();
