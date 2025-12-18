@@ -8378,7 +8378,8 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
         
-        reset_link = f"https://coinhubx.net/reset-password?token={reset_token}"
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://crypto-2fa-update.preview.emergentagent.com')
+        reset_link = f"{frontend_url}/reset-password?token={reset_token}"
         
         message = Mail(
             from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
