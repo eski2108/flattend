@@ -963,6 +963,139 @@ export default function AdminDashboard() {
           )}
         </Card>
 
+        {/* UNIFIED PLATFORM DATA - Single Source of Truth */}
+        {unifiedPlatformData && (
+          <Card style={{ 
+            background: 'linear-gradient(135deg, #0A1929 0%, #1a2744 100%)', 
+            border: '2px solid rgba(168, 85, 247, 0.5)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            marginBottom: '2rem'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ color: '#A855F7', fontSize: '22px', fontWeight: '700', margin: 0 }}>
+                📊 Unified Platform Data (Single Source of Truth)
+              </h2>
+              <span style={{ 
+                background: 'rgba(34, 197, 94, 0.2)', 
+                color: '#22C55E', 
+                padding: '4px 12px', 
+                borderRadius: '20px', 
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                ✓ LOCKED & SYNCED
+              </span>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.2)' }}>
+                <p style={{ color: '#8F9BB3', fontSize: '12px', marginBottom: '4px' }}>TOTAL USERS</p>
+                <p style={{ color: '#00F0FF', fontSize: '28px', fontWeight: '700', margin: 0 }}>{unifiedPlatformData.users?.total || 0}</p>
+                <p style={{ color: '#22C55E', fontSize: '11px', marginTop: '4px' }}>{unifiedPlatformData.users?.verified_email || 0} verified</p>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+                <p style={{ color: '#8F9BB3', fontSize: '12px', marginBottom: '4px' }}>TOTAL PLATFORM VALUE</p>
+                <p style={{ color: '#22C55E', fontSize: '28px', fontWeight: '700', margin: 0 }}>${unifiedPlatformData.total_platform_usd?.toLocaleString() || '0'}</p>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
+                <p style={{ color: '#8F9BB3', fontSize: '12px', marginBottom: '4px' }}>TOTAL DEPOSITS</p>
+                <p style={{ color: '#FFA500', fontSize: '28px', fontWeight: '700', margin: 0 }}>${unifiedPlatformData.volume?.total_deposits_usd?.toLocaleString() || '0'}</p>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                <p style={{ color: '#8F9BB3', fontSize: '12px', marginBottom: '4px' }}>TOTAL WITHDRAWALS</p>
+                <p style={{ color: '#EF4444', fontSize: '28px', fontWeight: '700', margin: 0 }}>${unifiedPlatformData.volume?.total_withdrawals_usd?.toLocaleString() || '0'}</p>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.2)' }}>
+                <p style={{ color: '#8F9BB3', fontSize: '12px', marginBottom: '4px' }}>FEES COLLECTED</p>
+                <p style={{ color: '#A855F7', fontSize: '28px', fontWeight: '700', margin: 0 }}>${unifiedPlatformData.volume?.total_fees_collected_usd?.toLocaleString() || '0'}</p>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(0, 240, 255, 0.2)' }}>
+                <p style={{ color: '#8F9BB3', fontSize: '12px', marginBottom: '4px' }}>P2P TRADES</p>
+                <p style={{ color: '#00F0FF', fontSize: '28px', fontWeight: '700', margin: 0 }}>{unifiedPlatformData.p2p?.total_trades || 0}</p>
+                <p style={{ color: '#FFA500', fontSize: '11px', marginTop: '4px' }}>{unifiedPlatformData.p2p?.active_trades || 0} active</p>
+              </div>
+            </div>
+            
+            <p style={{ color: '#8F9BB3', fontSize: '11px', textAlign: 'center', margin: 0 }}>
+              Data source: /api/unified/platform-summary • Last updated: {new Date(unifiedPlatformData.timestamp).toLocaleString()}
+            </p>
+          </Card>
+        )}
+
+        {/* UNIFIED USERS BREAKDOWN - Single Source of Truth */}
+        {unifiedUsersData.length > 0 && (
+          <Card style={{ 
+            background: 'linear-gradient(135deg, #0A1929 0%, #1a2744 100%)', 
+            border: '2px solid rgba(0, 240, 255, 0.5)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            marginBottom: '2rem'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h2 style={{ color: '#00F0FF', fontSize: '20px', fontWeight: '700', margin: 0 }}>
+                👥 Customer Financial Breakdown (Unified)
+              </h2>
+              <span style={{ 
+                background: 'rgba(34, 197, 94, 0.2)', 
+                color: '#22C55E', 
+                padding: '4px 12px', 
+                borderRadius: '20px', 
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                ✓ SYNCED
+              </span>
+            </div>
+            
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '11px' }}>CLIENT ID</th>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '11px' }}>EMAIL</th>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'right', fontSize: '11px' }}>BALANCE (USD)</th>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'right', fontSize: '11px' }}>DEPOSITS</th>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'right', fontSize: '11px' }}>WITHDRAWALS</th>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'right', fontSize: '11px' }}>FEES PAID</th>
+                    <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'center', fontSize: '11px' }}>P2P TRADES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {unifiedUsersData.slice(0, 15).map((user, index) => (
+                    <tr key={user.user_id} style={{ 
+                      borderBottom: '1px solid rgba(255,255,255,0.05)',
+                      background: index % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'transparent'
+                    }}>
+                      <td style={{ color: '#FFA500', padding: '10px 8px', fontSize: '12px', fontWeight: '600' }}>{user.client_id}</td>
+                      <td style={{ color: '#E0E0E0', padding: '10px 8px', fontSize: '12px' }}>{user.email}</td>
+                      <td style={{ color: '#22C55E', padding: '10px 8px', fontSize: '12px', textAlign: 'right', fontWeight: '600' }}>
+                        ${user.total_balance_usd?.toLocaleString() || '0'}
+                      </td>
+                      <td style={{ color: '#00F0FF', padding: '10px 8px', fontSize: '12px', textAlign: 'right' }}>
+                        ${user.activity?.deposits?.total_usd?.toLocaleString() || '0'}
+                      </td>
+                      <td style={{ color: '#EF4444', padding: '10px 8px', fontSize: '12px', textAlign: 'right' }}>
+                        ${user.activity?.withdrawals?.total_usd?.toLocaleString() || '0'}
+                      </td>
+                      <td style={{ color: '#A855F7', padding: '10px 8px', fontSize: '12px', textAlign: 'right' }}>
+                        ${user.activity?.fees_paid?.total_usd?.toLocaleString() || '0'}
+                      </td>
+                      <td style={{ color: '#00F0FF', padding: '10px 8px', fontSize: '12px', textAlign: 'center' }}>
+                        {user.p2p_stats?.total_trades || 0}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            <p style={{ color: '#8F9BB3', fontSize: '11px', textAlign: 'center', marginTop: '1rem', marginBottom: 0 }}>
+              Data source: /api/unified/all-users-breakdown • Single source of truth for all pages
+            </p>
+          </Card>
+        )}
+
         {/* Commission & Fee Settings */}
         <Card className="commission-settings-card" style={{ marginBottom: '2rem' }}>
           <div className="table-header">
