@@ -1310,3 +1310,45 @@ def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float
     </body>
     </html>
     """
+
+
+    async def send_verification_email(self, user_email: str, user_name: str, verification_token: str):
+        """Send email verification link"""
+        frontend_url = os.getenv('FRONTEND_URL', 'https://crypto-2fa-update.preview.emergentagent.com')
+        backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://crypto-2fa-update.preview.emergentagent.com')
+        
+        # The verification link goes to backend API
+        verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
+        
+        subject = "Verify Your CoinHubX Email"
+        html_content = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #051018 0%, #0A1929 100%); border: 1px solid #00F0FF; border-radius: 12px; padding: 30px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #00F0FF; margin: 0;">CoinHubX</h1>
+                        <p style="color: #8F9BB3; margin-top: 5px;">Professional Crypto Trading</p>
+                    </div>
+                    
+                    <h2 style="color: #FFFFFF;">Welcome, {user_name}!</h2>
+                    <p>Thank you for registering with CoinHubX. Please verify your email address to complete your registration.</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{verification_link}" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #00F0FF 0%, #9B4DFF 100%); color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                            Verify Email Address
+                        </a>
+                    </div>
+                    
+                    <p style="font-size: 14px; color: #8F9BB3;">
+                        If you didn't create an account with CoinHubX, please ignore this email.
+                    </p>
+                    
+                    <p style="font-size: 12px; color: #8F9BB3; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                        This verification link expires in 24 hours.
+                    </p>
+                </div>
+            </body>
+        </html>
+        """
+        
+        return await self.send_email(user_email, subject, html_content)
