@@ -59,13 +59,20 @@ export default function WalletPage() {
   }, [navigate]);
 
   const loadAllData = async (userId) => {
-    setLoading(true);
-    await Promise.all([
-      loadCoinMetadata(),
-      loadBalances(userId),
-      loadPriceData()
-    ]);
+    // FAST: Load balances first (critical), show page immediately
+    try {
+      const balanceResp = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`);
+      if (balanceResp.data.success) {
+        setBalances(balanceResp.data.balances || []);
+      }
+    } catch (e) { console.error('Balance load error:', e); }
+    
+    // STOP SPINNER - page is usable now
     setLoading(false);
+    
+    // Load non-critical data in background (non-blocking)
+    loadCoinMetadata();
+    loadPriceData();
   };
 
   const loadCoinMetadata = async () => {
