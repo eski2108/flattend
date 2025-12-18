@@ -512,24 +512,26 @@ export default function AdminDashboard() {
         console.log('Customer investments not available yet');
       }
       
-      // UNIFIED DATA - Single Source of Truth
-      try {
-        const [platformResp, usersResp] = await Promise.all([
-          axios.get(`${API}/api/unified/platform-summary`),
-          axios.get(`${API}/api/unified/all-users-breakdown?limit=50`)
-        ]);
-        
-        if (platformResp.data.success) {
-          setUnifiedPlatformData(platformResp.data.data);
-          console.log('✅ Unified platform data loaded from single source of truth');
-        }
-        if (usersResp.data.success) {
-          setUnifiedUsersData(usersResp.data.data);
-          console.log('✅ Unified users data loaded from single source of truth');
-        }
-      } catch (err) {
-        console.error('Error loading unified data:', err);
-      }
+      // UNIFIED DATA - Load progressively, not blocking
+      // Platform summary first (fast, critical)
+      axios.get(`${API}/api/unified/platform-summary`)
+        .then(resp => {
+          if (resp.data.success) {
+            setUnifiedPlatformData(resp.data.data);
+            console.log(`✅ Platform data loaded in ${resp.data.data.response_time_ms}ms`);
+          }
+        })
+        .catch(err => console.error('Platform summary error:', err));
+      
+      // Users breakdown second (paginated, limit 20)
+      axios.get(`${API}/api/unified/all-users-breakdown?limit=20`)
+        .then(resp => {
+          if (resp.data.success) {
+            setUnifiedUsersData(resp.data.data);
+            console.log(`✅ Users breakdown loaded in ${resp.data.response_time_ms}ms`);
+          }
+        })
+        .catch(err => console.error('Users breakdown error:', err));
       fetchBanners();
 
       if (statsResp.data.success) {
