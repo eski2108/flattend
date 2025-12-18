@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 
 /**
- * 🔒 LOCKED - 3D Coin Icon Component (OPTIMIZED)
+ * 🔒 LOCKED - 3D Coin Icon Component (PRODUCTION OPTIMIZED v2)
  * 
  * OPTIMIZATIONS:
- * - No lazy loading for immediate render
- * - Preloaded major coin logos
- * - Instant fallback to prevent layout shift
- * - Cached in browser
+ * - Zero visual jitter - stable container renders immediately
+ * - Images load in background without layout shift
+ * - CSS transition for smooth fade-in (no React state flicker)
+ * - Preloaded major coin logos on module init
+ * - Memoized for performance in large lists
  */
 
 // Top coins to preload immediately
-const PRIORITY_COINS = ['btc', 'eth', 'usdt', 'bnb', 'sol', 'xrp', 'usdc', 'ada', 'doge', 'dot'];
+const PRIORITY_COINS = ['btc', 'eth', 'usdt', 'bnb', 'sol', 'xrp', 'usdc', 'ada', 'doge', 'dot', 'ltc', 'link'];
 
 // 227 coins with 3D logos
 const COINS_WITH_3D_LOGOS = new Set([
@@ -40,14 +41,16 @@ const COINS_WITH_3D_LOGOS = new Set([
   'xyo', 'yfi', 'zec', 'zent', 'zil', 'zksync', 'zro'
 ]);
 
-// Preload priority coins on module load
+// Cache for loaded image status
+const imageCache = new Map();
+
+// Preload priority coins on module load - using Image() for better caching
 if (typeof window !== 'undefined') {
   PRIORITY_COINS.forEach(coin => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = `/assets/coins/3d/${coin}.png`;
-    document.head.appendChild(link);
+    const img = new Image();
+    img.src = `/assets/coins/3d/${coin}.png`;
+    img.onload = () => imageCache.set(coin, true);
+    img.onerror = () => imageCache.set(coin, false);
   });
 }
 
@@ -63,92 +66,105 @@ const cleanSymbol = (symbol) => {
 const COIN_COLORS = {
   btc: '#F7931A', eth: '#627EEA', bnb: '#F3BA2F', sol: '#A78BFA',
   xrp: '#00AAE4', usdt: '#26A17B', usdc: '#2775CA', ada: '#0033AD',
-  doge: '#C2A633', dot: '#E6007A', ltc: '#345D9D', matic: '#8247E5'
+  doge: '#C2A633', dot: '#E6007A', ltc: '#345D9D', matic: '#8247E5',
+  link: '#2A5ADA', xlm: '#000000', trx: '#FF0013', avax: '#E84142'
 };
 
-const Coin3DIcon = ({ symbol, size = 40, style = {} }) => {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+const Coin3DIcon = memo(({ symbol, size = 40, style = {} }) => {
   const clean = cleanSymbol(symbol);
   const has3DLogo = COINS_WITH_3D_LOGOS.has(clean);
-  const isPriority = PRIORITY_COINS.includes(clean);
-  
-  const logoSrc = has3DLogo 
-    ? `/assets/coins/3d/${clean}.png`
-    : null;
-  
   const fallbackColor = COIN_COLORS[clean] || '#00E5FF';
+  const logoSrc = has3DLogo ? `/assets/coins/3d/${clean}.png` : null;
   
-  const badgeStyle = {
+  // Use ref to track image load without causing re-render
+  const imgRef = useRef(null);
+  const [imgReady, setImgReady] = useState(imageCache.get(clean) === true);
+  
+  // Container style - ALWAYS the same size, never changes
+  const containerStyle = {
     width: `${size}px`,
     height: `${size}px`,
     minWidth: `${size}px`,
     minHeight: `${size}px`,
     borderRadius: '50%',
-    background: error || !logoSrc ? fallbackColor : 'linear-gradient(145deg, #2a2f45, #1a1f35)',
+    background: 'linear-gradient(145deg, #2a2f45, #1a1f35)',
     border: '1.5px solid rgba(0, 229, 255, 0.3)',
     boxShadow: '0 0 8px rgba(0,229,255,0.3), 0 0 16px rgba(0,229,255,0.15)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: `${Math.floor(size * 0.1)}px`,
     overflow: 'hidden',
     flexShrink: 0,
+    position: 'relative',
     ...style
   };
-  
-  // Instant text fallback while loading
-  if (!loaded && !error && logoSrc) {
+
+  // Text fallback style - always present but hidden when image loads
+  const textStyle = {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: `${size * 0.32}px`,
+    textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+    letterSpacing: '-0.5px',
+    position: 'absolute',
+    transition: 'opacity 0.15s ease-out',
+    opacity: imgReady ? 0 : 1,
+    pointerEvents: 'none'
+  };
+
+  // Image style - always rendered, fades in when loaded
+  const imgStyle = {
+    width: '85%',
+    height: '85%',
+    objectFit: 'contain',
+    borderRadius: '50%',
+    position: 'absolute',
+    transition: 'opacity 0.15s ease-out',
+    opacity: imgReady ? 1 : 0
+  };
+
+  const handleLoad = () => {
+    imageCache.set(clean, true);
+    setImgReady(true);
+  };
+
+  const handleError = () => {
+    imageCache.set(clean, false);
+    // Keep text visible on error
+  };
+
+  // If no logo available, just show text
+  if (!logoSrc) {
     return (
-      <div style={badgeStyle}>
-        <span style={{ 
-          color: '#fff', 
-          fontWeight: 'bold', 
-          fontSize: `${size * 0.35}px`,
-          textShadow: '0 1px 2px rgba(0,0,0,0.5)'
-        }}>
+      <div style={{...containerStyle, background: fallbackColor}}>
+        <span style={{...textStyle, opacity: 1}}>
           {clean.substring(0, 3).toUpperCase()}
         </span>
-        <img
-          src={logoSrc}
-          alt={clean.toUpperCase()}
-          style={{ display: 'none' }}
-          onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
-        />
       </div>
     );
   }
-  
-  if (error || !logoSrc) {
-    return (
-      <div style={badgeStyle}>
-        <span style={{ 
-          color: '#fff', 
-          fontWeight: 'bold', 
-          fontSize: `${size * 0.35}px`,
-          textShadow: '0 1px 2px rgba(0,0,0,0.5)'
-        }}>
-          {clean.substring(0, 3).toUpperCase()}
-        </span>
-      </div>
-    );
-  }
-  
+
   return (
-    <div style={badgeStyle}>
+    <div style={containerStyle}>
+      {/* Text fallback - always rendered, fades out */}
+      <span style={textStyle}>
+        {clean.substring(0, 3).toUpperCase()}
+      </span>
+      {/* Image - always rendered, fades in */}
       <img
+        ref={imgRef}
         src={logoSrc}
         alt={clean.toUpperCase()}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          borderRadius: '50%'
-        }}
+        style={imgStyle}
+        onLoad={handleLoad}
+        onError={handleError}
+        loading="eager"
+        decoding="async"
       />
     </div>
   );
-};
+});
+
+Coin3DIcon.displayName = 'Coin3DIcon';
 
 export default Coin3DIcon;
