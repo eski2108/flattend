@@ -499,6 +499,16 @@ export default function AdminDashboard() {
       if (signupsResp.data.success) {
         setRecentSignups(signupsResp.data.signups);
       }
+      
+      // Fetch customer investments
+      try {
+        const investResp = await axios.get(`${API}/api/admin/customer-investments?limit=20`);
+        if (investResp.data.success) {
+          setCustomerInvestments(investResp.data.customers);
+        }
+      } catch (err) {
+        console.log('Customer investments not available yet');
+      }
       fetchBanners();
 
       if (statsResp.data.success) {
