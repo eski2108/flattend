@@ -32,8 +32,16 @@ function InstantBuy() {
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    fetchCoins();
-    fetchUserBalance();
+    // Load in parallel but stop spinner after first critical data
+    const loadData = async () => {
+      // Fetch balance first (fast, critical)
+      await fetchUserBalance();
+      // Stop spinner early - page is usable
+      setLoading(false);
+      // Load coins in background
+      fetchCoins();
+    };
+    loadData();
   }, []);
 
   const fetchUserBalance = async () => {
