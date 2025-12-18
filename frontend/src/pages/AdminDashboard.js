@@ -778,6 +778,93 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
+        {/* Recent Signups Section */}
+        <Card style={{ 
+          background: 'linear-gradient(135deg, #0A1929 0%, #1a2744 100%)', 
+          border: '1px solid rgba(0, 240, 255, 0.3)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          marginBottom: '2rem'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ color: '#00F0FF', fontSize: '20px', fontWeight: '700', margin: 0 }}>
+              🆕 Recent Signups
+            </h2>
+            <span style={{ color: '#8F9BB3', fontSize: '14px' }}>
+              {recentSignups.length} latest users
+            </span>
+          </div>
+          
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                  <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>CLIENT ID</th>
+                  <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>NAME</th>
+                  <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>EMAIL</th>
+                  <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>PHONE</th>
+                  <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>VERIFIED</th>
+                  <th style={{ color: '#00F0FF', padding: '12px 8px', textAlign: 'left', fontSize: '12px', fontWeight: '600' }}>SIGNED UP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentSignups.slice(0, 10).map((signup, index) => (
+                  <tr key={signup.user_id} style={{ 
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    background: index % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'transparent'
+                  }}>
+                    <td style={{ color: '#FFA500', padding: '12px 8px', fontSize: '13px', fontWeight: '600' }}>
+                      {signup.client_id}
+                    </td>
+                    <td style={{ color: '#E0E0E0', padding: '12px 8px', fontSize: '13px' }}>
+                      {signup.full_name || 'N/A'}
+                    </td>
+                    <td style={{ color: '#E0E0E0', padding: '12px 8px', fontSize: '13px' }}>
+                      {signup.email}
+                    </td>
+                    <td style={{ color: '#E0E0E0', padding: '12px 8px', fontSize: '13px' }}>
+                      {signup.phone_number || 'N/A'}
+                    </td>
+                    <td style={{ padding: '12px 8px' }}>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <span style={{ 
+                          background: signup.email_verified ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                          color: signup.email_verified ? '#22C55E' : '#EF4444',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          fontWeight: '600'
+                        }}>
+                          {signup.email_verified ? '✓ Email' : '✗ Email'}
+                        </span>
+                        <span style={{ 
+                          background: signup.phone_verified ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                          color: signup.phone_verified ? '#22C55E' : '#EF4444',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          fontWeight: '600'
+                        }}>
+                          {signup.phone_verified ? '✓ Phone' : '✗ Phone'}
+                        </span>
+                      </div>
+                    </td>
+                    <td style={{ color: '#8F9BB3', padding: '12px 8px', fontSize: '12px' }}>
+                      {signup.signup_timestamp ? new Date(signup.signup_timestamp).toLocaleString() : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {recentSignups.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#8F9BB3' }}>
+              No signups yet. New users will appear here.
+            </div>
+          )}
+        </Card>
+
         {/* Commission & Fee Settings */}
         <Card className="commission-settings-card" style={{ marginBottom: '2rem' }}>
           <div className="table-header">
