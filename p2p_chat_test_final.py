@@ -23,7 +23,7 @@ Tests the complete P2P trade chat system with buyer-seller flow as requested:
 - POST /api/p2p/create-trade (should auto-create system message)
 - POST /api/p2p/mark-paid (should auto-create system messages)
 
-**Backend URL:** https://trading-rebuild.preview.emergentagent.com/api
+**Backend URL:** https://crypto-2fa-update.preview.emergentagent.com/api
 """
 
 import requests
@@ -33,7 +33,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://trading-rebuild.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
 
 # Test Users for P2P Chat Testing
 BUYER_USER = {

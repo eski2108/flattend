@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://trading-rebuild.preview.emergentagent.com"
+BACKEND_URL = "https://crypto-2fa-update.preview.emergentagent.com"
 TEST_USER_ID = "test_user_123"
 
 def log_test(test_name, status, details=""):

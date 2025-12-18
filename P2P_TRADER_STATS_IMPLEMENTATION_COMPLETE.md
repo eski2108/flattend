@@ -234,10 +234,10 @@ Returns success with all stats set to 0/false/null/empty:
 ### **Using curl:**
 ```bash
 # Test with existing user
-curl -X GET "https://trading-rebuild.preview.emergentagent.com/api/trader/stats/user_123abc"
+curl -X GET "https://crypto-2fa-update.preview.emergentagent.com/api/trader/stats/user_123abc"
 
 # Test with non-existent user (should return zeros)
-curl -X GET "https://trading-rebuild.preview.emergentagent.com/api/trader/stats/nonexistent"
+curl -X GET "https://crypto-2fa-update.preview.emergentagent.com/api/trader/stats/nonexistent"
 ```
 
 ### **Expected Behavior:**

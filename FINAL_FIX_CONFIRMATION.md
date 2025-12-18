@@ -77,7 +77,7 @@
 
 ## 📊 LIVE PREVIEW STATUS
 
-**URL**: https://trading-rebuild.preview.emergentagent.com
+**URL**: https://crypto-2fa-update.preview.emergentagent.com
 
 **Build Information**:
 - Latest Build Hash: Deployed Dec 9, 2024 08:55 UTC

@@ -15,7 +15,7 @@ Tests the critical admin flows that were failing:
 Focus on verifying the newly added admin endpoints work correctly and return proper data.
 Report: Which issues are NOW FIXED vs which still need work.
 
-**Backend URL:** https://trading-rebuild.preview.emergentagent.com/api
+**Backend URL:** https://crypto-2fa-update.preview.emergentagent.com/api
 """
 
 import requests
@@ -25,7 +25,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://trading-rebuild.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
 
 # Admin credentials
 ADMIN_USER = {

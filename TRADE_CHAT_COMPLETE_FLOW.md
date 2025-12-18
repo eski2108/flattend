@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://trading-rebuild.preview.emergentagent.com
+**Test it now at:** https://crypto-2fa-update.preview.emergentagent.com

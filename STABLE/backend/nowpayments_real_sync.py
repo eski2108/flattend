@@ -65,7 +65,7 @@ class NOWPaymentsRealSync:
             async with aiohttp.ClientSession() as session:
                 headers = {"x-api-key": self.api_key, "Content-Type": "application/json"}
                 
-                backend_url = os.getenv("REACT_APP_BACKEND_URL", "https://trading-rebuild.preview.emergentagent.com")
+                backend_url = os.getenv("REACT_APP_BACKEND_URL", "https://crypto-2fa-update.preview.emergentagent.com")
                 
                 # Create invoice for this currency
                 payload = {

@@ -4,7 +4,7 @@
 ================================================================================
 
 Date: December 11, 2025 21:46 UTC
-Environment: https://trading-rebuild.preview.emergentagent.com
+Environment: https://crypto-2fa-update.preview.emergentagent.com
 Status: ✅ ALL PHASES COMPLETE
 
 ================================================================================
@@ -202,7 +202,7 @@ NEXT STEPS FOR USER
 ================================================================================
 
 1. Login to Preview:
-   URL: https://trading-rebuild.preview.emergentagent.com
+   URL: https://crypto-2fa-update.preview.emergentagent.com
    Email: aby@test.com
    Password: test123
 
@@ -294,7 +294,7 @@ NEXT: User should test the UI flow with aby@test.com account.
 
 ================================================================================
 Generated: 2025-12-11 21:46 UTC
-System: https://trading-rebuild.preview.emergentagent.com
+System: https://crypto-2fa-update.preview.emergentagent.com
 Test User: aby@test.com / test123
 Active Ads: 2 ready to display
 ================================================================================

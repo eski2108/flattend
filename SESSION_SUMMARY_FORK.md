@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://trading-rebuild.preview.emergentagent.com
+https://crypto-2fa-update.preview.emergentagent.com
 
 ---
 

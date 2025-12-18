@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://trading-rebuild.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
 
 class FinalWalletTester:
     def __init__(self):

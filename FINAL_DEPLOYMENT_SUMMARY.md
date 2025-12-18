@@ -46,7 +46,7 @@ Referrals:    0  (no test data)
 ### ✅ Fixed 30 Files
 
 **Removed ALL hardcoded URLs:**
-- ❌ `https://trading-rebuild.preview.emergentagent.com`
+- ❌ `https://crypto-2fa-update.preview.emergentagent.com`
 - ❌ `http://localhost:8001`
 - ❌ Any other hardcoded references
 

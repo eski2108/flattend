@@ -14,7 +14,7 @@ This HTML file contains your entire app ready to be converted to APK.
 
 ### **Step 2:** Fill in the form:
 - **App Name:** Coin Hub X
-- **Website URL:** https://trading-rebuild.preview.emergentagent.com
+- **Website URL:** https://crypto-2fa-update.preview.emergentagent.com
 - **App Icon:** Upload your logo (optional)
 - **Package Name:** com.coinhubx.app
 
@@ -34,7 +34,7 @@ This HTML file contains your entire app ready to be converted to APK.
 
 ### **Step 2:** Enter your website URL:
 ```
-https://trading-rebuild.preview.emergentagent.com
+https://crypto-2fa-update.preview.emergentagent.com
 ```
 
 ### **Step 3:** Configure:
@@ -58,7 +58,7 @@ https://trading-rebuild.preview.emergentagent.com
 
 ### **Step 3:** Create new app:
 - Type: Website to App
-- URL: https://trading-rebuild.preview.emergentagent.com
+- URL: https://crypto-2fa-update.preview.emergentagent.com
 
 ### **Step 4:** Customize:
 - App name
@@ -80,7 +80,7 @@ https://trading-rebuild.preview.emergentagent.com
 
 ### **Step 3:** Enter URL:
 ```
-https://trading-rebuild.preview.emergentagent.com
+https://crypto-2fa-update.preview.emergentagent.com
 ```
 
 ### **Step 4:** Customize app

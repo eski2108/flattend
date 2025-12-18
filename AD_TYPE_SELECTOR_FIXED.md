@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://trading-rebuild.preview.emergentagent.com
+**Preview URL:** https://crypto-2fa-update.preview.emergentagent.com

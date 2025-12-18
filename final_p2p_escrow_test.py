@@ -9,7 +9,7 @@ Test the P2P escrow system using the correct request formats based on actual bac
 - /api/escrow/unlock (POST with BalanceUnlockRequest model)
 - /api/escrow/release (POST with BalanceReleaseRequest model)
 
-**Backend URL:** https://trading-rebuild.preview.emergentagent.com/api
+**Backend URL:** https://crypto-2fa-update.preview.emergentagent.com/api
 """
 
 import requests
@@ -20,7 +20,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://trading-rebuild.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-2fa-update.preview.emergentagent.com/api"
 
 class FinalP2PEscrowTester:
     def __init__(self):

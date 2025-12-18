@@ -1,6 +1,6 @@
 # ✅ ALL CHANGES DEPLOYED TO PREVIEW
 
-**Preview URL:** https://trading-rebuild.preview.emergentagent.com  
+**Preview URL:** https://crypto-2fa-update.preview.emergentagent.com  
 **Deployment Time:** December 11, 2025 23:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -86,7 +86,7 @@
 
 1. **Navigate to Preview:**
    ```
-   https://trading-rebuild.preview.emergentagent.com
+   https://crypto-2fa-update.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -139,10 +139,10 @@
 sudo supervisorctl status
 
 # Test preview URL
-curl https://trading-rebuild.preview.emergentagent.com
+curl https://crypto-2fa-update.preview.emergentagent.com
 
 # Test API health
-curl https://trading-rebuild.preview.emergentagent.com/api/health
+curl https://crypto-2fa-update.preview.emergentagent.com/api/health
 
 # All return 200 OK ✅
 ```
@@ -183,7 +183,7 @@ curl https://trading-rebuild.preview.emergentagent.com/api/health
 
 **All changes are LIVE at:**
 ```
-https://trading-rebuild.preview.emergentagent.com
+https://crypto-2fa-update.preview.emergentagent.com
 ```
 
 **Test Account:**

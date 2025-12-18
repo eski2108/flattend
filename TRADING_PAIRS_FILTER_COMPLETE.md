@@ -92,7 +92,7 @@ currencies.forEach(currency => {
 
 ## Proof from Live Preview
 
-**URL:** https://trading-rebuild.preview.emergentagent.com
+**URL:** https://crypto-2fa-update.preview.emergentagent.com
 
 ### Trading Page (Desktop)
 - Header shows: "106 pairs" (reduced from 494)

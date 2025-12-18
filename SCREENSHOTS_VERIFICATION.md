@@ -523,7 +523,7 @@ Permissions: Full admin access
 
 ### Test User Flow:
 ```
-1. Visit: https://trading-rebuild.preview.emergentagent.com/login
+1. Visit: https://crypto-2fa-update.preview.emergentagent.com/login
 2. Login: withdrawal_test@demo.com / Test123!
 3. Navigate to: /wallet
 4. Click "Withdraw" on BTC
@@ -536,7 +536,7 @@ Permissions: Full admin access
 
 ### Test Admin Flow:
 ```
-1. Visit: https://trading-rebuild.preview.emergentagent.com/admin/login
+1. Visit: https://crypto-2fa-update.preview.emergentagent.com/admin/login
 2. Login: admin_test@demo.com / Admin123!
 3. Enter code: CRYPTOLEND_ADMIN_2025
 4. Navigate to: /admin/withdrawals
@@ -567,6 +567,6 @@ Permissions: Full admin access
 ---
 
 **Captured:** December 13, 2024, 4:53 PM UTC
-**Environment:** https://trading-rebuild.preview.emergentagent.com
+**Environment:** https://crypto-2fa-update.preview.emergentagent.com
 **Total Screenshots:** 12
 **Status:** ✅ VERIFIED
