@@ -6093,6 +6093,48 @@ async def admin_get_all_users():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@api_router.get("/admin/recent-signups")
+async def admin_get_recent_signups(limit: int = 50):
+    """Get recent user signups for admin dashboard with all details"""
+    try:
+        users = await db.users.find(
+            {},
+            {"_id": 0, "password_hash": 0, "salt": 0, "verification_token": 0, "reset_token": 0}
+        ).sort("created_at", -1).limit(limit).to_list(limit)
+        
+        # Format the response with all signup details
+        signups = []
+        for user in users:
+            signups.append({
+                "client_id": user.get("client_id", f"CHX-{user.get('user_id', '')[:6].upper()}"),
+                "user_id": user.get("user_id"),
+                "email": user.get("email"),
+                "full_name": user.get("full_name"),
+                "phone_number": user.get("phone_number"),
+                "email_verified": user.get("email_verified", False),
+                "phone_verified": user.get("phone_verified", False),
+                "kyc_verified": user.get("kyc_verified", False),
+                "role": user.get("role", "user"),
+                "signup_timestamp": user.get("signup_timestamp") or user.get("created_at"),
+                "ip_address": user.get("ip_address"),
+                "user_agent": user.get("user_agent"),
+                "referral_code_used": user.get("referral_code_used"),
+                "referred_by": user.get("referred_by"),
+                "google_id": user.get("google_id"),
+                "last_login": user.get("last_login")
+            })
+        
+        return {
+            "success": True,
+            "signups": signups,
+            "count": len(signups),
+            "message": f"Retrieved {len(signups)} recent signups"
+        }
+    except Exception as e:
+        logger.error(f"Error getting recent signups: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.post("/admin/users/update-tier")
 async def admin_update_user_tier(request: dict):
     """Update user's referral tier (admin only)"""
