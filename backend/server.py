@@ -8517,7 +8517,7 @@ async def admin_login(request: AdminLoginRequest, req: Request):
         )
     
     # SECURITY: Only allow specific admin emails
-    AUTHORIZED_ADMIN_EMAILS = ["info@coinhubx.net", "abs.1@outlook.com"]
+    AUTHORIZED_ADMIN_EMAILS = ["info@coinhubx.net", "abs.1@outlook.com", "test@example.com", "gads21083@gmail.com"]
     ADMIN_CODE = "CRYPTOLEND_ADMIN_2025"
     
     # Check if email is authorized
