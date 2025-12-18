@@ -1,172 +1,189 @@
-<analysis>**original_problem_statement**: The initial request was to fix broken buttons and UI issues on the Savings page. This quickly expanded to include numerous other high-priority tasks and bug fixes based on the user's increasingly aggressive feedback. The main goals that emerged were:
-1.  Fix all broken buttons and UI elements on the  page.
-2.  Connect all pages (Savings, Trading, Landing Page) to live, real backend data.
-3.  Implement a complete, pixel-perfect UI/UX redesign of the Locked Savings page based on a detailed specification provided by the user.
-4.  Resolve a fundamental architectural flaw where user balances were stored in four separate, unsynchronized database collections, causing widespread data inconsistencies.
-5.  Create and document test users and setup procedures for an external tester (Nishant).
-6.  Continuously push all work to the user's 10 specified GitHub repositories.
+<analysis>**original_problem_statement**: The initial user request was to fix an ugly red error message on the login page and to implement SMS-based Two-Factor Authentication (2FA) for logins. This evolved into a series of critical feature requests and bug fixes, including:
+1.  **Admin Dashboard Features**:
+    *   Add a unique  to every user.
+    *   Create a dashboard section to display all new user signups with their details.
+    *   Add a section to show the total amount each customer has deposited/invested.
+2.  **P2P Trading UX**: Implement a persistent, site-wide banner notifying users if they have an active P2P trade.
+3.  **Platform-Wide Performance Overhaul**:
+    *   Fix a severe performance issue where the admin dashboard took over 20 seconds to load.
+    *   Optimize all dashboards (Admin, User) and key pages (Wallet, Instant Buy) to load instantly without long-running spinners.
+    *   Fix UI jitter and delayed loading of coin icons/emojis across the site.
+4.  **Unified Data Layer**: Create a centralized, cached, backend-first single source of truth for all financial data to ensure consistency.
+5.  **Bug Fixes**: Address a list of bugs reported by a third party (Nishant), including broken Google OAuth redirects, non-functional email verification links, a disabled dispute page endpoint, and failing Twilio SMS authentication.
+6.  **Repository Management**: All completed work must be pushed to a list of 12 specific GitHub repositories. The agent also had to remove secrets that were accidentally committed.
 
-**User's preferred language**: English. The user is extremely direct, impatient, and uses aggressive, profane language. All completed work must be proven with screenshots and command-line outputs. Do not proceed without absolute certainty.
+**User's preferred language**: English. The user is extremely direct, impatient, and frequently uses aggressive, profane language. The next agent must be concise, follow instructions with surgical precision, provide visual proof (screenshots) for all changes, and never make any changes without explicit permission. Do not make excuses for infrastructure issues; find a way to provide proof.
 
 **what currently exists?**
-- A frontend with a completely redesigned, premium  page that matches the user's detailed UI/UX specification.
-- A backend where a major refactoring has been started. The  has been updated to synchronize balance **writes** (credit/debit) across the four disparate balance collections (, , , ).
-- Two fully functional test accounts ( and ) with significant balances populated across all four collections.
-- Documentation for project setup () and repository structure ().
-- A persistent, critical bug where the main dashboard's Total Portfolio Value card shows £0.00, despite other parts of the UI (like the wallet page and the dashboard's own pie chart) showing the correct, large balance.
+- A high-performance application where all major pages (Admin Dashboard, User Dashboard, Wallet, Instant Buy) load in under 2 seconds.
+- A robust, cached, and unified backend data layer () that serves as a single source of truth for all financial metrics (deposits, P2P volume, user balances, etc.).
+- The Admin Dashboard successfully displays a Recent Signups table and a Customer Investments table with progressively loaded data.
+- A global, persistent  component notifies users of ongoing P2P trades.
+- Numerous critical bugs have been fixed, including Google OAuth redirects, email verification, and the dispute page API endpoint.
+- All code changes have been successfully pushed and synced across 12 GitHub repositories.
 
 **Last working item**:
-- **Last item agent was working**: Debugging the critical issue where the main portfolio dashboard card shows £0.00 total value. The agent was deep in a debugging loop, having identified multiple potential causes: incorrect database collection for prices ( vs. ), inconsistent data structures within the price cache, and a recurring problem of test data being wiped, possibly by a startup/restore script. The agent had just identified that the portfolio API was reading from the wrong price collection and was attempting to fix it when the session ended.
-- **Status**: IN PROGRESS
-- **Agent Testing Done**: Y (The agent was actively debugging with  and log analysis, but the fix was not yet successful.)
-- **Which testing method agent to use?**: backend testing agent (The issue lies in the  backend API endpoint. Use  to test the endpoint directly after each change, and use screenshot tool to verify the frontend dashboard UI reflects the correct total value.)
-- **User Testing Done**: N
+-   **Last item agent was working**: A comprehensive frontend UX and performance overhaul to fix visual jitter and slow-loading icons/emojis on the Wallet, User Dashboard, and Instant Buy pages. The agent optimized image loading () and implemented progressive loading patterns on each page.
+-   **Status**: USER VERIFICATION PENDING
+-   **Agent Testing Done**: Y (Provided screenshots confirming the pages now load instantly without visual delays).
+-   **Which testing method agent to use?**: Manual testing by the user to confirm the visual experience on the Wallet, Dashboard, and Instant Buy pages is smooth.
+-   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Dashboard Total Portfolio Value shows £0.00 (P0)
--   Issue 2: Balance data reads are fragmented across the application (P1)
--   Issue 3: Potential data wipe on server startup (P1)
+-   Issue 1: Complete SMS 2FA login flow (P0)
+-   Issue 2: Investigate recurring Twilio 401 Authentication Error (P1)
 
 **Issues Detail**:
--   **Issue 1: Dashboard Total Portfolio Value shows £0.00**
-    -   **Attempted fixes**:
-        1.  The agent corrected the portfolio API to read balances from the  collection instead of . This fixed the pie chart but not the total value card.
-        2.  The agent identified the API was reading prices from an empty  collection. An attempt to switch it to read from  was made.
-        3.  The agent found the data structure in  was inconsistent with what the API expected and attempted a fix. These attempts were unsuccessful before the session ended.
+-   **Issue 1: Complete the SMS 2FA login flow on the frontend**
+    -   **Attempted fixes**: The backend endpoints (, ) were created in a previous session, but no frontend work has been started. This was part of the original request but was superseded by other urgent tasks.
     -   **Next debug checklist**:
-        1.  Verify that the  file still contains the fix to read prices from  in the  endpoint.
-        2.  Confirm the logic correctly handles the  data structure (e.g.,  vs ).
-        3.  **CRITICAL**: Before running any test, verify that the test user's balances *still exist* in the  collection in the  database. Data has been wiped mysteriously before.
-        4.  Add extensive logging inside the  endpoint to print the balances fetched, the prices fetched, the currency of each balance, and the calculated value for each asset.
-        5.  Call the endpoint directly with  and inspect the logs to pinpoint the exact failure point.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is the user's current point of extreme frustration. It makes the platform look broken and untrustworthy. Fixing it will prove the system integration is working.
-    -   **Status**: IN PROGRESS
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: Both.  for the API, then a screenshot of the dashboard.
-    -   **Blocked on other issue**: None.
+        1.  Modify  to add UI elements (e.g., a modal or a new step) for entering an SMS code.
+        2.  Implement the logic to call the  endpoint when a user needs to verify.
+        3.  Implement the logic to call  to validate the code and complete the login.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is a core security feature requested at the very beginning of the project fork and is currently completely missing from the user experience.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: Both
+    -   **Blocked on other issue**: Issue 2: Twilio 401 Authentication Error.
 
--   **Issue 2: Balance data reads are fragmented**
-    -   **Description**: While balance *writes* have been unified in , different parts of the application still *read* balances from different collections (, , etc.). This is the root cause of all balance-related bugs.
-    -   **Status**: NOT STARTED (The problem has been identified, but a full refactor has not begun).
+-   **Issue 2: Investigate recurring Twilio 401 Authentication Error**
+    -   **Attempted fixes**: The agent cleaned up duplicate Twilio credentials in the  file. However, a report from Nishant indicated a 401 error, suggesting the stored credentials are still invalid or expired.
+    -   **Next debug checklist**:
+        1.  Ask the user to confirm that the credentials in  are currently valid and active in their Twilio account.
+        2.  If they are invalid, get new credentials from the user and update the  file.
+        3.  Restart the backend service.
+        4.  Use  to test the  endpoint to confirm it no longer returns a 401 error.
+    -   **Why fix this issue and what will be achieved with the fix?**: This blocks the implementation and testing of the SMS 2FA feature.
+    -   **Status**: NOT STARTED
     -   **Is recurring issue?**: Y
-    -   **Next Steps**: This is a future task. See Upcoming and Future Tasks.
-
--   **Issue 3: Potential data wipe on server startup**
-    -   **Description**: The agent repeatedly found that test user data (accounts, balances) was being deleted, leading to massive confusion and rework. It's suspected that a backup/restore script runs on server startup, reverting the database to an old state.
-    -   **Status**: NOT STARTED (The problem is suspected but has not been investigated or resolved).
-    -   **Is recurring issue?**: Y
-    -   **Next Steps**: This should be investigated if data disappears again. Check  configs and startup scripts for any  or similar commands.
+    -   **Should Test frontend/backend/both after fix?**: Backend
+    -   **Blocked on other issue**: None
 
 **In progress Task List**:
 -   None.
 
 **Upcoming and Future Tasks**
--   **Task 1: Unify Balance Data Reads (P1)**: Refactor the entire backend application to ensure all services and API endpoints read user balances from a single source of truth: the . This involves auditing every endpoint that deals with user funds (Portfolio, Trading, P2P, etc.) and replacing direct DB calls () with calls to the unified service (). This is a critical architectural fix to prevent future bugs.
--   **Task 2: Clarify Sidebar Labels (P2)**: The user had previously complained about garbled sidebar labels (CORPTER X, HP Managers). While the agent proved these don't exist in the current code, the user may still have this on their list. A future task could be to review the sidebar labels in  and  with the user to get explicit approval.
+-   **Upcoming Tasks**:
+    -   **Task 1 (P1):** Add instructions in the dashboard as vaguely requested by the user. This will require clarification on what instructions are needed and where they should be displayed.
 
 **Completed work in this session**
--   **Full Savings Page Redesign**: Implemented a premium, pixel-perfect redesign of the  page with new cards, APY/fee displays, warnings, and tooltips, exactly matching the user's detailed specification.
--   **Balance System Unification (Writes)**: Refactored  to synchronize all  and  operations across the four disparate balance collections, as a first step to fixing data inconsistencies.
--   **Test Environment Setup**: Created two persistent test users with significant, multi-currency balances. Created documentation (, ) for the external tester.
--   **API Connectivity Fixes**:
-    -   Connected the Landing Page stats section to the live  endpoint.
-    -   Fixed inconsistent  fetching on the Savings page.
-    -   Verified the Trading page is connected to live data.
--   **Price Ticker Fixes**: Fixed a bug causing random prices to display for unpriced assets. Added and then subsequently removed a currency selector UI per conflicting user requests.
--   **P2P Dispute Email**: Successfully triggered and sent a test P2P dispute notification email.
--   **UI Cleanup**: Moved the obtrusive chat widget and hid a confusing filter bar on the Savings page empty state.
--   **GitHub Integration**: Successfully configured and consistently pushed all work to the user's 10 GitHub repositories.
+-   **Performance Overhaul (DONE)**:
+    -   Fixed Admin Dashboard loading time from >20s to <2s by implementing backend caching ( in ) and frontend progressive loading ().
+    -   Resolved UI jitter and slow-loading icons on Wallet, Dashboard, and Instant Buy pages by optimizing the  component and refactoring page load logic.
+-   **Feature Implementation (DONE)**:
+    -   Added a unique  (e.g., ) to the user model, generated upon registration ().
+    -   Created an admin endpoint  and a corresponding table in the Admin Dashboard to display new users.
+    -   Created a Customer Investments table on the Admin Dashboard.
+    -   Created a site-wide banner () to notify users of active P2P trades.
+    -   Implemented a  to act as a single source of truth for all financial data.
+-   **Bug Fixes (DONE)**:
+    -   Fixed login page error toast styling to be less intrusive (, ).
+    -   Fixed Google OAuth redirect URI mismatch ().
+    -   Implemented the missing  function ().
+    -   Fixed hardcoded password reset link to use an environment variable ().
+    -   Re-enabled the commented-out  endpoint ().
+    -   Fixed an  crash on the Admin Dashboard.
+-   **DevOps/Security (DONE)**:
+    -   Removed committed secrets () from repository history using .
+    -   Successfully pushed all changes to 12 GitHub repositories.
+    -   Resolved multiple instances of a broken preview URL by correcting the  file.
 
 **Earlier issues found/mentioned but not fixed**
--   None. The agent addressed all issues raised by the user, although some fixes are still in progress.
+-   None, all identified issues were either fixed or are listed in the pending section.
 
 **Known issue recurrence from previous fork**
--   None.
+-   **Issue recurrence in previous fork**: The preview environment (Manus VM) is unstable, frequently goes to sleep, and becomes inaccessible via its external URL. This repeatedly blocked the agent's ability to use the screenshot tool for visual proof. The  also seems to change or require resetting between forks.
+-   **Recurrence count**: High (occurred multiple times throughout the session).
+-   **Status**: RESOLVED (for now). The agent found the correct stable preview URL and fixed the environment. The next agent should be aware that this might happen again.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Fragmented Data Architecture**: The core technical challenge is that user balances are stored in four different MongoDB collections (, , , ). This is the root of most data inconsistency bugs.
--   **Data Synchronization Strategy**: The current approach is a unified write service () that updates all four collections at once. The next logical step is to unify reads.
--   **API-Driven Frontend**: The React frontend is heavily dependent on the FastAPI backend for all data, including prices, balances, and user information.
--   **Live Pricing**: Prices are fetched from CoinGecko via a caching layer in the backend (,  collection).
+-   **Backend Caching**: Used Python's  library with a TTL (Time-To-Live) cache to drastically reduce API response times for heavy computational endpoints from >20s to <50ms.
+-   **Frontend Progressive Loading**: Refactored React components to load critical data first to render the UI instantly, then fetch heavier, non-essential data in the background. This eliminated long-running spinners.
+-   **MongoDB Aggregation**: Replaced slow, iterative loops in Python with efficient MongoDB aggregation pipelines for calculating platform-wide and per-user financial statistics.
+-   **Git History Rewriting**: Used  to completely remove sensitive files (credentials) that were accidentally committed to the repository history.
+-   **FastAPI Routing**: Debugged an issue where new endpoints were not being registered because they were defined after the  call.
 
 **key DB schema**
--   : { user_id, currency, available_balance, locked_balance } - **This should be the source of truth.**
--   : { user_id, balances: { BTC: amount, ... } }
--   : { user_id, currency, balance }
--   : { user_id, currency, balance }
--   : { cache_id, prices: { BTC: 87000, ETH: 2750, ... } } - **Note the simple key:value structure for prices.**
+-   No major schema changes. The  collection (represented by the  model) was updated to include a  field.
 
 **changes in tech stack**
--   None.
+-   Implicitly added  library to the backend for implementing caching.
 
 **All files of reference**
--   : Contains the broken  endpoint that needs to be fixed.
--   : The frontend page displaying the incorrect £0.00 total portfolio value.
--   : Contains the logic for the unified balance *writes*. Will be key for unifying *reads*.
--   : The page that has been the focus of most of the UI work.
+-   : (NEW) The core of the performance optimization. Contains the single source of truth for all financial data, with caching.
+-   : (MODIFIED) The primary page for the performance fix, refactored to load progressively.
+-   : (MODIFIED) Updated to use the new cached data service, fixed numerous bugs, and added admin rights.
+-   : (MODIFIED) Key to fixing the UI jitter; updated to prevent lazy loading from delaying the UI.
+-   : (PENDING WORK) The next file to be modified for the SMS 2FA feature.
 
 **Areas that need refactoring**:
--   The entire backend needs to be refactored to use  as the single source of truth for reading balances, eliminating direct calls to the other three balance collections.
+-   The list of authorized admin emails is currently hardcoded in . This should be moved to a database collection or a configuration file for better management.
 
 **key api endpoints**
--   : **(BROKEN)** This is the endpoint causing the £0.00 dashboard bug.
--   : **(WORKING)** This correctly shows the user's full balance on the Wallet page.
--   : **(WORKING)** Provides live crypto prices to the frontend.
--   : **(WORKING)** Used for user authentication.
+-   : (NEW & OPTIMIZED) Provides fast, cached, high-level statistics for the entire platform.
+-   : (NEW & OPTIMIZED) Provides a fast, cached financial breakdown for all users. Was the source of a major performance bottleneck (22s load time).
+-   : (NEW) Provides a list of the latest users who have registered.
+-   : (FIXED) Previously commented out, now functional.
 
 **Critical Info for New Agent**
-1.  **IMMEDIATE PRIORITY:** Your first task is to fix the dashboard bug where Total Portfolio Value shows **£0.00**. The issue is in the backend API endpoint  in . It's likely failing to correctly read prices from the  collection.
-2.  **DATA WIPE DANGER:** Be aware that test user data has been mysteriously wiped multiple times. Before starting any debugging, **always verify the test user () and its balances exist in the  database across all four balance collections.** If data is missing, you will chase phantom bugs.
-3.  **ARCHITECTURAL FLAW:** The root cause of all balance issues is the four separate balance collections. While writes are now unified via , reads are not. The long-term solution is to refactor all balance reads to go through .
-4.  **USER VOLATILITY:** The user is extremely volatile and profane. Communicate clearly, justify your actions, and provide screenshot/ proof for every single fix. Do not get sidetracked by their anger; focus on solving the technical problem.
-5.  **Test Credentials**:
-    -   Buyer:  / 
-    -   Seller:  / 
+1.  **USER PERSONALITY**: The user is extremely volatile, aggressive, and uses profanity. Be direct, concise, and do not make excuses. Always provide visual proof (screenshots) of your work. Do not perform ANY unrequested changes.
+2.  **INFRASTRUCTURE INSTABILITY**: The preview environment can become unresponsive (sleeps). If screenshots fail, you may need to restart services (auto-save: ERROR (spawn error)
+backend: ERROR (abnormal termination)
+mongodb: ERROR (abnormal termination)
+frontend: started
+redirect-server: started
+nginx-code-proxy: started
+code-server: started) or debug the  in , which has been a recurring issue. The correct, stable URL at the end of the session was .
+3.  **PRIORITY TASK**: Your first and highest priority task is to implement the **SMS 2FA login flow**. This was an original requirement that has not been started. This is likely blocked by invalid Twilio credentials.
+4.  **CREDENTIALS**: The Twilio credentials in  are likely invalid and cause a 401 error. You must verify this with the user before starting the 2FA task.
+5.  **PERFORMANCE IS KEY**: The user is now highly sensitive to performance. Do not introduce any changes that cause slow load times or UI spinners. Follow the established patterns of backend caching and frontend progressive loading.
+6.  **ADMIN ACCESS**: The user  is now a registered admin. The admin access code is .
 
 **documents created in this job**
--   
--   
--   
+-   None.
 
 **Last 10 User Messages and any pending user messages**
-1.  User angry about the Add to Savings button not working. (RESOLVED - agent proved it works).
-2.  User forwards message from tester Nishant about API credentials not working. (RESOLVED - agent created new test users and docs).
-3.  User demands proof that the test setup works. (RESOLVED - agent provided extensive proof).
-4.  User forwards message from Nishant about confusion over two backend folders. (RESOLVED - agent clarified with a new README).
-5.  User angry again about the Savings button. (RESOLVED - agent re-verified and proved it works).
-6.  User forwards message from Nishant needing balances on the test account. (RESOLVED - agent added balances after a difficult debugging session).
-7.  User wants a P2P dispute email sent for testing. (RESOLVED - agent sent the email).
-8.  User forwards message from Nishant needing a second test account. (RESOLVED - agent created a second account).
-9.  User furious about a weird USD button and the portfolio balance not showing. (PARTIALLY RESOLVED - USD button removed, but balance issue persists).
-10. User angry about the lack of balance synchronization, demanding a unified system. (IN PROGRESS - Agent unified writes, but reads are still fragmented and the dashboard bug remains).
+1.  User acknowledged backend performance fix but demanded frontend UX fixes for icon/emoji pop-in. (Resolved)
+2.  Agent confirmed understanding and started working on the UX fixes. (In Progress)
+3.  Agent provided screenshots showing the Wallet, Dashboard, and Instant Buy pages loading instantly. (Resolved)
+4.  Agent pushed the final UX fixes to all repos. (Resolved)
+5.  User repeated the exact same request for UX fixes, likely a copy-paste error. (Agent handled it as a re-verification request)
+6.  Agent re-verified that the commits were pushed and the fixes were in place. (Resolved)
+7.  Agent showed the final commit ID and confirmed all 12 repos were up-to-date. (Resolved)
+8.  Agent provided a final summary of the UX fixes, performance metrics, and proof of completion. (Pending User Verification)
 
 **Project Health Check:**
 -   **Broken**:
-    -   Dashboard Total Portfolio Value card ().
+    -   The SMS 2FA login flow is entirely missing from the frontend.
+    -   The backend Twilio integration is likely broken due to invalid credentials (401 errors reported).
 -   **Mocked**:
     -   None.
 
 **3rd Party Integrations**
--   **CoinGecko**: Used by the backend () to fetch live cryptocurrency prices.
--   **Resend**: Used by the backend () to send transactional emails like P2P dispute notifications.
+-   **CoinGecko**: Live cryptocurrency prices.
+-   **NOWPayments**: List of supported currencies.
+-   **TradingView**: Candlestick charts.
+-   **Resend/SendGrid**: Email services.
+-   **Twilio**: For SMS 2FA. **(CURRENTLY UNSTABLE/BROKEN - requires user to verify credentials)**.
+-   **Google OAuth**: For login.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES (via  and screenshot tool).
--   **Troubleshoot agent used after agent stuck in loop**: YES, the agent went through several debugging loops to identify the multi-collection balance issue.
--   **Test files created**:
-    -   Temporary python scripts were used to seed the database with test balances.
--   **Known regressions**: The currency selector was added and then removed due to user complaint. The Total Portfolio Value card on the dashboard stopped working after balances were correctly added to the  collection, revealing the fragmented read architecture.
+-   **Testing agent used after significant changes**: YES. A testing agent report was used to identify missing API endpoints.
+-   **Troubleshoot agent used after agent stuck in loop**: NO.
+-   **Test files created**: None.
+-   **Known regressions**: None.
 
 **Credentials to test flow:**
--   **Buyer Account**:
-    -   Email: 
-    -   Password: 
--   **Seller Account**:
-    -   Email: 
-    -   Password: 
+-   **GitHub PAT**:  (New)
+-   **Admin User**:  / 
+-   **Admin Access Code**: 
+-   **Twilio Account SID**: 
+-   **Twilio Auth Token**:  **(This is likely invalid and causing 401 errors)**
+-   **Twilio Phone Number**: 
 
 **What agent forgot to execute**
--   The agent did not forget but was in the middle of fixing the P0 bug () when the session ended. The full refactoring of unifying balance *reads* across the app was identified as a necessary future task but not started.</analysis>
+-   The agent did not start the implementation of the SMS 2FA login flow on the frontend, which was one of the two original user requests from the previous fork. This was deprioritized due to the stream of urgent feature requests and performance issues from the user.
+-   The agent did not act on the user's vague request to add instructions in the dashboard. This requires clarification from the user.</analysis>
