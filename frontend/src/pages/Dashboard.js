@@ -59,25 +59,10 @@ export default function Dashboard() {
 
   const loadData = async (userId) => {
     try {
-      // Cache-busting: Add timestamp + headers to prevent stale data
-      const res = await axios.get(`${API}/api/user/${userId}/portfolio?_t=${Date.now()}`, {
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
+      // PHASE 1: Load portfolio value first (critical, fast)
+      const res = await axios.get(`${API}/api/user/${userId}/portfolio?_t=${Date.now()}`);
       if (res.data.success) {
-        // API returns totalValue, not current_value - support both for compatibility
         const value = res.data.totalValue || res.data.current_value || 0;
-        console.log('🔍 Dashboard API Response:', {
-          totalValue: res.data.totalValue,
-          current_value: res.data.current_value,
-          final_value: value,
-          timestamp: new Date().toISOString(),
-          url: res.config.url
-        });
-        console.log(`💰 DASHBOARD PORTFOLIO VALUE: £${value.toFixed(2)}`);
         setTotalValue(value);
         setPortfolioData({
           change24h: res.data.change24h || res.data.plPercent || 0,
@@ -87,33 +72,29 @@ export default function Dashboard() {
         });
       }
       
-      // Load top assets (with cache busting + headers)
-      const assetsRes = await axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`, {
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-      if (assetsRes.data.success) {
-        setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
-      }
+      // STOP SPINNER - page is usable now
+      setLoading(false);
       
-      // Load recent transactions (with cache busting + headers)
-      const txRes = await axios.get(`${API}/api/transactions/${userId}?limit=5&_t=${Date.now()}`, {
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-      if (txRes.data.success) {
-        setRecentTransactions(txRes.data.transactions || []);
-      }
+      // PHASE 2: Load additional data in background (non-blocking)
+      axios.get(`${API}/api/wallets/balances/${userId}?_t=${Date.now()}`)
+        .then(assetsRes => {
+          if (assetsRes.data.success) {
+            setTopAssets(assetsRes.data.balances?.slice(0, 5) || []);
+          }
+        })
+        .catch(() => {});
+      
+      axios.get(`${API}/api/transactions/${userId}?limit=5&_t=${Date.now()}`)
+        .then(txRes => {
+          if (txRes.data.success) {
+            setRecentTransactions(txRes.data.transactions || []);
+          }
+        })
+        .catch(() => {});
+        
     } catch (error) {
       console.error('Error:', error);
-    } finally {
-      setLoading(false);
+      setLoading(false); // Always stop spinner
     }
   };
 
