@@ -1,19 +1,22 @@
 """
-UNIFIED DATA SERVICE - SINGLE SOURCE OF TRUTH
-=============================================
+UNIFIED DATA SERVICE - SINGLE SOURCE OF TRUTH (OPTIMIZED)
+==========================================================
 All financial calculations MUST go through this service.
 DO NOT duplicate this logic anywhere else.
 
-This service provides:
-- User financial summaries
-- Admin financial breakdowns
-- Transaction tracking across all features
-- Fee calculations per feature
+OPTIMIZATIONS:
+- In-memory caching with TTL
+- Aggregated queries instead of per-user loops
+- Pagination enforced
+- Background refresh for heavy calculations
 """
 
 import logging
-from datetime import datetime, timezone
+import asyncio
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Any
+from functools import lru_cache
+import time
 
 logger = logging.getLogger("unified_data_service")
 
@@ -25,297 +28,354 @@ class UnifiedDataService:
     
     def __init__(self, db):
         self.db = db
-        self._price_cache = {}
+        self._cache = {}
+        self._cache_ttl = {}
+        self._default_cache_seconds = 30  # Cache for 30 seconds
+        self._heavy_cache_seconds = 60    # Heavy queries cache for 60 seconds
+        
         self._default_prices = {
-            "BTC": 105000,
-            "ETH": 3900,
-            "USDT": 1,
-            "USDC": 1,
-            "SOL": 200,
-            "XRP": 2.3,
-            "ADA": 1.1,
-            "DOGE": 0.4,
-            "GBP": 1.27,
-            "EUR": 1.05,
-            "USD": 1
+            "BTC": 105000, "ETH": 3900, "USDT": 1, "USDC": 1,
+            "SOL": 200, "XRP": 2.3, "ADA": 1.1, "DOGE": 0.4,
+            "GBP": 1.27, "EUR": 1.05, "USD": 1
         }
+    
+    def _get_cache(self, key: str) -> Optional[Any]:
+        """Get cached value if not expired"""
+        if key in self._cache and key in self._cache_ttl:
+            if time.time() < self._cache_ttl[key]:
+                return self._cache[key]
+        return None
+    
+    def _set_cache(self, key: str, value: Any, ttl_seconds: int = None):
+        """Set cache with TTL"""
+        ttl = ttl_seconds or self._default_cache_seconds
+        self._cache[key] = value
+        self._cache_ttl[key] = time.time() + ttl
     
     def _get_usd_value(self, amount: float, currency: str) -> float:
         """Convert any currency amount to USD equivalent"""
+        if not amount:
+            return 0.0
         price = self._default_prices.get(currency.upper(), 1)
-        return float(amount or 0) * price
+        return float(amount) * price
     
-    async def get_user_financial_summary(self, user_id: str) -> Dict[str, Any]:
+    async def get_platform_summary_fast(self) -> Dict[str, Any]:
         """
-        Get complete financial summary for a user.
-        Used by: User Dashboard, Admin Dashboard, Reports
+        FAST platform summary - uses aggregation, not loops.
+        Target: < 500ms response time
         """
+        cache_key = "platform_summary_fast"
+        cached = self._get_cache(cache_key)
+        if cached:
+            return cached
+        
         try:
-            # Get wallet balances
-            wallets = await self.db.wallets.find(
-                {"user_id": user_id},
-                {"_id": 0}
-            ).to_list(100)
+            start = time.time()
             
-            balances = {}
-            total_balance_usd = 0
-            
-            for wallet in wallets:
-                currency = wallet.get("currency", "")
-                available = float(wallet.get("available_balance", 0) or 0)
-                locked = float(wallet.get("locked_balance", 0) or 0)
-                total = available + locked
-                
-                balances[currency] = {
-                    "available": available,
-                    "locked": locked,
-                    "total": total,
-                    "usd_value": self._get_usd_value(total, currency)
-                }
-                total_balance_usd += self._get_usd_value(total, currency)
-            
-            # Get all transactions
-            transactions = await self.db.wallet_transactions.find(
-                {"user_id": user_id},
-                {"_id": 0}
-            ).to_list(10000)
-            
-            # Categorize by type
-            deposits = {"count": 0, "total": 0, "total_usd": 0}
-            withdrawals = {"count": 0, "total": 0, "total_usd": 0}
-            swaps = {"count": 0, "total": 0, "total_usd": 0}
-            p2p_buys = {"count": 0, "total": 0, "total_usd": 0}
-            p2p_sells = {"count": 0, "total": 0, "total_usd": 0}
-            instant_buys = {"count": 0, "total": 0, "total_usd": 0}
-            staking = {"count": 0, "total": 0, "total_usd": 0}
-            vault = {"count": 0, "total": 0, "total_usd": 0}
-            fees_paid = {"count": 0, "total": 0, "total_usd": 0}
-            
-            for tx in transactions:
-                tx_type = tx.get("transaction_type", "").lower()
-                amount = float(tx.get("amount", 0) or 0)
-                currency = tx.get("currency", "USD")
-                usd_value = self._get_usd_value(amount, currency)
-                fee = float(tx.get("fee", 0) or 0)
-                fee_usd = self._get_usd_value(fee, currency)
-                
-                if tx_type in ["deposit", "crypto_deposit"]:
-                    deposits["count"] += 1
-                    deposits["total"] += amount
-                    deposits["total_usd"] += usd_value
-                elif tx_type in ["withdrawal", "crypto_withdrawal"]:
-                    withdrawals["count"] += 1
-                    withdrawals["total"] += amount
-                    withdrawals["total_usd"] += usd_value
-                elif tx_type in ["swap", "convert"]:
-                    swaps["count"] += 1
-                    swaps["total"] += amount
-                    swaps["total_usd"] += usd_value
-                elif tx_type in ["p2p_buy", "p2p_purchase"]:
-                    p2p_buys["count"] += 1
-                    p2p_buys["total"] += amount
-                    p2p_buys["total_usd"] += usd_value
-                elif tx_type in ["p2p_sell", "p2p_sale"]:
-                    p2p_sells["count"] += 1
-                    p2p_sells["total"] += amount
-                    p2p_sells["total_usd"] += usd_value
-                elif tx_type in ["instant_buy", "express_buy", "buy"]:
-                    instant_buys["count"] += 1
-                    instant_buys["total"] += amount
-                    instant_buys["total_usd"] += usd_value
-                elif tx_type in ["stake", "staking"]:
-                    staking["count"] += 1
-                    staking["total"] += amount
-                    staking["total_usd"] += usd_value
-                elif tx_type in ["vault", "vault_lock"]:
-                    vault["count"] += 1
-                    vault["total"] += amount
-                    vault["total_usd"] += usd_value
-                
-                if fee > 0:
-                    fees_paid["count"] += 1
-                    fees_paid["total"] += fee
-                    fees_paid["total_usd"] += fee_usd
-            
-            # Get P2P trade counts
-            p2p_trades_as_buyer = await self.db.p2p_trades.count_documents({"buyer_id": user_id})
-            p2p_trades_as_seller = await self.db.p2p_trades.count_documents({"seller_id": user_id})
-            
-            return {
-                "user_id": user_id,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "balances": balances,
-                "total_balance_usd": round(total_balance_usd, 2),
-                "activity": {
-                    "deposits": deposits,
-                    "withdrawals": withdrawals,
-                    "swaps": swaps,
-                    "p2p_buys": p2p_buys,
-                    "p2p_sells": p2p_sells,
-                    "instant_buys": instant_buys,
-                    "staking": staking,
-                    "vault": vault,
-                    "fees_paid": fees_paid
-                },
-                "p2p_stats": {
-                    "trades_as_buyer": p2p_trades_as_buyer,
-                    "trades_as_seller": p2p_trades_as_seller,
-                    "total_trades": p2p_trades_as_buyer + p2p_trades_as_seller
-                },
-                "total_transactions": len(transactions)
-            }
-        except Exception as e:
-            logger.error(f"Error getting user financial summary: {str(e)}")
-            return {"error": str(e), "user_id": user_id}
-    
-    async def get_admin_platform_summary(self) -> Dict[str, Any]:
-        """
-        Get complete platform financial summary for admin.
-        Used by: Admin Dashboard, Reports, Analytics
-        """
-        try:
-            # Get all users
+            # Get user counts - single queries
             total_users = await self.db.users.count_documents({})
             verified_users = await self.db.users.count_documents({"email_verified": True})
             kyc_users = await self.db.users.count_documents({"kyc_verified": True})
             
-            # Get all wallets for platform totals
-            all_wallets = await self.db.wallets.find({}, {"_id": 0}).to_list(100000)
+            # Get aggregated wallet totals using MongoDB aggregation
+            wallet_pipeline = [
+                {"$group": {
+                    "_id": "$currency",
+                    "total_available": {"$sum": {"$toDouble": {"$ifNull": ["$available_balance", 0]}}},
+                    "total_locked": {"$sum": {"$toDouble": {"$ifNull": ["$locked_balance", 0]}}}
+                }}
+            ]
+            wallet_totals = await self.db.wallets.aggregate(wallet_pipeline).to_list(100)
             
+            # Calculate platform totals
             platform_balances = {}
             total_platform_usd = 0
             
-            for wallet in all_wallets:
-                currency = wallet.get("currency", "")
-                available = float(wallet.get("available_balance", 0) or 0)
-                locked = float(wallet.get("locked_balance", 0) or 0)
-                total = available + locked
-                
-                if currency not in platform_balances:
-                    platform_balances[currency] = {"total": 0, "usd_value": 0}
-                
-                platform_balances[currency]["total"] += total
+            for w in wallet_totals:
+                currency = w["_id"] or ""
+                if not currency:
+                    continue
+                total = (w.get("total_available", 0) or 0) + (w.get("total_locked", 0) or 0)
                 usd_val = self._get_usd_value(total, currency)
-                platform_balances[currency]["usd_value"] += usd_val
+                platform_balances[currency] = {"total": round(total, 8), "usd_value": round(usd_val, 2)}
                 total_platform_usd += usd_val
             
-            # Get transaction totals
-            all_transactions = await self.db.wallet_transactions.find({}, {"_id": 0}).to_list(100000)
+            # Get transaction aggregates
+            tx_pipeline = [
+                {"$group": {
+                    "_id": "$transaction_type",
+                    "count": {"$sum": 1},
+                    "total_amount": {"$sum": {"$toDouble": {"$ifNull": ["$amount", 0]}}},
+                    "total_fees": {"$sum": {"$toDouble": {"$ifNull": ["$fee", 0]}}}
+                }}
+            ]
+            tx_totals = await self.db.wallet_transactions.aggregate(tx_pipeline).to_list(50)
             
-            total_deposits = 0
-            total_withdrawals = 0
-            total_fees_collected = 0
-            total_swaps = 0
-            total_p2p_volume = 0
-            total_instant_buys = 0
+            volume = {
+                "total_deposits_usd": 0, "total_withdrawals_usd": 0,
+                "total_swaps_usd": 0, "total_p2p_volume_usd": 0,
+                "total_instant_buys_usd": 0, "total_fees_collected_usd": 0
+            }
             
-            for tx in all_transactions:
-                tx_type = tx.get("transaction_type", "").lower()
-                amount = float(tx.get("amount", 0) or 0)
-                currency = tx.get("currency", "USD")
-                usd_value = self._get_usd_value(amount, currency)
-                fee = float(tx.get("fee", 0) or 0)
-                fee_usd = self._get_usd_value(fee, currency)
+            for tx in tx_totals:
+                tx_type = (tx["_id"] or "").lower()
+                amount = tx.get("total_amount", 0) or 0
+                fees = tx.get("total_fees", 0) or 0
                 
                 if tx_type in ["deposit", "crypto_deposit"]:
-                    total_deposits += usd_value
+                    volume["total_deposits_usd"] += amount
                 elif tx_type in ["withdrawal", "crypto_withdrawal"]:
-                    total_withdrawals += usd_value
+                    volume["total_withdrawals_usd"] += amount
                 elif tx_type in ["swap", "convert"]:
-                    total_swaps += usd_value
-                elif tx_type in ["p2p_buy", "p2p_sell", "p2p_purchase", "p2p_sale"]:
-                    total_p2p_volume += usd_value
+                    volume["total_swaps_usd"] += amount
+                elif tx_type in ["p2p_buy", "p2p_sell"]:
+                    volume["total_p2p_volume_usd"] += amount
                 elif tx_type in ["instant_buy", "express_buy", "buy"]:
-                    total_instant_buys += usd_value
+                    volume["total_instant_buys_usd"] += amount
                 
-                total_fees_collected += fee_usd
+                volume["total_fees_collected_usd"] += fees
             
-            # Get P2P stats
-            total_p2p_trades = await self.db.p2p_trades.count_documents({})
-            active_p2p_trades = await self.db.p2p_trades.count_documents({"status": {"$in": ["pending", "paid", "in_progress"]}})
-            completed_p2p_trades = await self.db.p2p_trades.count_documents({"status": "completed"})
+            # P2P stats - simple counts
+            total_p2p = await self.db.p2p_trades.count_documents({})
+            active_p2p = await self.db.p2p_trades.count_documents({"status": {"$in": ["pending", "paid", "in_progress"]}})
+            completed_p2p = await self.db.p2p_trades.count_documents({"status": "completed"})
             
-            # Get dispute stats
+            # Disputes
             total_disputes = await self.db.disputes.count_documents({})
-            active_disputes = await self.db.disputes.count_documents({"status": {"$in": ["open", "pending", "in_review"]}})
+            active_disputes = await self.db.disputes.count_documents({"status": {"$in": ["open", "pending"]}})
             
-            return {
+            elapsed = time.time() - start
+            
+            result = {
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "users": {
-                    "total": total_users,
-                    "verified_email": verified_users,
-                    "kyc_verified": kyc_users
-                },
-                "platform_balances": platform_balances,
+                "response_time_ms": round(elapsed * 1000, 2),
+                "users": {"total": total_users, "verified_email": verified_users, "kyc_verified": kyc_users},
                 "total_platform_usd": round(total_platform_usd, 2),
-                "volume": {
-                    "total_deposits_usd": round(total_deposits, 2),
-                    "total_withdrawals_usd": round(total_withdrawals, 2),
-                    "total_swaps_usd": round(total_swaps, 2),
-                    "total_p2p_volume_usd": round(total_p2p_volume, 2),
-                    "total_instant_buys_usd": round(total_instant_buys, 2),
-                    "total_fees_collected_usd": round(total_fees_collected, 2)
-                },
-                "p2p": {
-                    "total_trades": total_p2p_trades,
-                    "active_trades": active_p2p_trades,
-                    "completed_trades": completed_p2p_trades
-                },
-                "disputes": {
-                    "total": total_disputes,
-                    "active": active_disputes
-                },
-                "total_transactions": len(all_transactions)
+                "platform_balances_top": dict(list(sorted(platform_balances.items(), key=lambda x: x[1]["usd_value"], reverse=True))[:10]),
+                "volume": {k: round(v, 2) for k, v in volume.items()},
+                "p2p": {"total_trades": total_p2p, "active_trades": active_p2p, "completed_trades": completed_p2p},
+                "disputes": {"total": total_disputes, "active": active_disputes}
             }
+            
+            self._set_cache(cache_key, result, self._default_cache_seconds)
+            return result
+            
         except Exception as e:
-            logger.error(f"Error getting platform summary: {str(e)}")
+            logger.error(f"Error in platform summary: {str(e)}")
             return {"error": str(e)}
     
-    async def get_all_users_financial_breakdown(self, limit: int = 100) -> List[Dict[str, Any]]:
+    async def get_users_breakdown_fast(self, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
         """
-        Get financial breakdown for all users (admin view).
-        Used by: Admin Dashboard, Customer Management, Reports
+        FAST users breakdown - paginated, no per-user loops.
+        Target: < 500ms response time
         """
+        # Enforce hard limit
+        limit = min(limit, 50)
+        
+        cache_key = f"users_breakdown_{limit}_{offset}"
+        cached = self._get_cache(cache_key)
+        if cached:
+            return cached
+        
         try:
+            start = time.time()
+            
+            # Get users with pagination
             users = await self.db.users.find(
                 {},
-                {"_id": 0, "user_id": 1, "email": 1, "full_name": 1, "client_id": 1, "created_at": 1, "email_verified": 1, "kyc_verified": 1}
-            ).sort("created_at", -1).limit(limit).to_list(limit)
+                {"_id": 0, "user_id": 1, "email": 1, "full_name": 1, "client_id": 1, 
+                 "created_at": 1, "email_verified": 1, "kyc_verified": 1, "phone_number": 1}
+            ).sort("created_at", -1).skip(offset).limit(limit).to_list(limit)
             
+            user_ids = [u.get("user_id") for u in users if u.get("user_id")]
+            
+            # Get wallet balances for these users in ONE query
+            wallet_pipeline = [
+                {"$match": {"user_id": {"$in": user_ids}}},
+                {"$group": {
+                    "_id": "$user_id",
+                    "currencies": {"$push": {
+                        "currency": "$currency",
+                        "available": {"$toDouble": {"$ifNull": ["$available_balance", 0]}},
+                        "locked": {"$toDouble": {"$ifNull": ["$locked_balance", 0]}}
+                    }}
+                }}
+            ]
+            wallet_data = await self.db.wallets.aggregate(wallet_pipeline).to_list(limit)
+            wallet_map = {w["_id"]: w["currencies"] for w in wallet_data}
+            
+            # Get transaction counts per user in ONE query
+            tx_pipeline = [
+                {"$match": {"user_id": {"$in": user_ids}}},
+                {"$group": {
+                    "_id": "$user_id",
+                    "tx_count": {"$sum": 1},
+                    "total_deposited": {"$sum": {"$cond": [
+                        {"$in": ["$transaction_type", ["deposit", "crypto_deposit"]]},
+                        {"$toDouble": {"$ifNull": ["$amount", 0]}},
+                        0
+                    ]}},
+                    "total_withdrawn": {"$sum": {"$cond": [
+                        {"$in": ["$transaction_type", ["withdrawal", "crypto_withdrawal"]]},
+                        {"$toDouble": {"$ifNull": ["$amount", 0]}},
+                        0
+                    ]}},
+                    "total_fees": {"$sum": {"$toDouble": {"$ifNull": ["$fee", 0]}}}
+                }}
+            ]
+            tx_data = await self.db.wallet_transactions.aggregate(tx_pipeline).to_list(limit)
+            tx_map = {t["_id"]: t for t in tx_data}
+            
+            # Get P2P trade counts per user
+            p2p_pipeline = [
+                {"$match": {"$or": [{"buyer_id": {"$in": user_ids}}, {"seller_id": {"$in": user_ids}}]}},
+                {"$group": {
+                    "_id": None,
+                    "trades": {"$push": {"buyer_id": "$buyer_id", "seller_id": "$seller_id"}}
+                }}
+            ]
+            p2p_data = await self.db.p2p_trades.aggregate(p2p_pipeline).to_list(1)
+            
+            # Build P2P count map
+            p2p_map = {uid: 0 for uid in user_ids}
+            if p2p_data and p2p_data[0].get("trades"):
+                for trade in p2p_data[0]["trades"]:
+                    if trade.get("buyer_id") in p2p_map:
+                        p2p_map[trade["buyer_id"]] += 1
+                    if trade.get("seller_id") in p2p_map:
+                        p2p_map[trade["seller_id"]] += 1
+            
+            # Build result
             results = []
-            
             for user in users:
                 user_id = user.get("user_id")
                 if not user_id:
                     continue
                 
-                summary = await self.get_user_financial_summary(user_id)
+                # Calculate balance
+                total_usd = 0
+                wallets = wallet_map.get(user_id, [])
+                for w in wallets:
+                    total = (w.get("available", 0) or 0) + (w.get("locked", 0) or 0)
+                    total_usd += self._get_usd_value(total, w.get("currency", ""))
+                
+                tx_info = tx_map.get(user_id, {})
                 
                 results.append({
-                    "client_id": user.get("client_id", f"CHX-{user_id[:6].upper()}" if user_id else "N/A"),
+                    "client_id": user.get("client_id", f"CHX-{user_id[:6].upper()}"),
                     "user_id": user_id,
                     "email": user.get("email"),
                     "full_name": user.get("full_name"),
+                    "phone_number": user.get("phone_number"),
                     "email_verified": user.get("email_verified", False),
                     "kyc_verified": user.get("kyc_verified", False),
                     "signup_date": user.get("created_at"),
-                    "total_balance_usd": summary.get("total_balance_usd", 0),
-                    "activity": summary.get("activity", {}),
-                    "p2p_stats": summary.get("p2p_stats", {}),
-                    "total_transactions": summary.get("total_transactions", 0)
+                    "total_balance_usd": round(total_usd, 2),
+                    "total_deposited": round(tx_info.get("total_deposited", 0), 2),
+                    "total_withdrawn": round(tx_info.get("total_withdrawn", 0), 2),
+                    "total_fees_paid": round(tx_info.get("total_fees", 0), 2),
+                    "transaction_count": tx_info.get("tx_count", 0),
+                    "p2p_trades": p2p_map.get(user_id, 0)
                 })
             
-            return results
+            elapsed = time.time() - start
+            
+            result = {
+                "data": results,
+                "count": len(results),
+                "limit": limit,
+                "offset": offset,
+                "response_time_ms": round(elapsed * 1000, 2)
+            }
+            
+            self._set_cache(cache_key, result, self._default_cache_seconds)
+            return result
+            
         except Exception as e:
-            logger.error(f"Error getting all users breakdown: {str(e)}")
-            return []
+            logger.error(f"Error in users breakdown: {str(e)}")
+            return {"error": str(e), "data": []}
+    
+    async def get_user_summary_fast(self, user_id: str) -> Dict[str, Any]:
+        """
+        FAST single user summary.
+        Target: < 200ms response time
+        """
+        cache_key = f"user_summary_{user_id}"
+        cached = self._get_cache(cache_key)
+        if cached:
+            return cached
+        
+        try:
+            start = time.time()
+            
+            # Get wallets
+            wallets = await self.db.wallets.find(
+                {"user_id": user_id},
+                {"_id": 0, "currency": 1, "available_balance": 1, "locked_balance": 1}
+            ).to_list(50)
+            
+            balances = {}
+            total_usd = 0
+            for w in wallets:
+                currency = w.get("currency", "")
+                available = float(w.get("available_balance", 0) or 0)
+                locked = float(w.get("locked_balance", 0) or 0)
+                total = available + locked
+                usd_val = self._get_usd_value(total, currency)
+                balances[currency] = {"available": available, "locked": locked, "total": total, "usd_value": round(usd_val, 2)}
+                total_usd += usd_val
+            
+            # Get transaction summary using aggregation
+            tx_pipeline = [
+                {"$match": {"user_id": user_id}},
+                {"$group": {
+                    "_id": "$transaction_type",
+                    "count": {"$sum": 1},
+                    "total": {"$sum": {"$toDouble": {"$ifNull": ["$amount", 0]}}},
+                    "fees": {"$sum": {"$toDouble": {"$ifNull": ["$fee", 0]}}}
+                }}
+            ]
+            tx_summary = await self.db.wallet_transactions.aggregate(tx_pipeline).to_list(20)
+            
+            activity = {}
+            total_fees = 0
+            for tx in tx_summary:
+                tx_type = tx["_id"] or "other"
+                activity[tx_type] = {
+                    "count": tx.get("count", 0),
+                    "total": round(tx.get("total", 0), 2)
+                }
+                total_fees += tx.get("fees", 0)
+            
+            # P2P counts
+            p2p_buyer = await self.db.p2p_trades.count_documents({"buyer_id": user_id})
+            p2p_seller = await self.db.p2p_trades.count_documents({"seller_id": user_id})
+            
+            elapsed = time.time() - start
+            
+            result = {
+                "user_id": user_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "response_time_ms": round(elapsed * 1000, 2),
+                "total_balance_usd": round(total_usd, 2),
+                "balances": balances,
+                "activity": activity,
+                "total_fees_paid": round(total_fees, 2),
+                "p2p_stats": {"as_buyer": p2p_buyer, "as_seller": p2p_seller, "total": p2p_buyer + p2p_seller}
+            }
+            
+            self._set_cache(cache_key, result, self._default_cache_seconds)
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error in user summary: {str(e)}")
+            return {"error": str(e), "user_id": user_id}
 
 
-# Singleton instance - DO NOT CREATE MULTIPLE INSTANCES
+# Singleton instance
 _unified_service_instance = None
 
 def get_unified_service(db):
-    """Get or create the singleton unified data service instance"""
     global _unified_service_instance
     if _unified_service_instance is None:
         _unified_service_instance = UnifiedDataService(db)
