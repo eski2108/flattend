@@ -20,6 +20,8 @@ export default function AdminDashboard() {
   const [customers, setCustomers] = useState([]);
   const [recentSignups, setRecentSignups] = useState([]);
   const [customerInvestments, setCustomerInvestments] = useState([]);
+  const [unifiedPlatformData, setUnifiedPlatformData] = useState(null);
+  const [unifiedUsersData, setUnifiedUsersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [platformConfig, setPlatformConfig] = useState(null);
