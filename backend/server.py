@@ -30481,3 +30481,8 @@ async def get_payment_methods_list():
             {"id": "zelle", "name": "Zelle", "icon": "⚡"}
         ]
     }
+
+
+# Include additional endpoints defined after initial router registration
+app.include_router(api_router)
+
