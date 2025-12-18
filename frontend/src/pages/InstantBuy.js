@@ -103,9 +103,8 @@ function InstantBuy() {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to load coins');
-    } finally {
-      setLoading(false);
     }
+    // Spinner already stopped - don't set loading here
   };
 
   const handleBuy = async (coin, amount) => {
