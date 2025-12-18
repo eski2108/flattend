@@ -1,0 +1,30 @@
+{
+  "extends": ["react-app"],
+  "rules": {
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": ["**/Wallet.jsx"],
+            "message": "Wallet.jsx is DEPRECATED. Use WalletPage.js instead."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js", "**/*.jsx"],
+      "rules": {
+        "no-restricted-syntax": [
+          "warn",
+          {
+            "selector": "ImportDeclaration[source.value=/CoinIcon/]:not([source.value=/Coin3DIcon/])",
+            "message": "Use Coin3DIcon from @/components/Coin3DIcon.js - the ONLY authorized coin icon component."
+          }
+        ]
+      }
+    }
+  ]
+}
