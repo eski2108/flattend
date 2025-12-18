@@ -511,6 +511,25 @@ export default function AdminDashboard() {
       } catch (err) {
         console.log('Customer investments not available yet');
       }
+      
+      // UNIFIED DATA - Single Source of Truth
+      try {
+        const [platformResp, usersResp] = await Promise.all([
+          axios.get(`${API}/api/unified/platform-summary`),
+          axios.get(`${API}/api/unified/all-users-breakdown?limit=50`)
+        ]);
+        
+        if (platformResp.data.success) {
+          setUnifiedPlatformData(platformResp.data.data);
+          console.log('✅ Unified platform data loaded from single source of truth');
+        }
+        if (usersResp.data.success) {
+          setUnifiedUsersData(usersResp.data.data);
+          console.log('✅ Unified users data loaded from single source of truth');
+        }
+      } catch (err) {
+        console.error('Error loading unified data:', err);
+      }
       fetchBanners();
 
       if (statsResp.data.success) {
