@@ -481,87 +481,63 @@ export default function AdminDashboard() {
   };
 
     try {
-      const [statsResp, customersResp, configResp, refConfigResp, refEarningsResp, disputesResp, signupsResp] = await Promise.all([
-        axios.get(`${API}/api/admin/dashboard-stats`),
-        axios.get(`${API}/api/admin/customers`),
-        axios.get(`${API}/api/admin/platform-config`),
-        axios.get(`${API}/api/admin/referral-config`),
-        axios.get(`${API}/api/admin/referral-earnings`),
-        axios.get(`${API}/api/admin/disputes/all`),
-        axios.get(`${API}/api/admin/recent-signups?limit=20`)
+      // PHASE 1: Critical data only - show page FAST
+      const [statsResp, signupsResp] = await Promise.all([
+        axios.get(`${API}/api/admin/dashboard-stats`).catch(() => ({ data: { success: false } })),
+        axios.get(`${API}/api/admin/recent-signups?limit=20`).catch(() => ({ data: { success: false } }))
       ]);
       
+      if (statsResp.data.success) setStats(statsResp.data.stats);
+      if (signupsResp.data.success) setRecentSignups(signupsResp.data.signups);
+      
+      // STOP SPINNER NOW - page is usable
+      setLoading(false);
+      
+      // PHASE 2: Load everything else in background (non-blocking)
+      axios.get(`${API}/api/unified/platform-summary`)
+        .then(resp => resp.data.success && setUnifiedPlatformData(resp.data.data))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/unified/all-users-breakdown?limit=20`)
+        .then(resp => resp.data.success && setUnifiedUsersData(resp.data.data))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/admin/customers`)
+        .then(resp => resp.data.success && setCustomers(resp.data.customers))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/admin/platform-config`)
+        .then(resp => resp.data.success && setPlatformConfig(resp.data))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/admin/referral-config`)
+        .then(resp => resp.data.success && setReferralConfig(resp.data.config))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/admin/referral-earnings`)
+        .then(resp => resp.data.success && setReferralEarnings(resp.data.earnings))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/admin/disputes/all`)
+        .then(resp => resp.data.success && setDisputes(resp.data.disputes))
+        .catch(() => {});
+      
+      axios.get(`${API}/api/admin/customer-investments?limit=20`)
+        .then(resp => resp.data.success && setCustomerInvestments(resp.data.customers))
+        .catch(() => {});
+      
+      // Fire and forget for non-critical
       fetchLiquidity();
       fetchFeeBalances();
       fetchLiquidityHistory();
       fetchCustomerAnalytics();
       fetchPlatformSettings();
       fetchTradingLiquidity();
-      
-      if (signupsResp.data.success) {
-        setRecentSignups(signupsResp.data.signups);
-      }
-      
-      // Fetch customer investments
-      try {
-        const investResp = await axios.get(`${API}/api/admin/customer-investments?limit=20`);
-        if (investResp.data.success) {
-          setCustomerInvestments(investResp.data.customers);
-        }
-      } catch (err) {
-        console.log('Customer investments not available yet');
-      }
-      
-      // UNIFIED DATA - Load progressively, not blocking
-      // Platform summary first (fast, critical)
-      axios.get(`${API}/api/unified/platform-summary`)
-        .then(resp => {
-          if (resp.data.success) {
-            setUnifiedPlatformData(resp.data.data);
-            console.log(`✅ Platform data loaded in ${resp.data.data.response_time_ms}ms`);
-          }
-        })
-        .catch(err => console.error('Platform summary error:', err));
-      
-      // Users breakdown second (paginated, limit 20)
-      axios.get(`${API}/api/unified/all-users-breakdown?limit=20`)
-        .then(resp => {
-          if (resp.data.success) {
-            setUnifiedUsersData(resp.data.data);
-            console.log(`✅ Users breakdown loaded in ${resp.data.response_time_ms}ms`);
-          }
-        })
-        .catch(err => console.error('Users breakdown error:', err));
       fetchBanners();
-
-      if (statsResp.data.success) {
-        setStats(statsResp.data.stats);
-      }
-
-      if (customersResp.data.success) {
-        setCustomers(customersResp.data.customers);
-      }
-
-      if (configResp.data.success) {
-        setPlatformConfig(configResp.data);
-      }
-
-      if (refConfigResp.data.success) {
-        setReferralConfig(refConfigResp.data.config);
-      }
-
-      if (refEarningsResp.data.success) {
-        setReferralEarnings(refEarningsResp.data.earnings);
-      }
-
-      if (disputesResp.data.success) {
-        setDisputes(disputesResp.data.disputes);
-      }
+      
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Failed to load dashboard data');
-    } finally {
-      setLoading(false);
+      setLoading(false); // Always stop spinner
     }
   };
 
