@@ -1035,10 +1035,18 @@ class Notification(BaseModel):
     read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+def generate_client_id():
+    """Generate a unique client ID like CHX-XXXXXX"""
+    import random
+    import string
+    chars = string.ascii_uppercase + string.digits
+    return f"CHX-{''.join(random.choices(chars, k=6))}"
+
 class UserAccount(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
     user_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    client_id: str = Field(default_factory=generate_client_id)  # Human-readable ID like CHX-ABC123
     email: str
     password_hash: str
     full_name: str
