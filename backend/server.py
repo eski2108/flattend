@@ -7418,7 +7418,7 @@ async def google_auth():
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
         base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://crypto-2fa-update.preview.emergentagent.com')
-        redirect_uri = f"{base_url}/auth/google/callback"
+        redirect_uri = f"{base_url}/api/auth/google/callback"
         
         if not google_client_id:
             logger.error("❌ GOOGLE_CLIENT_ID not set in environment")
