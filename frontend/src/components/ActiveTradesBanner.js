@@ -1,0 +1,139 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { IoTime, IoSwapHorizontal } from 'react-icons/io5';
+
+const API = process.env.REACT_APP_BACKEND_URL;
+
+export default function ActiveTradesBanner() {
+  const navigate = useNavigate();
+  const [activeTrades, setActiveTrades] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkActiveTrades();
+    // Check every 30 seconds
+    const interval = setInterval(checkActiveTrades, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const checkActiveTrades = async () => {
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      if (!userData) {
+        setLoading(false);
+        return;
+      }
+      
+      const user = JSON.parse(userData);
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.get(`${API}/api/p2p/my-trades`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { status: 'active' }
+      });
+      
+      if (response.data.success) {
+        // Filter only active/pending trades
+        const active = (response.data.trades || []).filter(t => 
+          ['pending', 'paid', 'in_progress', 'awaiting_payment'].includes(t.status)
+        );
+        setActiveTrades(active);
+      }
+    } catch (error) {
+      console.error('Error checking active trades:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatTimeRemaining = (deadline) => {
+    if (!deadline) return 'N/A';
+    const now = new Date();
+    const end = new Date(deadline);
+    const diff = end - now;
+    
+    if (diff <= 0) return 'Expired';
+    
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${mins}m`;
+    }
+    return `${mins}m`;
+  };
+
+  if (loading || activeTrades.length === 0) return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      right: '20px',
+      zIndex: 9999,
+      maxWidth: '350px'
+    }}>
+      {activeTrades.map((trade, index) => (
+        <div
+          key={trade.trade_id}
+          onClick={() => navigate(`/trade/${trade.trade_id}`)}
+          style={{
+            background: 'linear-gradient(135deg, #0A1929 0%, #1a2744 100%)',
+            border: '1px solid #FFA500',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            marginBottom: index < activeTrades.length - 1 ? '10px' : 0,
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(255, 165, 0, 0.3)',
+            animation: 'pulse 2s infinite'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{
+              background: 'rgba(255, 165, 0, 0.2)',
+              borderRadius: '50%',
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <IoSwapHorizontal size={20} color="#FFA500" />
+            </div>
+            
+            <div style={{ flex: 1 }}>
+              <div style={{ color: '#FFA500', fontWeight: '600', fontSize: '14px' }}>
+                Active Trade
+              </div>
+              <div style={{ color: '#E0E0E0', fontSize: '12px' }}>
+                {trade.crypto_amount} {trade.crypto_currency} • {trade.status}
+              </div>
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(255, 165, 0, 0.15)',
+              padding: '4px 8px',
+              borderRadius: '6px'
+            }}>
+              <IoTime size={14} color="#FFA500" />
+              <span style={{ color: '#FFA500', fontSize: '12px', fontWeight: '600' }}>
+                {formatTimeRemaining(trade.payment_deadline)}
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+      
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { box-shadow: 0 4px 20px rgba(255, 165, 0, 0.3); }
+          50% { box-shadow: 0 4px 30px rgba(255, 165, 0, 0.5); }
+        }
+      `}</style>
+    </div>
+  );
+}
