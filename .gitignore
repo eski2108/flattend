@@ -104,3 +104,7 @@ frontend/node_modules/.cache/
 *.env.*
 .git-credentials
 *.credentials
+-e 
+# Environment files
+*.env
+*.env.*
