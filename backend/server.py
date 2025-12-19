@@ -8977,6 +8977,27 @@ async def admin_resolve_dispute(request: AdminResolveDisputeRequest):
         }
     )
     
+    # AUDIT LOG
+    await log_admin_action(
+        action="DISPUTE_RESOLVE",
+        admin_id=request.admin_address,
+        target_type="dispute",
+        target_id=request.dispute_id,
+        reason=request.admin_notes,
+        before_state=before_state,
+        after_state={
+            "dispute_status": "resolved",
+            "resolution": request.resolution,
+            "crypto_released_to": "buyer" if request.resolution == "release_to_buyer" else "seller"
+        },
+        metadata={
+            "order_id": request.order_id,
+            "buyer": buy_order.get("buyer_address"),
+            "seller": buy_order.get("seller_address"),
+            "crypto_amount": buy_order.get("crypto_amount")
+        }
+    )
+    
     return {
         "success": True,
         "message": f"Dispute resolved. Crypto {request.resolution.replace('_', ' ')}."
