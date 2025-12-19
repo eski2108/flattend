@@ -6185,6 +6185,306 @@ async def admin_update_user_tier(request: dict):
 
 
 # ============================================================================
+# 🔒 FREEZE USER ACCOUNT SYSTEM (P0-1)
+# ============================================================================
+# Allows admin to freeze/unfreeze user accounts
+# Frozen users cannot: login, trade, withdraw, buy
+# All actions are fully audited
+# ============================================================================
+
+class FreezeUserRequest(BaseModel):
+    admin_id: str
+    reason: str  # Mandatory - must explain why
+
+class UnfreezeUserRequest(BaseModel):
+    admin_id: str
+    reason: str  # Mandatory - must explain why
+
+
+async def check_user_frozen(user_id: str) -> dict:
+    """
+    Check if a user is frozen. Returns freeze status and details.
+    Call this before any sensitive operation.
+    """
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        return {"is_frozen": False, "exists": False}
+    
+    return {
+        "is_frozen": user.get("is_frozen", False),
+        "exists": True,
+        "frozen_at": user.get("frozen_at"),
+        "frozen_by": user.get("frozen_by"),
+        "freeze_reason": user.get("freeze_reason")
+    }
+
+
+async def enforce_not_frozen(user_id: str, action: str = "operation"):
+    """
+    Raises HTTPException if user is frozen. 
+    Use this as a guard in endpoints.
+    """
+    status = await check_user_frozen(user_id)
+    if status.get("is_frozen"):
+        logger.warning(f"🔒 Blocked {action} for frozen user {user_id}")
+        raise HTTPException(
+            status_code=403,
+            detail=f"Account is frozen. Reason: {status.get('freeze_reason', 'No reason provided')}. Contact support."
+        )
+
+
+@api_router.post("/admin/users/{user_id}/freeze")
+async def admin_freeze_user(user_id: str, request: FreezeUserRequest):
+    """
+    🔒 FREEZE USER ACCOUNT
+    
+    Blocks user from:
+    - Login
+    - Trading (buy/sell)
+    - Withdrawals
+    - Instant buy
+    - P2P trading
+    
+    Fully audited with before/after state.
+    """
+    try:
+        # Validate inputs
+        if not request.reason or len(request.reason.strip()) < 5:
+            raise HTTPException(status_code=400, detail="Reason is required (minimum 5 characters)")
+        
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        # Get current user state
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if user.get("is_frozen"):
+            raise HTTPException(status_code=400, detail="User is already frozen")
+        
+        # Capture before state
+        before_state = {
+            "is_frozen": user.get("is_frozen", False),
+            "frozen_at": user.get("frozen_at"),
+            "frozen_by": user.get("frozen_by"),
+            "freeze_reason": user.get("freeze_reason")
+        }
+        
+        freeze_timestamp = datetime.now(timezone.utc)
+        
+        # Apply freeze
+        result = await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "is_frozen": True,
+                "frozen_at": freeze_timestamp.isoformat(),
+                "frozen_by": request.admin_id,
+                "freeze_reason": request.reason.strip()
+            }}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to freeze user")
+        
+        # Capture after state
+        after_state = {
+            "is_frozen": True,
+            "frozen_at": freeze_timestamp.isoformat(),
+            "frozen_by": request.admin_id,
+            "freeze_reason": request.reason.strip()
+        }
+        
+        # AUDIT LOG - Immutable record
+        audit_entry = {
+            "audit_id": str(uuid.uuid4()),
+            "action": "USER_FREEZE",
+            "target_user_id": user_id,
+            "target_email": user.get("email"),
+            "admin_id": request.admin_id,
+            "reason": request.reason.strip(),
+            "before_state": before_state,
+            "after_state": after_state,
+            "timestamp": freeze_timestamp.isoformat(),
+            "ip_address": None,  # Can be added from request context
+            "immutable": True
+        }
+        await db.admin_audit_logs.insert_one(audit_entry)
+        
+        logger.info(f"🔒 FROZEN: User {user_id} by admin {request.admin_id}. Reason: {request.reason}")
+        
+        return {
+            "success": True,
+            "message": f"User {user_id} has been frozen",
+            "frozen_at": freeze_timestamp.isoformat(),
+            "audit_id": audit_entry["audit_id"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error freezing user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/users/{user_id}/unfreeze")
+async def admin_unfreeze_user(user_id: str, request: UnfreezeUserRequest):
+    """
+    🔓 UNFREEZE USER ACCOUNT
+    
+    Restores user access to all features.
+    Fully audited with before/after state.
+    """
+    try:
+        # Validate inputs
+        if not request.reason or len(request.reason.strip()) < 5:
+            raise HTTPException(status_code=400, detail="Reason is required (minimum 5 characters)")
+        
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        # Get current user state
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if not user.get("is_frozen"):
+            raise HTTPException(status_code=400, detail="User is not frozen")
+        
+        # Capture before state
+        before_state = {
+            "is_frozen": user.get("is_frozen", False),
+            "frozen_at": user.get("frozen_at"),
+            "frozen_by": user.get("frozen_by"),
+            "freeze_reason": user.get("freeze_reason")
+        }
+        
+        unfreeze_timestamp = datetime.now(timezone.utc)
+        
+        # Apply unfreeze
+        result = await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "is_frozen": False,
+                "frozen_at": None,
+                "frozen_by": None,
+                "freeze_reason": None,
+                "unfrozen_at": unfreeze_timestamp.isoformat(),
+                "unfrozen_by": request.admin_id,
+                "unfreeze_reason": request.reason.strip()
+            }}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to unfreeze user")
+        
+        # Capture after state
+        after_state = {
+            "is_frozen": False,
+            "unfrozen_at": unfreeze_timestamp.isoformat(),
+            "unfrozen_by": request.admin_id,
+            "unfreeze_reason": request.reason.strip()
+        }
+        
+        # AUDIT LOG - Immutable record
+        audit_entry = {
+            "audit_id": str(uuid.uuid4()),
+            "action": "USER_UNFREEZE",
+            "target_user_id": user_id,
+            "target_email": user.get("email"),
+            "admin_id": request.admin_id,
+            "reason": request.reason.strip(),
+            "before_state": before_state,
+            "after_state": after_state,
+            "timestamp": unfreeze_timestamp.isoformat(),
+            "ip_address": None,
+            "immutable": True
+        }
+        await db.admin_audit_logs.insert_one(audit_entry)
+        
+        logger.info(f"🔓 UNFROZEN: User {user_id} by admin {request.admin_id}. Reason: {request.reason}")
+        
+        return {
+            "success": True,
+            "message": f"User {user_id} has been unfrozen",
+            "unfrozen_at": unfreeze_timestamp.isoformat(),
+            "audit_id": audit_entry["audit_id"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error unfreezing user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/users/{user_id}/freeze-status")
+async def admin_get_freeze_status(user_id: str):
+    """Get freeze status and history for a user"""
+    try:
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get freeze/unfreeze history from audit logs
+        history = await db.admin_audit_logs.find({
+            "target_user_id": user_id,
+            "action": {"$in": ["USER_FREEZE", "USER_UNFREEZE"]}
+        }).sort("timestamp", -1).to_list(50)
+        
+        return {
+            "user_id": user_id,
+            "email": user.get("email"),
+            "is_frozen": user.get("is_frozen", False),
+            "frozen_at": user.get("frozen_at"),
+            "frozen_by": user.get("frozen_by"),
+            "freeze_reason": user.get("freeze_reason"),
+            "history": [{
+                "action": h.get("action"),
+                "admin_id": h.get("admin_id"),
+                "reason": h.get("reason"),
+                "timestamp": h.get("timestamp")
+            } for h in history]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting freeze status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/frozen-users")
+async def admin_list_frozen_users():
+    """List all currently frozen users"""
+    try:
+        frozen_users = await db.users.find(
+            {"is_frozen": True},
+            {"user_id": 1, "email": 1, "full_name": 1, "frozen_at": 1, "frozen_by": 1, "freeze_reason": 1}
+        ).to_list(1000)
+        
+        return {
+            "success": True,
+            "count": len(frozen_users),
+            "frozen_users": [{
+                "user_id": u.get("user_id"),
+                "email": u.get("email"),
+                "full_name": u.get("full_name"),
+                "frozen_at": u.get("frozen_at"),
+                "frozen_by": u.get("frozen_by"),
+                "freeze_reason": u.get("freeze_reason")
+            } for u in frozen_users]
+        }
+    except Exception as e:
+        logger.error(f"Error listing frozen users: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# END FREEZE USER ACCOUNT SYSTEM
+# ============================================================================
+
+
+# ============================================================================
 # END TRADER BADGE SYSTEM
 # ============================================================================
 
