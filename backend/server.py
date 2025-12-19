@@ -6514,12 +6514,26 @@ async def admin_get_freeze_status(user_id: str):
 
 @api_router.get("/admin/frozen-users")
 async def admin_list_frozen_users():
-    """List all currently frozen users"""
+    """List all currently frozen users from both collections"""
     try:
-        frozen_users = await db.users.find(
+        # Get frozen users from both collections
+        frozen_from_users = await db.users.find(
             {"is_frozen": True},
             {"user_id": 1, "email": 1, "full_name": 1, "frozen_at": 1, "frozen_by": 1, "freeze_reason": 1}
         ).to_list(1000)
+        
+        frozen_from_accounts = await db.user_accounts.find(
+            {"is_frozen": True},
+            {"user_id": 1, "email": 1, "full_name": 1, "frozen_at": 1, "frozen_by": 1, "freeze_reason": 1}
+        ).to_list(1000)
+        
+        # Combine and deduplicate by user_id
+        seen_ids = set()
+        frozen_users = []
+        for u in frozen_from_users + frozen_from_accounts:
+            if u.get("user_id") not in seen_ids:
+                seen_ids.add(u.get("user_id"))
+                frozen_users.append(u)
         
         return {
             "success": True,
