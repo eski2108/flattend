@@ -9302,10 +9302,12 @@ async def google_callback(code: str = None, error: str = None):
             if existing_user:
                 # User exists - generate token and redirect to login callback page
                 logger.info("   Existing user found, generating JWT...")
+                now_ts_google = datetime.now(timezone.utc)
                 token_payload = {
                     "user_id": existing_user["user_id"],
                     "email": existing_user["email"],
-                    "exp": datetime.now(timezone.utc) + timedelta(days=30)
+                    "iat": int(now_ts_google.timestamp()),
+                    "exp": now_ts_google + timedelta(days=30)
                 }
                 token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
                 
