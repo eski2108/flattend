@@ -244,8 +244,8 @@ class P2PDisputeTest:
                 "crypto_amount": 0.01,
                 "fiat_currency": "GBP",
                 "price_per_unit": 50000,
-                "min_order": 100,
-                "max_order": 500,
+                "min_purchase": 100,
+                "max_purchase": 500,
                 "payment_methods": ["bank_transfer"],
                 "terms": "Test sell offer for dispute testing"
             }
