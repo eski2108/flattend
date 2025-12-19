@@ -10008,17 +10008,20 @@ async def login_user(login_req: LoginRequest, request: Request):
     )
     
     # Generate JWT token
+    # Generate JWT token with iat (issued at) for session revocation validation
+    now_ts = datetime.now(timezone.utc)
     token_data = {
         "user_id": user["user_id"],
         "email": user["email"],
-        "exp": datetime.now(timezone.utc) + timedelta(days=7)
+        "iat": int(now_ts.timestamp()),  # Issued at - critical for session revocation
+        "exp": now_ts + timedelta(days=7)
     }
     token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
     
     # Update last login
     await db.users.update_one(
         {"email": login_req.email},
-        {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
+        {"$set": {"last_login": now_ts.isoformat()}}
     )
     
     # Send login security alert and create notification (only if new device)
