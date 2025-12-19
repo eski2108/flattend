@@ -1058,6 +1058,11 @@ class UserAccount(BaseModel):
     last_login: Optional[datetime] = None
     reset_token: Optional[str] = None
     reset_token_expires: Optional[datetime] = None
+    # === FREEZE CONTROLS ===
+    is_frozen: bool = False
+    frozen_at: Optional[datetime] = None
+    frozen_by: Optional[str] = None  # Admin user_id who froze
+    freeze_reason: Optional[str] = None
 
 # Wallet Management Models
 class UserWalletAddresses(BaseModel):
