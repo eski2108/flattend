@@ -7462,6 +7462,7 @@ async def admin_get_kyc_stats():
 
 @api_router.post("/wallet/withdraw")
 async def request_withdrawal(
+    request: Request,
     user_id: str,
     currency: str,
     amount: float,
@@ -7471,18 +7472,45 @@ async def request_withdrawal(
     """
     User requests cryptocurrency withdrawal - V2 with wallet service
     Locks balance immediately to prevent double-spend
+    
+    🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
     """
     # 🔒 FREEZE CHECKS - Block withdrawals for frozen users AND frozen wallets
     await enforce_not_frozen(user_id, "withdrawal")
     await enforce_wallet_not_frozen(user_id, currency, f"withdrawal of {currency}")
     
-    from withdrawal_system_v2 import create_withdrawal_request_v2
+    # 🔒 IDEMPOTENCY CHECK - Prevent duplicate withdrawals
+    idempotency_key = request.headers.get("Idempotency-Key") or request.headers.get("idempotency-key")
+    if idempotency_key:
+        idempotency = get_idempotency_service(db)
+        cached = await idempotency.check_and_lock(user_id, "withdrawal", idempotency_key)
+        if cached:
+            if cached.get("is_processing"):
+                raise HTTPException(status_code=409, detail=cached["response"]["message"])
+            logger.info(f"🔁 Returning cached withdrawal response for idempotency key")
+            return cached["response"]
     
-    wallet_service = get_wallet_service()
-    result = await create_withdrawal_request_v2(
-        db, wallet_service, user_id, currency, amount, wallet_address, network
-    )
-    return result
+    try:
+        from withdrawal_system_v2 import create_withdrawal_request_v2
+        
+        wallet_service = get_wallet_service()
+        result = await create_withdrawal_request_v2(
+            db, wallet_service, user_id, currency, amount, wallet_address, network
+        )
+        
+        # Store successful response for idempotency
+        if idempotency_key and result.get("success"):
+            idempotency = get_idempotency_service(db)
+            await idempotency.store_response(user_id, "withdrawal", idempotency_key, result)
+        
+        return result
+        
+    except Exception as e:
+        # Release idempotency lock on failure
+        if idempotency_key:
+            idempotency = get_idempotency_service(db)
+            await idempotency.release_lock(user_id, "withdrawal", idempotency_key)
+        raise
 
 
 @api_router.get("/wallet/withdrawals/{user_id}")
