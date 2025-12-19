@@ -9261,7 +9261,15 @@ async def initialize_user_wallets(user_id: str, initial_balances: dict = None):
 
 @api_router.post("/auth/register")
 async def register_user(request: RegisterRequest, req: Request):
-    """Register new user with email/password or Google OAuth"""
+    """
+    Register new user with email/password or Google OAuth
+    
+    🚦 FEATURE FLAG: signups_enabled
+    """
+    # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
+    flags = get_feature_flags_service(db)
+    await flags.enforce("signups_enabled", "New registrations")
+    
     from security import password_hasher
     from security_logger import SecurityLogger
     
