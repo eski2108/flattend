@@ -10109,18 +10109,20 @@ async def login_with_2fa(request: dict, req: Request):
         device_fingerprint=device_fingerprint
     )
     
-    # Generate JWT token
+    # Generate JWT token with iat for session revocation validation
+    now_ts_2fa = datetime.now(timezone.utc)
     token_data = {
         "user_id": user["user_id"],
         "email": user["email"],
-        "exp": datetime.now(timezone.utc) + timedelta(days=7)
+        "iat": int(now_ts_2fa.timestamp()),  # Issued at - critical for session revocation
+        "exp": now_ts_2fa + timedelta(days=7)
     }
     token = jwt.encode(token_data, "emergent_secret_key_2024", algorithm="HS256")
     
     # Update last login
     await db.users.update_one(
         {"user_id": user_id},
-        {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
+        {"$set": {"last_login": now_ts_2fa.isoformat()}}
     )
     
     return {
