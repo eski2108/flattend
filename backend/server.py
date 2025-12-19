@@ -25671,6 +25671,99 @@ async def start_background_tasks():
     # Start Express countdown checker
     asyncio.create_task(express_countdown_checker_loop())
     logger.info("✅ Express countdown checker started")
+    
+    # 🔒 P1: Start auto-cancel expired trades task
+    asyncio.create_task(auto_cancel_expired_trades_loop())
+    logger.info("✅ Auto-cancel expired trades task started")
+
+
+async def auto_cancel_expired_trades_loop():
+    """
+    🔒 P1: Background task to auto-cancel expired P2P trades
+    Runs every 5 minutes, cancels trades stuck in pending_payment for >30 minutes
+    """
+    import asyncio
+    from datetime import datetime, timezone, timedelta
+    
+    logger.info("🚀 Starting Auto-Cancel Expired Trades Service...")
+    
+    while True:
+        try:
+            # Find expired trades (pending_payment for more than 30 minutes)
+            expiry_threshold = datetime.now(timezone.utc) - timedelta(minutes=30)
+            
+            expired_trades = await db.trades.find({
+                "status": "pending_payment",
+                "escrow_locked": True,
+                "$or": [
+                    {"payment_deadline": {"$lt": datetime.now(timezone.utc).isoformat()}},
+                    {"created_at": {"$lt": expiry_threshold.isoformat()}}
+                ]
+            }).to_list(100)
+            
+            if expired_trades:
+                logger.info(f"🔄 Found {len(expired_trades)} expired trades to auto-cancel")
+                
+                wallet_service = get_wallet_service()
+                
+                for trade in expired_trades:
+                    try:
+                        trade_id = trade["trade_id"]
+                        seller_id = trade["seller_id"]
+                        crypto_amount = trade["crypto_amount"]
+                        currency = trade["crypto_currency"]
+                        
+                        # Unlock seller's funds
+                        await wallet_service.unlock_balance(
+                            user_id=seller_id,
+                            currency=currency,
+                            amount=crypto_amount,
+                            unlock_type="auto_cancel_expired",
+                            reference_id=trade_id
+                        )
+                        
+                        # Update trade status
+                        await db.trades.update_one(
+                            {"trade_id": trade_id},
+                            {
+                                "$set": {
+                                    "status": "cancelled",
+                                    "escrow_locked": False,
+                                    "cancelled_at": datetime.now(timezone.utc).isoformat(),
+                                    "cancellation_reason": "Auto-cancelled: Payment deadline expired"
+                                }
+                            }
+                        )
+                        
+                        # Return crypto to sell order
+                        if trade.get("sell_order_id"):
+                            await db.enhanced_sell_orders.update_one(
+                                {"order_id": trade["sell_order_id"]},
+                                {"$inc": {"crypto_amount": crypto_amount}}
+                            )
+                        
+                        # Audit log
+                        await db.audit_trail.insert_one({
+                            "action": "TRADE_AUTO_CANCELLED",
+                            "trade_id": trade_id,
+                            "seller_id": seller_id,
+                            "buyer_id": trade["buyer_id"],
+                            "crypto_amount": crypto_amount,
+                            "crypto_currency": currency,
+                            "reason": "Payment deadline expired",
+                            "timestamp": datetime.now(timezone.utc)
+                        })
+                        
+                        logger.info(f"✅ Auto-cancelled expired trade {trade_id}, unlocked {crypto_amount} {currency}")
+                        
+                    except Exception as trade_error:
+                        logger.error(f"❌ Failed to auto-cancel trade {trade.get('trade_id')}: {str(trade_error)}")
+            
+        except Exception as e:
+            logger.error(f"❌ Auto-cancel expired trades error: {str(e)}")
+        
+        # Run every 5 minutes
+        await asyncio.sleep(300)
 
 
 @app.get("/api/admin/platform-wallet/deposit-address/{currency}")
