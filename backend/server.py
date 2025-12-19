@@ -6217,8 +6217,13 @@ async def check_user_frozen(user_id: str) -> dict:
     """
     Check if a user is frozen. Returns freeze status and details.
     Call this before any sensitive operation.
+    Checks both 'users' and 'user_accounts' collections.
     """
+    # Check both collections
     user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        user = await db.user_accounts.find_one({"user_id": user_id})
+    
     if not user:
         return {"is_frozen": False, "exists": False}
     
