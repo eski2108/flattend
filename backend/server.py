@@ -10349,10 +10349,10 @@ async def verify_phone(request: dict):
             if datetime.now(timezone.utc) > expires_at:
                 raise HTTPException(status_code=400, detail="Verification code expired")
             
-            # Mark phone as verified
+            # Mark phone as verified ONLY - email must be verified separately
             await db.users.update_one(
                 {"user_id": user["user_id"]},
-                {"$set": {"phone_verified": True, "email_verified": True}}
+                {"$set": {"phone_verified": True}}
             )
             
             # Delete verification code
