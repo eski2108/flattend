@@ -21748,6 +21748,13 @@ async def get_p2p_dispute_detail(dispute_id: str, user_id: str = Query(None)):
     """Get dispute details"""
     try:
         print(f"Getting dispute: {dispute_id}")
+        print(f"Database name: {db.name}")
+        print(f"Collection: {db.p2p_disputes.name}")
+        
+        # Debug: count all disputes
+        total_disputes = await db.p2p_disputes.count_documents({})
+        print(f"Total disputes in collection: {total_disputes}")
+        
         dispute = await db.p2p_disputes.find_one({"dispute_id": dispute_id})
         print(f"Dispute found: {dispute is not None}")
         
