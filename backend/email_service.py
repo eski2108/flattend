@@ -213,7 +213,7 @@ class EmailService:
                         </p>
                         <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
                             <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-                                https://controlpanel-4.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+                                https://coinhubx.net/email/dispute/{dispute_id}
                             </p>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
