@@ -175,9 +175,13 @@ async def p2p_create_trade_with_wallet(
         trade_dict['express_fee'] = express_fee
         trade_dict['total_fee'] = total_fee
         
+        # 🔒 Store idempotency key if provided
+        if idempotency_key:
+            trade_dict['idempotency_key'] = idempotency_key
+        
         trade_id = trade_dict['trade_id']
         
-        # LOCK seller funds via wallet service
+        # LOCK seller funds via wallet service (ATOMIC)
         try:
             await wallet_service.lock_balance(
                 user_id=sell_order["seller_id"],
@@ -186,13 +190,28 @@ async def p2p_create_trade_with_wallet(
                 lock_type="p2p_escrow",
                 reference_id=trade_id
             )
-            logger.info(f"✅ P2P: Locked {crypto_amount} {sell_order['crypto_currency']} for trade {trade_id}")
+            logger.info(f"✅ P2P: ATOMIC LOCK {crypto_amount} {sell_order['crypto_currency']} for trade {trade_id}")
         except Exception as lock_error:
             logger.error(f"❌ P2P: Failed to lock funds: {str(lock_error)}")
             raise HTTPException(status_code=500, detail=f"Failed to lock funds: {str(lock_error)}")
         
         # Save trade
         await db.trades.insert_one(trade_dict)
+        
+        # 🔒 AUDIT LOG: Trade initiated
+        await db.audit_trail.insert_one({
+            "action": "TRADE_INITIATED",
+            "trade_id": trade_id,
+            "buyer_id": buyer_id,
+            "seller_id": sell_order["seller_id"],
+            "crypto_amount": crypto_amount,
+            "crypto_currency": sell_order["crypto_currency"],
+            "fiat_amount": fiat_amount,
+            "fiat_currency": sell_order["fiat_currency"],
+            "escrow_locked": True,
+            "idempotency_key": idempotency_key,
+            "timestamp": datetime.now(timezone.utc)
+        })
         
         # Update sell order
         new_amount = sell_order["crypto_amount"] - crypto_amount
