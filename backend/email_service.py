@@ -1235,6 +1235,7 @@ def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, f
 
 def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, seller_username: str):
     """Email template for buyer when seller releases crypto"""
+    frontend_url = get_frontend_url()
     return f"""
     <html>
     <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
