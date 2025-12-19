@@ -11506,27 +11506,34 @@ async def place_trading_order(request: dict):
     """Place a spot trading order (buy/sell crypto) - FIXED FOR NEW WALLET SCHEMA"""
     try:
         user_id = request.get("user_id")
-        
-        # 🔒 FREEZE CHECK - Block trading for frozen users
-        if user_id:
-            await enforce_not_frozen(user_id, "trading")
-        
         pair = request.get("pair")  # e.g., "BTCUSD"
         order_type = request.get("type")  # "buy" or "sell"
         amount = float(request.get("amount", 0))
         price = float(request.get("price", 0))
         fee_percent = float(request.get("fee_percent", 0.1))
         
+        # Parse pair to get base currency for freeze check
+        base = pair[:3] if pair else None  # First 3 chars
+        _quote = pair[3:] if pair else None  # Remaining chars
+        
+        # 🔒 FREEZE CHECKS - Block trading for frozen users AND frozen wallets
+        if user_id:
+            await enforce_not_frozen(user_id, "trading")
+        
+        # Check wallet freeze based on order type
+        if user_id and base:
+            if order_type == "sell":
+                # Selling crypto - check crypto wallet
+                await enforce_wallet_not_frozen(user_id, base, f"sell {base}")
+            else:
+                # Buying crypto - check GBP wallet (payment source)
+                await enforce_wallet_not_frozen(user_id, "GBP", "buy order (GBP)")
+        
         if not all([user_id, pair, order_type, amount > 0, price > 0]):
             return {
                 "success": False,
                 "message": "Missing or invalid required fields"
             }
-        
-        # Parse pair to get base and quote currencies (e.g., BTC/USD)
-        # Assuming format like "BTCUSD" -> base="BTC", quote="USD"
-        base = pair[:3]  # First 3 chars
-        _quote = pair[3:]  # Remaining chars (USD in this case, but we use GBP)
         
         # Calculate total in quote currency (convert USD to GBP - simplified 1:1 for now)
         total_amount = amount * price
