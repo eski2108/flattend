@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
+BASE_URL = "https://controlpanel-4.preview.emergentagent.com/api"
 
 print("🎯 FINAL 100% SUCCESS RATE TEST")
 print("=" * 70)

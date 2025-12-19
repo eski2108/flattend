@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://trading-perf-boost.preview.emergentagent.com
+**Test it now at:** https://controlpanel-4.preview.emergentagent.com

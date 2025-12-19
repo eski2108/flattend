@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://trading-perf-boost.preview.emergentagent.com
+**URL:** https://controlpanel-4.preview.emergentagent.com
 
 **Services Status:**
 ```bash

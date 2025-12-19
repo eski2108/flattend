@@ -285,7 +285,7 @@ UI Display: £68,973 +1.10%
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview
-**URL:** https://trading-perf-boost.preview.emergentagent.com/trading
+**URL:** https://controlpanel-4.preview.emergentagent.com/trading
 
 **Services:**
 - ✅ Backend: Running (real data endpoint active)

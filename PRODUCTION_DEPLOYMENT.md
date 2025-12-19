@@ -1,7 +1,7 @@
 # CoinHubX Production Deployment - LOCKED VERSION
 
 ## Production URL
-**Primary:** https://trading-perf-boost.preview.emergentagent.com
+**Primary:** https://controlpanel-4.preview.emergentagent.com
 **Custom Domain (to be configured):** https://coinhubx.net
 
 ## Current Status: STABLE AND LOCKED

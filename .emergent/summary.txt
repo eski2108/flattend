@@ -1,189 +1,139 @@
-<analysis>**original_problem_statement**: The initial user request was to fix an ugly red error message on the login page and to implement SMS-based Two-Factor Authentication (2FA) for logins. This evolved into a series of critical feature requests and bug fixes, including:
-1.  **Admin Dashboard Features**:
-    *   Add a unique  to every user.
-    *   Create a dashboard section to display all new user signups with their details.
-    *   Add a section to show the total amount each customer has deposited/invested.
-2.  **P2P Trading UX**: Implement a persistent, site-wide banner notifying users if they have an active P2P trade.
-3.  **Platform-Wide Performance Overhaul**:
-    *   Fix a severe performance issue where the admin dashboard took over 20 seconds to load.
-    *   Optimize all dashboards (Admin, User) and key pages (Wallet, Instant Buy) to load instantly without long-running spinners.
-    *   Fix UI jitter and delayed loading of coin icons/emojis across the site.
-4.  **Unified Data Layer**: Create a centralized, cached, backend-first single source of truth for all financial data to ensure consistency.
-5.  **Bug Fixes**: Address a list of bugs reported by a third party (Nishant), including broken Google OAuth redirects, non-functional email verification links, a disabled dispute page endpoint, and failing Twilio SMS authentication.
-6.  **Repository Management**: All completed work must be pushed to a list of 12 specific GitHub repositories. The agent also had to remove secrets that were accidentally committed.
+<analysis>**original_problem_statement**: The user's initial request was a comprehensive frontend UX overhaul to eliminate visual jitter and slow-loading icons/emojis on the Dashboard, Wallet, and Instant Buy pages. After this was completed and signed off, the user pivoted to a new, higher-priority set of tasks focused on core safety, control, and production readiness.
 
-**User's preferred language**: English. The user is extremely direct, impatient, and frequently uses aggressive, profane language. The next agent must be concise, follow instructions with surgical precision, provide visual proof (screenshots) for all changes, and never make any changes without explicit permission. Do not make excuses for infrastructure issues; find a way to provide proof.
+This new set of requirements was broken down into a strict priority order (P0, P1, P2).
+
+**PRODUCT REQUIREMENTS (P0 - CRITICAL - COMPLETE):**
+1.  **Freeze User Account**: Ability for an admin to freeze a user, blocking login, trading, and withdrawals. Must be fully audited.
+2.  **Freeze Wallet**: Ability for an admin to freeze a specific wallet (asset) for a user, blocking all value-moving actions from that wallet.
+3.  **Double-click/Duplicate Protection**: Implement backend-authoritative idempotency for all value-moving actions (withdrawals, swaps, buys, trades) using a client-sent  header, paired with a frontend debounce mechanism.
+4.  **Manual Balance Adjustment**: A dedicated, audited admin endpoint to credit/debit user balances with a mandatory reason. Must handle freeze states and prevent negative balances.
+
+**PRODUCT REQUIREMENTS (P1 - HIGH PRIORITY - IN PROGRESS):**
+1.  **Force Logout / Session Revocation**: Admin endpoint to revoke all active sessions for a user, which must also trigger automatically when a user is frozen.
+2.  **Complete Admin Action Audit**: Ensure every admin action is logged with a consistent, detailed format.
+3.  **Feature Flags / Kill Switches**: A DB-driven system to instantly toggle major features (withdrawals, swaps, signups, etc.) on/off without a redeploy. (This part of P1 was prioritized and is complete).
+
+**User's preferred language**: English. The user is highly technical, direct, and demands strict adherence to their specified requirements and priority order. All implementations must be non-negotiable and proven with evidence (JSON responses, audit logs, screenshots). The next agent must respond with precision and provide clear proof for all completed work.
 
 **what currently exists?**
-- A high-performance application where all major pages (Admin Dashboard, User Dashboard, Wallet, Instant Buy) load in under 2 seconds.
-- A robust, cached, and unified backend data layer () that serves as a single source of truth for all financial metrics (deposits, P2P volume, user balances, etc.).
-- The Admin Dashboard successfully displays a Recent Signups table and a Customer Investments table with progressively loaded data.
-- A global, persistent  component notifies users of ongoing P2P trades.
-- Numerous critical bugs have been fixed, including Google OAuth redirects, email verification, and the dispute page API endpoint.
-- All code changes have been successfully pushed and synced across 12 GitHub repositories.
+- A high-performance frontend with optimized icon/asset loading () and zero layout shift (CLS=0) on key pages, a milestone that has been formally signed off by the user.
+- A robust set of P0 admin safety controls are fully implemented and pushed to all repositories.
+- **Freeze System**: Admins can freeze/unfreeze entire user accounts or individual wallets, blocking all relevant financial operations. All actions are fully audited.
+- **Idempotency Service**: A backend service () prevents duplicate processing of financial transactions (withdraw, swap, buy, trade) using client-sent keys and atomic database operations. A corresponding frontend hook () and button component () provide UI debouncing.
+- **Manual Balance Adjustment System**: A dedicated, idempotent, and fully audited admin endpoint allows for manual credits/debits to user balances, with safety checks for negative balances and freeze states.
+- **Feature Flag / Kill Switch System**: A DB-driven service () allows admins to instantly enable/disable core platform features (withdrawals, swaps, P2P, etc.) without redeploying. All changes are audited.
 
 **Last working item**:
--   **Last item agent was working**: A comprehensive frontend UX and performance overhaul to fix visual jitter and slow-loading icons/emojis on the Wallet, User Dashboard, and Instant Buy pages. The agent optimized image loading () and implemented progressive loading patterns on each page.
--   **Status**: USER VERIFICATION PENDING
--   **Agent Testing Done**: Y (Provided screenshots confirming the pages now load instantly without visual delays).
--   **Which testing method agent to use?**: Manual testing by the user to confirm the visual experience on the Wallet, Dashboard, and Instant Buy pages is smooth.
+-   **Last item agent was working**: The agent was beginning the implementation of the Force Logout / Session Revocation feature, which is the next task in the P1 priority list.
+-   **Status**: IN PROGRESS
+-   **Agent Testing Done**: N
+-   **Which testing method agent to use?**: Backend testing agent or  to test the new session revocation endpoints and verify that a user with a revoked session is blocked from making authenticated requests.
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Complete SMS 2FA login flow (P0)
--   Issue 2: Investigate recurring Twilio 401 Authentication Error (P1)
-
-**Issues Detail**:
--   **Issue 1: Complete the SMS 2FA login flow on the frontend**
-    -   **Attempted fixes**: The backend endpoints (, ) were created in a previous session, but no frontend work has been started. This was part of the original request but was superseded by other urgent tasks.
-    -   **Next debug checklist**:
-        1.  Modify  to add UI elements (e.g., a modal or a new step) for entering an SMS code.
-        2.  Implement the logic to call the  endpoint when a user needs to verify.
-        3.  Implement the logic to call  to validate the code and complete the login.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is a core security feature requested at the very beginning of the project fork and is currently completely missing from the user experience.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Both
-    -   **Blocked on other issue**: Issue 2: Twilio 401 Authentication Error.
-
--   **Issue 2: Investigate recurring Twilio 401 Authentication Error**
-    -   **Attempted fixes**: The agent cleaned up duplicate Twilio credentials in the  file. However, a report from Nishant indicated a 401 error, suggesting the stored credentials are still invalid or expired.
-    -   **Next debug checklist**:
-        1.  Ask the user to confirm that the credentials in  are currently valid and active in their Twilio account.
-        2.  If they are invalid, get new credentials from the user and update the  file.
-        3.  Restart the backend service.
-        4.  Use  to test the  endpoint to confirm it no longer returns a 401 error.
-    -   **Why fix this issue and what will be achieved with the fix?**: This blocks the implementation and testing of the SMS 2FA feature.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: Backend
-    -   **Blocked on other issue**: None
+- There are no outstanding bugs or issues. The agent is executing a planned task list.
 
 **In progress Task List**:
--   None.
+-   **Task 1: Complete P1 Task: Force Logout / Session Revocation (P0)**
+    -   **Where to resume**: The agent has just created the foundational file . The next steps are:
+        1.  Flesh out  with logic to store, validate, and revoke user sessions (e.g., using a new  MongoDB collection).
+        2.  Create new admin endpoints in  (e.g., ) that use this service.
+        3.  Modify the Freeze User endpoint () to automatically call the new session revocation service.
+        4.  Integrate a session validation check into the core authentication middleware to ensure revoked sessions are immediately blocked.
+        5.  Add comprehensive audit logging for all session revocation actions.
+    -   **What will be achieved with this?**: This will provide a critical security control, allowing admins to immediately terminate a user's access across all devices, and will automatically enforce this upon freezing an account.
+    -   **Status**: IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?**: Backend
+    -   **Blocked on something**: None
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks**:
-    -   **Task 1 (P1):** Add instructions in the dashboard as vaguely requested by the user. This will require clarification on what instructions are needed and where they should be displayed.
+    -   **P1: Complete Admin Action Audit (P1)**: After Force Logout is done, the agent must review all admin endpoints and ensure every single one has consistent, detailed audit logging matching the standard set in P0.
+-   **Future Tasks**:
+    -   **P2: Transaction Rollback / Recovery (P2)**: Implement a clear state machine for transactions to handle partial failures gracefully (e.g.,  states).
+    -   **P2: On-chain Reconciliation (P2)**: Create a periodic, read-only job to compare internal ledger balances against on-chain balances and alert on any discrepancies.
+    -   **Implement SMS 2FA Login Flow**: This was an original request but was deprioritized. It is blocked by potentially invalid Twilio credentials that need user verification.
+    -   **Add instructions in the dashboard**: This was a vague, low-priority user request that still requires clarification.
 
 **Completed work in this session**
--   **Performance Overhaul (DONE)**:
-    -   Fixed Admin Dashboard loading time from >20s to <2s by implementing backend caching ( in ) and frontend progressive loading ().
-    -   Resolved UI jitter and slow-loading icons on Wallet, Dashboard, and Instant Buy pages by optimizing the  component and refactoring page load logic.
--   **Feature Implementation (DONE)**:
-    -   Added a unique  (e.g., ) to the user model, generated upon registration ().
-    -   Created an admin endpoint  and a corresponding table in the Admin Dashboard to display new users.
-    -   Created a Customer Investments table on the Admin Dashboard.
-    -   Created a site-wide banner () to notify users of active P2P trades.
-    -   Implemented a  to act as a single source of truth for all financial data.
--   **Bug Fixes (DONE)**:
-    -   Fixed login page error toast styling to be less intrusive (, ).
-    -   Fixed Google OAuth redirect URI mismatch ().
-    -   Implemented the missing  function ().
-    -   Fixed hardcoded password reset link to use an environment variable ().
-    -   Re-enabled the commented-out  endpoint ().
-    -   Fixed an  crash on the Admin Dashboard.
--   **DevOps/Security (DONE)**:
-    -   Removed committed secrets () from repository history using .
-    -   Successfully pushed all changes to 12 GitHub repositories.
-    -   Resolved multiple instances of a broken preview URL by correcting the  file.
+-   **Frontend UX & Performance Overhaul (DONE & SIGNED OFF)**
+    -   Rewrote  (v2) to eliminate layout shift and icon pop-in.
+    -   Added global CSS in  for layout stability.
+    -   Locked down the implementation by deprecating legacy components and adding ESLint rules.
+    -   Provided a full proof bundle with metrics (CLS=0), screenshots, and commit IDs.
+-   **P0-1: Freeze User Account (DONE)**: Implemented endpoints and logic to freeze/unfreeze user accounts, blocking all critical actions. Fully audited.
+-   **P0-2: Freeze Wallet (DONE)**: Implemented endpoints and logic to freeze/unfreeze specific asset wallets for a user. Fully audited.
+-   **P0-3: Double-click/Duplicate Protection (DONE)**: Created  and protected all value-moving endpoints against duplicate requests.
+-   **P0-4: Manual Balance Adjustment (DONE)**: Implemented a dedicated, audited admin endpoint for adjusting user balances with strict safety checks.
+-   **P1: Feature Flags / Kill Switches (DONE)**: Created  and admin endpoints to toggle all core platform features on/off instantly.
 
 **Earlier issues found/mentioned but not fixed**
--   None, all identified issues were either fixed or are listed in the pending section.
+-   **Issue 1: Invalid Twilio Credentials**
+    -   **Debug checklist**: The SMS 2FA feature is blocked because the Twilio credentials in  likely cause a 401 Authentication Error. The next agent must ask the user to verify the Account SID and Auth Token before attempting to work on the 2FA feature.
+    -   **Why to solve this issue and what will be achieved with this?**: This is a required security feature that cannot be implemented until the credentials are confirmed to be valid.
+    -   **Should Test frontend/backend/both after fix**: Backend
+    -   **Is recurring issue?**: Y
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: The preview environment (Manus VM) is unstable, frequently goes to sleep, and becomes inaccessible via its external URL. This repeatedly blocked the agent's ability to use the screenshot tool for visual proof. The  also seems to change or require resetting between forks.
--   **Recurrence count**: High (occurred multiple times throughout the session).
--   **Status**: RESOLVED (for now). The agent found the correct stable preview URL and fixed the environment. The next agent should be aware that this might happen again.
+-   **Issue recurrence in previous fork**: Massive, single-file backend () is prone to syntax errors that are hard to debug because they can prevent new routes from being registered without crashing the server.
+-   **Recurrence count**: Occurred once during this session (Message 336), blocking progress for a significant time.
+-   **Status**: RESOLVED (for now). The agent fixed the syntax error. The next agent must be vigilant and run a syntax check () after modifying this file.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend Caching**: Used Python's  library with a TTL (Time-To-Live) cache to drastically reduce API response times for heavy computational endpoints from >20s to <50ms.
--   **Frontend Progressive Loading**: Refactored React components to load critical data first to render the UI instantly, then fetch heavier, non-essential data in the background. This eliminated long-running spinners.
--   **MongoDB Aggregation**: Replaced slow, iterative loops in Python with efficient MongoDB aggregation pipelines for calculating platform-wide and per-user financial statistics.
--   **Git History Rewriting**: Used  to completely remove sensitive files (credentials) that were accidentally committed to the repository history.
--   **FastAPI Routing**: Debugged an issue where new endpoints were not being registered because they were defined after the  call.
+-   **Idempotency-as-a-Service**: A centralized backend service () that uses a dedicated MongoDB collection () with a unique compound index (, , ) and a TTL to ensure financial operations are processed only once.
+-   **DB-Driven Feature Flags**: A backend service () that stores feature toggles in MongoDB, allowing for real-time enabling/disabling of platform features without redeployment. Uses caching with a short TTL for performance and instant cache invalidation on updates.
+-   **Admin Control Systems**: A suite of admin-only, fully audited endpoints for critical safety functions, including freezing users/wallets and performing manual balance adjustments. These systems are built with strict safety rules (e.g., no negative balances, freeze overrides).
+-   **Frontend Performance Optimization**: The  component was rewritten to use fixed-size containers, concurrent text/image rendering with CSS opacity transitions, and image preloading to achieve a Cumulative Layout Shift (CLS) score of 0.
 
 **key DB schema**
--   No major schema changes. The  collection (represented by the  model) was updated to include a  field.
-
-**changes in tech stack**
--   Implicitly added  library to the backend for implementing caching.
+-   **idempotency_keys**: 
+-   **feature_flags**: 
+-   **balance_adjustments**: 
+-   **admin_audit_logs**: Generic collection for logging all admin actions (freeze, unfreeze, flag changes, adjustments, etc.).
+-   **users/user_accounts**: Added , , ,  fields.
+-   **wallets**: Added , , , ,  to the document for each asset.
 
 **All files of reference**
--   : (NEW) The core of the performance optimization. Contains the single source of truth for all financial data, with caching.
--   : (MODIFIED) The primary page for the performance fix, refactored to load progressively.
--   : (MODIFIED) Updated to use the new cached data service, fixed numerous bugs, and added admin rights.
--   : (MODIFIED) Key to fixing the UI jitter; updated to prevent lazy loading from delaying the UI.
--   : (PENDING WORK) The next file to be modified for the SMS 2FA feature.
-
-**Areas that need refactoring**:
--   The list of authorized admin emails is currently hardcoded in . This should be moved to a database collection or a configuration file for better management.
-
-**key api endpoints**
--   : (NEW & OPTIMIZED) Provides fast, cached, high-level statistics for the entire platform.
--   : (NEW & OPTIMIZED) Provides a fast, cached financial breakdown for all users. Was the source of a major performance bottleneck (22s load time).
--   : (NEW) Provides a list of the latest users who have registered.
--   : (FIXED) Previously commented out, now functional.
+-   : The main monolith file where all new endpoints and enforcement checks were added.
+-   : (NEW) The authoritative service for preventing duplicate transactions.
+-   : (NEW) The authoritative service for managing kill switches.
+-   : (NEW & IN-PROGRESS) The file where the next task will be implemented.
+-   : The file at the core of the completed UI/UX overhaul.
 
 **Critical Info for New Agent**
-1.  **USER PERSONALITY**: The user is extremely volatile, aggressive, and uses profanity. Be direct, concise, and do not make excuses. Always provide visual proof (screenshots) of your work. Do not perform ANY unrequested changes.
-2.  **INFRASTRUCTURE INSTABILITY**: The preview environment can become unresponsive (sleeps). If screenshots fail, you may need to restart services (auto-save: ERROR (spawn error)
-backend: ERROR (abnormal termination)
-mongodb: ERROR (abnormal termination)
-frontend: started
-redirect-server: started
-nginx-code-proxy: started
-code-server: started) or debug the  in , which has been a recurring issue. The correct, stable URL at the end of the session was .
-3.  **PRIORITY TASK**: Your first and highest priority task is to implement the **SMS 2FA login flow**. This was an original requirement that has not been started. This is likely blocked by invalid Twilio credentials.
-4.  **CREDENTIALS**: The Twilio credentials in  are likely invalid and cause a 401 error. You must verify this with the user before starting the 2FA task.
-5.  **PERFORMANCE IS KEY**: The user is now highly sensitive to performance. Do not introduce any changes that cause slow load times or UI spinners. Follow the established patterns of backend caching and frontend progressive loading.
-6.  **ADMIN ACCESS**: The user  is now a registered admin. The admin access code is .
+1.  **ADHERE TO PRIORITY**: The user has defined a strict P0 -> P1 -> P2 priority list. DO NOT deviate. Your next task is to complete the Force Logout implementation, followed by Complete Admin Action Audit.
+2.  **PROVIDE PROOF BUNDLES**: For every completed task, the user expects a proof bundle including JSON responses, audit log excerpts, and confirmation of commit/push. Follow the pattern established in the chat history.
+3.  **MONOLITH SERVER FILE**: The backend logic resides almost entirely in . It is extremely large and fragile. After any modification, **you must run a syntax check () before restarting the server** to avoid hard-to-debug route registration failures.
+4.  **TWO USER COLLECTIONS**: Be aware that user data is split across two collections:  and . All user-related queries must check both collections to find a user. This was a major source of bugs.
 
-**documents created in this job**
--   None.
-
-**Last 10 User Messages and any pending user messages**
-1.  User acknowledged backend performance fix but demanded frontend UX fixes for icon/emoji pop-in. (Resolved)
-2.  Agent confirmed understanding and started working on the UX fixes. (In Progress)
-3.  Agent provided screenshots showing the Wallet, Dashboard, and Instant Buy pages loading instantly. (Resolved)
-4.  Agent pushed the final UX fixes to all repos. (Resolved)
-5.  User repeated the exact same request for UX fixes, likely a copy-paste error. (Agent handled it as a re-verification request)
-6.  Agent re-verified that the commits were pushed and the fixes were in place. (Resolved)
-7.  Agent showed the final commit ID and confirmed all 12 repos were up-to-date. (Resolved)
-8.  Agent provided a final summary of the UX fixes, performance metrics, and proof of completion. (Pending User Verification)
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User**: Signed off on P0. Provided detailed requirements for the remaining P1 items: **1. Force Logout / Session Revocation**, and **2. Complete Admin Action Audit**. Instructed the agent to proceed in that order and provide proof for each.
 
 **Project Health Check:**
--   **Broken**:
-    -   The SMS 2FA login flow is entirely missing from the frontend.
-    -   The backend Twilio integration is likely broken due to invalid credentials (401 errors reported).
--   **Mocked**:
-    -   None.
+-   **Broken**: The SMS 2FA flow is completely unimplemented on the frontend and the backend is likely broken due to invalid Twilio credentials.
+-   **Mocked**: None.
 
 **3rd Party Integrations**
+-   **Twilio**: For SMS 2FA. **(CURRENTLY UNSTABLE/BROKEN - requires user to verify credentials)**.
 -   **CoinGecko**: Live cryptocurrency prices.
 -   **NOWPayments**: List of supported currencies.
 -   **TradingView**: Candlestick charts.
 -   **Resend/SendGrid**: Email services.
--   **Twilio**: For SMS 2FA. **(CURRENTLY UNSTABLE/BROKEN - requires user to verify credentials)**.
 -   **Google OAuth**: For login.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES. A testing agent report was used to identify missing API endpoints.
+-   **Testing agent used after significant changes**: YES, a testing agent was used to verify the initial UI/UX fixes.
 -   **Troubleshoot agent used after agent stuck in loop**: NO.
--   **Test files created**: None.
+-   **Test files created**: None. Test scripts were run directly via shell commands.
 -   **Known regressions**: None.
 
 **Credentials to test flow:**
--   **GitHub PAT**:  (New)
--   **Admin User**:  / 
--   **Admin Access Code**: 
--   **Twilio Account SID**: 
--   **Twilio Auth Token**:  **(This is likely invalid and causing 401 errors)**
--   **Twilio Phone Number**: 
+-   **Admin User**:  (used for audit logs). Login flow for this user not shown.
+-   **Test User**:  (from  collection in production DB).
+-   **Twilio Auth Token**: Likely invalid and the source of the 2FA issue.
 
 **What agent forgot to execute**
--   The agent did not start the implementation of the SMS 2FA login flow on the frontend, which was one of the two original user requests from the previous fork. This was deprioritized due to the stream of urgent feature requests and performance issues from the user.
--   The agent did not act on the user's vague request to add instructions in the dashboard. This requires clarification from the user.</analysis>
+- The agent has been following the user's reprioritization perfectly. The original requests for SMS 2FA and dashboard instructions have been correctly placed on the back burner in favor of the critical P0/P1 safety and control features.</analysis>

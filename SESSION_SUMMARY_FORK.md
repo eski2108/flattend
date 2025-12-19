@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://trading-perf-boost.preview.emergentagent.com
+https://controlpanel-4.preview.emergentagent.com
 
 ---
 

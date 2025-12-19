@@ -198,13 +198,13 @@ $ tail -n 50 /var/log/supervisor/frontend.err.log
 
 ### Backend Health Check:
 ```bash
-$ curl https://trading-perf-boost.preview.emergentagent.com/api/health
+$ curl https://controlpanel-4.preview.emergentagent.com/api/health
 {"status":"healthy","service":"coinhubx-backend"}
 ```
 
 ### NOWPayments API:
 ```bash
-$ curl https://trading-perf-boost.preview.emergentagent.com/api/nowpayments/currencies
+$ curl https://controlpanel-4.preview.emergentagent.com/api/nowpayments/currencies
 {"success":true,"currencies":["usdtmatic","xlm","usdcbsc",...]}
 ```
 
@@ -222,7 +222,7 @@ This is CORRECT and INTENTIONAL behavior:
 
 ### To Test Deposit Page:
 ```
-1. Go to https://trading-perf-boost.preview.emergentagent.com/#/register
+1. Go to https://controlpanel-4.preview.emergentagent.com/#/register
 2. Create account
 3. Navigate to /#/deposit/btc
 4. Page loads instantly, shows QR code and address
@@ -303,7 +303,7 @@ $ git diff HEAD~1 backend/server.py backend/routes/ backend/services/
 ✅ No runtime errors
 
 ### Deployment Status:
-✅ Live URL: https://trading-perf-boost.preview.emergentagent.com
+✅ Live URL: https://controlpanel-4.preview.emergentagent.com
 ✅ All services running
 ✅ Health check passing
 ✅ NOWPayments API accessible

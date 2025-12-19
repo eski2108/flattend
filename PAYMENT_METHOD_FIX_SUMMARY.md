@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://trading-perf-boost.preview.emergentagent.com
+https://controlpanel-4.preview.emergentagent.com
 
 ### Test Route
 
-`https://trading-perf-boost.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://controlpanel-4.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

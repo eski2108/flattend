@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
+BASE_URL = "https://controlpanel-4.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

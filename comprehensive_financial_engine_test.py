@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Backend URL from environment
-BACKEND_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
+BACKEND_URL = "https://controlpanel-4.preview.emergentagent.com/api"
 
 class FinancialEngineProofTest:
     def __init__(self):

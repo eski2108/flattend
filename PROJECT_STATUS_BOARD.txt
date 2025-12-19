@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://trading-perf-boost.preview.emergentagent.com  │
-│ Backend API:    https://trading-perf-boost.preview.emergentagent.com/api│
+│ Frontend URL:   https://controlpanel-4.preview.emergentagent.com  │
+│ Backend API:    https://controlpanel-4.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘

@@ -1,7 +1,7 @@
 # ✅ AD TYPE SYSTEM - COMPLETE IMPLEMENTATION
 
 **Date:** December 12, 2025 00:00 UTC  
-**Preview URL:** https://trading-perf-boost.preview.emergentagent.com  
+**Preview URL:** https://controlpanel-4.preview.emergentagent.com  
 **Status:** DEPLOYED AND OPERATIONAL
 
 ---
@@ -176,7 +176,7 @@ Max: {ad.max_order_limit || ad.max_amount || 0}
 
 1. **Navigate:**
    ```
-   https://trading-perf-boost.preview.emergentagent.com
+   https://controlpanel-4.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -245,5 +245,5 @@ All 12 requirements implemented:
 
 **Deployed:** December 12, 2025 00:00 UTC  
 **Test User:** aby@test.com / test123  
-**Preview:** https://trading-perf-boost.preview.emergentagent.com  
+**Preview:** https://controlpanel-4.preview.emergentagent.com  
 **Status:** LIVE AND OPERATIONAL

@@ -36,7 +36,7 @@ Tests the THREE critical features as requested in the review:
    - User receives 99% of requested amount
 7. GET admin wallet balance and verify fees accumulated
 
-**Backend URL:** https://trading-perf-boost.preview.emergentagent.com/api
+**Backend URL:** https://controlpanel-4.preview.emergentagent.com/api
 """
 
 import requests
@@ -46,7 +46,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://trading-perf-boost.preview.emergentagent.com/api"
+BASE_URL = "https://controlpanel-4.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

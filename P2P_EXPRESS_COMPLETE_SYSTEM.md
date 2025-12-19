@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://trading-perf-boost.preview.emergentagent.com/p2p-express
+https://controlpanel-4.preview.emergentagent.com/p2p-express
 
 ---
 

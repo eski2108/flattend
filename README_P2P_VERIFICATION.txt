@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://trading-perf-boost.preview.emergentagent.com
-P2P Page:     https://trading-perf-boost.preview.emergentagent.com/p2p
-Backend API:  https://trading-perf-boost.preview.emergentagent.com/api
+Frontend:     https://controlpanel-4.preview.emergentagent.com
+P2P Page:     https://controlpanel-4.preview.emergentagent.com/p2p
+Backend API:  https://controlpanel-4.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

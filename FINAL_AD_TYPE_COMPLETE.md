@@ -121,7 +121,7 @@ Test Sequence Completed:
 - **Test Result:** ✅ PASS - Complete flow working
 
 ### 10. Live Preview Deployment ✅
-- All changes pushed to: https://trading-perf-boost.preview.emergentagent.com
+- All changes pushed to: https://controlpanel-4.preview.emergentagent.com
 - Backend running and accessible
 - Frontend running and accessible
 - No breaking changes to existing features
@@ -231,7 +231,7 @@ Test Sequence Completed:
 
 ## PRODUCTION DEPLOYMENT
 
-**Live URL:** https://trading-perf-boost.preview.emergentagent.com
+**Live URL:** https://controlpanel-4.preview.emergentagent.com
 
 **Status:**
 - ✅ Backend: RUNNING

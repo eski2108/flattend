@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://trading-perf-boost.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

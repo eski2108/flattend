@@ -77,7 +77,7 @@
 
 ## 📊 LIVE PREVIEW STATUS
 
-**URL**: https://trading-perf-boost.preview.emergentagent.com
+**URL**: https://controlpanel-4.preview.emergentagent.com
 
 **Build Information**:
 - Latest Build Hash: Deployed Dec 9, 2024 08:55 UTC
