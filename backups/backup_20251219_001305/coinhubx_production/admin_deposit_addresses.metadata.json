@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"472b4a79bdd04b0091e50ae06df6d4fc","collectionName":"admin_deposit_addresses","type":"collection"}
