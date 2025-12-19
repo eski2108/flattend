@@ -3453,7 +3453,15 @@ async def preview_order(request: PreviewOrderRequest):
 
 @api_router.post("/p2p/create-trade")
 async def create_trade(request: CreateTradeRequest):
-    """Create P2P trade and lock crypto in escrow via wallet service"""
+    """
+    Create P2P trade and lock crypto in escrow via wallet service
+    
+    🚦 FEATURE FLAG: p2p_enabled
+    """
+    # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
+    flags = get_feature_flags_service(db)
+    await flags.enforce("p2p_enabled", "P2P Trading")
+    
     # 🔒 FREEZE CHECK - Block P2P trades for frozen users
     await enforce_not_frozen(request.buyer_id, "P2P trade")
     
