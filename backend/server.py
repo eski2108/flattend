@@ -9858,8 +9858,34 @@ async def google_callback(code: str = None, error: str = None):
             existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
             
             if existing_user:
-                # User exists - generate token and redirect to login callback page
-                logger.info("   Existing user found, generating JWT...")
+                # ============================================================================
+                # SECURITY: Check verification status - ALL users must verify
+                # ============================================================================
+                email_verified = existing_user.get("email_verified", False)
+                phone_verified = existing_user.get("phone_verified", False)
+                is_admin = existing_user.get("role") == "admin"
+                
+                logger.info(f"   Existing user found: email_verified={email_verified}, phone_verified={phone_verified}")
+                
+                # Only admins can bypass verification
+                if not is_admin and (not email_verified or not phone_verified):
+                    # Redirect to verification page
+                    logger.info("   User NOT verified, redirecting to verification...")
+                    user_json = json.dumps({
+                        "user_id": existing_user["user_id"],
+                        "email": existing_user["email"],
+                        "full_name": existing_user.get("full_name", ""),
+                        "requires_verification": True,
+                        "email_verified": email_verified,
+                        "phone_verified": phone_verified
+                    })
+                    from urllib.parse import quote
+                    redirect_url = f"{frontend_url}/verify?user={quote(user_json)}&email_required={not email_verified}&phone_required={not phone_verified}"
+                    logger.info(f"✅ Redirecting unverified Google user to: {frontend_url}/verify")
+                    return RedirectResponse(url=redirect_url, status_code=302)
+                
+                # User is fully verified - generate token and allow login
+                logger.info("   User VERIFIED, generating JWT...")
                 now_ts_google = datetime.now(timezone.utc)
                 token_payload = {
                     "user_id": existing_user["user_id"],
@@ -9879,7 +9905,7 @@ async def google_callback(code: str = None, error: str = None):
                 
                 from urllib.parse import quote
                 redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
-                logger.info(f"✅ Redirecting existing user to: {frontend_url}/login?google_success=true")
+                logger.info(f"✅ Redirecting verified user to: {frontend_url}/login?google_success=true")
                 return RedirectResponse(url=redirect_url, status_code=302)
             else:
                 # New user - redirect to phone verification with Google data
