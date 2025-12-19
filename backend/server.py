@@ -6295,8 +6295,21 @@ async def admin_freeze_user(user_id: str, request: FreezeUserRequest):
         
         freeze_timestamp = datetime.now(timezone.utc)
         
-        # Apply freeze
-        result = await db.users.update_one(
+        # Apply freeze to the correct collection
+        db_collection = db.users if user_collection == "users" else db.user_accounts
+        result = await db_collection.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "is_frozen": True,
+                "frozen_at": freeze_timestamp.isoformat(),
+                "frozen_by": request.admin_id,
+                "freeze_reason": request.reason.strip()
+            }}
+        )
+        
+        # Also update the other collection if it exists there
+        other_collection = db.user_accounts if user_collection == "users" else db.users
+        await other_collection.update_one(
             {"user_id": user_id},
             {"$set": {
                 "is_frozen": True,
