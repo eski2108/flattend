@@ -9102,11 +9102,13 @@ async def complete_phone_signup(request: dict):
         
         await db.users.insert_one(user)
         
-        # Generate JWT token
+        # Generate JWT token with iat for session revocation
+        now_ts_new_phone = datetime.now(timezone.utc)
         token_data = {
             "user_id": user_id,
             "email": user["email"],
-            "exp": datetime.now(timezone.utc) + timedelta(days=30)
+            "iat": int(now_ts_new_phone.timestamp()),
+            "exp": now_ts_new_phone + timedelta(days=30)
         }
         token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
         
