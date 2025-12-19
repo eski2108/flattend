@@ -267,29 +267,23 @@ class WalletService:
         """
         Lock balance for pending operations (P2P escrow, pending withdrawal)
         Moves from available to locked
+        
+        🔒 ATOMIC OPERATION: Uses findOneAndUpdate with balance check in query
+        to prevent race conditions where two trades could lock the same funds.
         """
         try:
             if amount <= 0:
                 raise ValueError("Lock amount must be positive")
             
-            wallet = await self.db.wallets.find_one(
-                {"user_id": user_id, "currency": currency}
-            )
-            
-            if not wallet:
-                raise ValueError(f"Wallet not found for {user_id}/{currency}")
-            
-            current_available = float(wallet.get("available_balance", 0))
-            
-            if current_available < amount:
-                raise ValueError(
-                    f"Insufficient available balance to lock. "
-                    f"Required: {amount}, Available: {current_available}"
-                )
-            
-            # Update balances (available decreases, locked increases, total stays same)
-            result = await self.db.wallets.update_one(
-                {"user_id": user_id, "currency": currency},
+            # 🔒 ATOMIC: Single operation that checks AND updates
+            # The query includes the balance check, so if another process
+            # already locked the funds, this query won't match and will fail
+            result = await self.db.wallets.find_one_and_update(
+                {
+                    "user_id": user_id, 
+                    "currency": currency,
+                    "available_balance": {"$gte": amount}  # Balance check IN the query
+                },
                 {
                     "$inc": {
                         "available_balance": -amount,
@@ -298,18 +292,61 @@ class WalletService:
                     "$set": {
                         "last_updated": datetime.now(timezone.utc)
                     }
-                }
+                },
+                return_document=True  # Return the updated document
             )
             
-            if result.modified_count > 0:
-                logger.info(f"✅ Locked {amount} {currency} for {user_id} | Type: {lock_type}")
+            if result:
+                logger.info(f"✅ ATOMIC LOCK: {amount} {currency} for {user_id} | Type: {lock_type} | Ref: {reference_id}")
+                
+                # Log to audit trail
+                await self._log_escrow_action(
+                    action="ESCROW_LOCKED",
+                    user_id=user_id,
+                    currency=currency,
+                    amount=amount,
+                    lock_type=lock_type,
+                    reference_id=reference_id,
+                    balance_after=result.get("available_balance", 0)
+                )
                 return True
             
-            return False
+            # If result is None, either wallet doesn't exist or insufficient balance
+            wallet = await self.db.wallets.find_one(
+                {"user_id": user_id, "currency": currency}
+            )
+            
+            if not wallet:
+                raise ValueError(f"Wallet not found for {user_id}/{currency}")
+            
+            current_available = float(wallet.get("available_balance", 0))
+            raise ValueError(
+                f"Insufficient available balance to lock. "
+                f"Required: {amount}, Available: {current_available}"
+            )
             
         except Exception as e:
             logger.error(f"❌ Error locking {amount} {currency} for {user_id}: {str(e)}")
             raise
+    
+    async def _log_escrow_action(self, action: str, user_id: str, currency: str, 
+                                  amount: float, lock_type: str, reference_id: str,
+                                  balance_after: float = None):
+        """Log escrow actions to audit trail for non-repudiation"""
+        try:
+            await self.db.audit_trail.insert_one({
+                "action": action,
+                "user_id": user_id,
+                "currency": currency,
+                "amount": amount,
+                "lock_type": lock_type,
+                "reference_id": reference_id,
+                "balance_after": balance_after,
+                "timestamp": datetime.now(timezone.utc),
+                "service": "wallet_service"
+            })
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to log audit trail: {str(e)}")
     
     async def unlock_balance(self, user_id: str, currency: str, amount: float,
                             unlock_type: str, reference_id: str) -> bool:
