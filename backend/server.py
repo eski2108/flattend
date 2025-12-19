@@ -3420,6 +3420,9 @@ async def preview_order(request: PreviewOrderRequest):
 @api_router.post("/p2p/create-trade")
 async def create_trade(request: CreateTradeRequest):
     """Create P2P trade and lock crypto in escrow via wallet service"""
+    # 🔒 FREEZE CHECK - Block P2P trades for frozen users
+    await enforce_not_frozen(request.buyer_id, "P2P trade")
+    
     from p2p_wallet_service import p2p_create_trade_with_wallet
     
     wallet_service = get_wallet_service()
