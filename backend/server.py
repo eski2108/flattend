@@ -21987,6 +21987,22 @@ async def resolve_dispute(dispute_id: str, request: dict):
             "timestamp": datetime.now(timezone.utc)
         })
         
+        # 📱 Send Telegram resolution confirmation
+        try:
+            from telegram_service import get_telegram_service
+            telegram_svc = get_telegram_service()
+            await telegram_svc.alert_dispute_resolved(
+                dispute_id=dispute_id,
+                trade_id=dispute.get("trade_id"),
+                resolution=resolution,
+                winner=winner,
+                amount=dispute.get("amount", 0),
+                currency=dispute.get("currency", "BTC"),
+                admin_id=admin_id
+            )
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to send Telegram resolution alert: {str(e)}")
+        
         logger.info(f"✅ Dispute {dispute_id} resolved. Winner: {winner}, Fee charged to: {loser_id}")
         
         return {
