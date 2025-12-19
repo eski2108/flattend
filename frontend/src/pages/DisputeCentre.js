@@ -28,7 +28,7 @@ function DisputeCentre() {
   const fetchDispute = async () => {
     try {
       setLoading(true);
-      const apiUrl = `${API}/api/p2p/disputes/${disputeId}?user_id=${userId}`;
+      const apiUrl = `${API}/api/disputes/${disputeId}`;
       console.log('Fetching dispute from:', apiUrl);
       const response = await axios.get(apiUrl);
       console.log('Dispute response:', response.data);
