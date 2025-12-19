@@ -8485,10 +8485,31 @@ async def upload_kyc_document(file: UploadFile = File(...), user_id: str = Form(
 @api_router.post("/admin/kyc/review")
 async def admin_review_kyc(review: KYCReview):
     """
-    Admin approves or rejects KYC submission.
+    Admin approves or rejects KYC submission - FULLY AUDITED.
     Automatically updates user permissions and badges.
     """
+    # Get before state
+    kyc = await db.kyc_submissions.find_one({"kyc_id": review.kyc_id}, {"_id": 0})
+    before_state = {"status": kyc.get("status") if kyc else None, "user_id": kyc.get("user_id") if kyc else None}
+    
     result = await review_kyc(db, review)
+    
+    # If successful, log the action
+    if result.get("success"):
+        await log_admin_action(
+            action="KYC_REVIEW",
+            admin_id=review.admin_id,
+            target_type="kyc",
+            target_id=review.kyc_id,
+            reason=review.rejection_reason or f"KYC {review.action}d",
+            before_state=before_state,
+            after_state={
+                "status": "verified" if review.action == "approve" else "rejected",
+                "action": review.action
+            },
+            metadata={"user_id": kyc.get("user_id") if kyc else None}
+        )
+    
     return result
 
 
