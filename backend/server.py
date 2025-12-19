@@ -11058,6 +11058,11 @@ async def place_trading_order(request: dict):
     """Place a spot trading order (buy/sell crypto) - FIXED FOR NEW WALLET SCHEMA"""
     try:
         user_id = request.get("user_id")
+        
+        # 🔒 FREEZE CHECK - Block trading for frozen users
+        if user_id:
+            await enforce_not_frozen(user_id, "trading")
+        
         pair = request.get("pair")  # e.g., "BTCUSD"
         order_type = request.get("type")  # "buy" or "sell"
         amount = float(request.get("amount", 0))
