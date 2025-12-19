@@ -248,7 +248,7 @@ class P2PDisputeTest:
                 "terms": "Test sell offer for dispute testing"
             }
             
-            response, status = await self.make_request('POST', '/p2p/offers/sell', sell_offer_data)
+            response, status = await self.make_request('POST', '/p2p/create-offer', sell_offer_data)
             
             if status == 201 and response.get('success'):
                 self.sell_offer_id = response.get('offer_id')
