@@ -12196,8 +12196,11 @@ async def activate_seller(request: dict):
     
     # Check requirements
     has_kyc = user.get("kyc_verified", False)
-    payment_methods = user.get("payment_methods", [])
-    has_payment_method = len(payment_methods) > 0
+    
+    # Check payment methods from BOTH user document AND payment_methods collection
+    user_payment_methods = user.get("payment_methods", [])
+    db_payment_methods = await db.payment_methods.find({"user_id": user_id}).to_list(100)
+    has_payment_method = len(user_payment_methods) > 0 or len(db_payment_methods) > 0
     
     if not has_kyc:
         raise HTTPException(status_code=400, detail="KYC verification required")
