@@ -312,7 +312,7 @@ class P2PDisputeTest:
             # Raise a dispute
             dispute_data = {
                 "trade_id": self.trade_id,
-                "initiated_by": self.buyer_data['user_id'],
+                "user_id": self.buyer_data['user_id'],
                 "reason": "payment_not_received",
                 "description": "Test dispute for testing admin resolution flow"
             }
