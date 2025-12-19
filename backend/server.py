@@ -6478,7 +6478,10 @@ async def admin_unfreeze_user(user_id: str, request: UnfreezeUserRequest):
 async def admin_get_freeze_status(user_id: str):
     """Get freeze status and history for a user"""
     try:
+        # Check both collections
         user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
