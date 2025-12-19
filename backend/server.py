@@ -1931,16 +1931,36 @@ async def get_sell_orders():
     return {"success": True, "orders": orders}
 
 @api_router.post("/crypto-market/buy/create")
-async def create_buy_order(request: CreateBuyOrderRequest):
-    """Create a buy order (buyer wants to purchase crypto)"""
+async def create_buy_order(http_request: Request, request: CreateBuyOrderRequest):
+    """
+    Create a buy order (buyer wants to purchase crypto)
+    
+    🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    """
     # 🔒 FREEZE CHECK - Block buys for frozen users
     buyer = await db.users.find_one({"wallet_address": request.buyer_address})
-    if buyer and buyer.get("user_id"):
-        await enforce_not_frozen(buyer["user_id"], "buy order")
+    user_id = buyer.get("user_id") if buyer else None
+    if user_id:
+        await enforce_not_frozen(user_id, "buy order")
+    
+    # 🔒 IDEMPOTENCY CHECK - Prevent duplicate buy orders
+    idempotency_key = http_request.headers.get("Idempotency-Key") or http_request.headers.get("idempotency-key")
+    if idempotency_key and user_id:
+        idempotency = get_idempotency_service(db)
+        cached = await idempotency.check_and_lock(user_id, "buy_order", idempotency_key)
+        if cached:
+            if cached.get("is_processing"):
+                raise HTTPException(status_code=409, detail=cached["response"]["message"])
+            logger.info(f"🔁 Returning cached buy order response for idempotency key")
+            return cached["response"]
     
     # Get sell order
     sell_order = await db.crypto_sell_orders.find_one({"order_id": request.sell_order_id}, {"_id": 0})
     if not sell_order or sell_order["status"] != "active":
+        # Release lock if validation fails
+        if idempotency_key and user_id:
+            idempotency = get_idempotency_service(db)
+            await idempotency.release_lock(user_id, "buy_order", idempotency_key)
         raise HTTPException(status_code=404, detail="Sell order not available")
     
     # Validate amount
