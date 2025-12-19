@@ -12257,8 +12257,13 @@ async def place_trading_order(http_request: Request, request: dict = None):
     Place a spot trading order (buy/sell crypto) - FIXED FOR NEW WALLET SCHEMA
     
     🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    🚦 FEATURE FLAG: trading_enabled
     """
     try:
+        # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
+        flags = get_feature_flags_service(db)
+        await flags.enforce("trading_enabled", "Trading")
+        
         # Handle Request body
         if request is None:
             request = await http_request.json()
