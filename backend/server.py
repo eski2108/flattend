@@ -6272,16 +6272,28 @@ async def admin_get_recent_signups(limit: int = 50):
 
 @api_router.post("/admin/users/update-tier")
 async def admin_update_user_tier(request: dict):
-    """Update user's referral tier (admin only)"""
+    """Update user's referral tier (admin only) - FULLY AUDITED"""
     try:
         user_id = request.get("user_id")
         tier = request.get("tier")
+        admin_id = request.get("admin_id", "admin")
+        reason = request.get("reason", "Tier update")
         
         if not user_id or not tier:
             raise HTTPException(status_code=400, detail="user_id and tier required")
         
         if tier not in ["standard", "vip", "golden"]:
             raise HTTPException(status_code=400, detail="Invalid tier. Must be standard, vip, or golden")
+        
+        # Get before state
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        before_state = {
+            "referral_tier": user.get("referral_tier", "standard"),
+            "tier_updated_at": user.get("tier_updated_at")
+        }
         
         # Update user tier
         result = await db.users.update_one(
@@ -6290,22 +6302,31 @@ async def admin_update_user_tier(request: dict):
         )
         
         if result.modified_count == 0:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail="User not found or no changes made")
         
-        # Log tier change
-        await db.admin_actions.insert_one({
-            "action": "tier_update",
-            "user_id": user_id,
-            "new_tier": tier,
-            "admin_id": request.get("admin_id", "admin"),
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        })
+        after_state = {
+            "referral_tier": tier,
+            "tier_updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # STANDARDIZED AUDIT LOG
+        audit_id = await log_admin_action(
+            action="USER_TIER_UPDATE",
+            admin_id=admin_id,
+            target_type="user",
+            target_id=user_id,
+            reason=reason,
+            before_state=before_state,
+            after_state=after_state,
+            metadata={"user_email": user.get("email")}
+        )
         
         logger.info(f"Admin updated user {user_id} tier to {tier}")
         
         return {
             "success": True,
-            "message": f"User tier updated to {tier}"
+            "message": f"User tier updated to {tier}",
+            "audit_id": audit_id
         }
     except HTTPException:
         raise
