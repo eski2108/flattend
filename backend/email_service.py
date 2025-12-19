@@ -1134,6 +1134,54 @@ class EmailService:
         
         await self.send_email(user_email, subject, html_content)
 
+    async def send_verification_email(
+        self,
+        user_email: str,
+        user_name: str,
+        verification_token: str,
+    ):
+        """Send verification email"""
+        subject = "Verify Your Email Address"
+        base_url = f"{os.getenv('BACKEND_URL')}"
+        verification_url = f"{base_url}/api/auth/verify-email?token={verification_token}"
+
+        html_content = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; background: #f9fafb; border-radius: 12px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #00F0FF; margin: 0;">CoinHub X</h1>
+                        <p style="color: #A855F7; font-size: 14px; font-weight: 600; margin: 5px 0;">Verify Your Email</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h2 style="color: #A855F7; margin-top: 0;">Verify Your Email Address</h2>
+                        
+                        <p>Hi {user_name},</p>
+                        
+                        <p>PleThanks for registering with Coinhub X</p>
+
+                        <p>Please click the button below to verify your email address:</p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{verification_url}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #fff !important; text-decoration: none !important; border-radius: 8px; font-weight: bold;">Verify Email</a>
+                        </div>
+                        
+                        <p>This link will expire in 24 hours.
+                        If you didn't request this verification, please ignore this email.</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <p style="color: #94a3b8; font-size: 12px; margin-bottom :5px;">
+                            © {datetime.now().year} CoinHub X. All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </body>
+        </html>
+        """
+        
+        await self.send_email(user_email, subject, html_content)
 
 # Create a global instance
 email_service = EmailService()
