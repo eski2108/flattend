@@ -21867,7 +21867,7 @@ async def resolve_dispute(dispute_id: str, request: dict):
         if not dispute:
             raise HTTPException(status_code=404, detail="Dispute not found")
         
-        if dispute.get("status") not in ["open", "pending"]:
+        if dispute.get("status") not in ["open", "pending", "OPEN", "PENDING"]:
             raise HTTPException(status_code=400, detail="Dispute already resolved")
         
         # Update dispute
