@@ -1079,10 +1079,10 @@ class AddWalletAddressRequest(BaseModel):
     address: str
 
 # class WithdrawalRequest(BaseModel):
-    user_id: str
-    currency: str
-    amount: float
-    withdrawal_address: str
+#     user_id: str
+#     currency: str
+#     amount: float
+#     withdrawal_address: str
 
 class DepositRequest(BaseModel):
     user_id: str
