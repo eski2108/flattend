@@ -24,6 +24,38 @@ export default function Login2() {
   useEffect(() => {
     // Handle Google OAuth callback
     const urlParams = new URLSearchParams(location.search);
+    
+    // ============================================================================
+    // SECURITY: Check if verification is required (for Google users)
+    // ============================================================================
+    if (urlParams.get('verification_required') === 'true') {
+      const userParam = urlParams.get('user');
+      const emailVerified = urlParams.get('email_verified') === 'true';
+      const phoneVerified = urlParams.get('phone_verified') === 'true';
+      
+      try {
+        const userData = userParam ? JSON.parse(decodeURIComponent(userParam)) : {};
+        localStorage.setItem('pending_verification_user', JSON.stringify(userData));
+        
+        if (!emailVerified && !phoneVerified) {
+          toast.warning('⚠️ Please verify your email and phone number to continue.');
+        } else if (!emailVerified) {
+          toast.warning('⚠️ Please verify your email to continue.');
+        } else if (!phoneVerified) {
+          toast.warning('⚠️ Please verify your phone number to continue.');
+        }
+        
+        setTimeout(() => {
+          navigate('/register?complete_verification=true&email=' + encodeURIComponent(userData.email || ''));
+        }, 1500);
+      } catch (error) {
+        console.error('Error parsing verification data:', error);
+        toast.error('Please complete registration to continue.');
+      }
+      return;
+    }
+    
+    // Handle successful Google login (only for VERIFIED users)
     if (urlParams.get('google_success') === 'true') {
       const token = urlParams.get('token');
       const userParam = urlParams.get('user');
