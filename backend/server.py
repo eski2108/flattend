@@ -9839,7 +9839,8 @@ async def google_callback(code: str = None, error: str = None):
     from fastapi.responses import RedirectResponse
     from urllib.parse import quote
     
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+    # Use BACKEND_URL as base - frontend and backend share same domain in production
+    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('BACKEND_URL', 'https://coinhubx.net'))
     
     logger.info(f"🔵 Google callback received - code: {'present' if code else 'missing'}, error: {error or 'none'}")
     
@@ -10897,7 +10898,8 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
         
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+        # Use BACKEND_URL as base - frontend and backend share same domain in production
+    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('BACKEND_URL', 'https://coinhubx.net'))
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
         
         message = Mail(
