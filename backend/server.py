@@ -21962,6 +21962,26 @@ async def resolve_dispute(dispute_id: str, request: dict):
             }
         )
         
+        # 🔒 AUDIT TRAIL: Log dispute resolution
+        await db.audit_trail.insert_one({
+            "action": "DISPUTE_RESOLVED",
+            "dispute_id": dispute_id,
+            "trade_id": dispute.get("trade_id"),
+            "resolution": resolution,
+            "winner": winner,
+            "loser": loser,
+            "winner_id": winner_id,
+            "loser_id": loser_id,
+            "crypto_amount": dispute.get("amount"),
+            "crypto_currency": dispute.get("currency"),
+            "fiat_amount": dispute.get("fiat_amount"),
+            "fiat_currency": dispute.get("fiat_currency"),
+            "dispute_fee": dispute_fee,
+            "admin_id": admin_id,
+            "admin_note": admin_note,
+            "timestamp": datetime.now(timezone.utc)
+        })
+        
         logger.info(f"✅ Dispute {dispute_id} resolved. Winner: {winner}, Fee charged to: {loser_id}")
         
         return {
