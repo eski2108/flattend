@@ -115,8 +115,9 @@ class P2PDisputeTest:
                     'password': seller_data['password']
                 })
                 if login_status == 200 and login_response.get('success'):
+                    user_info = login_response.get('user', {})
                     self.seller_data = {
-                        'user_id': login_response.get('user_id'),
+                        'user_id': user_info.get('user_id') or login_response.get('user_id'),
                         'email': seller_data['email'],
                         'password': seller_data['password']
                     }
