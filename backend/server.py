@@ -9268,6 +9268,64 @@ async def verify_email(token: str):
     """
     return HTMLResponse(content=success_html)
 
+
+@api_router.post("/auth/resend-verification-email")
+async def resend_verification_email(request: dict):
+    """
+    Resend verification email with new token.
+    Old token is invalidated and new 24-hour expiry is set.
+    """
+    email = request.get("email")
+    
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    
+    # Find user
+    user = await db.users.find_one({"email": email}, {"_id": 0})
+    if not user:
+        # Don't reveal if user exists
+        return {"success": True, "message": "If this email exists, a verification link has been sent."}
+    
+    # Check if already verified
+    if user.get("email_verified"):
+        raise HTTPException(status_code=400, detail="Email is already verified")
+    
+    # Generate new token with 24-hour expiry
+    import secrets
+    new_token = secrets.token_urlsafe(32)
+    new_expiry = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    
+    # Update user with new token
+    await db.users.update_one(
+        {"email": email},
+        {"$set": {
+            "verification_token": new_token,
+            "verification_token_expires": new_expiry
+        }}
+    )
+    
+    # Send verification email
+    try:
+        from email_service import send_verification_email
+        backend_url = os.environ.get("BACKEND_URL", "https://your-backend-url.com")
+        verification_link = f"{backend_url}/api/auth/verify-email?token={new_token}"
+        
+        await send_verification_email(
+            to_email=email,
+            verification_link=verification_link,
+            user_name=user.get("full_name", "User")
+        )
+        logger.info(f"✅ Resent verification email to {email}")
+    except Exception as e:
+        logger.error(f"❌ Failed to send verification email: {e}")
+    
+    return {
+        "success": True,
+        "message": "Verification email sent. Please check your inbox.",
+        "expires_in": "24 hours"
+    }
+
+
 # ============================================================================
 # TWILIO SMS UTILITY
 # ============================================================================
