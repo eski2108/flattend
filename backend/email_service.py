@@ -194,7 +194,7 @@ class EmailService:
                                 <table cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
-                                            <a href="https://controlpanel-4.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
+                                            <a href="https://coinhubx.net/email/dispute/{dispute_id}" 
                                                target="_blank"
                                                style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
                                                 🚨 RESOLVE DISPUTE NOW →
