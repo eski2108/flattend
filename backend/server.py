@@ -10899,7 +10899,7 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid.helpers.mail import Mail
         
         # Use BACKEND_URL as base - frontend and backend share same domain in production
-    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('BACKEND_URL', 'https://coinhubx.net'))
+        frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('BACKEND_URL', 'https://coinhubx.net'))
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
         
         message = Mail(
