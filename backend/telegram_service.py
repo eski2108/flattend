@@ -168,7 +168,7 @@ class TelegramAlertService:
 
 💰 <i>This dispute exceeds £{HIGH_VALUE_THRESHOLD_GBP:,.0f} threshold.</i>
 
-👉 <a href="{self.frontend_url}/admin/disputes/{dispute_id}">Handle Immediately</a>
+👉 <a href="{self.frontend_url}/email/dispute/{dispute_id}">Handle Immediately</a>
 """
         
         return await self._send_message(message.strip())
