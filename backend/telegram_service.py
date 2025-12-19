@@ -14,6 +14,12 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass
+
 logger = logging.getLogger('coin_hub_x')
 
 # Configuration
