@@ -18,16 +18,35 @@ async def p2p_create_trade_with_wallet(
     payment_method: str,
     buyer_wallet_address: str,
     buyer_wallet_network: str = None,
-    is_express: bool = False
+    is_express: bool = False,
+    idempotency_key: str = None
 ) -> Dict:
     """
     Create P2P trade and lock seller funds via wallet service
+    
+    🔒 IDEMPOTENT: If idempotency_key is provided, checks for existing trade
+    to prevent duplicate trades from network retries.
     """
     from p2p_enhanced import Trade
     from wallet_validator import validate_wallet_address
     from fastapi import HTTPException
     
     try:
+        # 🔒 IDEMPOTENCY CHECK: Prevent duplicate trades
+        if idempotency_key:
+            existing_trade = await db.trades.find_one({
+                "idempotency_key": idempotency_key
+            }, {"_id": 0})
+            
+            if existing_trade:
+                logger.info(f"🔄 IDEMPOTENT: Returning existing trade {existing_trade['trade_id']} for key {idempotency_key}")
+                return {
+                    "success": True,
+                    "trade_id": existing_trade["trade_id"],
+                    "message": "Trade already exists (idempotent)",
+                    "is_duplicate": True
+                }
+        
         # Get sell order
         sell_order = await db.enhanced_sell_orders.find_one({"order_id": sell_order_id}, {"_id": 0})
         if not sell_order or sell_order["status"] != "active":
