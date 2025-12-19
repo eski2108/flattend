@@ -111,6 +111,9 @@ class EmailService:
             admin_email = ADMIN_EMAIL_FALLBACK
         # 🔒 END LOCKED SECTION
         
+        # Get frontend URL dynamically
+        frontend_url = get_frontend_url()
+        
         subject = f"🚨 URGENT: P2P Trade Dispute - {trade_id}"
         
         dispute_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
