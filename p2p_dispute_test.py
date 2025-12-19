@@ -338,10 +338,27 @@ class P2PDisputeTest:
         print("\n🧪 TEST 6: Testing Admin Dispute Detail Access")
         
         try:
+            # If no dispute from previous tests, create a mock dispute directly
             if not self.dispute_id:
-                print("❌ No dispute available to test")
-                self.log_result("Admin Dispute Detail Access", False, "No dispute available")
-                return False
+                print("⚠️ No dispute from P2P flow, creating mock dispute for testing...")
+                
+                # Create a mock dispute directly
+                mock_dispute_data = {
+                    "trade_id": "mock-trade-" + str(uuid.uuid4())[:8],
+                    "user_id": self.buyer_data['user_id'] if self.buyer_data else "mock-buyer-id",
+                    "reason": "payment_not_received",
+                    "description": "Mock dispute created for testing admin dispute detail access"
+                }
+                
+                response, status = await self.make_request('POST', '/p2p/disputes/create', mock_dispute_data)
+                
+                if status == 201 and response.get('success'):
+                    self.dispute_id = response.get('dispute_id')
+                    print(f"✅ Mock dispute created: {self.dispute_id}")
+                else:
+                    print(f"❌ Failed to create mock dispute: {response}")
+                    self.log_result("Admin Dispute Detail Access", False, "Could not create test dispute")
+                    return False
                 
             # Test GET /api/p2p/disputes/{dispute_id}
             response, status = await self.make_request('GET', f'/p2p/disputes/{self.dispute_id}')
