@@ -111,7 +111,7 @@ class TelegramAlertService:
 <b>Reason:</b> {reason.replace('_', ' ').title()}
 <b>Initiated by:</b> {initiated_by.title()}
 
-👉 <a href="{self.frontend_url}/admin/disputes/{dispute_id}">Open Dispute Panel</a>
+👉 <a href="{self.frontend_url}/email/dispute/{dispute_id}">Open Dispute Panel</a>
 """
         
         return await self._send_message(message.strip())
