@@ -1321,10 +1321,10 @@ def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: floa
 def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float, crypto: str, buyer_id: str, seller_id: str, reported_by: str):
     """Email template for admin when dispute is opened"""
     from datetime import datetime
-    # Use old working domain that doesn't have cache issues
-    frontend_url = 'https://coinhubx.net'
+    # Use dynamic frontend URL
+    frontend_url = get_frontend_url()
     cache_bust = int(datetime.now().timestamp())
-    dispute_link = f"{frontend_url}/admin/disputes/{dispute_id}?t={cache_bust}"
+    dispute_link = f"{frontend_url}/email/dispute/{dispute_id}?t={cache_bust}"
     return f"""
     <html>
     <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
