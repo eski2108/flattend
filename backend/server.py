@@ -7458,8 +7458,9 @@ async def request_withdrawal(
     User requests cryptocurrency withdrawal - V2 with wallet service
     Locks balance immediately to prevent double-spend
     """
-    # 🔒 FREEZE CHECK - Block withdrawals for frozen users
+    # 🔒 FREEZE CHECKS - Block withdrawals for frozen users AND frozen wallets
     await enforce_not_frozen(user_id, "withdrawal")
+    await enforce_wallet_not_frozen(user_id, currency, f"withdrawal of {currency}")
     
     from withdrawal_system_v2 import create_withdrawal_request_v2
     
