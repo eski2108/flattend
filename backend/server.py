@@ -45,6 +45,23 @@ from session_service import get_session_service, SessionService
 COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
 
+# ============================================================================
+# DYNAMIC URL CONFIGURATION
+# These are read from .env and updated automatically when agent changes
+# NO HARDCODED FALLBACKS - must be set in .env
+# ============================================================================
+def get_backend_url():
+    """Get backend URL from environment - updates automatically per environment"""
+    return os.environ.get('BACKEND_URL') or os.environ.get('REACT_APP_BACKEND_URL') or 'http://localhost:8001'
+
+def get_frontend_url():
+    """Get frontend URL from environment - updates automatically per environment"""
+    return os.environ.get('FRONTEND_URL') or os.environ.get('BACKEND_URL') or os.environ.get('REACT_APP_BACKEND_URL') or 'http://localhost:3000'
+
+# Log the URLs being used on startup
+logger.info(f"🔗 BACKEND_URL: {get_backend_url()}")
+logger.info(f"🔗 FRONTEND_URL: {get_frontend_url()}")
+
 # JWT Configuration
 JWT_SECRET = os.getenv('JWT_SECRET', 'cryptolend-secret-key-change-in-production-2025')
 ALGORITHM = "HS256"
@@ -3368,7 +3385,7 @@ async def get_user_seller_link(user_id: str):
             raise HTTPException(status_code=404, detail="User not found")
         
         # Generate seller link
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        base_url = get_backend_url()
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         return {
@@ -7419,6 +7436,24 @@ async def validate_session_from_token(request: Request) -> dict:
                 detail=f"Account is frozen. Reason: {user.get('freeze_reason', 'Contact support')}"
             )
         
+        # ============================================================================
+        # SECURITY: Check verification status for ALL users (except admins)
+        # ============================================================================
+        is_admin = user.get("role") == "admin"
+        email_verified = user.get("email_verified", False)
+        phone_verified = user.get("phone_verified", False)
+        
+        if not is_admin and (not email_verified or not phone_verified):
+            missing = []
+            if not email_verified:
+                missing.append("email")
+            if not phone_verified:
+                missing.append("OTP")
+            raise HTTPException(
+                status_code=403,
+                detail=f"Complete email + OTP verification. Missing: {', '.join(missing)}"
+            )
+        
         # Check if session was revoked
         session_revoked_at = user.get("session_revoked_at")
         if session_revoked_at and token_iat:
@@ -7507,6 +7542,29 @@ async def verify_user_session(request: Request):
                 "valid": False,
                 "reason": "account_frozen",
                 "message": f"Account is frozen: {user.get('freeze_reason', 'Contact support')}"
+            }
+        
+        # ============================================================================
+        # SECURITY: Check verification status (email + OTP required for ALL users)
+        # ============================================================================
+        is_admin = user.get("role") == "admin"
+        email_verified = user.get("email_verified", False)
+        phone_verified = user.get("phone_verified", False)
+        
+        if not is_admin and (not email_verified or not phone_verified):
+            missing = []
+            if not email_verified:
+                missing.append("email")
+            if not phone_verified:
+                missing.append("OTP")
+            return {
+                "valid": False,
+                "reason": "verification_incomplete",
+                "message": f"Complete email + OTP verification. Missing: {', '.join(missing)}",
+                "verification_required": {
+                    "email": not email_verified,
+                    "phone": not phone_verified
+                }
             }
         
         # Check if session was revoked
@@ -9658,14 +9716,25 @@ async def store_emergent_session(request: dict):
     existing_user = await db.users.find_one({"email": email})
     
     if not existing_user:
-        # Create new user account
+        # ============================================================================
+        # SECURITY: Google/Emergent users must STILL complete OUR verification flow
+        # email_verified = false, phone_verified = false
+        # ============================================================================
+        import secrets
+        verification_token = secrets.token_urlsafe(32)
+        verification_token_expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+        
+        # Create new user account - NOT VERIFIED
         await db.users.insert_one({
             "user_id": user_id,
             "email": email,
             "full_name": name,
             "profile_picture": picture,
-            "email_verified": True,
+            "email_verified": False,  # MUST verify via our email flow
+            "phone_verified": False,  # MUST verify via OTP
             "auth_provider": "emergent_google",
+            "verification_token": verification_token,
+            "verification_token_expires": verification_token_expires,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "role": "user"
         })
@@ -9673,30 +9742,70 @@ async def store_emergent_session(request: dict):
         # Initialize balances
         await initialize_trader_balance(db, user_id)
         
-        logger.info(f"✅ New user created via Emergent Auth: {email}")
+        # Send verification email
+        try:
+            from email_service import EmailService
+            email_service = EmailService()
+            await email_service.send_verification_email(
+                user_email=email,
+                user_name=name,
+                verification_token=verification_token
+            )
+            logger.info(f"✅ Verification email sent to Emergent user: {email}")
+        except Exception as e:
+            logger.error(f"❌ Failed to send verification email: {e}")
+        
+        logger.info(f"✅ New user created via Emergent Auth: {email} (verification required)")
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "requires_verification": True,
+            "verification_required": {
+                "email": True,
+                "phone": True
+            },
+            "message": "Account created. Please verify your email and phone to continue."
+        }
     else:
-        # Use existing user_id
+        # Existing user - check verification status
         user_id = existing_user.get("user_id")
-    
-    # Store session with 7-day expiry
-    expiry = datetime.now(timezone.utc) + timedelta(days=7)
-    await db.user_sessions.update_one(
-        {"user_id": user_id},
-        {
-            "$set": {
-                "session_token": session_token,
-                "expires_at": expiry.isoformat(),
-                "created_at": datetime.now(timezone.utc).isoformat()
+        email_verified = existing_user.get("email_verified", False)
+        phone_verified = existing_user.get("phone_verified", False)
+        
+        # Store session with 7-day expiry
+        expiry = datetime.now(timezone.utc) + timedelta(days=7)
+        await db.user_sessions.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "session_token": session_token,
+                    "expires_at": expiry.isoformat(),
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        # If not fully verified, return verification required
+        if not email_verified or not phone_verified:
+            return {
+                "success": True,
+                "user_id": user_id,
+                "requires_verification": True,
+                "verification_required": {
+                    "email": not email_verified,
+                    "phone": not phone_verified
+                },
+                "message": "Please complete verification to continue."
             }
-        },
-        upsert=True
-    )
-    
-    return {
-        "success": True,
-        "user_id": user_id,
-        "message": "Session stored successfully"
-    }
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "requires_verification": False,
+            "message": "Session stored successfully"
+        }
 
 
 @api_router.get("/auth/google")
@@ -9708,7 +9817,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
-        base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+        base_url = get_backend_url()
         redirect_uri = f"{base_url}/api/auth/google/callback"
         
         if not google_client_id:
@@ -9747,7 +9856,8 @@ async def google_callback(code: str = None, error: str = None):
     from fastapi.responses import RedirectResponse
     from urllib.parse import quote
     
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+    # Use BACKEND_URL as base - frontend and backend share same domain in production
+    frontend_url = os.environ.get('FRONTEND_URL', get_backend_url())
     
     logger.info(f"🔵 Google callback received - code: {'present' if code else 'missing'}, error: {error or 'none'}")
     
@@ -9762,7 +9872,7 @@ async def google_callback(code: str = None, error: str = None):
     
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-    redirect_uri = f"{os.environ.get('BACKEND_URL', 'https://coinhubx.net')}/api/auth/google/callback"
+    redirect_uri = f"{get_backend_url()}/api/auth/google/callback"
     
     logger.info(f"   Using redirect_uri: {redirect_uri}")
     
@@ -9807,8 +9917,35 @@ async def google_callback(code: str = None, error: str = None):
             existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
             
             if existing_user:
-                # User exists - generate token and redirect to login callback page
-                logger.info("   Existing user found, generating JWT...")
+                # ============================================================================
+                # SECURITY: Check verification status - ALL users must verify
+                # ============================================================================
+                email_verified = existing_user.get("email_verified", False)
+                phone_verified = existing_user.get("phone_verified", False)
+                is_admin = existing_user.get("role") == "admin"
+                
+                logger.info(f"   Existing user found: email_verified={email_verified}, phone_verified={phone_verified}")
+                
+                # Only admins can bypass verification
+                if not is_admin and (not email_verified or not phone_verified):
+                    # Redirect to verification page - use login with verification_required flag
+                    logger.info("   User NOT verified, redirecting to login with verification required...")
+                    user_json = json.dumps({
+                        "user_id": existing_user["user_id"],
+                        "email": existing_user["email"],
+                        "full_name": existing_user.get("full_name", ""),
+                        "requires_verification": True,
+                        "email_verified": email_verified,
+                        "phone_verified": phone_verified
+                    })
+                    from urllib.parse import quote
+                    # Redirect to login page with verification_required flag - frontend must handle this
+                    redirect_url = f"{frontend_url}/login?verification_required=true&user={quote(user_json)}&email_verified={email_verified}&phone_verified={phone_verified}"
+                    logger.info(f"✅ Redirecting unverified Google user to: {frontend_url}/login?verification_required=true")
+                    return RedirectResponse(url=redirect_url, status_code=302)
+                
+                # User is fully verified - generate token and allow login
+                logger.info("   User VERIFIED, generating JWT...")
                 now_ts_google = datetime.now(timezone.utc)
                 token_payload = {
                     "user_id": existing_user["user_id"],
@@ -9828,7 +9965,7 @@ async def google_callback(code: str = None, error: str = None):
                 
                 from urllib.parse import quote
                 redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
-                logger.info(f"✅ Redirecting existing user to: {frontend_url}/login?google_success=true")
+                logger.info(f"✅ Redirecting verified user to: {frontend_url}/login?google_success=true")
                 return RedirectResponse(url=redirect_url, status_code=302)
             else:
                 # New user - redirect to phone verification with Google data
@@ -9868,7 +10005,16 @@ async def complete_google_signup(request: dict):
         raise HTTPException(status_code=400, detail="Username already taken")
     
     # Create user account
+    # ============================================================================
+    # SECURITY: Google users must STILL complete OUR verification flow
+    # email_verified = false, phone_verified = false
+    # User will be redirected to verification after Google auth
+    # ============================================================================
     user_id = str(uuid.uuid4())
+    import secrets
+    verification_token = secrets.token_urlsafe(32)
+    verification_token_expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    
     user_account = {
         "user_id": user_id,
         "email": google_data['email'],
@@ -9876,9 +10022,12 @@ async def complete_google_signup(request: dict):
         "username": username,
         "phone_number": phone_number,
         "role": "user",
-        "email_verified": True,  # Google already verified
-        "phone_verified": True,  # Already verified in previous step
+        "email_verified": False,  # MUST verify via our email flow
+        "phone_verified": False,  # MUST verify via OTP
         "google_id": google_data.get('id'),
+        "auth_provider": "google",
+        "verification_token": verification_token,
+        "verification_token_expires": verification_token_expires,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "wallet_address": None
     }
@@ -9893,19 +10042,31 @@ async def complete_google_signup(request: dict):
         "created_at": datetime.now(timezone.utc).isoformat()
     })
     
-    # Generate JWT token with iat for session revocation
-    now_ts_google_new = datetime.now(timezone.utc)
-    token_data = {
-        "user_id": user_id,
-        "email": google_data['email'],
-        "iat": int(now_ts_google_new.timestamp()),
-        "exp": now_ts_google_new + timedelta(days=30)
-    }
-    token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    # Send verification email
+    try:
+        from email_service import EmailService
+        email_service = EmailService()
+        backend_url = get_backend_url()
+        verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
+        await email_service.send_verification_email(
+            user_email=google_data['email'],
+            user_name=full_name,
+            verification_token=verification_token
+        )
+        logger.info(f"✅ Verification email sent to Google user: {google_data['email']}")
+    except Exception as e:
+        logger.error(f"❌ Failed to send verification email to Google user: {e}")
     
+    # Return response indicating verification is required
+    # Frontend should redirect to verification page, NOT dashboard
     return {
         "success": True,
-        "token": token,
+        "requires_verification": True,
+        "verification_required": {
+            "email": True,
+            "phone": True
+        },
+        "message": "Account created. Please verify your email and phone to continue.",
         "user": {
             "user_id": user_id,
             "email": google_data['email'],
@@ -9921,12 +10082,13 @@ async def complete_google_signup(request: dict):
     )
     
     # Show success page and redirect to login after 3 seconds
-    html_content = """
+    frontend_url = get_frontend_url()
+    html_content = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Email Verified - Coin Hub X</title>
-        <meta http-equiv="refresh" content="3;url=https://controlpanel-4.preview.emergentagent.com/login">
+        <meta http-equiv="refresh" content="3;url={frontend_url}/login">
         <style>
             body { 
                 font-family: Arial, sans-serif; 
@@ -9970,7 +10132,7 @@ async def complete_google_signup(request: dict):
             <h1>Email Verified Successfully!</h1>
             <p>Your account has been activated. You can now log in and start trading.</p>
             <p style="font-size: 14px; color: #ccc;">Redirecting to login page in 3 seconds...</p>
-            <a href="https://controlpanel-4.preview.emergentagent.com/login">Go to Login</a>
+            <a href="{frontend_url}/login">Go to Login</a>
         </div>
     </body>
     </html>
@@ -10320,7 +10482,7 @@ async def verify_phone(request: dict):
             )
             
             if verification_check.status == 'approved':
-                # Mark phone as verified
+                # Mark phone as verified ONLY - email must be verified separately
                 await db.users.update_one(
                     {"user_id": user["user_id"]},
                     {"$set": {"phone_verified": True}}
@@ -10349,10 +10511,10 @@ async def verify_phone(request: dict):
             if datetime.now(timezone.utc) > expires_at:
                 raise HTTPException(status_code=400, detail="Verification code expired")
             
-            # Mark phone as verified
+            # Mark phone as verified ONLY - email must be verified separately
             await db.users.update_one(
                 {"user_id": user["user_id"]},
-                {"$set": {"phone_verified": True, "email_verified": True}}
+                {"$set": {"phone_verified": True}}
             )
             
             # Delete verification code
@@ -10504,11 +10666,14 @@ async def login_user(login_req: LoginRequest, request: Request):
     email_verified = user.get("email_verified", False)
     phone_verified = user.get("phone_verified", False)
     
-    # Skip verification for admin users and Google OAuth users
+    # ============================================================================
+    # VERIFICATION ENFORCEMENT - ALL USERS MUST VERIFY (including Google)
+    # NO BYPASS for Google users - they must complete OUR verification flow
+    # Only admins are exempt
+    # ============================================================================
     is_admin = user.get("role") == "admin"
-    is_google_user = user.get("google_id") is not None or user.get("auth_provider") == "emergent_google"
     
-    if not is_admin and not is_google_user:
+    if not is_admin:
         if not email_verified:
             logger.warning(f"🔐 LOGIN BLOCKED: Email not verified for {login_req.email}")
             await security_logger.log_login_attempt(
@@ -10751,7 +10916,8 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
         
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+        # Use BACKEND_URL as base - frontend and backend share same domain in production
+        frontend_url = os.environ.get('FRONTEND_URL', get_backend_url())
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
         
         message = Mail(
@@ -11223,7 +11389,7 @@ async def send_broadcast_message(request: dict):
                                 <div style="color: #fff; font-size: 16px; line-height: 1.6; text-align: left;">
                                     {message_content.replace(chr(10), '<br>')}
                                 </div>
-                                <a href="https://controlpanel-4.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
+                                <a href="{get_frontend_url()}/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
                                     View on Platform
                                 </a>
                             </div>
@@ -12145,8 +12311,11 @@ async def get_seller_status(user_id: str):
     # Check requirements
     is_seller = user.get("is_seller", False)
     has_kyc = user.get("kyc_verified", False)
-    payment_methods = user.get("payment_methods", [])
-    has_payment_method = len(payment_methods) > 0
+    
+    # Check payment methods from BOTH user document AND payment_methods collection
+    user_payment_methods = user.get("payment_methods", [])
+    db_payment_methods = await db.payment_methods.find({"user_id": user_id}).to_list(100)
+    has_payment_method = len(user_payment_methods) > 0 or len(db_payment_methods) > 0
     
     # Get seller stats if already seller
     stats = {}
@@ -12193,8 +12362,11 @@ async def activate_seller(request: dict):
     
     # Check requirements
     has_kyc = user.get("kyc_verified", False)
-    payment_methods = user.get("payment_methods", [])
-    has_payment_method = len(payment_methods) > 0
+    
+    # Check payment methods from BOTH user document AND payment_methods collection
+    user_payment_methods = user.get("payment_methods", [])
+    db_payment_methods = await db.payment_methods.find({"user_id": user_id}).to_list(100)
+    has_payment_method = len(user_payment_methods) > 0 or len(db_payment_methods) > 0
     
     if not has_kyc:
         raise HTTPException(status_code=400, detail="KYC verification required")
@@ -15968,7 +16140,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
             
-            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
+            confirmation_url = f"{get_frontend_url()}/confirm-withdrawal?token={confirmation_token}"
             
             message = Mail(
                 from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -20175,7 +20347,7 @@ async def assign_golden_tier(request: dict):
             "success": True,
             "data": {
                 "referral_code": user.get("referral_code", user_id[:8].upper()),
-                "referral_link": f"https://controlpanel-4.preview.emergentagent.com/register?ref={user.get('referral_code', user_id[:8].upper())}",
+                "referral_link": f"{get_frontend_url()}/register?ref={user.get('referral_code', user_id[:8].upper())}",
                 "total_referrals": len(referred_users),
                 "active_referrals": len([u for u in referred_users if u.get("is_active", True)]),
                 "total_earnings": total_earnings,
@@ -27154,7 +27326,7 @@ async def get_my_seller_link(request: Request):
             return {"success": False, "error": "User not found"}
         
         # Create seller link with current domain
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        base_url = get_backend_url()
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         # Get username/email for display
@@ -29551,7 +29723,7 @@ async def get_user_referral_dashboard(user_id: str):
             )
         
         # Generate referral link
-        frontend_url = os.environ.get("FRONTEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        frontend_url = get_frontend_url()
         referral_link = f"{frontend_url}/register?ref={referral_code}"
         
         # Get all users referred by this user
