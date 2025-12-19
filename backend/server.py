@@ -3385,7 +3385,7 @@ async def get_user_seller_link(user_id: str):
             raise HTTPException(status_code=404, detail="User not found")
         
         # Generate seller link
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        base_url = get_backend_url()
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         return {
@@ -9817,7 +9817,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
-        base_url = os.environ.get('BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+        base_url = get_backend_url()
         redirect_uri = f"{base_url}/api/auth/google/callback"
         
         if not google_client_id:
@@ -9857,7 +9857,7 @@ async def google_callback(code: str = None, error: str = None):
     from urllib.parse import quote
     
     # Use BACKEND_URL as base - frontend and backend share same domain in production
-    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com'))
+    frontend_url = os.environ.get('FRONTEND_URL', get_backend_url())
     
     logger.info(f"🔵 Google callback received - code: {'present' if code else 'missing'}, error: {error or 'none'}")
     
@@ -9872,7 +9872,7 @@ async def google_callback(code: str = None, error: str = None):
     
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-    redirect_uri = f"{os.environ.get('BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')}/api/auth/google/callback"
+    redirect_uri = f"{get_backend_url()}/api/auth/google/callback"
     
     logger.info(f"   Using redirect_uri: {redirect_uri}")
     
@@ -10046,7 +10046,7 @@ async def complete_google_signup(request: dict):
     try:
         from email_service import EmailService
         email_service = EmailService()
-        backend_url = os.environ.get("BACKEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        backend_url = get_backend_url()
         verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
         await email_service.send_verification_email(
             user_email=google_data['email'],
@@ -10916,7 +10916,7 @@ async def forgot_password(request: ForgotPasswordRequest, req: Request):
         from sendgrid.helpers.mail import Mail
         
         # Use BACKEND_URL as base - frontend and backend share same domain in production
-        frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com'))
+        frontend_url = os.environ.get('FRONTEND_URL', get_backend_url())
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
         
         message = Mail(
@@ -16139,7 +16139,7 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
             
-            confirmation_url = f"{os.environ.get('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')}/confirm-withdrawal?token={confirmation_token}"
+            confirmation_url = f"{get_frontend_url()}/confirm-withdrawal?token={confirmation_token}"
             
             message = Mail(
                 from_email=os.environ.get('SENDER_EMAIL', 'noreply@coinhubx.net'),
@@ -27325,7 +27325,7 @@ async def get_my_seller_link(request: Request):
             return {"success": False, "error": "User not found"}
         
         # Create seller link with current domain
-        base_url = os.environ.get("REACT_APP_BACKEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        base_url = get_backend_url()
         seller_link = f"{base_url.replace('/api', '')}/p2p/seller/{user_id}"
         
         # Get username/email for display
@@ -29722,7 +29722,7 @@ async def get_user_referral_dashboard(user_id: str):
             )
         
         # Generate referral link
-        frontend_url = os.environ.get("FRONTEND_URL", "https://controlpanel-4.preview.emergentagent.com")
+        frontend_url = get_frontend_url()
         referral_link = f"{frontend_url}/register?ref={referral_code}"
         
         # Get all users referred by this user
