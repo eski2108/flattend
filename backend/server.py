@@ -45,6 +45,23 @@ from session_service import get_session_service, SessionService
 COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
 
+# ============================================================================
+# DYNAMIC URL CONFIGURATION
+# These are read from .env and updated automatically when agent changes
+# NO HARDCODED FALLBACKS - must be set in .env
+# ============================================================================
+def get_backend_url():
+    """Get backend URL from environment - updates automatically per environment"""
+    return os.environ.get('BACKEND_URL') or os.environ.get('REACT_APP_BACKEND_URL') or 'http://localhost:8001'
+
+def get_frontend_url():
+    """Get frontend URL from environment - updates automatically per environment"""
+    return os.environ.get('FRONTEND_URL') or os.environ.get('BACKEND_URL') or os.environ.get('REACT_APP_BACKEND_URL') or 'http://localhost:3000'
+
+# Log the URLs being used on startup
+logger.info(f"🔗 BACKEND_URL: {get_backend_url()}")
+logger.info(f"🔗 FRONTEND_URL: {get_frontend_url()}")
+
 # JWT Configuration
 JWT_SECRET = os.getenv('JWT_SECRET', 'cryptolend-secret-key-change-in-production-2025')
 ALGORITHM = "HS256"
