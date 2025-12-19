@@ -55,13 +55,25 @@ const resources = {
   id: { translation: id },
 };
 
+// Safe localStorage access for WebView compatibility
+const getSavedLanguage = () => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('language') || 'en';
+    }
+  } catch (e) {
+    console.warn('localStorage not available:', e);
+  }
+  return 'en';
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
     fallbackLng: 'en',
-    lng: localStorage.getItem('language') || 'en',
+    lng: getSavedLanguage(),
     debug: false,
     interpolation: {
       escapeValue: false,
