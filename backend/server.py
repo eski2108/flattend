@@ -8130,7 +8130,12 @@ async def request_withdrawal(
     Locks balance immediately to prevent double-spend
     
     🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    🚦 FEATURE FLAG: withdrawals_enabled
     """
+    # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
+    flags = get_feature_flags_service(db)
+    await flags.enforce("withdrawals_enabled", "Withdrawals")
+    
     # 🔒 FREEZE CHECKS - Block withdrawals for frozen users AND frozen wallets
     await enforce_not_frozen(user_id, "withdrawal")
     await enforce_wallet_not_frozen(user_id, currency, f"withdrawal of {currency}")
