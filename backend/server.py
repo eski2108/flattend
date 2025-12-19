@@ -6981,6 +6981,426 @@ async def admin_list_frozen_wallets():
 
 
 # ============================================================================
+# 🔧 ADMIN BALANCE ADJUSTMENT SYSTEM (P0-4)
+# ============================================================================
+# Controlled, audited pathway for admin balance adjustments
+# - No direct DB edits
+# - Full audit trail
+# - Cannot debit below zero
+# - Idempotency protected
+# - Respects freeze states with override flag
+# ============================================================================
+
+class BalanceAdjustmentRequest(BaseModel):
+    """Request model for admin balance adjustments"""
+    admin_id: str
+    target_user_id: str
+    asset: str  # e.g., USDT, BTC, GBP
+    amount: float  # Signed: + credit, - debit
+    reason: str  # Mandatory, min 15 chars
+    reference: Optional[str] = None  # dispute_id, ticket_id, tx_hash
+    note: Optional[str] = None  # Internal note
+    override_freeze: bool = False  # Allow adjustment even if frozen
+
+
+class BalanceAdjustmentFilter(BaseModel):
+    """Filter model for querying adjustments"""
+    target_user_id: Optional[str] = None
+    asset: Optional[str] = None
+    admin_id: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    status: Optional[str] = None  # applied, rejected
+
+
+@api_router.post("/admin/balance-adjustments")
+async def admin_create_balance_adjustment(
+    http_request: Request,
+    request: BalanceAdjustmentRequest
+):
+    """
+    🔧 ADMIN BALANCE ADJUSTMENT
+    
+    Creates a controlled, audited balance adjustment for a user.
+    
+    - Positive amount = CREDIT (add to balance)
+    - Negative amount = DEBIT (subtract from balance)
+    
+    Safety rules:
+    - Cannot debit below zero
+    - Respects freeze states (unless override_freeze=true)
+    - Idempotency protected via Idempotency-Key header
+    - Full audit trail
+    
+    Required fields:
+    - admin_id, target_user_id, asset, amount, reason (min 15 chars)
+    """
+    try:
+        # === VALIDATION ===
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        if not request.target_user_id:
+            raise HTTPException(status_code=400, detail="target_user_id is required")
+        
+        if not request.asset:
+            raise HTTPException(status_code=400, detail="asset is required")
+        
+        if request.amount == 0:
+            raise HTTPException(status_code=400, detail="amount cannot be zero")
+        
+        if not request.reason or len(request.reason.strip()) < 15:
+            raise HTTPException(status_code=400, detail="reason is required (minimum 15 characters)")
+        
+        # Normalize asset
+        asset = request.asset.upper()
+        
+        # === IDEMPOTENCY CHECK ===
+        idempotency_key = http_request.headers.get("Idempotency-Key") or http_request.headers.get("idempotency-key")
+        if idempotency_key:
+            idempotency = get_idempotency_service(db)
+            cached = await idempotency.check_and_lock(request.admin_id, "balance_adjustment", idempotency_key)
+            if cached:
+                if cached.get("is_processing"):
+                    raise HTTPException(status_code=409, detail="Adjustment is already being processed")
+                logger.info(f"🔁 Returning cached adjustment response for idempotency key")
+                return cached["response"]
+        
+        # === GET USER ===
+        user = await db.users.find_one({"user_id": request.target_user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": request.target_user_id})
+        if not user:
+            if idempotency_key:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(request.admin_id, "balance_adjustment", idempotency_key)
+            raise HTTPException(status_code=404, detail="Target user not found")
+        
+        # === CHECK FREEZE STATUS ===
+        user_frozen = user.get("is_frozen", False)
+        wallet = await db.wallets.find_one({"user_id": request.target_user_id, "currency": asset})
+        wallet_frozen = wallet.get("is_frozen", False) if wallet else False
+        
+        freeze_override_required = user_frozen or wallet_frozen
+        freeze_override_applied = False
+        
+        if freeze_override_required and not request.override_freeze:
+            if idempotency_key:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(request.admin_id, "balance_adjustment", idempotency_key)
+            
+            frozen_entity = "User account" if user_frozen else f"Wallet {asset}"
+            raise HTTPException(
+                status_code=403,
+                detail=f"{frozen_entity} is frozen. Set override_freeze=true to proceed."
+            )
+        
+        if freeze_override_required and request.override_freeze:
+            freeze_override_applied = True
+            logger.warning(f"⚠️ FREEZE OVERRIDE: Admin {request.admin_id} adjusting frozen {asset} for user {request.target_user_id}")
+        
+        # === GET CURRENT BALANCE ===
+        if not wallet:
+            # Create wallet if doesn't exist
+            wallet = {
+                "wallet_id": str(uuid.uuid4()),
+                "user_id": request.target_user_id,
+                "currency": asset,
+                "total_balance": 0.0,
+                "available_balance": 0.0,
+                "locked_balance": 0.0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.wallets.insert_one(wallet)
+        
+        balance_before = float(wallet.get("total_balance", 0))
+        available_before = float(wallet.get("available_balance", 0))
+        
+        # === CALCULATE NEW BALANCE ===
+        balance_after = balance_before + request.amount
+        available_after = available_before + request.amount
+        
+        # === SAFETY CHECK: Cannot debit below zero ===
+        if balance_after < 0:
+            if idempotency_key:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(request.admin_id, "balance_adjustment", idempotency_key)
+            
+            # Log rejected adjustment
+            rejection_entry = {
+                "adjustment_id": str(uuid.uuid4()),
+                "admin_id": request.admin_id,
+                "target_user_id": request.target_user_id,
+                "target_email": user.get("email"),
+                "asset": asset,
+                "amount": request.amount,
+                "balance_before": balance_before,
+                "balance_after_attempted": balance_after,
+                "reason": request.reason.strip(),
+                "reference": request.reference,
+                "note": request.note,
+                "status": "rejected",
+                "rejection_reason": "Insufficient balance - cannot debit below zero",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "immutable": True
+            }
+            await db.balance_adjustments.insert_one(rejection_entry)
+            await db.admin_audit_logs.insert_one({
+                **rejection_entry,
+                "audit_id": str(uuid.uuid4()),
+                "action": "ADMIN_BALANCE_ADJUSTMENT_REJECTED"
+            })
+            
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient balance. Current: {balance_before} {asset}, Requested debit: {abs(request.amount)} {asset}"
+            )
+        
+        # === APPLY ADJUSTMENT ===
+        adjustment_timestamp = datetime.now(timezone.utc)
+        adjustment_id = str(uuid.uuid4())
+        correlation_id = str(uuid.uuid4())
+        
+        # Update wallet balance
+        update_result = await db.wallets.update_one(
+            {"user_id": request.target_user_id, "currency": asset},
+            {"$set": {
+                "total_balance": balance_after,
+                "available_balance": available_after,
+                "updated_at": adjustment_timestamp.isoformat()
+            }}
+        )
+        
+        if update_result.modified_count == 0:
+            if idempotency_key:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(request.admin_id, "balance_adjustment", idempotency_key)
+            raise HTTPException(status_code=500, detail="Failed to apply balance adjustment")
+        
+        # === RECORD ADJUSTMENT ===
+        adjustment_record = {
+            "adjustment_id": adjustment_id,
+            "correlation_id": correlation_id,
+            "admin_id": request.admin_id,
+            "target_user_id": request.target_user_id,
+            "target_email": user.get("email"),
+            "asset": asset,
+            "amount": request.amount,
+            "adjustment_type": "credit" if request.amount > 0 else "debit",
+            "balance_before": balance_before,
+            "balance_after": balance_after,
+            "available_before": available_before,
+            "available_after": available_after,
+            "reason": request.reason.strip(),
+            "reference": request.reference,
+            "note": request.note,
+            "freeze_override_applied": freeze_override_applied,
+            "status": "applied",
+            "timestamp": adjustment_timestamp.isoformat(),
+            "immutable": True
+        }
+        await db.balance_adjustments.insert_one(adjustment_record)
+        
+        # === AUDIT LOG ===
+        audit_entry = {
+            "audit_id": str(uuid.uuid4()),
+            "correlation_id": correlation_id,
+            "action": "ADMIN_BALANCE_ADJUSTMENT",
+            "admin_id": request.admin_id,
+            "target_user_id": request.target_user_id,
+            "target_email": user.get("email"),
+            "asset": asset,
+            "amount": request.amount,
+            "adjustment_type": "credit" if request.amount > 0 else "debit",
+            "balance_before": balance_before,
+            "balance_after": balance_after,
+            "reason": request.reason.strip(),
+            "reference": request.reference,
+            "freeze_override_applied": freeze_override_applied,
+            "adjustment_id": adjustment_id,
+            "timestamp": adjustment_timestamp.isoformat(),
+            "immutable": True
+        }
+        await db.admin_audit_logs.insert_one(audit_entry)
+        
+        # === LOG ===
+        adj_type = "CREDITED" if request.amount > 0 else "DEBITED"
+        logger.info(
+            f"🔧 BALANCE {adj_type}: {abs(request.amount)} {asset} for user {request.target_user_id} "
+            f"by admin {request.admin_id}. Before: {balance_before}, After: {balance_after}. "
+            f"Reason: {request.reason}"
+        )
+        
+        result = {
+            "success": True,
+            "adjustment_id": adjustment_id,
+            "correlation_id": correlation_id,
+            "adjustment_type": "credit" if request.amount > 0 else "debit",
+            "asset": asset,
+            "amount": request.amount,
+            "balance_before": balance_before,
+            "balance_after": balance_after,
+            "target_user_id": request.target_user_id,
+            "target_email": user.get("email"),
+            "freeze_override_applied": freeze_override_applied,
+            "timestamp": adjustment_timestamp.isoformat(),
+            "message": f"Balance adjustment applied: {'+' if request.amount > 0 else ''}{request.amount} {asset}"
+        }
+        
+        # Store idempotency response
+        if idempotency_key:
+            idempotency = get_idempotency_service(db)
+            await idempotency.store_response(request.admin_id, "balance_adjustment", idempotency_key, result)
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating balance adjustment: {str(e)}")
+        if idempotency_key:
+            try:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(request.admin_id, "balance_adjustment", idempotency_key)
+            except:
+                pass
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/balance-adjustments")
+async def admin_list_balance_adjustments(
+    target_user_id: Optional[str] = None,
+    asset: Optional[str] = None,
+    admin_id: Optional[str] = None,
+    status: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    limit: int = 100
+):
+    """
+    List balance adjustments with optional filters.
+    """
+    try:
+        query = {}
+        
+        if target_user_id:
+            query["target_user_id"] = target_user_id
+        if asset:
+            query["asset"] = asset.upper()
+        if admin_id:
+            query["admin_id"] = admin_id
+        if status:
+            query["status"] = status
+        if start_date:
+            query["timestamp"] = {"$gte": start_date}
+        if end_date:
+            if "timestamp" in query:
+                query["timestamp"]["$lte"] = end_date
+            else:
+                query["timestamp"] = {"$lte": end_date}
+        
+        adjustments = await db.balance_adjustments.find(query).sort("timestamp", -1).limit(limit).to_list(limit)
+        
+        # Clean ObjectId
+        for adj in adjustments:
+            if "_id" in adj:
+                del adj["_id"]
+        
+        return {
+            "success": True,
+            "count": len(adjustments),
+            "adjustments": adjustments
+        }
+        
+    except Exception as e:
+        logger.error(f"Error listing balance adjustments: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/balance-adjustments/{adjustment_id}")
+async def admin_get_balance_adjustment(adjustment_id: str):
+    """Get a specific balance adjustment by ID"""
+    try:
+        adjustment = await db.balance_adjustments.find_one({"adjustment_id": adjustment_id})
+        if not adjustment:
+            raise HTTPException(status_code=404, detail="Adjustment not found")
+        
+        # Get related audit entry
+        audit = await db.admin_audit_logs.find_one({
+            "adjustment_id": adjustment_id,
+            "action": {"$in": ["ADMIN_BALANCE_ADJUSTMENT", "ADMIN_BALANCE_ADJUSTMENT_REJECTED"]}
+        })
+        
+        # Clean ObjectId
+        if "_id" in adjustment:
+            del adjustment["_id"]
+        if audit and "_id" in audit:
+            del audit["_id"]
+        
+        return {
+            "success": True,
+            "adjustment": adjustment,
+            "audit_entry": audit
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting balance adjustment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/balance-adjustments/user/{user_id}")
+async def admin_get_user_adjustment_history(user_id: str, limit: int = 50):
+    """Get all balance adjustments for a specific user"""
+    try:
+        # Get user info
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+        
+        adjustments = await db.balance_adjustments.find(
+            {"target_user_id": user_id}
+        ).sort("timestamp", -1).limit(limit).to_list(limit)
+        
+        # Calculate totals by asset
+        totals = {}
+        for adj in adjustments:
+            asset = adj.get("asset")
+            if asset not in totals:
+                totals[asset] = {"credits": 0, "debits": 0, "net": 0}
+            if adj.get("status") == "applied":
+                if adj.get("amount", 0) > 0:
+                    totals[asset]["credits"] += adj["amount"]
+                else:
+                    totals[asset]["debits"] += abs(adj["amount"])
+                totals[asset]["net"] += adj.get("amount", 0)
+        
+        # Clean ObjectId
+        for adj in adjustments:
+            if "_id" in adj:
+                del adj["_id"]
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "email": user.get("email") if user else "Unknown",
+            "count": len(adjustments),
+            "totals_by_asset": totals,
+            "adjustments": adjustments
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting user adjustment history: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# END ADMIN BALANCE ADJUSTMENT SYSTEM
+# ============================================================================
+
+
+# ============================================================================
 # END TRADER BADGE SYSTEM
 # ============================================================================
 
