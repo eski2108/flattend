@@ -6382,12 +6382,29 @@ async def admin_freeze_user(user_id: str, request: FreezeUserRequest):
         if result.modified_count == 0:
             raise HTTPException(status_code=500, detail="Failed to freeze user")
         
+        # === AUTO-REVOKE ALL SESSIONS ON FREEZE ===
+        # This forces immediate logout across all devices
+        session_revoke_result = None
+        try:
+            session_service = get_session_service(db)
+            session_revoke_result = await session_service.revoke_all_sessions(
+                user_id=user_id,
+                admin_id=request.admin_id,
+                reason=f"Auto-revoked due to account freeze: {request.reason.strip()}",
+                triggered_by="freeze"
+            )
+            logger.info(f"🔐 AUTO-REVOKED sessions for frozen user {user_id}: {session_revoke_result.get('sessions_revoked', 0)} sessions")
+        except Exception as e:
+            # Don't fail freeze if session revocation fails, but log it
+            logger.error(f"⚠️ Failed to auto-revoke sessions during freeze: {str(e)}")
+        
         # Capture after state
         after_state = {
             "is_frozen": True,
             "frozen_at": freeze_timestamp.isoformat(),
             "frozen_by": request.admin_id,
-            "freeze_reason": request.reason.strip()
+            "freeze_reason": request.reason.strip(),
+            "sessions_revoked": session_revoke_result.get("sessions_revoked", 0) if session_revoke_result else 0
         }
         
         # AUDIT LOG - Immutable record
@@ -6400,6 +6417,8 @@ async def admin_freeze_user(user_id: str, request: FreezeUserRequest):
             "reason": request.reason.strip(),
             "before_state": before_state,
             "after_state": after_state,
+            "sessions_revoked": session_revoke_result.get("sessions_revoked", 0) if session_revoke_result else 0,
+            "session_revocation_correlation_id": session_revoke_result.get("correlation_id") if session_revoke_result else None,
             "timestamp": freeze_timestamp.isoformat(),
             "ip_address": None,  # Can be added from request context
             "immutable": True
@@ -6412,7 +6431,9 @@ async def admin_freeze_user(user_id: str, request: FreezeUserRequest):
             "success": True,
             "message": f"User {user_id} has been frozen",
             "frozen_at": freeze_timestamp.isoformat(),
-            "audit_id": audit_entry["audit_id"]
+            "audit_id": audit_entry["audit_id"],
+            "sessions_revoked": session_revoke_result.get("sessions_revoked", 0) if session_revoke_result else 0,
+            "session_revocation_id": session_revoke_result.get("correlation_id") if session_revoke_result else None
         }
         
     except HTTPException:
