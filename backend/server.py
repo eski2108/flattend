@@ -9064,10 +9064,12 @@ async def complete_phone_signup(request: dict):
         existing = await db.users.find_one({"phone": phone_number})
         if existing:
             # Return existing user
+            now_ts_phone = datetime.now(timezone.utc)
             token_data = {
                 "user_id": existing["user_id"],
                 "email": existing.get("email", ""),
-                "exp": datetime.now(timezone.utc) + timedelta(days=30)
+                "iat": int(now_ts_phone.timestamp()),
+                "exp": now_ts_phone + timedelta(days=30)
             }
             token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
             
