@@ -10550,13 +10550,25 @@ async def get_all_customers():
 # ============= DATABASE BACKUP MANAGEMENT (ADMIN ONLY) =============
 
 @api_router.post("/admin/backup/create")
-async def create_manual_backup():
-    """Create a manual database backup (Admin only)"""
+async def create_manual_backup(request: Request, admin_id: str = "system", reason: str = "Manual backup"):
+    """Create a manual database backup (Admin only) - FULLY AUDITED"""
     from backup_system import backup_system
     
     result = backup_system.create_backup()
     
     if result.get("status") == "success":
+        # AUDIT LOG
+        await log_admin_action(
+            action="BACKUP_CREATE",
+            admin_id=admin_id,
+            target_type="database",
+            target_id=result.get("backup_name", "unknown"),
+            reason=reason,
+            before_state={},
+            after_state={"backup_name": result.get("backup_name"), "size": result.get("size")},
+            metadata={"backup_path": result.get("path")}
+        )
+        
         return {
             "success": True,
             "message": "Backup created successfully",
