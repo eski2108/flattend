@@ -6558,6 +6558,388 @@ async def admin_list_frozen_users():
 
 
 # ============================================================================
+# 🔒 FREEZE WALLET SYSTEM (P0-2)
+# ============================================================================
+# Allows admin to freeze/unfreeze specific wallets (by asset) per user
+# Frozen wallets block: withdrawals, sends, swaps, trades touching that asset
+# Deposits are allowed but do not auto-unfreeze
+# All actions are fully audited
+# ============================================================================
+
+class FreezeWalletRequest(BaseModel):
+    admin_id: str
+    reason: str  # Mandatory
+    freeze_scope: str = "full"  # "full" or "withdraw_only"
+
+class UnfreezeWalletRequest(BaseModel):
+    admin_id: str
+    reason: str  # Mandatory
+
+
+async def check_wallet_frozen(user_id: str, asset: str) -> dict:
+    """
+    Check if a specific wallet/asset is frozen for a user.
+    Returns freeze status and details.
+    """
+    # Normalize asset to uppercase
+    asset = asset.upper()
+    
+    # Check wallets collection
+    wallet = await db.wallets.find_one({"user_id": user_id, "currency": asset})
+    if not wallet:
+        return {"is_frozen": False, "exists": False, "asset": asset}
+    
+    return {
+        "is_frozen": wallet.get("is_frozen", False),
+        "exists": True,
+        "asset": asset,
+        "frozen_at": wallet.get("frozen_at"),
+        "frozen_by": wallet.get("frozen_by"),
+        "freeze_reason": wallet.get("freeze_reason"),
+        "freeze_scope": wallet.get("freeze_scope", "full")
+    }
+
+
+async def enforce_wallet_not_frozen(user_id: str, asset: str, action: str = "operation"):
+    """
+    Raises HTTPException if the wallet is frozen.
+    Use this as a guard in endpoints that move value from a wallet.
+    """
+    status = await check_wallet_frozen(user_id, asset)
+    if status.get("is_frozen"):
+        logger.warning(f"🔒 Blocked {action} for frozen wallet {asset} of user {user_id}")
+        raise HTTPException(
+            status_code=403,
+            detail=f"Wallet {asset} is frozen. Reason: {status.get('freeze_reason', 'No reason provided')}. Contact support."
+        )
+
+
+@api_router.post("/admin/wallets/{user_id}/{asset}/freeze")
+async def admin_freeze_wallet(user_id: str, asset: str, request: FreezeWalletRequest):
+    """
+    🔒 FREEZE WALLET/ASSET
+    
+    Freezes a specific wallet (asset) for a user.
+    Blocks: withdrawals, swaps, trades, sends from this asset.
+    Deposits are still allowed.
+    
+    freeze_scope options:
+    - "full": Block all outgoing operations
+    - "withdraw_only": Block only withdrawals (swaps/trades still allowed)
+    """
+    try:
+        # Normalize asset
+        asset = asset.upper()
+        
+        # Validate inputs
+        if not request.reason or len(request.reason.strip()) < 5:
+            raise HTTPException(status_code=400, detail="Reason is required (minimum 5 characters)")
+        
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        if request.freeze_scope not in ["full", "withdraw_only"]:
+            raise HTTPException(status_code=400, detail="freeze_scope must be 'full' or 'withdraw_only'")
+        
+        # Get user info
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Find the wallet
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": asset})
+        if not wallet:
+            raise HTTPException(status_code=404, detail=f"Wallet for {asset} not found for this user")
+        
+        if wallet.get("is_frozen"):
+            raise HTTPException(status_code=400, detail=f"Wallet {asset} is already frozen")
+        
+        # Capture before state
+        before_state = {
+            "is_frozen": wallet.get("is_frozen", False),
+            "frozen_at": wallet.get("frozen_at"),
+            "frozen_by": wallet.get("frozen_by"),
+            "freeze_reason": wallet.get("freeze_reason"),
+            "freeze_scope": wallet.get("freeze_scope"),
+            "balance": wallet.get("total_balance", 0)
+        }
+        
+        freeze_timestamp = datetime.now(timezone.utc)
+        correlation_id = str(uuid.uuid4())
+        
+        # Apply freeze to wallet
+        result = await db.wallets.update_one(
+            {"user_id": user_id, "currency": asset},
+            {"$set": {
+                "is_frozen": True,
+                "frozen_at": freeze_timestamp.isoformat(),
+                "frozen_by": request.admin_id,
+                "freeze_reason": request.reason.strip(),
+                "freeze_scope": request.freeze_scope
+            }}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to freeze wallet")
+        
+        # Capture after state
+        after_state = {
+            "is_frozen": True,
+            "frozen_at": freeze_timestamp.isoformat(),
+            "frozen_by": request.admin_id,
+            "freeze_reason": request.reason.strip(),
+            "freeze_scope": request.freeze_scope,
+            "balance": wallet.get("total_balance", 0)
+        }
+        
+        # AUDIT LOG - Immutable record
+        audit_entry = {
+            "audit_id": str(uuid.uuid4()),
+            "correlation_id": correlation_id,
+            "action": "WALLET_FREEZE",
+            "target_user_id": user_id,
+            "target_email": user.get("email"),
+            "target_asset": asset,
+            "admin_id": request.admin_id,
+            "reason": request.reason.strip(),
+            "freeze_scope": request.freeze_scope,
+            "before_state": before_state,
+            "after_state": after_state,
+            "timestamp": freeze_timestamp.isoformat(),
+            "immutable": True
+        }
+        await db.admin_audit_logs.insert_one(audit_entry)
+        
+        logger.info(f"🔒 WALLET FROZEN: {asset} for user {user_id} by admin {request.admin_id}. Reason: {request.reason}")
+        
+        return {
+            "success": True,
+            "message": f"Wallet {asset} for user {user_id} has been frozen",
+            "asset": asset,
+            "freeze_scope": request.freeze_scope,
+            "frozen_at": freeze_timestamp.isoformat(),
+            "audit_id": audit_entry["audit_id"],
+            "correlation_id": correlation_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error freezing wallet: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/wallets/{user_id}/{asset}/unfreeze")
+async def admin_unfreeze_wallet(user_id: str, asset: str, request: UnfreezeWalletRequest):
+    """
+    🔓 UNFREEZE WALLET/ASSET
+    
+    Unfreezes a specific wallet (asset) for a user.
+    Restores normal operations for this asset.
+    """
+    try:
+        # Normalize asset
+        asset = asset.upper()
+        
+        # Validate inputs
+        if not request.reason or len(request.reason.strip()) < 5:
+            raise HTTPException(status_code=400, detail="Reason is required (minimum 5 characters)")
+        
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        # Get user info
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Find the wallet
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": asset})
+        if not wallet:
+            raise HTTPException(status_code=404, detail=f"Wallet for {asset} not found for this user")
+        
+        if not wallet.get("is_frozen"):
+            raise HTTPException(status_code=400, detail=f"Wallet {asset} is not frozen")
+        
+        # Capture before state
+        before_state = {
+            "is_frozen": wallet.get("is_frozen", False),
+            "frozen_at": wallet.get("frozen_at"),
+            "frozen_by": wallet.get("frozen_by"),
+            "freeze_reason": wallet.get("freeze_reason"),
+            "freeze_scope": wallet.get("freeze_scope"),
+            "balance": wallet.get("total_balance", 0)
+        }
+        
+        unfreeze_timestamp = datetime.now(timezone.utc)
+        correlation_id = str(uuid.uuid4())
+        
+        # Apply unfreeze to wallet
+        result = await db.wallets.update_one(
+            {"user_id": user_id, "currency": asset},
+            {"$set": {
+                "is_frozen": False,
+                "frozen_at": None,
+                "frozen_by": None,
+                "freeze_reason": None,
+                "freeze_scope": None,
+                "unfrozen_at": unfreeze_timestamp.isoformat(),
+                "unfrozen_by": request.admin_id,
+                "unfreeze_reason": request.reason.strip()
+            }}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to unfreeze wallet")
+        
+        # Capture after state
+        after_state = {
+            "is_frozen": False,
+            "unfrozen_at": unfreeze_timestamp.isoformat(),
+            "unfrozen_by": request.admin_id,
+            "unfreeze_reason": request.reason.strip(),
+            "balance": wallet.get("total_balance", 0)
+        }
+        
+        # AUDIT LOG - Immutable record
+        audit_entry = {
+            "audit_id": str(uuid.uuid4()),
+            "correlation_id": correlation_id,
+            "action": "WALLET_UNFREEZE",
+            "target_user_id": user_id,
+            "target_email": user.get("email"),
+            "target_asset": asset,
+            "admin_id": request.admin_id,
+            "reason": request.reason.strip(),
+            "before_state": before_state,
+            "after_state": after_state,
+            "timestamp": unfreeze_timestamp.isoformat(),
+            "immutable": True
+        }
+        await db.admin_audit_logs.insert_one(audit_entry)
+        
+        logger.info(f"🔓 WALLET UNFROZEN: {asset} for user {user_id} by admin {request.admin_id}. Reason: {request.reason}")
+        
+        return {
+            "success": True,
+            "message": f"Wallet {asset} for user {user_id} has been unfrozen",
+            "asset": asset,
+            "unfrozen_at": unfreeze_timestamp.isoformat(),
+            "audit_id": audit_entry["audit_id"],
+            "correlation_id": correlation_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error unfreezing wallet: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/wallets/{user_id}/freeze-status")
+async def admin_get_wallet_freeze_status(user_id: str):
+    """Get freeze status for all wallets of a user"""
+    try:
+        # Get user info
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get all wallets for user
+        wallets = await db.wallets.find({"user_id": user_id}).to_list(100)
+        
+        # Get freeze/unfreeze history from audit logs
+        history = await db.admin_audit_logs.find({
+            "target_user_id": user_id,
+            "action": {"$in": ["WALLET_FREEZE", "WALLET_UNFREEZE"]}
+        }).sort("timestamp", -1).to_list(100)
+        
+        wallet_statuses = []
+        for w in wallets:
+            wallet_statuses.append({
+                "asset": w.get("currency"),
+                "balance": w.get("total_balance", 0),
+                "locked_balance": w.get("locked_balance", 0),
+                "is_frozen": w.get("is_frozen", False),
+                "frozen_at": w.get("frozen_at"),
+                "frozen_by": w.get("frozen_by"),
+                "freeze_reason": w.get("freeze_reason"),
+                "freeze_scope": w.get("freeze_scope")
+            })
+        
+        return {
+            "user_id": user_id,
+            "email": user.get("email"),
+            "wallets": wallet_statuses,
+            "frozen_count": sum(1 for w in wallet_statuses if w.get("is_frozen")),
+            "history": [{
+                "action": h.get("action"),
+                "asset": h.get("target_asset"),
+                "admin_id": h.get("admin_id"),
+                "reason": h.get("reason"),
+                "freeze_scope": h.get("freeze_scope"),
+                "timestamp": h.get("timestamp"),
+                "correlation_id": h.get("correlation_id")
+            } for h in history]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting wallet freeze status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/frozen-wallets")
+async def admin_list_frozen_wallets():
+    """List all currently frozen wallets across all users"""
+    try:
+        # Get all frozen wallets
+        frozen_wallets = await db.wallets.find(
+            {"is_frozen": True},
+            {"user_id": 1, "currency": 1, "total_balance": 1, "frozen_at": 1, "frozen_by": 1, "freeze_reason": 1, "freeze_scope": 1}
+        ).to_list(1000)
+        
+        # Enrich with user info
+        enriched = []
+        for w in frozen_wallets:
+            user = await db.users.find_one({"user_id": w.get("user_id")}, {"email": 1, "full_name": 1})
+            if not user:
+                user = await db.user_accounts.find_one({"user_id": w.get("user_id")}, {"email": 1, "full_name": 1})
+            
+            enriched.append({
+                "user_id": w.get("user_id"),
+                "email": user.get("email") if user else "Unknown",
+                "full_name": user.get("full_name") if user else "Unknown",
+                "asset": w.get("currency"),
+                "balance": w.get("total_balance", 0),
+                "frozen_at": w.get("frozen_at"),
+                "frozen_by": w.get("frozen_by"),
+                "freeze_reason": w.get("freeze_reason"),
+                "freeze_scope": w.get("freeze_scope")
+            })
+        
+        return {
+            "success": True,
+            "count": len(enriched),
+            "frozen_wallets": enriched
+        }
+    except Exception as e:
+        logger.error(f"Error listing frozen wallets: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# END FREEZE WALLET SYSTEM
+# ============================================================================
+
+
+# ============================================================================
 # END TRADER BADGE SYSTEM
 # ============================================================================
 
