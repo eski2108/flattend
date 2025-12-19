@@ -10082,12 +10082,13 @@ async def complete_google_signup(request: dict):
     )
     
     # Show success page and redirect to login after 3 seconds
-    html_content = """
+    frontend_url = get_frontend_url()
+    html_content = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Email Verified - Coin Hub X</title>
-        <meta http-equiv="refresh" content="3;url=https://controlpanel-4.preview.emergentagent.com/login">
+        <meta http-equiv="refresh" content="3;url={frontend_url}/login">
         <style>
             body { 
                 font-family: Arial, sans-serif; 
