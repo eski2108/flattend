@@ -38,6 +38,9 @@ from idempotency_service import get_idempotency_service, extract_idempotency_key
 # Feature Flags / Kill Switches Service (P1)
 from feature_flags_service import get_feature_flags_service, FeatureFlagsService
 
+# Session Management Service (P1)
+from session_service import get_session_service, SessionService
+
 # CoinGecko API Configuration
 COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
