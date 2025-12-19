@@ -197,48 +197,39 @@ class EmailService:
                         </ol>
                     </div>
                     
-                    <!-- Red Action Button -->
-                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                    <!-- BIG RED CLICKABLE BUTTON - Email Client Compatible -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
                         <tr>
                             <td align="center">
-                                <table cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
-                                            <a href="{frontend_url}/email/dispute/{dispute_id}" 
-                                               target="_blank"
-                                               style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
-                                                🚨 RESOLVE DISPUTE NOW →
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <!--[if mso]>
+                                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{frontend_url}/email/dispute/{dispute_id}" style="height:60px;v-text-anchor:middle;width:350px;" arcsize="10%" strokecolor="#DC2626" fillcolor="#DC2626">
+                                <w:anchorlock/>
+                                <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:18px;font-weight:bold;">🚨 RESOLVE DISPUTE NOW</center>
+                                </v:roundrect>
+                                <![endif]-->
+                                <!--[if !mso]><!-->
+                                <a href="{frontend_url}/email/dispute/{dispute_id}" 
+                                   target="_blank"
+                                   style="background-color:#DC2626; border:2px solid #DC2626; border-radius:8px; color:#ffffff; display:inline-block; font-family:Arial,sans-serif; font-size:18px; font-weight:bold; line-height:60px; text-align:center; text-decoration:none; width:350px; -webkit-text-size-adjust:none;">
+                                    🚨 RESOLVE DISPUTE NOW
+                                </a>
+                                <!--<![endif]-->
                             </td>
                         </tr>
                     </table>
                     
-                    <!-- Copyable Direct Link Box -->
-                    <div style="background: #FEF3C7; border: 2px solid #F59E0B; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <p style="margin: 0 0 10px 0; font-size: 14px; color: #92400E; font-weight: bold; text-align: center;">
-                            📋 COPY & SHARE THIS LINK WITH YOUR TEAM:
+                    <!-- CLICKABLE LINK - Large and Clear -->
+                    <div style="background: #FEF3C7; border: 3px solid #F59E0B; padding: 25px; border-radius: 8px; margin: 25px 0;">
+                        <p style="margin: 0 0 15px 0; font-size: 16px; color: #92400E; font-weight: bold; text-align: center;">
+                            👆 CLICK THE LINK BELOW TO RESOLVE:
                         </p>
-                        <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
-                            <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
+                        <p style="margin: 0; text-align: center;">
+                            <a href="{frontend_url}/email/dispute/{dispute_id}" 
+                               style="color: #DC2626; font-size: 16px; font-weight: bold; text-decoration: underline; word-break: break-all;">
                                 {frontend_url}/email/dispute/{dispute_id}
-                            </p>
-                        </div>
-                        <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
-                            Click anywhere on the link above to select and copy
+                            </a>
                         </p>
                     </div>
-                    
-                    <!-- Alternative Text Link (if button doesn't work) -->
-                    <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
-                        Button not working? Click here: 
-                        <a href="{frontend_url}/email/dispute/{dispute_id}" 
-                           style="color: #EF4444; font-weight: bold; text-decoration: underline;">
-                            Open Dispute #{dispute_id}
-                        </a>
-                    </p>
                     
                     <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px;">
                         <p style="margin: 0; font-size: 12px; color: #6B7280;">
