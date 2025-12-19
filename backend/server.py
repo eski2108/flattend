@@ -1386,9 +1386,10 @@ async def withdraw(request: WithdrawRequest):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # 🔒 FREEZE CHECK - Block withdrawals for frozen users
+    # 🔒 FREEZE CHECKS - Block withdrawals for frozen users AND frozen wallets
     if user.get("user_id"):
         await enforce_not_frozen(user["user_id"], "withdrawal")
+        await enforce_wallet_not_frozen(user["user_id"], request.currency, f"withdrawal of {request.currency}")
     
     # Calculate withdrawal fee
     fee = request.amount * (PLATFORM_CONFIG["withdraw_fee_percent"] / 100)
