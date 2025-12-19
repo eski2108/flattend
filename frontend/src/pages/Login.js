@@ -24,6 +24,43 @@ export default function Login() {
   useEffect(() => {
     // Handle Google OAuth callback
     const urlParams = new URLSearchParams(location.search);
+    
+    // ============================================================================
+    // SECURITY: Check if verification is required (for Google users)
+    // ============================================================================
+    if (urlParams.get('verification_required') === 'true') {
+      const userParam = urlParams.get('user');
+      const emailVerified = urlParams.get('email_verified') === 'true';
+      const phoneVerified = urlParams.get('phone_verified') === 'true';
+      
+      try {
+        const userData = userParam ? JSON.parse(decodeURIComponent(userParam)) : {};
+        
+        // Store user data temporarily for verification flow
+        localStorage.setItem('pending_verification_user', JSON.stringify(userData));
+        
+        // Show appropriate message
+        if (!emailVerified && !phoneVerified) {
+          toast.warning('⚠️ Please verify your email and phone number to continue.');
+        } else if (!emailVerified) {
+          toast.warning('⚠️ Please verify your email to continue. Check your inbox.');
+        } else if (!phoneVerified) {
+          toast.warning('⚠️ Please verify your phone number to continue.');
+        }
+        
+        // DO NOT redirect to dashboard - user must verify first
+        // Redirect to registration page to complete verification
+        setTimeout(() => {
+          navigate('/register?complete_verification=true&email=' + encodeURIComponent(userData.email || ''));
+        }, 1500);
+      } catch (error) {
+        console.error('Error parsing verification data:', error);
+        toast.error('Please complete registration to continue.');
+      }
+      return;
+    }
+    
+    // Handle successful Google login (only for VERIFIED users)
     if (urlParams.get('google_success') === 'true') {
       const token = urlParams.get('token');
       const userParam = urlParams.get('user');
@@ -39,7 +76,6 @@ export default function Login() {
           toast.success('✅ Logged in successfully with Google!');
           
           // Redirect to intended destination or dashboard
-          const urlParams = new URLSearchParams(location.search);
           const returnUrl = urlParams.get('return');
           const from = returnUrl || location.state?.from?.pathname || location.state?.from || '/dashboard';
           setTimeout(() => window.location.replace(from), 500);
