@@ -9159,13 +9159,13 @@ async def get_notifications(wallet_address: str):
 
 @api_router.get("/auth/verify-email")
 async def verify_email(token: str):
-    """Verify user email with token"""
+    """Verify user email with token - WITH EXPIRY CHECK"""
     from fastapi.responses import HTMLResponse, RedirectResponse
     
     user = await db.users.find_one({"verification_token": token}, {"_id": 0})
     
     if not user:
-        # Show error page
+        # Show error page - invalid token
         html_content = """
         <!DOCTYPE html>
         <html>
@@ -9189,12 +9189,58 @@ async def verify_email(token: str):
         """
         return HTMLResponse(content=html_content, status_code=400)
     
+    # ============================================================================
+    # CHECK TOKEN EXPIRY - 24 hour limit
+    # ============================================================================
+    token_expires = user.get("verification_token_expires")
+    if token_expires:
+        try:
+            expires_dt = datetime.fromisoformat(token_expires.replace('Z', '+00:00'))
+            if datetime.now(timezone.utc) > expires_dt:
+                # Token has expired
+                logger.warning(f"🔐 Expired verification token used for {user.get('email')}")
+                html_content = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Verification Expired - Coin Hub X</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            background: linear-gradient(135deg, #000D1A, #1a1f3a);
+                            color: white;
+                            text-align: center;
+                            padding: 50px;
+                        }
+                        .btn {
+                            display: inline-block;
+                            padding: 12px 24px;
+                            background: linear-gradient(135deg, #00F0FF, #7B2CFF);
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 8px;
+                            margin-top: 20px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Verification Link Expired</h1>
+                    <p>This verification link has expired (24 hour limit).</p>
+                    <p>Please request a new verification email.</p>
+                    <a href="/login" class="btn">Go to Login</a>
+                </body>
+                </html>
+                """
+                return HTMLResponse(content=html_content, status_code=400)
+        except Exception as e:
+            logger.error(f"Error parsing token expiry: {e}")
+    
     # Update user as verified
     await db.users.update_one(
         {"verification_token": token},
         {
             "$set": {"email_verified": True},
-            "$unset": {"verification_token": ""}
+            "$unset": {"verification_token": "", "verification_token_expires": ""}
         }
     )
     
