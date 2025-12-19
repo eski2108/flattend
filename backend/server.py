@@ -8664,7 +8664,7 @@ async def admin_get_pending_withdrawals():
 @api_router.post("/admin/withdrawals/review")
 async def admin_review_withdrawal_request(approval: WithdrawalApproval):
     """
-    Admin approves or rejects withdrawal request - V2 with wallet service
+    Admin approves or rejects withdrawal request - V2 with wallet service - FULLY AUDITED
     
     On Approve:
     - Releases locked balance (deducts from total)
@@ -8677,18 +8677,73 @@ async def admin_review_withdrawal_request(approval: WithdrawalApproval):
     """
     from withdrawal_system_v2 import admin_review_withdrawal_v2
     
+    # Get before state
+    withdrawal = await db.withdrawal_requests.find_one({"withdrawal_id": approval.withdrawal_id}, {"_id": 0})
+    before_state = {
+        "status": withdrawal.get("status") if withdrawal else None,
+        "amount": withdrawal.get("amount") if withdrawal else None,
+        "currency": withdrawal.get("currency") if withdrawal else None
+    }
+    
     wallet_service = get_wallet_service()
     result = await admin_review_withdrawal_v2(db, wallet_service, approval)
+    
+    # AUDIT LOG
+    if result.get("success"):
+        await log_admin_action(
+            action="WITHDRAWAL_REVIEW",
+            admin_id=approval.admin_id,
+            target_type="withdrawal",
+            target_id=approval.withdrawal_id,
+            reason=approval.notes or f"Withdrawal {'approved' if approval.approved else 'rejected'}",
+            before_state=before_state,
+            after_state={
+                "status": "approved" if approval.approved else "rejected",
+                "approved": approval.approved
+            },
+            metadata={
+                "user_id": withdrawal.get("user_id") if withdrawal else None,
+                "amount": withdrawal.get("amount") if withdrawal else None,
+                "currency": withdrawal.get("currency") if withdrawal else None,
+                "wallet_address": withdrawal.get("wallet_address") if withdrawal else None
+            }
+        )
+    
     return result
 
 
 @api_router.post("/admin/withdrawals/complete/{withdrawal_id}")
-async def admin_complete_withdrawal(withdrawal_id: str, admin_id: str):
+async def admin_complete_withdrawal(withdrawal_id: str, admin_id: str, tx_hash: str = None):
     """
-    Mark withdrawal as completed after admin has sent the crypto - V2
+    Mark withdrawal as completed after admin has sent the crypto - V2 - FULLY AUDITED
     Call this after you've sent the crypto to the user's wallet.
     """
+    # Get before state
+    withdrawal = await db.withdrawal_requests.find_one({"withdrawal_id": withdrawal_id}, {"_id": 0})
+    before_state = {
+        "status": withdrawal.get("status") if withdrawal else None,
+        "amount": withdrawal.get("amount") if withdrawal else None
+    }
+    
     result = await mark_withdrawal_completed(db, withdrawal_id, admin_id)
+    
+    # AUDIT LOG
+    if result.get("success"):
+        await log_admin_action(
+            action="WITHDRAWAL_COMPLETE",
+            admin_id=admin_id,
+            target_type="withdrawal",
+            target_id=withdrawal_id,
+            reason="Withdrawal sent to user wallet",
+            before_state=before_state,
+            after_state={"status": "completed"},
+            metadata={
+                "tx_hash": tx_hash,
+                "user_id": withdrawal.get("user_id") if withdrawal else None,
+                "amount": withdrawal.get("amount") if withdrawal else None
+            }
+        )
+    
     return result
 
 
