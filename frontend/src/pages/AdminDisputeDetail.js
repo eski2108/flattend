@@ -187,8 +187,22 @@ export default function AdminDisputeDetail() {
             </ol>
             <button
               onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                toast.success('Link copied! Paste in Chrome');
+                try {
+                  const url = window.location.href;
+                  if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url);
+                  } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                  }
+                  toast.success('Link copied! Paste in Chrome');
+                } catch (e) {
+                  toast.error('Could not copy - please copy URL manually');
+                }
               }}
               style={{
                 background: '#FFA500',
