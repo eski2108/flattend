@@ -7240,6 +7240,134 @@ async def admin_get_recent_revocations(limit: int = 50):
 
 
 # ============================================================================
+# 📝 ADMIN AUDIT LOG QUERY ENDPOINTS (P1-2)
+# ============================================================================
+
+@api_router.get("/admin/audit-logs")
+async def admin_get_audit_logs(
+    action: str = None,
+    admin_id: str = None,
+    target_type: str = None,
+    target_id: str = None,
+    start_date: str = None,
+    end_date: str = None,
+    limit: int = 100
+):
+    """
+    Query admin audit logs with filters.
+    
+    Filters:
+    - action: USER_FREEZE, WITHDRAWAL_APPROVE, KYC_VERIFY, etc.
+    - admin_id: Filter by admin who performed action
+    - target_type: user, wallet, withdrawal, kyc, dispute, backup, etc.
+    - target_id: Specific target ID
+    - start_date/end_date: Date range (ISO format)
+    - limit: Max results (default 100)
+    """
+    try:
+        query = {}
+        
+        if action:
+            query["action"] = action
+        if admin_id:
+            query["admin_id"] = admin_id
+        if target_type:
+            query["target_type"] = target_type
+        if target_id:
+            query["target_id"] = target_id
+        if start_date:
+            query["timestamp"] = {"$gte": start_date}
+        if end_date:
+            if "timestamp" in query:
+                query["timestamp"]["$lte"] = end_date
+            else:
+                query["timestamp"] = {"$lte": end_date}
+        
+        logs = await db.admin_audit_logs.find(query).sort("timestamp", -1).limit(limit).to_list(limit)
+        
+        # Clean up response
+        for log in logs:
+            if "_id" in log:
+                del log["_id"]
+        
+        return {
+            "success": True,
+            "count": len(logs),
+            "logs": logs
+        }
+        
+    except Exception as e:
+        logger.error(f"Error querying audit logs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/audit-logs/stats")
+async def admin_get_audit_stats():
+    """
+    Get audit log statistics for admin dashboard.
+    Shows counts by action type and recent activity.
+    """
+    try:
+        # Get action counts
+        pipeline = [
+            {"$group": {"_id": "$action", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        action_counts = await db.admin_audit_logs.aggregate(pipeline).to_list(100)
+        
+        # Get recent activity (last 24 hours)
+        yesterday = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+        recent_count = await db.admin_audit_logs.count_documents({"timestamp": {"$gte": yesterday}})
+        
+        # Get admin activity
+        admin_pipeline = [
+            {"$group": {"_id": "$admin_id", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        admin_activity = await db.admin_audit_logs.aggregate(admin_pipeline).to_list(10)
+        
+        return {
+            "success": True,
+            "total_logs": await db.admin_audit_logs.count_documents({}),
+            "recent_24h": recent_count,
+            "by_action": {item["_id"]: item["count"] for item in action_counts},
+            "by_admin": {item["_id"]: item["count"] for item in admin_activity}
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting audit stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/audit-logs/{audit_id}")
+async def admin_get_audit_detail(audit_id: str):
+    """
+    Get detailed information for a specific audit log entry.
+    """
+    try:
+        log = await db.admin_audit_logs.find_one({"audit_id": audit_id}, {"_id": 0})
+        
+        if not log:
+            # Try correlation_id
+            log = await db.admin_audit_logs.find_one({"correlation_id": audit_id}, {"_id": 0})
+        
+        if not log:
+            raise HTTPException(status_code=404, detail="Audit log not found")
+        
+        return {
+            "success": True,
+            "log": log
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting audit detail: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
 # SESSION VALIDATION DEPENDENCY (for protected routes)
 # ============================================================================
 
