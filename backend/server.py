@@ -11771,7 +11771,7 @@ async def place_trading_order(http_request: Request, request: dict = None):
             metadata={"pair": pair, "type": order_type, "amount": amount}
         )
         
-        return {
+        result = {
             "success": True,
             "message": f"{order_type.upper()} order executed successfully",
             "trade": {
@@ -11785,10 +11785,26 @@ async def place_trading_order(http_request: Request, request: dict = None):
             }
         }
         
+        # Store successful response for idempotency
+        if idempotency_key and user_id:
+            idempotency = get_idempotency_service(db)
+            await idempotency.store_response(user_id, "trading_order", idempotency_key, result)
+        
+        return result
+        
     except Exception as e:
         print(f"Error placing trading order: {e}")
         import traceback
         traceback.print_exc()
+        
+        # Release idempotency lock on failure
+        if 'idempotency_key' in dir() and idempotency_key and 'user_id' in dir() and user_id:
+            try:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(user_id, "trading_order", idempotency_key)
+            except:
+                pass
+        
         return {
             "success": False,
             "message": f"Error placing order: {str(e)}"
