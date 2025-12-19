@@ -92,7 +92,7 @@ from email_service import (
     p2p_dispute_opened_email,
     p2p_admin_dispute_alert
 )
-from telegram_service import telegram_service
+from telegram_service import get_telegram_service
 from p2p_enhanced import (
     GLOBAL_PAYMENT_METHODS,
     GLOBAL_CURRENCIES,
