@@ -139,7 +139,7 @@ class TelegramAlertService:
 
 ⏰ <i>This dispute has been waiting too long. Please resolve ASAP.</i>
 
-👉 <a href="{self.frontend_url}/admin/disputes/{dispute_id}">Resolve Now</a>
+👉 <a href="{self.frontend_url}/email/dispute/{dispute_id}">Resolve Now</a>
 """
         
         return await self._send_message(message.strip())
