@@ -2012,7 +2012,7 @@ async def create_buy_order(http_request: Request, request: CreateBuyOrderRequest
     # Get seller's bank details
     seller_bank = await db.bank_accounts.find_one({"wallet_address": sell_order["seller_address"]}, {"_id": 0})
     
-    return {
+    result = {
         "success": True,
         "order": buy_order.model_dump(),
         "seller_bank_details": {
@@ -2024,6 +2024,13 @@ async def create_buy_order(http_request: Request, request: CreateBuyOrderRequest
         "payment_deadline": buy_order.payment_deadline.isoformat(),
         "message": "Buy order created. Please make bank transfer within 30 minutes"
     }
+    
+    # Store successful response for idempotency
+    if idempotency_key and user_id:
+        idempotency = get_idempotency_service(db)
+        await idempotency.store_response(user_id, "buy_order", idempotency_key, result)
+    
+    return result
 
 @api_router.post("/crypto-market/payment/mark-paid")
 async def mark_as_paid(request: LegacyMarkAsPaidRequest):
