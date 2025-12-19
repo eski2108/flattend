@@ -9658,14 +9658,25 @@ async def store_emergent_session(request: dict):
     existing_user = await db.users.find_one({"email": email})
     
     if not existing_user:
-        # Create new user account
+        # ============================================================================
+        # SECURITY: Google/Emergent users must STILL complete OUR verification flow
+        # email_verified = false, phone_verified = false
+        # ============================================================================
+        import secrets
+        verification_token = secrets.token_urlsafe(32)
+        verification_token_expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+        
+        # Create new user account - NOT VERIFIED
         await db.users.insert_one({
             "user_id": user_id,
             "email": email,
             "full_name": name,
             "profile_picture": picture,
-            "email_verified": True,
+            "email_verified": False,  # MUST verify via our email flow
+            "phone_verified": False,  # MUST verify via OTP
             "auth_provider": "emergent_google",
+            "verification_token": verification_token,
+            "verification_token_expires": verification_token_expires,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "role": "user"
         })
@@ -9673,30 +9684,70 @@ async def store_emergent_session(request: dict):
         # Initialize balances
         await initialize_trader_balance(db, user_id)
         
-        logger.info(f"✅ New user created via Emergent Auth: {email}")
+        # Send verification email
+        try:
+            from email_service import EmailService
+            email_service = EmailService()
+            await email_service.send_verification_email(
+                user_email=email,
+                user_name=name,
+                verification_token=verification_token
+            )
+            logger.info(f"✅ Verification email sent to Emergent user: {email}")
+        except Exception as e:
+            logger.error(f"❌ Failed to send verification email: {e}")
+        
+        logger.info(f"✅ New user created via Emergent Auth: {email} (verification required)")
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "requires_verification": True,
+            "verification_required": {
+                "email": True,
+                "phone": True
+            },
+            "message": "Account created. Please verify your email and phone to continue."
+        }
     else:
-        # Use existing user_id
+        # Existing user - check verification status
         user_id = existing_user.get("user_id")
-    
-    # Store session with 7-day expiry
-    expiry = datetime.now(timezone.utc) + timedelta(days=7)
-    await db.user_sessions.update_one(
-        {"user_id": user_id},
-        {
-            "$set": {
-                "session_token": session_token,
-                "expires_at": expiry.isoformat(),
-                "created_at": datetime.now(timezone.utc).isoformat()
+        email_verified = existing_user.get("email_verified", False)
+        phone_verified = existing_user.get("phone_verified", False)
+        
+        # Store session with 7-day expiry
+        expiry = datetime.now(timezone.utc) + timedelta(days=7)
+        await db.user_sessions.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "session_token": session_token,
+                    "expires_at": expiry.isoformat(),
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            upsert=True
+        )
+        
+        # If not fully verified, return verification required
+        if not email_verified or not phone_verified:
+            return {
+                "success": True,
+                "user_id": user_id,
+                "requires_verification": True,
+                "verification_required": {
+                    "email": not email_verified,
+                    "phone": not phone_verified
+                },
+                "message": "Please complete verification to continue."
             }
-        },
-        upsert=True
-    )
-    
-    return {
-        "success": True,
-        "user_id": user_id,
-        "message": "Session stored successfully"
-    }
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "requires_verification": False,
+            "message": "Session stored successfully"
+        }
 
 
 @api_router.get("/auth/google")
