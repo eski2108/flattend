@@ -40,9 +40,9 @@ export default function AdminDisputeDetail() {
         setDispute(response.data.dispute);
         setMessages(response.data.dispute.messages || []);
         
-        // Trade data is already included in dispute response
-        if (response.data.trade) {
-          setTrade(response.data.trade);
+        // Trade data is inside dispute object
+        if (response.data.dispute && response.data.dispute.trade) {
+          setTrade(response.data.dispute.trade);
         }
       }
     } catch (error) {
