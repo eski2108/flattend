@@ -35,6 +35,9 @@ from cache_service import cache, PRICE_CACHE_TTL, price_cache_key
 # Idempotency Service for duplicate request protection (P0-3)
 from idempotency_service import get_idempotency_service, extract_idempotency_key
 
+# Feature Flags / Kill Switches Service (P1)
+from feature_flags_service import get_feature_flags_service, FeatureFlagsService
+
 # CoinGecko API Configuration
 COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
