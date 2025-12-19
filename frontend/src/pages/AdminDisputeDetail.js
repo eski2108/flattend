@@ -54,9 +54,25 @@ export default function AdminDisputeDetail() {
   };
 
   const copyDisputeLink = () => {
-    const link = `${window.location.origin}/admin/disputes/${disputeId}`;
-    navigator.clipboard.writeText(link);
-    toast.success('Dispute link copied to clipboard');
+    try {
+      const link = `${window.location.origin}/admin/disputes/${disputeId}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link);
+        toast.success('Dispute link copied to clipboard');
+      } else {
+        // Fallback for WebView
+        const textarea = document.createElement('textarea');
+        textarea.value = link;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        toast.success('Dispute link copied');
+      }
+    } catch (e) {
+      console.error('Copy failed:', e);
+      toast.error('Failed to copy link');
+    }
   };
 
   const sendAdminMessage = async (recipient = 'all') => {
