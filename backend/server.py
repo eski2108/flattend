@@ -32,6 +32,9 @@ from background_tasks import task_queue, send_email_background, update_prices_ba
 # Redis Caching Service for Performance
 from cache_service import cache, PRICE_CACHE_TTL, price_cache_key
 
+# Idempotency Service for duplicate request protection (P0-3)
+from idempotency_service import get_idempotency_service, extract_idempotency_key
+
 # CoinGecko API Configuration
 COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
