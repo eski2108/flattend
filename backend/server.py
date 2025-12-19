@@ -21618,13 +21618,18 @@ async def create_dispute(request: dict):
         
         # 3. Send Telegram Alert to Admin
         try:
-            await telegram_service.notify_dispute_opened({
-                "dispute_id": dispute_id,
-                "trade_id": trade_id,
-                "reason": reason,
-                "description": description,
-                "initiated_by": user_id
-            })
+            from telegram_service import get_telegram_service
+            telegram_svc = get_telegram_service()
+            await telegram_svc.alert_dispute_created(
+                dispute_id=dispute_id,
+                trade_id=trade_id,
+                amount=trade.get("crypto_amount", 0),
+                currency=trade.get("crypto_currency", "BTC"),
+                fiat_amount=trade.get("fiat_amount", 0),
+                fiat_currency=trade.get("fiat_currency", "GBP"),
+                reason=reason,
+                initiated_by=user_id
+            )
             logger.info(f"✅ Telegram alert sent for dispute {dispute_id}")
         except Exception as e:
             logger.error(f"❌ Failed to send Telegram alert for dispute {dispute_id}: {str(e)}")
