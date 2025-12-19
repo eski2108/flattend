@@ -12145,8 +12145,11 @@ async def get_seller_status(user_id: str):
     # Check requirements
     is_seller = user.get("is_seller", False)
     has_kyc = user.get("kyc_verified", False)
-    payment_methods = user.get("payment_methods", [])
-    has_payment_method = len(payment_methods) > 0
+    
+    # Check payment methods from BOTH user document AND payment_methods collection
+    user_payment_methods = user.get("payment_methods", [])
+    db_payment_methods = await db.payment_methods.find({"user_id": user_id}).to_list(100)
+    has_payment_method = len(user_payment_methods) > 0 or len(db_payment_methods) > 0
     
     # Get seller stats if already seller
     stats = {}
