@@ -1376,8 +1376,8 @@ def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float
 
     async def send_verification_email(self, user_email: str, user_name: str, verification_token: str):
         """Send email verification link"""
-        frontend_url = os.getenv('FRONTEND_URL', 'https://coinhubx.net')
-        backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://coinhubx.net')
+        frontend_url = get_frontend_url()
+        backend_url = os.getenv('REACT_APP_BACKEND_URL') or os.getenv('BACKEND_URL') or frontend_url
         
         # The verification link goes to backend API
         verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
