@@ -1929,6 +1929,11 @@ async def get_sell_orders():
 @api_router.post("/crypto-market/buy/create")
 async def create_buy_order(request: CreateBuyOrderRequest):
     """Create a buy order (buyer wants to purchase crypto)"""
+    # 🔒 FREEZE CHECK - Block buys for frozen users
+    buyer = await db.users.find_one({"wallet_address": request.buyer_address})
+    if buyer and buyer.get("user_id"):
+        await enforce_not_frozen(buyer["user_id"], "buy order")
+    
     # Get sell order
     sell_order = await db.crypto_sell_orders.find_one({"order_id": request.sell_order_id}, {"_id": 0})
     if not sell_order or sell_order["status"] != "active":
