@@ -6378,8 +6378,13 @@ async def admin_unfreeze_user(user_id: str, request: UnfreezeUserRequest):
         if not request.admin_id:
             raise HTTPException(status_code=400, detail="admin_id is required")
         
-        # Get current user state
+        # Get current user state (check both collections)
         user = await db.users.find_one({"user_id": user_id})
+        user_collection = "users"
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+            user_collection = "user_accounts"
+        
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -6396,8 +6401,24 @@ async def admin_unfreeze_user(user_id: str, request: UnfreezeUserRequest):
         
         unfreeze_timestamp = datetime.now(timezone.utc)
         
-        # Apply unfreeze
-        result = await db.users.update_one(
+        # Apply unfreeze to the correct collection
+        db_collection = db.users if user_collection == "users" else db.user_accounts
+        result = await db_collection.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "is_frozen": False,
+                "frozen_at": None,
+                "frozen_by": None,
+                "freeze_reason": None,
+                "unfrozen_at": unfreeze_timestamp.isoformat(),
+                "unfrozen_by": request.admin_id,
+                "unfreeze_reason": request.reason.strip()
+            }}
+        )
+        
+        # Also update the other collection if it exists there
+        other_collection = db.user_accounts if user_collection == "users" else db.users
+        await other_collection.update_one(
             {"user_id": user_id},
             {"$set": {
                 "is_frozen": False,
