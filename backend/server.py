@@ -11604,9 +11604,17 @@ async def get_orderbook(pair: str):
 
 
 @api_router.post("/trading/place-order")
-async def place_trading_order(request: dict):
-    """Place a spot trading order (buy/sell crypto) - FIXED FOR NEW WALLET SCHEMA"""
+async def place_trading_order(http_request: Request, request: dict = None):
+    """
+    Place a spot trading order (buy/sell crypto) - FIXED FOR NEW WALLET SCHEMA
+    
+    🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    """
     try:
+        # Handle Request body
+        if request is None:
+            request = await http_request.json()
+        
         user_id = request.get("user_id")
         pair = request.get("pair")  # e.g., "BTCUSD"
         order_type = request.get("type")  # "buy" or "sell"
@@ -11631,7 +11639,22 @@ async def place_trading_order(request: dict):
                 # Buying crypto - check GBP wallet (payment source)
                 await enforce_wallet_not_frozen(user_id, "GBP", "buy order (GBP)")
         
+        # 🔒 IDEMPOTENCY CHECK - Prevent duplicate trading orders
+        idempotency_key = http_request.headers.get("Idempotency-Key") or http_request.headers.get("idempotency-key")
+        if idempotency_key and user_id:
+            idempotency = get_idempotency_service(db)
+            cached = await idempotency.check_and_lock(user_id, "trading_order", idempotency_key)
+            if cached:
+                if cached.get("is_processing"):
+                    return {"success": False, "message": cached["response"]["message"]}
+                logger.info(f"🔁 Returning cached trading order response for idempotency key")
+                return cached["response"]
+        
         if not all([user_id, pair, order_type, amount > 0, price > 0]):
+            # Release lock if validation fails
+            if idempotency_key and user_id:
+                idempotency = get_idempotency_service(db)
+                await idempotency.release_lock(user_id, "trading_order", idempotency_key)
             return {
                 "success": False,
                 "message": "Missing or invalid required fields"
