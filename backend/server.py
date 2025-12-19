@@ -10504,11 +10504,14 @@ async def login_user(login_req: LoginRequest, request: Request):
     email_verified = user.get("email_verified", False)
     phone_verified = user.get("phone_verified", False)
     
-    # Skip verification for admin users and Google OAuth users
+    # ============================================================================
+    # VERIFICATION ENFORCEMENT - ALL USERS MUST VERIFY (including Google)
+    # NO BYPASS for Google users - they must complete OUR verification flow
+    # Only admins are exempt
+    # ============================================================================
     is_admin = user.get("role") == "admin"
-    is_google_user = user.get("google_id") is not None or user.get("auth_provider") == "emergent_google"
     
-    if not is_admin and not is_google_user:
+    if not is_admin:
         if not email_verified:
             logger.warning(f"🔐 LOGIN BLOCKED: Email not verified for {login_req.email}")
             await security_logger.log_login_attempt(
