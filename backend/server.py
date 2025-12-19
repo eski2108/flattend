@@ -6272,8 +6272,13 @@ async def admin_freeze_user(user_id: str, request: FreezeUserRequest):
         if not request.admin_id:
             raise HTTPException(status_code=400, detail="admin_id is required")
         
-        # Get current user state
+        # Get current user state (check both collections)
         user = await db.users.find_one({"user_id": user_id})
+        user_collection = "users"
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+            user_collection = "user_accounts"
+        
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
