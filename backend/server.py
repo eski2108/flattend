@@ -11389,7 +11389,7 @@ async def send_broadcast_message(request: dict):
                                 <div style="color: #fff; font-size: 16px; line-height: 1.6; text-align: left;">
                                     {message_content.replace(chr(10), '<br>')}
                                 </div>
-                                <a href="https://controlpanel-4.preview.emergentagent.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
+                                <a href="{get_frontend_url()}/dashboard" style="display: inline-block; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 30px;">
                                     View on Platform
                                 </a>
                             </div>
