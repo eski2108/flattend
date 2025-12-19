@@ -46,7 +46,7 @@ function PremiumAuth() {
     try {
       setLoading(true);
       console.log('Initiating Google sign-in...');
-      const response = await axios.get(`${API}/auth/google`);
+      const response = await axios.get(`${API}/api/auth/google`);
       console.log('Google auth response:', response.data);
       if (response.data.auth_url) {
         console.log('Redirecting to:', response.data.auth_url);
@@ -80,7 +80,7 @@ function PremiumAuth() {
     try {
       const fullPhone = `${countryCode}${phoneNumber}`;
       console.log('Sending OTP to:', fullPhone);
-      const response = await axios.post(`${API}/auth/phone/send-otp`, {
+      const response = await axios.post(`${API}/api/auth/phone/send-otp`, {
         phone_number: fullPhone
       });
       console.log('OTP response:', response.data);

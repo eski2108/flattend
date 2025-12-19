@@ -9817,7 +9817,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
-        base_url = get_backend_url()
+        base_url = os.environ.get('BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
         redirect_uri = f"{base_url}/api/auth/google/callback"
         
         if not google_client_id:
@@ -9848,7 +9848,7 @@ async def google_auth():
         return {"success": False, "error": str(e)}
 
 @api_router.get("/auth/google/callback")
-async def google_callback(code: str = None, error: str = None):
+async def google_callback(code: str = None, error: str = None, req: Request = None):
     """Handle Google OAuth callback"""
     import httpx
     import json
@@ -9915,72 +9915,108 @@ async def google_callback(code: str = None, error: str = None):
             
             # Check if user exists
             existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
+            logger.info(f"   Checking existing user in database... {existing_user}")
+
+            if not existing_user:
+                logger.info("   New user detected, adding it to the database...")
+
+                user_account = UserAccount(
+                    email=user_email,
+                    password_hash='',
+                    full_name=user_data.get('given_name', 'unknown') + ' ' + user_data.get('family_name', 'unknown'),
+                )
+
+                account_dict = user_account.model_dump()
+                account_dict['created_at'] = account_dict['created_at'].isoformat()
+                account_dict['email_verified'] = True
+                account_dict['phone_verified'] = True  # Always require phone verification
+                account_dict['phone_number'] = None
+                account_dict['google_id'] = user_data.get('id')
+                
+                # Get client IP and user agent for anti-abuse tracking
+                client_ip = req.client.host if req.client else "Unknown"
+                user_agent = req.headers.get("user-agent", "Unknown")
+
+                # ANTI-ABUSE: Store IP and user agent for referral fraud detection
+                account_dict['ip_address'] = client_ip
+                account_dict['user_agent'] = user_agent
+                account_dict['signup_timestamp'] = datetime.now(timezone.utc).isoformat()
+                
+                # ============================================================
+                # REFERRAL CODE PROCESSING (DURING REGISTRATION)
+                # ============================================================
+                referrer_user_id = None
+                referral_code_used = None
+                referral_tier_used = "standard"  # Default to standard
+                
+                await db.users.insert_one(account_dict)
+                existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
+                logger.info(f"✅ Newly added user found: {existing_user}")
+
+        # if existing_user:
+            # ============================================================================
+            # SECURITY: Check verification status - ALL users must verify
+            # ============================================================================
+            email_verified = existing_user.get("email_verified", False)
+            phone_verified = existing_user.get("phone_verified", False)
+            is_admin = existing_user.get("role") == "admin"
             
-            if existing_user:
-                # ============================================================================
-                # SECURITY: Check verification status - ALL users must verify
-                # ============================================================================
-                email_verified = existing_user.get("email_verified", False)
-                phone_verified = existing_user.get("phone_verified", False)
-                is_admin = existing_user.get("role") == "admin"
-                
-                logger.info(f"   Existing user found: email_verified={email_verified}, phone_verified={phone_verified}")
-                
-                # Only admins can bypass verification
-                if not is_admin and (not email_verified or not phone_verified):
-                    # Redirect to verification page - use login with verification_required flag
-                    logger.info("   User NOT verified, redirecting to login with verification required...")
-                    user_json = json.dumps({
-                        "user_id": existing_user["user_id"],
-                        "email": existing_user["email"],
-                        "full_name": existing_user.get("full_name", ""),
-                        "requires_verification": True,
-                        "email_verified": email_verified,
-                        "phone_verified": phone_verified
-                    })
-                    from urllib.parse import quote
-                    # Redirect to login page with verification_required flag - frontend must handle this
-                    redirect_url = f"{frontend_url}/login?verification_required=true&user={quote(user_json)}&email_verified={email_verified}&phone_verified={phone_verified}"
-                    logger.info(f"✅ Redirecting unverified Google user to: {frontend_url}/login?verification_required=true")
-                    return RedirectResponse(url=redirect_url, status_code=302)
-                
-                # User is fully verified - generate token and allow login
-                logger.info("   User VERIFIED, generating JWT...")
-                now_ts_google = datetime.now(timezone.utc)
-                token_payload = {
-                    "user_id": existing_user["user_id"],
-                    "email": existing_user["email"],
-                    "iat": int(now_ts_google.timestamp()),
-                    "exp": now_ts_google + timedelta(days=30)
-                }
-                token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
-                
-                # Redirect to a callback page that will handle the token
+            logger.info(f"   Existing user found: email_verified={email_verified}, phone_verified={phone_verified}")
+            
+            # Only admins can bypass verification
+            if not is_admin and (not email_verified or not phone_verified):
+                # Redirect to verification page
+                logger.info("   User NOT verified, redirecting to verification...")
                 user_json = json.dumps({
                     "user_id": existing_user["user_id"],
                     "email": existing_user["email"],
                     "full_name": existing_user.get("full_name", ""),
-                    "role": existing_user.get("role", "user")
+                    "requires_verification": True,
+                    "email_verified": email_verified,
+                    "phone_verified": phone_verified
                 })
-                
                 from urllib.parse import quote
-                redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
-                logger.info(f"✅ Redirecting verified user to: {frontend_url}/login?google_success=true")
+                redirect_url = f"{frontend_url}/verify?user={quote(user_json)}&email_required={not email_verified}&phone_required={not phone_verified}"
+                logger.info(f"✅ Redirecting unverified Google user to: {frontend_url}/verify")
                 return RedirectResponse(url=redirect_url, status_code=302)
-            else:
-                # New user - redirect to phone verification with Google data
-                logger.info("   New user, redirecting to phone verification...")
-                import base64
-                google_data_to_encode = {
-                    "email": user_email,
-                    "name": user_data.get('name', user_email.split('@')[0]),
-                    "google_id": user_data.get('id'),
-                    "picture": user_data.get('picture', '')
-                }
-                user_data_encoded = base64.b64encode(json.dumps(google_data_to_encode).encode()).decode()
-                redirect_url = f"{frontend_url}/register?google_data={user_data_encoded}&require_phone=true"
-                logger.info("✅ Redirecting new Google user to registration with phone verification")
-                return RedirectResponse(url=redirect_url, status_code=302)
+            
+            # User is fully verified - generate token and allow login
+            logger.info("   User VERIFIED, generating JWT...")
+            now_ts_google = datetime.now(timezone.utc)
+            token_payload = {
+                "user_id": existing_user["user_id"],
+                "email": existing_user["email"],
+                "iat": int(now_ts_google.timestamp()),
+                "exp": now_ts_google + timedelta(days=30)
+            }
+            token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
+            
+            # Redirect to a callback page that will handle the token
+            user_json = json.dumps({
+                "user_id": existing_user["user_id"],
+                "email": existing_user["email"],
+                "full_name": existing_user.get("full_name", ""),
+                "role": existing_user.get("role", "user")
+            })
+            
+            from urllib.parse import quote
+            redirect_url = f"{frontend_url}/login?google_success=true&token={token}&user={quote(user_json)}"
+            logger.info(f"✅ Redirecting verified user to: {frontend_url}/login?google_success=true")
+            return RedirectResponse(url=redirect_url, status_code=302)
+        # else:
+            # New user - redirect to phone verification with Google data
+            # logger.info("   New user, redirecting to phone verification...")
+            # import base64
+            # google_data_to_encode = {
+            #     "email": user_email,
+            #     "name": user_data.get('name', user_email.split('@')[0]),
+            #     "google_id": user_data.get('id'),
+            #     "picture": user_data.get('picture', '')
+            # }
+            # user_data_encoded = base64.b64encode(json.dumps(google_data_to_encode).encode()).decode()
+            # redirect_url = f"{frontend_url}/register?google_data={user_data_encoded}&require_phone=true"
+            logger.info("✅ Redirecting new Google user to registration with phone verification")
+            return RedirectResponse(url=redirect_url, status_code=302)
     
     except Exception as e:
         import traceback

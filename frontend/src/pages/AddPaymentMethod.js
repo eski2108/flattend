@@ -63,10 +63,10 @@ export default function AddPaymentMethod() {
       }
 
       const user = JSON.parse(userData);
-      console.log('🔥 Sending request to:', `${API}/api/users/payment-methods`);
+      console.log('🔥 Sending request to:', `${API}/api/user/payment-methods`);
       console.log('🔥 User ID:', user.user_id);
       
-      const response = await axios.post(`${API}/api/users/payment-methods`, {
+      const response = await axios.post(`${API}/api/user/payment-methods`, {
         user_id: user.user_id,
         payment_method: paymentMethod
       });
