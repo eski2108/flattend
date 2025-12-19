@@ -4,6 +4,9 @@ import os
 from typing import Optional
 import logging
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +15,10 @@ logger = logging.getLogger(__name__)
 # Default fallback if database unavailable
 ADMIN_EMAIL_FALLBACK = "info@coinhubx.net"
 # 🔒 END LOCKED SECTION
+
+def get_frontend_url():
+    """Get frontend URL dynamically from environment"""
+    return os.environ.get('FRONTEND_URL') or os.environ.get('BACKEND_URL') or os.environ.get('REACT_APP_BACKEND_URL') or 'https://controlpanel-4.preview.emergentagent.com'
 
 class EmailService:
     def __init__(self, api_key: Optional[str] = None, sender_email: Optional[str] = None):
