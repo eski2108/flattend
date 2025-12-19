@@ -11043,15 +11043,15 @@ async def execute_swap(request: Request, body: dict = None):
             from_amount=float(body.get("from_amount", 0))
         )
         
-        # Store successful response for idempotency
-        if idempotency_key and user_id and result.get("success"):
+        # Store response for idempotency (both success and failure)
+        if idempotency_key and user_id:
             idempotency = get_idempotency_service(db)
             await idempotency.store_response(user_id, "swap", idempotency_key, result)
         
         return result
         
     except Exception as e:
-        # Release idempotency lock on failure
+        # Release idempotency lock on exception (allows retry)
         if idempotency_key and user_id:
             idempotency = get_idempotency_service(db)
             await idempotency.release_lock(user_id, "swap", idempotency_key)
