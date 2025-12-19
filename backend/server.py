@@ -10488,13 +10488,18 @@ async def preview_swap(request: dict):
 @api_router.post("/swap/execute")
 async def execute_swap(request: dict):
     """Execute cryptocurrency swap via wallet service"""
+    # 🔒 FREEZE CHECK - Block swaps for frozen users
+    user_id = request.get("user_id")
+    if user_id:
+        await enforce_not_frozen(user_id, "swap")
+    
     from swap_wallet_service import execute_swap_with_wallet
     
     wallet_service = get_wallet_service()
     result = await execute_swap_with_wallet(
         db=db,
         wallet_service=wallet_service,
-        user_id=request.get("user_id"),
+        user_id=user_id,
         from_currency=request.get("from_currency"),
         to_currency=request.get("to_currency"),
         from_amount=float(request.get("from_amount", 0))
