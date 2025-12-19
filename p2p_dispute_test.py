@@ -1,36 +1,40 @@
 #!/usr/bin/env python3
 """
-P2P Dispute Testing - Create REAL P2P Trade and Dispute with FULL Data
-Testing the complete P2P dispute flow as requested:
+P2P DISPUTE RESOLUTION FLOW TESTING
 
-1. Create a P2P trade with realistic data (0.01 BTC for £500)
-2. Create a dispute with reason "crypto_not_released" and description
-3. Get the FULL dispute_id (not truncated)
-4. Call GET /api/p2p/disputes/{full_dispute_id} to verify it returns ALL data:
-   - dispute_id, trade_id, amount, currency, buyer_id, seller_id
-   - reason, description, created_at, status, messages array
-5. Show the EXACT URL: http://localhost:3000/admin/disputes/{FULL_DISPUTE_ID}
+This test verifies the complete P2P dispute resolution flow:
+1. Create test accounts (seller_test@coinhubx.com and buyer_test@coinhubx.com)
+2. Verify login functionality
+3. Create P2P sell offer
+4. Start P2P trade
+5. Raise dispute
+6. Test admin dispute detail page access
+7. Test dispute resolution (release crypto to buyer or return to seller)
 
-Backend URL: https://p2pdispute.preview.emergentagent.com/api
+Backend URL: https://p2pdispute.preview.emergentagent.com
 """
 
 import asyncio
 import aiohttp
 import json
+import uuid
+from datetime import datetime
+import sys
 import os
-from datetime import datetime, timezone
-from motor.motor_asyncio import AsyncIOMotorClient
 
-# Configuration
-BACKEND_URL = "https://p2pdispute.preview.emergentagent.com/api"
-MONGO_URL = "mongodb://localhost:27017"
-DB_NAME = "coinhubx"
+# Backend URL from environment
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://p2pdispute.preview.emergentagent.com')
+API_BASE = f"{BACKEND_URL}/api"
 
 class P2PDisputeTest:
     def __init__(self):
-        self.client = AsyncIOMotorClient(MONGO_URL)
-        self.db = self.client[DB_NAME]
         self.session = None
+        self.test_results = []
+        self.seller_data = None
+        self.buyer_data = None
+        self.sell_offer_id = None
+        self.trade_id = None
+        self.dispute_id = None
         
     async def setup_session(self):
         """Setup HTTP session"""
@@ -41,422 +45,474 @@ class P2PDisputeTest:
         if self.session:
             await self.session.close()
             
-    async def create_test_trade(self):
-        """Create a REAL P2P trade with realistic data (0.01 BTC for £500)"""
-        print("🔧 Creating REAL P2P trade: 0.01 BTC for £500...")
-        
-        trade_id = f"trade_dispute_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
-        buyer_id = f"buyer_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
-        seller_id = f"seller_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
-        
-        # REALISTIC DATA as requested: 0.01 BTC for £500
-        trade_data = {
-            "trade_id": trade_id,
-            "buyer_id": buyer_id,
-            "seller_id": seller_id,
-            "crypto_currency": "BTC",
-            "crypto_amount": 0.01,  # EXACTLY 0.01 BTC as requested
-            "fiat_currency": "GBP",
-            "fiat_amount": 500.00,  # EXACTLY £500 as requested
-            "status": "buyer_marked_paid",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-            "payment_method": "faster_payments",
-            "escrow_locked": True,
-            "payment_marked_at": datetime.now(timezone.utc).isoformat(),
-            "buyer_wallet_address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-            "seller_wallet_address": "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
-            "price_per_unit": 50000.00,  # £50,000 per BTC
-            "payment_reference": "FP12345678901",
-            "terms": "Payment within 30 minutes. Include reference number."
-        }
-        
-        # Insert trade into database
-        await self.db.p2p_trades.insert_one(trade_data)
-        print(f"✅ REAL P2P trade created: {trade_id}")
-        print(f"   - Amount: {trade_data['crypto_amount']} {trade_data['crypto_currency']} for £{trade_data['fiat_amount']}")
-        print(f"   - Buyer: {buyer_id}")
-        print(f"   - Seller: {seller_id}")
-        print(f"   - Status: {trade_data['status']}")
-        
-        return trade_id, buyer_id, seller_id
-        
-    async def create_dispute(self, trade_id, buyer_id):
-        """Create dispute with reason 'crypto_not_released' and detailed description"""
-        print(f"\n🚨 Creating dispute with reason 'crypto_not_released'...")
-        
-        # DETAILED DESCRIPTION as requested
-        dispute_data = {
-            "trade_id": trade_id,
-            "user_id": buyer_id,
-            "reason": "crypto_not_released",  # EXACT reason as requested
-            "description": "I have completed the payment of £500 for 0.01 BTC as agreed in the trade. The payment was made via Faster Payments with reference FP12345678901 and I have provided proof of payment. However, the seller has not released the cryptocurrency after 24 hours despite multiple attempts to contact them. I am requesting admin intervention to resolve this dispute and release my purchased cryptocurrency."
-        }
-        
-        url = f"{BACKEND_URL}/p2p/disputes/create"
+    async def make_request(self, method, endpoint, data=None, headers=None):
+        """Make HTTP request to backend"""
+        url = f"{API_BASE}{endpoint}"
         
         try:
-            async with self.session.post(url, json=dispute_data) as response:
-                response_text = await response.text()
-                print(f"📡 API Response Status: {response.status}")
-                print(f"📡 API Response: {response_text}")
-                
-                if response.status == 200:
-                    result = json.loads(response_text)
-                    if result.get("success"):
-                        dispute_id = result.get("dispute_id")
-                        print(f"✅ Dispute created successfully!")
-                        print(f"🆔 FULL DISPUTE ID: {dispute_id}")
-                        print(f"⚠️  Reason: {dispute_data['reason']}")
-                        print(f"📝 Description: {dispute_data['description'][:100]}...")
-                        return dispute_id, True
-                    else:
-                        print(f"❌ Dispute creation failed: {result}")
-                        return None, False
-                else:
-                    print(f"❌ HTTP Error {response.status}: {response_text}")
-                    return None, False
-                    
+            if method.upper() == 'GET':
+                async with self.session.get(url, headers=headers) as response:
+                    return await response.json(), response.status
+            elif method.upper() == 'POST':
+                async with self.session.post(url, json=data, headers=headers) as response:
+                    return await response.json(), response.status
+            elif method.upper() == 'PUT':
+                async with self.session.put(url, json=data, headers=headers) as response:
+                    return await response.json(), response.status
         except Exception as e:
-            print(f"❌ Exception during dispute creation: {str(e)}")
-            return None, False
+            print(f"❌ Request failed: {method} {url} - {str(e)}")
+            return {"error": str(e)}, 500
             
-    async def verify_dispute_in_database(self, trade_id):
-        """Verify dispute was created in disputes collection"""
-        print(f"\n🔍 Verifying dispute in database for trade {trade_id}...")
+    def log_result(self, test_name, success, message, details=None):
+        """Log test result"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} {test_name}: {message}")
+        
+        self.test_results.append({
+            "test": test_name,
+            "success": success,
+            "message": message,
+            "details": details,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    async def test_1_create_test_accounts(self):
+        """TEST 1: Create test accounts"""
+        print("\n🧪 TEST 1: Creating Test Accounts")
         
         try:
-            dispute = await self.db.p2p_disputes.find_one({"trade_id": trade_id})
-            if dispute:
-                print("✅ Dispute found in database:")
-                print(f"   - Dispute ID: {dispute.get('dispute_id')}")
-                print(f"   - Status: {dispute.get('status')}")
-                print(f"   - Reason: {dispute.get('reason')}")
-                print(f"   - Initiated by: {dispute.get('initiated_by')}")
-                print(f"   - Created at: {dispute.get('created_at')}")
-                return dispute.get('dispute_id'), True
-            else:
-                print("❌ Dispute not found in database")
-                return None, False
-                
-        except Exception as e:
-            print(f"❌ Database error: {str(e)}")
-            return None, False
+            # Create seller account
+            seller_data = {
+                "email": "seller_test@coinhubx.com",
+                "password": "TestPassword123!",
+                "full_name": "Test Seller",
+                "phone_number": "+447700900001"
+            }
             
-    async def verify_trade_status_updated(self, trade_id):
-        """Verify trade status was changed to 'disputed'"""
-        print(f"\n🔍 Verifying trade status update for {trade_id}...")
-        
-        try:
-            trade = await self.db.p2p_trades.find_one({"trade_id": trade_id})
-            if trade:
-                status = trade.get("status")
-                print(f"📊 Trade status: {status}")
-                if status == "disputed":
-                    print("✅ Trade status correctly updated to 'disputed'")
-                    return True
-                else:
-                    print(f"❌ Trade status is '{status}', expected 'disputed'")
-                    return False
+            response, status = await self.make_request('POST', '/auth/register', seller_data)
+            
+            if status == 201 and response.get('success'):
+                self.seller_data = {
+                    'user_id': response.get('user_id'),
+                    'email': seller_data['email'],
+                    'password': seller_data['password']
+                }
+                print(f"✅ Seller account created: {self.seller_data['user_id']}")
+                self.log_result("Create Seller Account", True, f"Seller created with ID: {self.seller_data['user_id']}")
+            elif response.get('user_id'):
+                # Account might already exist
+                self.seller_data = {
+                    'user_id': response.get('user_id'),
+                    'email': seller_data['email'],
+                    'password': seller_data['password']
+                }
+                print(f"✅ Seller account exists: {self.seller_data['user_id']}")
+                self.log_result("Create Seller Account", True, f"Seller account exists: {self.seller_data['user_id']}")
             else:
-                print("❌ Trade not found in database")
+                print(f"❌ Failed to create seller account: {response}")
+                self.log_result("Create Seller Account", False, f"Registration failed: {response}")
                 return False
                 
+            # Create buyer account
+            buyer_data = {
+                "email": "buyer_test@coinhubx.com",
+                "password": "TestPassword123!",
+                "full_name": "Test Buyer",
+                "phone_number": "+447700900002"
+            }
+            
+            response, status = await self.make_request('POST', '/auth/register', buyer_data)
+            
+            if status == 201 and response.get('success'):
+                self.buyer_data = {
+                    'user_id': response.get('user_id'),
+                    'email': buyer_data['email'],
+                    'password': buyer_data['password']
+                }
+                print(f"✅ Buyer account created: {self.buyer_data['user_id']}")
+                self.log_result("Create Buyer Account", True, f"Buyer created with ID: {self.buyer_data['user_id']}")
+            elif response.get('user_id'):
+                # Account might already exist
+                self.buyer_data = {
+                    'user_id': response.get('user_id'),
+                    'email': buyer_data['email'],
+                    'password': buyer_data['password']
+                }
+                print(f"✅ Buyer account exists: {self.buyer_data['user_id']}")
+                self.log_result("Create Buyer Account", True, f"Buyer account exists: {self.buyer_data['user_id']}")
+            else:
+                print(f"❌ Failed to create buyer account: {response}")
+                self.log_result("Create Buyer Account", False, f"Registration failed: {response}")
+                return False
+                
+            return True
+            
         except Exception as e:
-            print(f"❌ Database error: {str(e)}")
+            self.log_result("Create Test Accounts", False, f"Exception: {str(e)}")
             return False
             
-    async def verify_dispute_full_data(self, dispute_id):
-        """Call GET /api/p2p/disputes/{full_dispute_id} to verify ALL data is returned"""
-        print(f"\n🔍 Verifying FULL dispute data retrieval...")
-        
-        url = f"{BACKEND_URL}/p2p/disputes/{dispute_id}"
+    async def test_2_verify_login(self):
+        """TEST 2: Verify login functionality"""
+        print("\n🧪 TEST 2: Verifying Login Functionality")
         
         try:
-            async with self.session.get(url) as response:
-                response_text = await response.text()
-                print(f"📡 Dispute Detail API Status: {response.status}")
+            # Test seller login
+            seller_login = {
+                "email": self.seller_data['email'],
+                "password": self.seller_data['password']
+            }
+            
+            response, status = await self.make_request('POST', '/auth/login', seller_login)
+            
+            if status == 200 and response.get('success'):
+                print(f"✅ Seller login successful")
+                self.log_result("Seller Login", True, "Seller can login successfully")
+            else:
+                print(f"❌ Seller login failed: {response}")
+                self.log_result("Seller Login", False, f"Login failed: {response}")
+                return False
                 
-                if response.status == 200:
-                    result = json.loads(response_text)
-                    if result.get("success") and result.get("dispute"):
-                        dispute = result["dispute"]
-                        
-                        # VERIFY ALL REQUIRED FIELDS as requested
-                        required_fields = [
-                            'dispute_id', 'trade_id', 'amount', 'currency',
-                            'buyer_id', 'seller_id', 'reason', 'description',
-                            'created_at', 'status', 'messages'
-                        ]
-                        
-                        print(f"✅ Dispute data retrieved successfully!")
-                        print(f"\n📋 COMPLETE DISPUTE DATA:")
-                        
-                        missing_fields = []
-                        for field in required_fields:
-                            if field in dispute:
-                                value = dispute[field]
-                                if field == 'messages':
-                                    print(f"   {field}: {len(value)} messages")
-                                elif field == 'description':
-                                    print(f"   {field}: {value[:100]}...")
-                                else:
-                                    print(f"   {field}: {value}")
-                            else:
-                                missing_fields.append(field)
-                                print(f"   {field}: ❌ MISSING")
-                        
-                        if not missing_fields:
-                            print(f"\n✅ ALL {len(required_fields)} REQUIRED FIELDS PRESENT!")
-                            return True, dispute
-                        else:
-                            print(f"\n❌ MISSING FIELDS: {missing_fields}")
-                            return False, dispute
-                    else:
-                        print(f"❌ Dispute detail response invalid: {result}")
-                        return False, None
-                else:
-                    print(f"❌ Dispute detail HTTP Error {response.status}: {response_text}")
-                    return False, None
-                    
-        except Exception as e:
-            print(f"❌ Exception during dispute detail test: {str(e)}")
-            return False, None
-
-    async def show_frontend_url(self, dispute_id):
-        """Show the EXACT URL for testing the dispute detail page"""
-        print(f"\n🌐 FRONTEND URL FOR TESTING...")
-        
-        # As requested: http://localhost:3000/admin/disputes/{FULL_DISPUTE_ID}
-        # But we'll also show the actual frontend URL
-        localhost_url = f"http://localhost:3000/admin/disputes/{dispute_id}"
-        frontend_url = f"https://p2pdispute.preview.emergentagent.com/admin/disputes/{dispute_id}"
-        
-        print(f"\n🎯 EXACT URL FOR TESTING DISPUTE DETAIL PAGE:")
-        print(f"   Localhost: {localhost_url}")
-        print(f"   Frontend:  {frontend_url}")
-        print(f"\n🆔 FULL DISPUTE ID: {dispute_id}")
-        print(f"💰 Trade Details: 0.01 BTC for £500")
-        print(f"⚠️  Dispute Reason: crypto_not_released")
-        
-        return True
-
-    async def check_admin_disputes_endpoint(self):
-        """Call GET /api/admin/disputes/all to verify admin can see the dispute"""
-        print(f"\n👨‍💼 Testing admin disputes endpoint...")
-        
-        url = f"{BACKEND_URL}/admin/disputes/all"
-        
-        try:
-            async with self.session.get(url) as response:
-                response_text = await response.text()
-                print(f"📡 Admin API Response Status: {response.status}")
+            # Test buyer login
+            buyer_login = {
+                "email": self.buyer_data['email'],
+                "password": self.buyer_data['password']
+            }
+            
+            response, status = await self.make_request('POST', '/auth/login', buyer_login)
+            
+            if status == 200 and response.get('success'):
+                print(f"✅ Buyer login successful")
+                self.log_result("Buyer Login", True, "Buyer can login successfully")
+            else:
+                print(f"❌ Buyer login failed: {response}")
+                self.log_result("Buyer Login", False, f"Login failed: {response}")
+                return False
                 
-                if response.status == 200:
-                    result = json.loads(response_text)
-                    if result.get("success"):
-                        disputes = result.get("disputes", [])
-                        count = result.get("count", 0)
-                        print(f"✅ Admin can access disputes: {count} disputes found")
-                        
-                        # Show recent disputes
-                        if disputes:
-                            print("📋 Recent disputes:")
-                            for dispute in disputes[-3:]:  # Show last 3
-                                print(f"   - {dispute.get('dispute_id')} | {dispute.get('status')} | {dispute.get('reason')}")
-                        
-                        return True
-                    else:
-                        print(f"❌ Admin endpoint failed: {result}")
-                        return False
-                else:
-                    print(f"❌ Admin endpoint HTTP Error {response.status}: {response_text}")
-                    return False
-                    
+            return True
+            
         except Exception as e:
-            print(f"❌ Exception during admin endpoint test: {str(e)}")
+            self.log_result("Verify Login", False, f"Exception: {str(e)}")
             return False
             
-    async def check_backend_logs_for_email(self):
-        """Check backend logs to confirm email was sent to info@coinhubx.net"""
-        print(f"\n📧 Checking backend logs for email confirmation...")
+    async def test_3_create_p2p_sell_offer(self):
+        """TEST 3: Create P2P sell offer"""
+        print("\n🧪 TEST 3: Creating P2P Sell Offer")
         
         try:
-            # Check recent backend logs
-            import subprocess
-            result = subprocess.run(
-                ["tail", "-n", "100", "/var/log/supervisor/backend.err.log"],
-                capture_output=True,
-                text=True
-            )
+            # Create a sell offer
+            sell_offer_data = {
+                "seller_id": self.seller_data['user_id'],
+                "crypto_currency": "BTC",
+                "crypto_amount": 0.01,
+                "fiat_currency": "GBP",
+                "price_per_unit": 50000,
+                "min_order": 100,
+                "max_order": 500,
+                "payment_methods": ["bank_transfer"],
+                "terms": "Test sell offer for dispute testing"
+            }
             
-            log_content = result.stdout
+            response, status = await self.make_request('POST', '/p2p/offers/sell', sell_offer_data)
             
-            # Look for email-related log entries
-            email_indicators = [
-                "Admin dispute alert sent to info@coinhubx.net",
-                "✅ Admin dispute alert sent",
-                "send_dispute_alert_to_admin",
-                "info@coinhubx.net"
-            ]
-            
-            found_email_logs = []
-            for line in log_content.split('\n'):
-                for indicator in email_indicators:
-                    if indicator in line:
-                        found_email_logs.append(line.strip())
-                        
-            if found_email_logs:
-                print("✅ Email-related logs found:")
-                for log in found_email_logs[-5:]:  # Show last 5 relevant logs
-                    print(f"   📝 {log}")
+            if status == 201 and response.get('success'):
+                self.sell_offer_id = response.get('offer_id')
+                print(f"✅ Sell offer created: {self.sell_offer_id}")
+                self.log_result("Create Sell Offer", True, f"Sell offer created: {self.sell_offer_id}")
                 return True
             else:
-                print("⚠️  No email-related logs found in recent backend logs")
-                print("📝 Recent log sample:")
-                for line in log_content.split('\n')[-10:]:
-                    if line.strip():
-                        print(f"   {line.strip()}")
+                print(f"❌ Failed to create sell offer: {response}")
+                self.log_result("Create Sell Offer", False, f"Offer creation failed: {response}")
                 return False
                 
         except Exception as e:
-            print(f"❌ Error checking logs: {str(e)}")
+            self.log_result("Create P2P Sell Offer", False, f"Exception: {str(e)}")
             return False
             
-    async def cleanup_test_data(self, trade_id):
-        """Clean up test data"""
-        print(f"\n🧹 Cleaning up test data...")
+    async def test_4_start_p2p_trade(self):
+        """TEST 4: Start P2P trade"""
+        print("\n🧪 TEST 4: Starting P2P Trade")
         
         try:
-            # Remove test trade
-            await self.db.p2p_trades.delete_one({"trade_id": trade_id})
-            print(f"✅ Removed test trade: {trade_id}")
+            if not self.sell_offer_id:
+                print("❌ No sell offer available to start trade")
+                self.log_result("Start P2P Trade", False, "No sell offer available")
+                return False
+                
+            # Start a trade
+            trade_data = {
+                "buyer_id": self.buyer_data['user_id'],
+                "offer_id": self.sell_offer_id,
+                "fiat_amount": 250  # £250 worth
+            }
             
-            # Remove test dispute
-            await self.db.p2p_disputes.delete_one({"trade_id": trade_id})
-            print(f"✅ Removed test dispute for trade: {trade_id}")
+            response, status = await self.make_request('POST', '/p2p/trades/start', trade_data)
             
-            # Remove admin notifications
-            await self.db.admin_notifications.delete_many({"data.trade_id": trade_id})
-            print(f"✅ Removed admin notifications for trade: {trade_id}")
+            if status == 201 and response.get('success'):
+                self.trade_id = response.get('trade_id')
+                print(f"✅ Trade started: {self.trade_id}")
+                self.log_result("Start P2P Trade", True, f"Trade started: {self.trade_id}")
+                return True
+            else:
+                print(f"❌ Failed to start trade: {response}")
+                self.log_result("Start P2P Trade", False, f"Trade start failed: {response}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Start P2P Trade", False, f"Exception: {str(e)}")
+            return False
+            
+    async def test_5_raise_dispute(self):
+        """TEST 5: Raise dispute on trade"""
+        print("\n🧪 TEST 5: Raising Dispute")
+        
+        try:
+            if not self.trade_id:
+                print("❌ No trade available to dispute")
+                self.log_result("Raise Dispute", False, "No trade available")
+                return False
+                
+            # Raise a dispute
+            dispute_data = {
+                "trade_id": self.trade_id,
+                "initiated_by": self.buyer_data['user_id'],
+                "reason": "payment_not_received",
+                "description": "Test dispute for testing admin resolution flow"
+            }
+            
+            response, status = await self.make_request('POST', '/p2p/disputes/create', dispute_data)
+            
+            if status == 201 and response.get('success'):
+                self.dispute_id = response.get('dispute_id')
+                print(f"✅ Dispute raised: {self.dispute_id}")
+                self.log_result("Raise Dispute", True, f"Dispute created: {self.dispute_id}")
+                return True
+            else:
+                print(f"❌ Failed to raise dispute: {response}")
+                self.log_result("Raise Dispute", False, f"Dispute creation failed: {response}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Raise Dispute", False, f"Exception: {str(e)}")
+            return False
+            
+    async def test_6_admin_dispute_detail_access(self):
+        """TEST 6: Test admin dispute detail page access"""
+        print("\n🧪 TEST 6: Testing Admin Dispute Detail Access")
+        
+        try:
+            if not self.dispute_id:
+                print("❌ No dispute available to test")
+                self.log_result("Admin Dispute Detail Access", False, "No dispute available")
+                return False
+                
+            # Test GET /api/p2p/disputes/{dispute_id}
+            response, status = await self.make_request('GET', f'/p2p/disputes/{self.dispute_id}')
+            
+            if status == 200 and response.get('success'):
+                dispute_data = response.get('dispute')
+                print(f"✅ Dispute details retrieved successfully")
+                print(f"   Dispute ID: {dispute_data.get('dispute_id')}")
+                print(f"   Status: {dispute_data.get('status')}")
+                print(f"   Buyer ID: {dispute_data.get('buyer_id')}")
+                print(f"   Seller ID: {dispute_data.get('seller_id')}")
+                print(f"   Reason: {dispute_data.get('reason')}")
+                
+                self.log_result("Admin Dispute Detail Access", True, f"Dispute details retrieved: {dispute_data.get('dispute_id')}")
+                return True
+            else:
+                print(f"❌ Failed to retrieve dispute details: {response}")
+                self.log_result("Admin Dispute Detail Access", False, f"Dispute retrieval failed: {response}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Admin Dispute Detail Access", False, f"Exception: {str(e)}")
+            return False
+            
+    async def test_7_dispute_resolution(self):
+        """TEST 7: Test dispute resolution"""
+        print("\n🧪 TEST 7: Testing Dispute Resolution")
+        
+        try:
+            if not self.dispute_id:
+                print("❌ No dispute available to resolve")
+                self.log_result("Dispute Resolution", False, "No dispute available")
+                return False
+                
+            # Test dispute resolution - release to buyer
+            resolution_data = {
+                "admin_id": "test_admin",
+                "resolution": "release_to_buyer",
+                "admin_note": "Test resolution - releasing crypto to buyer after investigation"
+            }
+            
+            response, status = await self.make_request('POST', f'/admin/disputes/{self.dispute_id}/resolve', resolution_data)
+            
+            if status == 200 and response.get('success'):
+                print(f"✅ Dispute resolved successfully")
+                print(f"   Resolution: {resolution_data['resolution']}")
+                print(f"   Admin Note: {resolution_data['admin_note']}")
+                
+                self.log_result("Dispute Resolution", True, f"Dispute resolved: {resolution_data['resolution']}")
+                
+                # Verify dispute status changed
+                response, status = await self.make_request('GET', f'/p2p/disputes/{self.dispute_id}')
+                if status == 200 and response.get('success'):
+                    dispute_data = response.get('dispute')
+                    if dispute_data.get('status') == 'resolved':
+                        print(f"✅ Dispute status confirmed as resolved")
+                        self.log_result("Dispute Status Verification", True, "Dispute status updated to resolved")
+                    else:
+                        print(f"⚠️ Dispute status: {dispute_data.get('status')} (expected: resolved)")
+                        self.log_result("Dispute Status Verification", False, f"Status not updated: {dispute_data.get('status')}")
+                
+                return True
+            else:
+                print(f"❌ Failed to resolve dispute: {response}")
+                self.log_result("Dispute Resolution", False, f"Resolution failed: {response}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Dispute Resolution", False, f"Exception: {str(e)}")
+            return False
+            
+    async def test_8_backend_endpoints_direct(self):
+        """TEST 8: Test backend endpoints directly"""
+        print("\n🧪 TEST 8: Testing Backend Endpoints Directly")
+        
+        try:
+            # Test health endpoint
+            response, status = await self.make_request('GET', '/health')
+            if status == 200:
+                print("✅ Backend health check passed")
+                self.log_result("Backend Health", True, "Backend is healthy")
+            else:
+                self.log_result("Backend Health", False, f"Health check failed: {status}")
+                
+            # Test P2P offers endpoint
+            response, status = await self.make_request('GET', '/p2p/offers')
+            if status == 200:
+                offers = response.get('offers', [])
+                print(f"✅ P2P offers endpoint working - {len(offers)} offers")
+                self.log_result("P2P Offers Endpoint", True, f"Retrieved {len(offers)} offers")
+            else:
+                self.log_result("P2P Offers Endpoint", False, f"P2P offers failed: {status}")
+                
+            # Test P2P trades endpoint (if we have a trade)
+            if self.trade_id:
+                response, status = await self.make_request('GET', f'/p2p/trades/{self.trade_id}')
+                if status == 200:
+                    trade_data = response.get('trade')
+                    print(f"✅ P2P trade details retrieved: {trade_data.get('trade_id')}")
+                    self.log_result("P2P Trade Details", True, f"Trade details retrieved: {trade_data.get('trade_id')}")
+                else:
+                    self.log_result("P2P Trade Details", False, f"Trade details failed: {status}")
+                    
+            return True
             
         except Exception as e:
-            print(f"⚠️  Error during cleanup: {str(e)}")
+            self.log_result("Backend Endpoints Direct", False, f"Exception: {str(e)}")
+            return False
             
-    async def run_complete_test(self):
-        """Run the complete P2P dispute flow test as requested"""
-        print("🚀 Starting P2P Dispute Testing - Create REAL P2P Trade and Dispute with FULL Data")
+    async def run_all_tests(self):
+        """Run all P2P dispute tests"""
+        print("🚀 STARTING P2P DISPUTE RESOLUTION FLOW TESTING")
         print("=" * 80)
         
         await self.setup_session()
         
         try:
-            # Step 1: Create REAL P2P trade (0.01 BTC for £500)
-            trade_id, buyer_id, seller_id = await self.create_test_trade()
-            
-            # Step 2: Create dispute with reason "crypto_not_released" and description
-            dispute_id, dispute_created = await self.create_dispute(trade_id, buyer_id)
-            
-            if not dispute_created or not dispute_id:
-                print("❌ Cannot continue - dispute creation failed")
-                return False
-            
-            # Step 3: Get FULL dispute_id (not truncated) and verify ALL data
-            full_data_verified, dispute_data = await self.verify_dispute_full_data(dispute_id)
-            
-            # Step 4: Show EXACT URL for testing
-            url_shown = await self.show_frontend_url(dispute_id)
-            
-            # Step 5: Verify dispute in database
-            db_dispute_id, dispute_in_db = await self.verify_dispute_in_database(trade_id)
-            
-            # Step 6: Verify trade status updated
-            trade_status_updated = await self.verify_trade_status_updated(trade_id)
-            
-            # Step 7: Check admin disputes endpoint
-            admin_endpoint_works = await self.check_admin_disputes_endpoint()
-            
-            # Results Summary
-            print("\n" + "=" * 80)
-            print("📊 P2P DISPUTE TEST RESULTS - AS REQUESTED")
-            print("=" * 80)
-            
-            results = {
-                "1. Create P2P trade (0.01 BTC for £500)": True,
-                "2. Create dispute (crypto_not_released)": dispute_created,
-                "3. Get FULL dispute_id (not truncated)": dispute_created and dispute_id is not None,
-                "4. Verify ALL dispute data fields": full_data_verified,
-                "5. Show EXACT frontend URL": url_shown,
-                "6. Dispute stored in database": dispute_in_db,
-                "7. Trade status updated": trade_status_updated,
-                "8. Admin can access dispute": admin_endpoint_works
-            }
-            
-            for test, passed in results.items():
-                status = "✅ PASS" if passed else "❌ FAIL"
-                print(f"{status} {test}")
+            # Test 1: Create test accounts
+            if not await self.test_1_create_test_accounts():
+                print("❌ Failed to create test accounts - aborting tests")
+                return
                 
-            # Overall result
-            critical_tests = [
-                results["1. Create P2P trade (0.01 BTC for £500)"],
-                results["2. Create dispute (crypto_not_released)"],
-                results["3. Get FULL dispute_id (not truncated)"],
-                results["4. Verify ALL dispute data fields"]
-            ]
-            
-            all_critical_passed = all(critical_tests)
-            overall_status = "SUCCESS" if all_critical_passed else "FAILED"
-            overall_emoji = "🎉" if all_critical_passed else "❌"
-            
-            print(f"\n{overall_emoji} OVERALL TEST RESULT: {overall_status}")
-            
-            if all_critical_passed:
-                print(f"\n🎯 CRITICAL SUCCESS - All requested features working!")
-                print(f"🆔 FULL DISPUTE ID: {dispute_id}")
-                print(f"🌐 EXACT URL FOR TESTING:")
-                print(f"   http://localhost:3000/admin/disputes/{dispute_id}")
-                print(f"   https://p2pdispute.preview.emergentagent.com/admin/disputes/{dispute_id}")
-                print(f"\n📋 DISPUTE CONTAINS ALL REQUIRED DATA:")
-                if dispute_data:
-                    print(f"   - dispute_id: {dispute_data.get('dispute_id')}")
-                    print(f"   - trade_id: {dispute_data.get('trade_id')}")
-                    print(f"   - amount: {dispute_data.get('amount', 'N/A')}")
-                    print(f"   - currency: {dispute_data.get('currency', 'N/A')}")
-                    print(f"   - buyer_id: {dispute_data.get('buyer_id')}")
-                    print(f"   - seller_id: {dispute_data.get('seller_id')}")
-                    print(f"   - reason: {dispute_data.get('reason')}")
-                    print(f"   - description: Present")
-                    print(f"   - created_at: {dispute_data.get('created_at')}")
-                    print(f"   - status: {dispute_data.get('status')}")
-                    print(f"   - messages: {len(dispute_data.get('messages', []))} messages")
-            else:
-                failed_tests = [test for test, passed in results.items() if not passed]
-                print(f"🔧 Critical issues found in: {', '.join(failed_tests)}")
+            # Test 2: Verify login
+            if not await self.test_2_verify_login():
+                print("❌ Login verification failed - continuing with other tests")
                 
-            # Cleanup
-            await self.cleanup_test_data(trade_id)
+            # Test 3: Create P2P sell offer
+            if not await self.test_3_create_p2p_sell_offer():
+                print("❌ Failed to create sell offer - continuing with backend tests")
+                
+            # Test 4: Start P2P trade
+            if not await self.test_4_start_p2p_trade():
+                print("❌ Failed to start trade - continuing with backend tests")
+                
+            # Test 5: Raise dispute
+            if not await self.test_5_raise_dispute():
+                print("❌ Failed to raise dispute - continuing with backend tests")
+                
+            # Test 6: Admin dispute detail access
+            await self.test_6_admin_dispute_detail_access()
             
-            return all_critical_passed
+            # Test 7: Dispute resolution
+            await self.test_7_dispute_resolution()
             
-        except Exception as e:
-            print(f"❌ Test execution error: {str(e)}")
-            return False
+            # Test 8: Backend endpoints direct
+            await self.test_8_backend_endpoints_direct()
             
         finally:
             await self.cleanup_session()
-            self.client.close()
+            
+        # Print summary
+        self.print_test_summary()
+        
+    def print_test_summary(self):
+        """Print test results summary"""
+        print("\n" + "=" * 80)
+        print("📊 P2P DISPUTE RESOLUTION TEST SUMMARY")
+        print("=" * 80)
+        
+        passed = sum(1 for result in self.test_results if result['success'])
+        total = len(self.test_results)
+        success_rate = (passed / total * 100) if total > 0 else 0
+        
+        print(f"Total Tests: {total}")
+        print(f"Passed: {passed}")
+        print(f"Failed: {total - passed}")
+        print(f"Success Rate: {success_rate:.1f}%")
+        
+        print("\nDETAILED RESULTS:")
+        for result in self.test_results:
+            status = "✅ PASS" if result['success'] else "❌ FAIL"
+            print(f"{status} {result['test']}: {result['message']}")
+            
+        print("\n" + "=" * 80)
+        
+        # Specific analysis for P2P dispute flow
+        critical_tests = [
+            "Create Seller Account",
+            "Create Buyer Account", 
+            "Seller Login",
+            "Buyer Login",
+            "Admin Dispute Detail Access",
+            "Dispute Resolution"
+        ]
+        
+        critical_passed = sum(1 for result in self.test_results 
+                            if result['test'] in critical_tests and result['success'])
+        critical_total = len([r for r in self.test_results if r['test'] in critical_tests])
+        
+        if critical_total > 0:
+            critical_rate = (critical_passed / critical_total * 100)
+            print(f"CRITICAL FEATURES SUCCESS RATE: {critical_rate:.1f}% ({critical_passed}/{critical_total})")
+            
+        if success_rate >= 70:
+            print("🎉 P2P DISPUTE RESOLUTION TESTING COMPLETED!")
+            if critical_rate >= 80:
+                print("✅ Critical dispute resolution features are working")
+            else:
+                print("⚠️ Some critical features need attention")
+        else:
+            print("⚠️ P2P DISPUTE RESOLUTION TESTING COMPLETED WITH ISSUES")
+            print("❌ Major issues found in dispute resolution flow")
+            
+        print("=" * 80)
 
 async def main():
-    """Main test execution"""
-    test = P2PDisputeTest()
-    success = await test.run_complete_test()
-    
-    if success:
-        print("\n🎉 P2P Dispute Flow Test: PASSED")
-        exit(0)
-    else:
-        print("\n❌ P2P Dispute Flow Test: FAILED")
-        exit(1)
+    """Main test runner"""
+    tester = P2PDisputeTest()
+    await tester.run_all_tests()
 
 if __name__ == "__main__":
     asyncio.run(main())
