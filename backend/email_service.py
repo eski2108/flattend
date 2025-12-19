@@ -1201,6 +1201,7 @@ email_service = EmailService()
 # P2P Email Templates
 def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, fiat_amount: float, buyer_username: str):
     """Email template for seller when buyer marks payment"""
+    frontend_url = get_frontend_url()
     return f"""
     <html>
     <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
