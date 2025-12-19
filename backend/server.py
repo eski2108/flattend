@@ -11639,7 +11639,12 @@ async def execute_swap(request: Request, body: dict = None):
     Execute cryptocurrency swap via wallet service
     
     🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    🚦 FEATURE FLAG: swaps_enabled
     """
+    # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
+    flags = get_feature_flags_service(db)
+    await flags.enforce("swaps_enabled", "Swaps")
+    
     # Handle both Request body and direct dict
     if body is None:
         body = await request.json()
