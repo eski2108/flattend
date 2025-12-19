@@ -7525,15 +7525,16 @@ async def request_withdrawal(
             db, wallet_service, user_id, currency, amount, wallet_address, network
         )
         
-        # Store successful response for idempotency
-        if idempotency_key and result.get("success"):
+        # Store response for idempotency (both success and failure)
+        # This prevents duplicate processing attempts
+        if idempotency_key:
             idempotency = get_idempotency_service(db)
             await idempotency.store_response(user_id, "withdrawal", idempotency_key, result)
         
         return result
         
     except Exception as e:
-        # Release idempotency lock on failure
+        # Release idempotency lock on exception (allows retry)
         if idempotency_key:
             idempotency = get_idempotency_service(db)
             await idempotency.release_lock(user_id, "withdrawal", idempotency_key)
