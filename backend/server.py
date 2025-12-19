@@ -10334,13 +10334,16 @@ async def admin_login(request: AdminLoginRequest, req: Request):
     # Clear rate limit on successful admin login
     rate_limiter.clear_rate_limit(client_ip, "admin_login")
     
-    # Generate admin JWT token
+    # Generate admin JWT token with iat for session revocation
     import jwt
     from datetime import timedelta
+    now_ts_admin = datetime.now(timezone.utc)
     token_data = {
         "user_id": user["user_id"],
         "email": user["email"],
-        "role": "admin"
+        "role": "admin",
+        "iat": int(now_ts_admin.timestamp()),
+        "exp": now_ts_admin + timedelta(days=7)
     }
     admin_token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
     
