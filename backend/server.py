@@ -9868,7 +9868,16 @@ async def complete_google_signup(request: dict):
         raise HTTPException(status_code=400, detail="Username already taken")
     
     # Create user account
+    # ============================================================================
+    # SECURITY: Google users must STILL complete OUR verification flow
+    # email_verified = false, phone_verified = false
+    # User will be redirected to verification after Google auth
+    # ============================================================================
     user_id = str(uuid.uuid4())
+    import secrets
+    verification_token = secrets.token_urlsafe(32)
+    verification_token_expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    
     user_account = {
         "user_id": user_id,
         "email": google_data['email'],
@@ -9876,9 +9885,12 @@ async def complete_google_signup(request: dict):
         "username": username,
         "phone_number": phone_number,
         "role": "user",
-        "email_verified": True,  # Google already verified
-        "phone_verified": True,  # Already verified in previous step
+        "email_verified": False,  # MUST verify via our email flow
+        "phone_verified": False,  # MUST verify via OTP
         "google_id": google_data.get('id'),
+        "auth_provider": "google",
+        "verification_token": verification_token,
+        "verification_token_expires": verification_token_expires,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "wallet_address": None
     }
@@ -9893,19 +9905,31 @@ async def complete_google_signup(request: dict):
         "created_at": datetime.now(timezone.utc).isoformat()
     })
     
-    # Generate JWT token with iat for session revocation
-    now_ts_google_new = datetime.now(timezone.utc)
-    token_data = {
-        "user_id": user_id,
-        "email": google_data['email'],
-        "iat": int(now_ts_google_new.timestamp()),
-        "exp": now_ts_google_new + timedelta(days=30)
-    }
-    token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    # Send verification email
+    try:
+        from email_service import EmailService
+        email_service = EmailService()
+        backend_url = os.environ.get("BACKEND_URL", "https://coinhubx.net")
+        verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
+        await email_service.send_verification_email(
+            user_email=google_data['email'],
+            user_name=full_name,
+            verification_token=verification_token
+        )
+        logger.info(f"✅ Verification email sent to Google user: {google_data['email']}")
+    except Exception as e:
+        logger.error(f"❌ Failed to send verification email to Google user: {e}")
     
+    # Return response indicating verification is required
+    # Frontend should redirect to verification page, NOT dashboard
     return {
         "success": True,
-        "token": token,
+        "requires_verification": True,
+        "verification_required": {
+            "email": True,
+            "phone": True
+        },
+        "message": "Account created. Please verify your email and phone to continue.",
         "user": {
             "user_id": user_id,
             "email": google_data['email'],
