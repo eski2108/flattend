@@ -7404,6 +7404,212 @@ async def admin_get_user_adjustment_history(user_id: str, limit: int = 50):
 
 
 # ============================================================================
+# 🚦 FEATURE FLAGS / KILL SWITCHES (P1)
+# ============================================================================
+# DB-driven feature flags with:
+# - Global, per-tenant, per-environment scopes
+# - Short TTL cache (30s) for performance
+# - Instant cache invalidation on update
+# - Full audit trail
+# - Admin UI controls
+# ============================================================================
+
+class FeatureFlagUpdateRequest(BaseModel):
+    """Request model for updating a feature flag"""
+    admin_id: str
+    enabled: bool
+    reason: str  # Mandatory, min 10 chars
+    scope: str = "global"  # global, tenant, environment
+    tenant_id: Optional[str] = None
+    environment: Optional[str] = None
+
+
+@api_router.get("/admin/feature-flags")
+async def admin_list_feature_flags(
+    scope: Optional[str] = None,
+    category: Optional[str] = None,
+    tenant_id: Optional[str] = None,
+    environment: Optional[str] = None
+):
+    """
+    🚦 List all feature flags with optional filters
+    
+    Categories: system, auth, funds, trading, compliance, marketing
+    Scopes: global, tenant, environment
+    """
+    try:
+        flags_service = get_feature_flags_service(db)
+        flags = await flags_service.get_all_flags(
+            scope=scope,
+            tenant_id=tenant_id,
+            environment=environment,
+            category=category
+        )
+        
+        return {
+            "success": True,
+            "count": len(flags),
+            "cache_ttl_seconds": 30,
+            "flags": flags
+        }
+    except Exception as e:
+        logger.error(f"Error listing feature flags: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/feature-flags/{flag_name}")
+async def admin_get_feature_flag(
+    flag_name: str,
+    scope: str = "global",
+    tenant_id: Optional[str] = None,
+    environment: Optional[str] = None
+):
+    """Get a specific feature flag with its history"""
+    try:
+        flags_service = get_feature_flags_service(db)
+        
+        flag = await flags_service.get_flag(flag_name, scope, tenant_id, environment)
+        if not flag:
+            raise HTTPException(status_code=404, detail=f"Flag '{flag_name}' not found")
+        
+        history = await flags_service.get_flag_history(flag_name, limit=20)
+        
+        return {
+            "success": True,
+            "flag": flag,
+            "history": history
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting feature flag: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/feature-flags/{flag_name}")
+async def admin_update_feature_flag(flag_name: str, request: FeatureFlagUpdateRequest):
+    """
+    🚦 Update a feature flag
+    
+    This will:
+    - Update the flag value in database
+    - Invalidate cache immediately
+    - Log to admin_audit_logs
+    - Take effect within seconds (no redeploy needed)
+    """
+    try:
+        # Validate reason
+        if not request.reason or len(request.reason.strip()) < 10:
+            raise HTTPException(status_code=400, detail="Reason is required (minimum 10 characters)")
+        
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        flags_service = get_feature_flags_service(db)
+        
+        result = await flags_service.set_flag(
+            flag_name=flag_name,
+            enabled=request.enabled,
+            admin_id=request.admin_id,
+            reason=request.reason,
+            scope=request.scope,
+            tenant_id=request.tenant_id,
+            environment=request.environment
+        )
+        
+        return result
+        
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating feature flag: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/feature-flags/{flag_name}/toggle")
+async def admin_toggle_feature_flag(flag_name: str, admin_id: str, reason: str):
+    """
+    🚦 Quick toggle a feature flag (inverts current value)
+    """
+    try:
+        if not reason or len(reason.strip()) < 10:
+            raise HTTPException(status_code=400, detail="Reason is required (minimum 10 characters)")
+        
+        if not admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        flags_service = get_feature_flags_service(db)
+        
+        # Get current value
+        current = await flags_service.is_enabled(flag_name)
+        new_value = not current
+        
+        result = await flags_service.set_flag(
+            flag_name=flag_name,
+            enabled=new_value,
+            admin_id=admin_id,
+            reason=reason
+        )
+        
+        return {
+            **result,
+            "toggled_from": current,
+            "toggled_to": new_value
+        }
+        
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error toggling feature flag: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/feature-flags-status")
+async def admin_feature_flags_overview():
+    """
+    🚦 Get a quick overview of all flags status
+    
+    Returns a simple key-value map of flag_name -> enabled
+    """
+    try:
+        flags_service = get_feature_flags_service(db)
+        flags = await flags_service.get_all_flags(scope="global")
+        
+        status_map = {}
+        for flag in flags:
+            status_map[flag["flag_name"]] = {
+                "enabled": flag.get("enabled", True),
+                "category": flag.get("category", "unknown"),
+                "updated_at": flag.get("updated_at"),
+                "updated_by": flag.get("updated_by")
+            }
+        
+        # Count enabled/disabled
+        enabled_count = sum(1 for f in status_map.values() if f["enabled"])
+        disabled_count = len(status_map) - enabled_count
+        
+        return {
+            "success": True,
+            "total_flags": len(status_map),
+            "enabled_count": enabled_count,
+            "disabled_count": disabled_count,
+            "flags": status_map
+        }
+    except Exception as e:
+        logger.error(f"Error getting flags overview: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# END FEATURE FLAGS / KILL SWITCHES
+# ============================================================================
+
+
+# ============================================================================
 # END TRADER BADGE SYSTEM
 # ============================================================================
 
