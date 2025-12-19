@@ -1939,7 +1939,12 @@ async def create_buy_order(http_request: Request, request: CreateBuyOrderRequest
     Create a buy order (buyer wants to purchase crypto)
     
     🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    🚦 FEATURE FLAG: instant_buy_enabled
     """
+    # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
+    flags = get_feature_flags_service(db)
+    await flags.enforce("instant_buy_enabled", "Instant Buy")
+    
     # 🔒 FREEZE CHECK - Block buys for frozen users
     buyer = await db.users.find_one({"wallet_address": request.buyer_address})
     user_id = buyer.get("user_id") if buyer else None
