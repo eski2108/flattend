@@ -358,24 +358,13 @@ class WalletService:
             if amount <= 0:
                 raise ValueError("Unlock amount must be positive")
             
-            wallet = await self.db.wallets.find_one(
-                {"user_id": user_id, "currency": currency}
-            )
-            
-            if not wallet:
-                raise ValueError(f"Wallet not found for {user_id}/{currency}")
-            
-            current_locked = float(wallet.get("locked_balance", 0))
-            
-            if current_locked < amount:
-                raise ValueError(
-                    f"Insufficient locked balance to unlock. "
-                    f"Required: {amount}, Locked: {current_locked}"
-                )
-            
-            # Update balances (locked decreases, available increases, total stays same)
-            result = await self.db.wallets.update_one(
-                {"user_id": user_id, "currency": currency},
+            # 🔒 ATOMIC: Single operation that checks AND updates
+            result = await self.db.wallets.find_one_and_update(
+                {
+                    "user_id": user_id, 
+                    "currency": currency,
+                    "locked_balance": {"$gte": amount}  # Balance check IN the query
+                },
                 {
                     "$inc": {
                         "available_balance": amount,
@@ -384,14 +373,38 @@ class WalletService:
                     "$set": {
                         "last_updated": datetime.now(timezone.utc)
                     }
-                }
+                },
+                return_document=True
             )
             
-            if result.modified_count > 0:
-                logger.info(f"✅ Unlocked {amount} {currency} for {user_id} | Type: {unlock_type}")
+            if result:
+                logger.info(f"✅ ATOMIC UNLOCK: {amount} {currency} for {user_id} | Type: {unlock_type} | Ref: {reference_id}")
+                
+                # Log to audit trail
+                await self._log_escrow_action(
+                    action="ESCROW_UNLOCKED",
+                    user_id=user_id,
+                    currency=currency,
+                    amount=amount,
+                    lock_type=unlock_type,
+                    reference_id=reference_id,
+                    balance_after=result.get("available_balance", 0)
+                )
                 return True
             
-            return False
+            # If result is None, either wallet doesn't exist or insufficient locked balance
+            wallet = await self.db.wallets.find_one(
+                {"user_id": user_id, "currency": currency}
+            )
+            
+            if not wallet:
+                raise ValueError(f"Wallet not found for {user_id}/{currency}")
+            
+            current_locked = float(wallet.get("locked_balance", 0))
+            raise ValueError(
+                f"Insufficient locked balance to unlock. "
+                f"Required: {amount}, Locked: {current_locked}"
+            )
             
         except Exception as e:
             logger.error(f"❌ Error unlocking {amount} {currency} for {user_id}: {str(e)}")
