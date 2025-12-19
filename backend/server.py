@@ -10132,7 +10132,7 @@ async def complete_google_signup(request: dict):
             <h1>Email Verified Successfully!</h1>
             <p>Your account has been activated. You can now log in and start trading.</p>
             <p style="font-size: 14px; color: #ccc;">Redirecting to login page in 3 seconds...</p>
-            <a href="https://controlpanel-4.preview.emergentagent.com/login">Go to Login</a>
+            <a href="{frontend_url}/login">Go to Login</a>
         </div>
     </body>
     </html>
