@@ -7419,6 +7419,24 @@ async def validate_session_from_token(request: Request) -> dict:
                 detail=f"Account is frozen. Reason: {user.get('freeze_reason', 'Contact support')}"
             )
         
+        # ============================================================================
+        # SECURITY: Check verification status for ALL users (except admins)
+        # ============================================================================
+        is_admin = user.get("role") == "admin"
+        email_verified = user.get("email_verified", False)
+        phone_verified = user.get("phone_verified", False)
+        
+        if not is_admin and (not email_verified or not phone_verified):
+            missing = []
+            if not email_verified:
+                missing.append("email")
+            if not phone_verified:
+                missing.append("OTP")
+            raise HTTPException(
+                status_code=403,
+                detail=f"Complete email + OTP verification. Missing: {', '.join(missing)}"
+            )
+        
         # Check if session was revoked
         session_revoked_at = user.get("session_revoked_at")
         if session_revoked_at and token_iat:
