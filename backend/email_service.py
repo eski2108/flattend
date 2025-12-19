@@ -201,7 +201,7 @@ class EmailService:
                                 <table cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="center" bgcolor="#EF4444" style="border-radius: 8px;">
-                                            <a href="https://coinhubx.net/email/dispute/{dispute_id}" 
+                                            <a href="{get_frontend_url()}/email/dispute/{dispute_id}" 
                                                target="_blank"
                                                style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
                                                 🚨 RESOLVE DISPUTE NOW →
@@ -220,7 +220,7 @@ class EmailService:
                         </p>
                         <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #D97706;">
                             <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-                                https://coinhubx.net/email/dispute/{dispute_id}
+                                {get_frontend_url()}/email/dispute/{dispute_id}
                             </p>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 12px; color: #92400E; text-align: center;">
@@ -231,7 +231,7 @@ class EmailService:
                     <!-- Alternative Text Link (if button doesn't work) -->
                     <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
                         Button not working? Click here: 
-                        <a href="https://coinhubx.net/email/dispute/{dispute_id}" 
+                        <a href="{get_frontend_url()}/email/dispute/{dispute_id}" 
                            style="color: #EF4444; font-weight: bold; text-decoration: underline;">
                             Open Dispute #{dispute_id}
                         </a>
@@ -1074,7 +1074,7 @@ class EmailService:
                         {f'<div style="background: #f0fdf4; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #22C55E;"><h3 style="margin-top: 0; color: #22C55E;">Resolution</h3><p style="margin: 0; color: #166534;">{resolution}</p></div>' if resolution else ''}
                         
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="https://coinhubx.net/email/dispute/{order_id}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">
+                            <a href="{get_frontend_url()}/email/dispute/{order_id}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">
                                 View Dispute →
                             </a>
                         </div>
@@ -1214,7 +1214,7 @@ def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, f
             <p style="color: #FFA500;"><strong>⚠️ Action Required:</strong></p>
             <p>Please verify the payment in your bank account and release the crypto.</p>
             
-            <a href="https://coinhubx.net/p2p/order/{trade_id}" 
+            <a href="{get_frontend_url()}/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #22C55E, #16A34A); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Order
             </a>
@@ -1246,7 +1246,7 @@ def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, 
             
             <p>The {crypto} has been added to your wallet. You can now use or withdraw it.</p>
             
-            <a href="https://coinhubx.net/p2p/order/{trade_id}" 
+            <a href="{get_frontend_url()}/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #00C6FF, #0096CC); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Receipt
             </a>
@@ -1287,7 +1287,7 @@ def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: floa
             <table role="presentation" style="margin: 20px 0;">
                 <tr>
                     <td style="border-radius: 8px; background-color: #EF4444;">
-                        <a href="https://coinhubx.net/p2p/order/{trade_id}" 
+                        <a href="{get_frontend_url()}/p2p/order/{trade_id}" 
                            style="display: inline-block; padding: 15px 30px; color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                             View Trade & Dispute
                         </a>
@@ -1297,8 +1297,8 @@ def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: floa
             
             <p style="margin-top: 20px; font-size: 13px; color: #8F9BB3; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                 <strong>If button doesn't work, copy this link:</strong><br>
-                <a href="https://coinhubx.net/p2p/order/{trade_id}" style="color: #00F0FF; word-break: break-all;">
-                    https://coinhubx.net/p2p/order/{trade_id}
+                <a href="{get_frontend_url()}/p2p/order/{trade_id}" style="color: #00F0FF; word-break: break-all;">
+                    {get_frontend_url()}/p2p/order/{trade_id}
                 </a>
             </p>
             
