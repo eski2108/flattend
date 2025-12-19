@@ -224,7 +224,7 @@ class EmailService:
                     <!-- Alternative Text Link (if button doesn't work) -->
                     <p style="text-align: center; margin: 20px 0; font-size: 13px; color: #6B7280;">
                         Button not working? Click here: 
-                        <a href="https://controlpanel-4.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
+                        <a href="https://coinhubx.net/email/dispute/{dispute_id}" 
                            style="color: #EF4444; font-weight: bold; text-decoration: underline;">
                             Open Dispute #{dispute_id}
                         </a>
