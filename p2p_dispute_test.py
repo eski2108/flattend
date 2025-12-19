@@ -108,6 +108,24 @@ class P2PDisputeTest:
                 }
                 print(f"✅ Seller account exists: {self.seller_data['user_id']}")
                 self.log_result("Create Seller Account", True, f"Seller account exists: {self.seller_data['user_id']}")
+            elif 'already registered' in str(response.get('detail', '')):
+                # Account already exists, try to login to get user_id
+                login_response, login_status = await self.make_request('POST', '/auth/login', {
+                    'email': seller_data['email'],
+                    'password': seller_data['password']
+                })
+                if login_status == 200 and login_response.get('success'):
+                    self.seller_data = {
+                        'user_id': login_response.get('user_id'),
+                        'email': seller_data['email'],
+                        'password': seller_data['password']
+                    }
+                    print(f"✅ Seller account already exists: {self.seller_data['user_id']}")
+                    self.log_result("Create Seller Account", True, f"Seller account exists: {self.seller_data['user_id']}")
+                else:
+                    print(f"❌ Seller account exists but login failed: {login_response}")
+                    self.log_result("Create Seller Account", False, f"Account exists but login failed: {login_response}")
+                    return False
             else:
                 print(f"❌ Failed to create seller account: {response}")
                 self.log_result("Create Seller Account", False, f"Registration failed: {response}")
