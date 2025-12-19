@@ -1067,7 +1067,7 @@ class EmailService:
                         {f'<div style="background: #f0fdf4; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #22C55E;"><h3 style="margin-top: 0; color: #22C55E;">Resolution</h3><p style="margin: 0; color: #166534;">{resolution}</p></div>' if resolution else ''}
                         
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="https://controlpanel-4.preview.emergentagent.com/admin/disputes/{order_id}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">
+                            <a href="https://coinhubx.net/email/dispute/{order_id}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00F0FF, #A855F7); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">
                                 View Dispute →
                             </a>
                         </div>
