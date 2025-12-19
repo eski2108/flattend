@@ -1268,6 +1268,7 @@ def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, 
 
 def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: float, crypto: str, role: str):
     """Email template when dispute is opened"""
+    frontend_url = get_frontend_url()
     return f"""
     <html>
     <body style="font-family: Arial, sans-serif; background-color: #0A1929; color: #FFFFFF; padding: 20px;">
