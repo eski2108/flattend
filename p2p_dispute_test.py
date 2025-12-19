@@ -281,7 +281,7 @@ class P2PDisputeTest:
                 "fiat_amount": 250  # £250 worth
             }
             
-            response, status = await self.make_request('POST', '/p2p/trades/start', trade_data)
+            response, status = await self.make_request('POST', '/p2p/create-trade', trade_data)
             
             if status == 201 and response.get('success'):
                 self.trade_id = response.get('trade_id')
