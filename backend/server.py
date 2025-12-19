@@ -11008,13 +11008,26 @@ async def execute_swap(request: Request, body: dict = None):
         wallet_service = get_wallet_service()
         result = await execute_swap_with_wallet(
             db=db,
-        wallet_service=wallet_service,
-        user_id=user_id,
-        from_currency=from_currency,
-        to_currency=request.get("to_currency"),
-        from_amount=float(request.get("from_amount", 0))
-    )
-    return result
+            wallet_service=wallet_service,
+            user_id=user_id,
+            from_currency=from_currency,
+            to_currency=body.get("to_currency"),
+            from_amount=float(body.get("from_amount", 0))
+        )
+        
+        # Store successful response for idempotency
+        if idempotency_key and user_id and result.get("success"):
+            idempotency = get_idempotency_service(db)
+            await idempotency.store_response(user_id, "swap", idempotency_key, result)
+        
+        return result
+        
+    except Exception as e:
+        # Release idempotency lock on failure
+        if idempotency_key and user_id:
+            idempotency = get_idempotency_service(db)
+            await idempotency.release_lock(user_id, "swap", idempotency_key)
+        raise
 
 @api_router.post("/swap/execute-OLD")
 async def execute_swap_OLD(request: dict):
