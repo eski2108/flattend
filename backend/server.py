@@ -434,6 +434,64 @@ logger.info("✅ P2P Notification Service initialized")
 # JWT Secret Key
 SECRET_KEY = "emergent_secret_key_2024"
 
+# ============================================================================
+# 📝 STANDARDIZED ADMIN AUDIT LOGGING (P1-2)
+# ============================================================================
+# Every admin action MUST be logged with this consistent format
+# ============================================================================
+
+async def log_admin_action(
+    action: str,
+    admin_id: str,
+    target_type: str,  # user, wallet, withdrawal, kyc, feature_flag, backup, dispute, etc.
+    target_id: str,
+    reason: str,
+    before_state: dict = None,
+    after_state: dict = None,
+    metadata: dict = None,
+    ip_address: str = None
+) -> str:
+    """
+    Standardized admin action audit logging.
+    
+    Every admin action MUST be logged with:
+    - action: What was done (USER_FREEZE, WITHDRAWAL_APPROVE, KYC_VERIFY, etc.)
+    - admin_id: Who performed the action
+    - target_type: Type of target (user, wallet, withdrawal, etc.)
+    - target_id: ID of the target
+    - reason: Mandatory reason for the action
+    - before_state: State before the action (optional but recommended)
+    - after_state: State after the action (optional but recommended)
+    - metadata: Additional context (optional)
+    - ip_address: Admin's IP address (optional)
+    
+    Returns the audit_id for correlation.
+    """
+    correlation_id = str(uuid.uuid4())
+    timestamp = datetime.now(timezone.utc)
+    
+    audit_entry = {
+        "audit_id": correlation_id,
+        "correlation_id": correlation_id,
+        "action": action,
+        "admin_id": admin_id,
+        "target_type": target_type,
+        "target_id": target_id,
+        "reason": reason,
+        "before_state": before_state or {},
+        "after_state": after_state or {},
+        "metadata": metadata or {},
+        "ip_address": ip_address,
+        "timestamp": timestamp.isoformat(),
+        "immutable": True
+    }
+    
+    await db.admin_audit_logs.insert_one(audit_entry)
+    logger.info(f"📝 AUDIT: {action} on {target_type}/{target_id} by {admin_id}")
+    
+    return correlation_id
+
+
 # Create the main app without a prefix with custom response class
 app = FastAPI(default_response_class=SafeJSONResponse)
 # Rate Limiting Storage
