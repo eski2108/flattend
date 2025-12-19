@@ -8,7 +8,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://controlpanel-4.preview.emergentagent.com/api"
+BASE_URL = "https://p2pdispute.preview.emergentagent.com/api"
 
 def log_test(message, success=None):
     """Log test results with timestamp"""

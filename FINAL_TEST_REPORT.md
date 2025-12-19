@@ -3,7 +3,7 @@
 
 **Date:** December 11, 2025  
 **Status:** ✅ ALL BACKEND ENDPOINTS WORKING  
-**Environment:** https://controlpanel-4.preview.emergentagent.com
+**Environment:** https://p2pdispute.preview.emergentagent.com
 
 ---
 
@@ -41,7 +41,7 @@ User ID: aby-925330f1
 ### Test Executed:
 
 ```bash
-POST https://controlpanel-4.preview.emergentagent.com/api/p2p/create-ad
+POST https://p2pdispute.preview.emergentagent.com/api/p2p/create-ad
 
 Payload:
 {
@@ -100,7 +100,7 @@ db.p2p_ads.findOne({ad_id: "b8e7e31b-e2cd-46c7-a4df-022c7cf3465b"})
 ### Test Executed:
 
 ```bash
-GET https://controlpanel-4.preview.emergentagent.com/api/p2p/my-ads/aby-925330f1
+GET https://p2pdispute.preview.emergentagent.com/api/p2p/my-ads/aby-925330f1
 ```
 
 ### Result:
@@ -335,7 +335,7 @@ GET https://controlpanel-4.preview.emergentagent.com/api/p2p/my-ads/aby-925330f1
 
 1. **Navigate to the preview URL:**
    ```
-   https://controlpanel-4.preview.emergentagent.com
+   https://p2pdispute.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -541,6 +541,6 @@ The P2P ad creation, retrieval, and escrow flow are fully functional at the back
 **Test Report Generated:** 2025-12-11 21:50 UTC  
 **Backend Status:** ✅ ALL WORKING  
 **Database:** MongoDB Atlas (coinhubx_production)  
-**Preview URL:** https://controlpanel-4.preview.emergentagent.com  
+**Preview URL:** https://p2pdispute.preview.emergentagent.com  
 **Test User:** aby@test.com (aby-925330f1)  
 **Active Ads:** 2 BTC/GBP sell ads ready to display

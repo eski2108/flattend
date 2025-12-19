@@ -1,7 +1,7 @@
 # 🔐 COMPLETE AUTHENTICATION FLOW - TESTING RESULTS
 
 Date: December 8, 2024
-Tested on: https://controlpanel-4.preview.emergentagent.com/
+Tested on: https://p2pdispute.preview.emergentagent.com/
 
 ---
 
@@ -62,7 +62,7 @@ Name: Auth Test User 994001
 
 **Backend API Test (Manual):**
 ```bash
-curl -X POST "https://controlpanel-4.preview.emergentagent.com/api/auth/register" \
+curl -X POST "https://p2pdispute.preview.emergentagent.com/api/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
     "full_name": "Test User",

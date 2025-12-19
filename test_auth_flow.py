@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://controlpanel-4.preview.emergentagent.com/api"
+BASE_URL = "https://p2pdispute.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

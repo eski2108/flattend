@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://controlpanel-4.preview.emergentagent.com/#/trading
+**Live URL:** https://p2pdispute.preview.emergentagent.com/#/trading
 
 ---
 

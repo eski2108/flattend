@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://controlpanel-4.preview.emergentagent.com/login
-2. Visit marketplace: https://controlpanel-4.preview.emergentagent.com/p2p
+1. Login at: https://p2pdispute.preview.emergentagent.com/login
+2. Visit marketplace: https://p2pdispute.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

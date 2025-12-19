@@ -314,7 +314,7 @@ address = account.address
 
 ```bash
 # Using curl to simulate a deposit
-curl -X POST https://controlpanel-4.preview.emergentagent.com/api/admin/manual-deposit \
+curl -X POST https://p2pdispute.preview.emergentagent.com/api/admin/manual-deposit \
   -H "Content-Type: application/json" \
   -d '{
     "currency": "BTC",

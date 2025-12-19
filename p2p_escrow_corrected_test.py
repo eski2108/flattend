@@ -13,7 +13,7 @@ This test verifies the complete P2P escrow lifecycle using the correct endpoints
 8. Dispute resolution - admin releases escrow to winner
 9. Email notifications at each stage
 
-Backend URL: https://controlpanel-4.preview.emergentagent.com
+Backend URL: https://p2pdispute.preview.emergentagent.com
 """
 
 import asyncio
@@ -25,7 +25,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://p2pdispute.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class P2PEscrowCorrectedTest:

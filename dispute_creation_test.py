@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Backend URL from environment
-BACKEND_URL = "https://controlpanel-4.preview.emergentagent.com/api"
+BACKEND_URL = "https://p2pdispute.preview.emergentagent.com/api"
 
 class DisputeCreationTest:
     def __init__(self):

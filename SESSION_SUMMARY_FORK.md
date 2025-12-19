@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://controlpanel-4.preview.emergentagent.com
+https://p2pdispute.preview.emergentagent.com
 
 ---
 

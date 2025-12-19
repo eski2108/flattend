@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://controlpanel-4.preview.emergentagent.com
+https://p2pdispute.preview.emergentagent.com
 
 ### Test Route
 
-`https://controlpanel-4.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://p2pdispute.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://controlpanel-4.preview.emergentagent.com
+**URL:** https://p2pdispute.preview.emergentagent.com
 
 **Services Status:**
 ```bash

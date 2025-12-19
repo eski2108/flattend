@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://controlpanel-4.preview.emergentagent.com
+**Live URL:** https://p2pdispute.preview.emergentagent.com
 
 ---
 

@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://controlpanel-4.preview.emergentagent.com/api
-- **Frontend App**: https://controlpanel-4.preview.emergentagent.com
+- **Backend API**: https://p2pdispute.preview.emergentagent.com/api
+- **Frontend App**: https://p2pdispute.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:
