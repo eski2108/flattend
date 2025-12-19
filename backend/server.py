@@ -3423,6 +3423,16 @@ async def create_trade(request: CreateTradeRequest):
     # 🔒 FREEZE CHECK - Block P2P trades for frozen users
     await enforce_not_frozen(request.buyer_id, "P2P trade")
     
+    # Get sell order to determine crypto currency for wallet freeze check
+    sell_order = await db.enhanced_sell_orders.find_one({"order_id": request.sell_order_id})
+    if sell_order:
+        seller_id = sell_order.get("seller_id")
+        crypto_currency = sell_order.get("crypto_currency")
+        
+        # 🔒 WALLET FREEZE CHECK - Block if seller's crypto wallet is frozen
+        if seller_id and crypto_currency:
+            await enforce_wallet_not_frozen(seller_id, crypto_currency, f"P2P sell of {crypto_currency}")
+    
     from p2p_wallet_service import p2p_create_trade_with_wallet
     
     wallet_service = get_wallet_service()
