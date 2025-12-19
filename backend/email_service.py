@@ -1052,6 +1052,7 @@ class EmailService:
         resolution: Optional[str] = None
     ):
         """Send dispute-related notification"""
+        frontend_url = get_frontend_url()
         action_titles = {
             'opened': '⚠️ Dispute Opened',
             'message': '💬 New Dispute Message',
