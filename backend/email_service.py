@@ -1159,7 +1159,7 @@ def p2p_payment_marked_email(trade_id: str, crypto_amount: float, crypto: str, f
             <p style="color: #FFA500;"><strong>⚠️ Action Required:</strong></p>
             <p>Please verify the payment in your bank account and release the crypto.</p>
             
-            <a href="https://controlpanel-4.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://coinhubx.net/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #22C55E, #16A34A); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Order
             </a>
@@ -1191,7 +1191,7 @@ def p2p_crypto_released_email(trade_id: str, crypto_amount: float, crypto: str, 
             
             <p>The {crypto} has been added to your wallet. You can now use or withdraw it.</p>
             
-            <a href="https://controlpanel-4.preview.emergentagent.com/p2p/order/{trade_id}" 
+            <a href="https://coinhubx.net/p2p/order/{trade_id}" 
                style="display: inline-block; background: linear-gradient(135deg, #00C6FF, #0096CC); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 15px;">
                 View Receipt
             </a>
@@ -1232,7 +1232,7 @@ def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: floa
             <table role="presentation" style="margin: 20px 0;">
                 <tr>
                     <td style="border-radius: 8px; background-color: #EF4444;">
-                        <a href="https://controlpanel-4.preview.emergentagent.com/p2p/order/{trade_id}" 
+                        <a href="https://coinhubx.net/p2p/order/{trade_id}" 
                            style="display: inline-block; padding: 15px 30px; color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                             View Trade & Dispute
                         </a>
@@ -1242,8 +1242,8 @@ def p2p_dispute_opened_email(trade_id: str, dispute_id: str, crypto_amount: floa
             
             <p style="margin-top: 20px; font-size: 13px; color: #8F9BB3; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                 <strong>If button doesn't work, copy this link:</strong><br>
-                <a href="https://controlpanel-4.preview.emergentagent.com/p2p/order/{trade_id}" style="color: #00F0FF; word-break: break-all;">
-                    https://controlpanel-4.preview.emergentagent.com/p2p/order/{trade_id}
+                <a href="https://coinhubx.net/p2p/order/{trade_id}" style="color: #00F0FF; word-break: break-all;">
+                    https://coinhubx.net/p2p/order/{trade_id}
                 </a>
             </p>
             
@@ -1260,7 +1260,7 @@ def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float
     """Email template for admin when dispute is opened"""
     from datetime import datetime
     # Use old working domain that doesn't have cache issues
-    frontend_url = 'https://controlpanel-4.preview.emergentagent.com'
+    frontend_url = 'https://coinhubx.net'
     cache_bust = int(datetime.now().timestamp())
     dispute_link = f"{frontend_url}/admin/disputes/{dispute_id}?t={cache_bust}"
     return f"""
@@ -1314,8 +1314,8 @@ def p2p_admin_dispute_alert(trade_id: str, dispute_id: str, crypto_amount: float
 
     async def send_verification_email(self, user_email: str, user_name: str, verification_token: str):
         """Send email verification link"""
-        frontend_url = os.getenv('FRONTEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
-        backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://controlpanel-4.preview.emergentagent.com')
+        frontend_url = os.getenv('FRONTEND_URL', 'https://coinhubx.net')
+        backend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://coinhubx.net')
         
         # The verification link goes to backend API
         verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
