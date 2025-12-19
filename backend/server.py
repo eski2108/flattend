@@ -9910,8 +9910,8 @@ async def google_callback(code: str = None, error: str = None):
                 
                 # Only admins can bypass verification
                 if not is_admin and (not email_verified or not phone_verified):
-                    # Redirect to verification page
-                    logger.info("   User NOT verified, redirecting to verification...")
+                    # Redirect to verification page - use login with verification_required flag
+                    logger.info("   User NOT verified, redirecting to login with verification required...")
                     user_json = json.dumps({
                         "user_id": existing_user["user_id"],
                         "email": existing_user["email"],
@@ -9921,8 +9921,9 @@ async def google_callback(code: str = None, error: str = None):
                         "phone_verified": phone_verified
                     })
                     from urllib.parse import quote
-                    redirect_url = f"{frontend_url}/verify?user={quote(user_json)}&email_required={not email_verified}&phone_required={not phone_verified}"
-                    logger.info(f"✅ Redirecting unverified Google user to: {frontend_url}/verify")
+                    # Redirect to login page with verification_required flag - frontend must handle this
+                    redirect_url = f"{frontend_url}/login?verification_required=true&user={quote(user_json)}&email_verified={email_verified}&phone_verified={phone_verified}"
+                    logger.info(f"✅ Redirecting unverified Google user to: {frontend_url}/login?verification_required=true")
                     return RedirectResponse(url=redirect_url, status_code=302)
                 
                 # User is fully verified - generate token and allow login
