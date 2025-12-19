@@ -8528,6 +8528,23 @@ async def login_user(login_req: LoginRequest, request: Request):
         )
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # 🔒 CHECK IF USER IS FROZEN - Block login for frozen accounts
+    if user.get("is_frozen"):
+        logger.warning(f"🔒 LOGIN BLOCKED: Frozen user attempted login: {login_req.email}")
+        await security_logger.log_login_attempt(
+            user_id=user["user_id"],
+            email=login_req.email,
+            success=False,
+            ip_address=client_ip,
+            user_agent=user_agent,
+            device_fingerprint=device_fingerprint,
+            failure_reason="Account frozen"
+        )
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Account is frozen. Reason: {user.get('freeze_reason', 'Contact support')}. Please contact support."
+        )
+    
     # Clear rate limit on successful login
     rate_limiter.clear_rate_limit(client_ip, "login")
     
