@@ -9972,9 +9972,10 @@ async def register_user(request: RegisterRequest, req: Request):
         # For Google signup, use a placeholder hash
         password_hash = "google_oauth_" + str(uuid.uuid4())
     
-    # Generate email verification token
+    # Generate email verification token with 24-hour expiry
     import secrets
     verification_token = secrets.token_urlsafe(32)
+    verification_token_expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
     
     # Create user account (not verified yet)
     user_account = UserAccount(
@@ -9990,6 +9991,7 @@ async def register_user(request: RegisterRequest, req: Request):
     account_dict['phone_verified'] = False  # Always require phone verification
     account_dict['phone_number'] = request.phone_number
     account_dict['verification_token'] = verification_token
+    account_dict['verification_token_expires'] = verification_token_expires  # 24 hour expiry
     
     # Add Google ID if Google signup
     if is_google_signup and request.google_id:
