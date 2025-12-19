@@ -7245,6 +7245,100 @@ async def validate_session_from_token(request: Request) -> dict:
 # ============================================================================
 
 
+@api_router.post("/auth/verify-session")
+async def verify_user_session(request: Request):
+    """
+    🔐 VERIFY USER SESSION
+    
+    Checks if the current token/session is still valid.
+    
+    Returns:
+    - valid: true/false
+    - If invalid, returns reason (expired, revoked, frozen)
+    
+    Frontend should call this on protected routes to check session validity.
+    """
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return {
+            "valid": False,
+            "reason": "missing_token",
+            "message": "No authorization token provided"
+        }
+    
+    token = auth_header.replace("Bearer ", "")
+    
+    try:
+        # Decode JWT
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("user_id")
+        
+        if not user_id:
+            return {
+                "valid": False,
+                "reason": "invalid_token",
+                "message": "Token does not contain user_id"
+            }
+        
+        # Get token issued time
+        token_iat = payload.get("iat")
+        
+        # Get user
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            return {
+                "valid": False,
+                "reason": "user_not_found",
+                "message": "User no longer exists"
+            }
+        
+        # Check if user is frozen
+        if user.get("is_frozen"):
+            return {
+                "valid": False,
+                "reason": "account_frozen",
+                "message": f"Account is frozen: {user.get('freeze_reason', 'Contact support')}"
+            }
+        
+        # Check if session was revoked
+        session_revoked_at = user.get("session_revoked_at")
+        if session_revoked_at and token_iat:
+            if isinstance(session_revoked_at, str):
+                revoked_ts = datetime.fromisoformat(session_revoked_at.replace('Z', '+00:00')).timestamp()
+            else:
+                revoked_ts = session_revoked_at.timestamp()
+            
+            if token_iat < revoked_ts:
+                return {
+                    "valid": False,
+                    "reason": "session_revoked",
+                    "message": "Your session has been revoked. Please log in again."
+                }
+        
+        # Session is valid
+        return {
+            "valid": True,
+            "user_id": user_id,
+            "email": user.get("email"),
+            "role": user.get("role", "user")
+        }
+        
+    except jwt.ExpiredSignatureError:
+        return {
+            "valid": False,
+            "reason": "token_expired",
+            "message": "Your session has expired. Please log in again."
+        }
+    except jwt.InvalidTokenError as e:
+        return {
+            "valid": False,
+            "reason": "invalid_token",
+            "message": f"Invalid token: {str(e)}"
+        }
+
+
 # ============================================================================
 # 🔧 ADMIN BALANCE ADJUSTMENT SYSTEM (P0-4)
 # ============================================================================
