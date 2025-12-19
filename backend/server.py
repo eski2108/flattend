@@ -7527,6 +7527,29 @@ async def verify_user_session(request: Request):
                 "message": f"Account is frozen: {user.get('freeze_reason', 'Contact support')}"
             }
         
+        # ============================================================================
+        # SECURITY: Check verification status (email + OTP required for ALL users)
+        # ============================================================================
+        is_admin = user.get("role") == "admin"
+        email_verified = user.get("email_verified", False)
+        phone_verified = user.get("phone_verified", False)
+        
+        if not is_admin and (not email_verified or not phone_verified):
+            missing = []
+            if not email_verified:
+                missing.append("email")
+            if not phone_verified:
+                missing.append("OTP")
+            return {
+                "valid": False,
+                "reason": "verification_incomplete",
+                "message": f"Complete email + OTP verification. Missing: {', '.join(missing)}",
+                "verification_required": {
+                    "email": not email_verified,
+                    "phone": not phone_verified
+                }
+            }
+        
         # Check if session was revoked
         session_revoked_at = user.get("session_revoked_at")
         if session_revoked_at and token_iat:
