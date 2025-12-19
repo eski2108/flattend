@@ -10590,12 +10590,24 @@ async def list_backups():
     }
 
 @api_router.post("/admin/backup/restore")
-async def restore_backup(backup_name: str):
+async def restore_backup(backup_name: str, admin_id: str = "system", reason: str = "Database restore"):
     """
-    Restore database from a backup (Admin only)
+    Restore database from a backup (Admin only) - FULLY AUDITED
     WARNING: This will overwrite current database!
     """
     from backup_system import backup_system
+    
+    # CRITICAL: Log BEFORE restore (since DB will be overwritten)
+    audit_id = await log_admin_action(
+        action="BACKUP_RESTORE",
+        admin_id=admin_id,
+        target_type="database",
+        target_id=backup_name,
+        reason=reason,
+        before_state={"current_db": "coinhubx_production"},
+        after_state={"restored_from": backup_name},
+        metadata={"warning": "Database was overwritten"}
+    )
     
     result = backup_system.restore_backup(backup_name)
     
@@ -10603,7 +10615,8 @@ async def restore_backup(backup_name: str):
         return {
             "success": True,
             "message": "Database restored successfully",
-            "backup_name": backup_name
+            "backup_name": backup_name,
+            "audit_id": audit_id
         }
     else:
         raise HTTPException(status_code=500, detail=result.get("error", "Restoration failed"))
