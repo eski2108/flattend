@@ -10972,10 +10972,18 @@ async def preview_swap(request: dict):
     }
 
 @api_router.post("/swap/execute")
-async def execute_swap(request: dict):
-    """Execute cryptocurrency swap via wallet service"""
-    user_id = request.get("user_id")
-    from_currency = request.get("from_currency")
+async def execute_swap(request: Request, body: dict = None):
+    """
+    Execute cryptocurrency swap via wallet service
+    
+    🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
+    """
+    # Handle both Request body and direct dict
+    if body is None:
+        body = await request.json()
+    
+    user_id = body.get("user_id")
+    from_currency = body.get("from_currency")
     
     # 🔒 FREEZE CHECKS - Block swaps for frozen users AND frozen source wallet
     if user_id:
@@ -10983,11 +10991,23 @@ async def execute_swap(request: dict):
     if user_id and from_currency:
         await enforce_wallet_not_frozen(user_id, from_currency, f"swap from {from_currency}")
     
-    from swap_wallet_service import execute_swap_with_wallet
+    # 🔒 IDEMPOTENCY CHECK - Prevent duplicate swaps
+    idempotency_key = request.headers.get("Idempotency-Key") or request.headers.get("idempotency-key")
+    if idempotency_key and user_id:
+        idempotency = get_idempotency_service(db)
+        cached = await idempotency.check_and_lock(user_id, "swap", idempotency_key)
+        if cached:
+            if cached.get("is_processing"):
+                raise HTTPException(status_code=409, detail=cached["response"]["message"])
+            logger.info(f"🔁 Returning cached swap response for idempotency key")
+            return cached["response"]
     
-    wallet_service = get_wallet_service()
-    result = await execute_swap_with_wallet(
-        db=db,
+    try:
+        from swap_wallet_service import execute_swap_with_wallet
+        
+        wallet_service = get_wallet_service()
+        result = await execute_swap_with_wallet(
+            db=db,
         wallet_service=wallet_service,
         user_id=user_id,
         from_currency=from_currency,
