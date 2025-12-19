@@ -10389,6 +10389,52 @@ async def login_user(login_req: LoginRequest, request: Request):
             detail=f"Account is frozen. Reason: {user.get('freeze_reason', 'Contact support')}. Please contact support."
         )
     
+    # ============================================================================
+    # 🔐 VERIFICATION CHECK - BLOCK LOGIN IF NOT VERIFIED
+    # ============================================================================
+    # Users MUST verify their email AND phone before logging in
+    # This is a security requirement to prevent unverified access
+    # ============================================================================
+    email_verified = user.get("email_verified", False)
+    phone_verified = user.get("phone_verified", False)
+    
+    # Skip verification for admin users and Google OAuth users
+    is_admin = user.get("role") == "admin"
+    is_google_user = user.get("google_id") is not None or user.get("auth_provider") == "emergent_google"
+    
+    if not is_admin and not is_google_user:
+        if not email_verified:
+            logger.warning(f"🔐 LOGIN BLOCKED: Email not verified for {login_req.email}")
+            await security_logger.log_login_attempt(
+                user_id=user["user_id"],
+                email=login_req.email,
+                success=False,
+                ip_address=client_ip,
+                user_agent=user_agent,
+                device_fingerprint=device_fingerprint,
+                failure_reason="Email not verified"
+            )
+            raise HTTPException(
+                status_code=403,
+                detail="Please verify your email before logging in. Check your inbox for the verification link."
+            )
+        
+        if not phone_verified:
+            logger.warning(f"🔐 LOGIN BLOCKED: Phone not verified for {login_req.email}")
+            await security_logger.log_login_attempt(
+                user_id=user["user_id"],
+                email=login_req.email,
+                success=False,
+                ip_address=client_ip,
+                user_agent=user_agent,
+                device_fingerprint=device_fingerprint,
+                failure_reason="Phone not verified"
+            )
+            raise HTTPException(
+                status_code=403,
+                detail="Please verify your phone number before logging in. Enter the OTP code sent to your phone."
+            )
+    
     # Clear rate limit on successful login
     rate_limiter.clear_rate_limit(client_ip, "login")
     
