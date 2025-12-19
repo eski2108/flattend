@@ -20347,7 +20347,7 @@ async def assign_golden_tier(request: dict):
             "success": True,
             "data": {
                 "referral_code": user.get("referral_code", user_id[:8].upper()),
-                "referral_link": f"https://controlpanel-4.preview.emergentagent.com/register?ref={user.get('referral_code', user_id[:8].upper())}",
+                "referral_link": f"{get_frontend_url()}/register?ref={user.get('referral_code', user_id[:8].upper())}",
                 "total_referrals": len(referred_users),
                 "active_referrals": len([u for u in referred_users if u.get("is_active", True)]),
                 "total_earnings": total_earnings,
