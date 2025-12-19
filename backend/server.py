@@ -7000,6 +7000,231 @@ async def admin_list_frozen_wallets():
 
 
 # ============================================================================
+# 🔐 SESSION REVOCATION SYSTEM (P1)
+# ============================================================================
+# Force logout / session revocation for admin control
+# - Revoke all active sessions for a user
+# - Auto-trigger on user freeze
+# - Force re-authentication immediately
+# - Full audit trail
+# ============================================================================
+
+class SessionRevocationRequest(BaseModel):
+    """Request model for session revocation"""
+    admin_id: str
+    reason: str  # Mandatory, min 10 chars
+    triggered_by: str = "manual"  # manual, freeze, security
+
+
+@api_router.post("/admin/sessions/{user_id}/revoke")
+async def admin_revoke_user_sessions(user_id: str, request: SessionRevocationRequest):
+    """
+    🔐 REVOKE ALL SESSIONS FOR A USER
+    
+    Forces immediate logout across all devices.
+    User must re-authenticate on next request.
+    
+    Auto-triggered when a user is frozen.
+    Full audit trail included.
+    """
+    try:
+        # === VALIDATION ===
+        if not request.admin_id:
+            raise HTTPException(status_code=400, detail="admin_id is required")
+        
+        if not request.reason or len(request.reason.strip()) < 10:
+            raise HTTPException(status_code=400, detail="reason is required (minimum 10 characters)")
+        
+        # === GET SESSION SERVICE ===
+        session_service = get_session_service(db)
+        
+        # === REVOKE SESSIONS ===
+        result = await session_service.revoke_all_sessions(
+            user_id=user_id,
+            admin_id=request.admin_id,
+            reason=request.reason.strip(),
+            triggered_by=request.triggered_by
+        )
+        
+        logger.info(f"🔐 SESSIONS REVOKED: {user_id} by {request.admin_id}")
+        
+        return {
+            "success": True,
+            "message": f"All sessions revoked for user {user_id}",
+            "user_id": result["user_id"],
+            "sessions_revoked": result["sessions_revoked"],
+            "revoked_at": result["revoked_at"],
+            "correlation_id": result["correlation_id"],
+            "triggered_by": result["triggered_by"]
+        }
+        
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error revoking sessions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/sessions/{user_id}")
+async def admin_get_user_sessions(user_id: str):
+    """
+    Get session information and revocation history for a user.
+    """
+    try:
+        session_service = get_session_service(db)
+        
+        # Get user info
+        user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get active sessions
+        sessions = await session_service.get_user_sessions(user_id)
+        
+        # Get revocation history
+        revocation_history = await session_service.get_revocation_history(user_id)
+        
+        # Check current session validity
+        is_valid = await session_service.is_session_valid(user_id)
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "user_email": user.get("email"),
+            "session_revoked_at": user.get("session_revoked_at"),
+            "is_frozen": user.get("is_frozen", False),
+            "current_session_valid": is_valid,
+            "active_sessions": [s for s in sessions if s.get("is_active")],
+            "total_sessions": len(sessions),
+            "revocation_history": revocation_history
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting session info: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/sessions/revocations/recent")
+async def admin_get_recent_revocations(limit: int = 50):
+    """
+    Get recent session revocations across all users.
+    Useful for security monitoring.
+    """
+    try:
+        revocations = await db.session_revocations.find(
+            {}
+        ).sort("revoked_at", -1).limit(limit).to_list(limit)
+        
+        # Clean up response
+        for r in revocations:
+            if "_id" in r:
+                del r["_id"]
+            if "revoked_at" in r and isinstance(r["revoked_at"], datetime):
+                r["revoked_at"] = r["revoked_at"].isoformat()
+        
+        return {
+            "success": True,
+            "count": len(revocations),
+            "revocations": revocations
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting recent revocations: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# SESSION VALIDATION DEPENDENCY (for protected routes)
+# ============================================================================
+
+async def validate_session_from_token(request: Request) -> dict:
+    """
+    Validate that the user's session hasn't been revoked.
+    
+    This checks:
+    1. JWT token is present in Authorization header
+    2. Token is valid and not expired
+    3. Token was issued AFTER any session revocation
+    4. User is not frozen
+    
+    Returns user info if valid, raises HTTPException if not.
+    """
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
+    
+    token = auth_header.replace("Bearer ", "")
+    
+    try:
+        # Decode JWT
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("user_id")
+        
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token: no user_id")
+        
+        # Get token issued time
+        token_iat = payload.get("iat")  # issued at
+        if not token_iat:
+            # If no iat, use exp - 7 days as approximation
+            token_exp = payload.get("exp")
+            if token_exp:
+                token_iat = token_exp - (7 * 24 * 60 * 60)
+        
+        # Get user
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            user = await db.user_accounts.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        
+        # Check if user is frozen
+        if user.get("is_frozen"):
+            raise HTTPException(
+                status_code=403, 
+                detail=f"Account is frozen. Reason: {user.get('freeze_reason', 'Contact support')}"
+            )
+        
+        # Check if session was revoked
+        session_revoked_at = user.get("session_revoked_at")
+        if session_revoked_at and token_iat:
+            # Parse revocation time
+            if isinstance(session_revoked_at, str):
+                revoked_ts = datetime.fromisoformat(session_revoked_at.replace('Z', '+00:00')).timestamp()
+            else:
+                revoked_ts = session_revoked_at.timestamp()
+            
+            # If token was issued BEFORE revocation, it's invalid
+            if token_iat < revoked_ts:
+                raise HTTPException(
+                    status_code=401, 
+                    detail="Session has been revoked. Please re-authenticate."
+                )
+        
+        return {
+            "user_id": user_id,
+            "email": user.get("email"),
+            "role": user.get("role", "user")
+        }
+        
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+
+
+# ============================================================================
+# END SESSION REVOCATION SYSTEM
+# ============================================================================
+
+
+# ============================================================================
 # 🔧 ADMIN BALANCE ADJUSTMENT SYSTEM (P0-4)
 # ============================================================================
 # Controlled, audited pathway for admin balance adjustments
