@@ -25375,12 +25375,18 @@ async def get_telegram_notification_settings(user_id: str):
     """Get user's Telegram notification preferences"""
     settings = await db.telegram_notification_settings.find_one({"user_id": user_id}, {"_id": 0})
     
+    # Also get user's telegram_enabled flags
+    user = await db.users.find_one({"user_id": user_id}, {"telegram_enabled": 1, "telegram_disputes_enabled": 1})
+    
     if not settings:
         # Return defaults
         return {
             "success": True,
             "settings": {
+                "telegram_enabled": user.get("telegram_enabled", True) if user else True,
+                "telegram_disputes_enabled": user.get("telegram_disputes_enabled", True) if user else True,
                 "p2p_trades": True,
+                "disputes": True,
                 "deposits": True,
                 "withdrawals": True,
                 "price_alerts": True,
@@ -25392,7 +25398,10 @@ async def get_telegram_notification_settings(user_id: str):
     return {
         "success": True,
         "settings": {
+            "telegram_enabled": user.get("telegram_enabled", True) if user else True,
+            "telegram_disputes_enabled": user.get("telegram_disputes_enabled", True) if user else True,
             "p2p_trades": settings.get("p2p_trades", True),
+            "disputes": settings.get("disputes", True),
             "deposits": settings.get("deposits", True),
             "withdrawals": settings.get("withdrawals", True),
             "price_alerts": settings.get("price_alerts", True),
@@ -25410,7 +25419,24 @@ async def update_telegram_notification_settings(request: dict):
     if not user_id:
         raise HTTPException(status_code=400, detail="user_id required")
     
-    # Update settings
+    # Extract top-level flags to store on user document
+    telegram_enabled = settings.pop("telegram_enabled", None)
+    telegram_disputes_enabled = settings.pop("telegram_disputes_enabled", None)
+    
+    # Update user document with top-level flags
+    user_updates = {}
+    if telegram_enabled is not None:
+        user_updates["telegram_enabled"] = telegram_enabled
+    if telegram_disputes_enabled is not None:
+        user_updates["telegram_disputes_enabled"] = telegram_disputes_enabled
+    
+    if user_updates:
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": user_updates}
+        )
+    
+    # Update detailed settings
     await db.telegram_notification_settings.update_one(
         {"user_id": user_id},
         {
