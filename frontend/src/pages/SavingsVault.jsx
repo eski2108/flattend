@@ -492,7 +492,7 @@ const SavingsVault = () => {
       {/* LOCKED SAVINGS SECTION - Premium Redesign */}
       <div className="locked-savings-section">
         <div className="locked-savings-header">
-          <h2 className="locked-savings-title">Locked Savings — Earn Higher Rewards</h2>
+          <h2 className="locked-savings-title">Notice Savings — Secure Storage</h2>
           <p className="locked-savings-subtitle">Lock your crypto for added security. Early withdrawals incur a fee.</p>
         </div>
 
