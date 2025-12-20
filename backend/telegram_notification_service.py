@@ -7,6 +7,12 @@ Comprehensive notification service handling:
 - Audit logging for compliance
 - Fallback to email on failure
 - Notification preferences per user
+- Rate limiting for admin alerts
+
+SECURITY NOTICE:
+- Bot tokens MUST be stored only in server environment variables
+- NEVER commit tokens to repository
+- Rotate tokens immediately if leaked
 
 Production-ready with full error handling.
 """
@@ -16,6 +22,7 @@ import asyncio
 import aiohttp
 import logging
 import uuid
+import time
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any, List
 
@@ -34,6 +41,9 @@ ADMIN_TELEGRAM_CHAT_ID = os.environ.get('ADMIN_TELEGRAM_CHAT_ID')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://coinhubx.net')
 HIGH_VALUE_THRESHOLD_GBP = float(os.environ.get('HIGH_VALUE_DISPUTE_THRESHOLD', 1000))
 
+# Rate limiting: Max 1 message per 60 seconds for same dispute/trade
+ADMIN_RATE_LIMIT_SECONDS = 60
+
 
 class TelegramNotificationService:
     """
@@ -41,6 +51,17 @@ class TelegramNotificationService:
     
     Handles both admin alerts and user notifications
     with audit logging and email fallback.
+    
+    FAILOVER RULES:
+    - If Telegram delivery fails (blocked bot / user unlinked / API error):
+      1. Fallback to email notification
+      2. Log the failure in telegram_notification_logs
+    - Never silently drop alerts
+    
+    RATE LIMITING (Admin Bot):
+    - Throttle duplicate alerts (same dispute / same trade)
+    - Max 1 message per 60 seconds per entity
+    - Prevents spam during retries or cron jobs
     """
     
     def __init__(self, db=None):
@@ -53,6 +74,10 @@ class TelegramNotificationService:
         self.admin_enabled = bool(self.admin_bot_token and self.admin_chat_id)
         self.user_enabled = bool(self.user_bot_token)
         
+        # In-memory rate limit cache for admin alerts
+        # Key: "dispute_{id}" or "trade_{id}", Value: timestamp
+        self._admin_rate_limit_cache: Dict[str, float] = {}
+        
         if not self.admin_enabled:
             logger.warning("⚠️ Admin Telegram alerts disabled")
         if not self.user_enabled:
@@ -64,18 +89,66 @@ class TelegramNotificationService:
         """Set database reference"""
         self.db = db
     
+    # ==================== RATE LIMITING ====================
+    
+    def _is_rate_limited(self, entity_type: str, entity_id: str) -> bool:
+        """
+        Check if admin alert for this entity is rate limited.
+        Returns True if we should NOT send (rate limited).
+        """
+        cache_key = f"{entity_type}_{entity_id}"
+        now = time.time()
+        
+        last_sent = self._admin_rate_limit_cache.get(cache_key, 0)
+        if now - last_sent < ADMIN_RATE_LIMIT_SECONDS:
+            logger.info(f"⏳ Rate limited: {cache_key} (last sent {int(now - last_sent)}s ago)")
+            return True
+        
+        return False
+    
+    def _update_rate_limit(self, entity_type: str, entity_id: str):
+        """Update rate limit timestamp after successful send"""
+        cache_key = f"{entity_type}_{entity_id}"
+        self._admin_rate_limit_cache[cache_key] = time.time()
+        
+        # Clean old entries (older than 5 minutes)
+        now = time.time()
+        self._admin_rate_limit_cache = {
+            k: v for k, v in self._admin_rate_limit_cache.items()
+            if now - v < 300
+        }
+    
     # ==================== CORE SEND METHODS ====================
     
-    async def _send_admin_message(self, text: str, reply_markup: Dict = None) -> bool:
-        """Send message to admin group"""
+    async def _send_admin_message(self, text: str, reply_markup: Dict = None,
+                                   rate_limit_key: str = None) -> bool:
+        """
+        Send message to admin group with optional rate limiting.
+        rate_limit_key: e.g., "dispute_123" to prevent duplicate alerts
+        """
         if not self.admin_enabled:
             return False
-        return await self._send_telegram_message(
+        
+        # Check rate limit if key provided
+        if rate_limit_key:
+            parts = rate_limit_key.split("_", 1)
+            if len(parts) == 2 and self._is_rate_limited(parts[0], parts[1]):
+                return True  # Return True to indicate "handled" (just rate limited)
+        
+        success = await self._send_telegram_message(
             self.admin_bot_token, 
             self.admin_chat_id, 
             text, 
             reply_markup
         )
+        
+        # Update rate limit on success
+        if success and rate_limit_key:
+            parts = rate_limit_key.split("_", 1)
+            if len(parts) == 2:
+                self._update_rate_limit(parts[0], parts[1])
+        
+        return success
     
     async def _send_user_message(self, chat_id: str, text: str, reply_markup: Dict = None) -> bool:
         """Send message to a user"""
