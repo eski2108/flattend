@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import getCoinLogo from '../utils/coinLogos';
+import MobileBottomNav from '../components/MobileBottomNav';
 import './SavingsVault.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
