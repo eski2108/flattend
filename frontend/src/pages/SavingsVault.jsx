@@ -349,7 +349,7 @@ const SavingsVault = () => {
       <header className="savings-vault-header">
         <div className="header-title-section">
           <h1 className="savings-vault-title">Savings Vault</h1>
-          <p className="savings-vault-subtitle">Deposit crypto into notice accounts to earn guaranteed yields. Choose 30, 60, or 90 day notice periods. Early withdrawal incurs penalties.</p>
+          <p className="savings-vault-subtitle">Securely store your crypto in locked accounts. Choose 30, 60, or 90 day notice periods for withdrawals.</p>
         </div>
         
         <div className="header-actions">
