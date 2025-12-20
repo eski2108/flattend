@@ -5,7 +5,7 @@
 
 const { test, expect } = require('@playwright/test');
 
-const BASE_URL = process.env.TEST_URL || 'https://savingsflow-1.preview.emergentagent.com';
+const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
 test.describe('Notice Savings Page - Content Validation', () => {
   
