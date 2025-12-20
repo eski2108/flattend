@@ -1168,7 +1168,7 @@ const SavingsVault = () => {
                 <div className="summary-box">
                   <div className="summary-row"><span>Amount:</span><span>{depositAmount} {selectedCoin}</span></div>
                   <div className="summary-row"><span>Notice Period:</span><span>{selectedNoticePeriod} days</span></div>
-                  <div className="summary-row"><span>Estimated APY:</span><span className="success-text">{selectedNoticePeriod === 30 ? '3.5%' : selectedNoticePeriod === 60 ? '4.2%' : '5.0%'}</span></div>
+                  <div className="summary-row"><span>Lock Period:</span><span className="success-text">{selectedNoticePeriod} Days</span></div>
                   <div className="summary-row"><span>Unlock Date:</span><span>{new Date(Date.now() + selectedNoticePeriod * 24 * 60 * 60 * 1000).toLocaleDateString()}</span></div>
                   <div className="summary-row"><span>Early Withdrawal Fee:</span><span className="danger-text">{selectedNoticePeriod === 30 ? '1.5%' : selectedNoticePeriod === 60 ? '1.0%' : '0.5%'} of principal</span></div>
                 </div>
