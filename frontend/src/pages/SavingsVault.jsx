@@ -489,11 +489,11 @@ const SavingsVault = () => {
         </div>
       </div>
 
-      {/* LOCKED SAVINGS SECTION - Premium Redesign */}
+      {/* NOTICE ACCOUNTS SECTION */}
       <div className="locked-savings-section">
         <div className="locked-savings-header">
-          <h2 className="locked-savings-title">Locked Savings — Earn Higher Rewards</h2>
-          <p className="locked-savings-subtitle">Lock your crypto for added security. Early withdrawals incur a fee.</p>
+          <h2 className="locked-savings-title">Notice Accounts — Secure Storage</h2>
+          <p className="locked-savings-subtitle">Store your crypto securely with a notice period. Early withdrawals incur a fee.</p>
         </div>
 
         {/* Early Withdrawal Warning Banner */}
@@ -501,11 +501,11 @@ const SavingsVault = () => {
           <div className="warning-icon">⚠️</div>
           <div className="warning-content">
             <span className="warning-title">Early Withdrawal Penalty</span>
-            <span className="warning-text">Withdrawing before the lock period ends will result in a fee (see cards below). Locked funds cannot be withdrawn until the period ends without penalty.</span>
+            <span className="warning-text">Withdrawing before the notice period ends will result in a fee (see cards below). Funds cannot be withdrawn until the notice period ends without penalty.</span>
           </div>
         </div>
         
-        {/* Premium Lock Period Cards */}
+        {/* Notice Period Cards */}
         <div className="savings-periods-container">
           {/* Card 1: 30-Day Notice - Purple Theme */}
           <div className={`savings-card savings-card-30 ${selectedNoticePeriod === 30 ? 'selected' : ''}`}>
