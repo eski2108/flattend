@@ -1078,7 +1078,12 @@ const SavingsVault = () => {
                     className="wallet-source-card selected"
                     onClick={() => {}}
                   >
-                    <span className="wallet-icon">💰</span>
+                    <svg className="wallet-svg-icon" width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="6" y="14" width="36" height="24" rx="4" fill="#1e3a5f"/>
+                      <rect x="6" y="14" width="36" height="8" fill="#2563eb" opacity="0.3"/>
+                      <rect x="28" y="22" width="14" height="10" rx="2" fill="#0f172a"/>
+                      <circle cx="35" cy="27" r="3" fill="#22d3ee"/>
+                    </svg>
                     <div className="wallet-info">
                       <span className="wallet-name">Main Wallet</span>
                       <span className="wallet-hint">Your primary wallet balance</span>
