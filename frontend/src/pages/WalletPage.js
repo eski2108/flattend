@@ -600,6 +600,9 @@ export default function WalletPage() {
         onSuccess={() => loadBalances(user?.user_id)}
       />
 
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
       <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }
