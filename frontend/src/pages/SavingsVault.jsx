@@ -507,128 +507,128 @@ const SavingsVault = () => {
         
         {/* Premium Lock Period Cards */}
         <div className="savings-periods-container">
-          {/* Card 1: 30-Day Lock - Purple Theme */}
+          {/* Card 1: 30-Day Notice - Purple Theme */}
           <div className={`savings-card savings-card-30 ${selectedNoticePeriod === 30 ? 'selected' : ''}`}>
             <div className="period-header">
               <div className="period-days">30</div>
-              <div className="period-label">DAYS</div>
+              <div className="period-label">DAY NOTICE</div>
             </div>
             
-            <div className="apy-container">
-              <div className="apy-value">Locked</div>
-              <div className="apy-label">Annual Percentage Yield</div>
+            <div className="notice-info-container">
+              <div className="notice-info-icon">🔐</div>
+              <div className="notice-info-text">Secure Storage</div>
             </div>
             
             <div className="fee-container">
               <div className="fee-header">
                 <span className="fee-icon">⚠</span>
                 <span className="fee-title">Early Withdrawal</span>
-                <span className="tooltip-icon" title="If you withdraw before the lock period ends, this fee is deducted from your principal.">?</span>
+                <span className="tooltip-icon" title="If you withdraw before the notice period ends, this fee is deducted from your principal.">?</span>
               </div>
               <div className="fee-amount">1.5% Fee</div>
               <div className="fee-note">Deducted from principal</div>
             </div>
             
             <div className="tagline-container">
-              <div className="tagline">💡 Short-term Goals</div>
+              <div className="tagline">💡 Short-term Storage</div>
             </div>
             
             <div className="progress-visual">
               <div className="progress-fill progress-30-day"></div>
             </div>
-            <div className="time-label">33% of max term</div>
+            <div className="time-label">30 day notice period</div>
             
             <button 
               className="cta-button cta-30-day"
               onClick={() => {setSelectedNoticePeriod(30); setShowTransferModal(true);}}
             >
               <span className="button-icon">🔒</span>
-              Lock for 30 Days
+              30 Day Notice
             </button>
           </div>
 
-          {/* Card 2: 60-Day Lock - Pink Theme (Most Popular) */}
+          {/* Card 2: 60-Day Notice - Pink Theme (Most Popular) */}
           <div className={`savings-card savings-card-60 most-popular ${selectedNoticePeriod === 60 ? 'selected' : ''}`}>
             <div className="popular-badge">⭐ Most Popular</div>
             <div className="most-popular-glow"></div>
             
             <div className="period-header">
               <div className="period-days">60</div>
-              <div className="period-label">DAYS</div>
+              <div className="period-label">DAY NOTICE</div>
             </div>
             
-            <div className="apy-container">
-              <div className="apy-value">4.2<span className="apy-percent">%</span></div>
-              <div className="apy-label">Annual Percentage Yield</div>
+            <div className="notice-info-container">
+              <div className="notice-info-icon">🔐</div>
+              <div className="notice-info-text">Secure Storage</div>
             </div>
             
             <div className="fee-container">
               <div className="fee-header">
                 <span className="fee-icon">⚠</span>
                 <span className="fee-title">Early Withdrawal</span>
-                <span className="tooltip-icon" title="If you withdraw before the lock period ends, this fee is deducted from your principal.">?</span>
+                <span className="tooltip-icon" title="If you withdraw before the notice period ends, this fee is deducted from your principal.">?</span>
               </div>
               <div className="fee-amount">1.0% Fee</div>
               <div className="fee-note">Deducted from principal</div>
             </div>
             
             <div className="tagline-container">
-              <div className="tagline">⚖️ Balanced Earnings</div>
+              <div className="tagline">⚖️ Balanced Option</div>
             </div>
             
             <div className="progress-visual">
               <div className="progress-fill progress-60-day"></div>
             </div>
-            <div className="time-label">66% of max term</div>
+            <div className="time-label">60 day notice period</div>
             
             <button 
               className="cta-button cta-60-day"
               onClick={() => {setSelectedNoticePeriod(60); setShowTransferModal(true);}}
             >
               <span className="button-icon">🔒</span>
-              Lock for 60 Days
+              60 Day Notice
             </button>
           </div>
 
-          {/* Card 3: 90-Day Lock - Blue Theme (Maximum Returns) */}
+          {/* Card 3: 90-Day Notice - Blue Theme (Lowest Fee) */}
           <div className={`savings-card savings-card-90 ${selectedNoticePeriod === 90 ? 'selected' : ''}`}>
-            <div className="max-returns-badge">🚀 Maximum Returns</div>
+            <div className="max-returns-badge">💎 Lowest Fee</div>
             
             <div className="period-header">
               <div className="period-days">90</div>
-              <div className="period-label">DAYS</div>
+              <div className="period-label">DAY NOTICE</div>
             </div>
             
-            <div className="apy-container apy-highest">
-              <div className="apy-value">5.0<span className="apy-percent">%</span></div>
-              <div className="apy-label">Annual Percentage Yield</div>
+            <div className="notice-info-container">
+              <div className="notice-info-icon">🔐</div>
+              <div className="notice-info-text">Secure Storage</div>
             </div>
             
             <div className="fee-container fee-lowest">
               <div className="fee-header">
                 <span className="fee-icon">⚠</span>
                 <span className="fee-title">Early Withdrawal</span>
-                <span className="tooltip-icon" title="If you withdraw before the lock period ends, this fee is deducted from your principal.">?</span>
+                <span className="tooltip-icon" title="If you withdraw before the notice period ends, this fee is deducted from your principal.">?</span>
               </div>
               <div className="fee-amount">0.5% Fee</div>
               <div className="fee-note">Lowest penalty rate</div>
             </div>
             
             <div className="tagline-container">
-              <div className="tagline">💎 Maximum Returns</div>
+              <div className="tagline">🛡️ Maximum Security</div>
             </div>
             
             <div className="progress-visual">
               <div className="progress-fill progress-90-day"></div>
             </div>
-            <div className="time-label">100% - Full term</div>
+            <div className="time-label">90 day notice period</div>
             
             <button 
               className="cta-button cta-90-day"
               onClick={() => {setSelectedNoticePeriod(90); setShowTransferModal(true);}}
             >
               <span className="button-icon">🔒</span>
-              Lock for 90 Days
+              90 Day Notice
             </button>
           </div>
         </div>
