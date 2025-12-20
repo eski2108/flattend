@@ -22040,6 +22040,51 @@ async def resolve_dispute(dispute_id: str, request: dict):
         except Exception as e:
             logger.warning(f"⚠️ Failed to send Telegram resolution alert: {str(e)}")
         
+        # 📱 Send Telegram alerts to BOTH users about resolution
+        try:
+            from telegram_notification_service import get_telegram_notification_service
+            notif_svc = get_telegram_notification_service(db)
+            
+            # Get trade details
+            trade = await db.p2p_trades.find_one({"trade_id": dispute.get("trade_id")}, {"_id": 0})
+            if trade:
+                # Add usernames
+                buyer_user = await db.users.find_one({"user_id": trade.get("buyer_id")}, {"email": 1})
+                seller_user = await db.users.find_one({"user_id": trade.get("seller_id")}, {"email": 1})
+                trade["buyer_username"] = buyer_user.get("email", "").split("@")[0] if buyer_user else "Unknown"
+                trade["seller_username"] = seller_user.get("email", "").split("@")[0] if seller_user else "Unknown"
+                
+                # Update dispute with winner info
+                dispute_resolved = {
+                    **dispute,
+                    "winner": winner,
+                    "resolution": resolution,
+                    "dispute_fee_charged": dispute_fee
+                }
+                
+                # Notify buyer
+                await notif_svc.notify_user_dispute_resolved(
+                    trade=trade,
+                    dispute=dispute_resolved,
+                    user_id=trade.get("buyer_id"),
+                    role="buyer"
+                )
+                
+                # Notify seller
+                await notif_svc.notify_user_dispute_resolved(
+                    trade=trade,
+                    dispute=dispute_resolved,
+                    user_id=trade.get("seller_id"),
+                    role="seller"
+                )
+                
+                # Admin confirmation
+                await notif_svc.alert_admin_dispute_resolved(trade, dispute_resolved, admin_id)
+                
+                logger.info(f"✅ User Telegram alerts sent for dispute resolution {dispute_id}")
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to send user Telegram resolution alerts: {str(e)}")
+        
         logger.info(f"✅ Dispute {dispute_id} resolved. Winner: {winner}, Fee charged to: {loser_id}")
         
         return {
