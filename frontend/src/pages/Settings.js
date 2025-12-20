@@ -13,6 +13,7 @@ import EmailSettings from '@/components/settings/EmailSettings';
 import SecuritySettings from '@/components/settings/SecuritySettings';
 import TwoFactorSettings from '@/components/settings/TwoFactorSettings';
 import NotificationSettings from '@/components/settings/NotificationSettings';
+import TelegramSettings from '@/components/settings/TelegramSettings';
 import LanguageSettings from '@/components/settings/LanguageSettings';
 import PaymentMethodsManager from '@/components/settings/PaymentMethodsManager';
 
