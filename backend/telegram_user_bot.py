@@ -94,7 +94,7 @@ class TelegramUserBot:
         """
         Get user's linked Telegram chat ID from database
         """
-        if not self.db:
+        if self.db is None:
             return None
         
         try:
