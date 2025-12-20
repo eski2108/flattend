@@ -1,0 +1,94 @@
+name: Scheduled Site Monitoring & Tests
+
+on:
+  # Run every 30 minutes
+  schedule:
+    - cron: '*/30 * * * *'
+  # Also run on push to main
+  push:
+    branches: [main]
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd tests
+          npm install
+          npx playwright install chromium
+
+      - name: Run Playwright tests
+        id: tests
+        run: |
+          cd tests
+          npx playwright test --config=playwright.config.js
+        env:
+          TEST_URL: ${{ secrets.TEST_URL || 'https://your-site-url.com' }}
+        continue-on-error: true
+
+      - name: Upload Playwright HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: test-reports/
+          retention-days: 7
+
+      - name: Upload Test Results JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-json
+          path: test-reports/results.json
+          retention-days: 30
+
+      - name: Notify Slack on Success
+        if: steps.tests.outcome == 'success'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            ✅ *CoinHubX Tests PASSED*
+            All automated tests completed successfully.
+            View report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          author_name: Playwright Test Bot
+          fields: repo,commit,author,action,eventName,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on Failure
+        if: steps.tests.outcome == 'failure'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            ❌ *CoinHubX Tests FAILED*
+            Some tests did not pass. Please investigate immediately.
+            View report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          author_name: Playwright Test Bot
+          fields: repo,commit,author,action,eventName,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Send Email Summary
+        if: always()
+        run: |
+          echo "Test Status: ${{ steps.tests.outcome }}"
+          echo "Report available at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # GitHub automatically sends email notifications based on your settings
+
+      - name: Fail job if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
