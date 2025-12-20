@@ -20,1352 +20,472 @@ const getUserId = () => {
   }
 };
 
+// SVG Icons
+const LockIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
+
+const WalletIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+  </svg>
+);
+
+const ClockIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12 6 12 12 16 14"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const InfoIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 16v-4"/>
+    <path d="M12 8h.01"/>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+
 const SavingsVault = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [positions, setPositions] = useState([]);
   const [totalBalance, setTotalBalance] = useState(0);
-  const [totalBalanceCrypto, setTotalBalanceCrypto] = useState('');
   const [lockedBalance, setLockedBalance] = useState(0);
-  const [lockedBalanceCrypto, setLockedBalanceCrypto] = useState('');
   const [availableBalance, setAvailableBalance] = useState(0);
-  const [availableBalanceCrypto, setAvailableBalanceCrypto] = useState('');
-  const [totalInterestEarned, setTotalInterestEarned] = useState(0);
-  const [totalInterestCrypto, setTotalInterestCrypto] = useState('');
-  const [expandedCard, setExpandedCard] = useState(null);
-  const [sortBy, setSortBy] = useState('name');
-  const [showSortMenu, setShowSortMenu] = useState(false);
-  const [filterActive, setFilterActive] = useState(false);
-  const [filterFlexible, setFilterFlexible] = useState(false);
-  const [filterStaked, setFilterStaked] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState('Main');
-  const [showWalletMenu, setShowWalletMenu] = useState(false);
-  const [graphPeriod, setGraphPeriod] = useState({});
-  const [showTransferModal, setShowTransferModal] = useState(false);
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [positions, setPositions] = useState([]);
   
-  // Modal state for deposit flow
-  const [depositStep, setDepositStep] = useState(1); // 1-5 steps
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalStep, setModalStep] = useState(1);
   const [selectedCoin, setSelectedCoin] = useState('');
   const [depositAmount, setDepositAmount] = useState('');
-  const [selectedNoticePeriod, setSelectedNoticePeriod] = useState(30);
-  const [selectedPosition, setSelectedPosition] = useState(null);
-  const [showReferralBanner, setShowReferralBanner] = useState(true);
+  const [noticePeriod, setNoticePeriod] = useState(30);
   const [availableCoins, setAvailableCoins] = useState([]);
   const [loadingCoins, setLoadingCoins] = useState(false);
-  const [showNoticeRulesModal, setShowNoticeRulesModal] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
+  const [showBalances, setShowBalances] = useState(false);
 
   useEffect(() => {
     loadSavingsData();
     loadAvailableCoins();
     
-    // Check for payment success/cancel from URL params
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get('status');
-    const savingsId = urlParams.get('id');
-    
-    if (status === 'success' && savingsId) {
-      toast.success('🎉 Payment successful! Your savings are being activated...');
-      // Clean URL
+    if (status === 'success') {
+      toast.success('Payment successful! Your funds are now locked.');
       window.history.replaceState({}, document.title, '/savings');
-      // Reload data after a short delay
-      setTimeout(() => {
-        loadSavingsData();
-      }, 2000);
+      setTimeout(() => loadSavingsData(), 2000);
     } else if (status === 'cancelled') {
       toast.error('Payment was cancelled');
       window.history.replaceState({}, document.title, '/savings');
     }
   }, []);
 
-  // Emoji mapping for coins - COMPREHENSIVE LIST
-  const getCoinEmoji = (symbol) => {
-    const emojiMap = {
-      // Top cryptos
-      'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶',
-      'XRP': '✖️', 'SOL': '☀️', 'ADA': '🌐', 'DOGE': '🐶', 'TRX': '🔺',
-      'DOT': '🎯', 'MATIC': '🔷', 'LTC': '🌕', 'SHIB': '🐕', 'AVAX': '🏔️',
-      'LINK': '🔗', 'ATOM': '⚛️', 'UNI': '🦄', 'XLM': '⭐', 'XMR': '🕶️',
-      'BCH': '💚', 'TON': '🔵', 'DAI': '🟡', 'ETC': '🟢', 'FIL': '📁',
-      'VET': '♦️', 'ALGO': '◯', 'WBTC': '🔄', 'NEAR': '🌈', 'ICP': '∞',
-      
-      // Meme coins
-      'PEPE': '🐸', 'FLOKI': '🐕', 'BONK': '💥', 'WIF': '🧢', 'MEME': '😂',
-      'LEASH': '🦴', 'ELON': '🚀', 'BABYDOGE': '🐶', 'KISHU': '🐕', 
-      
-      // Stablecoins
-      'BUSD': '💵', 'TUSD': '💵', 'USDP': '💲', 'GUSD': '🏦', 'USDD': '💵',
-      'FRAX': '🏛️', 'LUSD': '💵', 'SUSD': '💵',
-      
-      // DeFi tokens
-      'AAVE': '👻', 'COMP': '🏛️', 'MKR': '👑', 'SNX': '⚡', 'CRV': '🌊',
-      'SUSHI': '🍣', 'CAKE': '🎂', '1INCH': '🦄', 'BAL': '⚖️', 'YFI': '💎',
-      'RUNE': '⚔️', 'ALPHA': '🐺', 'CREAM': '🍦', 'BADGER': '🦡',
-      
-      // Gaming/Metaverse
-      'AXS': '🎮', 'SAND': '🏖️', 'MANA': '🌍', 'ENJ': '🎮', 'GALA': '🎪',
-      'IMX': '🎮', 'GODS': '⚔️', 'SUPER': '🦸', 'STARL': '🌟', 'RACA': '🎨',
-      
-      // Layer 2 & Scaling
-      'ARB': '🔷', 'OP': '🔴', 'LRC': '⭕', 'ZK': '🔐', 'METIS': '⚡',
-      
-      // Exchange tokens
-      'FTT': '📈', 'OKB': '⭕', 'HT': '🔥', 'KCS': '🎯', 'GT': '🎯',
-      'CRO': '💎', 'LEO': '🦁', 'WOO': '🌊', 'MX': '💹',
-      
-      // AI & Tech
-      'FET': '🤖', 'AGIX': '🧠', 'OCEAN': '🌊', 'GRT': '📊', 'RENDER': '🎨',
-      'INJ': '💉', 'RNDR': '🎬', 'PAAL': '🤖',
-      
-      // Privacy coins
-      'DASH': '💸', 'ZEC': '🔒', 'DCR': '🔐', 'SC': '☁️',
-      
-      // Other major coins
-      'APT': '🔷', 'ARB': '🔵', 'OP': '🔴', 'SUI': '💧', 'SEI': '⚡',
-      'TIA': '🌌', 'INJ': '💉', 'RUNE': '⚔️', 'OSMO': '🌊', 'KUJI': '🌪️',
-      'LUNA': '🌙', 'LUNC': '🌑', 'UST': '💵', 'USTC': '💵',
-      
-      // Specific tokens from your list
-      'MEW': '😺', 'USDR': '💲', 'USDTMATIC': '💵', 'USDCBSC': '💲',
-      'SHIBBSC': '🐕', 'AVAXC': '🏔️', 'BERA': '🐻', 'RVN': '🦅',
-      'WOLFERC20': '🐺', 'GUARD': '🛡️', 'AWEBASE': '⚡', 'USDTSOL': '💵',
-      'VET': '💎', 'WETH': '◆', 'WBNB': '🔶', 'WMATIC': '🔷',
-      
-      // Base/Chain specific
-      'BASE': '🔵', 'ARB': '🔷', 'OP': '🔴', 'ZKSYNC': '🔐',
-      'POLYGON': '🔷', 'ARBITRUM': '🔷', 'OPTIMISM': '🔴',
-      
-      // Others
-      'FTM': '👻', 'ONE': '1️⃣', 'HBAR': '♾️', 'THETA': '📺',
-      'TFUEL': '⛽', 'EGLD': '⚡', 'FLOW': '🌊', 'ROSE': '🌹',
-      'KDA': '⛓️', 'KLAY': '🎮', 'MINA': '🔐', 'ZIL': '⚡'
-    };
-    
-    // Try exact match first
-    const upperSymbol = symbol.toUpperCase();
-    if (emojiMap[upperSymbol]) return emojiMap[upperSymbol];
-    
-    // Try partial matches for wrapped/chain-specific tokens
-    if (upperSymbol.includes('USDT')) return '💵';
-    if (upperSymbol.includes('USDC')) return '💲';
-    if (upperSymbol.includes('BTC')) return '₿';
-    if (upperSymbol.includes('ETH')) return '◆';
-    if (upperSymbol.includes('SHIB')) return '🐕';
-    if (upperSymbol.includes('DOGE')) return '🐶';
-    
-    // Default fallback
-    return '💎';
-  };
-
   const loadAvailableCoins = async () => {
     try {
       setLoadingCoins(true);
-      // Try NowPayments first for 230+ coins
-      const nowPaymentsResponse = await axios.get(`${API}/api/nowpayments/currencies`);
-      if (nowPaymentsResponse.data.success && nowPaymentsResponse.data.currencies) {
-        const currencies = nowPaymentsResponse.data.currencies;
-        // Convert NowPayments format to our format
-        const coinList = currencies.map(symbol => ({
+      const response = await axios.get(`${API}/api/nowpayments/currencies`);
+      if (response.data.success && response.data.currencies) {
+        const coinList = response.data.currencies.map(symbol => ({
           symbol: symbol.toUpperCase(),
-          name: symbol.charAt(0).toUpperCase() + symbol.slice(1),
-          emoji: getCoinEmoji(symbol)
+          name: symbol.charAt(0).toUpperCase() + symbol.slice(1)
         }));
         setAvailableCoins(coinList);
-        setLoadingCoins(false);  // FIX: SET TO FALSE HERE
-        console.log(`✅ Loaded ${coinList.length} coins from NowPayments`);
-        return;
-      }
-    } catch (error) {
-      console.error('NowPayments fetch failed, trying backend fallback:', error);
-    }
-    
-    // Fallback to backend supported cryptocurrencies
-    try {
-      const response = await axios.get(`${API}/api/supported/cryptocurrencies`);
-      if (response.data.success) {
-        const cryptos = response.data.cryptocurrencies;
-        const coinList = Object.keys(cryptos).map(symbol => ({
-          symbol: symbol,
-          name: cryptos[symbol].name,
-          emoji: getCoinEmoji(symbol)
-        }));
-        setAvailableCoins(coinList);
-        console.log(`✅ Loaded ${coinList.length} coins from backend`);
       }
     } catch (error) {
       console.error('Error loading coins:', error);
-      // Final fallback to default list
       setAvailableCoins([
-        { symbol: 'BTC', name: 'Bitcoin', emoji: '₿' },
-        { symbol: 'ETH', name: 'Ethereum', emoji: '◆' },
-        { symbol: 'USDT', name: 'Tether', emoji: '💵' },
-        { symbol: 'USDC', name: 'USD Coin', emoji: '💲' },
-        { symbol: 'BNB', name: 'Binance Coin', emoji: '🔶' },
-        { symbol: 'SOL', name: 'Solana', emoji: '☀️' },
-        { symbol: 'XRP', name: 'Ripple', emoji: '✖️' },
-        { symbol: 'ADA', name: 'Cardano', emoji: '🌐' },
-        { symbol: 'DOGE', name: 'Dogecoin', emoji: '🐶' },
-        { symbol: 'DOT', name: 'Polkadot', emoji: '🎯' },
-        { symbol: 'MATIC', name: 'Polygon', emoji: '🔷' },
-        { symbol: 'LTC', name: 'Litecoin', emoji: '🌕' },
-        { symbol: 'LINK', name: 'Chainlink', emoji: '🔗' },
-        { symbol: 'AVAX', name: 'Avalanche', emoji: '🏔️' }
+        { symbol: 'BTC', name: 'Bitcoin' },
+        { symbol: 'ETH', name: 'Ethereum' },
+        { symbol: 'USDT', name: 'Tether' },
+        { symbol: 'USDC', name: 'USD Coin' }
       ]);
-      console.log('✅ Using fallback coin list');
     } finally {
       setLoadingCoins(false);
     }
   };
 
-  useEffect(() => {
-    loadSavingsData();
-    loadAvailableCoins();  // LOAD COINS ON PAGE MOUNT
-  }, []);
-
   const loadSavingsData = async () => {
     try {
       setLoading(true);
       const userId = getUserId();
-      
       if (!userId) {
-        console.error('No user_id found - user not logged in');
         setLoading(false);
         return;
       }
-      
-      // REAL BACKEND CALL
       const response = await axios.get(`${API}/api/savings/positions/${userId}`);
-      
       if (response.data.success) {
         const data = response.data;
         setPositions(data.positions || []);
         setTotalBalance(data.total_balance_usd || 0);
-        setTotalBalanceCrypto(data.total_balance_crypto || '0.00 BTC');
         setLockedBalance(data.locked_balance_usd || 0);
-        setLockedBalanceCrypto(data.locked_balance_crypto || '0.00 BTC');
         setAvailableBalance(data.available_balance_usd || 0);
-        setAvailableBalanceCrypto(data.available_balance_crypto || '0.00 BTC');
-        setTotalInterestEarned(data.total_interest_earned_usd || 0);
-        setTotalInterestCrypto(data.total_interest_earned_crypto || '0.00 BTC');
-        
-        // Initialize graph periods
-        const periods = {};
-        data.positions?.forEach((pos, idx) => {
-          periods[idx] = '30d';
-        });
-        setGraphPeriod(periods);
       }
     } catch (error) {
       console.error('Error loading savings:', error);
-      setPositions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleCard = (index) => {
-    setExpandedCard(expandedCard === index ? null : index);
+  const openModal = () => {
+    setShowModal(true);
+    setModalStep(1);
+    setSelectedCoin('');
+    setDepositAmount('');
+    setNoticePeriod(30);
   };
 
-  const handleSort = (criteria) => {
-    setSortBy(criteria);
-    setShowSortMenu(false);
-    // Sort positions
-    const sorted = [...positions].sort((a, b) => {
-      if (criteria === 'name') return a.symbol.localeCompare(b.symbol);
-      if (criteria === 'apy') return (b.apy || 0) - (a.apy || 0);
-      if (criteria === 'earned') return (b.interest_earned_usd || 0) - (a.interest_earned_usd || 0);
-      if (criteria === 'balance') return (b.balance_usd || 0) - (a.balance_usd || 0);
-      return 0;
-    });
-    setPositions(sorted);
+  const closeModal = () => {
+    setShowModal(false);
+    setModalStep(1);
   };
 
-  const getFilteredPositions = () => {
-    let filtered = positions;
-    
-    if (filterActive) {
-      filtered = filtered.filter(p => p.balance > 0);
-    }
-    
-    if (filterFlexible && !filterStaked) {
-      filtered = filtered.filter(p => p.type === 'flexible');
-    } else if (filterStaked && !filterFlexible) {
-      filtered = filtered.filter(p => p.type === 'staked');
-    }
-    
-    return filtered;
+  const nextStep = () => {
+    if (modalStep < 5) setModalStep(modalStep + 1);
   };
 
-  const handleToggleFlexibleStaked = async (index, newType) => {
+  const prevStep = () => {
+    if (modalStep > 1) setModalStep(modalStep - 1);
+  };
+
+  const handleConfirm = async () => {
     try {
-      const position = positions[index];
+      setDepositLoading(true);
       const userId = getUserId();
-      if (!userId) { toast.error('Please log in first'); return; }
-      const response = await axios.post(`${API}/api/savings/toggle-type`, {
+      if (!userId) {
+        toast.error('Please log in first');
+        setDepositLoading(false);
+        return;
+      }
+      
+      const response = await axios.post(`${API}/api/savings/initiate`, {
         user_id: userId,
-        position_id: position.id,
-        new_type: newType
+        asset: selectedCoin,
+        amount: parseFloat(depositAmount),
+        lock_period_days: noticePeriod
       });
-      if (response.data.success) {
-        toast.success(`Changed to ${newType} savings`);
-        loadSavingsData();
+      
+      if (response.data.success && response.data.payment_url) {
+        toast.success('Redirecting to payment...');
+        window.location.href = response.data.payment_url;
+      } else {
+        toast.error('Failed to create payment');
+        setDepositLoading(false);
       }
     } catch (error) {
-      console.error('Toggle type error:', error);
-      toast.error('Failed to change savings type');
+      console.error('Deposit error:', error);
+      toast.error(error.response?.data?.detail || 'Deposit failed');
+      setDepositLoading(false);
     }
   };
 
-  const handleToggleAutoCompound = async (index) => {
-    try {
-      const position = positions[index];
-      const userId = getUserId();
-      if (!userId) { toast.error('Please log in first'); return; }
-      const newValue = !position.auto_compound;
-      const response = await axios.post(`${API}/api/savings/auto-compound`, {
-        user_id: userId,
-        position_id: position.id,
-        enabled: newValue
-      });
-      if (response.data.success) {
-        toast.success(`Auto-compound ${newValue ? 'enabled' : 'disabled'}`);
-        loadSavingsData();
-      }
-    } catch (error) {
-      console.error('Auto-compound error:', error);
-      toast.error('Failed to update auto-compound setting');
-    }
+  const getUnlockDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + noticePeriod);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  const handleLockPeriodChange = async (index, period) => {
-    try {
-      const position = positions[index];
-      const userId = getUserId();
-      if (!userId) { toast.error('Please log in first'); return; }
-      const response = await axios.post(`${API}/api/savings/change-period`, {
-        user_id: userId,
-        position_id: position.id,
-        new_period: period
-      });
-      if (response.data.success) {
-        toast.success(`Lock period changed to ${period} days`);
-        loadSavingsData();
-      }
-    } catch (error) {
-      console.error('Lock period change error:', error);
-      toast.error('Failed to change lock period');
-    }
+  const getEarlyWithdrawalFee = () => {
+    if (noticePeriod === 30) return '1.5%';
+    if (noticePeriod === 60) return '1.0%';
+    return '0.5%';
   };
-
-  const filteredPositions = getFilteredPositions();
 
   return (
-    <div className="savings-vault-container">
-      {/* PAGE HEADER */}
-      <header className="savings-vault-header">
-        <div className="header-title-section">
-          <h1 className="savings-vault-title">Savings Vault</h1>
-          <p className="savings-vault-subtitle">Securely store your crypto in locked accounts. Choose 30, 60, or 90 day notice periods for withdrawals.</p>
-        </div>
-        
-        <div className="header-actions">
-          {/* Wallet Selector Dropdown */}
-          <div className="wallet-selector-dropdown">
-            <button 
-              className="wallet-selector-btn"
-              onClick={() => setShowWalletMenu(!showWalletMenu)}
-            >
-              <span className="wallet-label">Wallet: {selectedWallet}</span>
-              <span className="dropdown-arrow">▼</span>
-            </button>
-            
-            {showWalletMenu && (
-              <div className="wallet-dropdown-menu">
-                <div 
-                  className={`dropdown-item ${selectedWallet === 'Main' ? 'active' : ''}`}
-                  onClick={() => { 
-                    navigate('/wallet');
-                    setShowWalletMenu(false); 
-                  }}
-                >
-                  Main Wallet
-                </div>
-                <div 
-                  className={`dropdown-item ${selectedWallet === 'Trading' ? 'active' : ''}`}
-                  onClick={() => { 
-                    navigate('/trading');
-                    setShowWalletMenu(false); 
-                  }}
-                >
-                  Trading Wallet
-                </div>
-                <div 
-                  className={`dropdown-item ${selectedWallet === 'Savings' ? 'active' : ''}`}
-                  onClick={() => { 
-                    setSelectedWallet('Savings');
-                    setShowWalletMenu(false); 
-                  }}
-                >
-                  Savings Wallet (Current)
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Add to Savings Button */}
-          <button 
-            className="transfer-from-wallet-btn"
-            onClick={() => setShowTransferModal(true)}
-          >
-            Add to Savings
-          </button>
-        </div>
-      </header>
+    <div className="savings-mobile-container">
+      {/* HERO SECTION */}
+      <div className="savings-hero">
+        <h1 className="savings-title">Notice Savings Account</h1>
+        <p className="savings-subtitle">Lock funds for 30 / 60 / 90 days. Withdraw only after notice period.</p>
+      </div>
 
-      {/* SUMMARY CARDS - 4 cards in a row */}
-      <div className="summary-cards-section">
-        {/* Card 1: Total Savings */}
-        <div className="summary-card glassmorphic-card">
-          <div className="card-icon-bg wallet-icon"></div>
-          <div className="card-label">
-            Total Balance
-            <span className="info-tooltip" title="Total value of all your savings deposits plus earned interest">ⓘ</span>
-          </div>
-          <div className="card-value-main">{totalBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{totalBalanceCrypto || 'Mixed Assets'}</div>
-          <div className="live-indicator">
-            <span className="live-dot pulsing"></span>
-            <span className="live-text">Live</span>
-          </div>
+      {/* HOW IT WORKS - Simple 3 steps */}
+      <div className="savings-explainer">
+        <div className="explainer-step">
+          <div className="step-icon"><ClockIcon /></div>
+          <span className="step-text">Choose notice period (30 / 60 / 90 days)</span>
         </div>
-
-        {/* Card 2: Locked Balance */}
-        <div className="summary-card glassmorphic-card">
-          <div className="card-icon-bg lock-icon"></div>
-          <div className="card-label">
-            Locked Balance
-            <span className="info-tooltip" title="Funds currently in notice period. Early withdrawal will incur penalty.">ⓘ</span>
-          </div>
-          <div className="card-value-main">{lockedBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{lockedBalanceCrypto || 'Mixed Assets'}</div>
-          <div className="live-indicator">
-            <span className="live-dot pulsing"></span>
-            <span className="live-text">Live</span>
-          </div>
+        <div className="explainer-step">
+          <div className="step-icon"><LockIcon /></div>
+          <span className="step-text">Funds are locked</span>
         </div>
-
-        {/* Card 3: Available to Withdraw */}
-        <div className="summary-card glassmorphic-card">
-          <div className="card-icon-bg unlock-icon"></div>
-          <div className="card-label">
-            Available to Withdraw
-            <span className="info-tooltip" title="Funds ready to withdraw without penalty. Notice period has ended.">ⓘ</span>
-          </div>
-          <div className="card-value-main">{availableBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{availableBalanceCrypto || 'Mixed Assets'}</div>
-          <div className="live-indicator">
-            <span className="live-dot pulsing"></span>
-            <span className="live-text">Live</span>
-          </div>
-        </div>
-
-        {/* Card 4: Total Interest Earned */}
-        <div className="summary-card glassmorphic-card">
-          <div className="card-icon-bg interest-icon"></div>
-          <div className="card-label">
-            Total Interest Earned
-            <span className="info-tooltip" title="Lifetime interest earned across all your savings accounts">ⓘ</span>
-          </div>
-          <div className="card-value-main">{totalInterestEarned.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{totalInterestCrypto || 'Mixed Assets'}</div>
-          <div className="live-indicator">
-            <span className="live-dot pulsing"></span>
-            <span className="live-text">Live</span>
-          </div>
+        <div className="explainer-step">
+          <div className="step-icon"><WalletIcon /></div>
+          <span className="step-text">Withdraw after notice period</span>
         </div>
       </div>
 
-      {/* NOTICE ACCOUNTS SECTION */}
-      <div className="locked-savings-section">
-        <div className="locked-savings-header">
-          <h2 className="locked-savings-title">Notice Accounts — Secure Storage</h2>
-          <p className="locked-savings-subtitle">Store your crypto securely with a notice period. Early withdrawals incur a fee.</p>
-        </div>
-
-        {/* Early Withdrawal Warning Banner */}
-        <div className="early-withdrawal-warning">
-          <div className="warning-icon">⚠️</div>
-          <div className="warning-content">
-            <span className="warning-title">Early Withdrawal Penalty</span>
-            <span className="warning-text">Withdrawing before the notice period ends will result in a fee (see cards below). Funds cannot be withdrawn until the notice period ends without penalty.</span>
-          </div>
-        </div>
-        
-        {/* Notice Period Cards */}
-        <div className="savings-periods-container">
-          {/* Card 1: 30-Day Notice - Purple Theme */}
-          <div className={`savings-card savings-card-30 ${selectedNoticePeriod === 30 ? 'selected' : ''}`}>
-            <div className="period-header">
-              <div className="period-days">30</div>
-              <div className="period-label">DAY NOTICE</div>
-            </div>
-            
-            <div className="notice-info-container">
-              <div className="notice-info-icon">🔐</div>
-              <div className="notice-info-text">Secure Storage</div>
-            </div>
-            
-            <div className="fee-container">
-              <div className="fee-header">
-                <span className="fee-icon">⚠</span>
-                <span className="fee-title">Early Withdrawal</span>
-                <span className="tooltip-icon" title="If you withdraw before the notice period ends, this fee is deducted from your principal.">?</span>
-              </div>
-              <div className="fee-amount">1.5% Fee</div>
-              <div className="fee-note">Deducted from principal</div>
-            </div>
-            
-            <div className="tagline-container">
-              <div className="tagline">💡 Short-term Storage</div>
-            </div>
-            
-            <div className="progress-visual">
-              <div className="progress-fill progress-30-day"></div>
-            </div>
-            <div className="time-label">30 day notice period</div>
-            
-            <button 
-              className="cta-button cta-30-day"
-              onClick={() => {setSelectedNoticePeriod(30); setShowTransferModal(true);}}
-            >
-              <span className="button-icon">🔒</span>
-              30 Day Notice
-            </button>
-          </div>
-
-          {/* Card 2: 60-Day Notice - Pink Theme (Most Popular) */}
-          <div className={`savings-card savings-card-60 most-popular ${selectedNoticePeriod === 60 ? 'selected' : ''}`}>
-            <div className="popular-badge">⭐ Most Popular</div>
-            <div className="most-popular-glow"></div>
-            
-            <div className="period-header">
-              <div className="period-days">60</div>
-              <div className="period-label">DAY NOTICE</div>
-            </div>
-            
-            <div className="notice-info-container">
-              <div className="notice-info-icon">🔐</div>
-              <div className="notice-info-text">Secure Storage</div>
-            </div>
-            
-            <div className="fee-container">
-              <div className="fee-header">
-                <span className="fee-icon">⚠</span>
-                <span className="fee-title">Early Withdrawal</span>
-                <span className="tooltip-icon" title="If you withdraw before the notice period ends, this fee is deducted from your principal.">?</span>
-              </div>
-              <div className="fee-amount">1.0% Fee</div>
-              <div className="fee-note">Deducted from principal</div>
-            </div>
-            
-            <div className="tagline-container">
-              <div className="tagline">⚖️ Balanced Option</div>
-            </div>
-            
-            <div className="progress-visual">
-              <div className="progress-fill progress-60-day"></div>
-            </div>
-            <div className="time-label">60 day notice period</div>
-            
-            <button 
-              className="cta-button cta-60-day"
-              onClick={() => {setSelectedNoticePeriod(60); setShowTransferModal(true);}}
-            >
-              <span className="button-icon">🔒</span>
-              60 Day Notice
-            </button>
-          </div>
-
-          {/* Card 3: 90-Day Notice - Blue Theme (Lowest Fee) */}
-          <div className={`savings-card savings-card-90 ${selectedNoticePeriod === 90 ? 'selected' : ''}`}>
-            <div className="max-returns-badge">💎 Lowest Fee</div>
-            
-            <div className="period-header">
-              <div className="period-days">90</div>
-              <div className="period-label">DAY NOTICE</div>
-            </div>
-            
-            <div className="notice-info-container">
-              <div className="notice-info-icon">🔐</div>
-              <div className="notice-info-text">Secure Storage</div>
-            </div>
-            
-            <div className="fee-container fee-lowest">
-              <div className="fee-header">
-                <span className="fee-icon">⚠</span>
-                <span className="fee-title">Early Withdrawal</span>
-                <span className="tooltip-icon" title="If you withdraw before the notice period ends, this fee is deducted from your principal.">?</span>
-              </div>
-              <div className="fee-amount">0.5% Fee</div>
-              <div className="fee-note">Lowest penalty rate</div>
-            </div>
-            
-            <div className="tagline-container">
-              <div className="tagline">🛡️ Maximum Security</div>
-            </div>
-            
-            <div className="progress-visual">
-              <div className="progress-fill progress-90-day"></div>
-            </div>
-            <div className="time-label">90 day notice period</div>
-            
-            <button 
-              className="cta-button cta-90-day"
-              onClick={() => {setSelectedNoticePeriod(90); setShowTransferModal(true);}}
-            >
-              <span className="button-icon">🔒</span>
-              90 Day Notice
-            </button>
-          </div>
-        </div>
-
-        {/* Calculator Hint */}
-        <div className="calculator-hint">
-          <span className="calculator-icon">📊</span>
-          <span className="calculator-text">Example: Lock $1,000 for 90 days for secure storage. Early withdrawal fee applies.</span>
-        </div>
-
-        {/* Security Footer */}
-        <div className="security-footer">
-          <span className="security-icon">🔒</span>
-          <span className="security-text">Funds are secured and protected. Your principal is never at risk.</span>
-          <button 
-            className="notice-rules-btn"
-            onClick={() => setShowNoticeRulesModal(true)}
-          >
-            View Terms & Conditions
-          </button>
-        </div>
-      </div>
-
-      {/* REFERRAL BANNER */}
-      {showReferralBanner && (
-        <div 
-          className="referral-banner glassmorphic-card purple-accent clickable"
-          onClick={() => navigate('/referrals')}
-          style={{ cursor: 'pointer' }}
+      {/* BALANCE CARDS - Collapsed by default */}
+      <div className="balance-section">
+        <button 
+          className="balance-toggle"
+          onClick={() => setShowBalances(!showBalances)}
         >
-          <div className="referral-content">
-            <span className="referral-icon">🎁</span>
-            <div className="referral-text-section">
-              <span className="referral-title">Invite friends, earn more</span>
-              <span className="referral-subtitle">Get 10% bonus when your referrals use CoinHubX</span>
-            </div>
-            <span className="referral-arrow">→</span>
-          </div>
-          <button 
-            className="dismiss-banner-btn"
-            onClick={(e) => { e.stopPropagation(); setShowReferralBanner(false); }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
-
-      {/* SORTING & FILTERS BAR - Only show when user has savings positions */}
-      {positions.length > 0 && (
-        <div className="controls-toolbar">
-          {/* Sort By Dropdown */}
-          <div className="sort-control">
-            <button 
-              className="sort-btn"
-              onClick={() => setShowSortMenu(!showSortMenu)}
-            >
-              <span className="sort-label">Sort: </span>
-              <span className="sort-value">{sortBy === 'name' ? 'Token Name' : sortBy === 'balance' ? 'Balance' : 'Balance'}</span>
-              <span className="dropdown-arrow">▼</span>
-            </button>
-            
-            {showSortMenu && (
-              <div className="sort-dropdown-menu">
-                <div className="dropdown-item" onClick={() => handleSort('name')}>Token Name</div>
-                <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance (High to Low)</div>
-                <div className="dropdown-item" onClick={() => handleSort('earned')}>Total Earned</div>
-                <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance</div>
-              </div>
-            )}
-          </div>
-          
-          {/* Filter Toggles */}
-          <div className="filter-toggles">
-            <button 
-              className={`filter-toggle-btn ${filterActive ? 'active' : ''}`}
-              onClick={() => setFilterActive(!filterActive)}
-            >
-              Active {filterActive && '✓'}
-            </button>
-            <button 
-              className={`filter-toggle-btn ${filterFlexible ? 'active' : ''}`}
-              onClick={() => setFilterFlexible(!filterFlexible)}
-            >
-              30 Day {filterFlexible && '✓'}
-            </button>
-            <button 
-              className={`filter-toggle-btn ${filterStaked ? 'active' : ''}`}
-              onClick={() => setFilterStaked(!filterStaked)}
-            >
-              60/90 Day {filterStaked && '✓'}
-            </button>
-          </div>
-          
-          <div className="visible-count">{filteredPositions.length}/{positions.length} assets shown</div>
-        </div>
-      )}
-
-      {/* YOUR SAVINGS - PORTFOLIO LIST */}
-      <div className="portfolio-list-section">
-        <div className="section-header-with-description">
-          <h2 className="section-heading">Your Savings</h2>
-          <p className="section-description">Monitor your locked funds. Each row shows amount, lock period, and time remaining.</p>
-        </div>
+          <span>View Balances</span>
+          <span className={`toggle-arrow ${showBalances ? 'open' : ''}`}>▼</span>
+        </button>
         
-        {loading ? (
-          <div className="loading-state">
-            <div className="skeleton-card"></div>
-            <div className="skeleton-card"></div>
-            <div className="skeleton-card"></div>
-          </div>
-        ) : filteredPositions.length === 0 ? (
-          <div className="empty-state-card glassmorphic-card">
-            <div className="empty-state-icon">🏦</div>
-            <h3 className="empty-state-title">Start Earning with Notice Accounts</h3>
-            <p className="empty-state-description">Lock your crypto for 30, 60, or 90 days for secure storage.</p>
-            <div className="empty-state-steps">
-              <div className="step-item">
-                <span className="step-number">1</span>
-                <span className="step-text">Choose lock period above</span>
+        {showBalances && (
+          <div className="balance-cards">
+            <div className="balance-card">
+              <div className="balance-label">
+                Total Balance
+                <span className="info-tip" title="Total value of all your notice account deposits">
+                  <InfoIcon />
+                </span>
               </div>
-              <div className="step-item">
-                <span className="step-number">2</span>
-                <span className="step-text">Transfer from wallet</span>
-              </div>
-              <div className="step-item">
-                <span className="step-number">3</span>
-                <span className="step-text">Funds securely locked</span>
-              </div>
-            </div>
-            <button className="empty-state-cta" onClick={() => setShowTransferModal(true)}>
-              Add to Savings
-            </button>
-          </div>
-        ) : (
-          <div className="savings-table-container">
-            {/* Table Header Row */}
-            <div className="savings-table-header">
-              <div className="header-cell asset-col">Asset</div>
-              <div className="header-cell amount-col">Locked Amount</div>
-              <div className="header-cell apy-col">Status</div>
-              <div className="header-cell date-col">End Date</div>
-              <div className="header-cell fee-col">Early Withdrawal Fee</div>
+              <div className="balance-value">${totalBalance.toFixed(2)}</div>
             </div>
             
-            {/* Data Rows */}
-            <div className="token-cards-list">
-            {filteredPositions.map((position, index) => (
-              <div 
-                key={index} 
-                className={`token-card glassmorphic-card ${expandedCard === index ? 'expanded' : ''}`}
-              >
-                {/* COLLAPSED VIEW - Card Header */}
-                <div className="token-card-header">
-                  <div className="token-identity">
-                    <div className="token-icon-circle">
-                      <img 
-                        src={getCoinLogo(position.symbol)} 
-                        alt={position.symbol}
-                        onError={(e) => {
-                          if (!e.target.dataset.triedSvg) {
-                            e.target.dataset.triedSvg = 'true';
-                            e.target.src = `/crypto-icons/${position.symbol.toLowerCase()}.svg`;
-                          } else {
-                            e.target.style.display = 'none';
-                            const letter = position.symbol?.substring(0, 1) || '?';
-                            e.target.parentElement.innerHTML = `<div class="fallback-icon">${letter}</div>`;
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className="token-name-label">
-                      {position.name || position.symbol} ({position.symbol})
-                    </div>
-                  </div>
-                  
-                  <div className="token-balance-info">
-                    <div className="balance-primary">{position.balance || '0.000'} {position.symbol}</div>
-                    <div className="balance-fiat">≈ ${position.balance_usd || '0.00'}</div>
-                  </div>
-                  
-                  <div className="token-apy-section">
-                    <span className="apy-label">Status</span>
-                    <span className="apy-value">{position.apy || 0}%</span>
-                  </div>
-                  
-                  <div className="token-pnl-section">
-                    <span className="pnl-label">P/L:</span>
-                    <span className={`pnl-value ${position.pnl_percentage >= 0 ? 'positive' : 'negative'}`}>
-                      {position.pnl_percentage >= 0 ? '↑ +' : '↓ '}{position.pnl_percentage || 0}%
-                    </span>
-                  </div>
-                  
-                  <div className="token-24h-section">
-                    <span className="h24-label">24h:</span>
-                    <span className={`h24-value ${position.price_change_24h >= 0 ? 'positive' : 'negative'}`}>
-                      {position.price_change_24h >= 0 ? '+' : ''}{position.price_change_24h || 0}%
-                    </span>
-                  </div>
-                  
-                  <div className="token-interest-earned">
-                    <span className="earned-label">Interest earned:</span>
-                    <span className="earned-value">{position.interest_earned || '0.00'} {position.symbol}</span>
-                  </div>
-                  
-                  <div className="token-est-monthly">
-                    <span className="monthly-label">Est. Monthly:</span>
-                    <span className="monthly-value">~${position.estimated_monthly || '0.00'}</span>
-                  </div>
-                  
-                  <div className="token-sparkline">
-                    <svg width="80" height="30" viewBox="0 0 80 30">
-                      <path
-                        d="M 0 20 L 20 18 L 40 15 L 60 12 L 80 10"
-                        stroke={position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D6D'}
-                        strokeWidth="2"
-                        fill="none"
-                      />
-                    </svg>
-                  </div>
-                  
-                  <div className="token-status-badge">
-                    <span className={`status-badge ${position.type === 'flexible' ? 'available' : 'locked'}`}>
-                      {position.type === 'flexible' ? 'Available' : 'Locked'}
-                    </span>
-                  </div>
-                  
-                  <div className="token-toggles-section">
-                    {/* Notice Period Display */}
-                    <div className="notice-period-display">
-                      <span className="notice-label">Notice Period:</span>
-                      <span className="notice-value">{position.lock_period || 30} Days</span>
-                    </div>
-                    
-                    {position.type !== 'flexible' && (
-                      <div className="countdown-timer">
-                        <span className="countdown-label">Days Remaining:</span>
-                        <span className="countdown-value">23 Days</span>
-                      </div>
-                    )}
-                    
-                    {/* Auto-Compound Flip Switch */}
-                    <div className="auto-compound-switch">
-                      <label className="switch-label">
-                        <span className="switch-text">Auto-Compound</span>
-                        <input 
-                          type="checkbox" 
-                          className="switch-input"
-                          checked={position.auto_compound || false}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            handleToggleAutoCompound(index);
-                          }}
-                        />
-                        <span className="switch-slider"></span>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <button 
-                    className="expand-collapse-btn"
-                    onClick={() => toggleCard(index)}
-                  >
-                    {expandedCard === index ? '▲' : '▼'}
-                  </button>
-                </div>
-
-                {/* EXPANDED VIEW */}
-                {expandedCard === index && (
-                  <div className="token-card-expanded">
-                    {/* Price Information */}
-                    <div className="price-info-section">
-                      <div className="price-info-item">
-                        <span className="price-label">Current Price</span>
-                        <span className="price-value">${position.current_price || 'Loading...'}</span>
-                      </div>
-                      <div className="price-info-item">
-                        <span className="price-label">P/L (Unrealised)</span>
-                        <span className={`price-value ${position.pnl_percentage >= 0 ? 'positive' : 'negative'}`}>
-                          {position.pnl_percentage >= 0 ? '↑' : '↓'} {position.pnl_percentage >= 0 ? '+' : ''}{position.pnl_percentage || '0.00'}%
-                        </span>
-                      </div>
-                      <div className="price-info-item">
-                        <span className="price-label">P/L Value</span>
-                        <span className={`price-value ${position.pnl_usd >= 0 ? 'positive' : 'negative'}`}>
-                          {position.pnl_usd >= 0 ? '+' : ''}${position.pnl_usd || '0.00'}
-                        </span>
-                      </div>
-                      <div className="price-info-item">
-                        <span className="price-label">Entry Price</span>
-                        <span className="price-value secondary">${position.entry_price || 'N/A'}</span>
-                      </div>
-                    </div>
-                    
-                    {/* 30d/90d Earnings Graph */}
-                    <div className="earnings-graph-section">
-                      <div className="graph-period-toggle">
-                        <button 
-                          className={`period-btn ${(graphPeriod[index] || '30d') === '30d' ? 'active' : ''}`}
-                          onClick={() => setGraphPeriod({...graphPeriod, [index]: '30d'})}
-                        >
-                          30D
-                        </button>
-                        <button 
-                          className={`period-btn ${(graphPeriod[index] || '30d') === '90d' ? 'active' : ''}`}
-                          onClick={() => setGraphPeriod({...graphPeriod, [index]: '90d'})}
-                        >
-                          90D
-                        </button>
-                      </div>
-                      
-                      <div className="graph-container">
-                        <div className="graph-label">Price Movement (30D)</div>
-                        <svg className="earnings-chart" viewBox="0 0 600 100" preserveAspectRatio="none">
-                          <defs>
-                            <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" style={{stopColor: position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D4F', stopOpacity: 0.3}} />
-                              <stop offset="100%" style={{stopColor: position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D4F', stopOpacity: 0}} />
-                            </linearGradient>
-                          </defs>
-                          <path 
-                            className="earnings-line"
-                            d="M 0 80 L 100 70 L 200 50 L 300 40 L 400 45 L 500 30 L 600 20" 
-                            stroke={position.pnl_percentage >= 0 ? '#00FF85' : '#FF4D4F'}
-                            strokeWidth="2" 
-                            fill="none"
-                          />
-                          <path 
-                            d="M 0 100 L 0 80 L 100 70 L 200 50 L 300 40 L 400 45 L 500 30 L 600 20 L 600 100 Z" 
-                            fill={`url(#grad-${index})`}
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Early Withdrawal Warning */}
-                    {position.type !== 'flexible' && (
-                      <div className="early-withdrawal-warning">
-                        <span className="warning-icon">⚠️</span>
-                        <span className="warning-text">
-                          Early withdrawal fee: {position.lock_period === 30 ? '1.5%' : position.lock_period === 60 ? '1.0%' : '0.5%'} will be deducted from principal
-                        </span>
-                      </div>
-                    )}
-                    
-                    {/* Action Buttons */}
-                    <div className="action-buttons-row">
-                      <button 
-                        className="action-btn add-btn"
-                        onClick={() => {
-                          setSelectedPosition(position);
-                          setShowAddModal(true);
-                        }}
-                      >
-                        Add to Savings
-                      </button>
-                      <button 
-                        className="action-btn withdraw-btn"
-                        onClick={() => {
-                          setSelectedPosition(position);
-                          setShowWithdrawModal(true);
-                        }}
-                      >
-                        {position.type === 'flexible' ? 'Withdraw' : 'Early Withdrawal'}
-                      </button>
-                      <button 
-                        className="action-btn details-btn"
-                        onClick={() => {
-                          setSelectedPosition(position);
-                          setShowHistoryModal(true);
-                        }}
-                      >
-                        View Details
-                      </button>
-                    </div>
-
-                    {/* Lock-up Period Selectors (only show if staked) */}
-                    {position.type === 'staked' && (
-                      <div className="lockup-period-selectors">
-                        <button 
-                          className={`lockup-pill ${position.lock_period === 7 ? 'active' : ''}`}
-                          onClick={() => handleLockPeriodChange(index, 7)}
-                        >
-                          7d
-                        </button>
-                        <button 
-                          className={`lockup-pill ${position.lock_period === 30 ? 'active' : ''}`}
-                          onClick={() => handleLockPeriodChange(index, 30)}
-                        >
-                          30d
-                        </button>
-                        <button 
-                          className={`lockup-pill ${position.lock_period === 90 ? 'active' : ''}`}
-                          onClick={() => handleLockPeriodChange(index, 90)}
-                        >
-                          90d
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Interest History Link/Button */}
-                    <button 
-                      className="interest-history-btn"
-                      onClick={() => {
-                        setSelectedPosition(position);
-                        setShowHistoryModal(true);
-                      }}
-                    >
-                      📑 Interest History
-                    </button>
-                  </div>
-                )}
+            <div className="balance-card">
+              <div className="balance-label">
+                Locked Balance
+                <span className="info-tip" title="Funds currently in notice period">
+                  <InfoIcon />
+                </span>
               </div>
-            ))}
+              <div className="balance-value">${lockedBalance.toFixed(2)}</div>
+            </div>
+            
+            <div className="balance-card">
+              <div className="balance-label">
+                Available to Withdraw
+                <span className="info-tip" title="Funds ready to withdraw - notice period ended">
+                  <InfoIcon />
+                </span>
+              </div>
+              <div className="balance-value">${availableBalance.toFixed(2)}</div>
             </div>
           </div>
         )}
       </div>
 
-      {/* MOBILE FOOTER - Clean SVG Icons */}
+      {/* YOUR POSITIONS */}
+      {positions.length > 0 && (
+        <div className="positions-section">
+          <h2 className="section-title">Your Notice Accounts</h2>
+          {positions.map((pos, idx) => (
+            <div key={idx} className="position-card">
+              <div className="position-header">
+                <img 
+                  src={getCoinLogo(pos.symbol)} 
+                  alt={pos.symbol}
+                  className="position-icon"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+                <div className="position-info">
+                  <span className="position-symbol">{pos.symbol}</span>
+                  <span className="position-amount">{pos.balance} {pos.symbol}</span>
+                </div>
+              </div>
+              <div className="position-details">
+                <div className="detail-row">
+                  <span>Notice Period</span>
+                  <span>{pos.lock_period || 30} days</span>
+                </div>
+                <div className="detail-row">
+                  <span>Status</span>
+                  <span className={`status-badge ${pos.status === 'locked' ? 'locked' : 'available'}`}>
+                    {pos.status === 'locked' ? 'Locked' : 'Available'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Spacer for bottom button */}
+      <div className="bottom-spacer"></div>
+
+      {/* STICKY CTA BUTTON */}
+      <div className="sticky-cta">
+        <button className="cta-button" onClick={openModal}>
+          Add to Savings
+        </button>
+      </div>
+
+      {/* MOBILE BOTTOM NAV */}
       <MobileBottomNav />
 
-      {/* MODALS */}
-      {showTransferModal && (
-        <div className="modal-overlay" onClick={() => setShowTransferModal(false)}>
-          <div className="modal-content glassmorphic-card modal-large" onClick={(e) => e.stopPropagation()}>
-            <h3>Add to Savings</h3>
-            <button className="modal-close-btn" onClick={() => {setShowTransferModal(false); setDepositStep(1);}}>✕</button>
-            
-            <div className="deposit-flow-steps">
-              <div className={`step-indicator ${depositStep >= 1 ? 'active' : ''} ${depositStep > 1 ? 'completed' : ''}`}>1</div>
-              <div className="step-line"></div>
-              <div className={`step-indicator ${depositStep >= 2 ? 'active' : ''} ${depositStep > 2 ? 'completed' : ''}`}>2</div>
-              <div className="step-line"></div>
-              <div className={`step-indicator ${depositStep >= 3 ? 'active' : ''} ${depositStep > 3 ? 'completed' : ''}`}>3</div>
-              <div className="step-line"></div>
-              <div className={`step-indicator ${depositStep >= 4 ? 'active' : ''} ${depositStep > 4 ? 'completed' : ''}`}>4</div>
-              <div className="step-line"></div>
-              <div className={`step-indicator ${depositStep >= 5 ? 'active' : ''}`}>5</div>
+      {/* MODAL - Step Flow */}
+      {showModal && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="modal-header">
+              <h2>Add to Savings</h2>
+              <button className="modal-close" onClick={closeModal}>
+                <CloseIcon />
+              </button>
             </div>
-            
-            {depositStep === 1 && (
-              <div className="deposit-step">
-                <h4>Step 1: Select Wallet Source</h4>
-                <p className="step-description">Select which wallet to transfer funds from</p>
-                <div className="wallet-source-options">
-                  <div 
-                    className="wallet-source-card selected"
-                    onClick={() => {}}
-                  >
-                    <span className="wallet-icon">💰</span>
+
+            {/* Step Indicator */}
+            <div className="step-indicator">
+              {[1, 2, 3, 4, 5].map((step) => (
+                <div 
+                  key={step} 
+                  className={`step-dot ${modalStep >= step ? 'active' : ''} ${modalStep === step ? 'current' : ''}`}
+                />
+              ))}
+            </div>
+
+            {/* Step Content */}
+            <div className="modal-content">
+              {/* STEP 1: Select Wallet */}
+              {modalStep === 1 && (
+                <div className="step-content">
+                  <h3>Select Wallet</h3>
+                  <div className="wallet-option selected">
+                    <WalletIcon />
                     <div className="wallet-info">
                       <span className="wallet-name">Main Wallet</span>
-                      <span className="wallet-hint">Your primary wallet balance</span>
+                      <span className="wallet-desc">Your primary wallet</span>
                     </div>
-                    <span className="check-mark">✓</span>
+                    <CheckIcon />
                   </div>
+                  <button className="next-btn" onClick={nextStep}>Next</button>
                 </div>
-                <div className="step-actions">
-                  <button 
-                    className="modal-secondary-btn"
-                    onClick={() => {
-                      setShowTransferModal(false);
-                      setDepositStep(1);
-                      navigate('/wallet');
-                    }}
-                  >
-                    Go to Main Wallet
-                  </button>
-                  <button className="modal-cta-btn" onClick={() => setDepositStep(2)}>Next</button>
-                </div>
-              </div>
-            )}
-            
-            {depositStep === 2 && (
-              <div className="deposit-step">
-                <h4>Step 2: Select Coin</h4>
-                <p className="step-subtitle">{availableCoins.length} cryptocurrencies available</p>
-                {loadingCoins ? (
-                  <div className="loading-coins">Loading coins...</div>
-                ) : (
-                  <div className="coin-grid">
-                    {availableCoins.map(coin => (
-                      <div 
-                        key={coin.symbol}
-                        className={`coin-option-card ${selectedCoin === coin.symbol ? 'selected' : ''}`}
-                        onClick={() => setSelectedCoin(coin.symbol)}
-                      >
-                        <div className="coin-option-logo-wrapper">
+              )}
+
+              {/* STEP 2: Enter Amount */}
+              {modalStep === 2 && (
+                <div className="step-content">
+                  <h3>Select Coin</h3>
+                  {loadingCoins ? (
+                    <div className="loading-text">Loading coins...</div>
+                  ) : (
+                    <div className="coin-list">
+                      {availableCoins.slice(0, 20).map((coin) => (
+                        <div 
+                          key={coin.symbol}
+                          className={`coin-option ${selectedCoin === coin.symbol ? 'selected' : ''}`}
+                          onClick={() => setSelectedCoin(coin.symbol)}
+                        >
                           <img 
                             src={getCoinLogo(coin.symbol)} 
-                            alt={coin.symbol} 
-                            className="coin-option-logo"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
-                            }}
+                            alt={coin.symbol}
+                            className="coin-icon"
+                            onError={(e) => { e.target.style.display = 'none'; }}
                           />
-                          <div className="coin-emoji-fallback" style={{display: 'none'}}>
-                            {coin.emoji}
-                          </div>
+                          <span className="coin-symbol">{coin.symbol}</span>
+                          {selectedCoin === coin.symbol && <CheckIcon />}
                         </div>
-                        <div className="coin-option-info">
-                          <span className="coin-option-symbol">{coin.symbol}</span>
-                          <span className="coin-option-name">{coin.name}</span>
-                        </div>
-                      </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="step-buttons">
+                    <button className="back-btn" onClick={prevStep}>Back</button>
+                    <button className="next-btn" onClick={nextStep} disabled={!selectedCoin}>Next</button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Amount */}
+              {modalStep === 3 && (
+                <div className="step-content">
+                  <h3>Enter Amount</h3>
+                  <div className="amount-input-container">
+                    <input
+                      type="number"
+                      className="amount-input"
+                      placeholder="0.00"
+                      value={depositAmount}
+                      onChange={(e) => setDepositAmount(e.target.value)}
+                    />
+                    <span className="amount-currency">{selectedCoin}</span>
+                  </div>
+                  <div className="step-buttons">
+                    <button className="back-btn" onClick={prevStep}>Back</button>
+                    <button className="next-btn" onClick={nextStep} disabled={!depositAmount || parseFloat(depositAmount) <= 0}>Next</button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: Notice Period */}
+              {modalStep === 4 && (
+                <div className="step-content">
+                  <h3>Select Notice Period</h3>
+                  <div className="period-options">
+                    {[30, 60, 90].map((days) => (
+                      <button
+                        key={days}
+                        className={`period-btn ${noticePeriod === days ? 'selected' : ''}`}
+                        onClick={() => setNoticePeriod(days)}
+                      >
+                        {days} Days
+                      </button>
                     ))}
                   </div>
-                )}
-                <button className="modal-cta-btn" onClick={() => setDepositStep(3)} disabled={!selectedCoin}>Next</button>
-              </div>
-            )}
-            
-            {depositStep === 3 && (
-              <div className="deposit-step">
-                <h4>Step 3: Enter Amount</h4>
-                <input 
-                  type="number" 
-                  className="deposit-input" 
-                  placeholder="0.00"
-                  value={depositAmount}
-                  onChange={(e) => setDepositAmount(e.target.value)}
-                />
-                <button className="modal-secondary-btn" onClick={() => setDepositAmount('1.0')}>Max</button>
-                <button className="modal-cta-btn" onClick={() => setDepositStep(4)} disabled={!depositAmount}>Next</button>
-              </div>
-            )}
-            
-            {depositStep === 4 && (
-              <div className="deposit-step">
-                <h4>Step 4: Select Notice Period</h4>
-                <div className="notice-selector-mini">
-                  <button className={`notice-mini-btn ${selectedNoticePeriod === 30 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(30)}>30 Days</button>
-                  <button className={`notice-mini-btn ${selectedNoticePeriod === 60 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(60)}>60 Days</button>
-                  <button className={`notice-mini-btn ${selectedNoticePeriod === 90 ? 'active' : ''}`} onClick={() => setSelectedNoticePeriod(90)}>90 Days</button>
+                  <div className="period-warning">
+                    <InfoIcon />
+                    <span>Funds cannot be withdrawn before notice period ends</span>
+                  </div>
+                  <div className="step-buttons">
+                    <button className="back-btn" onClick={prevStep}>Back</button>
+                    <button className="next-btn" onClick={nextStep}>Next</button>
+                  </div>
                 </div>
-                <button className="modal-cta-btn" onClick={() => setDepositStep(5)}>Next</button>
-              </div>
-            )}
-            
-            {depositStep === 5 && (
-              <div className="deposit-step">
-                <h4>Step 5: Confirm Summary</h4>
-                <div className="summary-box">
-                  <div className="summary-row"><span>Amount:</span><span>{depositAmount} {selectedCoin}</span></div>
-                  <div className="summary-row"><span>Notice Period:</span><span>{selectedNoticePeriod} days</span></div>
-                  <div className="summary-row"><span>Lock Period:</span><span className="success-text">{selectedNoticePeriod} Days</span></div>
-                  <div className="summary-row"><span>Unlock Date:</span><span>{new Date(Date.now() + selectedNoticePeriod * 24 * 60 * 60 * 1000).toLocaleDateString()}</span></div>
-                  <div className="summary-row"><span>Early Withdrawal Fee:</span><span className="danger-text">{selectedNoticePeriod === 30 ? '1.5%' : selectedNoticePeriod === 60 ? '1.0%' : '0.5%'} of principal</span></div>
+              )}
+
+              {/* STEP 5: Review & Confirm */}
+              {modalStep === 5 && (
+                <div className="step-content">
+                  <h3>Review</h3>
+                  <div className="review-box">
+                    <div className="review-row">
+                      <span>Amount</span>
+                      <span>{depositAmount} {selectedCoin}</span>
+                    </div>
+                    <div className="review-row">
+                      <span>Notice Period</span>
+                      <span>{noticePeriod} days</span>
+                    </div>
+                    <div className="review-row">
+                      <span>Lock Date</span>
+                      <span>{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    </div>
+                    <div className="review-row">
+                      <span>Unlock Date</span>
+                      <span>{getUnlockDate()}</span>
+                    </div>
+                    <div className="review-row warning">
+                      <span>Early Withdrawal Fee</span>
+                      <span>{getEarlyWithdrawalFee()}</span>
+                    </div>
+                  </div>
+                  <div className="step-buttons">
+                    <button className="back-btn" onClick={prevStep}>Back</button>
+                    <button 
+                      className="confirm-btn" 
+                      onClick={handleConfirm}
+                      disabled={depositLoading}
+                    >
+                      {depositLoading ? 'Processing...' : 'Confirm'}
+                    </button>
+                  </div>
                 </div>
-                <button 
-                  className="modal-cta-btn" 
-                  disabled={depositLoading}
-                  onClick={async () => {
-                    try {
-                      setDepositLoading(true);
-                      const userId = getUserId();
-                      if (!userId) { 
-                        toast.error('Please log in first'); 
-                        setDepositLoading(false);
-                        return; 
-                      }
-                      
-                      // Call initiate endpoint - returns NowPayments URL
-                      const response = await axios.post(`${API}/api/savings/initiate`, {
-                        user_id: userId,
-                        asset: selectedCoin,
-                        amount: parseFloat(depositAmount),
-                        lock_period_days: selectedNoticePeriod
-                      });
-                      
-                      if (response.data.success && response.data.payment_url) {
-                        toast.success('Redirecting to payment...');
-                        // Redirect to NowPayments hosted checkout
-                        window.location.href = response.data.payment_url;
-                      } else {
-                        toast.error('Failed to create payment');
-                        setDepositLoading(false);
-                      }
-                    } catch (error) {
-                      console.error('Deposit error:', error);
-                      toast.error(error.response?.data?.detail || 'Deposit failed');
-                      setDepositLoading(false);
-                    }
-                  }}
-                >
-                  {depositLoading ? 'Processing...' : 'Proceed to Payment'}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {showWithdrawModal && (
-        <div className="modal-overlay" onClick={() => setShowWithdrawModal(false)}>
-          <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
-            <h3>Withdraw from Savings</h3>
-            <button className="modal-close-btn" onClick={() => setShowWithdrawModal(false)}>✕</button>
-            
-            {selectedPosition && selectedPosition.type !== 'flexible' && (
-              <div className="modal-warning-box">
-                <span className="modal-warning-icon">⚠️</span>
-                <div className="modal-warning-content">
-                  <p className="modal-warning-title">Early Withdrawal Penalty</p>
-                  <p className="modal-warning-text">
-                    Withdrawing before your notice period ends will incur a {selectedPosition?.lock_period === 30 ? '1.5%' : selectedPosition?.lock_period === 60 ? '1.0%' : '0.5%'} fee deducted from your principal.
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            <div className="withdraw-form">
-              <label>Amount to withdraw</label>
-              <input 
-                type="number" 
-                className="deposit-input" 
-                placeholder={`Max: ${selectedPosition?.balance || 0} ${selectedPosition?.symbol || ''}`}
-                max={selectedPosition?.balance || 0}
-              />
-              <button className="modal-secondary-btn" onClick={(e) => {
-                const input = e.target.previousElementSibling;
-                input.value = selectedPosition?.balance || 0;
-              }}>Max</button>
-              
-              <button className="modal-cta-btn" onClick={async (e) => {
-                try {
-                  const amount = parseFloat(e.target.parentElement.querySelector('input').value);
-                  if (!amount || amount <= 0) {
-                    alert('Please enter a valid amount');
-                    return;
-                  }
-                  
-                  const userId = getUserId();
-                  if (!userId) { toast.error('Please log in first'); return; }
-                  const response = await axios.post(`${API}/api/savings/withdraw`, {
-                    user_id: userId,
-                    coin: selectedPosition.symbol,
-                    amount: amount
-                  });
-                  
-                  if (response.data.success) {
-                    const withdrawal = response.data.withdrawal;
-                    if (withdrawal.penalty_applied > 0) {
-                      alert(`Withdrawal completed. Penalty applied: ${withdrawal.penalty_applied.toFixed(6)} ${selectedPosition.symbol} (${withdrawal.penalty_percentage.toFixed(1)}%)`);
-                    } else {
-                      alert('Withdrawal completed successfully!');
-                    }
-                    setShowWithdrawModal(false);
-                    loadSavingsData();
-                  }
-                } catch (error) {
-                  alert('Withdrawal failed: ' + (error.response?.data?.detail || error.message));
-                }
-              }}>Confirm Withdrawal</button>
+              )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {showAddModal && (
-        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-          <div className="modal-content glassmorphic-card" onClick={(e) => e.stopPropagation()}>
-            <h3>Add {selectedPosition?.symbol}</h3>
-            <button className="modal-close-btn" onClick={() => setShowAddModal(false)}>✕</button>
-            <p>Add more to your notice account deposit to increase your earnings</p>
-          </div>
-        </div>
-      )}
-
-      {showHistoryModal && (
-        <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
-          <div className="modal-content glassmorphic-card modal-large" onClick={(e) => e.stopPropagation()}>
-            <h3>Interest History - {selectedPosition?.symbol}</h3>
-            <button className="modal-close-btn" onClick={() => setShowHistoryModal(false)}>✕</button>
-            <div className="history-list">
-              <p>No interest history yet</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* NOTICE RULES MODAL */}
-      {showNoticeRulesModal && (
-        <div className="modal-overlay" onClick={() => setShowNoticeRulesModal(false)}>
-          <div className="modal-content glassmorphic-card modal-large" onClick={(e) => e.stopPropagation()}>
-            <h3>Notice Rules & Early Withdrawal Penalties</h3>
-            <button className="modal-close-btn" onClick={() => setShowNoticeRulesModal(false)}>✕</button>
-            
-            <div className="notice-rules-content" style={{ padding: '20px 0', lineHeight: '1.8' }}>
-              <h4 style={{ color: 'var(--accent)', marginTop: '0' }}>How Notice Accounts Work</h4>
-              <p>When you deposit into a savings vault, you choose a <strong>notice period</strong> (30, 60, or 90 days). Your funds are locked for this duration for secure storage.</p>
-              
-              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Interest Rates</h4>
-              <ul>
-                <li><strong>30-day lock:</strong> 1.5% early withdrawal fee</li>
-                <li><strong>60-day lock:</strong> 1.0% early withdrawal fee</li>
-                <li><strong>90-day lock:</strong> 0.5% early withdrawal fee</li>
-              </ul>
-              
-              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Early Withdrawal Penalties (OPTION A)</h4>
-              <p style={{ color: '#ff6b6b', fontWeight: 600 }}>If you withdraw before the lock period ends:</p>
-              <ul>
-                <li><strong>30-day lock:</strong> 2% penalty on principal + forfeit 100% interest</li>
-                <li><strong>60-day lock:</strong> 1.0% fee deducted from principal</li>
-                <li><strong>90-day lock:</strong> 5% penalty on principal + forfeit 100% interest</li>
-              </ul>
-              
-              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Important Notes</h4>
-              <ul>
-                <li>✅ Your principal is <strong>NEVER lost</strong> (you only pay a small percentage)</li>
-                <li>✅ Penalty is taken from the withdrawal amount, not your total balance</li>
-                <li>✅ After the lock period ends, withdraw anytime without penalty</li>
-                <li>✅ Interest is calculated daily and paid at maturity</li>
-              </ul>
-              
-              <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Example</h4>
-              <div style={{ background: 'rgba(19, 215, 255, 0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                <p><strong>Scenario:</strong> You deposit 1 BTC in a 30-day lock</p>
-                <p><strong>After 15 days:</strong> You earned 0.05 BTC interest</p>
-                <p><strong>Early withdrawal:</strong></p>
-                <ul style={{ marginLeft: '20px' }}>
-                  <li>Penalty: 1 BTC × 2% = 0.02 BTC</li>
-                  <li>Forfeit interest: 0.05 BTC</li>
-                  <li><strong>You receive:</strong> 0.98 BTC</li>
-                  <li><strong>Platform keeps:</strong> 0.07 BTC (penalty + interest)</li>
-                </ul>
-              </div>
-            </div>
-            
-            <button 
-              className="modal-cta-btn" 
-              onClick={() => setShowNoticeRulesModal(false)}
-              style={{ marginTop: '24px' }}
-            >
-              Got it
-            </button>
           </div>
         </div>
       )}
