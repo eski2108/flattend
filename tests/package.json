@@ -1,0 +1,14 @@
+{
+  "name": "coinhubx-tests",
+  "version": "1.0.0",
+  "description": "Automated tests for CoinHubX",
+  "scripts": {
+    "test": "npx playwright test --config=playwright.config.js",
+    "test:mobile": "npx playwright test --config=playwright.config.js --project='Mobile Chrome'",
+    "test:desktop": "npx playwright test --config=playwright.config.js --project='Desktop Chrome'",
+    "test:report": "npx playwright show-report ../test-reports"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
