@@ -766,6 +766,9 @@ export default function Settings() {
         />,
         document.body
       )}
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 }
