@@ -723,7 +723,7 @@ const SavingsVault = () => {
           <div className="empty-state-card glassmorphic-card">
             <div className="empty-state-icon">🏦</div>
             <h3 className="empty-state-title">Start Earning with Notice Accounts</h3>
-            <p className="empty-state-description">Lock your crypto for 30, 60, or 90 days to earn guaranteed interest.</p>
+            <p className="empty-state-description">Lock your crypto for 30, 60, or 90 days for secure storage.</p>
             <div className="empty-state-steps">
               <div className="step-item">
                 <span className="step-number">1</span>
