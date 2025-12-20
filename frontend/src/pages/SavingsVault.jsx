@@ -1172,26 +1172,44 @@ const SavingsVault = () => {
                   <div className="summary-row"><span>Unlock Date:</span><span>{new Date(Date.now() + selectedNoticePeriod * 24 * 60 * 60 * 1000).toLocaleDateString()}</span></div>
                   <div className="summary-row"><span>Early Withdrawal Fee:</span><span className="danger-text">{selectedNoticePeriod === 30 ? '1.5%' : selectedNoticePeriod === 60 ? '1.0%' : '0.5%'} of principal</span></div>
                 </div>
-                <button className="modal-cta-btn" onClick={async () => {
-                  try {
-                    const userId = getUserId();
-                    if (!userId) { toast.error('Please log in first'); return; }
-                    const response = await axios.post(`${API}/api/savings/deposit`, {
-                      user_id: userId,
-                      coin: selectedCoin,
-                      amount: parseFloat(depositAmount),
-                      notice_period: selectedNoticePeriod
-                    });
-                    if (response.data.success) {
-                      alert('Deposit created successfully!');
-                      setShowTransferModal(false);
-                      setDepositStep(1);
-                      loadSavingsData();
+                <button 
+                  className="modal-cta-btn" 
+                  disabled={depositLoading}
+                  onClick={async () => {
+                    try {
+                      setDepositLoading(true);
+                      const userId = getUserId();
+                      if (!userId) { 
+                        toast.error('Please log in first'); 
+                        setDepositLoading(false);
+                        return; 
+                      }
+                      
+                      // Call initiate endpoint - returns NowPayments URL
+                      const response = await axios.post(`${API}/api/savings/initiate`, {
+                        user_id: userId,
+                        asset: selectedCoin,
+                        amount: parseFloat(depositAmount),
+                        lock_period_days: selectedNoticePeriod
+                      });
+                      
+                      if (response.data.success && response.data.payment_url) {
+                        toast.success('Redirecting to payment...');
+                        // Redirect to NowPayments hosted checkout
+                        window.location.href = response.data.payment_url;
+                      } else {
+                        toast.error('Failed to create payment');
+                        setDepositLoading(false);
+                      }
+                    } catch (error) {
+                      console.error('Deposit error:', error);
+                      toast.error(error.response?.data?.detail || 'Deposit failed');
+                      setDepositLoading(false);
                     }
-                  } catch (error) {
-                    alert('Deposit failed: ' + error.message);
-                  }
-                }}>Confirm Deposit</button>
+                  }}
+                >
+                  {depositLoading ? 'Processing...' : 'Proceed to Payment'}
+                </button>
               </div>
             )}
           </div>
