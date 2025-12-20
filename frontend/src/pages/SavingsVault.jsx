@@ -735,7 +735,7 @@ const SavingsVault = () => {
               </div>
               <div className="step-item">
                 <span className="step-number">3</span>
-                <span className="step-text">Start earning interest</span>
+                <span className="step-text">Funds securely locked</span>
               </div>
             </div>
             <button className="empty-state-cta" onClick={() => setShowTransferModal(true)}>
