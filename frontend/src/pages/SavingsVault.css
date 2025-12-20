@@ -2943,3 +2943,14 @@
     border-color: #13D7FF !important;
   }
 }
+
+/* SVG Wallet Icon in Modal */
+.wallet-svg-icon {
+  flex-shrink: 0;
+}
+
+.wallet-source-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
