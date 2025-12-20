@@ -31631,6 +31631,157 @@ async def republish_listing(listing_id: str, request: dict):
 # 🔒 END LOCKED SECTION
 # =============================================================================
 
+# =============================================================================
+# ==================== TELEGRAM USER BOT ENDPOINTS ====================
+# =============================================================================
+
+@api_router.get("/telegram/link-url")
+async def get_telegram_link_url(user_id: str):
+    """
+    Get the Telegram linking URL for a user.
+    User clicks this to open Telegram and link their account.
+    """
+    try:
+        from telegram_linking import get_telegram_link_url
+        
+        # Verify user exists
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Check if already linked
+        if user.get("telegram_chat_id"):
+            return {
+                "success": True,
+                "already_linked": True,
+                "telegram_username": user.get("telegram_username"),
+                "message": "Telegram already linked"
+            }
+        
+        link_url = get_telegram_link_url(user_id)
+        
+        return {
+            "success": True,
+            "link_url": link_url,
+            "expires_minutes": 15
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating telegram link: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/telegram/unlink")
+async def unlink_telegram_account(request: dict):
+    """
+    Unlink Telegram from user account
+    """
+    try:
+        from telegram_linking import unlink_telegram
+        
+        user_id = request.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        success = await unlink_telegram(db, user_id)
+        
+        return {
+            "success": success,
+            "message": "Telegram unlinked" if success else "Failed to unlink"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error unlinking telegram: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/telegram/status/{user_id}")
+async def get_telegram_status(user_id: str):
+    """
+    Check if user has Telegram linked
+    """
+    try:
+        user = await db.users.find_one({"user_id": user_id}, {
+            "telegram_chat_id": 1,
+            "telegram_username": 1,
+            "telegram_linked_at": 1
+        })
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        linked = bool(user.get("telegram_chat_id"))
+        
+        return {
+            "success": True,
+            "linked": linked,
+            "telegram_username": user.get("telegram_username") if linked else None,
+            "linked_at": user.get("telegram_linked_at") if linked else None
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/telegram/webhook/user")
+async def telegram_user_bot_webhook(request: Request):
+    """
+    Webhook handler for Telegram User Bot.
+    Processes /start commands for account linking.
+    """
+    try:
+        from telegram_linking import process_telegram_start
+        from telegram_user_bot import get_user_telegram_bot
+        
+        data = await request.json()
+        
+        message = data.get("message", {})
+        text = message.get("text", "")
+        chat = message.get("chat", {})
+        user = message.get("from", {})
+        
+        telegram_user_id = str(chat.get("id", ""))
+        telegram_username = user.get("username", "")
+        
+        # Handle /start command with link token
+        if text.startswith("/start "):
+            token = text.replace("/start ", "").strip()
+            
+            result = await process_telegram_start(
+                db=db,
+                telegram_user_id=telegram_user_id,
+                telegram_username=telegram_username,
+                start_param=token
+            )
+            
+            # Send response to user
+            bot = get_user_telegram_bot(db)
+            await bot._send_message(telegram_user_id, result["message"])
+            
+        elif text == "/start":
+            # No token - show instructions
+            bot = get_user_telegram_bot(db)
+            await bot._send_message(
+                telegram_user_id,
+                "👋 <b>Welcome to CoinHubX!</b>\n\n"
+                "To link your account, please:\n"
+                "1. Log into CoinHubX\n"
+                "2. Go to Settings → Notifications\n"
+                "3. Click 'Link Telegram'\n\n"
+                "You'll receive P2P trade alerts and notifications here."
+            )
+        
+        return {"ok": True}
+        
+    except Exception as e:
+        logger.error(f"Telegram webhook error: {str(e)}")
+        return {"ok": True}  # Always return 200 to Telegram
+
+
 @api_router.get("/trading/ohlcv/{pair}")
 async def get_ohlcv_data(pair: str, interval: str = "15m", limit: int = 100):
     """
