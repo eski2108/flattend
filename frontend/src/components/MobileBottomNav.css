@@ -1,0 +1,164 @@
+/* Mobile Bottom Navigation - Clean SVG Icons */
+
+.mobile-bottom-nav-container {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(180deg, rgba(10, 15, 30, 0.95) 0%, rgba(5, 10, 20, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 240, 255, 0.15);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 16px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 9999;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .mobile-bottom-nav-container {
+    display: flex;
+  }
+}
+
+/* Tab Button */
+.nav-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 70px;
+  min-height: 54px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-tab-btn:active {
+  transform: scale(0.95);
+}
+
+/* Icon Wrapper */
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.icon-wrapper.active {
+  background: rgba(0, 240, 255, 0.1);
+  transform: scale(1.05);
+}
+
+/* Glow Effect behind active icon */
+.glow-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(8px);
+  z-index: -1;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* SVG Icon Styles */
+.nav-icon {
+  transition: all 0.2s ease;
+}
+
+.nav-icon.active {
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));
+}
+
+/* Tab Label */
+.tab-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6B7280;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.tab-label.active {
+  color: #00F0FF;
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+/* Active Indicator - thin cyan line under active tab */
+.active-indicator {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: linear-gradient(90deg, #00F0FF, #7A3CFF);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+  animation: indicatorAppear 0.2s ease;
+}
+
+@keyframes indicatorAppear {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 24px;
+    opacity: 1;
+  }
+}
+
+/* Hover state for desktop testing */
+@media (hover: hover) {
+  .nav-tab-btn:hover .icon-wrapper {
+    background: rgba(0, 240, 255, 0.05);
+  }
+  
+  .nav-tab-btn:hover .tab-label {
+    color: #9CA3AF;
+  }
+  
+  .nav-tab-btn.active:hover .tab-label {
+    color: #00F0FF;
+  }
+}
+
+/* Ensure proper spacing at bottom of page content */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 80px;
+  }
+  
+  .savings-vault-container,
+  .wallet-container,
+  .settings-container {
+    padding-bottom: 90px !important;
+  }
+}
