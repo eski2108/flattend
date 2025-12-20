@@ -269,7 +269,7 @@ class TelegramNotificationService:
     # ==================== EMAIL FALLBACK ====================
     
     async def send_email_fallback(self, user_id: str, subject: str, content: str) -> bool:
-        """Send email as fallback when Telegram fails"""
+        """Send email as fallback when Telegram fails for USER notifications"""
         try:
             # Import email service
             from email_service import send_email_notification
@@ -294,6 +294,40 @@ class TelegramNotificationService:
             
         except Exception as e:
             logger.error(f"❌ Email fallback failed: {str(e)}")
+            return False
+    
+    async def _send_admin_email_fallback(self, subject: str, content: str, 
+                                          dispute_id: str = None) -> bool:
+        """
+        Send email to admin as fallback when Admin Telegram fails.
+        Sends to configured admin email address.
+        """
+        try:
+            from email_service import send_email_notification
+            
+            admin_email = os.environ.get('ADMIN_EMAIL', 'info@coinhubx.net')
+            
+            await send_email_notification(
+                to_email=admin_email,
+                subject=subject,
+                html_content=content
+            )
+            
+            logger.info(f"✅ Admin email fallback sent to {admin_email}")
+            
+            # Log the fallback
+            await self.log_notification(
+                event_type="admin_email_fallback",
+                dispute_id=dispute_id,
+                success=True,
+                failure_reason="Telegram failed, used email fallback",
+                fallback_used="email"
+            )
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Admin email fallback failed: {str(e)}")
             return False
     
     # ==================== INLINE BUTTONS ====================
