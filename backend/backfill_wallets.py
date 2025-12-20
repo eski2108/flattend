@@ -18,7 +18,7 @@ DB_NAME = os.environ.get('DB_NAME', 'coinhubx_production')
 async def get_nowpayments_currencies():
     """Fetch all supported currencies from NowPayments"""
     try:
-        response = requests.get('https://crypto-alert-hub-2.preview.emergentagent.com/api/nowpayments/currencies', timeout=10)
+        response = requests.get('https://savingsflow-1.preview.emergentagent.com/api/nowpayments/currencies', timeout=10)
         data = response.json()
         return [c.upper() for c in data.get('currencies', [])]
     except:

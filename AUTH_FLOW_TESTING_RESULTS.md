@@ -1,7 +1,7 @@
 # 🔐 COMPLETE AUTHENTICATION FLOW - TESTING RESULTS
 
 Date: December 8, 2024
-Tested on: https://crypto-alert-hub-2.preview.emergentagent.com/
+Tested on: https://savingsflow-1.preview.emergentagent.com/
 
 ---
 
@@ -62,7 +62,7 @@ Name: Auth Test User 994001
 
 **Backend API Test (Manual):**
 ```bash
-curl -X POST "https://crypto-alert-hub-2.preview.emergentagent.com/api/auth/register" \
+curl -X POST "https://savingsflow-1.preview.emergentagent.com/api/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
     "full_name": "Test User",

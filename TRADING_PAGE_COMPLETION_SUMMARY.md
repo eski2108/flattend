@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://crypto-alert-hub-2.preview.emergentagent.com/#/trading
+**Live URL:** https://savingsflow-1.preview.emergentagent.com/#/trading
 
 ---
 

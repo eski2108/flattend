@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://crypto-alert-hub-2.preview.emergentagent.com/api"
+BASE_URL = "https://savingsflow-1.preview.emergentagent.com/api"
 
 class ExpressBuyTester:
     def __init__(self):

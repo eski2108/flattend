@@ -139,7 +139,7 @@ sudo supervisorctl restart frontend
 ```
 
 **Live URL:**
-https://crypto-alert-hub-2.preview.emergentagent.com/#/trading
+https://savingsflow-1.preview.emergentagent.com/#/trading
 
 **Status:** ✅ DEPLOYED TO LIVE PREVIEW
 

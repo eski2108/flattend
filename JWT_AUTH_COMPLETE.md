@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://crypto-alert-hub-2.preview.emergentagent.com
+**Live URL:** https://savingsflow-1.preview.emergentagent.com
 
 ---
 

@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-alert-hub-2.preview.emergentagent.com
+**URL:** https://savingsflow-1.preview.emergentagent.com
 
 **Services Status:**
 ```bash

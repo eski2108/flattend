@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://crypto-alert-hub-2.preview.emergentagent.com/api
-- **Frontend App**: https://crypto-alert-hub-2.preview.emergentagent.com
+- **Backend API**: https://savingsflow-1.preview.emergentagent.com/api
+- **Frontend App**: https://savingsflow-1.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

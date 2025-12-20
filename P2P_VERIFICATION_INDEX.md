@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://crypto-alert-hub-2.preview.emergentagent.com
-- Backend API: https://crypto-alert-hub-2.preview.emergentagent.com/api
-- P2P Marketplace: https://crypto-alert-hub-2.preview.emergentagent.com/p2p
+- Frontend: https://savingsflow-1.preview.emergentagent.com
+- Backend API: https://savingsflow-1.preview.emergentagent.com/api
+- P2P Marketplace: https://savingsflow-1.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

@@ -12,7 +12,7 @@ import json
 from datetime import datetime
 
 # Get backend URL from environment
-BACKEND_URL = "https://crypto-alert-hub-2.preview.emergentagent.com"
+BACKEND_URL = "https://savingsflow-1.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 AUTH_BASE = f"{BACKEND_URL}"
 

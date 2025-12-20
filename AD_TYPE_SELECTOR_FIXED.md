@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://crypto-alert-hub-2.preview.emergentagent.com
+**Preview URL:** https://savingsflow-1.preview.emergentagent.com
