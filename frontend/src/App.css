@@ -8085,11 +8085,11 @@ html {
     forced-color-adjust: none !important;
   }
   
-  /* Boost saturation for WebKit browsers */
-  body {
-    filter: saturate(1.05);
-    -webkit-filter: saturate(1.05);
-  }
+  /* 
+   * REMOVED: filter on body breaks position:fixed for mobile bottom nav
+   * The saturate filter creates a new stacking context that breaks fixed positioning
+   * Instead, apply saturation to specific elements that need it
+   */
 }
 
 /* Force consistent gradient rendering */
