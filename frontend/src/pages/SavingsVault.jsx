@@ -666,7 +666,7 @@ const SavingsVault = () => {
               onClick={() => setShowSortMenu(!showSortMenu)}
             >
               <span className="sort-label">Sort: </span>
-              <span className="sort-value">{sortBy === 'name' ? 'Token Name' : sortBy === 'apy' ? 'APY' : sortBy === 'earned' ? 'Total Earned' : 'Balance'}</span>
+              <span className="sort-value">{sortBy === 'name' ? 'Token Name' : sortBy === 'balance' ? 'Balance' : 'Balance'}</span>
               <span className="dropdown-arrow">▼</span>
             </button>
             
