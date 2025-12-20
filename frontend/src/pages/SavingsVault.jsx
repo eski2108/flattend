@@ -1295,7 +1295,7 @@ const SavingsVault = () => {
             
             <div className="notice-rules-content" style={{ padding: '20px 0', lineHeight: '1.8' }}>
               <h4 style={{ color: 'var(--accent)', marginTop: '0' }}>How Notice Accounts Work</h4>
-              <p>When you deposit into a savings vault, you choose a <strong>notice period</strong> (30, 60, or 90 days). Your funds are locked for this duration to earn higher interest.</p>
+              <p>When you deposit into a savings vault, you choose a <strong>notice period</strong> (30, 60, or 90 days). Your funds are locked for this duration for secure storage.</p>
               
               <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Interest Rates</h4>
               <ul>
