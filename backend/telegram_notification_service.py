@@ -534,7 +534,9 @@ class TelegramNotificationService:
     
     async def alert_admin_dispute_created(self, trade: Dict, dispute: Dict) -> bool:
         """
-        Alert admin group about new dispute
+        Alert admin group about new dispute.
+        Rate limited: Max 1 alert per dispute per 60 seconds.
+        Falls back to email if Telegram fails.
         """
         trade_id = trade.get("trade_id", "N/A")
         dispute_id = dispute.get("dispute_id", "N/A")
@@ -568,7 +570,10 @@ class TelegramNotificationService:
 """
         
         buttons = self._admin_dispute_buttons(dispute_id)
-        success = await self._send_admin_message(message.strip(), buttons)
+        
+        # Rate limit key to prevent duplicate alerts
+        rate_key = f"dispute_{dispute_id}"
+        success = await self._send_admin_message(message.strip(), buttons, rate_limit_key=rate_key)
         
         await self.log_notification(
             event_type="admin_dispute_created",
@@ -578,12 +583,21 @@ class TelegramNotificationService:
             success=success
         )
         
+        # Failover: If Telegram fails, send email to admin
+        if not success:
+            await self._send_admin_email_fallback(
+                subject=f"🚨 DISPUTE OPENED - {dispute_id}",
+                content=f"<p>New dispute requires attention.</p><p>Dispute ID: {dispute_id}</p><p>Trade ID: {trade_id}</p><p>Amount: {crypto_amount} {crypto} (£{fiat_amount:,.2f})</p><p><a href='{self.frontend_url}/email/dispute/{dispute_id}'>Resolve Dispute</a></p>",
+                dispute_id=dispute_id
+            )
+        
         return success
     
     async def alert_admin_dispute_resolved(self, trade: Dict, dispute: Dict, 
                                             admin_id: str) -> bool:
         """
-        Confirm to admin group that dispute was resolved
+        Confirm to admin group that dispute was resolved.
+        Rate limited: Max 1 alert per dispute per 60 seconds.
         """
         trade_id = trade.get("trade_id", "N/A")
         dispute_id = dispute.get("dispute_id", "N/A")
