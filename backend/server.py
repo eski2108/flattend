@@ -33769,3 +33769,33 @@ async def get_unified_user_summary_by_token(token: str = Header(None, alias="Aut
 
 # Re-include router for new endpoints
 app.include_router(api_router)
+
+@api_router.get("/telegram/status")
+async def get_telegram_status_query(user_id: str):
+    """
+    Check if user has Telegram linked (query param version)
+    """
+    try:
+        user = await db.users.find_one({"user_id": user_id}, {
+            "telegram_chat_id": 1,
+            "telegram_username": 1,
+            "telegram_linked_at": 1
+        })
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        linked = bool(user.get("telegram_chat_id"))
+        
+        return {
+            "success": True,
+            "linked": linked,
+            "telegram_chat_id": user.get("telegram_chat_id") if linked else None,
+            "telegram_username": user.get("telegram_username") if linked else None,
+            "linked_at": user.get("telegram_linked_at") if linked else None
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting telegram status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
