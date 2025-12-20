@@ -710,7 +710,7 @@ const SavingsVault = () => {
       <div className="portfolio-list-section">
         <div className="section-header-with-description">
           <h2 className="section-heading">Your Savings</h2>
-          <p className="section-description">Monitor your locked funds. Each row shows amount, APY, interest earned, and profit/loss since deposit.</p>
+          <p className="section-description">Monitor your locked funds. Each row shows amount, lock period, and time remaining.</p>
         </div>
         
         {loading ? (
