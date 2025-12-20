@@ -179,6 +179,13 @@ export default function Settings() {
           dataTestId: 'btn-notification-settings'
         },
         { 
+          icon: Smartphone, 
+          label: 'Telegram', 
+          description: 'Connect Telegram for instant alerts', 
+          action: () => setActiveModal('telegram'),
+          dataTestId: 'btn-telegram-settings'
+        },
+        { 
           icon: Globe, 
           label: 'Language', 
           description: currentUser.language ? `${currentUser.language.toUpperCase()}` : 'English', 
