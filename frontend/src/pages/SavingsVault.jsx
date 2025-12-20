@@ -573,7 +573,7 @@ const SavingsVault = () => {
             </div>
             
             <div className="tagline-container">
-              <div className="tagline">⚖️ Balanced Earnings</div>
+              <div className="tagline">⚖️ Balanced Option</div>
             </div>
             
             <div className="progress-visual">
