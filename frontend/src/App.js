@@ -68,6 +68,7 @@ const DisputeCentre = lazy(() => import("@/pages/DisputeCentre"));
 const AdminDisputes = lazy(() => import("@/pages/AdminDisputes"));
 import AdminDisputeDetail from "@/pages/AdminDisputeDetail";
 import EmailDisputeEntry from "@/pages/EmailDisputeEntry";
+import TelegramRedirect from "@/pages/TelegramRedirect";
 const BlockedUsers = lazy(() => import("@/pages/BlockedUsers"));
 const AdminSettings = lazy(() => import("@/pages/AdminSettings"));
 const MerchantProfile = lazy(() => import("@/pages/MerchantProfile"));
