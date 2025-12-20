@@ -1,7 +1,6 @@
 /* Mobile Bottom Navigation - Clean SVG Icons */
 
 .mobile-bottom-nav-container {
-  display: none;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -11,7 +10,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid rgba(0, 240, 255, 0.15);
-  display: flex;
+  display: none;
   justify-content: space-around;
   align-items: center;
   padding: 0 16px;
@@ -23,7 +22,7 @@
 /* Show only on mobile */
 @media (max-width: 768px) {
   .mobile-bottom-nav-container {
-    display: flex;
+    display: flex !important;
   }
 }
 
