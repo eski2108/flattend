@@ -35,7 +35,7 @@ except:
 logger = logging.getLogger('coin_hub_x')
 
 # Configuration
-TELEGRAM_ADMIN_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_ADMIN_BOT_TOKEN = os.environ.get('TELEGRAM_ADMIN_BOT_TOKEN')
 TELEGRAM_USER_BOT_TOKEN = os.environ.get('TELEGRAM_USER_BOT_TOKEN')
 ADMIN_TELEGRAM_CHAT_ID = os.environ.get('ADMIN_TELEGRAM_CHAT_ID')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://coinhubx.net')

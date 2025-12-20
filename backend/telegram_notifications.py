@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 logger = logging.getLogger(__name__)
 
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_ADMIN_BOT_TOKEN")
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 
 # Initialize bot
