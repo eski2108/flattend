@@ -673,7 +673,7 @@ const SavingsVault = () => {
             {showSortMenu && (
               <div className="sort-dropdown-menu">
                 <div className="dropdown-item" onClick={() => handleSort('name')}>Token Name</div>
-                <div className="dropdown-item" onClick={() => handleSort('apy')}>APY (High to Low)</div>
+                <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance (High to Low)</div>
                 <div className="dropdown-item" onClick={() => handleSort('earned')}>Total Earned</div>
                 <div className="dropdown-item" onClick={() => handleSort('balance')}>Balance</div>
               </div>
