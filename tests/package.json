@@ -9,6 +9,6 @@
     "test:report": "npx playwright show-report ../test-reports"
   },
   "dependencies": {
-    "@playwright/test": "^1.40.0"
+    "@playwright/test": "^1.57.0"
   }
 }
