@@ -626,3 +626,10 @@
     padding-bottom: 180px;
   }
 }
+
+/* Hide old MobileBottomNav component when on savings page */
+.savings-container ~ .mobile-bottom-nav-container,
+.savings-container + .mobile-bottom-nav-container,
+body:has(.savings-container) .mobile-bottom-nav-container {
+  display: none !important;
+}
