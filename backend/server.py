@@ -5281,9 +5281,9 @@ async def create_savings_deposit_new(request: dict):
         start_date = datetime.now(timezone.utc)
         unlock_date = start_date + timedelta(days=notice_period)
         
-        # Determine APY based on notice period
-        apy_map = {30: 5.2, 60: 6.8, 90: 8.5}
-        apy = apy_map.get(notice_period, 5.2)
+        # Notice period fees
+        fee_map = {30: 1.5, 60: 1.0, 90: 0.5}
+        early_withdrawal_fee = fee_map.get(notice_period, 1.5)
         
         # Create or update savings balance
         existing = await db.savings_balances.find_one({
