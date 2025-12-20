@@ -241,7 +241,7 @@ const TelegramSettings = ({ user, onClose }) => {
             alignItems: 'center',
             gap: '10px'
           }}>
-            <IoLogoTelegram size={28} color="#0088cc" />
+            <FaTelegramPlane size={28} color="#0088cc" />
             Telegram Notifications
           </h2>
           <button onClick={onClose} style={{
@@ -324,7 +324,7 @@ const TelegramSettings = ({ user, onClose }) => {
                   justifyContent: 'center',
                   margin: '0 auto 16px'
                 }}>
-                  <IoLogoTelegram size={32} color="#0088cc" />
+                  <FaTelegramPlane size={32} color="#0088cc" />
                 </div>
                 <h3 style={{ color: '#fff', margin: '0 0 8px', fontSize: '18px' }}>
                   Connect Your Telegram
