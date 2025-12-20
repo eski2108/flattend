@@ -46,6 +46,12 @@ const SavingsVault = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   
+  // Currency selector
+  const [displayCurrency, setDisplayCurrency] = useState('GBP');
+  const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
+  const currencySymbols = { GBP: '£', USD: '$', EUR: '€' };
+  const currencyRates = { GBP: 1, USD: 1.27, EUR: 1.17 }; // Approximate rates from GBP
+  
   // Modal state for deposit flow
   const [depositStep, setDepositStep] = useState(1); // 1-5 steps
   const [selectedCoin, setSelectedCoin] = useState('');
@@ -57,6 +63,12 @@ const SavingsVault = () => {
   const [loadingCoins, setLoadingCoins] = useState(false);
   const [showNoticeRulesModal, setShowNoticeRulesModal] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
+
+  // Helper to format balance with selected currency
+  const formatBalance = (amount) => {
+    const converted = amount * currencyRates[displayCurrency];
+    return `${currencySymbols[displayCurrency]}${converted.toFixed(2)}`;
+  };
 
   useEffect(() => {
     loadSavingsData();
