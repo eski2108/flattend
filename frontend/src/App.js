@@ -179,6 +179,9 @@ function App() {
             {/* EMAIL ENTRY ROUTE - HARD REDIRECT TO BYPASS CACHE */}
             <Route path="/email/dispute/:disputeId" element={<EmailDisputeEntry />} />
             
+            {/* TELEGRAM REDIRECT - HANDLES WEBVIEW SESSION ISSUES */}
+            <Route path="/telegram-redirect" element={<TelegramRedirect />} />
+            
             {/* ADMIN DISPUTE ROUTES - PUBLIC ACCESS FOR EMAIL LINKS */}
             <Route path="/admin/disputes/:disputeId" element={<AdminDisputeDetail />} />
             <Route path="/dispute-view/:disputeId" element={<AdminDisputeDetail />} />
