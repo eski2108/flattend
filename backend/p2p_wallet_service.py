@@ -253,6 +253,33 @@ async def p2p_create_trade_with_wallet(
         except Exception as notif_error:
             logger.error(f"Failed to send in-app notifications: {str(notif_error)}")
         
+        # 📱 Send TELEGRAM notifications for trade created
+        try:
+            from telegram_user_bot import get_user_telegram_bot
+            
+            tg_bot = get_user_telegram_bot(db)
+            trade_data = {
+                "trade_id": trade_id,
+                "crypto_amount": crypto_amount,
+                "crypto_currency": sell_order["crypto_currency"],
+                "fiat_amount": fiat_amount,
+                "fiat_currency": sell_order["fiat_currency"],
+                "time_limit_minutes": 30
+            }
+            
+            # Notify buyer
+            await tg_bot.notify_trade_created(trade_data, "buyer", buyer_id)
+            
+            # Notify seller
+            await tg_bot.notify_trade_created(trade_data, "seller", sell_order["seller_id"])
+            
+            # Notify seller escrow locked
+            await tg_bot.notify_escrow_locked(trade_data, sell_order["seller_id"])
+            
+            logger.info(f"📱 Telegram trade alerts sent for {trade_id}")
+        except Exception as tg_error:
+            logger.error(f"Failed to send Telegram notifications: {str(tg_error)}")
+        
         # 📧 Send EMAIL notifications for escrow locked
         try:
             from email_service import email_service
