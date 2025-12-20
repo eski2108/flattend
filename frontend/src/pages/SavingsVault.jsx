@@ -615,7 +615,7 @@ const SavingsVault = () => {
             </div>
             
             <div className="tagline-container">
-              <div className="tagline">💎 Maximum Returns</div>
+              <div className="tagline">💎 Maximum Security</div>
             </div>
             
             <div className="progress-visual">
