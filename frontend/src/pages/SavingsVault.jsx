@@ -600,8 +600,8 @@ const SavingsVault = () => {
             </div>
             
             <div className="apy-container apy-highest">
-              <div className="apy-value">5.0<span className="apy-percent">%</span></div>
-              <div className="apy-label">Annual Percentage Yield</div>
+              <div className="apy-value">🔒</div>
+              <div className="apy-label">Secure Storage</div>
             </div>
             
             <div className="fee-container fee-lowest">
