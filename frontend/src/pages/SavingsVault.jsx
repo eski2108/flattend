@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import getCoinLogo from '../utils/coinLogos';
-import MobileBottomNav from '../components/MobileBottomNav';
 import './SavingsVault.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Helper to get user_id consistently from localStorage
 const getUserId = () => {
   const userData = localStorage.getItem('cryptobank_user');
   if (!userData) return null;
@@ -20,50 +18,6 @@ const getUserId = () => {
   }
 };
 
-// SVG Icons
-const LockIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-  </svg>
-);
-
-const WalletIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
-    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
-    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
-  </svg>
-);
-
-const ClockIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <polyline points="12 6 12 12 16 14"/>
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
-const InfoIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M12 16v-4"/>
-    <path d="M12 8h.01"/>
-  </svg>
-);
-
-const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"/>
-    <line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
-);
-
 const SavingsVault = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -72,7 +26,6 @@ const SavingsVault = () => {
   const [availableBalance, setAvailableBalance] = useState(0);
   const [positions, setPositions] = useState([]);
   
-  // Modal state
   const [showModal, setShowModal] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [selectedCoin, setSelectedCoin] = useState('');
@@ -90,11 +43,11 @@ const SavingsVault = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get('status');
     if (status === 'success') {
-      toast.success('Payment successful! Your funds are now locked.');
+      toast.success('Funds locked successfully');
       window.history.replaceState({}, document.title, '/savings');
       setTimeout(() => loadSavingsData(), 2000);
     } else if (status === 'cancelled') {
-      toast.error('Payment was cancelled');
+      toast.error('Payment cancelled');
       window.history.replaceState({}, document.title, '/savings');
     }
   }, []);
@@ -111,7 +64,6 @@ const SavingsVault = () => {
         setAvailableCoins(coinList);
       }
     } catch (error) {
-      console.error('Error loading coins:', error);
       setAvailableCoins([
         { symbol: 'BTC', name: 'Bitcoin' },
         { symbol: 'ETH', name: 'Ethereum' },
@@ -192,8 +144,7 @@ const SavingsVault = () => {
         setDepositLoading(false);
       }
     } catch (error) {
-      console.error('Deposit error:', error);
-      toast.error(error.response?.data?.detail || 'Deposit failed');
+      toast.error(error.response?.data?.detail || 'Failed');
       setDepositLoading(false);
     }
   };
@@ -204,37 +155,61 @@ const SavingsVault = () => {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  const getEarlyWithdrawalFee = () => {
+  const getLockDate = () => {
+    return new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const getEarlyFee = () => {
     if (noticePeriod === 30) return '1.5%';
     if (noticePeriod === 60) return '1.0%';
     return '0.5%';
   };
 
   return (
-    <div className="savings-mobile-container">
-      {/* HERO SECTION */}
-      <div className="savings-hero">
-        <h1 className="savings-title">Notice Savings Account</h1>
-        <p className="savings-subtitle">Lock funds for 30 / 60 / 90 days. Withdraw only after notice period.</p>
+    <div className="notice-savings-container">
+      {/* HEADER */}
+      <div className="notice-header">
+        <h1>Notice Savings</h1>
+        <p>Lock funds for 30, 60, or 90 days. Withdraw after notice period.</p>
       </div>
 
-      {/* HOW IT WORKS - Simple 3 steps */}
-      <div className="savings-explainer">
-        <div className="explainer-step">
-          <div className="step-icon"><ClockIcon /></div>
-          <span className="step-text">Choose notice period (30 / 60 / 90 days)</span>
-        </div>
-        <div className="explainer-step">
-          <div className="step-icon"><LockIcon /></div>
-          <span className="step-text">Funds are locked</span>
-        </div>
-        <div className="explainer-step">
-          <div className="step-icon"><WalletIcon /></div>
-          <span className="step-text">Withdraw after notice period</span>
+      {/* LOCK PERIOD CARDS */}
+      <div className="lock-cards">
+        <button 
+          className={`lock-card ${noticePeriod === 30 ? 'selected' : ''}`}
+          onClick={() => { setNoticePeriod(30); openModal(); }}
+        >
+          <span className="lock-icon">🔒</span>
+          <span className="lock-text">Lock for 30 Days</span>
+        </button>
+        
+        <button 
+          className={`lock-card ${noticePeriod === 60 ? 'selected' : ''}`}
+          onClick={() => { setNoticePeriod(60); openModal(); }}
+        >
+          <span className="lock-icon">🔒</span>
+          <span className="lock-text">Lock for 60 Days</span>
+        </button>
+        
+        <button 
+          className={`lock-card ${noticePeriod === 90 ? 'selected' : ''}`}
+          onClick={() => { setNoticePeriod(90); openModal(); }}
+        >
+          <span className="lock-icon">🔒</span>
+          <span className="lock-text">Lock for 90 Days</span>
+        </button>
+      </div>
+
+      {/* EARLY WITHDRAWAL WARNING */}
+      <div className="warning-card">
+        <span className="warning-icon">⚠️</span>
+        <div className="warning-text">
+          <span className="warning-title">Early Withdrawal</span>
+          <span className="warning-desc">Fee: {getEarlyFee()} of withdrawn amount</span>
         </div>
       </div>
 
-      {/* BALANCE CARDS - Collapsed by default */}
+      {/* BALANCE SECTION */}
       <div className="balance-section">
         <button 
           className="balance-toggle"
@@ -247,245 +222,233 @@ const SavingsVault = () => {
         {showBalances && (
           <div className="balance-cards">
             <div className="balance-card">
-              <div className="balance-label">
-                Total Balance
-                <span className="info-tip" title="Total value of all your notice account deposits">
-                  <InfoIcon />
-                </span>
-              </div>
-              <div className="balance-value">${totalBalance.toFixed(2)}</div>
+              <span className="balance-label">Total Balance</span>
+              <span className="balance-value">${totalBalance.toFixed(2)}</span>
             </div>
             
             <div className="balance-card">
-              <div className="balance-label">
-                Locked Balance
-                <span className="info-tip" title="Funds currently in notice period">
-                  <InfoIcon />
-                </span>
-              </div>
-              <div className="balance-value">${lockedBalance.toFixed(2)}</div>
+              <span className="balance-label">Locked Balance</span>
+              <span className="balance-value">${lockedBalance.toFixed(2)}</span>
             </div>
             
             <div className="balance-card">
-              <div className="balance-label">
-                Available to Withdraw
-                <span className="info-tip" title="Funds ready to withdraw - notice period ended">
-                  <InfoIcon />
-                </span>
-              </div>
-              <div className="balance-value">${availableBalance.toFixed(2)}</div>
+              <span className="balance-label">Available to Withdraw</span>
+              <span className="balance-value">${availableBalance.toFixed(2)}</span>
+              <span className="balance-helper">🕒 Available after notice period ends</span>
             </div>
           </div>
         )}
       </div>
 
-      {/* YOUR POSITIONS */}
+      {/* POSITIONS */}
       {positions.length > 0 && (
         <div className="positions-section">
-          <h2 className="section-title">Your Notice Accounts</h2>
+          <h2>Your Locked Funds</h2>
           {positions.map((pos, idx) => (
             <div key={idx} className="position-card">
-              <div className="position-header">
-                <img 
-                  src={getCoinLogo(pos.symbol)} 
-                  alt={pos.symbol}
-                  className="position-icon"
-                  onError={(e) => { e.target.style.display = 'none'; }}
-                />
-                <div className="position-info">
-                  <span className="position-symbol">{pos.symbol}</span>
-                  <span className="position-amount">{pos.balance} {pos.symbol}</span>
-                </div>
+              <div className="position-row">
+                <span className="position-label">Asset</span>
+                <span className="position-value">{pos.balance} {pos.symbol}</span>
               </div>
-              <div className="position-details">
-                <div className="detail-row">
-                  <span>Notice Period</span>
-                  <span>{pos.lock_period || 30} days</span>
-                </div>
-                <div className="detail-row">
-                  <span>Status</span>
-                  <span className={`status-badge ${pos.status === 'locked' ? 'locked' : 'available'}`}>
-                    {pos.status === 'locked' ? 'Locked' : 'Available'}
-                  </span>
-                </div>
+              <div className="position-row">
+                <span className="position-label">Notice Period</span>
+                <span className="position-value">{pos.lock_period || 30} days</span>
+              </div>
+              <div className="position-row">
+                <span className="position-label">Status</span>
+                <span className={`status-tag ${pos.status}`}>
+                  {pos.status === 'locked' ? '🔒 Locked' : 'Available'}
+                </span>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Spacer for bottom button */}
+      {/* SPACER */}
       <div className="bottom-spacer"></div>
 
-      {/* STICKY CTA BUTTON */}
+      {/* STICKY CTA */}
       <div className="sticky-cta">
-        <button className="cta-button" onClick={openModal}>
-          Add to Savings
-        </button>
+        <button className="cta-btn" onClick={openModal}>Add to Savings</button>
       </div>
 
-      {/* MOBILE BOTTOM NAV */}
-      <MobileBottomNav />
+      {/* BOTTOM NAV */}
+      <nav className="bottom-nav">
+        <button 
+          className="nav-btn"
+          onClick={() => navigate('/wallet')}
+        >
+          <span className="nav-icon">👛</span>
+          <span className="nav-label">Wallet</span>
+        </button>
+        <button 
+          className="nav-btn active"
+          onClick={() => navigate('/savings')}
+        >
+          <span className="nav-icon">🔒</span>
+          <span className="nav-label">Savings</span>
+          <span className="nav-indicator"></span>
+        </button>
+        <button 
+          className="nav-btn"
+          onClick={() => navigate('/settings')}
+        >
+          <span className="nav-icon">⚙️</span>
+          <span className="nav-label">Settings</span>
+        </button>
+      </nav>
 
-      {/* MODAL - Step Flow */}
+      {/* MODAL */}
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             {/* Modal Header */}
             <div className="modal-header">
-              <h2>Add to Savings</h2>
-              <button className="modal-close" onClick={closeModal}>
-                <CloseIcon />
-              </button>
+              <span className="modal-title">Add to Savings</span>
+              <button className="modal-close" onClick={closeModal}>✕</button>
             </div>
 
-            {/* Step Indicator */}
-            <div className="step-indicator">
-              {[1, 2, 3, 4, 5].map((step) => (
-                <div 
-                  key={step} 
-                  className={`step-dot ${modalStep >= step ? 'active' : ''} ${modalStep === step ? 'current' : ''}`}
-                />
-              ))}
-            </div>
+            {/* Step Text */}
+            <div className="step-text">Step {modalStep} of 5</div>
 
-            {/* Step Content */}
-            <div className="modal-content">
-              {/* STEP 1: Select Wallet */}
-              {modalStep === 1 && (
-                <div className="step-content">
-                  <h3>Select Wallet</h3>
-                  <div className="wallet-option selected">
-                    <WalletIcon />
-                    <div className="wallet-info">
-                      <span className="wallet-name">Main Wallet</span>
-                      <span className="wallet-desc">Your primary wallet</span>
-                    </div>
-                    <CheckIcon />
-                  </div>
-                  <button className="next-btn" onClick={nextStep}>Next</button>
-                </div>
-              )}
-
-              {/* STEP 2: Enter Amount */}
-              {modalStep === 2 && (
-                <div className="step-content">
-                  <h3>Select Coin</h3>
-                  {loadingCoins ? (
-                    <div className="loading-text">Loading coins...</div>
-                  ) : (
-                    <div className="coin-list">
-                      {availableCoins.slice(0, 20).map((coin) => (
-                        <div 
-                          key={coin.symbol}
-                          className={`coin-option ${selectedCoin === coin.symbol ? 'selected' : ''}`}
-                          onClick={() => setSelectedCoin(coin.symbol)}
-                        >
-                          <img 
-                            src={getCoinLogo(coin.symbol)} 
-                            alt={coin.symbol}
-                            className="coin-icon"
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
-                          <span className="coin-symbol">{coin.symbol}</span>
-                          {selectedCoin === coin.symbol && <CheckIcon />}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className="step-buttons">
-                    <button className="back-btn" onClick={prevStep}>Back</button>
-                    <button className="next-btn" onClick={nextStep} disabled={!selectedCoin}>Next</button>
+            {/* STEP 1: Select Wallet */}
+            {modalStep === 1 && (
+              <div className="modal-step">
+                <h3>Select Wallet</h3>
+                <div className="wallet-card selected">
+                  <span className="wallet-icon">👛</span>
+                  <div className="wallet-info">
+                    <span className="wallet-name">Main Wallet</span>
+                    <span className="wallet-desc">Your primary balance</span>
                   </div>
                 </div>
-              )}
-
-              {/* STEP 3: Amount */}
-              {modalStep === 3 && (
-                <div className="step-content">
-                  <h3>Enter Amount</h3>
-                  <div className="amount-input-container">
-                    <input
-                      type="number"
-                      className="amount-input"
-                      placeholder="0.00"
-                      value={depositAmount}
-                      onChange={(e) => setDepositAmount(e.target.value)}
-                    />
-                    <span className="amount-currency">{selectedCoin}</span>
-                  </div>
-                  <div className="step-buttons">
-                    <button className="back-btn" onClick={prevStep}>Back</button>
-                    <button className="next-btn" onClick={nextStep} disabled={!depositAmount || parseFloat(depositAmount) <= 0}>Next</button>
-                  </div>
+                <div className="step-btns">
+                  <button className="btn-secondary" onClick={() => navigate('/wallet')}>Go to Wallet</button>
+                  <button className="btn-primary" onClick={nextStep}>Next</button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* STEP 4: Notice Period */}
-              {modalStep === 4 && (
-                <div className="step-content">
-                  <h3>Select Notice Period</h3>
-                  <div className="period-options">
-                    {[30, 60, 90].map((days) => (
+            {/* STEP 2: Amount */}
+            {modalStep === 2 && (
+              <div className="modal-step">
+                <h3>Select Coin</h3>
+                {loadingCoins ? (
+                  <p className="loading-text">Loading...</p>
+                ) : (
+                  <div className="coin-grid">
+                    {availableCoins.slice(0, 16).map((coin) => (
                       <button
-                        key={days}
-                        className={`period-btn ${noticePeriod === days ? 'selected' : ''}`}
-                        onClick={() => setNoticePeriod(days)}
+                        key={coin.symbol}
+                        className={`coin-btn ${selectedCoin === coin.symbol ? 'selected' : ''}`}
+                        onClick={() => setSelectedCoin(coin.symbol)}
                       >
-                        {days} Days
+                        <img 
+                          src={getCoinLogo(coin.symbol)} 
+                          alt={coin.symbol}
+                          className="coin-img"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                        <span>{coin.symbol}</span>
                       </button>
                     ))}
                   </div>
-                  <div className="period-warning">
-                    <InfoIcon />
-                    <span>Funds cannot be withdrawn before notice period ends</span>
-                  </div>
-                  <div className="step-buttons">
-                    <button className="back-btn" onClick={prevStep}>Back</button>
-                    <button className="next-btn" onClick={nextStep}>Next</button>
-                  </div>
+                )}
+                <div className="step-btns">
+                  <button className="btn-secondary" onClick={prevStep}>Back</button>
+                  <button className="btn-primary" onClick={nextStep} disabled={!selectedCoin}>Next</button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* STEP 5: Review & Confirm */}
-              {modalStep === 5 && (
-                <div className="step-content">
-                  <h3>Review</h3>
-                  <div className="review-box">
-                    <div className="review-row">
-                      <span>Amount</span>
-                      <span>{depositAmount} {selectedCoin}</span>
-                    </div>
-                    <div className="review-row">
-                      <span>Notice Period</span>
-                      <span>{noticePeriod} days</span>
-                    </div>
-                    <div className="review-row">
-                      <span>Lock Date</span>
-                      <span>{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                    </div>
-                    <div className="review-row">
-                      <span>Unlock Date</span>
-                      <span>{getUnlockDate()}</span>
-                    </div>
-                    <div className="review-row warning">
-                      <span>Early Withdrawal Fee</span>
-                      <span>{getEarlyWithdrawalFee()}</span>
-                    </div>
+            {/* STEP 3: Amount */}
+            {modalStep === 3 && (
+              <div className="modal-step">
+                <h3>Enter Amount</h3>
+                <div className="amount-box">
+                  <input
+                    type="number"
+                    className="amount-input"
+                    placeholder="0.00"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                  />
+                  <span className="amount-currency">{selectedCoin}</span>
+                </div>
+                <p className="helper-text">💡 Funds will be locked for the full notice period</p>
+                <div className="step-btns">
+                  <button className="btn-secondary" onClick={prevStep}>Back</button>
+                  <button className="btn-primary" onClick={nextStep} disabled={!depositAmount || parseFloat(depositAmount) <= 0}>Next</button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: Notice Period */}
+            {modalStep === 4 && (
+              <div className="modal-step">
+                <h3>Select Notice Period</h3>
+                <div className="period-btns">
+                  <button 
+                    className={`period-btn ${noticePeriod === 30 ? 'selected' : ''}`}
+                    onClick={() => setNoticePeriod(30)}
+                  >
+                    🔒 30 Days
+                  </button>
+                  <button 
+                    className={`period-btn ${noticePeriod === 60 ? 'selected' : ''}`}
+                    onClick={() => setNoticePeriod(60)}
+                  >
+                    🔒 60 Days
+                  </button>
+                  <button 
+                    className={`period-btn ${noticePeriod === 90 ? 'selected' : ''}`}
+                    onClick={() => setNoticePeriod(90)}
+                  >
+                    🔒 90 Days
+                  </button>
+                </div>
+                <div className="step-btns">
+                  <button className="btn-secondary" onClick={prevStep}>Back</button>
+                  <button className="btn-primary" onClick={nextStep}>Next</button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 5: Review */}
+            {modalStep === 5 && (
+              <div className="modal-step">
+                <h3>Review</h3>
+                <div className="review-box">
+                  <div className="review-row">
+                    <span>Amount</span>
+                    <span>{depositAmount} {selectedCoin}</span>
                   </div>
-                  <div className="step-buttons">
-                    <button className="back-btn" onClick={prevStep}>Back</button>
-                    <button 
-                      className="confirm-btn" 
-                      onClick={handleConfirm}
-                      disabled={depositLoading}
-                    >
-                      {depositLoading ? 'Processing...' : 'Confirm'}
-                    </button>
+                  <div className="review-row">
+                    <span>Lock Date</span>
+                    <span>{getLockDate()}</span>
+                  </div>
+                  <div className="review-row">
+                    <span>📅 Unlock Date</span>
+                    <span>{getUnlockDate()}</span>
+                  </div>
+                  <div className="review-row">
+                    <span>Early Withdrawal Fee</span>
+                    <span>{getEarlyFee()}</span>
                   </div>
                 </div>
-              )}
-            </div>
+                <div className="step-btns">
+                  <button className="btn-secondary" onClick={prevStep}>Back</button>
+                  <button 
+                    className="btn-confirm" 
+                    onClick={handleConfirm}
+                    disabled={depositLoading}
+                  >
+                    {depositLoading ? 'Processing...' : '🔒 Confirm Lock'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
