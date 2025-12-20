@@ -1046,21 +1046,8 @@ const SavingsVault = () => {
         )}
       </div>
 
-      {/* MOBILE FOOTER - Only visible on mobile */}
-      <div className="mobile-bottom-nav">
-        <button className="nav-tab" onClick={() => navigate('/wallet')}>
-          <span className="tab-icon">💰</span>
-          <span className="tab-label">Wallet</span>
-        </button>
-        <button className="nav-tab active">
-          <span className="tab-icon">💲</span>
-          <span className="tab-label">Savings</span>
-        </button>
-        <button className="nav-tab" onClick={() => navigate('/settings')}>
-          <span className="tab-icon">⚙️</span>
-          <span className="tab-label">Settings</span>
-        </button>
-      </div>
+      {/* MOBILE FOOTER - Clean SVG Icons */}
+      <MobileBottomNav />
 
       {/* MODALS */}
       {showTransferModal && (
