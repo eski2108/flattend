@@ -60,6 +60,24 @@ const SavingsVault = () => {
   useEffect(() => {
     loadSavingsData();
     loadAvailableCoins();
+    
+    // Check for payment success/cancel from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    const savingsId = urlParams.get('id');
+    
+    if (status === 'success' && savingsId) {
+      toast.success('🎉 Payment successful! Your savings are being activated...');
+      // Clean URL
+      window.history.replaceState({}, document.title, '/savings');
+      // Reload data after a short delay
+      setTimeout(() => {
+        loadSavingsData();
+      }, 2000);
+    } else if (status === 'cancelled') {
+      toast.error('Payment was cancelled');
+      window.history.replaceState({}, document.title, '/savings');
+    }
   }, []);
 
   // Emoji mapping for coins - COMPREHENSIVE LIST
