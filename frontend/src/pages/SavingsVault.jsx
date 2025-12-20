@@ -473,7 +473,7 @@ const SavingsVault = () => {
       <div className="locked-savings-section">
         <div className="locked-savings-header">
           <h2 className="locked-savings-title">Locked Savings — Earn Higher Rewards</h2>
-          <p className="locked-savings-subtitle">Lock your crypto for a fixed period to earn higher APY. Early withdrawals incur a fee.</p>
+          <p className="locked-savings-subtitle">Lock your crypto for added security. Early withdrawals incur a fee.</p>
         </div>
 
         {/* Early Withdrawal Warning Banner */}
