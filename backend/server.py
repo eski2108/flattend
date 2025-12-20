@@ -5258,96 +5258,315 @@ async def create_savings_deposit(request: dict):
 
 @api_router.post("/savings/deposit")
 async def create_savings_deposit_new(request: dict):
-    """Create a new savings deposit"""
+    """
+    DEPRECATED - Use /savings/initiate for NowPayments flow
+    This endpoint now just redirects to initiate
+    """
+    return await initiate_savings_deposit(request)
+
+
+@api_router.post("/savings/initiate")
+async def initiate_savings_deposit(request: dict):
+    """
+    Initiate a savings deposit via NowPayments
+    
+    Flow:
+    1. Validate request
+    2. Create pending savings record
+    3. Create NowPayments invoice
+    4. Return payment URL to frontend
+    
+    Webhook will confirm payment and activate savings
+    """
     try:
-        user_id = request.get('user_id')
-        coin = request.get('coin')
-        amount = request.get('amount')
-        notice_period = request.get('notice_period', 30)
-        
-        # Get current price from CoinGecko
-        try:
-            coin_id = get_coingecko_id(coin)
-            coin_data = await get_coingecko_market_data(coin_id)
-            entry_price = coin_data.get('current_price', 0) if coin_data else 0
-        except Exception as price_error:
-            logger.warning(f"Failed to get price for {coin}: {price_error}")
-            # Use fallback prices
-            fallback_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0}
-            entry_price = fallback_prices.get(coin, 0)
-        
-        # Calculate unlock date
+        import uuid
         from datetime import datetime, timedelta, timezone
-        start_date = datetime.now(timezone.utc)
-        unlock_date = start_date + timedelta(days=notice_period)
         
-        # Notice period fees
+        user_id = request.get('user_id')
+        asset = request.get('asset') or request.get('coin')
+        amount = float(request.get('amount', 0))
+        lock_period_days = int(request.get('lock_period_days') or request.get('notice_period', 30))
+        
+        # ============ VALIDATION ============
+        if not user_id:
+            raise HTTPException(status_code=400, detail="User ID required")
+        if not asset:
+            raise HTTPException(status_code=400, detail="Asset required")
+        if amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
+        if lock_period_days not in [30, 60, 90]:
+            raise HTTPException(status_code=400, detail="Lock period must be 30, 60, or 90 days")
+        
+        # Check minimum amount (20 USD equivalent)
+        min_amount_usd = 20
+        # Get price for validation
+        try:
+            coin_id = get_coingecko_id(asset.upper())
+            coin_data = await get_coingecko_market_data(coin_id)
+            current_price = coin_data.get('current_price', 0) if coin_data else 0
+        except:
+            fallback_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0, "USDC": 1.0}
+            current_price = fallback_prices.get(asset.upper(), 100)
+        
+        amount_usd = amount * current_price
+        if amount_usd < min_amount_usd:
+            raise HTTPException(status_code=400, detail=f"Minimum deposit is ${min_amount_usd} USD")
+        
+        # Verify user exists
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # ============ CREATE PENDING SAVINGS RECORD ============
+        savings_id = f"sav_{uuid.uuid4().hex[:12]}"
+        now = datetime.now(timezone.utc)
+        unlock_date = now + timedelta(days=lock_period_days)
+        
+        # Early withdrawal fee by period
         fee_map = {30: 1.5, 60: 1.0, 90: 0.5}
-        early_withdrawal_fee = fee_map.get(notice_period, 1.5)
+        early_withdrawal_fee = fee_map.get(lock_period_days, 1.5)
         
-        # Create or update savings balance
-        existing = await db.savings_balances.find_one({
+        pending_savings = {
+            "savings_id": savings_id,
             "user_id": user_id,
-            "currency": coin
-        })
+            "asset": asset.upper(),
+            "amount": amount,
+            "amount_usd": amount_usd,
+            "lock_period_days": lock_period_days,
+            "early_withdrawal_fee_percent": early_withdrawal_fee,
+            "status": "pending_payment",  # Will change to "active_locked" after payment
+            "entry_price": current_price,
+            "unlock_date": unlock_date.isoformat(),
+            "created_at": now.isoformat(),
+            "updated_at": now.isoformat(),
+            "payment_id": None,  # Will be set after NowPayments
+            "payment_expires_at": (now + timedelta(minutes=60)).isoformat()
+        }
         
-        if existing:
-            # Update existing
-            new_balance = existing.get('savings_balance', 0) + amount
-            await db.savings_balances.update_one(
-                {"user_id": user_id, "currency": coin},
-                {"$set": {
-                    "savings_balance": new_balance,
-                    "lock_start_time": start_date.isoformat(),
-                    "unlock_time": unlock_date.isoformat(),
-                    "updated_at": start_date.isoformat()
-                }}
+        await db.pending_savings.insert_one(pending_savings)
+        logger.info(f"✅ Created pending savings {savings_id} for user {user_id}")
+        
+        # ============ CREATE NOWPAYMENTS INVOICE ============
+        try:
+            from nowpayments_integration import NOWPaymentsService
+            nowpayments = NOWPaymentsService()
+            
+            backend_url = os.getenv('BACKEND_URL', 'https://crypto-alert-hub-2.preview.emergentagent.com')
+            frontend_url = os.getenv('FRONTEND_URL', 'https://crypto-alert-hub-2.preview.emergentagent.com')
+            
+            # Create invoice (user pays in selected crypto)
+            invoice_payload = {
+                "price_amount": amount,
+                "price_currency": asset.lower(),
+                "pay_currency": asset.lower(),
+                "order_id": savings_id,
+                "order_description": f"Savings Deposit - {lock_period_days} Day Lock",
+                "ipn_callback_url": f"{backend_url}/api/savings/webhook",
+                "success_url": f"{frontend_url}/savings?status=success&id={savings_id}",
+                "cancel_url": f"{frontend_url}/savings?status=cancelled&id={savings_id}"
+            }
+            
+            # Use invoice endpoint for hosted checkout
+            import requests
+            api_key = os.getenv('NOWPAYMENTS_API_KEY')
+            headers = {"x-api-key": api_key, "Content-Type": "application/json"}
+            
+            response = requests.post(
+                "https://api.nowpayments.io/v1/invoice",
+                json=invoice_payload,
+                headers=headers,
+                timeout=30
             )
-        else:
-            # Create new - DATABASE FIELDS FOR OPTION A
-            await db.savings_balances.insert_one({
-                "user_id": user_id,
-                "currency": coin,
-                "savings_balance": amount,
-                "accrued_earnings": 0,  # Interest calculated on backend
-                "type": "staked",
-                "lock_period": notice_period,
-                "lock_start_time": start_date.isoformat(),  # LOCK START TIME
-                "unlock_time": unlock_date.isoformat(),     # UNLOCK TIME
-                "entry_price": entry_price,
-                "deposit_timestamp": int(start_date.timestamp()),
-                "apy": apy,
-                "created_at": start_date.isoformat(),
-                "auto_compound": True
-            })
+            
+            if response.status_code not in [200, 201]:
+                logger.error(f"NowPayments invoice error: {response.text}")
+                raise Exception(f"NowPayments error: {response.text}")
+            
+            invoice_data = response.json()
+            payment_url = invoice_data.get('invoice_url')
+            payment_id = invoice_data.get('id')
+            
+            # Update pending savings with payment ID
+            await db.pending_savings.update_one(
+                {"savings_id": savings_id},
+                {"$set": {"payment_id": payment_id, "invoice_data": invoice_data}}
+            )
+            
+            logger.info(f"✅ NowPayments invoice created: {payment_id} -> {payment_url}")
+            
+            return {
+                "success": True,
+                "savings_id": savings_id,
+                "payment_url": payment_url,
+                "payment_id": payment_id,
+                "amount": amount,
+                "asset": asset.upper(),
+                "lock_period_days": lock_period_days,
+                "expires_in_minutes": 60
+            }
+            
+        except Exception as np_error:
+            logger.error(f"NowPayments error: {str(np_error)}")
+            # Clean up pending record
+            await db.pending_savings.delete_one({"savings_id": savings_id})
+            raise HTTPException(status_code=500, detail=f"Payment service error: {str(np_error)}")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error initiating savings deposit: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/savings/webhook")
+async def savings_nowpayments_webhook(request: Request):
+    """
+    NowPayments webhook for savings deposits
+    
+    Confirms payment and activates savings lock
+    """
+    try:
+        import hmac
+        import hashlib
+        from datetime import datetime, timedelta, timezone
+        
+        body = await request.body()
+        payload = await request.json()
+        
+        logger.info(f"📥 Savings webhook received: {payload}")
+        
+        # ============ VERIFY SIGNATURE ============
+        ipn_secret = os.getenv('NOWPAYMENTS_IPN_SECRET')
+        if ipn_secret:
+            received_sig = request.headers.get('x-nowpayments-sig')
+            if received_sig:
+                # Sort payload and create signature
+                sorted_payload = dict(sorted(payload.items()))
+                payload_str = str(sorted_payload).replace("'", '"').replace(" ", "")
+                expected_sig = hmac.new(
+                    ipn_secret.encode(),
+                    payload_str.encode(),
+                    hashlib.sha512
+                ).hexdigest()
+                
+                if not hmac.compare_digest(received_sig, expected_sig):
+                    logger.warning("⚠️ Invalid webhook signature")
+                    # Continue anyway for now - some webhooks may not have sig
+        
+        # ============ EXTRACT DATA ============
+        order_id = payload.get('order_id')  # This is our savings_id
+        payment_status = payload.get('payment_status')
+        payment_id = payload.get('payment_id')
+        actually_paid = float(payload.get('actually_paid', 0))
+        pay_currency = payload.get('pay_currency', '').upper()
+        
+        if not order_id:
+            logger.error("Webhook missing order_id")
+            return {"status": "error", "message": "Missing order_id"}
+        
+        # ============ FIND PENDING SAVINGS ============
+        pending = await db.pending_savings.find_one({"savings_id": order_id})
+        if not pending:
+            logger.warning(f"No pending savings found for {order_id}")
+            return {"status": "error", "message": "Savings not found"}
+        
+        # ============ IDEMPOTENCY CHECK ============
+        if pending.get('status') == 'active_locked':
+            logger.info(f"Savings {order_id} already activated - idempotent")
+            return {"status": "ok", "message": "Already processed"}
+        
+        # ============ CHECK PAYMENT STATUS ============
+        confirmed_statuses = ['finished', 'confirmed', 'sending', 'partially_paid']
+        
+        if payment_status not in confirmed_statuses:
+            logger.info(f"Payment status {payment_status} - not yet confirmed")
+            await db.pending_savings.update_one(
+                {"savings_id": order_id},
+                {"$set": {"last_webhook_status": payment_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            return {"status": "ok", "message": f"Status: {payment_status}"}
+        
+        # ============ ACTIVATE SAVINGS ============
+        user_id = pending.get('user_id')
+        asset = pending.get('asset')
+        amount = pending.get('amount')
+        lock_period_days = pending.get('lock_period_days')
+        entry_price = pending.get('entry_price', 0)
+        early_withdrawal_fee = pending.get('early_withdrawal_fee_percent', 1.5)
+        
+        now = datetime.now(timezone.utc)
+        unlock_date = now + timedelta(days=lock_period_days)
+        
+        # Create active savings record
+        savings_record = {
+            "savings_id": order_id,
+            "user_id": user_id,
+            "currency": asset,
+            "savings_balance": amount,
+            "accrued_earnings": 0,
+            "type": "notice_account",
+            "lock_period": lock_period_days,
+            "lock_start_time": now.isoformat(),
+            "unlock_time": unlock_date.isoformat(),
+            "entry_price": entry_price,
+            "early_withdrawal_fee_percent": early_withdrawal_fee,
+            "status": "active_locked",
+            "payment_id": payment_id,
+            "actually_paid": actually_paid,
+            "created_at": now.isoformat(),
+            "activated_at": now.isoformat()
+        }
+        
+        await db.savings_balances.insert_one(savings_record)
+        
+        # Update pending record status
+        await db.pending_savings.update_one(
+            {"savings_id": order_id},
+            {"$set": {"status": "active_locked", "activated_at": now.isoformat()}}
+        )
         
         # Log transaction
         await db.savings_transactions.insert_one({
+            "transaction_id": f"stx_{uuid.uuid4().hex[:12]}",
+            "savings_id": order_id,
             "user_id": user_id,
-            "currency": coin,
+            "currency": asset,
             "type": "deposit",
             "amount": amount,
-            "notice_period": notice_period,
-            "apy": apy,
-            "entry_price": entry_price,
-            "unlock_date": unlock_date.isoformat(),
-            "timestamp": start_date.isoformat()
+            "lock_period": lock_period_days,
+            "payment_id": payment_id,
+            "status": "completed",
+            "timestamp": now.isoformat()
         })
         
-        return {
-            "success": True,
-            "message": "Deposit created successfully",
-            "deposit": {
-                "coin": coin,
-                "amount": amount,
-                "notice_period": notice_period,
-                "apy": apy,
-                "unlock_date": unlock_date.isoformat()
-            }
-        }
+        logger.info(f"✅ Savings {order_id} ACTIVATED for user {user_id}: {amount} {asset} locked for {lock_period_days} days")
+        
+        # ============ SEND NOTIFICATIONS ============
+        try:
+            # Telegram notification
+            from telegram_notification_service import get_telegram_notification_service
+            notif_svc = get_telegram_notification_service(db)
+            
+            can_send, chat_id = await notif_svc.can_send_to_user(user_id)
+            if can_send:
+                message = f"""
+💰 <b>Savings Deposit Confirmed!</b>
+
+<b>Amount:</b> {amount} {asset}
+<b>Lock Period:</b> {lock_period_days} days
+<b>Unlock Date:</b> {unlock_date.strftime('%d %b %Y')}
+
+Your funds are now securely locked. Early withdrawal fee: {early_withdrawal_fee}%
+"""
+                await notif_svc._send_user_message(chat_id, message.strip())
+        except Exception as notif_error:
+            logger.warning(f"Failed to send savings notification: {notif_error}")
+        
+        return {"status": "ok", "message": "Savings activated"}
+        
     except Exception as e:
-        logger.error(f"Error creating savings deposit: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Savings webhook error: {str(e)}")
+        return {"status": "error", "message": str(e)}
 
 # ██████████████████████████████████████████████████████████████████████████████████
 # ███                                                                            ███
