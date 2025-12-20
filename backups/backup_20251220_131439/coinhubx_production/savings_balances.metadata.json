@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"adce1b1b35e744b9b9d5d154a1e71880","collectionName":"savings_balances","type":"collection"}
