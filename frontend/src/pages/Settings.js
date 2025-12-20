@@ -744,6 +744,13 @@ export default function Settings() {
         />,
         document.body
       )}
+      {activeModal === 'telegram' && ReactDOM.createPortal(
+        <TelegramSettings
+          user={currentUser}
+          onClose={() => setActiveModal(null)}
+        />,
+        document.body
+      )}
       {activeModal === 'language' && ReactDOM.createPortal(
         <LanguageSettings
           user={currentUser}
