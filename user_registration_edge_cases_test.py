@@ -11,7 +11,7 @@ import json
 import time
 
 # Configuration
-BACKEND_URL = "https://p2pdispute.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-alert-hub-2.preview.emergentagent.com/api"
 
 def test_edge_cases():
     """Test edge cases for registration and login"""

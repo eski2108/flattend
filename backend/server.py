@@ -9817,7 +9817,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
-        base_url = os.environ.get('BACKEND_URL', 'https://p2pdispute.preview.emergentagent.com')
+        base_url = os.environ.get('BACKEND_URL', 'https://crypto-alert-hub-2.preview.emergentagent.com')
         redirect_uri = f"{base_url}/api/auth/google/callback"
         
         if not google_client_id:

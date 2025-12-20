@@ -43,7 +43,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://p2pdispute.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-alert-hub-2.preview.emergentagent.com/api"
 
 # Test credentials from review request
 EXISTING_USER = {

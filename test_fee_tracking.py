@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://p2pdispute.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-alert-hub-2.preview.emergentagent.com/api"
 
 def test_fee_tracking():
     print("\n" + "="*60)

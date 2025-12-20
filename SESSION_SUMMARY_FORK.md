@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://p2pdispute.preview.emergentagent.com
+https://crypto-alert-hub-2.preview.emergentagent.com
 
 ---
 

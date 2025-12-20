@@ -260,7 +260,7 @@ OVERALL:              95% ██████████████████
 ## 🚀 Deployment Status
 
 ### Current Environment:
-- **URL**: https://p2pdispute.preview.emergentagent.com
+- **URL**: https://crypto-alert-hub-2.preview.emergentagent.com
 - **Backend**: RUNNING (FastAPI on port 8001)
 - **Frontend**: RUNNING (React on port 3000)
 - **Database**: RUNNING (MongoDB on localhost:27017)
@@ -348,8 +348,8 @@ These are **optional enhancements** that can be completed post-launch:
    - Database: coinhubx
 
 5. **Access**
-   - Frontend: https://p2pdispute.preview.emergentagent.com
-   - Backend API: https://p2pdispute.preview.emergentagent.com/api
+   - Frontend: https://crypto-alert-hub-2.preview.emergentagent.com
+   - Backend API: https://crypto-alert-hub-2.preview.emergentagent.com/api
 
 ---
 

@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://p2pdispute.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://crypto-alert-hub-2.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

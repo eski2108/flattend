@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://p2pdispute.preview.emergentagent.com
+https://crypto-alert-hub-2.preview.emergentagent.com
 
 ### Test Route
 
-`https://p2pdispute.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://crypto-alert-hub-2.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -388,7 +388,7 @@ BUY trade:
 
 **Test BUY:**
 ```bash
-curl -X POST https://p2pdispute.preview.emergentagent.com/api/trading/execute-v2 \
+curl -X POST https://crypto-alert-hub-2.preview.emergentagent.com/api/trading/execute-v2 \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "YOUR_USER_ID",
@@ -400,7 +400,7 @@ curl -X POST https://p2pdispute.preview.emergentagent.com/api/trading/execute-v2
 
 **Test SELL:**
 ```bash
-curl -X POST https://p2pdispute.preview.emergentagent.com/api/trading/execute-v2 \
+curl -X POST https://crypto-alert-hub-2.preview.emergentagent.com/api/trading/execute-v2 \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "YOUR_USER_ID",

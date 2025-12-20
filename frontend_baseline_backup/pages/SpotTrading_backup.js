@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://p2pdispute.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-alert-hub-2.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

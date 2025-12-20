@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://p2pdispute.preview.emergentagent.com
-P2P Page:     https://p2pdispute.preview.emergentagent.com/p2p
-Backend API:  https://p2pdispute.preview.emergentagent.com/api
+Frontend:     https://crypto-alert-hub-2.preview.emergentagent.com
+P2P Page:     https://crypto-alert-hub-2.preview.emergentagent.com/p2p
+Backend API:  https://crypto-alert-hub-2.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

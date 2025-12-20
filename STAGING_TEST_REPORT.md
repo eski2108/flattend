@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://p2pdispute.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://crypto-alert-hub-2.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

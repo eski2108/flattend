@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://p2pdispute.preview.emergentagent.com
+**URL:** https://crypto-alert-hub-2.preview.emergentagent.com
 
 **Services Status:**
 ```bash

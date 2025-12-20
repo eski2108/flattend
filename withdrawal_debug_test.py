@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://p2pdispute.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-alert-hub-2.preview.emergentagent.com/api"
 TEST_USER_EMAIL = "withdrawal_test@demo.com"
 TEST_USER_PASSWORD = "Test123!"
 ADMIN_USER_EMAIL = "admin_test@demo.com"

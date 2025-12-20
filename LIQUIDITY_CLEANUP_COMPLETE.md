@@ -130,7 +130,7 @@ To complete the file locking:
 **Build Completed:** December 9, 2024
 **Frontend Restarted:** Yes
 **Services Status:** All running
-**Live URL:** https://p2pdispute.preview.emergentagent.com
+**Live URL:** https://crypto-alert-hub-2.preview.emergentagent.com
 
 ---
 
