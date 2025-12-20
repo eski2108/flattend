@@ -55,6 +55,7 @@ const SavingsVault = () => {
   const [availableCoins, setAvailableCoins] = useState([]);
   const [loadingCoins, setLoadingCoins] = useState(false);
   const [showNoticeRulesModal, setShowNoticeRulesModal] = useState(false);
+  const [depositLoading, setDepositLoading] = useState(false);
 
   useEffect(() => {
     loadSavingsData();
