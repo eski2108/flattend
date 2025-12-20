@@ -1110,12 +1110,15 @@ const SavingsVault = () => {
             {depositStep === 2 && (
               <div className="deposit-step">
                 <h4>Step 2: Select Coin</h4>
-                <p className="step-subtitle">{availableCoins.length} cryptocurrencies available</p>
+                <p className="step-subtitle">Select from popular cryptocurrencies</p>
                 {loadingCoins ? (
                   <div className="loading-coins">Loading coins...</div>
                 ) : (
                   <div className="coin-grid">
-                    {availableCoins.map(coin => (
+                    {availableCoins
+                      .filter(coin => ['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'XRP', 'SOL', 'DOGE'].includes(coin.symbol))
+                      .slice(0, 8)
+                      .map(coin => (
                       <div 
                         key={coin.symbol}
                         className={`coin-option-card ${selectedCoin === coin.symbol ? 'selected' : ''}`}
@@ -1132,12 +1135,11 @@ const SavingsVault = () => {
                             }}
                           />
                           <div className="coin-emoji-fallback" style={{display: 'none'}}>
-                            {coin.emoji}
+                            {coin.symbol.charAt(0)}
                           </div>
                         </div>
                         <div className="coin-option-info">
                           <span className="coin-option-symbol">{coin.symbol}</span>
-                          <span className="coin-option-name">{coin.name}</span>
                         </div>
                       </div>
                     ))}
