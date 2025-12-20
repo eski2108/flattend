@@ -477,6 +477,6 @@ def get_user_telegram_bot(db=None) -> TelegramUserBot:
     global _user_bot
     if _user_bot is None:
         _user_bot = TelegramUserBot(db)
-    elif db and not _user_bot.db:
+    elif db is not None and _user_bot.db is None:
         _user_bot.set_db(db)
     return _user_bot
