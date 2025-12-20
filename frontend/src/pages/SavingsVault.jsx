@@ -643,7 +643,7 @@ const SavingsVault = () => {
             <span className="referral-icon">🎁</span>
             <div className="referral-text-section">
               <span className="referral-title">Invite friends, earn more</span>
-              <span className="referral-subtitle">Get 10% of your referrals' interest earnings as bonus rewards</span>
+              <span className="referral-subtitle">Get 10% bonus when your referrals use CoinHubX</span>
             </div>
             <span className="referral-arrow">→</span>
           </div>
