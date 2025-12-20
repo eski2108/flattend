@@ -440,15 +440,42 @@ const SavingsVault = () => {
 
       {/* SUMMARY CARDS - 4 cards in a row */}
       <div className="summary-cards-section">
+        {/* Currency Selector */}
+        <div className="currency-selector-row">
+          <span className="currency-label-text">Display Currency:</span>
+          <div className="currency-dropdown">
+            <button 
+              className="currency-toggle-btn"
+              onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
+            >
+              {currencySymbols[displayCurrency]} {displayCurrency}
+              <span className="dropdown-arrow">▼</span>
+            </button>
+            {showCurrencyMenu && (
+              <div className="currency-menu">
+                {['GBP', 'USD', 'EUR'].map(curr => (
+                  <button
+                    key={curr}
+                    className={`currency-option ${displayCurrency === curr ? 'active' : ''}`}
+                    onClick={() => { setDisplayCurrency(curr); setShowCurrencyMenu(false); }}
+                  >
+                    {currencySymbols[curr]} {curr}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Card 1: Total Savings */}
         <div className="summary-card glassmorphic-card">
           <div className="card-icon-bg wallet-icon"></div>
           <div className="card-label">
             Total Balance
-            <span className="info-tooltip" title="Total value of all your savings deposits plus earned interest">ⓘ</span>
+            <span className="info-tooltip" title="Total value of all your savings deposits">ⓘ</span>
           </div>
-          <div className="card-value-main">{totalBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{totalBalanceCrypto || 'Mixed Assets'}</div>
+          <div className="card-value-main">{formatBalance(totalBalance)}</div>
+          <div className="card-value-fiat">{positions.length > 0 ? `${positions.length} asset(s)` : 'No deposits yet'}</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
@@ -462,8 +489,8 @@ const SavingsVault = () => {
             Locked Balance
             <span className="info-tooltip" title="Funds currently in notice period. Early withdrawal will incur penalty.">ⓘ</span>
           </div>
-          <div className="card-value-main">{lockedBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{lockedBalanceCrypto || 'Mixed Assets'}</div>
+          <div className="card-value-main">{formatBalance(lockedBalance)}</div>
+          <div className="card-value-fiat">In notice period</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
@@ -477,23 +504,8 @@ const SavingsVault = () => {
             Available to Withdraw
             <span className="info-tooltip" title="Funds ready to withdraw without penalty. Notice period has ended.">ⓘ</span>
           </div>
-          <div className="card-value-main">{availableBalance.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{availableBalanceCrypto || 'Mixed Assets'}</div>
-          <div className="live-indicator">
-            <span className="live-dot pulsing"></span>
-            <span className="live-text">Live</span>
-          </div>
-        </div>
-
-        {/* Card 4: Total Interest Earned */}
-        <div className="summary-card glassmorphic-card">
-          <div className="card-icon-bg interest-icon"></div>
-          <div className="card-label">
-            Total Interest Earned
-            <span className="info-tooltip" title="Lifetime interest earned across all your savings accounts">ⓘ</span>
-          </div>
-          <div className="card-value-main">{totalInterestEarned.toFixed(2)} <span className="crypto-symbol">USD</span></div>
-          <div className="card-value-fiat">{totalInterestCrypto || 'Mixed Assets'}</div>
+          <div className="card-value-main">{formatBalance(availableBalance)}</div>
+          <div className="card-value-fiat">Ready to withdraw</div>
           <div className="live-indicator">
             <span className="live-dot pulsing"></span>
             <span className="live-text">Live</span>
