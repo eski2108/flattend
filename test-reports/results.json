@@ -1,0 +1,2343 @@
+{
+  "config": {
+    "configFile": "/app/tests/playwright.config.js",
+    "rootDir": "/app/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "../test-reports",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../test-reports/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/app/tests/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/app/tests/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Desktop Chrome",
+        "name": "Desktop Chrome",
+        "testDir": "/app/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "savings-page.spec.js",
+      "file": "savings-page.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Notice Savings Page - Content Validation",
+          "file": "savings-page.spec.js",
+          "line": 10,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should NOT contain crypto-staking/APY terminology",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 671,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Verified: \"Annual Percentage Yield\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"APY\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"APR\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Earn Interest\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Interest Rate\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Staking Rewards\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Yield Farming\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Maximum Returns\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Balanced Earnings\" does NOT appear\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:28.820Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 651,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Verified: \"Annual Percentage Yield\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"APY\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"APR\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Earn Interest\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Interest Rate\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Staking Rewards\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Yield Farming\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Maximum Returns\" does NOT appear\n"
+                        },
+                        {
+                          "text": "✅ Verified: \"Balanced Earnings\" does NOT appear\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:28.845Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-5373c148834b93e3137e",
+              "file": "savings-page.spec.js",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "should contain correct notice savings terminology",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 616,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:52:27",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 27,
+                          "line": 52
+                        },
+                        "snippet": "  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 27,
+                            "line": 52
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });\n    at /app/tests/savings-page.spec.js:52:27"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:29.624Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-c3991--notice-savings-terminology-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 27,
+                        "line": 52
+                      }
+                    },
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 642,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:52:27",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 27,
+                          "line": 52
+                        },
+                        "snippet": "  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 27,
+                            "line": 52
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });\n    at /app/tests/savings-page.spec.js:52:27"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:12:30.834Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-c3991--notice-savings-terminology-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 27,
+                        "line": 52
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 621,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:52:27",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 27,
+                          "line": 52
+                        },
+                        "snippet": "  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 27,
+                            "line": 52
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });\n    at /app/tests/savings-page.spec.js:52:27"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:29.633Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-c3991--notice-savings-terminology-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 27,
+                        "line": 52
+                      }
+                    },
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 647,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:52:27",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 27,
+                          "line": 52
+                        },
+                        "snippet": "  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 27,
+                            "line": 52
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Notice\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  50 |     \n  51 |     for (const term of requiredTerms) {\n> 52 |       expect(pageContent).toContain(term);\n     |                           ^\n  53 |       console.log(`✅ Verified: \"${term}\" appears correctly`);\n  54 |     }\n  55 |   });\n    at /app/tests/savings-page.spec.js:52:27"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:12:30.812Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-c3991--notice-savings-terminology-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 27,
+                        "line": 52
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-7f617d03fc4e88ea6dad",
+              "file": "savings-page.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "should display currency selector with GBP/USD/EUR options",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5629,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n    at /app/tests/savings-page.spec.js:60:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 60
+                        },
+                        "snippet": "  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 60
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n\n  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();\n    at /app/tests/savings-page.spec.js:60:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:32.159Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-a6957-or-with-GBP-USD-EUR-options-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 60
+                      }
+                    },
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5644,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n    at /app/tests/savings-page.spec.js:60:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 60
+                        },
+                        "snippet": "  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 60
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n\n  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();\n    at /app/tests/savings-page.spec.js:60:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:12:38.479Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-a6957-or-with-GBP-USD-EUR-options-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 60
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 5668,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n    at /app/tests/savings-page.spec.js:60:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 60
+                        },
+                        "snippet": "  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 60
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n\n  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();\n    at /app/tests/savings-page.spec.js:60:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:32.143Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-a6957-or-with-GBP-USD-EUR-options-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 60
+                      }
+                    },
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 5628,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n    at /app/tests/savings-page.spec.js:60:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 60
+                        },
+                        "snippet": "  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 60
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.currency-toggle-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.currency-toggle-btn')\u001b[22m\n\n\n  58 |     // Find currency toggle button\n  59 |     const currencyBtn = page.locator('.currency-toggle-btn');\n> 60 |     await expect(currencyBtn).toBeVisible();\n     |                               ^\n  61 |     \n  62 |     // Click to open dropdown\n  63 |     await currencyBtn.click();\n    at /app/tests/savings-page.spec.js:60:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:12:38.531Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-a6957-or-with-GBP-USD-EUR-options-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 60
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-bf63a68290f71942f468",
+              "file": "savings-page.spec.js",
+              "line": 57,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Notice Savings Page - Add to Savings Flow",
+          "file": "savings-page.spec.js",
+          "line": 76,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Add to Savings button should open modal",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15633,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:84:18",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 18,
+                          "line": 84
+                        },
+                        "snippet": "  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 18,
+                            "line": 84
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1\n    at /app/tests/savings-page.spec.js:84:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:44.811Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-92b46-gs-button-should-open-modal-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 18,
+                        "line": 84
+                      }
+                    },
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15671,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:84:18",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 18,
+                          "line": 84
+                        },
+                        "snippet": "  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 18,
+                            "line": 84
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1\n    at /app/tests/savings-page.spec.js:84:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:13:01.074Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-92b46-gs-button-should-open-modal-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 18,
+                        "line": 84
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15629,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:84:18",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 18,
+                          "line": 84
+                        },
+                        "snippet": "  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 18,
+                            "line": 84
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1\n    at /app/tests/savings-page.spec.js:84:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:12:44.810Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-92b46-gs-button-should-open-modal-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 18,
+                        "line": 84
+                      }
+                    },
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15627,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:84:18",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 18,
+                          "line": 84
+                        },
+                        "snippet": "  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 18,
+                            "line": 84
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  82 |     // Find and click Add to Savings button\n  83 |     const addBtn = page.locator('button:has-text(\"Add to Savings\")').first();\n> 84 |     await addBtn.click();\n     |                  ^\n  85 |     await page.waitForTimeout(1000);\n  86 |     \n  87 |     // Modal should appear with Step 1\n    at /app/tests/savings-page.spec.js:84:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:13:01.132Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-92b46-gs-button-should-open-modal-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 18,
+                        "line": 84
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-438e35b9224556b3ffe9",
+              "file": "savings-page.spec.js",
+              "line": 78,
+              "column": 3
+            },
+            {
+              "title": "Full 5-step deposit flow should work",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15653,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:99:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 99
+                        },
+                        "snippet": "   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 99
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');\n    at /app/tests/savings-page.spec.js:99:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:13:17.419Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9d673-ep-deposit-flow-should-work-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 99
+                      }
+                    },
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15631,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:99:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 99
+                        },
+                        "snippet": "   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 99
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');\n    at /app/tests/savings-page.spec.js:99:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:13:33.833Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9d673-ep-deposit-flow-should-work-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 99
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15649,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:99:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 99
+                        },
+                        "snippet": "   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 99
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');\n    at /app/tests/savings-page.spec.js:99:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:13:17.452Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9d673-ep-deposit-flow-should-work-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 99
+                      }
+                    },
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15655,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:99:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 99
+                        },
+                        "snippet": "   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 99
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n   97 |     \n   98 |     // Step 1: Open modal\n>  99 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  100 |     await page.waitForTimeout(800);\n  101 |     await expect(page.locator('text=Step 1')).toBeVisible();\n  102 |     console.log('✅ Step 1: Select Wallet');\n    at /app/tests/savings-page.spec.js:99:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:13:33.848Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9d673-ep-deposit-flow-should-work-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 99
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-9fc5135042d67e08aff7",
+              "file": "savings-page.spec.js",
+              "line": 94,
+              "column": 3
+            },
+            {
+              "title": "NowPayments integration - should show 200+ coins",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15669,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:143:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 143
+                        },
+                        "snippet": "  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 143
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);\n    at /app/tests/savings-page.spec.js:143:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:13:50.136Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-d907a-ion---should-show-200-coins-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 143
+                      }
+                    },
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15634,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:143:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 143
+                        },
+                        "snippet": "  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 143
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);\n    at /app/tests/savings-page.spec.js:143:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:06.531Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-d907a-ion---should-show-200-coins-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 143
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15644,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:143:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 143
+                        },
+                        "snippet": "  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 143
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);\n    at /app/tests/savings-page.spec.js:143:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:13:50.163Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-d907a-ion---should-show-200-coins-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 143
+                      }
+                    },
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 15645,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:143:69",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 69,
+                          "line": 143
+                        },
+                        "snippet": "  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 69,
+                            "line": 143
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Add to Savings\")').first()\u001b[22m\n\n\n  141 |     \n  142 |     // Open modal and go to Step 2\n> 143 |     await page.locator('button:has-text(\"Add to Savings\")').first().click();\n      |                                                                     ^\n  144 |     await page.waitForTimeout(800);\n  145 |     await page.locator('button:has-text(\"Next\")').click();\n  146 |     await page.waitForTimeout(1000);\n    at /app/tests/savings-page.spec.js:143:69"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:06.552Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-d907a-ion---should-show-200-coins-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 69,
+                        "line": 143
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-81d80fc288f34eca6ff9",
+              "file": "savings-page.spec.js",
+              "line": 138,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Notice Savings Page - Lock Period Cards",
+          "file": "savings-page.spec.js",
+          "line": 159,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display 30, 60, 90 day lock options",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6119,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:170:51",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 51,
+                          "line": 170
+                        },
+                        "snippet": "  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 51,
+                            "line": 170
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n\n  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     \n    at /app/tests/savings-page.spec.js:170:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:22.834Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9a0d0-y-30-60-90-day-lock-options-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 51,
+                        "line": 170
+                      }
+                    },
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6130,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:170:51",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 51,
+                          "line": 170
+                        },
+                        "snippet": "  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 51,
+                            "line": 170
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n\n  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     \n    at /app/tests/savings-page.spec.js:170:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:29.590Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9a0d0-y-30-60-90-day-lock-options-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 51,
+                        "line": 170
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 6155,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:170:51",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 51,
+                          "line": 170
+                        },
+                        "snippet": "  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 51,
+                            "line": 170
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n\n  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     \n    at /app/tests/savings-page.spec.js:170:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:22.868Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9a0d0-y-30-60-90-day-lock-options-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 51,
+                        "line": 170
+                      }
+                    },
+                    {
+                      "workerIndex": 23,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 6122,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n    at /app/tests/savings-page.spec.js:170:51",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 51,
+                          "line": 170
+                        },
+                        "snippet": "  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 51,
+                            "line": 170
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=30').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=30').first()\u001b[22m\n\n\n  168 |     \n  169 |     // Check all three lock periods exist\n> 170 |     await expect(page.locator('text=30').first()).toBeVisible();\n      |                                                   ^\n  171 |     await expect(page.locator('text=60').first()).toBeVisible();\n  172 |     await expect(page.locator('text=90').first()).toBeVisible();\n  173 |     \n    at /app/tests/savings-page.spec.js:170:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:29.694Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9a0d0-y-30-60-90-day-lock-options-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 51,
+                        "line": 170
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-97035f34bb823ae1e170",
+              "file": "savings-page.spec.js",
+              "line": 161,
+              "column": 3
+            },
+            {
+              "title": "lock cards should show Secure Storage, not APY",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1149,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:186:25",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 25,
+                          "line": 186
+                        },
+                        "snippet": "  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 25,
+                            "line": 186
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     \n    at /app/tests/savings-page.spec.js:186:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:36.386Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9c4ef-show-Secure-Storage-not-APY-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 25,
+                        "line": 186
+                      }
+                    },
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1147,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:186:25",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 25,
+                          "line": 186
+                        },
+                        "snippet": "  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 25,
+                            "line": 186
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     \n    at /app/tests/savings-page.spec.js:186:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:38.211Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9c4ef-show-Secure-Storage-not-APY-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 25,
+                        "line": 186
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 25,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 1132,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:186:25",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 25,
+                          "line": 186
+                        },
+                        "snippet": "  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 25,
+                            "line": 186
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     \n    at /app/tests/savings-page.spec.js:186:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:36.547Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9c4ef-show-Secure-Storage-not-APY-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 25,
+                        "line": 186
+                      }
+                    },
+                    {
+                      "workerIndex": 27,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 1131,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n    at /app/tests/savings-page.spec.js:186:25",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 25,
+                          "line": 186
+                        },
+                        "snippet": "  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     "
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 25,
+                            "line": 186
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"Secure Storage\"\u001b[39m\nReceived string:    \u001b[31m\"   404 The requested path could not be found  \"\u001b[39m\n\n  184 |     // Should show \"Secure Storage\" not APY percentages\n  185 |     const pageContent = await page.textContent('body');\n> 186 |     expect(pageContent).toContain('Secure Storage');\n      |                         ^\n  187 |     expect(pageContent).not.toContain('4.2%');\n  188 |     expect(pageContent).not.toContain('5.0%');\n  189 |     \n    at /app/tests/savings-page.spec.js:186:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:38.443Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Notice-Saving-9c4ef-show-Secure-Storage-not-APY-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 25,
+                        "line": 186
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-8f37ccddf4196bc3d53a",
+              "file": "savings-page.spec.js",
+              "line": 177,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Site Health Checks",
+          "file": "savings-page.spec.js",
+          "line": 195,
+          "column": 6,
+          "specs": [
+            {
+              "title": "homepage should load successfully",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 28,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 152,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:199:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 199
+                        },
+                        "snippet": "  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 199
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |\n    at /app/tests/savings-page.spec.js:199:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:39.985Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-35349-ge-should-load-successfully-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 199
+                      }
+                    },
+                    {
+                      "workerIndex": 30,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 157,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:199:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 199
+                        },
+                        "snippet": "  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 199
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |\n    at /app/tests/savings-page.spec.js:199:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:40.872Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-35349-ge-should-load-successfully-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 199
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 29,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 152,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:199:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 199
+                        },
+                        "snippet": "  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 199
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |\n    at /app/tests/savings-page.spec.js:199:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:40.273Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-35349-ge-should-load-successfully-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 199
+                      }
+                    },
+                    {
+                      "workerIndex": 31,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 148,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:199:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 199
+                        },
+                        "snippet": "  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 199
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  197 |   test('homepage should load successfully', async ({ page }) => {\n  198 |     const response = await page.goto(`${BASE_URL}/`);\n> 199 |     expect(response.status()).toBe(200);\n      |                               ^\n  200 |     console.log('✅ Homepage loads (200 OK)');\n  201 |   });\n  202 |\n    at /app/tests/savings-page.spec.js:199:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:41.172Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-35349-ge-should-load-successfully-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 199
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-23f94fe871f4c811f22d",
+              "file": "savings-page.spec.js",
+              "line": 197,
+              "column": 3
+            },
+            {
+              "title": "savings page should load successfully",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 32,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 169,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:205:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 205
+                        },
+                        "snippet": "  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 205
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |\n    at /app/tests/savings-page.spec.js:205:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:41.765Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-907fc-ge-should-load-successfully-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 205
+                      }
+                    },
+                    {
+                      "workerIndex": 34,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 165,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:205:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 205
+                        },
+                        "snippet": "  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 205
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |\n    at /app/tests/savings-page.spec.js:205:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:42.660Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-907fc-ge-should-load-successfully-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 205
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 33,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 168,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:205:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 205
+                        },
+                        "snippet": "  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 205
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |\n    at /app/tests/savings-page.spec.js:205:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:42.079Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-907fc-ge-should-load-successfully-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 205
+                      }
+                    },
+                    {
+                      "workerIndex": 35,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 160,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:205:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 205
+                        },
+                        "snippet": "  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 205
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  203 |   test('savings page should load successfully', async ({ page }) => {\n  204 |     const response = await page.goto(`${BASE_URL}/savings`);\n> 205 |     expect(response.status()).toBe(200);\n      |                               ^\n  206 |     console.log('✅ Savings page loads (200 OK)');\n  207 |   });\n  208 |\n    at /app/tests/savings-page.spec.js:205:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:42.967Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-907fc-ge-should-load-successfully-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 205
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-a802b481ee044b872070",
+              "file": "savings-page.spec.js",
+              "line": 203,
+              "column": 3
+            },
+            {
+              "title": "login page should load successfully",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 36,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 166,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:211:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 211
+                        },
+                        "snippet": "  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 211
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |\n    at /app/tests/savings-page.spec.js:211:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:43.553Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-0c751-ge-should-load-successfully-Mobile-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 211
+                      }
+                    },
+                    {
+                      "workerIndex": 38,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 165,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:211:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 211
+                        },
+                        "snippet": "  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 211
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |\n    at /app/tests/savings-page.spec.js:211:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:44.457Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-0c751-ge-should-load-successfully-Mobile-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 211
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 37,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 129,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:211:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 211
+                        },
+                        "snippet": "  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 211
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |\n    at /app/tests/savings-page.spec.js:211:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:43.889Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-0c751-ge-should-load-successfully-Desktop-Chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 211
+                      }
+                    },
+                    {
+                      "workerIndex": 39,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 154,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at /app/tests/savings-page.spec.js:211:31",
+                        "location": {
+                          "file": "/app/tests/savings-page.spec.js",
+                          "column": 31,
+                          "line": 211
+                        },
+                        "snippet": "  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/tests/savings-page.spec.js",
+                            "column": 31,
+                            "line": 211
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  209 |   test('login page should load successfully', async ({ page }) => {\n  210 |     const response = await page.goto(`${BASE_URL}/login`);\n> 211 |     expect(response.status()).toBe(200);\n      |                               ^\n  212 |     console.log('✅ Login page loads (200 OK)');\n  213 |   });\n  214 |\n    at /app/tests/savings-page.spec.js:211:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2025-12-20T23:14:44.773Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/tests/test-results/savings-page-Site-Health-C-0c751-ge-should-load-successfully-Desktop-Chrome-retry1/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/tests/savings-page.spec.js",
+                        "column": 31,
+                        "line": 211
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-4722a814820ad50ea807",
+              "file": "savings-page.spec.js",
+              "line": 209,
+              "column": 3
+            },
+            {
+              "title": "API health check",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 40,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 143,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ API responding\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:45.355Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                },
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Desktop Chrome",
+                  "projectName": "Desktop Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 41,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 76,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ API responding\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-20T23:14:45.653Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "47443d1e3e30a5d1ebcb-1e73ae384f669e647b9c",
+              "file": "savings-page.spec.js",
+              "line": 215,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-12-20T23:12:28.316Z",
+    "duration": 137549.69,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 20,
+    "flaky": 0
+  }
+}
