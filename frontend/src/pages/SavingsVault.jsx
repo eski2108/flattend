@@ -616,7 +616,7 @@ const SavingsVault = () => {
         {/* Calculator Hint */}
         <div className="calculator-hint">
           <span className="calculator-icon">📊</span>
-          <span className="calculator-text">Example: $1,000 → $1,050 after 90 days at 5% APY (minus any early withdrawal fees)</span>
+          <span className="calculator-text">Example: Lock $1,000 for 90 days for secure storage. Early withdrawal fee applies.</span>
         </div>
 
         {/* Security Footer */}
