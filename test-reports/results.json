@@ -95,7 +95,7 @@
           "column": 6,
           "specs": [
             {
-              "title": "API health check",
+              "title": "homepage should load successfully",
               "ok": true,
               "tags": [],
               "tests": [
@@ -110,16 +110,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 737,
+                      "duration": 813,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "✅ API responding\n"
+                          "text": "✅ Homepage loads (200 OK)\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-20T23:16:39.514Z",
+                      "startTime": "2025-12-20T23:16:48.864Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -137,16 +137,16 @@
                       "workerIndex": 1,
                       "parallelIndex": 1,
                       "status": "passed",
-                      "duration": 644,
+                      "duration": 788,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "✅ API responding\n"
+                          "text": "✅ Homepage loads (200 OK)\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-20T23:16:39.542Z",
+                      "startTime": "2025-12-20T23:16:48.882Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -154,9 +154,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "47443d1e3e30a5d1ebcb-1e73ae384f669e647b9c",
+              "id": "47443d1e3e30a5d1ebcb-23f94fe871f4c811f22d",
               "file": "savings-page.spec.js",
-              "line": 215,
+              "line": 197,
               "column": 3
             }
           ]
@@ -166,8 +166,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-12-20T23:16:39.010Z",
-    "duration": 1457.3449999999998,
+    "startTime": "2025-12-20T23:16:48.364Z",
+    "duration": 1543.3010000000004,
     "expected": 2,
     "skipped": 0,
     "unexpected": 0,
