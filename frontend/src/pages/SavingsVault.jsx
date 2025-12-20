@@ -590,9 +590,9 @@ const SavingsVault = () => {
             </button>
           </div>
 
-          {/* Card 3: 90-Day Lock - Blue Theme (Maximum Returns) */}
+          {/* Card 3: 90-Day Lock - Blue Theme (Lowest Fee) */}
           <div className={`savings-card savings-card-90 ${selectedNoticePeriod === 90 ? 'selected' : ''}`}>
-            <div className="max-returns-badge">🚀 Maximum Returns</div>
+            <div className="max-returns-badge">💎 Lowest Fee</div>
             
             <div className="period-header">
               <div className="period-days">90</div>
