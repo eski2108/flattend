@@ -748,7 +748,7 @@ const SavingsVault = () => {
             <div className="savings-table-header">
               <div className="header-cell asset-col">Asset</div>
               <div className="header-cell amount-col">Locked Amount</div>
-              <div className="header-cell apy-col">APY</div>
+              <div className="header-cell apy-col">Status</div>
               <div className="header-cell date-col">End Date</div>
               <div className="header-cell fee-col">Early Withdrawal Fee</div>
             </div>
