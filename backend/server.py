@@ -21634,6 +21634,43 @@ async def create_dispute(request: dict):
         except Exception as e:
             logger.error(f"❌ Failed to send Telegram alert for dispute {dispute_id}: {str(e)}")
         
+        # 4. Send Telegram Alerts to BOTH Buyer and Seller (User Bot)
+        try:
+            from telegram_notification_service import get_telegram_notification_service
+            notif_svc = get_telegram_notification_service(db)
+            
+            # Add usernames to trade for notification
+            trade_with_usernames = {**trade}
+            buyer_user = await db.users.find_one({"user_id": trade.get("buyer_id")}, {"email": 1})
+            seller_user = await db.users.find_one({"user_id": trade.get("seller_id")}, {"email": 1})
+            trade_with_usernames["buyer_username"] = buyer_user.get("email", "").split("@")[0] if buyer_user else "Unknown"
+            trade_with_usernames["seller_username"] = seller_user.get("email", "").split("@")[0] if seller_user else "Unknown"
+            
+            dispute_with_role = {**dispute_data, "initiated_by": "buyer" if user_id == trade.get("buyer_id") else "seller"}
+            
+            # Notify buyer
+            await notif_svc.notify_user_dispute_raised(
+                trade=trade_with_usernames,
+                dispute=dispute_with_role,
+                user_id=trade.get("buyer_id"),
+                role="buyer"
+            )
+            
+            # Notify seller
+            await notif_svc.notify_user_dispute_raised(
+                trade=trade_with_usernames,
+                dispute=dispute_with_role,
+                user_id=trade.get("seller_id"),
+                role="seller"
+            )
+            
+            # Also send to admin via unified service (with buttons)
+            await notif_svc.alert_admin_dispute_created(trade_with_usernames, dispute_with_role)
+            
+            logger.info(f"✅ User Telegram alerts sent for dispute {dispute_id}")
+        except Exception as e:
+            logger.error(f"❌ Failed to send user Telegram alerts for dispute {dispute_id}: {str(e)}")
+        
         return {
             "success": True,
             "dispute_id": dispute_id,
