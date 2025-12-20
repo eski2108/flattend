@@ -790,7 +790,7 @@ const SavingsVault = () => {
                   </div>
                   
                   <div className="token-apy-section">
-                    <span className="apy-label">APY</span>
+                    <span className="apy-label">Status</span>
                     <span className="apy-value">{position.apy || 0}%</span>
                   </div>
                   
