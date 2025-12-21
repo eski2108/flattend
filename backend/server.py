@@ -10897,12 +10897,28 @@ async def login_user(login_req: LoginRequest, request: Request):
             logger.info(f"Migrated password hash for {login_req.email} from SHA256 to bcrypt")
     else:
         # New bcrypt hash
-        logger.info(f"🔍 DEBUG: Verifying with bcrypt - password: '{login_req.password}', hash: {stored_hash[:30]}...")
         password_valid = password_hasher.verify_password(login_req.password, stored_hash)
-        logger.info(f"🔍 DEBUG: Bcrypt verification result: {password_valid}")
     
     if not password_valid:
         logger.error(f"PASSWORD MISMATCH for {login_req.email}")
+        
+        # ========================================
+        # INCREMENT FAILED ATTEMPTS & LOCKOUT
+        # ========================================
+        failed_attempts = user.get("failed_login_attempts", 0) + 1
+        update_data = {"failed_login_attempts": failed_attempts}
+        
+        # Lock account after 5 failed attempts for 15 minutes
+        if failed_attempts >= 5:
+            lock_until = datetime.now(timezone.utc) + timedelta(minutes=15)
+            update_data["locked_until"] = lock_until.isoformat()
+            logger.warning(f"🔒 ACCOUNT LOCKED: {login_req.email} after {failed_attempts} failed attempts")
+        
+        await db.users.update_one(
+            {"email": login_req.email},
+            {"$set": update_data}
+        )
+        
         # Log failed attempt
         await security_logger.log_login_attempt(
             user_id=user["user_id"],
@@ -10911,9 +10927,23 @@ async def login_user(login_req: LoginRequest, request: Request):
             ip_address=client_ip,
             user_agent=user_agent,
             device_fingerprint=device_fingerprint,
-            failure_reason="Invalid password"
+            failure_reason=f"Invalid password (attempt {failed_attempts}/5)"
         )
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        remaining_attempts = max(0, 5 - failed_attempts)
+        if remaining_attempts > 0:
+            raise HTTPException(status_code=401, detail=f"Invalid credentials. {remaining_attempts} attempts remaining.")
+        else:
+            raise HTTPException(status_code=429, detail="Account locked for 15 minutes due to too many failed attempts.")
+    
+    # ========================================
+    # RESET FAILED ATTEMPTS ON SUCCESS
+    # ========================================
+    if user.get("failed_login_attempts", 0) > 0:
+        await db.users.update_one(
+            {"email": login_req.email},
+            {"$set": {"failed_login_attempts": 0, "locked_until": None}}
+        )
     
     # 🔒 CHECK IF USER IS FROZEN - Block login for frozen accounts
     if user.get("is_frozen"):
