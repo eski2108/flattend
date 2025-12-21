@@ -33203,6 +33203,104 @@ async def set_test_mode(request: Request):
 
 
 # ==========================================
+# BUG REPORT ENDPOINT (FREE)
+# ==========================================
+
+@app.post("/api/bug-report")
+async def submit_bug_report(request: Request):
+    """Submit a bug report - sends to admin email and optionally Slack"""
+    try:
+        data = await request.json()
+        
+        report_type = data.get("type", "bug")
+        description = data.get("description", "")
+        reporter_email = data.get("email", "Not provided")
+        page_url = data.get("url", "Unknown")
+        user_agent = data.get("userAgent", "Unknown")
+        screen_size = data.get("screenSize", "Unknown")
+        timestamp = data.get("timestamp", datetime.utcnow().isoformat())
+        
+        if not description:
+            raise HTTPException(status_code=400, detail="Description is required")
+        
+        # Store in database
+        bug_report = {
+            "id": str(uuid.uuid4()),
+            "type": report_type,
+            "description": description,
+            "reporter_email": reporter_email,
+            "page_url": page_url,
+            "user_agent": user_agent,
+            "screen_size": screen_size,
+            "timestamp": timestamp,
+            "status": "new",
+            "created_at": datetime.utcnow()
+        }
+        
+        await db.bug_reports.insert_one(bug_report)
+        logger.info(f"Bug report submitted: {bug_report['id']}")
+        
+        # Send email notification
+        try:
+            from sendgrid import SendGridAPIClient
+            from sendgrid.helpers.mail import Mail
+            
+            admin_email = os.environ.get('SENDER_EMAIL', 'info@coinhubx.net')
+            
+            email_body = f"""
+            <h2>🐛 New Bug Report</h2>
+            <table style="border-collapse: collapse; width: 100%;">
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Type:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{report_type}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Description:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{description}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Reporter Email:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{reporter_email}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Page URL:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{page_url}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Screen Size:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{screen_size}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Browser:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{user_agent[:100]}...</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Timestamp:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{timestamp}</td></tr>
+            </table>
+            """
+            
+            message = Mail(
+                from_email=admin_email,
+                to_emails=admin_email,
+                subject=f"[CoinHubX Bug] {report_type.upper()}: New Report",
+                html_content=email_body
+            )
+            
+            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+            sg.send(message)
+            logger.info(f"Bug report email sent for {bug_report['id']}")
+        except Exception as email_error:
+            logger.error(f"Failed to send bug report email: {str(email_error)}")
+        
+        # Send to Slack if webhook configured
+        slack_webhook = os.environ.get('SLACK_WEBHOOK_URL')
+        if slack_webhook:
+            try:
+                import aiohttp
+                slack_message = {
+                    "text": f"🐛 *New Bug Report*\n\n*Type:* {report_type}\n*Description:* {description[:200]}...\n*Page:* {page_url}\n*Reporter:* {reporter_email}"
+                }
+                async with aiohttp.ClientSession() as session:
+                    await session.post(slack_webhook, json=slack_message)
+                logger.info(f"Bug report sent to Slack for {bug_report['id']}")
+            except Exception as slack_error:
+                logger.error(f"Failed to send to Slack: {str(slack_error)}")
+        
+        return {
+            "success": True,
+            "message": "Bug report submitted successfully",
+            "report_id": bug_report["id"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error submitting bug report: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to submit bug report")
+
+
+# ==========================================
 # SETTINGS & USER PREFERENCES ENDPOINTS
 # ==========================================
 
