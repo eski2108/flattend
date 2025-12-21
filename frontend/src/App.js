@@ -52,7 +52,7 @@ const ManagerSettings = lazy(() => import("@/pages/ManagerSettings"));
 import MerchantCenter from "@/pages/MerchantCenter";
 import AddPaymentMethod from "@/pages/AddPaymentMethod";
 import CreateAd from "@/pages/CreateAd";
-import BugReportButton from "@/components/BugReportButton";
+// BugReportButton removed per user request
 const PremiumAuth = lazy(() => import("@/pages/PremiumAuth"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
