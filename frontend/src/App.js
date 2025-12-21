@@ -328,6 +328,8 @@ function App() {
           <ChatWidget />
           {/* Active Trades Banner - Shows when user has pending P2P trades */}
           <ActiveTradesBanner />
+          {/* Bug Report Button - Shows on ALL pages */}
+          <BugReportButton />
         </BrowserRouter>
       </div>
     </WalletProvider>
