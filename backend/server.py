@@ -8992,6 +8992,7 @@ async def request_withdrawal(
     
     🔒 IDEMPOTENCY PROTECTED - Send Idempotency-Key header to prevent duplicates
     🚦 FEATURE FLAG: withdrawals_enabled
+    🔐 WHITELIST CHECK: Non-whitelisted addresses trigger 24h delay
     """
     # 🚦 FEATURE FLAG CHECK - Can be disabled instantly via admin
     flags = get_feature_flags_service(db)
@@ -9000,6 +9001,65 @@ async def request_withdrawal(
     # 🔒 FREEZE CHECKS - Block withdrawals for frozen users AND frozen wallets
     await enforce_not_frozen(user_id, "withdrawal")
     await enforce_wallet_not_frozen(user_id, currency, f"withdrawal of {currency}")
+    
+    # ========================================
+    # 🔐 WITHDRAWAL ADDRESS WHITELIST CHECK
+    # ========================================
+    whitelist_entry = await db.withdrawal_whitelist.find_one({
+        "user_id": user_id,
+        "currency": currency.upper(),
+        "address": wallet_address,
+        "verified": True
+    })
+    
+    withdrawal_delay = None
+    if not whitelist_entry:
+        # Address not whitelisted - apply 24 hour delay
+        withdrawal_delay = datetime.now(timezone.utc) + timedelta(hours=24)
+        logger.warning(f"⚠️ WITHDRAWAL TO NON-WHITELISTED ADDRESS: {user_id} -> {wallet_address[:20]}...")
+        
+        # Send warning email
+        try:
+            user = await db.users.find_one({"user_id": user_id})
+            if user and user.get("email"):
+                from sendgrid import SendGridAPIClient
+                from sendgrid.helpers.mail import Mail
+                
+                cancel_token = str(uuid.uuid4())
+                await db.withdrawal_cancellation_tokens.insert_one({
+                    "token": cancel_token,
+                    "user_id": user_id,
+                    "address": wallet_address,
+                    "currency": currency,
+                    "amount": amount,
+                    "created_at": datetime.now(timezone.utc),
+                    "expires_at": withdrawal_delay
+                })
+                
+                cancel_link = f"{os.environ.get('BACKEND_URL', '')}/api/wallet/withdraw/cancel/{cancel_token}"
+                
+                message = Mail(
+                    from_email=os.environ.get('SENDER_EMAIL', 'info@coinhubx.net'),
+                    to_emails=user["email"],
+                    subject="⚠️ Withdrawal to New Address - 24 Hour Security Hold",
+                    html_content=f"""
+                    <h2>⚠️ Withdrawal Security Alert</h2>
+                    <p>A withdrawal has been requested to an address not in your whitelist:</p>
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Amount:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{amount} {currency}</td></tr>
+                        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd; word-break: break-all;">{wallet_address}</td></tr>
+                        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Network:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{network or 'Default'}</td></tr>
+                    </table>
+                    <p><strong>This withdrawal will be processed after 24 hours</strong> to protect your funds.</p>
+                    <p>If you did NOT request this withdrawal, click the link below to cancel immediately:</p>
+                    <p><a href="{cancel_link}" style="background: #ff4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">❌ CANCEL THIS WITHDRAWAL</a></p>
+                    <p>To avoid delays in the future, add this address to your whitelist in Settings.</p>
+                    """
+                )
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                sg.send(message)
+        except Exception as email_err:
+            logger.error(f"Failed to send withdrawal warning email: {str(email_err)}")
     
     # 🔒 IDEMPOTENCY CHECK - Prevent duplicate withdrawals
     idempotency_key = request.headers.get("Idempotency-Key") or request.headers.get("idempotency-key")
@@ -9017,11 +9077,17 @@ async def request_withdrawal(
         
         wallet_service = get_wallet_service()
         result = await create_withdrawal_request_v2(
-            db, wallet_service, user_id, currency, amount, wallet_address, network
+            db, wallet_service, user_id, currency, amount, wallet_address, network,
+            delayed_until=withdrawal_delay  # Pass delay if non-whitelisted
         )
         
+        # Add whitelist warning to response
+        if withdrawal_delay:
+            result["whitelist_warning"] = True
+            result["delayed_until"] = withdrawal_delay.isoformat()
+            result["message"] = f"Withdrawal queued. Processing in 24 hours (new address security hold). Check email to cancel if unauthorized."
+        
         # Store response for idempotency (both success and failure)
-        # This prevents duplicate processing attempts
         if idempotency_key:
             idempotency = get_idempotency_service(db)
             await idempotency.store_response(user_id, "withdrawal", idempotency_key, result)
@@ -9034,6 +9100,157 @@ async def request_withdrawal(
             idempotency = get_idempotency_service(db)
             await idempotency.release_lock(user_id, "withdrawal", idempotency_key)
         raise
+
+
+# ========================================
+# WITHDRAWAL WHITELIST ENDPOINTS
+# ========================================
+
+@api_router.get("/wallet/whitelist/{user_id}")
+async def get_whitelist_addresses(user_id: str):
+    """Get user's whitelisted withdrawal addresses"""
+    addresses = await db.withdrawal_whitelist.find(
+        {"user_id": user_id},
+        {"_id": 0}
+    ).to_list(100)
+    return {"addresses": addresses}
+
+
+@api_router.post("/wallet/whitelist/add")
+async def add_whitelist_address(request: dict):
+    """Add address to whitelist - requires email verification"""
+    user_id = request.get("user_id")
+    currency = request.get("currency", "").upper()
+    address = request.get("address", "").strip()
+    label = request.get("label", "")
+    
+    if not all([user_id, currency, address]):
+        raise HTTPException(status_code=400, detail="user_id, currency, and address required")
+    
+    # Check if already exists
+    existing = await db.withdrawal_whitelist.find_one({
+        "user_id": user_id,
+        "currency": currency,
+        "address": address
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="Address already in whitelist")
+    
+    # Create verification token
+    verification_token = str(uuid.uuid4())
+    
+    whitelist_entry = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "currency": currency,
+        "address": address,
+        "label": label,
+        "verified": False,
+        "verification_token": verification_token,
+        "created_at": datetime.now(timezone.utc),
+        "verified_at": None
+    }
+    
+    await db.withdrawal_whitelist.insert_one(whitelist_entry)
+    
+    # Send verification email
+    try:
+        user = await db.users.find_one({"user_id": user_id})
+        if user and user.get("email"):
+            from sendgrid import SendGridAPIClient
+            from sendgrid.helpers.mail import Mail
+            
+            verify_link = f"{os.environ.get('BACKEND_URL', '')}/api/wallet/whitelist/verify/{verification_token}"
+            
+            message = Mail(
+                from_email=os.environ.get('SENDER_EMAIL', 'info@coinhubx.net'),
+                to_emails=user["email"],
+                subject="Verify Your Withdrawal Address",
+                html_content=f"""
+                <h2>Confirm Withdrawal Address</h2>
+                <p>You requested to add a new withdrawal address to your whitelist:</p>
+                <table style="border-collapse: collapse;">
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Currency:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{currency}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd; word-break: break-all;">{address}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Label:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{label or 'None'}</td></tr>
+                </table>
+                <p><a href="{verify_link}" style="background: #00e5ff; color: black; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 16px;">✅ Verify Address</a></p>
+                <p>If you did not request this, please ignore this email and secure your account.</p>
+                """
+            )
+            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+            sg.send(message)
+    except Exception as e:
+        logger.error(f"Failed to send whitelist verification email: {str(e)}")
+    
+    return {
+        "success": True,
+        "message": "Address added. Check your email to verify.",
+        "entry": {k: v for k, v in whitelist_entry.items() if k != "verification_token"}
+    }
+
+
+@api_router.get("/wallet/whitelist/verify/{token}")
+async def verify_whitelist_address(token: str):
+    """Verify whitelist address via email link"""
+    entry = await db.withdrawal_whitelist.find_one({"verification_token": token})
+    
+    if not entry:
+        raise HTTPException(status_code=404, detail="Invalid or expired verification link")
+    
+    if entry.get("verified"):
+        return {"success": True, "message": "Address already verified"}
+    
+    await db.withdrawal_whitelist.update_one(
+        {"verification_token": token},
+        {"$set": {"verified": True, "verified_at": datetime.now(timezone.utc)}}
+    )
+    
+    return {"success": True, "message": "Address verified and added to whitelist"}
+
+
+@api_router.delete("/wallet/whitelist/{entry_id}")
+async def remove_whitelist_address(entry_id: str, user_id: str):
+    """Remove address from whitelist"""
+    result = await db.withdrawal_whitelist.delete_one({
+        "id": entry_id,
+        "user_id": user_id
+    })
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Address not found")
+    
+    return {"success": True, "message": "Address removed from whitelist"}
+
+
+@api_router.get("/wallet/withdraw/cancel/{token}")
+async def cancel_delayed_withdrawal(token: str):
+    """Cancel a delayed withdrawal via email link"""
+    cancellation = await db.withdrawal_cancellation_tokens.find_one({"token": token})
+    
+    if not cancellation:
+        return {"success": False, "message": "Invalid or expired cancellation link"}
+    
+    if datetime.now(timezone.utc) > cancellation.get("expires_at", datetime.now(timezone.utc)):
+        return {"success": False, "message": "Cancellation window expired - withdrawal already processed"}
+    
+    # Cancel the pending withdrawal
+    await db.pending_withdrawals.update_one(
+        {
+            "user_id": cancellation["user_id"],
+            "wallet_address": cancellation["address"],
+            "status": "pending"
+        },
+        {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc), "cancel_reason": "User cancelled via email"}}
+    )
+    
+    # Invalidate the token
+    await db.withdrawal_cancellation_tokens.delete_one({"token": token})
+    
+    logger.info(f"✅ Withdrawal cancelled via email link: {cancellation['user_id']} -> {cancellation['address'][:20]}...")
+    
+    return {"success": True, "message": "Withdrawal cancelled successfully. Your funds are safe."}
 
 
 @api_router.get("/wallet/withdrawals/{user_id}")
