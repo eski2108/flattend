@@ -10816,9 +10816,6 @@ async def login_user(login_req: LoginRequest, request: Request):
         )
     
     logger.info(f"=== LOGIN ATTEMPT: {login_req.email} ===")
-    logger.info(f"🔍 DEBUG: Received email: '{login_req.email}' (length: {len(login_req.email)})")
-    logger.info(f"🔍 DEBUG: Received password: '{login_req.password}' (length: {len(login_req.password)})")
-    logger.info(f"🔍 DEBUG: Email bytes: {login_req.email.encode()}")
     
     # Find user
     user = await db.users.find_one({"email": login_req.email}, {"_id": 0})
@@ -10836,8 +10833,31 @@ async def login_user(login_req: LoginRequest, request: Request):
         )
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # ========================================
+    # ACCOUNT LOCKOUT CHECK
+    # ========================================
+    locked_until = user.get("locked_until")
+    if locked_until:
+        if isinstance(locked_until, str):
+            locked_until = datetime.fromisoformat(locked_until.replace('Z', '+00:00'))
+        if locked_until > datetime.now(timezone.utc):
+            remaining = int((locked_until - datetime.now(timezone.utc)).total_seconds() / 60)
+            logger.warning(f"🔒 LOGIN BLOCKED: Account locked for {login_req.email}")
+            await security_logger.log_login_attempt(
+                user_id=user.get("user_id"),
+                email=login_req.email,
+                success=False,
+                ip_address=client_ip,
+                user_agent=user_agent,
+                device_fingerprint=device_fingerprint,
+                failure_reason="Account temporarily locked"
+            )
+            raise HTTPException(
+                status_code=429,
+                detail=f"Account temporarily locked due to too many failed attempts. Try again in {remaining} minutes."
+            )
+    
     logger.info(f"User found: {login_req.email}")
-    logger.info(f"🔍 DEBUG: User data - user_id: {user.get('user_id')}, role: {user.get('role')}")
     
     # Verify password - handle both old SHA256 and new bcrypt hashes
     from security import password_hasher
