@@ -1,0 +1,659 @@
+========================================
+Test Run: Sat Dec 20 23:39:06 UTC 2025
+========================================
+
+Running 24 tests using 2 workers
+
+  ✘   2 [Desktop Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (3ms)
+  ✘   1 [Mobile Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (3ms)
+  ✘   3 [Mobile Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (retry #1) (3ms)
+  ✘   4 [Desktop Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (retry #1) (3ms)
+  ✘   6 [Desktop Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology (3ms)
+  ✘   5 [Mobile Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology (3ms)
+  ✘   7 [Mobile Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology (retry #1) (3ms)
+  ✘   8 [Desktop Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology (retry #1) (3ms)
+  ✘   9 [Mobile Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options (3ms)
+  ✘  10 [Desktop Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options (3ms)
+  ✘  11 [Mobile Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options (retry #1) (3ms)
+  ✘  12 [Desktop Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options (retry #1) (15ms)
+  ✘  13 [Mobile Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal (3ms)
+  ✘  14 [Desktop Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal (3ms)
+  ✘  15 [Mobile Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal (retry #1) (3ms)
+  ✘  16 [Desktop Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal (retry #1) (3ms)
+  ✘  17 [Desktop Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work (3ms)
+  ✘  18 [Mobile Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work (3ms)
+  ✘  19 [Desktop Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work (retry #1) (3ms)
+  ✘  20 [Mobile Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work (retry #1) (3ms)
+  ✘  21 [Mobile Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins (3ms)
+  ✘  22 [Desktop Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins (3ms)
+  ✘  23 [Mobile Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins (retry #1) (3ms)
+  ✘  24 [Desktop Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins (retry #1) (3ms)
+  ✘  25 [Desktop Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options (3ms)
+  ✘  26 [Mobile Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options (3ms)
+  ✘  27 [Mobile Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options (retry #1) (3ms)
+  ✘  28 [Desktop Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options (retry #1) (3ms)
+  ✘  29 [Desktop Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY (3ms)
+  ✘  30 [Mobile Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY (3ms)
+  ✘  31 [Desktop Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY (retry #1) (3ms)
+  ✘  32 [Mobile Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY (retry #1) (15ms)
+  ✘  33 [Mobile Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully (3ms)
+  ✘  34 [Desktop Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully (29ms)
+  ✘  35 [Mobile Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully (retry #1) (3ms)
+  ✘  36 [Desktop Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully (retry #1) (5ms)
+  ✘  37 [Mobile Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully (29ms)
+  ✘  38 [Desktop Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully (3ms)
+  ✘  39 [Desktop Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully (retry #1) (24ms)
+  ✘  40 [Mobile Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully (retry #1) (21ms)
+  ✘  41 [Desktop Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully (6ms)
+  ✘  42 [Mobile Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully (3ms)
+  ✘  44 [Mobile Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully (retry #1) (3ms)
+  ✘  43 [Desktop Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully (retry #1) (3ms)
+  ✘  45 [Mobile Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check (3ms)
+  ✘  46 [Desktop Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check (4ms)
+  ✘  47 [Desktop Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check (retry #1) (3ms)
+  ✘  48 [Mobile Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check (retry #1) (3ms)
+
+
+  1) [Mobile Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  2) [Mobile Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  3) [Mobile Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  4) [Mobile Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  5) [Mobile Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  6) [Mobile Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  7) [Mobile Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  8) [Mobile Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  9) [Mobile Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  10) [Mobile Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  11) [Mobile Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  12) [Mobile Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check ─────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  13) [Desktop Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  14) [Desktop Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  15) [Desktop Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  16) [Desktop Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  17) [Desktop Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  18) [Desktop Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  19) [Desktop Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  20) [Desktop Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  21) [Desktop Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  22) [Desktop Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  23) [Desktop Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  24) [Desktop Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check ────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  24 failed
+    [Mobile Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology 
+    [Mobile Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology 
+    [Mobile Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options 
+    [Mobile Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal 
+    [Mobile Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work 
+    [Mobile Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins 
+    [Mobile Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options 
+    [Mobile Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY 
+    [Mobile Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully 
+    [Mobile Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully 
+    [Mobile Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully 
+    [Mobile Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check ───────────
+    [Desktop Chrome] › savings-page.spec.js:17:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology 
+    [Desktop Chrome] › savings-page.spec.js:39:3 › Notice Savings Page - Content Validation › should contain correct notice savings terminology 
+    [Desktop Chrome] › savings-page.spec.js:57:3 › Notice Savings Page - Content Validation › should display currency selector with GBP/USD/EUR options 
+    [Desktop Chrome] › savings-page.spec.js:78:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should open modal 
+    [Desktop Chrome] › savings-page.spec.js:94:3 › Notice Savings Page - Add to Savings Flow › Full 5-step deposit flow should work 
+    [Desktop Chrome] › savings-page.spec.js:138:3 › Notice Savings Page - Add to Savings Flow › NowPayments integration - should show 200+ coins 
+    [Desktop Chrome] › savings-page.spec.js:161:3 › Notice Savings Page - Lock Period Cards › should display 30, 60, 90 day lock options 
+    [Desktop Chrome] › savings-page.spec.js:177:3 › Notice Savings Page - Lock Period Cards › lock cards should show Secure Storage, not APY 
+    [Desktop Chrome] › savings-page.spec.js:197:3 › Site Health Checks › homepage should load successfully 
+    [Desktop Chrome] › savings-page.spec.js:203:3 › Site Health Checks › savings page should load successfully 
+    [Desktop Chrome] › savings-page.spec.js:209:3 › Site Health Checks › login page should load successfully 
+    [Desktop Chrome] › savings-page.spec.js:215:3 › Site Health Checks › API health check ──────────
+❌ TESTS FAILED at Sat Dec 20 23:39:20 UTC 2025
+
