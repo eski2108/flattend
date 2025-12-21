@@ -39,6 +39,22 @@ jobs:
           npm ci || npm install
           npx playwright install chromium --with-deps
 
+      - name: Verify TEST_URL is configured
+        run: |
+          if [ -z "$SITE_URL" ]; then
+            echo "❌ ERROR: TEST_URL secret is not configured!"
+            echo ""
+            echo "To fix this:"
+            echo "1. Go to your GitHub repository"
+            echo "2. Click Settings > Secrets and variables > Actions"
+            echo "3. Click 'New repository secret'"
+            echo "4. Name: TEST_URL"
+            echo "5. Value: Your deployed site URL (e.g., https://your-app.vercel.app)"
+            echo ""
+            exit 1
+          fi
+          echo "✅ TEST_URL configured: $SITE_URL"
+
       - name: Verify site is reachable
         run: |
           echo "Testing connectivity to: $SITE_URL"
