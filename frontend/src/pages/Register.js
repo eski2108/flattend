@@ -902,18 +902,30 @@ function getStyles() {
     }
 
     @media (max-width: 480px) {
+      .register-container {
+        padding: 16px;
+        min-height: 100vh;
+      }
+      
       .auth-card {
-        padding: 24px;
-        margin: 10px;
-        max-width: calc(100vw - 20px);
+        padding: 20px;
+        margin: 0;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 16px;
       }
       
       .auth-title {
-        font-size: 28px;
+        font-size: 24px;
+      }
+      
+      .auth-subtitle {
+        font-size: 13px;
       }
       
       .logo {
-        height: 80px;
+        height: 70px;
       }
       
       .phone-input-wrapper {
@@ -924,6 +936,35 @@ function getStyles() {
       .country-button {
         width: 100%;
         justify-content: space-between;
+      }
+      
+      .verification-header {
+        margin-bottom: 24px;
+      }
+      
+      .verification-icon svg {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .verification-input {
+        font-size: 24px;
+        letter-spacing: 8px;
+        text-align: center;
+      }
+      
+      .input-group {
+        margin-bottom: 16px;
+      }
+      
+      .auth-input {
+        padding: 14px 16px;
+        font-size: 15px;
+      }
+      
+      .auth-button {
+        padding: 14px 20px;
+        font-size: 15px;
       }
     }
   `;
