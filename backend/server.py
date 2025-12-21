@@ -2138,7 +2138,9 @@ async def mark_as_paid(request: LegacyMarkAsPaidRequest):
             "$set": {
                 "status": "marked_as_paid",
                 "payment_reference": request.payment_reference,
-                "marked_paid_at": datetime.now(timezone.utc).isoformat()
+                "marked_paid_at": datetime.now(timezone.utc).isoformat(),
+                "payment_verified": False,  # Open Banking verification pending
+                "verification_method": None
             }
         }
     )
@@ -2173,8 +2175,232 @@ async def mark_as_paid(request: LegacyMarkAsPaidRequest):
     
     return {
         "success": True,
-        "message": "Payment marked as completed. Seller will be notified to release crypto."
+        "message": "Payment marked as completed. Seller will be notified to release crypto.",
+        "open_banking_available": bool(os.environ.get("TRUELAYER_CLIENT_ID"))
     }
+
+
+# ========================================
+# P2P PAYMENT VERIFICATION (Open Banking / TrueLayer)
+# ========================================
+
+@api_router.post("/p2p/verify-payment/initiate")
+async def initiate_payment_verification(request: dict):
+    """
+    Initiate Open Banking payment verification for P2P trades.
+    Uses TrueLayer to verify buyer's bank transaction.
+    """
+    order_id = request.get("order_id")
+    buyer_user_id = request.get("buyer_user_id")
+    
+    if not order_id or not buyer_user_id:
+        raise HTTPException(status_code=400, detail="order_id and buyer_user_id required")
+    
+    # Get trade details
+    trade = await db.crypto_buy_orders.find_one({"order_id": order_id})
+    if not trade:
+        trade = await db.p2p_trades.find_one({"trade_id": order_id})
+    
+    if not trade:
+        raise HTTPException(status_code=404, detail="Trade not found")
+    
+    # Check TrueLayer credentials
+    client_id = os.environ.get("TRUELAYER_CLIENT_ID")
+    client_secret = os.environ.get("TRUELAYER_CLIENT_SECRET")
+    redirect_uri = os.environ.get("TRUELAYER_REDIRECT_URI", f"{os.environ.get('BACKEND_URL', '')}/api/p2p/verify-payment/callback")
+    
+    if not client_id or not client_secret:
+        return {
+            "success": False,
+            "available": False,
+            "message": "Open Banking verification not configured. Manual verification required."
+        }
+    
+    # Generate state for OAuth
+    state = str(uuid.uuid4())
+    
+    # Store verification session
+    await db.payment_verification_sessions.insert_one({
+        "session_id": state,
+        "order_id": order_id,
+        "buyer_user_id": buyer_user_id,
+        "trade_amount": trade.get("fiat_amount") or trade.get("total_price"),
+        "trade_currency": trade.get("fiat_currency", "GBP"),
+        "seller_account": trade.get("seller_bank_details", {}),
+        "status": "initiated",
+        "created_at": datetime.now(timezone.utc)
+    })
+    
+    # Build TrueLayer auth URL
+    auth_url = (
+        f"https://auth.truelayer.com/?response_type=code"
+        f"&client_id={client_id}"
+        f"&scope=info%20accounts%20transactions"
+        f"&redirect_uri={redirect_uri}"
+        f"&state={state}"
+        f"&providers=uk-ob-all%20uk-oauth-all"
+    )
+    
+    return {
+        "success": True,
+        "available": True,
+        "auth_url": auth_url,
+        "session_id": state,
+        "message": "Redirect user to auth_url to connect their bank"
+    }
+
+
+@api_router.get("/p2p/verify-payment/callback")
+async def payment_verification_callback(code: str = None, state: str = None, error: str = None):
+    """
+    TrueLayer OAuth callback - exchanges code for access token and verifies payment
+    """
+    if error:
+        logger.error(f"TrueLayer auth error: {error}")
+        return {"success": False, "error": error}
+    
+    if not code or not state:
+        raise HTTPException(status_code=400, detail="Missing code or state")
+    
+    # Get verification session
+    session = await db.payment_verification_sessions.find_one({"session_id": state})
+    if not session:
+        raise HTTPException(status_code=404, detail="Verification session not found or expired")
+    
+    client_id = os.environ.get("TRUELAYER_CLIENT_ID")
+    client_secret = os.environ.get("TRUELAYER_CLIENT_SECRET")
+    redirect_uri = os.environ.get("TRUELAYER_REDIRECT_URI", f"{os.environ.get('BACKEND_URL', '')}/api/p2p/verify-payment/callback")
+    
+    try:
+        import httpx
+        
+        # Exchange code for access token
+        async with httpx.AsyncClient() as client:
+            token_response = await client.post(
+                "https://auth.truelayer.com/connect/token",
+                data={
+                    "grant_type": "authorization_code",
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "redirect_uri": redirect_uri,
+                    "code": code
+                }
+            )
+            
+            if token_response.status_code != 200:
+                logger.error(f"TrueLayer token exchange failed: {token_response.text}")
+                raise HTTPException(status_code=500, detail="Failed to verify with bank")
+            
+            tokens = token_response.json()
+            access_token = tokens.get("access_token")
+            
+            # Get accounts
+            accounts_response = await client.get(
+                "https://api.truelayer.com/data/v1/accounts",
+                headers={"Authorization": f"Bearer {access_token}"}
+            )
+            accounts = accounts_response.json().get("results", [])
+            
+            # Get transactions from all accounts (last 30 days)
+            all_transactions = []
+            for account in accounts:
+                account_id = account.get("account_id")
+                tx_response = await client.get(
+                    f"https://api.truelayer.com/data/v1/accounts/{account_id}/transactions",
+                    headers={"Authorization": f"Bearer {access_token}"}
+                )
+                transactions = tx_response.json().get("results", [])
+                all_transactions.extend(transactions)
+            
+            # Match transaction against trade
+            trade_amount = float(session.get("trade_amount", 0))
+            seller_account = session.get("seller_account", {})
+            seller_sort_code = seller_account.get("sort_code", "").replace("-", "")
+            seller_account_number = seller_account.get("account_number", "")
+            
+            payment_verified = False
+            matched_transaction = None
+            
+            for tx in all_transactions:
+                tx_amount = abs(float(tx.get("amount", 0)))
+                tx_type = tx.get("transaction_type", "")
+                
+                # Check if amounts match (within small tolerance for fees)
+                amount_match = abs(tx_amount - trade_amount) < 1.0
+                
+                # Check if it's an outgoing payment
+                is_debit = tx.get("transaction_classification", [])[0] == "Debit" if tx.get("transaction_classification") else tx_amount < 0
+                
+                if amount_match and is_debit:
+                    payment_verified = True
+                    matched_transaction = tx
+                    break
+            
+            # Update session and trade
+            await db.payment_verification_sessions.update_one(
+                {"session_id": state},
+                {"$set": {
+                    "status": "verified" if payment_verified else "not_found",
+                    "verified_at": datetime.now(timezone.utc),
+                    "matched_transaction": matched_transaction
+                }}
+            )
+            
+            if payment_verified:
+                # Update trade with verification
+                await db.crypto_buy_orders.update_one(
+                    {"order_id": session["order_id"]},
+                    {"$set": {
+                        "payment_verified": True,
+                        "verification_method": "open_banking",
+                        "verified_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                await db.p2p_trades.update_one(
+                    {"trade_id": session["order_id"]},
+                    {"$set": {
+                        "payment_verified": True,
+                        "verification_method": "open_banking",
+                        "verified_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+                logger.info(f"✅ P2P payment verified via Open Banking: {session['order_id']}")
+                
+                return {
+                    "success": True,
+                    "verified": True,
+                    "message": "Payment verified! The seller has been notified and can now release the crypto."
+                }
+            else:
+                return {
+                    "success": True,
+                    "verified": False,
+                    "message": "Could not find a matching payment. Please ensure you've sent the correct amount."
+                }
+                
+    except Exception as e:
+        logger.error(f"Payment verification error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Verification failed: {str(e)}")
+
+
+@api_router.get("/p2p/verify-payment/status/{order_id}")
+async def get_payment_verification_status(order_id: str):
+    """Check if payment has been verified for a P2P trade"""
+    trade = await db.crypto_buy_orders.find_one({"order_id": order_id}, {"_id": 0})
+    if not trade:
+        trade = await db.p2p_trades.find_one({"trade_id": order_id}, {"_id": 0})
+    
+    if not trade:
+        raise HTTPException(status_code=404, detail="Trade not found")
+    
+    return {
+        "order_id": order_id,
+        "payment_verified": trade.get("payment_verified", False),
+        "verification_method": trade.get("verification_method"),
+        "verified_at": trade.get("verified_at")
+    }
+
 
 @api_router.post("/crypto-market/release")
 async def release_crypto(request: LegacyReleaseCryptoRequest):
