@@ -324,8 +324,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
-          {/* AI Chat Widget - Shows on ALL pages */}
-          <ChatWidget />
           {/* Active Trades Banner - Shows when user has pending P2P trades */}
           <ActiveTradesBanner />
         </BrowserRouter>
