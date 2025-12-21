@@ -5577,8 +5577,8 @@ async def initiate_savings_deposit(request: dict):
             from nowpayments_integration import NOWPaymentsService
             nowpayments = NOWPaymentsService()
             
-            backend_url = os.getenv('BACKEND_URL', 'https://bugsecurehub.preview.emergentagent.com')
-            frontend_url = os.getenv('FRONTEND_URL', 'https://bugsecurehub.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://coinhubx.net')
+            frontend_url = os.getenv('FRONTEND_URL', 'https://coinhubx.net')
             
             # Create invoice (user pays in selected crypto)
             invoice_payload = {
