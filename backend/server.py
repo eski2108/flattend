@@ -33208,17 +33208,27 @@ async def set_test_mode(request: Request):
 
 @app.post("/api/bug-report")
 async def submit_bug_report(request: Request):
-    """Submit a bug report - sends to admin email and optionally Slack"""
+    """
+    Submit a bug report with full context.
+    Captures: page URL, user ID, device/browser, timestamp, screenshot, console errors
+    Sends to: Database + Slack (no 3rd party tools)
+    """
     try:
         data = await request.json()
         
+        # Required fields
         report_type = data.get("type", "bug")
         description = data.get("description", "")
-        reporter_email = data.get("email", "Not provided")
-        page_url = data.get("url", "Unknown")
-        user_agent = data.get("userAgent", "Unknown")
-        screen_size = data.get("screenSize", "Unknown")
+        page_url = data.get("page_url", "Unknown")
+        user_id = data.get("user_id")  # null if not logged in
+        device_info = data.get("device_info", {})
         timestamp = data.get("timestamp", datetime.utcnow().isoformat())
+        
+        # Optional fields
+        reporter_email = data.get("reporter_email")
+        screenshot = data.get("screenshot")  # base64 image
+        console_errors = data.get("console_errors", [])
+        referrer = data.get("referrer")
         
         if not description:
             raise HTTPException(status_code=400, detail="Description is required")
@@ -33228,19 +33238,72 @@ async def submit_bug_report(request: Request):
             "id": str(uuid.uuid4()),
             "type": report_type,
             "description": description,
-            "reporter_email": reporter_email,
             "page_url": page_url,
-            "user_agent": user_agent,
-            "screen_size": screen_size,
+            "user_id": user_id,
+            "device_info": device_info,
             "timestamp": timestamp,
+            "reporter_email": reporter_email,
+            "screenshot": screenshot,  # Store base64 or null
+            "console_errors": console_errors,
+            "referrer": referrer,
             "status": "new",
             "created_at": datetime.utcnow()
         }
         
         await db.bug_reports.insert_one(bug_report)
-        logger.info(f"Bug report submitted: {bug_report['id']}")
+        logger.info(f"Bug report submitted: {bug_report['id']} by user {user_id or 'anonymous'}")
         
-        # Send email notification
+        # Send to Slack (PRIMARY notification)
+        slack_webhook = os.environ.get('SLACK_WEBHOOK_URL')
+        if slack_webhook:
+            try:
+                import aiohttp
+                
+                # Build detailed Slack message
+                device_str = f"{device_info.get('platform', 'Unknown')} | {device_info.get('viewportWidth', '?')}x{device_info.get('viewportHeight', '?')}"
+                browser = device_info.get('userAgent', 'Unknown')[:80]
+                error_count = len(console_errors)
+                has_screenshot = "✅ Yes" if screenshot else "❌ No"
+                
+                slack_message = {
+                    "blocks": [
+                        {
+                            "type": "header",
+                            "text": {"type": "plain_text", "text": f"🐛 Bug Report: {report_type.upper()}", "emoji": True}
+                        },
+                        {
+                            "type": "section",
+                            "fields": [
+                                {"type": "mrkdwn", "text": f"*Page:*\n{page_url}"},
+                                {"type": "mrkdwn", "text": f"*User ID:*\n{user_id or 'Not logged in'}"},
+                                {"type": "mrkdwn", "text": f"*Device:*\n{device_str}"},
+                                {"type": "mrkdwn", "text": f"*Screenshot:*\n{has_screenshot}"},
+                                {"type": "mrkdwn", "text": f"*Console Errors:*\n{error_count}"},
+                                {"type": "mrkdwn", "text": f"*Time:*\n{timestamp}"}
+                            ]
+                        },
+                        {
+                            "type": "section",
+                            "text": {"type": "mrkdwn", "text": f"*Description:*\n{description[:500]}"}
+                        }
+                    ]
+                }
+                
+                # Add console errors if any
+                if console_errors:
+                    error_text = "\n".join([f"• {e.get('type', 'error')}: {e.get('message', '')[:100]}" for e in console_errors[:5]])
+                    slack_message["blocks"].append({
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": f"*Console Errors:*\n```{error_text}```"}
+                    })
+                
+                async with aiohttp.ClientSession() as session:
+                    await session.post(slack_webhook, json=slack_message)
+                logger.info(f"Bug report sent to Slack: {bug_report['id']}")
+            except Exception as slack_error:
+                logger.error(f"Failed to send to Slack: {str(slack_error)}")
+        
+        # Send email notification (backup)
         try:
             from sendgrid import SendGridAPIClient
             from sendgrid.helpers.mail import Mail
@@ -33248,22 +33311,26 @@ async def submit_bug_report(request: Request):
             admin_email = os.environ.get('SENDER_EMAIL', 'info@coinhubx.net')
             
             email_body = f"""
-            <h2>🐛 New Bug Report</h2>
-            <table style="border-collapse: collapse; width: 100%;">
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Type:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{report_type}</td></tr>
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Description:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{description}</td></tr>
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Reporter Email:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{reporter_email}</td></tr>
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Page URL:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{page_url}</td></tr>
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Screen Size:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{screen_size}</td></tr>
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Browser:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{user_agent[:100]}...</td></tr>
-                <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Timestamp:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{timestamp}</td></tr>
+            <h2>🐛 Bug Report #{bug_report['id'][:8]}</h2>
+            <table style="border-collapse: collapse; width: 100%; font-family: sans-serif;">
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Type</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{report_type}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Page URL</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{page_url}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>User ID</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{user_id or 'Not logged in'}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Device</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{device_info.get('platform', 'Unknown')} | {device_info.get('viewportWidth', '?')}x{device_info.get('viewportHeight', '?')}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Browser</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{device_info.get('userAgent', 'Unknown')[:100]}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Reporter Email</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{reporter_email or 'Not provided'}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Console Errors</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{len(console_errors)}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Screenshot</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{'Attached' if screenshot else 'None'}</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>Timestamp</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{timestamp}</td></tr>
             </table>
+            <h3>Description:</h3>
+            <p style="background: #f9f9f9; padding: 15px; border-left: 4px solid #ff6b6b;">{description}</p>
             """
             
             message = Mail(
                 from_email=admin_email,
                 to_emails=admin_email,
-                subject=f"[CoinHubX Bug] {report_type.upper()}: New Report",
+                subject=f"[CoinHubX Bug] {report_type.upper()}: {description[:50]}...",
                 html_content=email_body
             )
             
@@ -33272,20 +33339,6 @@ async def submit_bug_report(request: Request):
             logger.info(f"Bug report email sent for {bug_report['id']}")
         except Exception as email_error:
             logger.error(f"Failed to send bug report email: {str(email_error)}")
-        
-        # Send to Slack if webhook configured
-        slack_webhook = os.environ.get('SLACK_WEBHOOK_URL')
-        if slack_webhook:
-            try:
-                import aiohttp
-                slack_message = {
-                    "text": f"🐛 *New Bug Report*\n\n*Type:* {report_type}\n*Description:* {description[:200]}...\n*Page:* {page_url}\n*Reporter:* {reporter_email}"
-                }
-                async with aiohttp.ClientSession() as session:
-                    await session.post(slack_webhook, json=slack_message)
-                logger.info(f"Bug report sent to Slack for {bug_report['id']}")
-            except Exception as slack_error:
-                logger.error(f"Failed to send to Slack: {str(slack_error)}")
         
         return {
             "success": True,
@@ -33298,6 +33351,44 @@ async def submit_bug_report(request: Request):
     except Exception as e:
         logger.error(f"Error submitting bug report: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to submit bug report")
+
+
+# ==========================================
+# BACKEND CRITICAL ERROR SLACK ALERTS
+# ==========================================
+
+async def send_slack_critical_error(error_type: str, error_message: str, context: dict = None):
+    """Send critical backend errors to Slack"""
+    slack_webhook = os.environ.get('SLACK_WEBHOOK_URL')
+    if not slack_webhook:
+        return
+    
+    try:
+        import aiohttp
+        
+        context_str = "\n".join([f"• {k}: {v}" for k, v in (context or {}).items()])
+        
+        slack_message = {
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {"type": "plain_text", "text": f"🚨 CRITICAL ERROR: {error_type}", "emoji": True}
+                },
+                {
+                    "type": "section",
+                    "text": {"type": "mrkdwn", "text": f"*Error:*\n```{error_message[:1000]}```"}
+                },
+                {
+                    "type": "section",
+                    "text": {"type": "mrkdwn", "text": f"*Context:*\n{context_str or 'None'}\n\n*Time:* {datetime.utcnow().isoformat()}"}
+                }
+            ]
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            await session.post(slack_webhook, json=slack_message)
+    except Exception as e:
+        logger.error(f"Failed to send critical error to Slack: {str(e)}")
 
 
 # ==========================================
