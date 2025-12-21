@@ -827,7 +827,7 @@ export default function MobileTradingPage() {
           gap: '16px'
         }}>
           <div style={{ color: '#6B7280', fontSize: '13px' }}>
-            © 2024 CoinHubX. All rights reserved.
+            © 2025 CoinHubX. All rights reserved.
           </div>
           <div style={{ display: 'flex', gap: '24px' }}>
             <a href="/terms" style={{ color: '#8B9AAB', fontSize: '13px', textDecoration: 'none' }}>Terms</a>

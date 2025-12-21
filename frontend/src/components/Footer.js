@@ -276,7 +276,7 @@ export default function Footer() {
           gap: '1rem'
         }}>
           <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>
-            © 2024 Coin Hub X. All rights reserved.
+            © 2025 Coin Hub X. All rights reserved.
           </p>
           <p style={{ color: '#666', fontSize: '12px', margin: 0 }}>
             Cryptocurrency trading involves risk. Trade responsibly.

@@ -506,7 +506,7 @@ export default function SpotTradingPro() {
             flexShrink: 0
           }}>
             <div style={{ color: '#6B7280', fontSize: '12px' }}>
-              © 2024 CoinHubX. All rights reserved.
+              © 2025 CoinHubX. All rights reserved.
             </div>
             <div style={{ display: 'flex', gap: '24px' }}>
               <a href="/terms" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
@@ -771,7 +771,7 @@ export default function SpotTradingPro() {
           textAlign: 'center'
         }}>
           <div style={{ color: '#6B7280', fontSize: '11px', marginBottom: '8px' }}>
-            © 2024 CoinHubX. All rights reserved.
+            © 2025 CoinHubX. All rights reserved.
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
             <a href="/terms" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Terms</a>
