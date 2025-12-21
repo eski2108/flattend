@@ -9374,7 +9374,7 @@ async def add_whitelist_address(request: dict):
         "label": label,
         "verified": False,
         "verification_token": verification_token,
-        "created_at": datetime.now(timezone.utc),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "verified_at": None
     }
     
@@ -9410,10 +9410,21 @@ async def add_whitelist_address(request: dict):
     except Exception as e:
         logger.error(f"Failed to send whitelist verification email: {str(e)}")
     
+    # Return clean response (exclude _id and verification_token)
+    response_entry = {
+        "id": whitelist_entry["id"],
+        "user_id": whitelist_entry["user_id"],
+        "currency": whitelist_entry["currency"],
+        "address": whitelist_entry["address"],
+        "label": whitelist_entry["label"],
+        "verified": whitelist_entry["verified"],
+        "created_at": whitelist_entry["created_at"]
+    }
+    
     return {
         "success": True,
         "message": "Address added. Check your email to verify.",
-        "entry": {k: v for k, v in whitelist_entry.items() if k != "verification_token"}
+        "entry": response_entry
     }
 
 
