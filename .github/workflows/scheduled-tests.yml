@@ -11,8 +11,11 @@ on:
   workflow_dispatch:
 
 env:
-  # Default to production site - override with TEST_URL secret if needed
-  SITE_URL: ${{ secrets.TEST_URL || 'https://coinhubx.net' }}
+  # REQUIRED: Set TEST_URL secret in GitHub repo settings
+  # Go to: Settings > Secrets > Actions > New repository secret
+  # Name: TEST_URL
+  # Value: Your deployed site URL (e.g., https://your-app.vercel.app)
+  SITE_URL: ${{ secrets.TEST_URL }}
 
 jobs:
   test:
