@@ -139,7 +139,7 @@ const AccountUpgrade = lazy(() => import("@/pages/AccountUpgrade"));
 const P2PBoost = lazy(() => import("@/pages/P2PBoost"));
 const PriceAlerts = lazy(() => import("@/pages/PriceAlerts"));
 const UIShowcase = lazy(() => import("@/pages/UIShowcase"));
-import ChatWidget from "@/components/ChatWidget";
+// ChatWidget removed per user request
 import { Toaster } from "@/components/ui/sonner";
 import TestModeBanner from "@/components/TestModeBanner";
 import ActiveTradesBanner from "@/components/ActiveTradesBanner";
