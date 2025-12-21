@@ -1,18 +1,23 @@
 name: Scheduled Site Monitoring & Tests
 
 on:
-  # Run every 30 minutes
+  # Run every 6 hours to reduce noise
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 */6 * * *'
   # Also run on push to main
   push:
     branches: [main]
   # Allow manual trigger
   workflow_dispatch:
 
+env:
+  # Default to production site - override with TEST_URL secret if needed
+  SITE_URL: ${{ secrets.TEST_URL || 'https://coinhubx.net' }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
       - name: Checkout code
@@ -21,28 +26,35 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: tests/package-lock.json
 
       - name: Install dependencies
         run: |
           cd tests
-          npm install
-          npx playwright install chromium
+          npm ci || npm install
+          npx playwright install chromium --with-deps
+
+      - name: Verify site is reachable
+        run: |
+          echo "Testing connectivity to: $SITE_URL"
+          curl -sS --connect-timeout 10 -o /dev/null -w "HTTP Status: %{http_code}\n" "$SITE_URL" || echo "Warning: Site may be slow or unreachable"
 
       - name: Run Playwright tests
         id: tests
         run: |
           cd tests
-          npx playwright test --config=playwright.config.js
+          npx playwright test --config=playwright.config.js --timeout=45000
         env:
-          TEST_URL: ${{ secrets.TEST_URL || 'https://your-site-url.com' }}
+          TEST_URL: ${{ env.SITE_URL }}
         continue-on-error: true
 
       - name: Upload Playwright HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.run_number }}
           path: test-reports/
           retention-days: 7
 
@@ -50,18 +62,19 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-json
+          name: test-results-${{ github.run_number }}
           path: test-reports/results.json
           retention-days: 30
 
       - name: Notify Slack on Success
-        if: steps.tests.outcome == 'success'
+        if: steps.tests.outcome == 'success' && secrets.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: success
           text: |
             ✅ *CoinHubX Tests PASSED*
             All automated tests completed successfully.
+            Tested URL: ${{ env.SITE_URL }}
             View report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           author_name: Playwright Test Bot
           fields: repo,commit,author,action,eventName,workflow
@@ -69,25 +82,30 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Notify Slack on Failure
-        if: steps.tests.outcome == 'failure'
+        if: steps.tests.outcome == 'failure' && secrets.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: failure
           text: |
             ❌ *CoinHubX Tests FAILED*
             Some tests did not pass. Please investigate immediately.
+            Tested URL: ${{ env.SITE_URL }}
             View report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           author_name: Playwright Test Bot
           fields: repo,commit,author,action,eventName,workflow
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      - name: Send Email Summary
+      - name: Test Summary
         if: always()
         run: |
+          echo "=========================================="
+          echo "Test Results Summary"
+          echo "=========================================="
+          echo "Site Tested: $SITE_URL"
           echo "Test Status: ${{ steps.tests.outcome }}"
-          echo "Report available at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          # GitHub automatically sends email notifications based on your settings
+          echo "Report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "=========================================="
 
       - name: Fail job if tests failed
         if: steps.tests.outcome == 'failure'
