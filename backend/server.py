@@ -15343,6 +15343,241 @@ async def set_seller_fast_payment_status(request: dict):
         raise
 
 
+# ========================================
+# FIAT ON-RAMP (MoonPay/Ramp Integration)
+# ========================================
+
+@api_router.post("/fiat/onramp/create-session")
+async def create_fiat_onramp_session(request: dict):
+    """
+    Create a fiat on-ramp session (MoonPay, Ramp, etc.)
+    Returns widget URL or session data for embedding
+    """
+    user_id = request.get("user_id")
+    amount_fiat = request.get("amount")
+    fiat_currency = request.get("fiat_currency", "GBP").upper()
+    crypto_currency = request.get("crypto_currency", "BTC").upper()
+    
+    if not user_id or not amount_fiat:
+        raise HTTPException(status_code=400, detail="user_id and amount required")
+    
+    # Get user's wallet address for the crypto
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get or create deposit address for user
+    wallet = await db.wallets.find_one({"user_id": user_id, "currency": crypto_currency})
+    deposit_address = wallet.get("address") if wallet else None
+    
+    # If no address, generate one (placeholder - would integrate with actual wallet service)
+    if not deposit_address:
+        deposit_address = f"coinhubx_{user_id}_{crypto_currency.lower()}"
+    
+    # MoonPay integration
+    moonpay_api_key = os.environ.get("MOONPAY_API_KEY")
+    moonpay_secret = os.environ.get("MOONPAY_SECRET_KEY")
+    
+    if moonpay_api_key:
+        # Production MoonPay integration
+        import hmac
+        import hashlib
+        import urllib.parse
+        
+        base_url = "https://buy.moonpay.com"
+        params = {
+            "apiKey": moonpay_api_key,
+            "currencyCode": crypto_currency.lower(),
+            "baseCurrencyCode": fiat_currency.lower(),
+            "baseCurrencyAmount": str(amount_fiat),
+            "walletAddress": deposit_address,
+            "email": user.get("email", ""),
+            "externalCustomerId": user_id,
+            "redirectURL": f"{os.environ.get('BACKEND_URL', '')}/api/fiat/onramp/callback"
+        }
+        
+        query_string = urllib.parse.urlencode(params)
+        
+        # Sign the URL if secret key is available
+        signature = ""
+        if moonpay_secret:
+            signature = hmac.new(
+                moonpay_secret.encode(),
+                f"?{query_string}".encode(),
+                hashlib.sha256
+            ).hexdigest()
+            query_string += f"&signature={signature}"
+        
+        widget_url = f"{base_url}?{query_string}"
+        
+        # Log the session
+        session_id = str(uuid.uuid4())
+        await db.fiat_onramp_sessions.insert_one({
+            "session_id": session_id,
+            "user_id": user_id,
+            "provider": "moonpay",
+            "amount_fiat": amount_fiat,
+            "fiat_currency": fiat_currency,
+            "crypto_currency": crypto_currency,
+            "deposit_address": deposit_address,
+            "status": "initiated",
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "provider": "moonpay",
+            "widget_url": widget_url,
+            "session_id": session_id
+        }
+    
+    # Ramp Network fallback
+    ramp_api_key = os.environ.get("RAMP_API_KEY")
+    if ramp_api_key:
+        widget_url = f"https://buy.ramp.network/?hostApiKey={ramp_api_key}&hostAppName=CoinHubX&userAddress={deposit_address}&swapAsset={crypto_currency}&fiatCurrency={fiat_currency}&fiatValue={amount_fiat}&userEmailAddress={user.get('email', '')}"
+        
+        session_id = str(uuid.uuid4())
+        await db.fiat_onramp_sessions.insert_one({
+            "session_id": session_id,
+            "user_id": user_id,
+            "provider": "ramp",
+            "amount_fiat": amount_fiat,
+            "fiat_currency": fiat_currency,
+            "crypto_currency": crypto_currency,
+            "deposit_address": deposit_address,
+            "status": "initiated",
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "provider": "ramp",
+            "widget_url": widget_url,
+            "session_id": session_id
+        }
+    
+    # No provider configured
+    raise HTTPException(
+        status_code=503,
+        detail="Fiat on-ramp not configured. Please use P2P or bank transfer."
+    )
+
+
+@api_router.post("/fiat/onramp/webhook/moonpay")
+async def moonpay_webhook(request: Request):
+    """MoonPay webhook for transaction updates"""
+    try:
+        body = await request.body()
+        signature = request.headers.get("Moonpay-Signature", "")
+        
+        # Verify webhook signature
+        moonpay_secret = os.environ.get("MOONPAY_WEBHOOK_SECRET")
+        if moonpay_secret:
+            import hmac
+            import hashlib
+            expected_sig = hmac.new(
+                moonpay_secret.encode(),
+                body,
+                hashlib.sha256
+            ).hexdigest()
+            
+            if not hmac.compare_digest(signature, expected_sig):
+                logger.warning("Invalid MoonPay webhook signature")
+                raise HTTPException(status_code=401, detail="Invalid signature")
+        
+        data = await request.json()
+        
+        status = data.get("status")
+        external_id = data.get("externalCustomerId")  # Our user_id
+        crypto_amount = data.get("quoteCurrencyAmount")
+        crypto_currency = data.get("quoteCurrency", "").upper()
+        tx_hash = data.get("cryptoTransactionId")
+        
+        logger.info(f"MoonPay webhook: user={external_id}, status={status}, amount={crypto_amount} {crypto_currency}")
+        
+        if status == "completed" and external_id:
+            # Credit user's wallet
+            from wallet_service import get_wallet_service
+            wallet_service = get_wallet_service()
+            
+            await wallet_service.credit_balance(
+                db=db,
+                user_id=external_id,
+                currency=crypto_currency,
+                amount=float(crypto_amount),
+                transaction_type="fiat_purchase",
+                reference=f"moonpay_{tx_hash}"
+            )
+            
+            # Update session
+            await db.fiat_onramp_sessions.update_one(
+                {"user_id": external_id, "crypto_currency": crypto_currency, "status": "initiated"},
+                {"$set": {"status": "completed", "tx_hash": tx_hash, "completed_at": datetime.now(timezone.utc)}}
+            )
+            
+            logger.info(f"✅ MoonPay purchase credited: {external_id} received {crypto_amount} {crypto_currency}")
+        
+        return {"received": True}
+        
+    except Exception as e:
+        logger.error(f"MoonPay webhook error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/fiat/onramp/webhook/ramp")
+async def ramp_webhook(request: Request):
+    """Ramp Network webhook for transaction updates"""
+    try:
+        data = await request.json()
+        
+        event_type = data.get("type")
+        purchase = data.get("purchase", {})
+        
+        if event_type == "RELEASED":
+            user_address = purchase.get("receiverAddress")
+            crypto_amount = purchase.get("cryptoAmount")
+            crypto_currency = purchase.get("asset", {}).get("symbol", "").upper()
+            
+            # Find user by deposit address
+            wallet = await db.wallets.find_one({"address": user_address})
+            if wallet:
+                user_id = wallet.get("user_id")
+                
+                from wallet_service import get_wallet_service
+                wallet_service = get_wallet_service()
+                
+                await wallet_service.credit_balance(
+                    db=db,
+                    user_id=user_id,
+                    currency=crypto_currency,
+                    amount=float(crypto_amount),
+                    transaction_type="fiat_purchase",
+                    reference=f"ramp_{purchase.get('id')}"
+                )
+                
+                logger.info(f"✅ Ramp purchase credited: {user_id} received {crypto_amount} {crypto_currency}")
+        
+        return {"received": True}
+        
+    except Exception as e:
+        logger.error(f"Ramp webhook error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/fiat/onramp/status/{session_id}")
+async def get_onramp_status(session_id: str):
+    """Get status of a fiat on-ramp session"""
+    session = await db.fiat_onramp_sessions.find_one(
+        {"session_id": session_id},
+        {"_id": 0}
+    )
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    return session
+
+
 @api_router.get("/admin/p2p-express-stats")
 async def get_p2p_express_statistics():
     """Get statistics on P2P Express usage and fallback rates"""
