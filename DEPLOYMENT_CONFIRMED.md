@@ -1,6 +1,6 @@
 # ✅ ALL CHANGES DEPLOYED TO PREVIEW
 
-**Preview URL:** https://nowpay-debug.preview.emergentagent.com  
+**Preview URL:** https://bugsecurehub.preview.emergentagent.com  
 **Deployment Time:** December 11, 2025 23:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -86,7 +86,7 @@
 
 1. **Navigate to Preview:**
    ```
-   https://nowpay-debug.preview.emergentagent.com
+   https://bugsecurehub.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -139,10 +139,10 @@
 sudo supervisorctl status
 
 # Test preview URL
-curl https://nowpay-debug.preview.emergentagent.com
+curl https://bugsecurehub.preview.emergentagent.com
 
 # Test API health
-curl https://nowpay-debug.preview.emergentagent.com/api/health
+curl https://bugsecurehub.preview.emergentagent.com/api/health
 
 # All return 200 OK ✅
 ```
@@ -183,7 +183,7 @@ curl https://nowpay-debug.preview.emergentagent.com/api/health
 
 **All changes are LIVE at:**
 ```
-https://nowpay-debug.preview.emergentagent.com
+https://bugsecurehub.preview.emergentagent.com
 ```
 
 **Test Account:**

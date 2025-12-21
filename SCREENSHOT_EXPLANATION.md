@@ -3,7 +3,7 @@
 ## 📸 SCREENSHOTS TAKEN
 
 ### Screenshot 1 & 2: Deposit Page
-**URL:** `https://nowpay-debug.preview.emergentagent.com/#/deposit/btc`
+**URL:** `https://bugsecurehub.preview.emergentagent.com/#/deposit/btc`
 **Result:** Shows "Loading..." spinner
 
 ### Screenshot 3 & 4: Login Page
@@ -11,7 +11,7 @@
 **Result:** Shows login page
 
 ### Screenshot 5: Registration Page
-**URL:** `https://nowpay-debug.preview.emergentagent.com/#/register`
+**URL:** `https://bugsecurehub.preview.emergentagent.com/#/register`
 **Result:** Shows registration form with validation
 
 ---
@@ -142,7 +142,7 @@ $ tail -n 30 /app/frontend/src/pages/SpotTradingPro.css | grep "color: #FFFFFF"
 ### Option 1: Create Test Account (Recommended)
 
 ```
-Step 1: Go to https://nowpay-debug.preview.emergentagent.com/#/register
+Step 1: Go to https://bugsecurehub.preview.emergentagent.com/#/register
 
 Step 2: Fill in registration form:
    - Full Name: Your Name
@@ -154,7 +154,7 @@ Step 2: Fill in registration form:
 Step 3: Click "CREATE ACCOUNT"
 
 Step 4: After successful registration/login, navigate to:
-   https://nowpay-debug.preview.emergentagent.com/#/deposit/btc
+   https://bugsecurehub.preview.emergentagent.com/#/deposit/btc
 
 Step 5: OBSERVE:
    ✅ Page loads INSTANTLY (no infinite spinner)
@@ -164,7 +164,7 @@ Step 5: OBSERVE:
    ✅ Instructions visible
 
 Step 6: Navigate to:
-   https://nowpay-debug.preview.emergentagent.com/#/trading
+   https://bugsecurehub.preview.emergentagent.com/#/trading
 
 Step 7: Open DevTools (F12), toggle mobile view (Ctrl+Shift+M), select iPhone SE
 
@@ -179,7 +179,7 @@ Step 8: OBSERVE:
 ### Option 2: Use Browser DevTools
 
 ```
-Step 1: Open https://nowpay-debug.preview.emergentagent.com
+Step 1: Open https://bugsecurehub.preview.emergentagent.com
 
 Step 2: Open DevTools (F12)
 
@@ -278,4 +278,4 @@ $ ls -lh /app/frontend/build/static/js/main.*.js
 
 **Document Created:** December 9, 2024
 **Status:** DEPLOYED AND VERIFIED
-**URL:** https://nowpay-debug.preview.emergentagent.com
+**URL:** https://bugsecurehub.preview.emergentagent.com

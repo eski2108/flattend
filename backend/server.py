@@ -5577,8 +5577,8 @@ async def initiate_savings_deposit(request: dict):
             from nowpayments_integration import NOWPaymentsService
             nowpayments = NOWPaymentsService()
             
-            backend_url = os.getenv('BACKEND_URL', 'https://nowpay-debug.preview.emergentagent.com')
-            frontend_url = os.getenv('FRONTEND_URL', 'https://nowpay-debug.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://bugsecurehub.preview.emergentagent.com')
+            frontend_url = os.getenv('FRONTEND_URL', 'https://bugsecurehub.preview.emergentagent.com')
             
             # Create invoice (user pays in selected crypto)
             invoice_payload = {
@@ -10490,7 +10490,7 @@ async def google_auth():
     try:
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
         # Use the backend URL which is the same as frontend URL in this setup
-        base_url = os.environ.get('BACKEND_URL', 'https://nowpay-debug.preview.emergentagent.com')
+        base_url = os.environ.get('BACKEND_URL', 'https://bugsecurehub.preview.emergentagent.com')
         redirect_uri = f"{base_url}/api/auth/google/callback"
         
         if not google_client_id:

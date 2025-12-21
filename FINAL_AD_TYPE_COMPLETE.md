@@ -121,7 +121,7 @@ Test Sequence Completed:
 - **Test Result:** ✅ PASS - Complete flow working
 
 ### 10. Live Preview Deployment ✅
-- All changes pushed to: https://nowpay-debug.preview.emergentagent.com
+- All changes pushed to: https://bugsecurehub.preview.emergentagent.com
 - Backend running and accessible
 - Frontend running and accessible
 - No breaking changes to existing features
@@ -231,7 +231,7 @@ Test Sequence Completed:
 
 ## PRODUCTION DEPLOYMENT
 
-**Live URL:** https://nowpay-debug.preview.emergentagent.com
+**Live URL:** https://bugsecurehub.preview.emergentagent.com
 
 **Status:**
 - ✅ Backend: RUNNING

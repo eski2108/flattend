@@ -14,7 +14,7 @@ import time
 from PIL import Image
 
 # Configuration
-BASE_URL = "https://nowpay-debug.preview.emergentagent.com/api"
+BASE_URL = "https://bugsecurehub.preview.emergentagent.com/api"
 
 def print_test_header(test_name):
     """Print formatted test header"""

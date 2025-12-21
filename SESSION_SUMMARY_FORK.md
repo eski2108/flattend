@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://nowpay-debug.preview.emergentagent.com
+https://bugsecurehub.preview.emergentagent.com
 
 ---
 

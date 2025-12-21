@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://nowpay-debug.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://bugsecurehub.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://nowpay-debug.preview.emergentagent.com`
-- Backend API: `https://nowpay-debug.preview.emergentagent.com/api`
+- Frontend: `https://bugsecurehub.preview.emergentagent.com`
+- Backend API: `https://bugsecurehub.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

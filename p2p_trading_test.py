@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://nowpay-debug.preview.emergentagent.com/api"
+BASE_URL = "https://bugsecurehub.preview.emergentagent.com/api"
 
 # Test Users
 BUYER_USER = {

@@ -6,7 +6,7 @@
 
 **Line 197 - Main Button URL:**
 ```html
-<a href="https://nowpay-debug.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+<a href="https://bugsecurehub.preview.emergentagent.com/admin/disputes/{dispute_id}" 
    target="_blank"
    style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
     🚨 RESOLVE DISPUTE NOW →
@@ -19,7 +19,7 @@
 **Line 216 - Copyable Link:**
 ```html
 <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-    https://nowpay-debug.preview.emergentagent.com/admin/disputes/{dispute_id}
+    https://bugsecurehub.preview.emergentagent.com/admin/disputes/{dispute_id}
 </p>
 ```
 **Issue:** Copy-paste link redirects to homepage instead of dispute page
@@ -28,7 +28,7 @@
 
 **Line 227 - Alternative Text Link:**
 ```html
-<a href="https://nowpay-debug.preview.emergentagent.com/admin/disputes/{dispute_id}" 
+<a href="https://bugsecurehub.preview.emergentagent.com/admin/disputes/{dispute_id}" 
    style="color: #EF4444; font-weight: bold; text-decoration: underline;">
     Open Dispute #{dispute_id}
 </a>
@@ -41,7 +41,7 @@
 
 **Line 197 - Main Button URL:**
 ```html
-<a href="https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
+<a href="https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
    target="_blank"
    style="font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; padding: 15px 40px; display: inline-block; border-radius: 8px;">
     🚨 RESOLVE DISPUTE NOW →
@@ -54,7 +54,7 @@
 **Line 216 - Copyable Link:**
 ```html
 <p style="margin: 0; font-size: 13px; color: #1F2937; word-break: break-all; text-align: center; font-family: monospace;">
-    https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+    https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 </p>
 ```
 **Fixed:** Added `#/` - Copy-paste link now works correctly ✅
@@ -63,7 +63,7 @@
 
 **Line 227 - Alternative Text Link:**
 ```html
-<a href="https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
+<a href="https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}" 
    style="color: #EF4444; font-weight: bold; text-decoration: underline;">
     Open Dispute #{dispute_id}
 </a>

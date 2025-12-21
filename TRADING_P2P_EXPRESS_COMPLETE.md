@@ -504,8 +504,8 @@ $ curl http://localhost:8001/api/prices/live | jq '.prices.BTC.price_usd'
 ```
 
 **Pages Accessible:**
-- ✅ https://nowpay-debug.preview.emergentagent.com/trading
-- ✅ https://nowpay-debug.preview.emergentagent.com/p2p-express
+- ✅ https://bugsecurehub.preview.emergentagent.com/trading
+- ✅ https://bugsecurehub.preview.emergentagent.com/p2p-express
 
 ---
 

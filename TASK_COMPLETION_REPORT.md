@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://nowpay-debug.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://bugsecurehub.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 📧 URLs found in dispute email template:
 
-1. https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://nowpay-debug.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://bugsecurehub.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://nowpay-debug.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://bugsecurehub.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

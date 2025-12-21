@@ -12,7 +12,7 @@ import json
 from datetime import datetime
 
 # Get backend URL from environment
-BACKEND_URL = "https://nowpay-debug.preview.emergentagent.com"
+BACKEND_URL = "https://bugsecurehub.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 AUTH_BASE = f"{BACKEND_URL}"
 

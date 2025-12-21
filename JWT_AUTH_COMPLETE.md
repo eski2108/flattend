@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://nowpay-debug.preview.emergentagent.com
+**Live URL:** https://bugsecurehub.preview.emergentagent.com
 
 ---
 

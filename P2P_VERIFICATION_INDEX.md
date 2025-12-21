@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://nowpay-debug.preview.emergentagent.com
-- Backend API: https://nowpay-debug.preview.emergentagent.com/api
-- P2P Marketplace: https://nowpay-debug.preview.emergentagent.com/p2p
+- Frontend: https://bugsecurehub.preview.emergentagent.com
+- Backend API: https://bugsecurehub.preview.emergentagent.com/api
+- P2P Marketplace: https://bugsecurehub.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

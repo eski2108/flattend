@@ -14,7 +14,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://nowpay-debug.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://bugsecurehub.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

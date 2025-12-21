@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://nowpay-debug.preview.emergentagent.com
+https://bugsecurehub.preview.emergentagent.com
 
 ### Test Route
 
-`https://nowpay-debug.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://bugsecurehub.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## Access the Page
 
-**URL:** `https://nowpay-debug.preview.emergentagent.com/admin/liquidity-manager`
+**URL:** `https://bugsecurehub.preview.emergentagent.com/admin/liquidity-manager`
 
 ---
 
@@ -154,7 +154,7 @@ Updates a specific currency's balance:
 
 ### "Failed to load liquidity data"
 - Check backend is running: `sudo supervisorctl status backend`
-- Check API endpoint: `curl https://nowpay-debug.preview.emergentagent.com/api/admin/liquidity-all`
+- Check API endpoint: `curl https://bugsecurehub.preview.emergentagent.com/api/admin/liquidity-all`
 - Restart backend if needed: `sudo supervisorctl restart backend`
 
 ### Update button is disabled

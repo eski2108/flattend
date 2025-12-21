@@ -12,7 +12,7 @@ import base64
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://nowpay-debug.preview.emergentagent.com/api"
+BACKEND_URL = "https://bugsecurehub.preview.emergentagent.com/api"
 
 # Test User Credentials
 TEST_USER = {

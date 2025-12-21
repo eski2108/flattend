@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 load_dotenv('/app/backend/.env')
 
 # Configuration
-BACKEND_URL = "https://nowpay-debug.preview.emergentagent.com/api"
+BACKEND_URL = "https://bugsecurehub.preview.emergentagent.com/api"
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DB_NAME', 'coinhubx')
 
