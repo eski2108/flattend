@@ -263,40 +263,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Supported Cryptocurrencies */}
-        <div style={{
-          borderTop: '1px solid rgba(0, 240, 255, 0.1)',
-          paddingTop: '2rem',
-          marginBottom: '2rem'
-        }}>
-          <h4 style={{ color: '#00F0FF', fontSize: '14px', fontWeight: '700', marginBottom: '1rem', textAlign: 'center' }}>
-            SUPPORTED CRYPTOCURRENCIES
-          </h4>
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '1.5rem'
-          }}>
-            {['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'MATIC', 'LTC', 'LINK', 'AVAX', 'ATOM', 'UNI', 'TRX', 'SHIB'].map(coin => (
-              <div key={coin} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.5rem',
-                opacity: 0.8,
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
-              >
-                <Coin3DIcon symbol={coin} size={36} />
-                <span style={{ color: '#888', fontSize: '11px', fontWeight: '600' }}>{coin}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Crypto icons section removed - cleaner look */}
 
         {/* Bottom Bar */}
         <div style={{
