@@ -1,170 +1,98 @@
-# CoinHubX Monitoring & Alerting Setup Guide
+# CoinHubX Monitoring - 100% FREE Setup
 
-This document explains how to configure all monitoring tools for CoinHubX.
-
----
-
-## 🔔 1. UptimeRobot (Downtime Alerts)
-
-### What it does:
-- Checks if your site is online every 5 minutes
-- Sends instant alerts when site goes down
-- Shows uptime statistics
-
-### Setup Steps:
-
-1. **Create Account**: Go to https://uptimerobot.com and sign up (free tier available)
-
-2. **Add Monitor**:
-   - Click "Add New Monitor"
-   - Monitor Type: `HTTP(s)`
-   - Friendly Name: `CoinHubX Production`
-   - URL: `https://coinhubx.net` (your live site URL)
-   - Monitoring Interval: `5 minutes`
-
-3. **Configure Alerts**:
-   - Go to "Alert Contacts" in sidebar
-   - Add your email (default)
-   - **Add Slack**:
-     - Click "Add Alert Contact" → "Slack"
-     - Follow OAuth flow to connect your Slack workspace
-     - Select channel: `#website-alerts`
-   - **Add SMS** (optional, requires credits):
-     - Click "Add Alert Contact" → "SMS"
-     - Enter phone number
-
-4. **Assign Contacts to Monitor**:
-   - Edit your monitor
-   - Check all alert contacts you want notified
-
-### Result:
-- Site down → Slack message + SMS + Email within 5 minutes
+All tools are FREE. No credit card required.
 
 ---
 
-## 🐛 2. Marker.io (Visual Bug Reporting)
+## ✅ Already Done (By Me)
 
-### What it does:
-- Adds a floating button to your site
-- Users/testers can screenshot bugs with annotations
-- Automatically captures browser info, console logs, etc.
-- Creates tickets in your dashboard
+| Feature | Status | What It Does |
+|---------|--------|-------------|
+| **Bug Report Button** | ✅ LIVE | Red "Bug?" button on every page - users report issues |
+| **GitHub Actions Tests** | ✅ CONFIGURED | Auto-tests every 6 hours |
+| **Uptime Check Workflow** | ✅ CONFIGURED | Checks site every 30 mins |
+| **Email Notifications** | ✅ CONFIGURED | Bug reports sent to your email |
 
-### Setup Steps:
+---
 
-1. **Create Account**: Go to https://marker.io and sign up
+## 🔧 You Need To Do (5 Minutes)
 
-2. **Create Project**:
-   - Click "New Project"
+### Step 1: Add GitHub Secrets
+
+1. Go to: `github.com/coinhubx1/Po1/settings/secrets/actions`
+2. Click **"New repository secret"** for each:
+
+| Secret Name | Value | Where to Get It |
+|-------------|-------|----------------|
+| `TEST_URL` | Your live site URL | e.g., `https://your-site.com` |
+| `SLACK_WEBHOOK_URL` | Slack webhook URL | See Step 2 below |
+
+### Step 2: Create Slack Webhook (FREE)
+
+1. Go to: https://api.slack.com/apps
+2. Click **"Create New App"** → **"From scratch"**
+3. Name: `CoinHubX Alerts`, Workspace: Your workspace
+4. Click **"Incoming Webhooks"** in sidebar
+5. Toggle **"Activate Incoming Webhooks"** ON
+6. Click **"Add New Webhook to Workspace"**
+7. Select channel: `#website-alerts` (create it first)
+8. Copy the webhook URL (starts with `https://hooks.slack.com/...`)
+9. Add to GitHub as `SLACK_WEBHOOK_URL` secret
+
+### Step 3: UptimeRobot (FREE - 50 monitors)
+
+1. Sign up: https://uptimerobot.com (free)
+2. Click **"Add New Monitor"**
+3. Settings:
+   - Type: `HTTP(s)`
    - Name: `CoinHubX`
-   - Add your site URL
-
-3. **Get Your Project ID**:
-   - In project settings, copy your Project ID
-   - It looks like: `64f8a1b2c3d4e5f6a7b8c9d0`
-
-4. **Update Code**:
-   - Open `/app/frontend/public/index.html`
-   - Find: `project: 'MARKER_PROJECT_ID'`
-   - Replace with your actual project ID
-
-5. **Configure Slack Integration**:
-   - In Marker.io dashboard → Settings → Integrations
-   - Click "Slack"
-   - Connect to your workspace
-   - Select channel: `#website-bugs`
-
-### Result:
-- User clicks bug button → Screenshots with annotation
-- Bug posted to Marker.io dashboard + Slack notification
+   - URL: Your live site URL
+   - Interval: `5 minutes`
+4. Add Alert Contacts:
+   - Your email (automatic)
+   - Slack (use same webhook URL)
 
 ---
 
-## 🧪 3. Automated Tests (GitHub Actions + Playwright)
+## 📊 What You'll Get
 
-### What it does:
-- Runs automated tests every 6 hours
-- Checks for forbidden text (APY, staking, etc.)
-- Verifies critical pages load
-- Sends Slack alerts on failure
+### Bug Reports
+- Users click red "Bug?" button → Fill form → You get email
+- Stored in database for review
+- Optional: Also posts to Slack if webhook configured
 
-### Already Configured! Just add secrets:
+### Site Down Alerts
+- UptimeRobot checks every 5 mins → Email + Slack if down
+- GitHub Actions backup check every 30 mins
 
-1. **Add TEST_URL Secret**:
-   - Go to: `github.com/coinhubx1/Po1/settings/secrets/actions`
-   - Click "New repository secret"
-   - Name: `TEST_URL`
-   - Value: `https://your-deployed-site-url.com`
-
-2. **Add SLACK_WEBHOOK_URL Secret**:
-   - Create Slack webhook:
-     - Go to https://api.slack.com/apps
-     - Create new app → "Incoming Webhooks"
-     - Activate webhooks
-     - Add webhook to channel: `#website-alerts`
-     - Copy webhook URL
-   - Add to GitHub:
-     - Name: `SLACK_WEBHOOK_URL`
-     - Value: `https://hooks.slack.com/services/xxx/yyy/zzz`
-
-3. **Manual Test Run**:
-   - Go to Actions tab in GitHub
-   - Select "Scheduled Site Monitoring & Tests"
-   - Click "Run workflow"
-
-### Result:
-- Tests fail → Slack message with link to report
-- Tests pass → Optional success notification
-
----
-
-## 📊 Slack Channel Setup
-
-Create these channels in your Slack workspace:
-
-| Channel | Purpose | Connected Tools |
-|---------|---------|----------------|
-| `#website-alerts` | Critical alerts (downtime, test failures) | UptimeRobot, GitHub Actions |
-| `#website-bugs` | Bug reports from users | Marker.io |
-
----
-
-## 🔑 GitHub Secrets Required
-
-| Secret Name | Where to Get It | Purpose |
-|-------------|-----------------|----------|
-| `TEST_URL` | Your deployed site URL | Where to run tests against |
-| `SLACK_WEBHOOK_URL` | Slack App Settings | Send test result notifications |
-
----
-
-## ✅ Verification Checklist
-
-- [ ] UptimeRobot account created
-- [ ] UptimeRobot monitor added for production URL
-- [ ] UptimeRobot Slack alert contact configured
-- [ ] Marker.io account created
-- [ ] Marker.io project ID added to index.html
-- [ ] Marker.io Slack integration configured
-- [ ] GitHub secret TEST_URL added
-- [ ] GitHub secret SLACK_WEBHOOK_URL added
-- [ ] Manual workflow run successful
+### Automated Test Alerts
+- Tests run every 6 hours
+- Checks: Pages load, no APY text, button works
+- Slack notification on failure with report link
 
 ---
 
 ## 🆘 Troubleshooting
 
-### Tests Failing?
-1. Check if `TEST_URL` secret is set correctly
-2. Verify the URL is accessible (not behind auth)
-3. View the Playwright report artifact in GitHub Actions
+**Tests failing?**
+- Check `TEST_URL` secret is correct and site is live
 
-### No Slack Notifications?
-1. Verify `SLACK_WEBHOOK_URL` is correct
-2. Check Slack channel permissions
-3. Make sure webhook is not disabled
+**No Slack messages?**
+- Verify `SLACK_WEBHOOK_URL` secret is correct
+- Test webhook: `curl -X POST -H 'Content-type: application/json' --data '{"text":"Test"}' YOUR_WEBHOOK_URL`
 
-### Marker.io Widget Not Showing?
-1. Verify project ID is correct in index.html
-2. Check browser console for errors
-3. Rebuild frontend: `cd frontend && yarn build`
+**Bug reports not arriving?**
+- Check backend logs: `tail -f /var/log/supervisor/backend.err.log`
+- Verify SendGrid API key is set
+
+---
+
+## 💰 Cost Summary
+
+| Tool | Cost |
+|------|------|
+| Bug Report Button | £0 (built-in) |
+| GitHub Actions | £0 (2000 mins/month free) |
+| Slack | £0 (free tier) |
+| UptimeRobot | £0 (50 monitors free) |
+| **TOTAL** | **£0/month** |
