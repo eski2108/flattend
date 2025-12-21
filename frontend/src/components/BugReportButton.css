@@ -143,16 +143,72 @@
   color: #fff;
 }
 
+/* Screenshot capture */
+.capture-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #a0aec0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.capture-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.capture-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.screenshot-preview {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.screenshot-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.remove-screenshot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 0, 0, 0.8);
+  border: none;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .bug-report-meta {
   padding: 10px;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
   margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .bug-report-meta small {
   color: #6b7280;
   font-size: 12px;
+}
+
+.bug-report-meta .error-count {
+  color: #f59e0b;
 }
 
 .bug-report-submit {
