@@ -1,21 +1,11 @@
-name: Scheduled Site Monitoring & Tests
+name: CI Tests on Push
 
 on:
-  # Run every 6 hours to reduce noise
-  schedule:
-    - cron: '0 */6 * * *'
-  # Also run on push to main
   push:
     branches: [main]
-  # Allow manual trigger
+  pull_request:
+    branches: [main]
   workflow_dispatch:
-
-env:
-  # REQUIRED: Set TEST_URL secret in GitHub repo settings
-  # Go to: Settings > Secrets > Actions > New repository secret
-  # Name: TEST_URL
-  # Value: Your deployed site URL (e.g., https://your-app.vercel.app)
-  SITE_URL: ${{ secrets.TEST_URL }}
 
 jobs:
   test:
@@ -30,102 +20,37 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: tests/package-lock.json
 
-      - name: Install dependencies
+      - name: Install test dependencies
         run: |
           cd tests
           npm ci || npm install
           npx playwright install chromium --with-deps
 
-      - name: Verify TEST_URL is configured
-        run: |
-          if [ -z "$SITE_URL" ]; then
-            echo "❌ ERROR: TEST_URL secret is not configured!"
-            echo ""
-            echo "To fix this:"
-            echo "1. Go to your GitHub repository"
-            echo "2. Click Settings > Secrets and variables > Actions"
-            echo "3. Click 'New repository secret'"
-            echo "4. Name: TEST_URL"
-            echo "5. Value: Your deployed site URL (e.g., https://your-app.vercel.app)"
-            echo ""
-            exit 1
-          fi
-          echo "✅ TEST_URL configured: $SITE_URL"
-
-      - name: Verify site is reachable
-        run: |
-          echo "Testing connectivity to: $SITE_URL"
-          curl -sS --connect-timeout 10 -o /dev/null -w "HTTP Status: %{http_code}\n" "$SITE_URL" || echo "Warning: Site may be slow or unreachable"
-
       - name: Run Playwright tests
         id: tests
         run: |
           cd tests
-          npx playwright test --config=playwright.config.js --timeout=45000
+          npx playwright test --config=playwright.config.js
         env:
-          TEST_URL: ${{ env.SITE_URL }}
+          TEST_URL: ${{ secrets.TEST_URL }}
         continue-on-error: true
 
-      - name: Upload Playwright HTML Report
+      - name: Upload Test Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ github.run_number }}
+          name: test-report-${{ github.run_number }}
           path: test-reports/
           retention-days: 7
 
-      - name: Upload Test Results JSON
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ github.run_number }}
-          path: test-reports/results.json
-          retention-days: 30
-
-      - name: Notify Slack on Success
-        if: steps.tests.outcome == 'success' && secrets.SLACK_WEBHOOK_URL != ''
-        uses: 8398a7/action-slack@v3
-        with:
-          status: success
-          text: |
-            ✅ *CoinHubX Tests PASSED*
-            All automated tests completed successfully.
-            Tested URL: ${{ env.SITE_URL }}
-            View report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          author_name: Playwright Test Bot
-          fields: repo,commit,author,action,eventName,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
       - name: Notify Slack on Failure
-        if: steps.tests.outcome == 'failure' && secrets.SLACK_WEBHOOK_URL != ''
-        uses: 8398a7/action-slack@v3
-        with:
-          status: failure
-          text: |
-            ❌ *CoinHubX Tests FAILED*
-            Some tests did not pass. Please investigate immediately.
-            Tested URL: ${{ env.SITE_URL }}
-            View report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          author_name: Playwright Test Bot
-          fields: repo,commit,author,action,eventName,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Test Summary
-        if: always()
+        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
         run: |
-          echo "=========================================="
-          echo "Test Results Summary"
-          echo "=========================================="
-          echo "Site Tested: $SITE_URL"
-          echo "Test Status: ${{ steps.tests.outcome }}"
-          echo "Report: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo "=========================================="
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"❌ *CI Tests Failed*\n\nRepo: ${{ github.repository }}\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\n\nView: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"
 
-      - name: Fail job if tests failed
+      - name: Fail if tests failed
         if: steps.tests.outcome == 'failure'
         run: exit 1
