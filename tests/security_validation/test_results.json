@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T10:24:05.756820",
+  "timestamp": "2025-12-21T10:27:19.174932",
   "passed": 5,
   "total": 6,
   "results": [
@@ -26,7 +26,8 @@
       "passed": true,
       "details": [
         "GET whitelist: WORKING",
-        "ADD whitelist: FAILED",
+        "ADD whitelist: WORKING",
+        "Email verification: MENTIONED",
         "Verification status: CORRECT",
         "Duplicate prevention: WORKING"
       ]
