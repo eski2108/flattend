@@ -1,0 +1,169 @@
+.fiat-onramp {
+  background: linear-gradient(180deg, #1a2332 0%, #0d1520 100%);
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.onramp-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.onramp-header h3 {
+  color: #fff;
+  font-size: 20px;
+  margin: 0 0 8px 0;
+}
+
+.onramp-header p {
+  color: #8892a0;
+  font-size: 14px;
+  margin: 0;
+}
+
+.onramp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group label {
+  display: block;
+  color: #a0aec0;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.input-with-select {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.input-with-select input {
+  flex: 1;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.input-with-select input:focus {
+  outline: none;
+}
+
+.input-with-select select {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.input-with-select select option {
+  background: #1a2332;
+}
+
+.input-with-select.receive {
+  padding: 14px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-with-select.receive .estimated {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.swap-icon {
+  text-align: center;
+  color: #00e5ff;
+  font-size: 24px;
+  padding: 8px;
+}
+
+.buy-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.buy-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.3);
+}
+
+.buy-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.onramp-info {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.onramp-info p {
+  color: #6b7280;
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+/* Widget View */
+.fiat-onramp-widget {
+  background: #1a2332;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.widget-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 16px;
+}
+
+.close-widget {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.widget-note {
+  color: #6b7280;
+  font-size: 12px;
+  text-align: center;
+  padding: 12px;
+  margin: 0;
+}
