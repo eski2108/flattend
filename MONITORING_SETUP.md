@@ -1,110 +1,170 @@
-# Site Monitoring & Bug Tracking Setup Guide
+# CoinHubX Monitoring & Alerting Setup Guide
 
-## Option 1: UptimeRobot (Basic Uptime Monitoring)
+This document explains how to configure all monitoring tools for CoinHubX.
+
+---
+
+## 🔔 1. UptimeRobot (Downtime Alerts)
+
+### What it does:
+- Checks if your site is online every 5 minutes
+- Sends instant alerts when site goes down
+- Shows uptime statistics
 
 ### Setup Steps:
-1. Go to [UptimeRobot.com](https://uptimerobot.com) and create a free account
-2. Click "Add New Monitor"
-3. Configure:
-   - **Monitor Type**: HTTP(s)
-   - **Friendly Name**: CoinHubX - Homepage
-   - **URL**: `https://nowpay-debug.preview.emergentagent.com`
-   - **Monitoring Interval**: 5 minutes
-4. Add more monitors for:
-   - `/login` - Login page
-   - `/savings` - Savings page
-   - `/api/health` - API health check
-5. Add alert contacts (email/SMS)
 
-**Result**: Get alerts within 5 minutes if site goes down.
+1. **Create Account**: Go to https://uptimerobot.com and sign up (free tier available)
 
----
+2. **Add Monitor**:
+   - Click "Add New Monitor"
+   - Monitor Type: `HTTP(s)`
+   - Friendly Name: `CoinHubX Production`
+   - URL: `https://coinhubx.net` (your live site URL)
+   - Monitoring Interval: `5 minutes`
 
-## Option 2: BugHerd / Marker.io (Visual Bug Tracking)
+3. **Configure Alerts**:
+   - Go to "Alert Contacts" in sidebar
+   - Add your email (default)
+   - **Add Slack**:
+     - Click "Add Alert Contact" → "Slack"
+     - Follow OAuth flow to connect your Slack workspace
+     - Select channel: `#website-alerts`
+   - **Add SMS** (optional, requires credits):
+     - Click "Add Alert Contact" → "SMS"
+     - Enter phone number
 
-### BugHerd Setup:
-1. Sign up at [bugherd.com](https://bugherd.com)
-2. Create a new project for CoinHubX
-3. Copy the JavaScript snippet provided
-4. Add to your site before `</body>` tag:
+4. **Assign Contacts to Monitor**:
+   - Edit your monitor
+   - Check all alert contacts you want notified
 
-```html
-<script type='text/javascript' src='https://www.bugherd.com/sidebarv2.js?apikey=YOUR_API_KEY' async='true'></script>
-```
-
-### Marker.io Setup:
-1. Sign up at [marker.io](https://marker.io)
-2. Create a new project
-3. Install the widget:
-
-```html
-<script>
-  window.markerConfig = {
-    project: 'YOUR_PROJECT_ID',
-    source: 'snippet'
-  };
-</script>
-<script>
-  !function(e,r,a){if(!e.__Marker){e.__Marker={};var t=[],n={__cs:t};["show","hide","isVisible","capture","cancelCapture","unload","reload","isExtensionInstalled","setReporter","setCustomData","on","off"].forEach(function(e){n[e]=function(){var r=Array.prototype.slice.call(arguments);r.unshift(e),t.push(r)}}),e.Marker=n;var s=r.createElement("script");s.async=1,s.src="https://edge.marker.io/latest/shim.js";var i=r.getElementsByTagName("script")[0];i.parentNode.insertBefore(s,i)}}(window,document);
-</script>
-```
-
-**Result**: Visual bug reporting sidebar on your live site.
+### Result:
+- Site down → Slack message + SMS + Email within 5 minutes
 
 ---
 
-## Option 3: Automated Testing (Already Implemented)
+## 🐛 2. Marker.io (Visual Bug Reporting)
 
-### Tests Location: `/app/tests/`
+### What it does:
+- Adds a floating button to your site
+- Users/testers can screenshot bugs with annotations
+- Automatically captures browser info, console logs, etc.
+- Creates tickets in your dashboard
 
-### Run Tests Manually:
-```bash
-cd /app/tests
-npm install
-npm test
-```
+### Setup Steps:
 
-### Test Coverage:
-- ✅ No APY/staking terminology on notice page
-- ✅ Correct terminology (Notice, Lock, Fee)
-- ✅ Currency selector (GBP/USD/EUR)
-- ✅ Add to Savings 5-step flow
-- ✅ NowPayments integration (237+ coins)
-- ✅ Lock period cards (30/60/90 days)
-- ✅ Site health checks (homepage, savings, login, API)
+1. **Create Account**: Go to https://marker.io and sign up
 
-### GitHub Actions:
-- **File**: `.github/workflows/scheduled-tests.yml`
-- **Schedule**: Every 30 minutes
-- **Also runs**: On push to main branch
-- **Reports**: Uploaded as artifacts
+2. **Create Project**:
+   - Click "New Project"
+   - Name: `CoinHubX`
+   - Add your site URL
 
----
+3. **Get Your Project ID**:
+   - In project settings, copy your Project ID
+   - It looks like: `64f8a1b2c3d4e5f6a7b8c9d0`
 
-## Quick Integration Code for Frontend
+4. **Update Code**:
+   - Open `/app/frontend/public/index.html`
+   - Find: `project: 'MARKER_PROJECT_ID'`
+   - Replace with your actual project ID
 
-Add this to your `index.html` or main template before `</body>`:
+5. **Configure Slack Integration**:
+   - In Marker.io dashboard → Settings → Integrations
+   - Click "Slack"
+   - Connect to your workspace
+   - Select channel: `#website-bugs`
 
-```html
-<!-- BugHerd (uncomment and add your API key) -->
-<!-- <script type='text/javascript' src='https://www.bugherd.com/sidebarv2.js?apikey=YOUR_KEY' async='true'></script> -->
-
-<!-- Marker.io (uncomment and add your project ID) -->
-<!--
-<script>
-  window.markerConfig = { project: 'YOUR_PROJECT_ID', source: 'snippet' };
-</script>
-<script async src="https://edge.marker.io/latest/shim.js"></script>
--->
-```
+### Result:
+- User clicks bug button → Screenshots with annotation
+- Bug posted to Marker.io dashboard + Slack notification
 
 ---
 
-## Summary of Implementation Status
+## 🧪 3. Automated Tests (GitHub Actions + Playwright)
 
-| Option | Tool | Status |
-|--------|------|--------|
-| 1 | UptimeRobot | 📋 Manual setup required (free account) |
-| 2 | BugHerd/Marker.io | 📋 Code ready, needs API key |
-| 3 | Playwright Tests | ✅ Fully implemented |
-| 3 | GitHub Actions | ✅ Workflow created (runs every 30 min) |
+### What it does:
+- Runs automated tests every 6 hours
+- Checks for forbidden text (APY, staking, etc.)
+- Verifies critical pages load
+- Sends Slack alerts on failure
+
+### Already Configured! Just add secrets:
+
+1. **Add TEST_URL Secret**:
+   - Go to: `github.com/coinhubx1/Po1/settings/secrets/actions`
+   - Click "New repository secret"
+   - Name: `TEST_URL`
+   - Value: `https://your-deployed-site-url.com`
+
+2. **Add SLACK_WEBHOOK_URL Secret**:
+   - Create Slack webhook:
+     - Go to https://api.slack.com/apps
+     - Create new app → "Incoming Webhooks"
+     - Activate webhooks
+     - Add webhook to channel: `#website-alerts`
+     - Copy webhook URL
+   - Add to GitHub:
+     - Name: `SLACK_WEBHOOK_URL`
+     - Value: `https://hooks.slack.com/services/xxx/yyy/zzz`
+
+3. **Manual Test Run**:
+   - Go to Actions tab in GitHub
+   - Select "Scheduled Site Monitoring & Tests"
+   - Click "Run workflow"
+
+### Result:
+- Tests fail → Slack message with link to report
+- Tests pass → Optional success notification
+
+---
+
+## 📊 Slack Channel Setup
+
+Create these channels in your Slack workspace:
+
+| Channel | Purpose | Connected Tools |
+|---------|---------|----------------|
+| `#website-alerts` | Critical alerts (downtime, test failures) | UptimeRobot, GitHub Actions |
+| `#website-bugs` | Bug reports from users | Marker.io |
+
+---
+
+## 🔑 GitHub Secrets Required
+
+| Secret Name | Where to Get It | Purpose |
+|-------------|-----------------|----------|
+| `TEST_URL` | Your deployed site URL | Where to run tests against |
+| `SLACK_WEBHOOK_URL` | Slack App Settings | Send test result notifications |
+
+---
+
+## ✅ Verification Checklist
+
+- [ ] UptimeRobot account created
+- [ ] UptimeRobot monitor added for production URL
+- [ ] UptimeRobot Slack alert contact configured
+- [ ] Marker.io account created
+- [ ] Marker.io project ID added to index.html
+- [ ] Marker.io Slack integration configured
+- [ ] GitHub secret TEST_URL added
+- [ ] GitHub secret SLACK_WEBHOOK_URL added
+- [ ] Manual workflow run successful
+
+---
+
+## 🆘 Troubleshooting
+
+### Tests Failing?
+1. Check if `TEST_URL` secret is set correctly
+2. Verify the URL is accessible (not behind auth)
+3. View the Playwright report artifact in GitHub Actions
+
+### No Slack Notifications?
+1. Verify `SLACK_WEBHOOK_URL` is correct
+2. Check Slack channel permissions
+3. Make sure webhook is not disabled
+
+### Marker.io Widget Not Showing?
+1. Verify project ID is correct in index.html
+2. Check browser console for errors
+3. Rebuild frontend: `cd frontend && yarn build`
