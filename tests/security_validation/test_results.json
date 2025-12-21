@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-12-21T10:24:05.756820",
+  "passed": 5,
+  "total": 6,
+  "results": [
+    {
+      "test_name": "Health Endpoint",
+      "passed": true,
+      "details": [
+        "HTTP Status: 200",
+        "Status: healthy",
+        "Timestamp: present"
+      ]
+    },
+    {
+      "test_name": "Rate Limiting & Account Lockout",
+      "passed": false,
+      "details": [
+        "Account lockout: FAILED",
+        "Attempts counter: NOT VISIBLE",
+        "Lock enforcement: FAILED"
+      ]
+    },
+    {
+      "test_name": "Withdrawal Whitelist",
+      "passed": true,
+      "details": [
+        "GET whitelist: WORKING",
+        "ADD whitelist: FAILED",
+        "Verification status: CORRECT",
+        "Duplicate prevention: WORKING"
+      ]
+    },
+    {
+      "test_name": "Bug Report System",
+      "passed": true,
+      "details": [
+        "Submission: WORKING",
+        "Report ID: returned"
+      ]
+    },
+    {
+      "test_name": "Fiat On-Ramp",
+      "passed": true,
+      "details": [
+        "Endpoint: EXISTS",
+        "Status endpoint: EXISTS"
+      ]
+    },
+    {
+      "test_name": "P2P Payment Verification",
+      "passed": true,
+      "details": [
+        "Initiate endpoint: EXISTS",
+        "Status endpoint: EXISTS"
+      ]
+    }
+  ]
+}
