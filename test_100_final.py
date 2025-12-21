@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://savingsflow-1.preview.emergentagent.com/api"
+BASE_URL = "https://nowpay-debug.preview.emergentagent.com/api"
 
 print("🎯 FINAL 100% SUCCESS RATE TEST")
 print("=" * 70)

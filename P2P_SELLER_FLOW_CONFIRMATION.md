@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://savingsflow-1.preview.emergentagent.com/#/p2p
+   https://nowpay-debug.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://savingsflow-1.preview.emergentagent.com/#/p2p/merchant
+   https://nowpay-debug.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://savingsflow-1.preview.emergentagent.com/#/p2p/create-ad
+   https://nowpay-debug.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

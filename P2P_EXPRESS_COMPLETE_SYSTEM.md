@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://savingsflow-1.preview.emergentagent.com/p2p-express
+https://nowpay-debug.preview.emergentagent.com/p2p-express
 
 ---
 

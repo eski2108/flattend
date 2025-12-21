@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://savingsflow-1.preview.emergentagent.com
+https://nowpay-debug.preview.emergentagent.com
 
 ---
 

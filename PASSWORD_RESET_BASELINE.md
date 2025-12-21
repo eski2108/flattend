@@ -35,7 +35,7 @@ sudo supervisorctl restart all
 ---
 
 ## Test Password Reset Flow:
-1. Visit: https://savingsflow-1.preview.emergentagent.com/forgot-password
+1. Visit: https://nowpay-debug.preview.emergentagent.com/forgot-password
 2. Enter email: admin@coinhubx.com
 3. Click "Send Reset Link"
 4. Check email for reset link

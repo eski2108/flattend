@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://savingsflow-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://nowpay-debug.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {

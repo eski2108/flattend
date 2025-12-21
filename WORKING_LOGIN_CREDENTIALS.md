@@ -13,7 +13,7 @@
 
 ## HOW TO LOGIN:
 
-1. Go to: https://savingsflow-1.preview.emergentagent.com/#/login
+1. Go to: https://nowpay-debug.preview.emergentagent.com/#/login
 2. Enter email: demo@coinhubx.com
 3. Enter password: Test123!
 4. Click Login

@@ -1,7 +1,7 @@
 # ✅ AD TYPE SYSTEM - COMPLETE IMPLEMENTATION
 
 **Date:** December 12, 2025 00:00 UTC  
-**Preview URL:** https://savingsflow-1.preview.emergentagent.com  
+**Preview URL:** https://nowpay-debug.preview.emergentagent.com  
 **Status:** DEPLOYED AND OPERATIONAL
 
 ---
@@ -176,7 +176,7 @@ Max: {ad.max_order_limit || ad.max_amount || 0}
 
 1. **Navigate:**
    ```
-   https://savingsflow-1.preview.emergentagent.com
+   https://nowpay-debug.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -245,5 +245,5 @@ All 12 requirements implemented:
 
 **Deployed:** December 12, 2025 00:00 UTC  
 **Test User:** aby@test.com / test123  
-**Preview:** https://savingsflow-1.preview.emergentagent.com  
+**Preview:** https://nowpay-debug.preview.emergentagent.com  
 **Status:** LIVE AND OPERATIONAL

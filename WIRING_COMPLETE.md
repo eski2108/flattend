@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://savingsflow-1.preview.emergentagent.com/api
-- **Frontend App**: https://savingsflow-1.preview.emergentagent.com
+- **Backend API**: https://nowpay-debug.preview.emergentagent.com/api
+- **Frontend App**: https://nowpay-debug.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

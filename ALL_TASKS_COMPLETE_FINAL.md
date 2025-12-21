@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://savingsflow-1.preview.emergentagent.com
+**URL:** https://nowpay-debug.preview.emergentagent.com
 
 **Services Status:**
 ```bash

@@ -3,7 +3,7 @@
 COMPLETE P2P BUYER FLOW TEST - WITH DETAILED STEP-BY-STEP RESULTS
 Test Scenario: Complete buyer journey from marketplace viewing to receiving Bitcoin
 
-Backend URL: https://savingsflow-1.preview.emergentagent.com/api
+Backend URL: https://nowpay-debug.preview.emergentagent.com/api
 """
 
 import requests
@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import uuid
 
 # Configuration
-BASE_URL = "https://savingsflow-1.preview.emergentagent.com/api"
+BASE_URL = "https://nowpay-debug.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class P2PBuyerFlowTester:

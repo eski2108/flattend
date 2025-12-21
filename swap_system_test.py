@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://savingsflow-1.preview.emergentagent.com"
+BACKEND_URL = "https://nowpay-debug.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test data

@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://savingsflow-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://nowpay-debug.preview.emergentagent.com/api"
 
 def test_savings_portfolio_comprehensive():
     """Comprehensive test of all savings and portfolio endpoints"""

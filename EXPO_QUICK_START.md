@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://savingsflow-1.preview.emergentagent.com/api
+https://nowpay-debug.preview.emergentagent.com/api
 ```
 
 This means:

@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://savingsflow-1.preview.emergentagent.com
-P2P Page:     https://savingsflow-1.preview.emergentagent.com/p2p
-Backend API:  https://savingsflow-1.preview.emergentagent.com/api
+Frontend:     https://nowpay-debug.preview.emergentagent.com
+P2P Page:     https://nowpay-debug.preview.emergentagent.com/p2p
+Backend API:  https://nowpay-debug.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

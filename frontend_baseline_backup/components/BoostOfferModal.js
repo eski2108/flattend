@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { X, Zap, TrendingUp, Star, Check } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://savingsflow-1.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://nowpay-debug.preview.emergentagent.com';
 
 const BOOST_PRICING = [
   {

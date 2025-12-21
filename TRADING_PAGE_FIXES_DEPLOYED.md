@@ -2,7 +2,7 @@
 
 **Deployment Date:** December 9, 2024, 8:33 PM UTC  
 **Status:** ✅ LIVE ON PREVIEW  
-**Preview URL:** https://savingsflow-1.preview.emergentagent.com/#/trading
+**Preview URL:** https://nowpay-debug.preview.emergentagent.com/#/trading
 
 ---
 
@@ -391,8 +391,8 @@ $ curl http://localhost:8001/api/prices/live?coins=BTC
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://savingsflow-1.preview.emergentagent.com  
-**Trading Page:** https://savingsflow-1.preview.emergentagent.com/#/trading
+**URL:** https://nowpay-debug.preview.emergentagent.com  
+**Trading Page:** https://nowpay-debug.preview.emergentagent.com/#/trading
 
 **Services:**
 - Frontend: ✅ Running (localhost:3000)
@@ -419,7 +419,7 @@ $ curl http://localhost:8001/api/prices/live?coins=BTC
 ### For User/QA:
 
 1. **Open Trading Page:**
-   - Go to: https://savingsflow-1.preview.emergentagent.com/#/trading
+   - Go to: https://nowpay-debug.preview.emergentagent.com/#/trading
    - Wait for page to load (2-3 seconds)
 
 2. **Check Stats Panel:**

@@ -8,7 +8,7 @@
 3. Configure:
    - **Monitor Type**: HTTP(s)
    - **Friendly Name**: CoinHubX - Homepage
-   - **URL**: `https://savingsflow-1.preview.emergentagent.com`
+   - **URL**: `https://nowpay-debug.preview.emergentagent.com`
    - **Monitoring Interval**: 5 minutes
 4. Add more monitors for:
    - `/login` - Login page
