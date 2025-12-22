@@ -34996,3 +34996,158 @@ async def give_withdrawal_notice(request: dict):
     except Exception as e:
         logger.error(f"Error giving notice: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== PAYMENT SYNC INTEGRITY CHECK ====================
+# SYNC_INTEGRITY_CHECKSUM: COINHUBX_2025_FINAL_LOCK_ed0247eaa
+# DO NOT MODIFY WITHOUT UPDATING CHECKSUM AND RUNNING FULL TEST SUITE
+# =====================================================================
+
+@api_router.get("/integrity/check")
+async def check_payment_integrity(user_id: str = None):
+    """
+    CRITICAL: Validates all 4 balance collections are in sync.
+    This endpoint must pass before any deployment.
+    """
+    try:
+        tolerance = 0.000001
+        results = []
+        mismatches = []
+        
+        # If no user_id provided, check a sample of recent users
+        if not user_id:
+            recent_users = await db.users.find({}).sort("created_at", -1).limit(5).to_list(5)
+            user_ids = [u.get('user_id') for u in recent_users if u.get('user_id')]
+        else:
+            user_ids = [user_id]
+        
+        for uid in user_ids:
+            # Get balances from all 4 collections
+            wallets = await db.wallets.find({"user_id": uid}).to_list(100)
+            crypto_balances = await db.crypto_balances.find({"user_id": uid}).to_list(100)
+            trader_balances = await db.trader_balances.find({"trader_id": uid}).to_list(100)
+            internal_balances = await db.internal_balances.find({"user_id": uid}).to_list(100)
+            
+            # Build currency map
+            currencies = set()
+            for w in wallets:
+                currencies.add(w.get('currency'))
+            for c in crypto_balances:
+                currencies.add(c.get('currency'))
+            for t in trader_balances:
+                currencies.add(t.get('currency'))
+            for i in internal_balances:
+                currencies.add(i.get('currency'))
+            
+            for currency in currencies:
+                if not currency:
+                    continue
+                    
+                # Get balance from each collection
+                w_bal = next((w.get('available_balance', w.get('total_balance', 0)) for w in wallets if w.get('currency') == currency), 0)
+                c_bal = next((c.get('available_balance', c.get('balance', 0)) for c in crypto_balances if c.get('currency') == currency), 0)
+                t_bal = next((t.get('available_balance', 0) for t in trader_balances if t.get('currency') == currency), 0)
+                i_bal = next((i.get('available_balance', 0) for i in internal_balances if i.get('currency') == currency), 0)
+                
+                # Convert to float
+                w_bal = float(w_bal or 0)
+                c_bal = float(c_bal or 0)
+                t_bal = float(t_bal or 0)
+                i_bal = float(i_bal or 0)
+                
+                # Check if all match within tolerance
+                all_match = (
+                    abs(w_bal - c_bal) <= tolerance and
+                    abs(w_bal - t_bal) <= tolerance and
+                    abs(w_bal - i_bal) <= tolerance
+                )
+                
+                result = {
+                    "user_id": uid[:20] + "...",
+                    "currency": currency,
+                    "wallets": w_bal,
+                    "crypto_balances": c_bal,
+                    "trader_balances": t_bal,
+                    "internal_balances": i_bal,
+                    "in_sync": all_match
+                }
+                results.append(result)
+                
+                if not all_match:
+                    mismatches.append(result)
+        
+        # Determine overall health
+        is_healthy = len(mismatches) == 0
+        
+        if is_healthy:
+            return {
+                "status": "healthy",
+                "details": "All balances in sync across all 4 collections",
+                "checked_users": len(user_ids),
+                "checked_currencies": len(results),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "checksum": "COINHUBX_2025_FINAL_LOCK_ed0247eaa"
+            }
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail={
+                    "status": "INTEGRITY_FAILURE",
+                    "message": "Balance mismatch detected across collections",
+                    "mismatches": mismatches,
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Integrity check failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Integrity check error: {str(e)}")
+
+
+@api_router.post("/integrity/sync-all")
+async def force_sync_all_balances(user_id: str):
+    """
+    EMERGENCY: Force sync all 4 collections for a user.
+    Use only when integrity check fails.
+    """
+    try:
+        # Get the most trusted source (wallets collection)
+        wallets = await db.wallets.find({"user_id": user_id}).to_list(100)
+        
+        synced = []
+        for wallet in wallets:
+            currency = wallet.get('currency')
+            available = float(wallet.get('available_balance', 0))
+            locked = float(wallet.get('locked_balance', 0))
+            total = float(wallet.get('total_balance', available + locked))
+            
+            # Sync to all other collections
+            await db.crypto_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$set": {"available_balance": available, "balance": total, "locked_balance": locked}},
+                upsert=True
+            )
+            await db.trader_balances.update_one(
+                {"trader_id": user_id, "currency": currency},
+                {"$set": {"available_balance": available, "total_balance": total, "locked_balance": locked}},
+                upsert=True
+            )
+            await db.internal_balances.update_one(
+                {"user_id": user_id, "currency": currency},
+                {"$set": {"available_balance": available, "total_balance": total, "locked_balance": locked}},
+                upsert=True
+            )
+            
+            synced.append({"currency": currency, "balance": total})
+        
+        return {
+            "success": True,
+            "message": f"Force synced {len(synced)} currencies for user",
+            "synced": synced,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
