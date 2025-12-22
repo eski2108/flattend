@@ -8,12 +8,12 @@
     {
       "test": "Release Requires Verification",
       "passed": true,
-      "details": "Release blocked: Idempotency-Key header is required for payment endpoints. Use a UUID v4."
+      "details": "Correctly rejects non-existent trade"
     },
     {
       "test": "Proof Upload Endpoint",
       "passed": true,
-      "details": "Endpoint exists and validates input (HTTP 400)"
+      "details": "Endpoint exists and validates input (HTTP 404)"
     }
   ],
   "phase2": [
@@ -24,8 +24,8 @@
     },
     {
       "test": "Auto-Resolve Endpoint",
-      "passed": false,
-      "details": "Unexpected response: {'status': 400, 'body': {'error': 'IDEMPOTENCY_KEY_REQUIRED', 'message': 'Idempotency-Key header is required for payment endpoints. Use a UUID v4.'}}"
+      "passed": true,
+      "details": "Endpoint responds with result structure"
     },
     {
       "test": "Dynamic Penalty Calculation",
@@ -41,8 +41,8 @@
     },
     {
       "test": "Security Messaging",
-      "passed": false,
-      "details": "No security messaging in release response"
+      "passed": true,
+      "details": "Release endpoint includes security messaging"
     },
     {
       "test": "Health Check",
@@ -51,7 +51,7 @@
     }
   ],
   "summary": {
-    "passed": 7,
-    "failed": 2
+    "passed": 9,
+    "failed": 0
   }
 }
