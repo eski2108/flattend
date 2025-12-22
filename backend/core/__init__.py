@@ -1,8 +1,6 @@
-"""
-Core trading engine module.
-Contains protected trading logic with locked formulas.
-"""
+# /app/backend/core/__init__.py
+# Core Configuration Package
 
-from .trading_engine import TradingEngine, TRADING_ENGINE_VERSION
+from .config import PaymentConfig, payment_config
 
-__all__ = ['TradingEngine', 'TRADING_ENGINE_VERSION']
+__all__ = ['PaymentConfig', 'payment_config']
