@@ -317,7 +317,7 @@ export default function WalletPage() {
           </button>
 
           <button
-            onClick={() => navigate('/swap-crypto')}}
+            onClick={() => navigate('/swap-crypto')}
             style={{
               display: 'flex',
               flexDirection: 'column',
