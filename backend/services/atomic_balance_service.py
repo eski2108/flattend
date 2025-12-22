@@ -24,8 +24,8 @@ class AtomicBalanceService:
 
     def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
-        mongo_uri = os.getenv('MONGO_URL', os.getenv('MONGODB_URI', 'mongodb://localhost:27017'))
-        self.client = AsyncIOMotorClient(mongo_uri)
+        # Use the same client that created the database to avoid session issues
+        self.client = db.client
         self._checksum = "8f3a7c2e1d5b9a4f"
 
     def _generate_event_checksum(self, event_data: Dict) -> str:
