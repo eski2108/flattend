@@ -670,7 +670,7 @@ export default function Dashboard() {
                         transition: 'all 0.3s'
                       }}
                     >
-                      View All
+                      {t('dashboard.view_all')}
                     </button>
                   </div>
                   
@@ -811,7 +811,7 @@ export default function Dashboard() {
                         transition: 'all 0.3s'
                       }}
                     >
-                      View All
+                      {t('dashboard.view_all')}
                     </button>
                   </div>
                   
