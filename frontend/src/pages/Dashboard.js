@@ -169,10 +169,10 @@ export default function Dashboard() {
                 <div>
                   <h1 style={{ fontSize: isMobile ? '32px' : '42px', fontWeight: '700', color: '#FFFFFF', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <IoBarChart size={isMobile ? 32 : 42} color="#00F0FF" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8))' }} />
-                    Portfolio Dashboard
+                    {t('dashboard.title')}
                   </h1>
                   <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>
-                    Welcome back, {user?.first_name || 'Trader'}! Track your crypto investments in real-time
+                    {t('dashboard.welcome', { name: user?.first_name || 'Trader' })}
                   </p>
                 </div>
                 <button
