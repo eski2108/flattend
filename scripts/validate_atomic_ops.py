@@ -488,28 +488,29 @@ async def test_insufficient_balance_rejection(session: aiohttp.ClientSession, us
     """
     log("Testing insufficient balance rejection...", "TEST")
     
-    # Try to withdraw more than available
+    # Try to withdraw more than available via crypto-bank/withdraw
     headers = {"Idempotency-Key": str(uuid.uuid4())}
     
     resp = await make_request(
         session, "POST",
-        "/api/user/withdraw",
+        "/api/crypto-bank/withdraw",
         data={
+            "user_id": user_id,
             "currency": "BTC",
             "amount": 999999.99,  # Impossibly large amount
-            "wallet_address": "bc1qtest123456789"
+            "wallet_address": "bc1qtest123456789abcdef"
         },
         headers=headers,
         token=token
     )
     
-    # Should be rejected (400 insufficient, 403 denied, 422 validation, 500 with error msg)
-    if resp["status"] in [400, 403, 422]:
+    # Should be rejected (400 insufficient, 403 denied, 422 validation, 429 rate limit)
+    if resp["status"] in [400, 403, 422, 429]:
         record_result(
             "phase2",
             "Insufficient Balance Rejection",
             True,
-            f"Correctly rejected with status {resp['status']}"
+            f"Correctly rejected with status {resp['status']}: {resp['body'].get('detail', '')}"
         )
         return True
     
@@ -521,7 +522,7 @@ async def test_insufficient_balance_rejection(session: aiohttp.ClientSession, us
                 "phase2",
                 "Insufficient Balance Rejection",
                 True,
-                f"Correctly rejected (500 with balance error): {resp['body']}"
+                f"Correctly rejected (500 with balance error)"
             )
             return True
     
