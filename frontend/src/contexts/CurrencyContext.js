@@ -39,7 +39,7 @@ export const CurrencyProvider = ({ children }) => {
 
   const fetchCurrencies = async () => {
     try {
-      const response = await axios.get(`${API}/api/currencies/list`);
+      const response = await axios.get(`${API}/currencies/list`);
       if (response.data.success) {
         setCurrencies(response.data.currencies);
         
@@ -57,7 +57,7 @@ export const CurrencyProvider = ({ children }) => {
 
   const fetchUserCurrency = async (userId) => {
     try {
-      const response = await axios.get(`${API}/api/user/${userId}/currency-preference`);
+      const response = await axios.get(`${API}/user/${userId}/currency-preference`);
       if (response.data.success) {
         setCurrency(response.data.currency);
         setSymbol(response.data.symbol);
@@ -84,7 +84,7 @@ export const CurrencyProvider = ({ children }) => {
 
     const user = JSON.parse(userData);
     try {
-      const response = await axios.post(`${API}/api/user/${user.user_id}/currency-preference`, {
+      const response = await axios.post(`${API}/user/${user.user_id}/currency-preference`, {
         currency: newCurrency
       });
       

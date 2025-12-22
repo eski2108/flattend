@@ -154,7 +154,7 @@ export default function LandingPage() {
 
   const fetchPlatformStats = async () => {
     try {
-      const response = await axios.get(`${API}/api/platform/stats`);
+      const response = await axios.get(`${API}/platform/stats`);
       if (response.data.success) {
         setStats(response.data.stats);
       }
