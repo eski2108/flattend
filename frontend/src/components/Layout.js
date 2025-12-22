@@ -191,7 +191,7 @@ export default function Layout({ children }) {
                 color: '#00F0FF',
                 letterSpacing: '0.5px'
               }}>
-                📱 GET APP
+                📱 {t('common.get_app')}
               </div>
               
               <div style={{ display: 'flex', gap: '0.4rem' }}>
@@ -219,7 +219,7 @@ export default function Layout({ children }) {
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
-                  Android
+                  {t('common.android')}
                 </button>
                 
                 <button
