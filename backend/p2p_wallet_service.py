@@ -198,6 +198,30 @@ async def p2p_create_trade_with_wallet(
         # Save trade
         await db.trades.insert_one(trade_dict)
         
+        # ═══════════════════════════════════════════════════════════════════
+        # 🔐 CRYPTOGRAPHIC PROOF: Create immutable trade initiation proof
+        # ═══════════════════════════════════════════════════════════════════
+        try:
+            from services.p2p_proof_protocol import get_p2p_proof_protocol
+            proof_protocol = get_p2p_proof_protocol(db)
+            
+            initiation_proof = await proof_protocol.initiate_trade_proof(
+                trade_id=trade_id,
+                buyer_id=buyer_id,
+                seller_id=sell_order["seller_id"],
+                trade_data={
+                    "crypto_amount": crypto_amount,
+                    "crypto_currency": sell_order["crypto_currency"],
+                    "fiat_amount": fiat_amount,
+                    "fiat_currency": sell_order["fiat_currency"],
+                    "payment_method": payment_method,
+                    "escrow_locked": True
+                }
+            )
+            logger.info(f"✅ P2P: Created cryptographic proof for trade {trade_id}")
+        except Exception as proof_error:
+            logger.warning(f"⚠️ P2P: Proof creation failed (non-blocking): {str(proof_error)}")
+        
         # 🔒 AUDIT LOG: Trade initiated
         await db.audit_trail.insert_one({
             "action": "TRADE_INITIATED",
