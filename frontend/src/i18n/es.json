@@ -60,7 +60,8 @@
     "referrals": "Referencias",
     "transaction_history": "Historial de Transacciones",
     "settings": "Configuración",
-    "support": "Soporte / Chat"
+    "support": "Soporte / Chat",
+    "profile": "Perfil"
   },
   "dashboard": {
     "title": "Panel de Portafolio",
