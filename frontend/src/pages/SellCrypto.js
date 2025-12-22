@@ -94,7 +94,7 @@ export default function SellCrypto() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/bank/add`, {
+      const response = await axios.post(`${API}/api/bank/add`, {
         wallet_address: account,
         bank_name: bankName,
         account_number: accountNumber,
