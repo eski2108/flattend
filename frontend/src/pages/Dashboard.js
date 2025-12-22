@@ -148,7 +148,7 @@ export default function Dashboard() {
       }}>
         <div style={{ textAlign: 'center', color: '#00F0FF' }}>
           <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
-          <div>Loading Portfolio...</div>
+          <div>{t('common.loading')}</div>
         </div>
       </div>
     );
