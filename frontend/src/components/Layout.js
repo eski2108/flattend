@@ -170,6 +170,11 @@ export default function Layout({ children }) {
             padding: '1rem',
             borderTop: '1px solid rgba(0, 240, 255, 0.2)'
           }}>
+            {/* LANGUAGE SWITCHER FOR DESKTOP */}
+            <div style={{ marginBottom: '0.75rem' }}>
+              <LanguageSwitcher style={{ width: '100%' }} />
+            </div>
+            
             {/* MOBILE APP SECTION - COMPACT */}
             <div style={{
               padding: '0.5rem',
