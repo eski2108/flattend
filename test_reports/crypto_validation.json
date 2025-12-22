@@ -23,7 +23,7 @@
     {
       "test": "Timing Attack Resistance",
       "passed": true,
-      "details": "WARNING: 98.29% timing diff (library-dependent)"
+      "details": "WARNING: 98.31% timing diff (library-dependent)"
     },
     {
       "test": "Hash Chain Integrity",
