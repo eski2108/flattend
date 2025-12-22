@@ -456,7 +456,7 @@ export default function Dashboard() {
                       return (
                         <div style={{ textAlign: 'center', padding: '40px', color: '#8F9BB3' }}>
                           <IoAnalytics size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
-                          <div>No portfolio data available</div>
+                          <div>{t('dashboard.no_portfolio_data')}</div>
                           <button
                             onClick={() => navigate('/instant-buy')}
                             style={{
@@ -471,7 +471,7 @@ export default function Dashboard() {
                               cursor: 'pointer'
                             }}
                           >
-                            Start Investing
+                            {t('dashboard.start_investing')}
                           </button>
                         </div>
                       );
