@@ -35227,3 +35227,11 @@ async def force_sync_all_balances(user_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+
+# =====================================================================
+# FINAL ROUTER REGISTRATION - MUST BE AT END OF FILE
+# This ensures ALL endpoints defined above are registered
+# =====================================================================
+app.include_router(api_router)
+
