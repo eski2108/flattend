@@ -15,6 +15,17 @@ export default function AdminFees() {
   const [payoutModal, setPayoutModal] = useState(false);
   const [editFeeModal, setEditFeeModal] = useState(false);
   
+  // NEW: Withdraw fees state
+  const [withdrawModal, setWithdrawModal] = useState(false);
+  const [withdrawableBalances, setWithdrawableBalances] = useState({ fiat: {}, crypto: {}, total_gbp_equivalent: 0 });
+  const [withdrawData, setWithdrawData] = useState({
+    currency: 'GBP',
+    amount: '',
+    destination: '',
+    type: 'fiat'
+  });
+  const [withdrawHistory, setWithdrawHistory] = useState([]);
+  
   const [payoutData, setPayoutData] = useState({
     currency: 'BTC',
     amount: '',
@@ -36,7 +47,61 @@ export default function AdminFees() {
 
   useEffect(() => {
     fetchData();
+    fetchWithdrawableBalances();
+    fetchWithdrawHistory();
   }, []);
+
+  // NEW: Fetch withdrawable balances
+  const fetchWithdrawableBalances = async () => {
+    try {
+      const res = await axios.get(`${API}/api/admin/fees/withdrawable`);
+      if (res.data.success) {
+        setWithdrawableBalances(res.data.withdrawable);
+      }
+    } catch (error) {
+      console.error('Error fetching withdrawable balances:', error);
+    }
+  };
+
+  // NEW: Fetch withdrawal history
+  const fetchWithdrawHistory = async () => {
+    try {
+      const res = await axios.get(`${API}/api/admin/fees/withdrawal-history`);
+      if (res.data.success) {
+        setWithdrawHistory(res.data.withdrawals);
+      }
+    } catch (error) {
+      console.error('Error fetching withdrawal history:', error);
+    }
+  };
+
+  // NEW: Handle fee withdrawal
+  const handleWithdrawFees = async (e) => {
+    e.preventDefault();
+    
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    try {
+      const response = await axios.post(`${API}/api/admin/fees/withdraw`, {
+        admin_id: currentUser.user_id,
+        currency: withdrawData.currency,
+        amount: parseFloat(withdrawData.amount),
+        destination: withdrawData.destination,
+        type: withdrawData.type
+      });
+      
+      if (response.data.success) {
+        toast.success(`Withdrawal of ${withdrawData.amount} ${withdrawData.currency} initiated!`);
+        setWithdrawModal(false);
+        setWithdrawData({ currency: 'GBP', amount: '', destination: '', type: 'fiat' });
+        fetchData();
+        fetchWithdrawableBalances();
+        fetchWithdrawHistory();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Withdrawal failed');
+    }
+  };
 
   const fetchData = async () => {
     try {
