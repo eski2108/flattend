@@ -456,6 +456,75 @@ class AtomicBalanceService:
                     logger.error(f"[ATOMIC] Debit FAILED: {user_id}/{currency}/{amount} - {str(e)}")
                     raise
 
+    async def _atomic_debit_fallback(
+        self,
+        user_id: str,
+        currency: str,
+        amount: float,
+        tx_type: str,
+        ref_id: str,
+        metadata: Optional[Dict],
+        timestamp: datetime,
+        before_state: Dict
+    ) -> Dict[str, Any]:
+        """Fallback debit without transactions."""
+        try:
+            # Update all 4 collections
+            await self._update_all_collections(
+                user_id, currency,
+                available_delta=-amount,
+                total_delta=-amount,
+                session=None
+            )
+            
+            # Get new balance
+            wallet = await self.db.wallets.find_one({"user_id": user_id, "currency": currency})
+            new_balance = wallet.get("available_balance", 0) if wallet else 0
+            
+            # Get after state
+            after_state = await self._get_all_balances(user_id, currency)
+            
+            # Audit trail
+            event_data = {
+                "event_type": f"atomic_debit_{tx_type}",
+                "user_id": user_id,
+                "currency": currency,
+                "amount": -amount,
+                "reference_id": ref_id,
+                "timestamp": timestamp.isoformat()
+            }
+            
+            await self.db.audit_trail.insert_one({
+                "event_id": os.urandom(16).hex(),
+                "event_type": f"atomic_debit_{tx_type}",
+                "user_id": user_id,
+                "currency": currency,
+                "amount": -amount,
+                "reference_id": ref_id,
+                "before_state": before_state,
+                "after_state": after_state,
+                "metadata": metadata or {},
+                "timestamp": timestamp,
+                "checksum": self._generate_event_checksum(event_data),
+                "service_checksum": self._checksum,
+                "transaction_mode": "fallback"
+            })
+            
+            logger.info(f"[ATOMIC-FALLBACK] Debit completed: {user_id}, {currency}, -{amount}, ref={ref_id}")
+            
+            return {
+                "success": True,
+                "new_balance": new_balance,
+                "amount_debited": amount,
+                "transaction_type": tx_type,
+                "reference_id": ref_id,
+                "mode": "fallback"
+            }
+            
+        except Exception as e:
+            logger.error(f"[ATOMIC-FALLBACK] Debit FAILED: {user_id}/{currency}/{amount} - {str(e)}")
+            raise
+
     async def atomic_lock(
         self,
         user_id: str,
