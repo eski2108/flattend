@@ -30487,6 +30487,25 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
             })
         by_currency_list.sort(key=lambda x: x["total_revenue"], reverse=True)
         
+        # Sort recent_transactions by timestamp descending (newest first)
+        def get_sort_timestamp(tx):
+            ts = tx.get("timestamp")
+            if ts is None:
+                return datetime.min
+            if isinstance(ts, datetime):
+                return ts
+            if isinstance(ts, str):
+                try:
+                    return datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                except:
+                    return datetime.min
+            return datetime.min
+        
+        recent_transactions.sort(key=get_sort_timestamp, reverse=True)
+        
+        # Only return most recent 20 transactions
+        recent_transactions = recent_transactions[:20]
+        
         return {
             "success": True,
             "summary": {
