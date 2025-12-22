@@ -395,9 +395,13 @@ python scripts/validate_atomic_ops.py --phase all
 |----------|----------|
 | Full Technical Report | `/app/COMPLETE_V2_PAYMENT_SYSTEM_REPORT.md` |
 | Validation Script | `/app/scripts/validate_atomic_ops.py` |
+| P2P Security Tests | `/app/scripts/validate_p2p_fixes.py` |
+| Crypto Validation Suite | `/app/scripts/test_crypto_validation.py` |
 | Atomic Balance Service | `/app/backend/services/atomic_balance_service.py` |
 | Idempotency Middleware | `/app/backend/middleware/idempotency.py` |
 | Integrity API | `/app/backend/api/integrity.py` |
+| HSM Key Manager | `/app/backend/services/security/key_manager.py` |
+| Quantum-Resistant Crypto | `/app/backend/services/security/quantum_resistant.py` |
 
 ---
 
