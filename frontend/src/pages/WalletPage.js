@@ -343,7 +343,7 @@ export default function WalletPage() {
             }}>
               ⇄
             </div>
-            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Swap</div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>{t('wallet.swap')}</div>
           </button>
 
           <button
@@ -378,7 +378,7 @@ export default function WalletPage() {
             }}>
               ↑
             </div>
-            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Send</div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>{t('wallet.send')}</div>
           </button>
 
           <button
