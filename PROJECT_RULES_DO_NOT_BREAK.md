@@ -151,8 +151,22 @@ See: `/app/MASTER_IMPLEMENTATION_LOG.md`
 - ✅ Fee collection to admin dashboard
 - ✅ 29 validation tests passing
 - ✅ **i18n / TRANSLATION SYSTEM (COMPLETED 2025-12-22)**
+- ✅ **SELLER FLOW - KYC, Payment Methods, Merchant Center (FIXED 2025-12-22)**
+- ✅ **CREATE AD - Price Margin Options (above/below market) (VERIFIED 2025-12-22)**
 
 **DO NOT REBUILD ANY OF THE ABOVE.**
+
+---
+
+# 🔧 BUGS ALREADY FIXED - 2025-12-22
+
+## DO NOT TRY TO FIX THESE AGAIN
+
+| Bug | File | Fix Applied | Status |
+|-----|------|-------------|--------|
+| `Trash2 is not defined` | PaymentMethods.js | Changed to IoTrash | ✅ FIXED |
+| Double semicolon syntax | PaymentMethods.js | Removed extra `;` | ✅ FIXED |
+| "Failed to load seller info" | MerchantCenter.js | Fixed API endpoint URL | ✅ FIXED |
 
 ---
 
