@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://crypto-integrify.preview.emergentagent.com  │
-│ Backend API:    https://crypto-integrify.preview.emergentagent.com/api│
+│ Frontend URL:   https://balance-sync-repair.preview.emergentagent.com  │
+│ Backend API:    https://balance-sync-repair.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘

@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://crypto-integrify.preview.emergentagent.com/api"
+BASE_URL = "https://balance-sync-repair.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://crypto-integrify.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://balance-sync-repair.preview.emergentagent.com"

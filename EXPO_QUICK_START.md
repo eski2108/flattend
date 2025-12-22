@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://crypto-integrify.preview.emergentagent.com/api
+https://balance-sync-repair.preview.emergentagent.com/api
 ```
 
 This means:

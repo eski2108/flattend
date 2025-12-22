@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://crypto-integrify.preview.emergentagent.com/api"
+BASE_URL = "https://balance-sync-repair.preview.emergentagent.com/api"
 
 class RobustBackendTester:
     def __init__(self):

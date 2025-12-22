@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://crypto-integrify.preview.emergentagent.com
-- Backend API: https://crypto-integrify.preview.emergentagent.com/api
-- P2P Marketplace: https://crypto-integrify.preview.emergentagent.com/p2p
+- Frontend: https://balance-sync-repair.preview.emergentagent.com
+- Backend API: https://balance-sync-repair.preview.emergentagent.com/api
+- P2P Marketplace: https://balance-sync-repair.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

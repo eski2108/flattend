@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://crypto-integrify.preview.emergentagent.com/#/p2p
+   https://balance-sync-repair.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://crypto-integrify.preview.emergentagent.com/#/p2p/merchant
+   https://balance-sync-repair.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://crypto-integrify.preview.emergentagent.com/#/p2p/create-ad
+   https://balance-sync-repair.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://crypto-integrify.preview.emergentagent.com/api
-- **Frontend App**: https://crypto-integrify.preview.emergentagent.com
+- **Backend API**: https://balance-sync-repair.preview.emergentagent.com/api
+- **Frontend App**: https://balance-sync-repair.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

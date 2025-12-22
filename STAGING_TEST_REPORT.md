@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://crypto-integrify.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://balance-sync-repair.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

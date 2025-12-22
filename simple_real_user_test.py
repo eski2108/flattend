@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://crypto-integrify.preview.emergentagent.com/api"
+BASE_URL = "https://balance-sync-repair.preview.emergentagent.com/api"
 SENDGRID_API_KEY = "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"
 
 def test_email_verification():

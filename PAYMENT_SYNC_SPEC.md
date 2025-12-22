@@ -179,19 +179,19 @@ curl -X POST "http://localhost:8001/api/test/credit" \
   -d '{"user_id": "80a4a694-a6a4-4f84-94a3-1e5cad51eaf3", "currency": "BTC", "amount": 0.005}'
 
 # Step 2: Verify integrity (MUST return "status": "healthy")
-curl "http://localhost:8001/api/integrity/check?test_user_id=80a4a694-a6a4-4f84-94a3-1e5cad51eaf3"
+curl "http://localhost:8001/api/integrity/check?test_user_id=balance-sync-repair"
 
 # Step 3: Lock balance for trade (simulate P2P)
 # (Use actual P2P trade flow or test endpoint)
 
 # Step 4: Verify integrity (MUST return "status": "healthy")
-curl "http://localhost:8001/api/integrity/check?test_user_id=80a4a694-a6a4-4f84-94a3-1e5cad51eaf3"
+curl "http://localhost:8001/api/integrity/check?test_user_id=balance-sync-repair"
 
 # Step 5: Complete/release trade
 # (Use actual P2P release flow or test endpoint)
 
 # Step 6: Final integrity check (MUST return "status": "healthy")
-curl "http://localhost:8001/api/integrity/check?test_user_id=80a4a694-a6a4-4f84-94a3-1e5cad51eaf3"
+curl "http://localhost:8001/api/integrity/check?test_user_id=balance-sync-repair"
 ```
 
 ---
@@ -214,7 +214,7 @@ curl "http://localhost:8001/api/integrity/check?test_user_id=80a4a694-a6a4-4f84-
 
 **Usage:**
 ```bash
-curl -X POST "http://localhost:8001/api/integrity/sync-all?user_id=80a4a694-a6a4-4f84-94a3-1e5cad51eaf3"
+curl -X POST "http://localhost:8001/api/integrity/sync-all?user_id=balance-sync-repair"
 ```
 
 ---

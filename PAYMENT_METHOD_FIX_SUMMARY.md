@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://crypto-integrify.preview.emergentagent.com
+https://balance-sync-repair.preview.emergentagent.com
 
 ### Test Route
 
-`https://crypto-integrify.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://balance-sync-repair.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

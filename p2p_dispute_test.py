@@ -11,7 +11,7 @@ This test verifies the complete P2P dispute resolution flow:
 6. Test admin dispute detail page access
 7. Test dispute resolution (release crypto to buyer or return to seller)
 
-Backend URL: https://crypto-integrify.preview.emergentagent.com
+Backend URL: https://balance-sync-repair.preview.emergentagent.com
 """
 
 import asyncio
@@ -23,7 +23,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://crypto-integrify.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://balance-sync-repair.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class P2PDisputeTest:

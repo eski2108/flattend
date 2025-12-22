@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-integrify.preview.emergentagent.com
+**URL:** https://balance-sync-repair.preview.emergentagent.com
 
 **Services Status:**
 ```bash

@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-integrify.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://balance-sync-repair.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

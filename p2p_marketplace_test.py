@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://crypto-integrify.preview.emergentagent.com/api"
+BASE_URL = "https://balance-sync-repair.preview.emergentagent.com/api"
 
 # Test users
 BUYER_USER = {

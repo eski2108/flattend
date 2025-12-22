@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://crypto-integrify.preview.emergentagent.com
+**Live URL:** https://balance-sync-repair.preview.emergentagent.com
 
 ---
 

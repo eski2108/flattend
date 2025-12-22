@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://crypto-integrify.preview.emergentagent.com
+**Test it now at:** https://balance-sync-repair.preview.emergentagent.com

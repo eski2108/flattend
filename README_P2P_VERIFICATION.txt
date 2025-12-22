@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://crypto-integrify.preview.emergentagent.com
-P2P Page:     https://crypto-integrify.preview.emergentagent.com/p2p
-Backend API:  https://crypto-integrify.preview.emergentagent.com/api
+Frontend:     https://balance-sync-repair.preview.emergentagent.com
+P2P Page:     https://balance-sync-repair.preview.emergentagent.com/p2p
+Backend API:  https://balance-sync-repair.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://crypto-integrify.preview.emergentagent.com/api"
+BACKEND_URL = "https://balance-sync-repair.preview.emergentagent.com/api"
 
 def test_with_actual_data():
     """Test with actual user data setup"""
