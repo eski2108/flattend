@@ -713,8 +713,16 @@ async def main(phase: str = "all", concurrent_count: int = 10):
                 log("CRITICAL: Cannot authenticate. Aborting tests.", "FAIL")
                 return
         
-        token = auth.get("access_token")
-        user_id = await get_user_id_from_token(session, token)
+        # Handle different token response formats
+        token = auth.get("access_token") or auth.get("token")
+        
+        # Try to get user_id from response first
+        user_id = None
+        if auth.get("user"):
+            user_id = auth["user"].get("user_id") or auth["user"].get("id")
+        
+        if not user_id:
+            user_id = await get_user_id_from_token(session, token)
         
         if not user_id:
             log("Failed to get user ID. Aborting tests.", "FAIL")
