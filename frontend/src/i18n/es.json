@@ -126,6 +126,10 @@
     "express_title": "P2P Express",
     "express_subtitle": "Compra cripto con GBP instantáneamente • Entrega en 2-5 minutos",
     "marketplace_title": "Mercado P2P",
+    "marketplace": {
+      "title": "Mercado P2P",
+      "subtitle": "Comercia directamente con otros usuarios"
+    },
     "buy": "Comprar",
     "sell": "Vender",
     "price": "Precio",
