@@ -906,6 +906,104 @@ export default function AdminFees() {
             </div>
           </div>
         )}
+
+        {/* 💰 WITHDRAW FEES MODAL - NEW */}
+        {withdrawModal && (
+          <div className="modal-overlay" onClick={() => setWithdrawModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>💰 Withdraw Collected Fees</h3>
+                <button onClick={() => setWithdrawModal(false)}>&times;</button>
+              </div>
+
+              <div className="info-box" style={{ marginBottom: '1.5rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <p style={{ color: '#10B981', fontSize: '0.9rem', margin: 0 }}>
+                  💡 Withdraw your collected platform fees to your personal wallet or bank account.
+                </p>
+              </div>
+
+              <form onSubmit={handleWithdrawFees}>
+                <div className="form-group">
+                  <label>Withdrawal Type</label>
+                  <select
+                    value={withdrawData.type}
+                    onChange={(e) => setWithdrawData({...withdrawData, type: e.target.value, currency: e.target.value === 'fiat' ? 'GBP' : 'BTC'})}
+                    required
+                  >
+                    <option value="fiat">Fiat (Bank Transfer)</option>
+                    <option value="crypto">Crypto (Blockchain)</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Currency</label>
+                  <select
+                    value={withdrawData.currency}
+                    onChange={(e) => setWithdrawData({...withdrawData, currency: e.target.value})}
+                    required
+                  >
+                    {withdrawData.type === 'fiat' ? (
+                      <>
+                        <option value="GBP">GBP (£{(withdrawableBalances.fiat?.GBP || 0).toFixed(2)} available)</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="BTC">BTC ({(withdrawableBalances.crypto?.BTC || 0).toFixed(8)} available)</option>
+                        <option value="ETH">ETH ({(withdrawableBalances.crypto?.ETH || 0).toFixed(8)} available)</option>
+                        <option value="USDT">USDT ({(withdrawableBalances.crypto?.USDT || 0).toFixed(2)} available)</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Amount</label>
+                  <input
+                    type="number"
+                    step="0.00000001"
+                    min="0"
+                    value={withdrawData.amount}
+                    onChange={(e) => setWithdrawData({...withdrawData, amount: e.target.value})}
+                    placeholder="Enter amount to withdraw"
+                    required
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const max = withdrawData.type === 'fiat' 
+                        ? withdrawableBalances.fiat?.[withdrawData.currency] || 0
+                        : withdrawableBalances.crypto?.[withdrawData.currency] || 0;
+                      setWithdrawData({...withdrawData, amount: max.toString()});
+                    }}
+                    style={{ marginTop: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#10B981', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    Withdraw Max
+                  </button>
+                </div>
+
+                <div className="form-group">
+                  <label>{withdrawData.type === 'fiat' ? 'Bank Account / Reference' : 'Wallet Address'}</label>
+                  <input
+                    type="text"
+                    value={withdrawData.destination}
+                    onChange={(e) => setWithdrawData({...withdrawData, destination: e.target.value})}
+                    placeholder={withdrawData.type === 'fiat' ? 'Bank account details or reference' : 'Your wallet address'}
+                    required
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button type="button" onClick={() => setWithdrawModal(false)} className="cancel-btn">
+                    Cancel
+                  </button>
+                  <button type="submit" className="submit-btn" style={{ background: '#10B981' }}>
+                    Withdraw Fees
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
