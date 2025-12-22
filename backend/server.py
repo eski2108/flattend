@@ -28319,6 +28319,7 @@ async def open_p2p_dispute(request: Request):
         admins = await db.users.find({"role": "admin"}).to_list(length=10)
         admin_email_html = p2p_admin_dispute_alert(
             trade_id=trade_id,
+            dispute_id=dispute_id,
             crypto_amount=trade.get("crypto_amount", 0),
             crypto=trade.get("crypto_currency", "BTC"),
             buyer_id=trade["buyer_id"],
