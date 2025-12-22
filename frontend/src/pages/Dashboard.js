@@ -428,7 +428,7 @@ export default function Dashboard() {
                       textShadow: '0 0 15px rgba(0, 240, 255, 0.5)'
                     }}>
                       <IoAnalytics size={20} color="#00F0FF" />
-                      Portfolio Allocation
+                      {t('dashboard.portfolio_allocation')}
                     </h3>
                   </div>
                   
