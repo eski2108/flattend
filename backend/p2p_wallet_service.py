@@ -336,14 +336,18 @@ async def p2p_release_crypto_with_wallet(
     db,
     wallet_service,
     trade_id: str,
-    seller_id: str
+    seller_id: str,
+    force_release: bool = False  # Admin override only
 ) -> Dict:
     """
     Release crypto from escrow to buyer via wallet service
     Collects platform fee with referral commission support
+    
+    🔒 CRITICAL SECURITY: Payment verification is REQUIRED before release
     """
     try:
         from centralized_fee_system import get_fee_manager
+        from services.payment_verification import get_payment_verification_service, PaymentStatus
         
         # Get trade
         trade = await db.trades.find_one({"trade_id": trade_id}, {"_id": 0})
@@ -358,6 +362,31 @@ async def p2p_release_crypto_with_wallet(
         
         if not trade.get("escrow_locked"):
             return {"success": False, "message": "Funds not in escrow"}
+        
+        # ═══════════════════════════════════════════════════════════════════
+        # 🔒 CRITICAL SECURITY CHECK: VERIFY PAYMENT BEFORE RELEASE
+        # ═══════════════════════════════════════════════════════════════════
+        if not force_release:
+            payment_service = get_payment_verification_service(db)
+            verification = await payment_service.verify_payment(trade_id)
+            
+            if not verification.get("verified"):
+                logger.warning(f"⚠️ P2P RELEASE BLOCKED: Payment not verified for trade {trade_id}")
+                logger.warning(f"   Verification status: {verification.get('status')}")
+                logger.warning(f"   Message: {verification.get('message', 'No details')}")
+                
+                return {
+                    "success": False,
+                    "message": "Cannot release crypto: Payment not verified",
+                    "verification_status": verification.get("status"),
+                    "verification_details": verification.get("message"),
+                    "requires_verification": True,
+                    "suggestion": verification.get("suggestion", "Please upload payment proof or wait for bank transfer to clear.")
+                }
+            
+            logger.info(f"✅ Payment verified for trade {trade_id} via {verification.get('provider', 'unknown')}")
+        else:
+            logger.warning(f"⚠️ FORCE RELEASE: Admin override for trade {trade_id} - skipping payment verification")
         
         crypto_amount = trade["crypto_amount"]
         currency = trade["crypto_currency"]
