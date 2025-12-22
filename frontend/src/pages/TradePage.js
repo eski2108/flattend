@@ -138,7 +138,7 @@ export default function TradePage() {
     }
     
     try {
-      await axios.post(`${BACKEND_URL}/api/p2p/disputes/initiate`, {
+      await axios.post(`${BACKEND_URL}/api/p2p/disputes/create`, {
         trade_id: tradeId,
         reporter_id: user.user_id,
         reporter_role: isSeller ? 'seller' : 'buyer',
