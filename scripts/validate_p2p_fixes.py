@@ -48,6 +48,9 @@ async def request(session, method, endpoint, data=None, headers=None, token=None
     url = f"{BACKEND_URL}{endpoint}"
     hdrs = headers or {}
     hdrs["Content-Type"] = "application/json"
+    # Add idempotency key for POST requests
+    if method.upper() == "POST":
+        hdrs["Idempotency-Key"] = str(uuid.uuid4())
     if token:
         hdrs["Authorization"] = f"Bearer {token}"
     try:
