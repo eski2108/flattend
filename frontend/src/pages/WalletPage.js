@@ -181,7 +181,7 @@ export default function WalletPage() {
           fontSize: '20px',
           color: '#00E5FF',
           fontWeight: '600'
-        }}>Loading wallet...</div>
+        }}>{t('common.loading')}</div>
       </div>
     );
   }
@@ -206,13 +206,13 @@ export default function WalletPage() {
               fontWeight: '700',
               color: '#FFFFFF',
               margin: '0 0 8px 0'
-            }}>Wallet</h1>
+            }}>{t('wallet.title')}</h1>
             <p style={{
               fontSize: '14px',
               color: '#8FA3BF',
               margin: 0,
               fontWeight: '400'
-            }}>Manage your crypto assets</p>
+            }}>{t('wallet.manage_assets')}</p>
           </div>
           <button
             onClick={handleRefresh}
@@ -239,7 +239,7 @@ export default function WalletPage() {
                 animation: refreshing ? 'spin 1s linear infinite' : 'none'
               }}
             />
-            Refresh
+            {t('common.refresh')}
           </button>
         </div>
 
