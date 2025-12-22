@@ -463,7 +463,7 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
             "fee_percentage": swap_fee_percent,
             "referral_commission_paid": referrer_commission,
             "net_profit": admin_fee,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(timezone.utc),  # STORE AS DATETIME, NOT STRING
             "description": f"Swap fee ({swap_fee_percent}%) from {from_currency} to {to_currency}"
         })
         logger.info(f"✅ SWAP FEE logged to admin_revenue: {admin_fee} {from_currency}")
