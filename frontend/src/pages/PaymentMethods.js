@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 const API = process.env.REACT_APP_BACKEND_URL;
 import { IoAdd, IoAlertCircle, IoCheckmark, IoCheckmarkCircle, IoClose, IoCreate } from 'react-icons/io5';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';;
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 // API already defined
 
