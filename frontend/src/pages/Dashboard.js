@@ -231,7 +231,7 @@ export default function Dashboard() {
                   pointerEvents: 'none'
                 }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                  <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Portfolio Value</div>
+                  <div style={{ fontSize: '12px', color: '#8F9BB3', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('dashboard.total_value')}</div>
                   <button
                     onClick={() => setBalanceVisible(!balanceVisible)}
                     style={{
