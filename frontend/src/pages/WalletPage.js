@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { IoRefresh, IoSearch } from 'react-icons/io5';
@@ -33,6 +34,7 @@ const CoinIcon = ({ symbol, size = 40 }) => <Coin3DIcon symbol={symbol} size={si
 
 export default function WalletPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [user, setUser] = useState(null);
   const [allCoins, setAllCoins] = useState([]);
   const [balances, setBalances] = useState([]);
