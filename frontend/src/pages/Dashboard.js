@@ -249,7 +249,7 @@ export default function Dashboard() {
                   {balanceVisible ? formatCurrency(totalValue) : '••••••'}
                 </div>
                 <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                  Available: {balanceVisible ? formatCurrency(portfolioData.availableBalance) : '••••••'}
+                  {t('dashboard.available_balance')}: {balanceVisible ? formatCurrency(portfolioData.availableBalance) : '••••••'}
                 </div>
               </div>
               
