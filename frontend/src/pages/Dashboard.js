@@ -343,7 +343,7 @@ export default function Dashboard() {
                   filter: 'blur(25px)',
                   pointerEvents: 'none'
                 }} />
-                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</div>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('dashboard.quick_actions')}</div>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => navigate('/instant-buy')}
