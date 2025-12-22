@@ -30379,8 +30379,9 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         
         # ═══════════════════════════════════════════════════════════════
         # PRIMARY SOURCE: admin_revenue collection (where all fees are logged)
+        # Sort by timestamp descending to get newest first
         # ═══════════════════════════════════════════════════════════════
-        revenue_records = await db.admin_revenue.find({}).to_list(10000)
+        revenue_records = await db.admin_revenue.find({}).sort("timestamp", -1).to_list(10000)
         logger.info(f"🔍 Found {len(revenue_records)} admin_revenue records")
         
         # Filter by timeframe
