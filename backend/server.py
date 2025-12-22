@@ -19171,6 +19171,236 @@ async def get_fee_revenue_stats():
 
 
 # ============================================================================
+# ADMIN FEE WITHDRAWAL SYSTEM
+# ============================================================================
+
+@api_router.get("/admin/fees/withdrawable")
+async def get_withdrawable_fees():
+    """Get all withdrawable fee balances for admin"""
+    try:
+        withdrawable = {
+            "fiat": {},
+            "crypto": {},
+            "total_gbp_equivalent": 0
+        }
+        
+        # Get admin_wallet balances
+        admin_wallets = await db.wallets.find({"user_id": "admin_wallet"}).to_list(10)
+        for w in admin_wallets:
+            currency = w.get("currency", "UNKNOWN")
+            balance = w.get("available_balance", 0)
+            if balance > 0:
+                if currency == "GBP":
+                    withdrawable["fiat"][currency] = balance
+                    withdrawable["total_gbp_equivalent"] += balance
+                else:
+                    withdrawable["crypto"][currency] = balance
+        
+        # Get PLATFORM_FEES balances
+        platform_fees = await db.internal_balances.find({"user_id": "PLATFORM_FEES"}).to_list(10)
+        for pf in platform_fees:
+            currency = pf.get("currency", "UNKNOWN")
+            balance = pf.get("balance", 0)
+            if balance > 0:
+                if currency == "GBP":
+                    withdrawable["fiat"][currency] = withdrawable["fiat"].get(currency, 0) + balance
+                    withdrawable["total_gbp_equivalent"] += balance
+                else:
+                    withdrawable["crypto"][currency] = withdrawable["crypto"].get(currency, 0) + balance
+        
+        # Get PLATFORM_TREASURY_WALLET balances
+        treasury = await db.internal_balances.find({"user_id": "PLATFORM_TREASURY_WALLET"}).to_list(10)
+        for t in treasury:
+            currency = t.get("currency", "UNKNOWN")
+            balance = t.get("balance", 0)
+            if balance > 0:
+                if currency == "GBP":
+                    withdrawable["fiat"][currency] = withdrawable["fiat"].get(currency, 0) + balance
+                    withdrawable["total_gbp_equivalent"] += balance
+                else:
+                    withdrawable["crypto"][currency] = withdrawable["crypto"].get(currency, 0) + balance
+        
+        # Get approximate GBP value for crypto (using cached prices)
+        try:
+            btc_price = await db.price_cache.find_one({"symbol": "BTC"})
+            eth_price = await db.price_cache.find_one({"symbol": "ETH"})
+            
+            if btc_price and "BTC" in withdrawable["crypto"]:
+                withdrawable["total_gbp_equivalent"] += withdrawable["crypto"]["BTC"] * btc_price.get("price_gbp", 50000)
+            if eth_price and "ETH" in withdrawable["crypto"]:
+                withdrawable["total_gbp_equivalent"] += withdrawable["crypto"]["ETH"] * eth_price.get("price_gbp", 2500)
+        except:
+            pass
+        
+        return {
+            "success": True,
+            "withdrawable": withdrawable
+        }
+    except Exception as e:
+        logger.error(f"Error getting withdrawable fees: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/fees/withdraw")
+async def withdraw_admin_fees(request: Request):
+    """
+    Withdraw collected fees to admin's personal wallet
+    
+    For FIAT: Creates a withdrawal record (manual bank transfer)
+    For CRYPTO: Triggers NOWPayments payout to specified address
+    """
+    try:
+        data = await request.json()
+        admin_id = data.get("admin_id")
+        currency = data.get("currency")
+        amount = float(data.get("amount", 0))
+        destination = data.get("destination")  # Bank account or crypto address
+        withdrawal_type = data.get("type", "fiat")  # "fiat" or "crypto"
+        
+        if not admin_id or not currency or amount <= 0:
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        # Verify admin
+        admin = await db.users.find_one({"user_id": admin_id, "role": "admin"})
+        if not admin:
+            raise HTTPException(status_code=403, detail="Unauthorized - Admin only")
+        
+        # Check available balance
+        total_available = 0
+        
+        # Check admin_wallet
+        admin_wallet = await db.wallets.find_one({"user_id": "admin_wallet", "currency": currency})
+        if admin_wallet:
+            total_available += admin_wallet.get("available_balance", 0)
+        
+        # Check PLATFORM_FEES
+        platform_fees = await db.internal_balances.find_one({"user_id": "PLATFORM_FEES", "currency": currency})
+        if platform_fees:
+            total_available += platform_fees.get("balance", 0)
+        
+        # Check PLATFORM_TREASURY_WALLET
+        treasury = await db.internal_balances.find_one({"user_id": "PLATFORM_TREASURY_WALLET", "currency": currency})
+        if treasury:
+            total_available += treasury.get("balance", 0)
+        
+        if amount > total_available:
+            raise HTTPException(status_code=400, detail=f"Insufficient balance. Available: {total_available} {currency}")
+        
+        # Create withdrawal record
+        withdrawal_id = str(uuid.uuid4())
+        withdrawal = {
+            "withdrawal_id": withdrawal_id,
+            "admin_id": admin_id,
+            "type": withdrawal_type,
+            "currency": currency,
+            "amount": amount,
+            "destination": destination,
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc),
+            "source_wallets": []
+        }
+        
+        # Deduct from wallets (prioritize admin_wallet, then PLATFORM_FEES, then TREASURY)
+        remaining = amount
+        
+        if admin_wallet and admin_wallet.get("available_balance", 0) > 0:
+            deduct = min(remaining, admin_wallet["available_balance"])
+            await db.wallets.update_one(
+                {"user_id": "admin_wallet", "currency": currency},
+                {"$inc": {"available_balance": -deduct, "total_balance": -deduct}}
+            )
+            withdrawal["source_wallets"].append({"wallet": "admin_wallet", "amount": deduct})
+            remaining -= deduct
+        
+        if remaining > 0 and platform_fees and platform_fees.get("balance", 0) > 0:
+            deduct = min(remaining, platform_fees["balance"])
+            await db.internal_balances.update_one(
+                {"user_id": "PLATFORM_FEES", "currency": currency},
+                {"$inc": {"balance": -deduct}}
+            )
+            withdrawal["source_wallets"].append({"wallet": "PLATFORM_FEES", "amount": deduct})
+            remaining -= deduct
+        
+        if remaining > 0 and treasury and treasury.get("balance", 0) > 0:
+            deduct = min(remaining, treasury["balance"])
+            await db.internal_balances.update_one(
+                {"user_id": "PLATFORM_TREASURY_WALLET", "currency": currency},
+                {"$inc": {"balance": -deduct}}
+            )
+            withdrawal["source_wallets"].append({"wallet": "PLATFORM_TREASURY_WALLET", "amount": deduct})
+            remaining -= deduct
+        
+        # For crypto, trigger NOWPayments payout
+        payout_result = None
+        if withdrawal_type == "crypto" and destination:
+            try:
+                from nowpayments_integration import nowpayments_service
+                payout_result = await nowpayments_service.create_payout(
+                    address=destination,
+                    currency=currency.lower(),
+                    amount=amount
+                )
+                withdrawal["payout_id"] = payout_result.get("id")
+                withdrawal["status"] = "processing"
+            except Exception as payout_error:
+                logger.error(f"NOWPayments payout error: {payout_error}")
+                withdrawal["status"] = "pending_manual"
+                withdrawal["payout_error"] = str(payout_error)
+        
+        # Save withdrawal record
+        await db.admin_fee_withdrawals.insert_one(withdrawal)
+        
+        # Log to audit trail
+        await db.audit_trail.insert_one({
+            "action": "ADMIN_FEE_WITHDRAWAL",
+            "admin_id": admin_id,
+            "withdrawal_id": withdrawal_id,
+            "currency": currency,
+            "amount": amount,
+            "destination": destination,
+            "type": withdrawal_type,
+            "timestamp": datetime.now(timezone.utc)
+        })
+        
+        logger.info(f"✅ Admin fee withdrawal: {amount} {currency} by {admin_id}")
+        
+        return {
+            "success": True,
+            "withdrawal_id": withdrawal_id,
+            "amount": amount,
+            "currency": currency,
+            "status": withdrawal["status"],
+            "message": f"Withdrawal of {amount} {currency} initiated successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Admin fee withdrawal error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/fees/withdrawal-history")
+async def get_fee_withdrawal_history():
+    """Get history of admin fee withdrawals"""
+    try:
+        withdrawals = await db.admin_fee_withdrawals.find({}).sort("created_at", -1).limit(100).to_list(100)
+        
+        # Convert datetime to string
+        for w in withdrawals:
+            w.pop("_id", None)
+            if isinstance(w.get("created_at"), datetime):
+                w["created_at"] = w["created_at"].isoformat()
+        
+        return {
+            "success": True,
+            "withdrawals": withdrawals
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
 # WALLET MANAGEMENT ENDPOINTS
 # ============================================================================
 
