@@ -91,7 +91,7 @@ export default function MerchantCenter() {
       
       const [statusResp, adsResp] = await Promise.all([
         axios.get(`${API}/api/p2p/seller-status/${userId}`, { signal: controller.signal }),
-        axiosInstance.get('/p2p/my-ads', { signal: controller.signal })
+        axios.get(`${API}/api/p2p/my-ads/${userId}`, { signal: controller.signal })
       ]);
       
       clearTimeout(timeoutId);
