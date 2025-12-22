@@ -356,6 +356,12 @@ class AtomicBalanceService:
         if current_available < amount:
             raise ValueError(f"Insufficient balance. Available: {current_available}, Required: {amount}")
 
+        # Use fallback mode if transactions not supported
+        if not self._transactions_supported:
+            return await self._atomic_debit_fallback(
+                user_id, currency, amount, tx_type, ref_id, metadata, timestamp, before_state
+            )
+
         async with await self.client.start_session() as session:
             async with session.start_transaction():
                 try:
@@ -372,8 +378,6 @@ class AtomicBalanceService:
                     
                     if not wallet_result:
                         raise ValueError(f"Insufficient balance in wallets collection")
-                    
-                    logger.info(f"[ATOMIC] wallets debited: {user_id}/{currency} -{amount}")
 
                     # 2. Update crypto_balances collection
                     await self.db.crypto_balances.update_one(
@@ -384,7 +388,6 @@ class AtomicBalanceService:
                         },
                         session=session
                     )
-                    logger.info(f"[ATOMIC] crypto_balances debited: {user_id}/{currency} -{amount}")
 
                     # 3. Update trader_balances collection
                     await self.db.trader_balances.update_one(
@@ -395,7 +398,6 @@ class AtomicBalanceService:
                         },
                         session=session
                     )
-                    logger.info(f"[ATOMIC] trader_balances debited: {user_id}/{currency} -{amount}")
 
                     # 4. Update internal_balances collection
                     await self.db.internal_balances.update_one(
@@ -406,7 +408,6 @@ class AtomicBalanceService:
                         },
                         session=session
                     )
-                    logger.info(f"[ATOMIC] internal_balances debited: {user_id}/{currency} -{amount}")
 
                     # Get after state
                     after_state = {
