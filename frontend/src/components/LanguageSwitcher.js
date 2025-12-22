@@ -119,6 +119,8 @@ export default function LanguageSwitcher({ style }) {
               borderRadius: '12px',
               padding: '8px',
               minWidth: '180px',
+              maxHeight: '400px',
+              overflowY: 'auto',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 240, 255, 0.1)',
               backdropFilter: 'blur(10px)',
               zIndex: 1000
