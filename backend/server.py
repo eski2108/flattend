@@ -262,9 +262,23 @@ initialize_referral_engine(db)
 logger.info("✅ Central Wallet Service initialized")
 
 # ============================================================================
-# CRITICAL: UNIFIED BALANCE SYNC UTILITY
+# ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+# ⚠️                    PAYMENT SYNC CORE - FROZEN MODULE                    ⚠️
+# ⚠️                         DO NOT MODIFY                                    ⚠️
+# ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+#
+# INTEGRITY_CHECKSUM_v2: COINHUBX_LOCKDOWN_2025_f8a9e2c1d4b7
+#
+# MODIFICATION REQUIRES:
+#   1) Update checksum above
+#   2) Run full test suite: python test_payment_sync.py
+#   3) Pass /api/integrity/check for 10 consecutive transactions
+#   4) Project lead written approval
+#
 # All balance operations MUST use these functions to stay synchronized
 # across all 4 balance collections: wallets, internal_balances, crypto_balances, trader_balances
+#
+# ANY CHANGE TO THIS SECTION BREAKS FINANCIAL INTEGRITY
 # ============================================================================
 
 async def sync_balance_update(user_id: str, currency: str, available_balance: float, 
