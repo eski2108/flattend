@@ -319,7 +319,7 @@ export default function Dashboard() {
                   {portfolioData.totalAssets}
                 </div>
                 <div style={{ fontSize: '12px', color: '#8F9BB3' }}>
-                  Locked: {balanceVisible ? formatCurrency(portfolioData.lockedBalance) : '••••••'}
+                  {t('dashboard.locked_balance')}: {balanceVisible ? formatCurrency(portfolioData.lockedBalance) : '••••••'}
                 </div>
               </div>
               
