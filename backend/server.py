@@ -266,6 +266,26 @@ if IS_STAGING:
 else:
     logger.info("🚀 RUNNING IN PRODUCTION MODE")
 
+# ============================================================================
+# PAYMENT SYSTEM v2.0 - SERVICE INITIALIZATION
+# INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
+# ============================================================================
+# Initialize Atomic Balance Service (P0.1 - MongoDB Transactions)
+atomic_balance_service = get_atomic_balance_service(db)
+logger.info("✅ AtomicBalanceService initialized (P0.1)")
+
+# Initialize Liquidity Reservation Service (P0.3 - Two-phase commit)
+liquidity_reservation_service = get_liquidity_reservation_service(db)
+logger.info("✅ LiquidityReservationService initialized (P0.3)")
+
+# Initialize Referral Chain Service (P1.2 - Multi-level referrals)
+referral_chain_service = get_referral_chain_service(db)
+logger.info("✅ ReferralChainService initialized (P1.2)")
+
+# Load Payment Config (P0.2 - No hardcoded secrets)
+logger.info(f"✅ PaymentConfig loaded - Admin Wallet: {payment_config.ADMIN_WALLET_ID}")
+# ============================================================================
+
 # Initialize Central Wallet Service
 from wallet_service import initialize_wallet_service, get_wallet_service
 from referral_engine import initialize_referral_engine, get_referral_engine
