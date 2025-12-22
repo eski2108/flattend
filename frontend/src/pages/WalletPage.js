@@ -413,7 +413,7 @@ export default function WalletPage() {
             }}>
               ↓
             </div>
-            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Receive</div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>{t('wallet.receive')}</div>
           </button>
         </div>
 
@@ -424,9 +424,9 @@ export default function WalletPage() {
           marginBottom: '16px'
         }}>
           {[
-            { name: 'Crypto', route: '/wallet' },
-            { name: 'Activity', route: '/transactions' },
-            { name: 'Portfolio', route: '/dashboard' }
+            { name: t('wallet.crypto'), route: '/wallet' },
+            { name: t('wallet.activity'), route: '/transactions' },
+            { name: t('nav.dashboard'), route: '/dashboard' }
           ].map((tab) => (
             <button
               key={tab.name}
