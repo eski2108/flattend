@@ -391,8 +391,12 @@ async def sync_debit_balance(user_id: str, currency: str, amount: float, reason:
         logger.error(f"❌ DEBIT ERROR: {user_id}/{currency}: {e}")
         return False
 
+# ⚠️ SYNC_LOCK - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_lock_balance(user_id: str, currency: str, amount: float, reason: str = "lock"):
-    """Lock balance (move from available to locked) across all collections"""
+    """
+    FROZEN FUNCTION - Lock balance (move from available to locked) across ALL 4 collections.
+    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    """
     try:
         wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
         if not wallet:
