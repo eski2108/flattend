@@ -750,12 +750,12 @@ export default function P2POrderPage() {
             maxWidth: '480px',
             width: '90%'
           }}>
-            <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Open Dispute</h3>
-            <p style={{ color: '#8F9BB3', marginBottom: '16px' }}>Please explain why you are opening a dispute. Admin will review and resolve.</p>
+            <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>{t('p2p.dispute.title')}</h3>
+            <p style={{ color: '#8F9BB3', marginBottom: '16px' }}>{t('p2p.dispute.description')}</p>
             <textarea
               value={disputeReason}
               onChange={(e) => setDisputeReason(e.target.value)}
-              placeholder="Describe the issue..."
+              placeholder={t('p2p.dispute.placeholder')}
               style={{
                 width: '100%',
                 height: '120px',
@@ -783,7 +783,7 @@ export default function P2POrderPage() {
                   cursor: 'pointer'
                 }}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleOpenDispute}
@@ -799,7 +799,7 @@ export default function P2POrderPage() {
                   cursor: processing || !disputeReason.trim() ? 'not-allowed' : 'pointer'
                 }}
               >
-                Submit Dispute
+                {t('p2p.dispute.submit')}
               </button>
             </div>
           </div>
