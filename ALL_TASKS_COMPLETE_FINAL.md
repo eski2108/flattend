@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://bugsecurehub.preview.emergentagent.com
+**URL:** https://crypto-integrify.preview.emergentagent.com
 
 **Services Status:**
 ```bash

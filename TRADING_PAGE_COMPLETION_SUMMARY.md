@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://bugsecurehub.preview.emergentagent.com/#/trading
+**Live URL:** https://crypto-integrify.preview.emergentagent.com/#/trading
 
 ---
 

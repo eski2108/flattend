@@ -83,7 +83,7 @@ NOWPAYMENTS_API_KEY=your_api_key_here
 NOWPAYMENTS_IPN_SECRET=your_ipn_secret_here
 
 # Your backend URL (for webhook callbacks)
-BACKEND_URL=https://bugsecurehub.preview.emergentagent.com
+BACKEND_URL=https://crypto-integrify.preview.emergentagent.com
 ```
 
 ### How to Get These Values
@@ -99,7 +99,7 @@ BACKEND_URL=https://bugsecurehub.preview.emergentagent.com
 
 1. In NOWPayments dashboard, go to **Settings** → **IPN (Callbacks)**
 2. Enable IPN callbacks
-3. Set IPN callback URL to: `https://bugsecurehub.preview.emergentagent.com/api/nowpayments/ipn`
+3. Set IPN callback URL to: `https://crypto-integrify.preview.emergentagent.com/api/nowpayments/ipn`
 4. Copy the **IPN Secret Key** shown
 5. Paste into `.env` as `NOWPAYMENTS_IPN_SECRET`
 
@@ -112,7 +112,7 @@ This must be your **publicly accessible** backend URL:
 BACKEND_URL=https://coinhubx.com
 
 # Staging/Preview
-BACKEND_URL=https://bugsecurehub.preview.emergentagent.com
+BACKEND_URL=https://crypto-integrify.preview.emergentagent.com
 
 # Local testing (use ngrok)
 BACKEND_URL=https://abc123.ngrok.io

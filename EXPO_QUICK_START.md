@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://bugsecurehub.preview.emergentagent.com/api
+https://crypto-integrify.preview.emergentagent.com/api
 ```
 
 This means:
