@@ -343,20 +343,52 @@ async def execute_swap_with_wallet(db, wallet_service, user_id: str, from_curren
         
         await wallet_service.credit(user_id=user_id, currency=to_currency, amount=to_amount, transaction_type="swap_in", reference_id=swap_id, metadata={"from_currency": from_currency})
         
-        # Credit admin wallet with admin portion of fee (using PLATFORM_FEES for consistency)
-        # Also credit to internal_balances for admin dashboard tracking
-        await db.internal_balances.update_one(
-            {"user_id": "PLATFORM_FEES", "currency": from_currency},
-            {
-                "$inc": {
-                    "balance": admin_fee,
-                    "total_fees": admin_fee,
-                    "swap_fees": admin_fee
-                },
-                "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
-            },
+        # Credit admin wallet with admin portion of fee
+        # UPDATE ALL 4 COLLECTIONS for proper sync (wallets, internal_balances, crypto_balances, trader_balances)
+        timestamp = datetime.now(timezone.utc)
+        
+        # Get current admin_wallet balance
+        admin_wallet = await db.wallets.find_one({"user_id": "admin_wallet", "currency": from_currency})
+        current_balance = float(admin_wallet.get("available_balance", 0)) if admin_wallet else 0
+        new_balance = current_balance + admin_fee
+        
+        balance_update = {
+            "available_balance": new_balance,
+            "total_balance": new_balance,
+            "balance": new_balance,
+            "last_updated": timestamp,
+            "updated_at": timestamp
+        }
+        
+        # Update wallets collection
+        await db.wallets.update_one(
+            {"user_id": "admin_wallet", "currency": from_currency},
+            {"$set": {**balance_update, "user_id": "admin_wallet", "currency": from_currency}},
             upsert=True
         )
+        
+        # Update internal_balances collection
+        await db.internal_balances.update_one(
+            {"user_id": "admin_wallet", "currency": from_currency},
+            {"$set": {**balance_update, "user_id": "admin_wallet", "currency": from_currency}},
+            upsert=True
+        )
+        
+        # Update crypto_balances collection
+        await db.crypto_balances.update_one(
+            {"user_id": "admin_wallet", "currency": from_currency},
+            {"$set": {**balance_update, "user_id": "admin_wallet", "currency": from_currency}},
+            upsert=True
+        )
+        
+        # Update trader_balances collection
+        await db.trader_balances.update_one(
+            {"trader_id": "admin_wallet", "currency": from_currency},
+            {"$set": {**balance_update, "trader_id": "admin_wallet", "currency": from_currency}},
+            upsert=True
+        )
+        
+        logger.info(f"💰 SWAP FEE {admin_fee} {from_currency} credited to admin_wallet (synced to all 4 collections)")
         
         # Save referral commission using NEW calculator
         if referrer_id and referrer_commission > 0:
