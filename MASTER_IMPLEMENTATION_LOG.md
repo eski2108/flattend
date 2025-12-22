@@ -61,6 +61,18 @@ The following systems are **COMPLETE** and **LOCKED**. Any modification requires
 - **Fix:** Changed `axiosInstance.get('/p2p/my-ads')` to `axios.get(\`${API}/api/p2p/my-ads/${userId}\`)`
 - **Status:** ✅ FIXED
 
+### Bug 4: PriceTickerEnhanced.js - Cartoonish Emoji Icons
+- **Problem:** Ticker showing childish emojis like 💵 💲 🐶 🔶 ☀️
+- **File:** `/app/frontend/src/components/PriceTickerEnhanced.js`
+- **Fix:** Replaced with professional crypto symbols: ₿ Ξ ₮ ◈ ◆ ◎ Ł Ð ₳
+- **Status:** ✅ FIXED
+
+### Bug 5: CreateAd.js - price_type Not Being Sent
+- **Problem:** Frontend not sending `price_type` (fixed/floating) to backend
+- **File:** `/app/frontend/src/pages/CreateAd.js`
+- **Fix:** Added `price_type` to formData state and API request
+- **Status:** ✅ FIXED
+
 ---
 
 # ✅ SELLER FLOW - VERIFIED WORKING 2025-12-22
