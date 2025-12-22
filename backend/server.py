@@ -568,30 +568,29 @@ async def sync_release_locked_balance(user_id: str, currency: str, amount: float
         logger.error(f"❌ RELEASE ERROR: {user_id}/{currency}: {e}")
         # Fallback to legacy method
         try:
-        # Debit from seller's locked balance
-        seller_wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
-        if not seller_wallet:
-            return False
+            seller_wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
+            if not seller_wallet:
+                return False
+                
+            seller_available = float(seller_wallet.get("available_balance", 0))
+            seller_locked = float(seller_wallet.get("locked_balance", 0))
             
-        seller_available = float(seller_wallet.get("available_balance", 0))
-        seller_locked = float(seller_wallet.get("locked_balance", 0))
-        
-        if seller_locked < amount:
+            if seller_locked < amount:
+                return False
+            
+            # Update seller (reduce locked)
+            await sync_balance_update(user_id, currency, seller_available, seller_locked - amount, f"RELEASE_OUT:{reason}")
+            
+            # Credit to buyer
+            await sync_credit_balance(to_user_id, currency, amount, f"RELEASE_IN:{reason}")
+            
+            logger.info(f"🔄 RELEASED {amount} {currency} from {user_id} to {to_user_id} ({reason}) [FALLBACK]")
+            return True
+        except Exception as fallback_error:
+            logger.error(f"❌ RELEASE FALLBACK ERROR: {user_id} -> {to_user_id}/{currency}: {fallback_error}")
             return False
-        
-        # Update seller (reduce locked)
-        await sync_balance_update(user_id, currency, seller_available, seller_locked - amount, f"RELEASE_OUT:{reason}")
-        
-        # Credit to buyer
-        await sync_credit_balance(to_user_id, currency, amount, f"RELEASE_IN:{reason}")
-        
-        logger.info(f"🔄 RELEASED {amount} {currency} from {user_id} to {to_user_id} ({reason})")
-        return True
-    except Exception as e:
-        logger.error(f"❌ RELEASE ERROR: {user_id} -> {to_user_id}/{currency}: {e}")
-        return False
 
-logger.info("✅ Unified Balance Sync Utilities initialized")
+logger.info("✅ Unified Balance Sync Utilities initialized (Payment System v2.0)")
 
 # Initialize P2P Notification Service
 from p2p_notification_service import initialize_notification_service, get_notification_service
