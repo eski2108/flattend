@@ -32503,10 +32503,15 @@ async def _update_stats_after_trade(trade_id: str):
 
 @api_router.post("/p2p/trade/release")
 async def release_crypto_to_buyer(request: dict):
-    """Seller releases crypto from escrow to buyer"""
+    """
+    Seller releases crypto from escrow to buyer
+    
+    🔒 CRITICAL SECURITY: Payment verification REQUIRED before release
+    """
     try:
         trade_id = request.get("trade_id")
         user_id = request.get("user_id")
+        force_release = request.get("force_release", False)  # Admin only
         
         # Get trade
         trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"_id": 0})
@@ -32518,8 +32523,34 @@ async def release_crypto_to_buyer(request: dict):
             raise HTTPException(status_code=403, detail="Only seller can release")
         
         # Check status
-        if trade.get("status") != "payment_made":
+        if trade.get("status") not in ["payment_made", "buyer_marked_paid", "payment_confirmed"]:
             raise HTTPException(status_code=400, detail="Payment not marked yet")
+        
+        # ═══════════════════════════════════════════════════════════════════
+        # 🔒 CRITICAL: VERIFY PAYMENT BEFORE RELEASE
+        # ═══════════════════════════════════════════════════════════════════
+        if not force_release:
+            payment_service = get_payment_verification_service(db)
+            verification = await payment_service.verify_payment(trade_id)
+            
+            if not verification.get("verified"):
+                logger.warning(f"⚠️ RELEASE BLOCKED: Payment not verified for trade {trade_id}")
+                return {
+                    "success": False,
+                    "message": "Cannot release crypto: Payment not verified",
+                    "verification_status": verification.get("status"),
+                    "requires_verification": True,
+                    "details": verification.get("message", "Please upload payment proof or verify via bank connection."),
+                    "suggestion": "Ask buyer to upload payment screenshot or connect bank via TrueLayer for instant verification."
+                }
+            
+            logger.info(f"✅ Payment verified for {trade_id} via {verification.get('provider', 'unknown')}")
+        else:
+            # Check if user is admin for force_release
+            user = await db.users.find_one({"user_id": user_id}, {"role": 1})
+            if not user or user.get("role") != "admin":
+                raise HTTPException(status_code=403, detail="Only admin can force release")
+            logger.warning(f"⚠️ ADMIN FORCE RELEASE for trade {trade_id} by {user_id}")
         
         # Release crypto from escrow to buyer
         buyer_id = trade.get("buyer_id")
@@ -32544,7 +32575,9 @@ async def release_crypto_to_buyer(request: dict):
                 "$set": {
                     "status": "completed",
                     "completed_at": datetime.now(timezone.utc).isoformat(),
-                    "escrow_locked": False
+                    "escrow_locked": False,
+                    "payment_verified": True,
+                    "released_by": user_id
                 }
             }
         )
