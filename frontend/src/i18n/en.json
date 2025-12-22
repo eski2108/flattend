@@ -91,8 +91,8 @@
     "manage_security": "Manage Security Settings"
   },
   "wallet": {
-    "title": "My Wallet",
-    "total_balance": "Total Balance",
+    "title": "Wallet",
+    "total_balance": "Total Portfolio Value",
     "deposit": "Deposit",
     "withdraw": "Withdraw",
     "swap": "Swap",
@@ -108,7 +108,15 @@
     "network_fee": "Network Fee",
     "scan_qr": "Scan QR Code",
     "copy_address": "Copy Address",
-    "address_copied": "Address copied to clipboard!"
+    "address_copied": "Address copied to clipboard!",
+    "manage_assets": "Manage your crypto assets",
+    "today": "today",
+    "no_holdings": "No holdings yet",
+    "send": "Send",
+    "receive": "Receive",
+    "crypto": "Crypto",
+    "activity": "Activity",
+    "search_assets": "Search assets..."
   },
   "p2p": {
     "express_title": "P2P Express",
