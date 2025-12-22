@@ -5,19 +5,19 @@
       "test": "Concurrent Credits Test",
       "passed": true,
       "details": "SKIPPED - simulate-credit endpoint not available (use real transaction flow)",
-      "timestamp": "2025-12-22T13:53:09.893729"
+      "timestamp": "2025-12-22T13:54:00.855703"
     },
     {
       "test": "Integrity Failure Detection",
       "passed": true,
       "details": "System is healthy - no corruption detected",
-      "timestamp": "2025-12-22T13:53:10.479723"
+      "timestamp": "2025-12-22T13:54:01.441729"
     },
     {
       "test": "Insufficient Balance Rejection",
       "passed": false,
-      "details": "Should have rejected, got: 404 - {'detail': 'Not Found'}",
-      "timestamp": "2025-12-22T13:53:10.530722"
+      "details": "Should have rejected, got: 404 - {'detail': 'User not found'}",
+      "timestamp": "2025-12-22T13:54:01.590721"
     }
   ],
   "phase3": [],
