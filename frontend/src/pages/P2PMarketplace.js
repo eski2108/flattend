@@ -401,7 +401,7 @@ function P2PMarketplace() {
                   margin: 0,
                   textShadow: '0 0 30px rgba(0, 240, 255, 0.3)'
                 }}>
-                  P2P Marketplace
+                  {t('p2p.marketplace.title')}
                 </h1>
                 <div style={{
                   width: '28px',
