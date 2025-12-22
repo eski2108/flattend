@@ -901,7 +901,7 @@ export default function Dashboard() {
                     textShadow: '0 0 15px rgba(245, 197, 66, 0.5)'
                   }}>
                     <IoFlash size={20} color="#F5C542" />
-                    Quick Actions
+                    {t('dashboard.quick_actions')}
                   </h3>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -933,8 +933,8 @@ export default function Dashboard() {
                     >
                       <IoAdd size={20} color="#22C55E" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>Buy Crypto</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Instant purchase with GBP</div>
+                        <div>{t('dashboard.buy_crypto')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.instant_purchase')}</div>
                       </div>
                     </button>
                     
