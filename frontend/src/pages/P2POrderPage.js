@@ -197,7 +197,7 @@ export default function P2POrderPage() {
       });
       
       if (response.data.success) {
-        toast.success('Dispute opened. Admin will review.');
+        toast.success(t('p2p.disputeOpened'));
         setShowDisputeModal(false);
         fetchTrade(currentUser.user_id);
       }
