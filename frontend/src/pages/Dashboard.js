@@ -654,7 +654,7 @@ export default function Dashboard() {
                       textShadow: '0 0 15px rgba(0, 240, 255, 0.5)'
                     }}>
                       <IoStar size={20} color="#00F0FF" />
-                      Top Assets
+                      {t('dashboard.top_holdings')}
                     </h3>
                     <button
                       onClick={() => navigate('/wallet')}
