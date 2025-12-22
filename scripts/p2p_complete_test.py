@@ -18,7 +18,7 @@ load_dotenv(Path('/app/backend/.env'))
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-API_URL = "https://multilingual-crypto-2.preview.emergentagent.com"
+API_URL = "https://i18n-p2p-fixes.preview.emergentagent.com"
 
 async def run_test():
     mongo_url = os.environ.get('MONGO_URL')

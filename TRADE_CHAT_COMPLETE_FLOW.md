@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://multilingual-crypto-2.preview.emergentagent.com
+**Test it now at:** https://i18n-p2p-fixes.preview.emergentagent.com

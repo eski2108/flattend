@@ -288,7 +288,7 @@ db.admin_liquidity_wallets.updateOne(
 )
 
 // Try withdrawal via API
-curl -X POST https://multilingual-crypto-2.preview.emergentagent.com/api/wallet/withdraw \
+curl -X POST https://i18n-p2p-fixes.preview.emergentagent.com/api/wallet/withdraw \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "test_user",
@@ -321,7 +321,7 @@ db.admin_liquidity_wallets.updateOne(
 )
 
 // Try SELL trade
-curl -X POST https://multilingual-crypto-2.preview.emergentagent.com/api/trading/execute-v2 \
+curl -X POST https://i18n-p2p-fixes.preview.emergentagent.com/api/trading/execute-v2 \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "test_user",
@@ -351,7 +351,7 @@ db.admin_liquidity_wallets.updateOne(
 )
 
 // Try swap
-curl -X POST https://multilingual-crypto-2.preview.emergentagent.com/api/swap/execute \
+curl -X POST https://i18n-p2p-fixes.preview.emergentagent.com/api/swap/execute \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "test_user",

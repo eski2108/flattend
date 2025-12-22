@@ -121,7 +121,7 @@ Test Sequence Completed:
 - **Test Result:** ✅ PASS - Complete flow working
 
 ### 10. Live Preview Deployment ✅
-- All changes pushed to: https://multilingual-crypto-2.preview.emergentagent.com
+- All changes pushed to: https://i18n-p2p-fixes.preview.emergentagent.com
 - Backend running and accessible
 - Frontend running and accessible
 - No breaking changes to existing features
@@ -231,7 +231,7 @@ Test Sequence Completed:
 
 ## PRODUCTION DEPLOYMENT
 
-**Live URL:** https://multilingual-crypto-2.preview.emergentagent.com
+**Live URL:** https://i18n-p2p-fixes.preview.emergentagent.com
 
 **Status:**
 - ✅ Backend: RUNNING

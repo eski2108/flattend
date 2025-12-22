@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://multilingual-crypto-2.preview.emergentagent.com
+**Live URL:** https://i18n-p2p-fixes.preview.emergentagent.com
 
 ---
 

@@ -23,7 +23,7 @@ async def test():
     )
     
     print("✅ Email template generation completed")
-    print(f"Expected URL: https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}")
+    print(f"Expected URL: https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}")
 
 if __name__ == "__main__":
     asyncio.run(test())

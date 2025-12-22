@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://multilingual-crypto-2.preview.emergentagent.com/#/trading
+**Live URL:** https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
 
 ---
 

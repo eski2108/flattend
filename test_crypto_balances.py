@@ -6,7 +6,7 @@ Test crypto balances endpoint specifically
 import requests
 import json
 
-BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
+BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
 USER_ID = "b382449d-f995-4c9e-a02d-39b7bf1ebb5d"
 
 def test_crypto_balances():

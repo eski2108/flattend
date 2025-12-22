@@ -126,7 +126,7 @@ Automatically applied when Arabic is selected.
 ```
 Test on mobile browser (not app):
 1. Open Chrome on phone
-2. Visit: https://multilingual-crypto-2.preview.emergentagent.com/login
+2. Visit: https://i18n-p2p-fixes.preview.emergentagent.com/login
 3. Login with: gads21083@gmail.com / 123456789
 
 If mobile browser works → App code issue
@@ -313,7 +313,7 @@ Expected: ~£9,900 on both Wallet and Portfolio pages
 If issues persist after clearing cache:
 
 **Backend is confirmed working:**
-- API: https://multilingual-crypto-2.preview.emergentagent.com/api
+- API: https://i18n-p2p-fixes.preview.emergentagent.com/api
 - Returns correct data for all endpoints
 - All integrations functional
 

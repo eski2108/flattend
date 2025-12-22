@@ -42,7 +42,7 @@ Location: `/app/mobile/src/App.js`
 **Endpoint:** `${API_URL}/api/marketplace/list`
 
 **Status:** ✅ Working perfectly
-- Connected to production backend: `https://multilingual-crypto-2.preview.emergentagent.com`
+- Connected to production backend: `https://i18n-p2p-fixes.preview.emergentagent.com`
 - Fetches seeded marketplace offers
 - Supports filtering by:
   - `offer_type` (buy/sell)
@@ -95,7 +95,7 @@ The mobile marketplace perfectly mirrors the web version:
 
 ### Backend API: ✅ Verified Working
 ```bash
-curl "https://multilingual-crypto-2.preview.emergentagent.com/api/marketplace/list?offer_type=sell&crypto=BTC&fiat=GBP"
+curl "https://i18n-p2p-fixes.preview.emergentagent.com/api/marketplace/list?offer_type=sell&crypto=BTC&fiat=GBP"
 ```
 
 Returns 12 seeded offers with full seller information including:

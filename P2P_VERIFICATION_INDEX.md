@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://multilingual-crypto-2.preview.emergentagent.com
-- Backend API: https://multilingual-crypto-2.preview.emergentagent.com/api
-- P2P Marketplace: https://multilingual-crypto-2.preview.emergentagent.com/p2p
+- Frontend: https://i18n-p2p-fixes.preview.emergentagent.com
+- Backend API: https://i18n-p2p-fixes.preview.emergentagent.com/api
+- P2P Marketplace: https://i18n-p2p-fixes.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

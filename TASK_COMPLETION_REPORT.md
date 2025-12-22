@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{disput
 ```
 📧 URLs found in dispute email template:
 
-1. https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

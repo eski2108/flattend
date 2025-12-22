@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://multilingual-crypto-2.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://i18n-p2p-fixes.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

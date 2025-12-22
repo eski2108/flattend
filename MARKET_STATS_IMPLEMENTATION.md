@@ -195,6 +195,6 @@ The advanced market stats module has been implemented with:
 - ✅ No placeholder or fake values
 - ⚠️ **Awaiting backend API integration for real market data**
 
-**Live URL:** https://multilingual-crypto-2.preview.emergentagent.com/#/trading
+**Live URL:** https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
 
 **Status:** Ready for backend integration. Frontend code complete and deployed.

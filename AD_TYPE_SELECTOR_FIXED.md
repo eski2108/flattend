@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://multilingual-crypto-2.preview.emergentagent.com
+**Preview URL:** https://i18n-p2p-fixes.preview.emergentagent.com

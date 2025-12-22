@@ -150,7 +150,7 @@ Once built, you can distribute the APK by:
 
 1. **Backend URL:** The app is configured to connect to:
    ```
-   https://multilingual-crypto-2.preview.emergentagent.com/api
+   https://i18n-p2p-fixes.preview.emergentagent.com/api
    ```
 
 2. **Permissions:** The app requests:

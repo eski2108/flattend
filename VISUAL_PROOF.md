@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/dispute_123
+https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/dispute_1
 
 ### ✅ AFTER (FIXED)
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://multilingual-crypto-2.preview.emergentagent.com/`
+2. Browser loads: `https://i18n-p2p-fixes.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/dispute
 
 #### ❌ BEFORE
 ```html
-<a href="https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/dispute
 
 #### ❌ BEFORE
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{disput
 
 #### ❌ BEFORE
 ```html
-<a href="https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://i18n-p2p-fixes.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

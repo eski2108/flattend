@@ -227,7 +227,7 @@ mongodb     RUNNING   (pid 32)
 
 ### Test 1: Available Coins Endpoint
 ```bash
-$ curl https://multilingual-crypto-2.preview.emergentagent.com/api/p2p/marketplace/available-coins
+$ curl https://i18n-p2p-fixes.preview.emergentagent.com/api/p2p/marketplace/available-coins
 
 Response:
 {
@@ -240,7 +240,7 @@ Response:
 
 ### Test 2: Marketplace Offers Endpoint
 ```bash
-$ curl https://multilingual-crypto-2.preview.emergentagent.com/api/p2p/marketplace/offers
+$ curl https://i18n-p2p-fixes.preview.emergentagent.com/api/p2p/marketplace/offers
 
 Response:
 {

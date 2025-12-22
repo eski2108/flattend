@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { X, Zap, TrendingUp, Star, Check } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://multilingual-crypto-2.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://i18n-p2p-fixes.preview.emergentagent.com';
 
 const BOOST_PRICING = [
   {

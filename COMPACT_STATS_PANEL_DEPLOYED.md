@@ -3,7 +3,7 @@
 **Deployment Date:** December 9, 2024, 8:49 PM UTC  
 **Status:** ✅ LIVE ON PREVIEW  
 **Build Hash:** main.d189ec6d.js  
-**Preview URL:** https://multilingual-crypto-2.preview.emergentagent.com/#/trading
+**Preview URL:** https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
 
 ---
 
@@ -661,10 +661,10 @@ volume >= 1000000 ? `£${(volume / 1000000).toFixed(2)}M`
 ## 🔗 LIVE PREVIEW
 
 **Main App:**  
-https://multilingual-crypto-2.preview.emergentagent.com/
+https://i18n-p2p-fixes.preview.emergentagent.com/
 
 **Trading Page:**  
-https://multilingual-crypto-2.preview.emergentagent.com/#/trading
+https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
 
 **Test Different Pairs:**
 - BTC/GBP (default)

@@ -7,7 +7,7 @@ This script tests the complete payment flows as requested:
 2. Manual Payment Marking (Admin)
 3. Seller Payout Request
 
-Backend URL: https://multilingual-crypto-2.preview.emergentagent.com
+Backend URL: https://i18n-p2p-fixes.preview.emergentagent.com
 """
 
 import requests
@@ -18,7 +18,7 @@ from datetime import datetime
 import sys
 
 # Configuration
-BACKEND_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
 TEST_USER_ID = "testuser123"
 TEST_SELLER_ID = "testseller"
 TEST_ORDER_ID = "test_order_123"

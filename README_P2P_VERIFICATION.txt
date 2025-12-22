@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://multilingual-crypto-2.preview.emergentagent.com
-P2P Page:     https://multilingual-crypto-2.preview.emergentagent.com/p2p
-Backend API:  https://multilingual-crypto-2.preview.emergentagent.com/api
+Frontend:     https://i18n-p2p-fixes.preview.emergentagent.com
+P2P Page:     https://i18n-p2p-fixes.preview.emergentagent.com/p2p
+Backend API:  https://i18n-p2p-fixes.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

@@ -512,7 +512,7 @@ mongodb    RUNNING   pid 37,   uptime 1:30:00
 
 **Test User Withdrawal:**
 ```
-1. Open: https://multilingual-crypto-2.preview.emergentagent.com/login
+1. Open: https://i18n-p2p-fixes.preview.emergentagent.com/login
 2. Login: withdrawal_test@demo.com / Test123!
 3. Navigate to /wallet
 4. Click "Withdraw" on BTC
@@ -525,7 +525,7 @@ mongodb    RUNNING   pid 37,   uptime 1:30:00
 
 **Test Admin Approval:**
 ```
-1. Open: https://multilingual-crypto-2.preview.emergentagent.com/admin/login
+1. Open: https://i18n-p2p-fixes.preview.emergentagent.com/admin/login
 2. Login: admin_test@demo.com / Admin123!
 3. Enter code: CRYPTOLEND_ADMIN_2025
 4. Navigate to /admin/withdrawals

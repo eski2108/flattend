@@ -21,7 +21,7 @@ import sys
 from datetime import datetime, timezone
 
 # Configuration
-BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
+BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
 
 class BoostOfferTester:
     def __init__(self):

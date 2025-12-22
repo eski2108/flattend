@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://multilingual-crypto-2.preview.emergentagent.com/#/p2p
+   https://i18n-p2p-fixes.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://multilingual-crypto-2.preview.emergentagent.com/#/p2p/merchant
+   https://i18n-p2p-fixes.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://multilingual-crypto-2.preview.emergentagent.com/#/p2p/create-ad
+   https://i18n-p2p-fixes.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

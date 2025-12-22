@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://multilingual-crypto-2.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://i18n-p2p-fixes.preview.emergentagent.com"

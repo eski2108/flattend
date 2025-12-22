@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://multilingual-crypto-2.preview.emergentagent.com/api
+https://i18n-p2p-fixes.preview.emergentagent.com/api
 ```
 
 This means:

@@ -37,7 +37,7 @@ Tests the COMPLETE flow from deposit → balance → matching → trade → fee 
 #### **Phase 8: Complete End-to-End Scenario**
 **Full User Journey**
 
-**Backend URL:** https://multilingual-crypto-2.preview.emergentagent.com/api
+**Backend URL:** https://i18n-p2p-fixes.preview.emergentagent.com/api
 """
 
 import requests
@@ -48,7 +48,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
+BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
 
 class P2PEscrowFinalTester:
     def __init__(self):

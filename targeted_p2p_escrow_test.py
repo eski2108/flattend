@@ -17,7 +17,7 @@ Test the P2P escrow system using the actual implemented endpoints found in the b
 - /api/trader/create-profile (POST)
 - /api/trader/create-advert (POST)
 
-**Backend URL:** https://multilingual-crypto-2.preview.emergentagent.com/api
+**Backend URL:** https://i18n-p2p-fixes.preview.emergentagent.com/api
 """
 
 import requests
@@ -28,7 +28,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
+BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
 
 class TargetedP2PEscrowTester:
     def __init__(self):

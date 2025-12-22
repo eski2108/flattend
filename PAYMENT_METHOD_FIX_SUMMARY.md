@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://multilingual-crypto-2.preview.emergentagent.com
+https://i18n-p2p-fixes.preview.emergentagent.com
 
 ### Test Route
 
-`https://multilingual-crypto-2.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://i18n-p2p-fixes.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

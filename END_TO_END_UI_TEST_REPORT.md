@@ -18,7 +18,7 @@ All wallet backend endpoints are fully functional and tested with real data flow
 
 **Test:**
 ```bash
-curl https://multilingual-crypto-2.preview.emergentagent.com/api/wallets/balances/test_user_alice
+curl https://i18n-p2p-fixes.preview.emergentagent.com/api/wallets/balances/test_user_alice
 ```
 
 **Response:**
@@ -64,7 +64,7 @@ curl https://multilingual-crypto-2.preview.emergentagent.com/api/wallets/balance
 
 **Test:**
 ```bash
-curl https://multilingual-crypto-2.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
+curl https://i18n-p2p-fixes.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
 ```
 
 **Response:**

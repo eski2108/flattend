@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://multilingual-crypto-2.preview.emergentagent.com/api
-- **Frontend App**: https://multilingual-crypto-2.preview.emergentagent.com
+- **Backend API**: https://i18n-p2p-fixes.preview.emergentagent.com/api
+- **Frontend App**: https://i18n-p2p-fixes.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

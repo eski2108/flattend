@@ -381,7 +381,7 @@
     }
   ],
   "test_metadata": {
-    "backend_url": "https://multilingual-crypto-2.preview.emergentagent.com/api",
+    "backend_url": "https://i18n-p2p-fixes.preview.emergentagent.com/api",
     "test_timestamp": "2025-12-05T07:53:01.004921+00:00",
     "test_type": "comprehensive_backend_audit"
   }

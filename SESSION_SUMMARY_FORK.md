@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://multilingual-crypto-2.preview.emergentagent.com
+https://i18n-p2p-fixes.preview.emergentagent.com
 
 ---
 
