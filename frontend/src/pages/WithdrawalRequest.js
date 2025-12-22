@@ -92,11 +92,11 @@ export default function WithdrawalRequest() {
   const handleOTPVerified = async (otp) => {
     setSubmitting(true);
     try {
-      const response = await axios.post(`${API}/api/nowpayments/withdraw`, {
+      const response = await axios.post(`${API}/api/wallet/withdraw`, {
         user_id: user.user_id,
         currency: pendingWithdrawal.currency,
         amount: pendingWithdrawal.amount,
-        address: pendingWithdrawal.address,
+        wallet_address: pendingWithdrawal.address,
         otp_code: otp
       });
 
