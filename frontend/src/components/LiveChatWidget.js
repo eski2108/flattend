@@ -20,7 +20,7 @@ export default function LiveChatWidget() {
 
   const loadChat = async (userId) => {
     try {
-      const response = await axios.get(`${API}/support/chat/${userId}`);
+      const response = await axios.get(`${API}/api/support/chat/${userId}`);
       if (response.data.success && response.data.messages) {
         setMessages(response.data.messages);
         setChatId(response.data.chat_id);
@@ -71,7 +71,7 @@ export default function LiveChatWidget() {
     // Send to backend
     try {
       if (userData.user_id) {
-        await axios.post(`${API}/support/chat`, {
+        await axios.post(`${API}/api/support/chat`, {
           user_id: userData.user_id,
           message: inputMessage,
           chat_id: chatId

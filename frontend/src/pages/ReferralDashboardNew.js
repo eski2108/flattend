@@ -61,7 +61,7 @@ export default function ReferralDashboardNew() {
       setLoading(true);
       
       // 🔥 USE COMPREHENSIVE ENDPOINT - 100% REAL DATA FROM ALL SOURCES
-      const comprehensiveRes = await axios.get(`${API}/referral/dashboard/comprehensive/${user.user_id}`);
+      const comprehensiveRes = await axios.get(`${API}/api/referral/dashboard/comprehensive/${user.user_id}`);
       const data = comprehensiveRes.data;
       
       if (!data.success) {
@@ -458,7 +458,7 @@ export default function ReferralDashboardNew() {
             <button
               onClick={async () => {
                 try {
-                  const response = await axios.post(`${API}/referrals/purchase-vip`, {
+                  const response = await axios.post(`${API}/api/referrals/purchase-vip`, {
                     user_id: user.user_id
                   });
                   

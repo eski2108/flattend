@@ -110,7 +110,7 @@ function PremiumAuth() {
     setLoading(true);
     try {
       const fullPhone = `${countryCode}${phoneNumber}`;
-      const response = await axios.post(`${API}/auth/phone/verify-otp`, {
+      const response = await axios.post(`${API}/api/auth/phone/verify-otp`, {
         phone_number: fullPhone,
         code: code
       });

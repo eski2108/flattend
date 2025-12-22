@@ -36,7 +36,7 @@ export default function BuyCrypto() {
 
   const fetchSellOrders = async () => {
     try {
-      const response = await axios.get(`${API}/crypto-market/sell/orders`);
+      const response = await axios.get(`${API}/api/crypto-market/sell/orders`);
       if (response.data.success) {
         setSellOrders(response.data.orders);
       }
@@ -62,7 +62,7 @@ export default function BuyCrypto() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/crypto-market/buy/create`, {
+      const response = await axios.post(`${API}/api/crypto-market/buy/create`, {
         buyer_address: account,
         sell_order_id: selectedOrder.order_id,
         crypto_amount: amount,
@@ -91,7 +91,7 @@ export default function BuyCrypto() {
     }
 
     try {
-      const response = await axios.post(`${API}/crypto-market/payment/mark-paid`, {
+      const response = await axios.post(`${API}/api/crypto-market/payment/mark-paid`, {
         buyer_address: account,
         order_id: buyOrderDetails.order.order_id,
         payment_reference: paymentReference,

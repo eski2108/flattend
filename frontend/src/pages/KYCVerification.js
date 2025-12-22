@@ -50,7 +50,7 @@ export default function KYCVerification() {
 
   const fetchKYCStatus = async (userId) => {
     try {
-      const response = await axios.get(`${API}/kyc/status/${userId}`);
+      const response = await axios.get(`${API}/api/kyc/status/${userId}`);
       setKycStatus(response.data);
     } catch (error) {
       console.error('Error fetching KYC status:', error);
@@ -100,7 +100,7 @@ export default function KYCVerification() {
 
     setSubmitting(true);
     try {
-      const response = await axios.post(`${API}/kyc/submit`, {
+      const response = await axios.post(`${API}/api/kyc/submit`, {
         user_id: user.user_id,
         ...formData,
         document_front: documentFront,

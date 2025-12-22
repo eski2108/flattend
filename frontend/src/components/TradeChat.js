@@ -57,7 +57,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get(`${API}/trade/chat/${tradeId}`, {
+      const response = await axios.get(`${API}/api/trade/chat/${tradeId}`, {
         params: { user_id: userId }
       });
       
@@ -65,7 +65,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
         setMessages(response.data.messages);
         
         // Mark messages as read
-        await axios.post(`${API}/trade/chat/mark-read`, {
+        await axios.post(`${API}/api/trade/chat/mark-read`, {
           trade_id: tradeId,
           user_id: userId
         });
@@ -97,7 +97,7 @@ export default function TradeChat({ tradeId, userId, userRole, onClose }) {
     
     setSending(true);
     try {
-      await axios.post(`${API}/trade/chat/send`, {
+      await axios.post(`${API}/api/trade/chat/send`, {
         trade_id: tradeId,
         user_id: userId,
         message: textToSend,

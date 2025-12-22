@@ -41,7 +41,7 @@ export const WalletProvider = ({ children }) => {
         
         // Then fetch fresh user data from backend in background
         try {
-          const response = await axios.get(`${API}/user/profile/${userData.user_id}`, {
+          const response = await axios.get(`${API}/api/user/profile/${userData.user_id}`, {
             headers: {
               'Authorization': `Bearer ${storedToken}`
             }
@@ -103,7 +103,7 @@ export const WalletProvider = ({ children }) => {
       setAccount(address);
 
       // Register/login with backend
-      const response = await axios.post(`${API}/auth/connect-wallet`, {
+      const response = await axios.post(`${API}/api/auth/connect-wallet`, {
         wallet_address: address,
       });
 
@@ -131,7 +131,7 @@ export const WalletProvider = ({ children }) => {
 
   const fetchUserProfile = async (walletAddress) => {
     try {
-      const response = await axios.get(`${API}/user/profile/${walletAddress}`);
+      const response = await axios.get(`${API}/api/user/profile/${walletAddress}`);
       if (response.data.success) {
         setUser(response.data.user);
       }
