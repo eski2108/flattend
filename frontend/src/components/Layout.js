@@ -253,7 +253,7 @@ export default function Layout({ children }) {
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
-                  iPhone
+                  {t('common.iphone')}
                 </button>
               </div>
             </div>
