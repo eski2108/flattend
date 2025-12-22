@@ -48,19 +48,20 @@
     "referral_code": "Referral Code (Optional)"
   },
   "nav": {
-    "dashboard": "Portfolio",
-    "wallet": "Wallet",
-    "savings": "Savings Vault",
+    "dashboard": "Portefeuille",
+    "wallet": "Portefeuille",
+    "savings": "Coffre d'Épargne",
     "allocations": "Allocations",
-    "instant_buy": "Instant Buy",
+    "instant_buy": "Achat Instantané",
     "p2p_express": "P2P Express",
-    "p2p_marketplace": "P2P Marketplace",
+    "p2p_marketplace": "Marché P2P",
     "trading": "Trading",
-    "swap": "Swap Crypto",
-    "referrals": "Referrals",
-    "transaction_history": "Transaction History",
-    "settings": "Settings",
-    "support": "Support / Chat"
+    "swap": "Échanger Crypto",
+    "referrals": "Parrainages",
+    "transaction_history": "Historique des Transactions",
+    "settings": "Paramètres",
+    "support": "Support / Chat",
+    "profile": "Profil"
   },
   "dashboard": {
     "title": "Tableau de Bord",
