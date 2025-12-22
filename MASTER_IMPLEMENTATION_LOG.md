@@ -1,7 +1,7 @@
-# 🚨 COINHUBX - MASTER IMPLEMENTATION LOG V3.1 🚨
+# 🚨 COINHUBX - MASTER IMPLEMENTATION LOG V3.2 🚨
 
-**Last Updated:** 2025-12-22
-**Document Version:** 3.1
+**Last Updated:** 2025-12-22 (Session 2)
+**Document Version:** 3.2
 **Latest Commit:** See git log
 
 ---
@@ -33,6 +33,113 @@ The following systems are **COMPLETE** and **LOCKED**. Any modification requires
 | Cryptographic Security (HSM, Quantum) | 🔒 LOCKED | 2025-08-26 |
 | Payment Verification Layer | 🔒 LOCKED | 2025-08-26 |
 | **i18n / Translation System** | 🔒 LOCKED | 2025-12-22 |
+| **Seller Flow / KYC / Payment Methods** | 🔒 LOCKED | 2025-12-22 |
+| **Create Ad / Price Margin Options** | 🔒 LOCKED | 2025-12-22 |
+
+---
+
+# 🔧 BUGS FIXED - 2025-12-22 (Session 2)
+
+## DO NOT RE-FIX THESE - THEY ARE ALREADY DONE
+
+### Bug 1: PaymentMethods.js - Missing Icon Import
+- **Error:** `Trash2 is not defined`
+- **File:** `/app/frontend/src/pages/PaymentMethods.js`
+- **Fix:** Changed `<Trash2>` to `<IoTrash>` and added import
+- **Status:** ✅ FIXED
+
+### Bug 2: PaymentMethods.js - Double Semicolon
+- **Error:** Syntax error on line 7
+- **File:** `/app/frontend/src/pages/PaymentMethods.js`
+- **Fix:** Removed extra semicolon `};;` → `};`
+- **Status:** ✅ FIXED
+
+### Bug 3: MerchantCenter.js - Wrong API Endpoint
+- **Error:** "Failed to load seller information" toast
+- **Root Cause:** Frontend calling `/api/p2p/my-ads` but endpoint is `/api/p2p/my-ads/{user_id}`
+- **File:** `/app/frontend/src/pages/MerchantCenter.js`
+- **Fix:** Changed `axiosInstance.get('/p2p/my-ads')` to `axios.get(\`${API}/api/p2p/my-ads/${userId}\`)`
+- **Status:** ✅ FIXED
+
+---
+
+# ✅ SELLER FLOW - VERIFIED WORKING 2025-12-22
+
+## ALL PAGES AND BUTTONS TESTED WITH SCREENSHOTS
+
+### Page 1: KYC Verification (`/kyc-verification`)
+| Element | Status |
+|---------|--------|
+| Step 1: Personal Info form | ✅ WORKING |
+| Full Name field | ✅ WORKING |
+| Date of Birth field | ✅ WORKING |
+| Nationality field | ✅ WORKING |
+| Address fields | ✅ WORKING |
+| ID Type dropdown | ✅ WORKING |
+| ID Number field | ✅ WORKING |
+| "Continue to Documents" button | ✅ WORKING |
+| Step 2: Documents Upload | ✅ WORKING |
+| ID Document upload | ✅ WORKING |
+| Selfie with ID upload | ✅ WORKING |
+| Proof of Address upload | ✅ WORKING |
+| Step 3: Review | ✅ WORKING |
+
+### Page 2: Payment Methods (`/payment-methods`)
+| Element | Status |
+|---------|--------|
+| "+ Add Payment Method" button | ✅ WORKING |
+| Add Payment Method modal | ✅ WORKING |
+| Payment Method Name field | ✅ WORKING |
+| Payment Type dropdown | ✅ WORKING |
+| Account Holder field | ✅ WORKING |
+| Sort Code field | ✅ WORKING |
+| Account Number field | ✅ WORKING |
+| Bank Name field | ✅ WORKING |
+| "Activate" button | ✅ WORKING |
+| Edit button | ✅ WORKING |
+| Delete button (IoTrash icon) | ✅ FIXED & WORKING |
+
+### Page 3: Merchant Center (`/p2p/merchant`)
+| Element | Status |
+|---------|--------|
+| Seller stats display | ✅ WORKING |
+| Requirements checklist | ✅ WORKING |
+| "Account Verified" requirement | ✅ WORKING |
+| "Payment Method" requirement | ✅ WORKING |
+| "ACTIVATE SELLER ACCOUNT" button | ✅ WORKING |
+| "+ CREATE NEW AD" button | ✅ WORKING |
+| My Active Ads list | ✅ WORKING |
+| Boost button | ✅ WORKING |
+| View button | ✅ WORKING |
+| **NO ERROR TOAST** | ✅ FIXED |
+
+### Page 4: Create Ad (`/p2p/create-ad`)
+| Element | Status |
+|---------|--------|
+| "I Want to SELL Crypto" button | ✅ WORKING |
+| "I Want to BUY Crypto" button | ✅ WORKING |
+| Crypto Asset dropdown (BTC) | ✅ WORKING |
+| Fiat Currency dropdown (GBP) | ✅ WORKING |
+| **"Fixed Price" button** | ✅ WORKING |
+| **"Floating (% Margin)" button** | ✅ WORKING - ABOVE/BELOW MARKET |
+| **Margin % input field** | ✅ WORKING |
+| Trade Limits (Min/Max) | ✅ WORKING |
+| Payment Methods (8 options) | ✅ WORKING |
+| Terms & Conditions field | ✅ WORKING |
+
+---
+
+# 📝 PRICE MARGIN OPTIONS - CONFIRMED WORKING
+
+**The seller can set prices:**
+- **Fixed Price:** Enter exact price per crypto
+- **Floating (% Margin):** Set percentage above/below market rate
+  - Positive % = ABOVE market (e.g., +2.5% = selling at premium)
+  - Negative % = BELOW market (e.g., -1% = selling at discount)
+
+**This is implemented in:**
+- Frontend: `/app/frontend/src/pages/CreateAd.js`
+- Backend: `/app/backend/server.py` (lines 2668-2750)
 
 ---
 
