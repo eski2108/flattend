@@ -12117,9 +12117,9 @@ async def get_admin_dashboard_stats():
             },
             "revenue": {
                 "platform_fees": total_platform_fees,
-                "p2p_express_fees": p2p_express_fees[0]["total"] if p2p_express_fees else 0,
-                "transaction_fees": transaction_fees[0]["total"] if transaction_fees else 0,
-                "fee_wallet_balance": admin_fee_wallet.get("balance", 0) if admin_fee_wallet else 0
+                "fee_transactions": total_fee_txns,
+                "fee_wallet_balance": (admin_fee_wallet.get("balance", 0) if admin_fee_wallet else 0) + 
+                                      (admin_wallet.get("available_balance", 0) if admin_wallet else 0)
             }
         }
     }
