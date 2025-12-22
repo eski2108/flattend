@@ -1071,7 +1071,7 @@ export default function Dashboard() {
                     textShadow: '0 0 15px rgba(34, 197, 94, 0.5)'
                   }}>
                     <IoShield size={20} color="#22C55E" />
-                    Account Status
+                    {t('dashboard.account_status')}
                   </h3>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -1084,8 +1084,8 @@ export default function Dashboard() {
                       borderRadius: '10px',
                       border: '1px solid rgba(239, 68, 68, 0.2)'
                     }}>
-                      <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>2FA Security</span>
-                      <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700' }}>Disabled</span>
+                      <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '600' }}>{t('dashboard.2fa_security')}</span>
+                      <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700' }}>{t('dashboard.disabled')}</span>
                     </div>
                     
                     <button
@@ -1103,7 +1103,7 @@ export default function Dashboard() {
                         transition: 'all 0.3s'
                       }}
                     >
-                      Manage Security Settings
+                      {t('dashboard.manage_security')}
                     </button>
                   </div>
                 </div>
