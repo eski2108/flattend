@@ -59,7 +59,7 @@ export default function Layout({ children }) {
     { path: '/swap-crypto', label: t('nav.swap'), icon: IoFlash },
     { path: '/referrals', label: t('nav.referrals'), icon: IoGift },
     { path: '/my-orders', label: t('nav.transaction_history'), icon: IoDocument },
-    { path: '/profile', label: 'Profile', icon: IoGrid },
+    { path: '/profile', label: t('nav.profile'), icon: IoGrid },
     { path: '/settings', label: t('nav.settings'), icon: IoCard }
   ];
   
