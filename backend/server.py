@@ -362,8 +362,12 @@ async def sync_credit_balance(user_id: str, currency: str, amount: float, reason
         logger.error(f"❌ CREDIT ERROR: {user_id}/{currency}: {e}")
         return False
 
+# ⚠️ SYNC_DEBIT - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_debit_balance(user_id: str, currency: str, amount: float, reason: str = "debit"):
-    """Debit (subtract) from user's balance across all collections"""
+    """
+    FROZEN FUNCTION - Debit (subtract) from user's balance across ALL 4 collections.
+    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    """
     try:
         # Get current balance from wallets (source of truth)
         wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
