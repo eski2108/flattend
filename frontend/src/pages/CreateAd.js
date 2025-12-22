@@ -123,6 +123,7 @@ export default function CreateAd() {
         ad_type: adType, // Already lowercase: "sell" or "buy"
         crypto_currency: formData.crypto_currency,
         fiat_currency: formData.fiat_currency,
+        price_type: formData.price_type,  // 'fixed' or 'floating'
         price_value: parseFloat(formData.price_value),
         min_amount: parseFloat(formData.min_amount),
         max_amount: parseFloat(formData.max_amount),
