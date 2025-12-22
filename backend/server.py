@@ -22505,6 +22505,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ============================================================================
+# PAYMENT SYSTEM v2.0 - IDEMPOTENCY MIDDLEWARE (P1.3)
+# INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
+# ============================================================================
+from middleware.idempotency import IdempotencyMiddleware
+app.add_middleware(IdempotencyMiddleware)
+logger.info("✅ Idempotency middleware added (P1.3)")
+# ============================================================================
+
 # Add middleware to prevent ALL caching on API responses
 @app.middleware("http")
 async def add_no_cache_headers(request: Request, call_next):
