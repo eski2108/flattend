@@ -445,8 +445,12 @@ async def sync_unlock_balance(user_id: str, currency: str, amount: float, reason
         logger.error(f"❌ UNLOCK ERROR: {user_id}/{currency}: {e}")
         return False
 
+# ⚠️ SYNC_RELEASE - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_release_locked_balance(user_id: str, currency: str, amount: float, to_user_id: str, reason: str = "release"):
-    """Release locked balance to another user (e.g., P2P trade completion)"""
+    """
+    FROZEN FUNCTION - Release locked balance to another user (e.g., P2P trade completion).
+    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    """
     try:
         # Debit from seller's locked balance
         seller_wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
