@@ -40,7 +40,7 @@ export default function CreateOffer() {
 
   const fetchConfig = async () => {
     try {
-      const response = await axios.get(`${API}/p2p/config`);
+      const response = await axios.get(`${API}/api/p2p/config`);
       if (response.data.success) {
         setConfig(response.data);
       }
@@ -118,7 +118,7 @@ export default function CreateOffer() {
 
     setCreating(true);
     try {
-      const response = await axios.post(`${API}/p2p/create-offer`, {
+      const response = await axios.post(`${API}/api/p2p/create-offer`, {
         seller_id: currentUser.user_id,
         crypto_currency: cryptoCurrency,
         crypto_amount: parseFloat(cryptoAmount),

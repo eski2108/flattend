@@ -33,7 +33,7 @@ export default function MyLoans() {
 
   const fetchLoans = async () => {
     try {
-      const response = await axios.get(`${API}/user/loans/${account}`);
+      const response = await axios.get(`${API}/api/user/loans/${account}`);
       if (response.data.success) {
         setBorrows(response.data.borrows);
         setLends(response.data.lends);
@@ -49,7 +49,7 @@ export default function MyLoans() {
   const handleRepay = async (loanId) => {
     setRepaying(true);
     try {
-      const response = await axios.post(`${API}/loans/repay`, {
+      const response = await axios.post(`${API}/api/loans/repay`, {
         borrower_address: account,
         loan_id: loanId,
       });
@@ -71,7 +71,7 @@ export default function MyLoans() {
   const handleLiquidate = async (loanId) => {
     setLiquidating(true);
     try {
-      const response = await axios.post(`${API}/loans/liquidate`, {
+      const response = await axios.post(`${API}/api/loans/liquidate`, {
         liquidator_address: account,
         loan_id: loanId,
       });

@@ -43,26 +43,26 @@ export default function AdminFees() {
       setLoading(true);
       
       // Fetch admin wallet balance
-      const balanceRes = await axios.get(`${API}/admin/wallet/balance`);
+      const balanceRes = await axios.get(`${API}/api/admin/wallet/balance`);
       if (balanceRes.data.success) {
         setAdminBalance(balanceRes.data);
       }
       
       // Fetch fee settings
-      const feeRes = await axios.get(`${API}/admin/fee-settings`);
+      const feeRes = await axios.get(`${API}/api/admin/fee-settings`);
       if (feeRes.data.success) {
         setFeeSettings(feeRes.data.fees);
       }
       
       // Fetch saved external wallets
-      const walletsRes = await axios.get(`${API}/admin/external-wallets`);
+      const walletsRes = await axios.get(`${API}/api/admin/external-wallets`);
       if (walletsRes.data.success) {
         setExternalWallets(walletsRes.data.wallets);
         setWalletFormData(walletsRes.data.wallets);
       }
       
       // Fetch pending payouts
-      const pendingRes = await axios.get(`${API}/admin/pending-payouts`);
+      const pendingRes = await axios.get(`${API}/api/admin/pending-payouts`);
       if (pendingRes.data.success) {
         setPendingPayouts(pendingRes.data.pending_payouts);
       }
@@ -79,7 +79,7 @@ export default function AdminFees() {
     e.preventDefault();
     
     try {
-      const response = await axios.post(`${API}/admin/update-fee`, editFeeData);
+      const response = await axios.post(`${API}/api/admin/update-fee`, editFeeData);
       
       if (response.data.success) {
         toast.success(response.data.message);
@@ -95,7 +95,7 @@ export default function AdminFees() {
     e.preventDefault();
     
     try {
-      const response = await axios.post(`${API}/admin/save-external-wallet`, {
+      const response = await axios.post(`${API}/api/admin/save-external-wallet`, {
         wallets: walletFormData
       });
       
@@ -122,7 +122,7 @@ export default function AdminFees() {
     }
     
     try {
-      const response = await axios.post(`${API}/admin/wallet/payout`, {
+      const response = await axios.post(`${API}/api/admin/wallet/payout`, {
         ...payoutData,
         external_address: addressToUse
       });
@@ -142,7 +142,7 @@ export default function AdminFees() {
     e.preventDefault();
     
     try {
-      const response = await axios.post(`${API}/admin/confirm-payout`, {
+      const response = await axios.post(`${API}/api/admin/confirm-payout`, {
         transaction_id: selectedPayout.transaction_id,
         tx_hash: txHash
       });

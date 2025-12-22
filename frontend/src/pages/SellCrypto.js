@@ -57,8 +57,8 @@ export default function SellCrypto() {
       }
 
       const requests = [
-        axios.get(`${API}/bank/accounts/${account}`),
-        axios.get(`${API}/crypto-market/orders/${account}`)
+        axios.get(`${API}/api/bank/accounts/${account}`),
+        axios.get(`${API}/api/crypto-market/orders/${account}`)
       ];
 
       if (userId) {
@@ -132,7 +132,7 @@ export default function SellCrypto() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/crypto-market/sell/create`, {
+      const response = await axios.post(`${API}/api/crypto-market/sell/create`, {
         seller_address: account,
         crypto_amount: parseFloat(cryptoAmount),
         price_per_unit: parseFloat(pricePerUnit),
@@ -161,7 +161,7 @@ export default function SellCrypto() {
   const handleReleaseCrypto = async (orderId) => {
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/crypto-market/release`, {
+      const response = await axios.post(`${API}/api/crypto-market/release`, {
         seller_address: account,
         order_id: orderId,
       });

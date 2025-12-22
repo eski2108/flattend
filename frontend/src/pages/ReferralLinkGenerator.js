@@ -30,7 +30,7 @@ export default function ReferralLinkGenerator() {
       const user = JSON.parse(userData);
       const userId = user.user_id;
 
-      const response = await axios.get(`${API}/referral/dashboard/${userId}`);
+      const response = await axios.get(`${API}/api/referral/dashboard/${userId}`);
       
       if (response.data.success) {
         setReferralData(response.data);

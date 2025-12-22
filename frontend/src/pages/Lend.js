@@ -33,7 +33,7 @@ export default function Lend() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get(`${API}/platform/stats`);
+      const response = await axios.get(`${API}/api/platform/stats`);
       if (response.data.success) {
         setStats(response.data.stats);
       }
@@ -50,7 +50,7 @@ export default function Lend() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/user/deposit`, {
+      const response = await axios.post(`${API}/api/user/deposit`, {
         wallet_address: account,
         amount: parseFloat(depositAmount),
       });
@@ -76,7 +76,7 @@ export default function Lend() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/user/withdraw`, {
+      const response = await axios.post(`${API}/api/user/withdraw`, {
         wallet_address: account,
         amount: parseFloat(withdrawAmount),
       });
@@ -107,7 +107,7 @@ export default function Lend() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/loans/create-offer`, {
+      const response = await axios.post(`${API}/api/loans/create-offer`, {
         lender_address: account,
         amount: parseFloat(lendAmount),
         duration_days: parseInt(lendDuration),
