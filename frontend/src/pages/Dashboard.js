@@ -314,7 +314,7 @@ export default function Dashboard() {
                   filter: 'blur(25px)',
                   pointerEvents: 'none'
                 }} />
-                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Assets</div>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('dashboard.total_assets')}</div>
                 <div style={{ fontSize: isMobile ? '28px' : '32px', fontWeight: '700', color: '#9B4DFF', textShadow: '0 0 15px rgba(155, 77, 255, 0.5)' }}>
                   {portfolioData.totalAssets}
                 </div>
