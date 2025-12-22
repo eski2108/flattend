@@ -91,8 +91,8 @@
     "manage_security": "Configurar Seguridad"
   },
   "wallet": {
-    "title": "Mi Billetera",
-    "total_balance": "Saldo Total",
+    "title": "Billetera",
+    "total_balance": "Valor Total del Portafolio",
     "deposit": "Depositar",
     "withdraw": "Retirar",
     "swap": "Intercambiar",
@@ -108,7 +108,15 @@
     "network_fee": "Tarifa de Red",
     "scan_qr": "Escanear Código QR",
     "copy_address": "Copiar Dirección",
-    "address_copied": "¡Dirección copiada al portapapeles!"
+    "address_copied": "¡Dirección copiada al portapapeles!",
+    "manage_assets": "Gestiona tus activos cripto",
+    "today": "hoy",
+    "no_holdings": "Sin tenencias aún",
+    "send": "Enviar",
+    "receive": "Recibir",
+    "crypto": "Cripto",
+    "activity": "Actividad",
+    "search_assets": "Buscar activos..."
   },
   "p2p": {
     "express_title": "P2P Express",
