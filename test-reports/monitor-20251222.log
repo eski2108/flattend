@@ -5978,3 +5978,302 @@ Running 6 tests using 1 worker
     [Mobile Chrome] › savings-page.spec.js:86:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should exist and be clickable 
 ❌ TESTS FAILED at Mon Dec 22 13:45:52 UTC 2025
 
+========================================
+Test Run: Mon Dec 22 14:15:52 UTC 2025
+========================================
+
+Running 6 tests using 1 worker
+
+  ✘  1 [Mobile Chrome] › savings-page.spec.js:13:3 › Site Health Checks › homepage should load successfully (3ms)
+  ✘  2 [Mobile Chrome] › savings-page.spec.js:13:3 › Site Health Checks › homepage should load successfully (retry #1) (3ms)
+  ✘  3 [Mobile Chrome] › savings-page.spec.js:13:3 › Site Health Checks › homepage should load successfully (retry #2) (3ms)
+  ✘  4 [Mobile Chrome] › savings-page.spec.js:19:3 › Site Health Checks › savings page should load successfully (6ms)
+  ✘  5 [Mobile Chrome] › savings-page.spec.js:19:3 › Site Health Checks › savings page should load successfully (retry #1) (5ms)
+  ✘  6 [Mobile Chrome] › savings-page.spec.js:19:3 › Site Health Checks › savings page should load successfully (retry #2) (3ms)
+  ✘  7 [Mobile Chrome] › savings-page.spec.js:25:3 › Site Health Checks › login page should load successfully (3ms)
+  ✘  8 [Mobile Chrome] › savings-page.spec.js:25:3 › Site Health Checks › login page should load successfully (retry #1) (3ms)
+  ✘  9 [Mobile Chrome] › savings-page.spec.js:25:3 › Site Health Checks › login page should load successfully (retry #2) (3ms)
+  ✘  10 [Mobile Chrome] › savings-page.spec.js:41:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (3ms)
+  ✘  11 [Mobile Chrome] › savings-page.spec.js:41:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (retry #1) (3ms)
+  ✘  12 [Mobile Chrome] › savings-page.spec.js:41:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology (retry #2) (3ms)
+  ✘  13 [Mobile Chrome] › savings-page.spec.js:64:3 › Notice Savings Page - Content Validation › should contain notice savings terminology (3ms)
+  ✘  14 [Mobile Chrome] › savings-page.spec.js:64:3 › Notice Savings Page - Content Validation › should contain notice savings terminology (retry #1) (3ms)
+  ✘  15 [Mobile Chrome] › savings-page.spec.js:64:3 › Notice Savings Page - Content Validation › should contain notice savings terminology (retry #2) (3ms)
+  ✘  16 [Mobile Chrome] › savings-page.spec.js:86:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should exist and be clickable (3ms)
+  ✘  17 [Mobile Chrome] › savings-page.spec.js:86:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should exist and be clickable (retry #1) (3ms)
+  ✘  18 [Mobile Chrome] › savings-page.spec.js:86:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should exist and be clickable (retry #2) (3ms)
+
+
+  1) [Mobile Chrome] › savings-page.spec.js:13:3 › Site Health Checks › homepage should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/savings-page-Site-Health-C-35349-ge-should-load-successfully-Mobile-Chrome-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/savings-page-Site-Health-C-35349-ge-should-load-successfully-Mobile-Chrome-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  2) [Mobile Chrome] › savings-page.spec.js:19:3 › Site Health Checks › savings page should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/savings-page-Site-Health-C-907fc-ge-should-load-successfully-Mobile-Chrome-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/savings-page-Site-Health-C-907fc-ge-should-load-successfully-Mobile-Chrome-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  3) [Mobile Chrome] › savings-page.spec.js:25:3 › Site Health Checks › login page should load successfully 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/savings-page-Site-Health-C-0c751-ge-should-load-successfully-Mobile-Chrome-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/savings-page-Site-Health-C-0c751-ge-should-load-successfully-Mobile-Chrome-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  4) [Mobile Chrome] › savings-page.spec.js:41:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/savings-page-Notice-Saving-609e8-pto-staking-APY-terminology-Mobile-Chrome-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/savings-page-Notice-Saving-609e8-pto-staking-APY-terminology-Mobile-Chrome-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  5) [Mobile Chrome] › savings-page.spec.js:64:3 › Notice Savings Page - Content Validation › should contain notice savings terminology 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/savings-page-Notice-Saving-1a687--notice-savings-terminology-Mobile-Chrome-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/savings-page-Notice-Saving-1a687--notice-savings-terminology-Mobile-Chrome-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  6) [Mobile Chrome] › savings-page.spec.js:86:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should exist and be clickable 
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/savings-page-Notice-Saving-5d133-ould-exist-and-be-clickable-Mobile-Chrome-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/savings-page-Notice-Saving-5d133-ould-exist-and-be-clickable-Mobile-Chrome-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+  6 failed
+    [Mobile Chrome] › savings-page.spec.js:13:3 › Site Health Checks › homepage should load successfully 
+    [Mobile Chrome] › savings-page.spec.js:19:3 › Site Health Checks › savings page should load successfully 
+    [Mobile Chrome] › savings-page.spec.js:25:3 › Site Health Checks › login page should load successfully 
+    [Mobile Chrome] › savings-page.spec.js:41:3 › Notice Savings Page - Content Validation › should NOT contain crypto-staking/APY terminology 
+    [Mobile Chrome] › savings-page.spec.js:64:3 › Notice Savings Page - Content Validation › should contain notice savings terminology 
+    [Mobile Chrome] › savings-page.spec.js:86:3 › Notice Savings Page - Add to Savings Flow › Add to Savings button should exist and be clickable 
+❌ TESTS FAILED at Mon Dec 22 14:16:01 UTC 2025
+
