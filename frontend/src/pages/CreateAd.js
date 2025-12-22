@@ -21,6 +21,7 @@ export default function CreateAd() {
   const [formData, setFormData] = useState({
     crypto_currency: 'BTC',
     fiat_currency: 'GBP',
+    price_type: 'fixed',  // 'fixed' or 'floating'
     price_value: '',
     min_amount: '',
     max_amount: '',
