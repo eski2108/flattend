@@ -255,7 +255,7 @@ export default function WalletPage() {
             marginBottom: '8px',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
-          }}>Total Portfolio Value</div>
+          }}>{t('wallet.total_balance')}</div>
           <div style={{
             fontSize: '40px',
             fontWeight: '700',
@@ -271,10 +271,10 @@ export default function WalletPage() {
               fontWeight: '600',
               color: portfolioChange24h >= 0 ? '#16C784' : '#EA3943'
             }}>
-              {portfolioChange24h >= 0 ? '+' : ''}{portfolioChange24h.toFixed(2)}% today
+              {portfolioChange24h >= 0 ? '+' : ''}{portfolioChange24h.toFixed(2)}% {t('wallet.today')}
             </div>
           ) : (
-            <div style={{ fontSize: '14px', color: '#8FA3C8' }}>No holdings yet</div>
+            <div style={{ fontSize: '14px', color: '#8FA3C8' }}>{t('wallet.no_holdings')}</div>
           )}
         </div>
 
@@ -313,11 +313,11 @@ export default function WalletPage() {
             }}>
               +
             </div>
-            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>Buy</div>
+            <div style={{ fontSize: '12px', color: '#8FA3C8', fontWeight: '400' }}>{t('trading.buy')}</div>
           </button>
 
           <button
-            onClick={() => navigate('/swap-crypto')}
+            onClick={() => navigate('/swap-crypto')}}
             style={{
               display: 'flex',
               flexDirection: 'column',
