@@ -6,7 +6,7 @@ import { DollarSign, IoCash, IoSend, IoSettings, IoTrendingUp, IoWallet, Send, S
 import './AdminFees.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = BACKEND_URL;
 
 export default function AdminFees() {
   const [adminBalance, setAdminBalance] = useState({});
