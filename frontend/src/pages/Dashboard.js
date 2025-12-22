@@ -966,8 +966,8 @@ export default function Dashboard() {
                     >
                       <IoBarChart size={20} color="#00F0FF" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>Spot Trading</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Advanced trading with charts</div>
+                        <div>{t('dashboard.spot_trading')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.advanced_trading')}</div>
                       </div>
                     </button>
                     
@@ -999,8 +999,8 @@ export default function Dashboard() {
                     >
                       <IoSwapHorizontal size={20} color="#9B4DFF" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>Swap Crypto</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Exchange between currencies</div>
+                        <div>{t('dashboard.swap_crypto')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.exchange_currencies')}</div>
                       </div>
                     </button>
                     
@@ -1032,8 +1032,8 @@ export default function Dashboard() {
                     >
                       <IoFlash size={20} color="#F5C542" />
                       <div style={{ textAlign: 'left' }}>
-                        <div>P2P Express</div>
-                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>Fast peer-to-peer trading</div>
+                        <div>{t('nav.p2p_express')}</div>
+                        <div style={{ fontSize: '12px', color: '#8F9BB3' }}>{t('dashboard.p2p_trading')}</div>
                       </div>
                     </button>
                   </div>
