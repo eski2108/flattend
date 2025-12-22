@@ -21,7 +21,10 @@
     "sort": "Sort",
     "view": "View",
     "download": "Download",
-    "upload": "Upload"
+    "upload": "Upload",
+    "get_app": "GET APP",
+    "android": "Android",
+    "iphone": "iPhone"
   },
   "header": {
     "title": "COIN HUB X",
