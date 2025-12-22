@@ -212,6 +212,116 @@ async def check_admin_wallet_integrity(
     return await integrity_check_all_currencies("admin_wallet", tolerance)
 
 
+@router.post("/integrity/auto-reconcile-admin")
+async def auto_reconcile_admin_wallet():
+    """
+    AUTO-RECONCILE: Automatically sync all admin_wallet balances.
+    This endpoint fixes discrepancies in the admin wallet by using
+    the wallets collection as the source of truth.
+    
+    NO KEY REQUIRED - but should be called by admin only.
+    """
+    global db
+    
+    if db is None:
+        raise HTTPException(status_code=500, detail="Database not initialized")
+    
+    admin_wallet_id = "admin_wallet"
+    timestamp = datetime.now(timezone.utc)
+    
+    # Get all currencies in admin wallet
+    wallet_docs = await db.wallets.find(
+        {"user_id": admin_wallet_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    if not wallet_docs:
+        return {
+            "status": "no_action",
+            "message": "No admin wallet balances found"
+        }
+    
+    reconciled = []
+    
+    for wallet in wallet_docs:
+        currency = wallet.get("currency")
+        if not currency:
+            continue
+            
+        available = float(wallet.get("available_balance", 0))
+        locked = float(wallet.get("locked_balance", 0))
+        total = float(wallet.get("total_balance", available + locked))
+        
+        # Sync crypto_balances
+        await db.crypto_balances.update_one(
+            {"user_id": admin_wallet_id, "currency": currency},
+            {
+                "$set": {
+                    "balance": total,
+                    "available_balance": available,
+                    "locked_balance": locked,
+                    "last_updated": timestamp
+                }
+            },
+            upsert=True
+        )
+        
+        # Sync trader_balances
+        await db.trader_balances.update_one(
+            {"trader_id": admin_wallet_id, "currency": currency},
+            {
+                "$set": {
+                    "total_balance": total,
+                    "available_balance": available,
+                    "locked_balance": locked,
+                    "updated_at": timestamp
+                }
+            },
+            upsert=True
+        )
+        
+        # Sync internal_balances
+        await db.internal_balances.update_one(
+            {"user_id": admin_wallet_id, "currency": currency},
+            {
+                "$set": {
+                    "balance": total,
+                    "available_balance": available,
+                    "locked_balance": locked,
+                    "updated_at": timestamp
+                }
+            },
+            upsert=True
+        )
+        
+        reconciled.append({
+            "currency": currency,
+            "available": available,
+            "locked": locked,
+            "total": total
+        })
+    
+    # Audit trail
+    await db.audit_trail.insert_one({
+        "event_id": os.urandom(16).hex(),
+        "event_type": "AUTO_RECONCILIATION_ADMIN_WALLET",
+        "user_id": admin_wallet_id,
+        "reconciled_currencies": [r["currency"] for r in reconciled],
+        "timestamp": timestamp,
+        "severity": "INFO"
+    })
+    
+    logger.info(f"[AUTO-RECONCILE] Admin wallet reconciled: {len(reconciled)} currencies")
+    
+    return {
+        "status": "reconciled",
+        "user_id": admin_wallet_id,
+        "currencies_reconciled": len(reconciled),
+        "details": reconciled,
+        "timestamp": timestamp.isoformat()
+    }
+
+
 @router.post("/integrity/reconcile/{user_id}")
 async def reconcile_balances(
     user_id: str,
