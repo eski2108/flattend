@@ -28297,6 +28297,7 @@ async def open_p2p_dispute(request: Request):
         if buyer and buyer.get("email"):
             email_html = p2p_dispute_opened_email(
                 trade_id=trade_id,
+                dispute_id=dispute_id,
                 crypto_amount=trade.get("crypto_amount", 0),
                 crypto=trade.get("crypto_currency", "BTC"),
                 role="Buyer"
@@ -28310,6 +28311,7 @@ async def open_p2p_dispute(request: Request):
         if seller and seller.get("email"):
             email_html = p2p_dispute_opened_email(
                 trade_id=trade_id,
+                dispute_id=dispute_id,
                 crypto_amount=trade.get("crypto_amount", 0),
                 crypto=trade.get("crypto_currency", "BTC"),
                 role="Seller"
