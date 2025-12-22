@@ -212,7 +212,7 @@ curl http://localhost:8001/api/trader/stats/{actual_user_id}
 
 **External URL:**
 ```bash
-curl https://crypto-trust-guard.preview.emergentagent.com/api/trader/stats/{user_id}
+curl https://multilingual-crypto-2.preview.emergentagent.com/api/trader/stats/{user_id}
 ```
 
 ---

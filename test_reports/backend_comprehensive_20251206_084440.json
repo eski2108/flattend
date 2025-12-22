@@ -393,7 +393,7 @@
     }
   ],
   "test_metadata": {
-    "backend_url": "https://crypto-trust-guard.preview.emergentagent.com/api",
+    "backend_url": "https://multilingual-crypto-2.preview.emergentagent.com/api",
     "test_timestamp": "2025-12-06T08:44:40.645045+00:00",
     "test_type": "comprehensive_backend_audit"
   }

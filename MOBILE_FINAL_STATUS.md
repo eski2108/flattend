@@ -41,7 +41,7 @@
 
 ### API Test:
 ```bash
-curl https://crypto-trust-guard.preview.emergentagent.com/api/user/referral-dashboard/9757bd8c-16f8-4efb-b075-0af4a432990a
+curl https://multilingual-crypto-2.preview.emergentagent.com/api/user/referral-dashboard/9757bd8c-16f8-4efb-b075-0af4a432990a
 ```
 
 ### Response:
@@ -50,7 +50,7 @@ curl https://crypto-trust-guard.preview.emergentagent.com/api/user/referral-dash
   "success": true,
   "data": {
     "referral_code": "HZZCUVHF",
-    "referral_link": "https://crypto-trust-guard.preview.emergentagent.com/register?ref=HZZCUVHF",
+    "referral_link": "https://multilingual-crypto-2.preview.emergentagent.com/register?ref=HZZCUVHF",
     "total_referrals": 0,
     "active_referrals": 0,
     "total_earnings": 0,

@@ -68,7 +68,7 @@ Tests EVERY major feature of Coin Hub X platform to achieve 100% success rate as
    - Data consistency across devices
    - Real-time balance updates
 
-**Backend URL:** https://crypto-trust-guard.preview.emergentagent.com/api
+**Backend URL:** https://multilingual-crypto-2.preview.emergentagent.com/api
 """
 
 import requests
@@ -79,7 +79,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
+BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
 
 class ComprehensivePlatformTester:
     def __init__(self):

@@ -77,7 +77,7 @@
 
 ## 📊 LIVE PREVIEW STATUS
 
-**URL**: https://crypto-trust-guard.preview.emergentagent.com
+**URL**: https://multilingual-crypto-2.preview.emergentagent.com
 
 **Build Information**:
 - Latest Build Hash: Deployed Dec 9, 2024 08:55 UTC

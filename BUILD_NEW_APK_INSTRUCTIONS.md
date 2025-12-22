@@ -14,7 +14,7 @@ The website has ALL the latest features right now:
 
 1. Go to: **https://www.pwabuilder.com/**
 
-2. Enter this URL: **https://crypto-trust-guard.preview.emergentagent.com**
+2. Enter this URL: **https://multilingual-crypto-2.preview.emergentagent.com**
 
 3. Click "Start" then "Package for Stores"
 

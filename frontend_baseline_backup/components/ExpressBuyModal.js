@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { X, Zap, TrendingUp, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-trust-guard.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://multilingual-crypto-2.preview.emergentagent.com';
 
 const EXPRESS_CRYPTOS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'LTC'];
 

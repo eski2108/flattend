@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
+BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
 
 # Test Users
 BUYER_USER = {

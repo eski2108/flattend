@@ -1,7 +1,7 @@
 # CoinHubX Production Deployment - LOCKED VERSION
 
 ## Production URL
-**Primary:** https://crypto-trust-guard.preview.emergentagent.com
+**Primary:** https://multilingual-crypto-2.preview.emergentagent.com
 **Custom Domain (to be configured):** https://coinhubx.net
 
 ## Current Status: STABLE AND LOCKED

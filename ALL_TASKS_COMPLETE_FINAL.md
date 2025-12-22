@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-trust-guard.preview.emergentagent.com
+**URL:** https://multilingual-crypto-2.preview.emergentagent.com
 
 **Services Status:**
 ```bash

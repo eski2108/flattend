@@ -111,7 +111,7 @@ BTC: 0.12382175857852622
 
 ### API Endpoint Test
 ```bash
-$ curl https://crypto-trust-guard.preview.emergentagent.com/api/portfolio/summary/USER_ID
+$ curl https://multilingual-crypto-2.preview.emergentagent.com/api/portfolio/summary/USER_ID
 
 {
   "success": true,

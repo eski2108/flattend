@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://crypto-trust-guard.preview.emergentagent.com
+https://multilingual-crypto-2.preview.emergentagent.com
 
 ---
 

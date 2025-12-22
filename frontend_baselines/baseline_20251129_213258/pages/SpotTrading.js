@@ -13,7 +13,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://crypto-trust-guard.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://multilingual-crypto-2.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

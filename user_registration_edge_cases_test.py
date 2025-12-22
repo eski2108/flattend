@@ -11,7 +11,7 @@ import json
 import time
 
 # Configuration
-BACKEND_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
+BACKEND_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
 
 def test_edge_cases():
     """Test edge cases for registration and login"""

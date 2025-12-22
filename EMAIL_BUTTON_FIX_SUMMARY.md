@@ -5,8 +5,8 @@ The dispute resolution email button sent to admins was **NOT CLICKABLE** because
 
 ### Root Cause
 The email template in `backend/email_service.py` was generating URLs without the `#/` HashRouter prefix:
-- ❌ **WRONG:** `https://crypto-trust-guard.preview.emergentagent.com/admin/disputes/{dispute_id}`
-- ✅ **CORRECT:** `https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}`
+- ❌ **WRONG:** `https://multilingual-crypto-2.preview.emergentagent.com/admin/disputes/{dispute_id}`
+- ✅ **CORRECT:** `https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}`
 
 ---
 
@@ -18,17 +18,17 @@ The email template in `backend/email_service.py` was generating URLs without the
 
 1. **Line 197** - Main Action Button URL
    ```html
-   <a href="https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+   <a href="https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
    ```
 
 2. **Line 216** - Copyable Direct Link
    ```html
-   https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+   https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    ```
 
 3. **Line 227** - Alternative Text Link
    ```html
-   <a href="https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+   <a href="https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
    ```
 
 ---
@@ -39,13 +39,13 @@ The email template in `backend/email_service.py` was generating URLs without the
 ```
 📧 URLs found in dispute email template:
 
-1. https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -120,7 +120,7 @@ All existing P2P flows remain intact:
 
 3. **Click Email Button**
    - Click "🚨 RESOLVE DISPUTE NOW →" button
-   - Should navigate to: `https://crypto-trust-guard.preview.emergentagent.com/#/admin/disputes/{dispute_id}`
+   - Should navigate to: `https://multilingual-crypto-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}`
    - Page loads correctly showing dispute details
 
 4. **Resolve Dispute** (as admin)

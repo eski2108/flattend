@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Bot configuration
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_ADMIN_BOT_TOKEN")
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
-WEB_APP_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://crypto-trust-guard.preview.emergentagent.com")
+WEB_APP_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://multilingual-crypto-2.preview.emergentagent.com")
 
 # Database connection
 db_client = None

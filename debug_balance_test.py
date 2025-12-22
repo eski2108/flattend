@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
+BASE_URL = "https://multilingual-crypto-2.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

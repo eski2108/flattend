@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://crypto-trust-guard.preview.emergentagent.com/p2p-express
+https://multilingual-crypto-2.preview.emergentagent.com/p2p-express
 
 ---
 

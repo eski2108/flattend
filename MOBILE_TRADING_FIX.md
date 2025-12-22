@@ -139,7 +139,7 @@ sudo supervisorctl restart frontend
 ```
 
 **Live URL:**
-https://crypto-trust-guard.preview.emergentagent.com/#/trading
+https://multilingual-crypto-2.preview.emergentagent.com/#/trading
 
 **Status:** ✅ DEPLOYED TO LIVE PREVIEW
 
