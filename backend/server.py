@@ -92,6 +92,18 @@ from email_service import (
     p2p_dispute_opened_email,
     p2p_admin_dispute_alert
 )
+
+# ============================================================================
+# PAYMENT SYSTEM SPECIFICATION v2.0 - LOCKED SERVICES
+# INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
+# DO NOT MODIFY WITHOUT UPDATING CHANGELOG
+# ============================================================================
+from services.atomic_balance_service import AtomicBalanceService, get_atomic_balance_service
+from services.liquidity_reservation import LiquidityReservationService, get_liquidity_reservation_service
+from services.balance_schema import BALANCE_FIELD_MAP, get_field, normalize_balance_doc
+from services.referral_chain import ReferralChainService, get_referral_chain_service
+from core.config import PaymentConfig, payment_config
+from api.integrity import router as integrity_router, set_database as set_integrity_db
 from telegram_service import get_telegram_service
 from p2p_enhanced import (
     GLOBAL_PAYMENT_METHODS,
