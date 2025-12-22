@@ -236,7 +236,7 @@ export default function SpotTradingPro() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API}/api/trading/spot/order`, {
+      const response = await axios.post(`${API}/api/trading/place-order`, {
         pair: selectedPair,
         type: orderType,
         amount: parseFloat(amount),
