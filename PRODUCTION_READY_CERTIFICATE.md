@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://balance-sync-repair.preview.emergentagent.com`
-- Backend API: `https://balance-sync-repair.preview.emergentagent.com/api`
+- Frontend: `https://atomic-pay-fix.preview.emergentagent.com`
+- Backend API: `https://atomic-pay-fix.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

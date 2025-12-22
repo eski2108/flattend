@@ -149,7 +149,7 @@
 
 ## How to Test
 
-1. **Go to:** https://balance-sync-repair.preview.emergentagent.com/settings
+1. **Go to:** https://atomic-pay-fix.preview.emergentagent.com/settings
 2. **Log in with:** admin@coinhubx.net / test123
 3. **Test each button:**
    - Click every button

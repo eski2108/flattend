@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://balance-sync-repair.preview.emergentagent.com"
+BACKEND_URL = "https://atomic-pay-fix.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 class CoinHubXTester:

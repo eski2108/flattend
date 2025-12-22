@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://balance-sync-repair.preview.emergentagent.com/api/admin/fees/test
+$ curl https://atomic-pay-fix.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://balance-sync-repair.preview.emergentagent.com/api/admin/fees/all
+$ curl https://atomic-pay-fix.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

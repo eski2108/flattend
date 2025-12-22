@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://balance-sync-repair.preview.emergentagent.com
+**Live URL:** https://atomic-pay-fix.preview.emergentagent.com
 
 ---
 

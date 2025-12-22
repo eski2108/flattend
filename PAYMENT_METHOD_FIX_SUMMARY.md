@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://balance-sync-repair.preview.emergentagent.com
+https://atomic-pay-fix.preview.emergentagent.com
 
 ### Test Route
 
-`https://balance-sync-repair.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://atomic-pay-fix.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

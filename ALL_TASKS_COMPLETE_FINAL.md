@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://balance-sync-repair.preview.emergentagent.com
+**URL:** https://atomic-pay-fix.preview.emergentagent.com
 
 **Services Status:**
 ```bash

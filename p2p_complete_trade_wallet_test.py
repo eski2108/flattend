@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://balance-sync-repair.preview.emergentagent.com/api"
+BASE_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
 
 # Test credentials as specified in the request
 BUYER_EMAIL = "buyer_proof@test.com"

@@ -20,7 +20,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 # Backend URL from environment
-BACKEND_URL = "https://balance-sync-repair.preview.emergentagent.com"
+BACKEND_URL = "https://atomic-pay-fix.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test users

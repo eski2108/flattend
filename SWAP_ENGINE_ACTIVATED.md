@@ -9,7 +9,7 @@ Time: 13:25 UTC
 
 ### Backend API Test
 ```bash
-curl -X POST "https://balance-sync-repair.preview.emergentagent.com/api/swap/execute" \
+curl -X POST "https://atomic-pay-fix.preview.emergentagent.com/api/swap/execute" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "50d4a845-ff56-4328-ace2-fa427792c754",
@@ -183,7 +183,7 @@ SELECT * FROM wallets WHERE user_id = '50d4a845-ff56-4328-ace2-fa427792c754' AND
 
 ### Method 1: Via API
 ```bash
-curl -X POST "https://balance-sync-repair.preview.emergentagent.com/api/swap/execute" \
+curl -X POST "https://atomic-pay-fix.preview.emergentagent.com/api/swap/execute" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "YOUR_USER_ID",

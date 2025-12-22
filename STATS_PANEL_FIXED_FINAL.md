@@ -2,7 +2,7 @@
 
 **Deployment Date:** December 9, 2024, 9:47 PM UTC  
 **Status:** ✅ LIVE AND FULLY FUNCTIONAL  
-**Preview URL:** https://balance-sync-repair.preview.emergentagent.com/#/trading
+**Preview URL:** https://atomic-pay-fix.preview.emergentagent.com/#/trading
 
 ---
 
@@ -575,7 +575,7 @@ Glow: Strong cyan neon effect
 ## 🔗 LIVE PREVIEW
 
 **Trading Page:**  
-https://balance-sync-repair.preview.emergentagent.com/#/trading
+https://atomic-pay-fix.preview.emergentagent.com/#/trading
 
 **What to Verify:**
 1. Panel shows all 5 data fields

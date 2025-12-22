@@ -302,7 +302,7 @@ async def send_dispute_emails(trade_id, dispute_id, buyer_id, seller_id):
     )
     print(f"✅ Sent dispute email to admin: {admin_email}")
     
-    frontend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://balance-sync-repair.preview.emergentagent.com')
+    frontend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://atomic-pay-fix.preview.emergentagent.com')
     print("\n🔗 Email contains link to:")
     print(f"   {frontend_url}/admin/disputes/{dispute_id}")
     
@@ -364,7 +364,7 @@ async def main():
             print(f"   Disputed Trade ID: {dispute_trade_id}")
             print(f"   Dispute ID: {dispute_id}")
             print("\n📧 EMAILS SENT TO: info@coinhubx.net")
-            frontend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://balance-sync-repair.preview.emergentagent.com')
+            frontend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://atomic-pay-fix.preview.emergentagent.com')
             print("\n🔗 DISPUTE LINK:")
             print(f"   {frontend_url}/admin/disputes/{dispute_id}")
             print("\n✅ Check your email inbox at info@coinhubx.net")

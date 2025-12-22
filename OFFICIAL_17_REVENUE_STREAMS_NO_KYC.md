@@ -2,7 +2,7 @@
 
 **Date:** November 30, 2025  
 **Status:** FULLY IMPLEMENTED  
-**Dashboard URL:** https://balance-sync-repair.preview.emergentagent.com/admin/business
+**Dashboard URL:** https://atomic-pay-fix.preview.emergentagent.com/admin/business
 
 ---
 
@@ -173,7 +173,7 @@
 ## 📈 HOW TO USE
 
 ### **Access Dashboard**
-1. Go to: https://balance-sync-repair.preview.emergentagent.com/admin/login
+1. Go to: https://atomic-pay-fix.preview.emergentagent.com/admin/login
 2. Login:
    - Email: `info@coinhubx.net`
    - Password: `Admin123!`

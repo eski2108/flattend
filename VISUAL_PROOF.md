@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://balance-sync-repair.preview.emergentagent.com/admin/disputes/dispute_123
+https://atomic-pay-fix.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://balance-sync-repair.preview.emergentagent.com/admin/disputes/dispute_123
 
 ### ✅ AFTER (FIXED)
 ```
-https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://atomic-pay-fix.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://balance-sync-repair.preview.emergentagent.com/`
+2. Browser loads: `https://atomic-pay-fix.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/dispute_1
 
 #### ❌ BEFORE
 ```html
-<a href="https://balance-sync-repair.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://atomic-pay-fix.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://atomic-pay-fix.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/dispute_1
 
 #### ❌ BEFORE
 ```
-https://balance-sync-repair.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://atomic-pay-fix.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://atomic-pay-fix.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/{dispute_
 
 #### ❌ BEFORE
 ```html
-<a href="https://balance-sync-repair.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://atomic-pay-fix.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://balance-sync-repair.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://atomic-pay-fix.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

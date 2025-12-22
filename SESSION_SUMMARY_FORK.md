@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://balance-sync-repair.preview.emergentagent.com
+https://atomic-pay-fix.preview.emergentagent.com
 
 ---
 

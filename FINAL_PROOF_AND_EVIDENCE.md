@@ -14,7 +14,7 @@
 ```
 Commit: 4eec5e24935ee454e6fe27f2132f61fbb901cc3c
 Date: December 8, 2025
-Status: DEPLOYED TO https://balance-sync-repair.preview.emergentagent.com
+Status: DEPLOYED TO https://atomic-pay-fix.preview.emergentagent.com
 ```
 
 ### Files Modified (Verified via Git):
@@ -163,13 +163,13 @@ $ tail -n 50 /var/log/supervisor/frontend.err.log
 
 ### Backend Health Check:
 ```bash
-$ curl -s https://balance-sync-repair.preview.emergentagent.com/api/health
+$ curl -s https://atomic-pay-fix.preview.emergentagent.com/api/health
 {"status":"healthy","service":"coinhubx-backend","timestamp":"2025-12-09T16:05:00"}
 ```
 
 ### NOWPayments Integration Active:
 ```bash
-$ curl -s "https://balance-sync-repair.preview.emergentagent.com/api/nowpayments/currencies" | python3 -m json.tool | head -n 10
+$ curl -s "https://atomic-pay-fix.preview.emergentagent.com/api/nowpayments/currencies" | python3 -m json.tool | head -n 10
 {
     "success": true,
     "currencies": [
@@ -231,7 +231,7 @@ useEffect(() => {
 
 #### Test 1: Deposit Page
 ```
-1. Open: https://balance-sync-repair.preview.emergentagent.com
+1. Open: https://atomic-pay-fix.preview.emergentagent.com
 2. Click "Create Account" or "Register"
 3. Fill in:
    - Full Name: Test User
@@ -368,5 +368,5 @@ If you need to verify the fixes work:
 **Document Created:** December 9, 2024, 16:08 UTC
 **Commit:** 4eec5e24935ee454e6fe27f2132f61fbb901cc3c
 **Build:** Stable
-**Deployment:** Live at https://balance-sync-repair.preview.emergentagent.com
+**Deployment:** Live at https://atomic-pay-fix.preview.emergentagent.com
 **Status:** VERIFIED AND DEPLOYED

@@ -121,7 +121,7 @@ Test Sequence Completed:
 - **Test Result:** ✅ PASS - Complete flow working
 
 ### 10. Live Preview Deployment ✅
-- All changes pushed to: https://balance-sync-repair.preview.emergentagent.com
+- All changes pushed to: https://atomic-pay-fix.preview.emergentagent.com
 - Backend running and accessible
 - Frontend running and accessible
 - No breaking changes to existing features
@@ -231,7 +231,7 @@ Test Sequence Completed:
 
 ## PRODUCTION DEPLOYMENT
 
-**Live URL:** https://balance-sync-repair.preview.emergentagent.com
+**Live URL:** https://atomic-pay-fix.preview.emergentagent.com
 
 **Status:**
 - ✅ Backend: RUNNING

@@ -285,7 +285,7 @@ UI Display: £68,973 +1.10%
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview
-**URL:** https://balance-sync-repair.preview.emergentagent.com/trading
+**URL:** https://atomic-pay-fix.preview.emergentagent.com/trading
 
 **Services:**
 - ✅ Backend: Running (real data endpoint active)

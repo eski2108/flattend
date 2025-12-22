@@ -6,7 +6,7 @@ Check internal balances collection directly
 import requests
 import json
 
-BACKEND_URL = "https://balance-sync-repair.preview.emergentagent.com"
+BACKEND_URL = "https://atomic-pay-fix.preview.emergentagent.com"
 
 def check_collections():
     print("=== CHECKING INTERNAL BALANCE COLLECTIONS ===")

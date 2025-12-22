@@ -13,7 +13,7 @@
 
 ## HOW TO LOGIN:
 
-1. Go to: https://balance-sync-repair.preview.emergentagent.com/#/login
+1. Go to: https://atomic-pay-fix.preview.emergentagent.com/#/login
 2. Enter email: demo@coinhubx.com
 3. Enter password: Test123!
 4. Click Login

@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://balance-sync-repair.preview.emergentagent.com/api
-- **Frontend App**: https://balance-sync-repair.preview.emergentagent.com
+- **Backend API**: https://atomic-pay-fix.preview.emergentagent.com/api
+- **Frontend App**: https://atomic-pay-fix.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:
