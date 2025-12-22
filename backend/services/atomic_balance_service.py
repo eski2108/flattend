@@ -108,20 +108,8 @@ class AtomicBalanceService:
         """
         Atomically credit a user's balance across ALL 4 collections.
         
-        Args:
-            user_id: The user ID to credit
-            currency: Currency code (BTC, ETH, GBP, etc.)
-            amount: Amount to credit (must be positive)
-            tx_type: Transaction type for audit trail
-            ref_id: Reference ID (transaction ID, swap ID, etc.)
-            metadata: Optional additional data for audit trail
-            
-        Returns:
-            Dict with success status and new balance
-            
-        Raises:
-            ValueError: If amount is negative
-            Exception: If transaction fails
+        If MongoDB transactions are not supported (non-replica-set), falls back to
+        sequential updates with audit trail for recovery.
         """
         if amount < 0:
             raise ValueError(f"Credit amount must be positive, got {amount}")
@@ -131,10 +119,99 @@ class AtomicBalanceService:
             return {"success": True, "new_balance": 0, "message": "Zero amount, no change"}
 
         timestamp = datetime.now(timezone.utc)
-        
-        # Get before state for audit
         before_state = await self._get_all_balances(user_id, currency)
         
+        # Try with transaction if supported, otherwise use fallback
+        if self._transactions_supported:
+            return await self._atomic_credit_with_transaction(
+                user_id, currency, amount, tx_type, ref_id, metadata, timestamp, before_state
+            )
+        else:
+            return await self._atomic_credit_fallback(
+                user_id, currency, amount, tx_type, ref_id, metadata, timestamp, before_state
+            )
+
+    async def _atomic_credit_fallback(
+        self,
+        user_id: str,
+        currency: str,
+        amount: float,
+        tx_type: str,
+        ref_id: str,
+        metadata: Optional[Dict],
+        timestamp: datetime,
+        before_state: Dict
+    ) -> Dict[str, Any]:
+        """Fallback credit without transactions - updates all 4 collections sequentially."""
+        try:
+            # Update all 4 collections (no session)
+            await self._update_all_collections(
+                user_id, currency,
+                available_delta=amount,
+                total_delta=amount,
+                session=None
+            )
+            
+            # Get new balance
+            wallet = await self.db.wallets.find_one({"user_id": user_id, "currency": currency})
+            new_balance = wallet.get("available_balance", amount) if wallet else amount
+            
+            # Get after state
+            after_state = await self._get_all_balances(user_id, currency)
+            
+            # Audit trail
+            event_data = {
+                "event_type": f"atomic_credit_{tx_type}",
+                "user_id": user_id,
+                "currency": currency,
+                "amount": amount,
+                "reference_id": ref_id,
+                "timestamp": timestamp.isoformat()
+            }
+            
+            await self.db.audit_trail.insert_one({
+                "event_id": os.urandom(16).hex(),
+                "event_type": f"atomic_credit_{tx_type}",
+                "user_id": user_id,
+                "currency": currency,
+                "amount": amount,
+                "reference_id": ref_id,
+                "before_state": before_state,
+                "after_state": after_state,
+                "metadata": metadata or {},
+                "timestamp": timestamp,
+                "checksum": self._generate_event_checksum(event_data),
+                "service_checksum": self._checksum,
+                "transaction_mode": "fallback"
+            })
+            
+            logger.info(f"[ATOMIC-FALLBACK] Credit completed: {user_id}, {currency}, +{amount}, ref={ref_id}")
+            
+            return {
+                "success": True,
+                "new_balance": new_balance,
+                "amount_credited": amount,
+                "transaction_type": tx_type,
+                "reference_id": ref_id,
+                "mode": "fallback"
+            }
+            
+        except Exception as e:
+            logger.error(f"[ATOMIC-FALLBACK] Credit FAILED: {user_id}/{currency}/{amount} - {str(e)}")
+            raise
+
+    async def _atomic_credit_with_transaction(
+        self,
+        user_id: str,
+        currency: str,
+        amount: float,
+        tx_type: str,
+        ref_id: str,
+        metadata: Optional[Dict],
+        timestamp: datetime,
+        before_state: Dict
+    ) -> Dict[str, Any]:
+        """Credit with MongoDB transaction support."""
         async with await self.client.start_session() as session:
             async with session.start_transaction():
                 try:
@@ -150,7 +227,6 @@ class AtomicBalanceService:
                         return_document=True,
                         upsert=True
                     )
-                    logger.info(f"[ATOMIC] wallets updated: {user_id}/{currency} +{amount}")
 
                     # 2. Update crypto_balances collection
                     await self.db.crypto_balances.update_one(
@@ -163,7 +239,6 @@ class AtomicBalanceService:
                         session=session,
                         upsert=True
                     )
-                    logger.info(f"[ATOMIC] crypto_balances updated: {user_id}/{currency} +{amount}")
 
                     # 3. Update trader_balances collection
                     await self.db.trader_balances.update_one(
@@ -176,7 +251,6 @@ class AtomicBalanceService:
                         session=session,
                         upsert=True
                     )
-                    logger.info(f"[ATOMIC] trader_balances updated: {user_id}/{currency} +{amount}")
 
                     # 4. Update internal_balances collection
                     await self.db.internal_balances.update_one(
@@ -189,7 +263,6 @@ class AtomicBalanceService:
                         session=session,
                         upsert=True
                     )
-                    logger.info(f"[ATOMIC] internal_balances updated: {user_id}/{currency} +{amount}")
 
                     # Get after state for audit
                     after_state = {
@@ -199,7 +272,7 @@ class AtomicBalanceService:
                         "internal_balances": before_state.get("internal_balances", 0) + amount
                     }
 
-                    # 5. Log to audit trail (also within transaction)
+                    # 5. Log to audit trail
                     event_data = {
                         "event_type": f"atomic_credit_{tx_type}",
                         "user_id": user_id,
@@ -221,7 +294,8 @@ class AtomicBalanceService:
                         "metadata": metadata or {},
                         "timestamp": timestamp,
                         "checksum": self._generate_event_checksum(event_data),
-                        "service_checksum": self._checksum
+                        "service_checksum": self._checksum,
+                        "transaction_mode": "atomic"
                     }, session=session)
 
                     logger.info(f"[ATOMIC] Credit completed: {user_id}, {currency}, +{amount}, ref={ref_id}")
@@ -232,7 +306,8 @@ class AtomicBalanceService:
                         "new_balance": new_balance,
                         "amount_credited": amount,
                         "transaction_type": tx_type,
-                        "reference_id": ref_id
+                        "reference_id": ref_id,
+                        "mode": "atomic"
                     }
                     
                 except Exception as e:
