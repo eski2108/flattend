@@ -60,7 +60,8 @@
     "referrals": "Referrals",
     "transaction_history": "Transaction History",
     "settings": "Settings",
-    "support": "Support / Chat"
+    "support": "Support / Chat",
+    "profile": "Profile"
   },
   "dashboard": {
     "title": "Portfolio Dashboard",
