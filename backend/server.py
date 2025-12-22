@@ -418,8 +418,12 @@ async def sync_lock_balance(user_id: str, currency: str, amount: float, reason: 
         logger.error(f"❌ LOCK ERROR: {user_id}/{currency}: {e}")
         return False
 
+# ⚠️ SYNC_UNLOCK - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_unlock_balance(user_id: str, currency: str, amount: float, reason: str = "unlock"):
-    """Unlock balance (move from locked to available) across all collections"""
+    """
+    FROZEN FUNCTION - Unlock balance (move from locked to available) across ALL 4 collections.
+    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    """
     try:
         wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
         if not wallet:
