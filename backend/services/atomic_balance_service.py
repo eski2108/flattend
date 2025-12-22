@@ -27,11 +27,74 @@ class AtomicBalanceService:
         # Use the same client that created the database to avoid session issues
         self.client = db.client
         self._checksum = "8f3a7c2e1d5b9a4f"
+        # Check if replica set is available for transactions
+        self._transactions_supported = os.getenv('MONGO_TRANSACTIONS_ENABLED', 'false').lower() == 'true'
+        logger.info(f"AtomicBalanceService initialized (transactions_supported={self._transactions_supported})")
 
     def _generate_event_checksum(self, event_data: Dict) -> str:
         """Generate SHA256 checksum for audit trail event."""
         data_str = str(sorted(event_data.items()))
         return hashlib.sha256(data_str.encode()).hexdigest()[:16]
+
+    async def _update_all_collections(
+        self,
+        user_id: str,
+        currency: str,
+        available_delta: float = 0,
+        locked_delta: float = 0,
+        total_delta: float = 0,
+        session=None
+    ):
+        """Update all 4 balance collections with the given deltas."""
+        timestamp = datetime.now(timezone.utc)
+        
+        # 1. Update wallets collection
+        await self.db.wallets.update_one(
+            {"user_id": user_id, "currency": currency},
+            {
+                "$inc": {"available_balance": available_delta, "locked_balance": locked_delta, "total_balance": total_delta},
+                "$set": {"last_updated": timestamp},
+                "$setOnInsert": {"created_at": timestamp}
+            },
+            session=session,
+            upsert=True
+        )
+
+        # 2. Update crypto_balances collection
+        await self.db.crypto_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {
+                "$inc": {"balance": total_delta, "available_balance": available_delta, "locked_balance": locked_delta},
+                "$set": {"last_updated": timestamp},
+                "$setOnInsert": {"created_at": timestamp}
+            },
+            session=session,
+            upsert=True
+        )
+
+        # 3. Update trader_balances collection
+        await self.db.trader_balances.update_one(
+            {"trader_id": user_id, "currency": currency},
+            {
+                "$inc": {"total_balance": total_delta, "available_balance": available_delta, "locked_balance": locked_delta},
+                "$set": {"updated_at": timestamp},
+                "$setOnInsert": {"created_at": timestamp}
+            },
+            session=session,
+            upsert=True
+        )
+
+        # 4. Update internal_balances collection
+        await self.db.internal_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {
+                "$inc": {"balance": total_delta, "available_balance": available_delta, "locked_balance": locked_delta},
+                "$set": {"updated_at": timestamp},
+                "$setOnInsert": {"created_at": timestamp}
+            },
+            session=session,
+            upsert=True
+        )
 
     async def atomic_credit(
         self,
