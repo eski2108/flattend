@@ -859,7 +859,7 @@ export default function Dashboard() {
                     )) : (
                       <div style={{ textAlign: 'center', padding: '40px', color: '#8F9BB3' }}>
                         <IoTime size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
-                        <div>No recent activity</div>
+                        <div>{t('dashboard.no_transactions')}</div>
                       </div>
                     )}
                   </div>
