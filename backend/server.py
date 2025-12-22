@@ -33284,24 +33284,32 @@ async def get_savings_positions(user_id: str):
             coin_id = get_coingecko_id(symbol)
             
             # Get current price and 24h change from CoinGecko
-            coin_data = await get_coingecko_market_data(coin_id)
-            current_price = coin_data.get('current_price', 0) if coin_data else 0
-            price_change_24h = coin_data.get('price_change_percentage_24h', 0) if coin_data else 0
+            try:
+                coin_data = await get_coingecko_market_data(coin_id)
+                current_price = coin_data.get('current_price', 0) if coin_data else 0
+                price_change_24h = coin_data.get('price_change_percentage_24h', 0) if coin_data else 0
+            except Exception as e:
+                logger.warning(f"CoinGecko error for {symbol}: {e}")
+                coin_data = None
+                current_price = 0
+                price_change_24h = 0
             
             if not current_price:
                 # Fallback to internal market prices
                 current_price = market_prices.get(symbol.upper(), {}).get('price_usd', 0)
                 price_change_24h = 0
+                # Final fallback
+                if not current_price:
+                    fallback_prices = {"BTC": 95000, "ETH": 3500, "USDT": 1.0, "USDC": 1.0, "GBP": 1.27}
+                    current_price = fallback_prices.get(symbol.upper(), 0)
             
             # Get entry price (stored when deposit was made)
             entry_price = saving.get('entry_price', current_price)
             entry_timestamp = saving.get('deposit_timestamp', int(time.time()))
             
-            # If no entry price stored, try to get historical price
+            # If no entry price stored, use current price
             if not entry_price or entry_price == 0:
-                entry_price = await get_coingecko_historical_price(coin_id, entry_timestamp)
-                if not entry_price:
-                    entry_price = current_price
+                entry_price = current_price
             
             # Calculate P&L
             balance_usd = balance * current_price
