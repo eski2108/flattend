@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { IoCheckmarkCircle as CheckCircle, IoChevronDown, IoClose, IoFilter, IoFlash, IoLocation, IoOptions, IoPersonOutline as User, IoSearch as Search, IoShield, IoStar, IoTime as Clock, IoTrendingUp as TrendingUp, IoTrophy } from 'react-icons/io5';
@@ -12,6 +13,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 function P2PMarketplace() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   // Add CSS animation for boosted badge
   React.useEffect(() => {
