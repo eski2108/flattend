@@ -285,6 +285,65 @@ export default function AdminFees() {
           </div>
         </div>
 
+        {/* 💰 WITHDRAW COLLECTED FEES - NEW SECTION */}
+        <div className="admin-wallet-section" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', marginTop: '2rem' }}>
+          <div className="section-header">
+            <h2 style={{ color: '#fff' }}>
+              💰 Withdraw Collected Fees
+            </h2>
+            <button 
+              className="payout-btn"
+              onClick={() => setWithdrawModal(true)}
+              style={{ background: '#fff', color: '#059669' }}
+            >
+              <IoSend size={18} />
+              Withdraw Fees Now
+            </button>
+          </div>
+          
+          <div style={{ color: '#fff', marginBottom: '1rem' }}>
+            Total fees available for withdrawal:
+          </div>
+          
+          <div className="balance-grid">
+            <div className="total-value-card" style={{ background: 'rgba(255,255,255,0.2)' }}>
+              <div className="value-label" style={{ color: '#d1fae5' }}>Total (GBP Equivalent)</div>
+              <div className="value-amount" style={{ color: '#fff' }}>£{(withdrawableBalances.total_gbp_equivalent || 0).toFixed(2)}</div>
+            </div>
+            
+            {Object.entries(withdrawableBalances.fiat || {}).map(([currency, balance]) => (
+              <div key={currency} className="balance-card" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                <div className="currency-name" style={{ color: '#d1fae5' }}>{currency} (Fiat)</div>
+                <div className="currency-amount" style={{ color: '#fff' }}>£{parseFloat(balance).toFixed(2)}</div>
+              </div>
+            ))}
+            
+            {Object.entries(withdrawableBalances.crypto || {}).map(([currency, balance]) => (
+              balance > 0 && (
+                <div key={currency} className="balance-card" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                  <div className="currency-name" style={{ color: '#d1fae5' }}>{currency} (Crypto)</div>
+                  <div className="currency-amount" style={{ color: '#fff' }}>{parseFloat(balance).toFixed(8)}</div>
+                </div>
+              )
+            ))}
+          </div>
+          
+          {withdrawHistory.length > 0 && (
+            <div style={{ marginTop: '1.5rem' }}>
+              <h3 style={{ color: '#fff', marginBottom: '0.5rem' }}>Recent Withdrawals</h3>
+              <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '8px', padding: '1rem' }}>
+                {withdrawHistory.slice(0, 5).map((w, i) => (
+                  <div key={i} style={{ color: '#fff', padding: '0.5rem 0', borderBottom: i < 4 ? '1px solid rgba(255,255,255,0.2)' : 'none' }}>
+                    <span style={{ fontWeight: 'bold' }}>{w.amount} {w.currency}</span>
+                    <span style={{ marginLeft: '1rem', opacity: 0.8 }}>→ {w.destination?.slice(0, 20)}...</span>
+                    <span style={{ marginLeft: '1rem', opacity: 0.6, fontSize: '0.9em' }}>{w.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Pending Payouts */}
         {pendingPayouts.length > 0 && (
           <div className="pending-payouts-section" style={{ background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', border: '1px solid rgba(245, 158, 11, 0.5)' }}>
