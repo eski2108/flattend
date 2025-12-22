@@ -167,6 +167,10 @@ See: `/app/MASTER_IMPLEMENTATION_LOG.md`
 | `Trash2 is not defined` | PaymentMethods.js | Changed to IoTrash | ✅ FIXED |
 | Double semicolon syntax | PaymentMethods.js | Removed extra `;` | ✅ FIXED |
 | "Failed to load seller info" | MerchantCenter.js | Fixed API endpoint URL | ✅ FIXED |
+| Cartoonish emoji icons | PriceTickerEnhanced.js | Replaced with ₿ Ξ ₮ ◈ ◆ symbols | ✅ FIXED |
+| Cartoonish emoji icons | coinConfig.js | Replaced with professional symbols | ✅ FIXED |
+| price_type not sent | CreateAd.js | Added to formData and API request | ✅ FIXED |
+| Translation key not resolved | en.json, es.json, fr.json | Added p2p.marketplace.title structure | ✅ FIXED |
 
 ---
 
