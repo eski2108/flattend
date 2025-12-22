@@ -21,7 +21,10 @@
     "sort": "Ordina",
     "view": "Visualizza",
     "download": "Scarica",
-    "upload": "Carica"
+    "upload": "Carica",
+    "get_app": "SCARICA APP",
+    "android": "Android",
+    "iphone": "iPhone"
   },
   "header": {
     "title": "COIN HUB X",
