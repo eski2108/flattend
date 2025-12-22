@@ -5,25 +5,25 @@
       "test": "Concurrent Credits Test",
       "passed": true,
       "details": "SKIPPED - simulate-credit endpoint not available (use real transaction flow)",
-      "timestamp": "2025-12-22T13:54:56.656761"
+      "timestamp": "2025-12-22T13:56:51.795741"
     },
     {
       "test": "Integrity Failure Detection",
       "passed": true,
       "details": "System is healthy - no corruption detected",
-      "timestamp": "2025-12-22T13:54:57.242725"
+      "timestamp": "2025-12-22T13:56:52.375741"
     },
     {
       "test": "Insufficient Balance Rejection",
-      "passed": false,
-      "details": "Should have rejected, got: 200 - {'success': True, 'status': 'pending_admin_approval', 'withdrawal_id': 'Glcduz5K5Db1eS3RcfnGcQ', 'message': 'Withdrawal request submitted. Admin approval required for amounts over \u00a310,000.', 'amount_gbp': 47499999525.0}",
-      "timestamp": "2025-12-22T13:54:58.079748"
+      "passed": true,
+      "details": "Correctly rejected with status 400: Insufficient balance. Available: 0.04800000 BTC, Requested: 999999.99000000 BTC",
+      "timestamp": "2025-12-22T13:56:52.630742"
     }
   ],
   "phase3": [],
   "summary": {
-    "passed": 2,
-    "failed": 1,
+    "passed": 3,
+    "failed": 0,
     "warnings": 1
   }
 }
