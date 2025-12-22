@@ -740,7 +740,7 @@ export default function Dashboard() {
                     )) : (
                       <div style={{ textAlign: 'center', padding: '40px', color: '#8F9BB3' }}>
                         <IoWallet size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
-                        <div>No assets found</div>
+                        <div>{t('dashboard.no_assets')}</div>
                         <button
                           onClick={() => navigate('/instant-buy')}
                           style={{
@@ -755,7 +755,7 @@ export default function Dashboard() {
                             cursor: 'pointer'
                           }}
                         >
-                          Buy Your First Crypto
+                          {t('dashboard.buy_first_crypto')}
                         </button>
                       </div>
                     )}
