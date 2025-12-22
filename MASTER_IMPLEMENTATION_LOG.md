@@ -169,9 +169,9 @@ POST /api/p2p/disputes/auto-resolve/{dispute_id}
 
 ---
 
-## 🧪 VALIDATION TESTING (12/12 TESTS PASSING)
+## 🧪 VALIDATION TESTING (21/21 TESTS PASSING)
 
-**TEST SUITE:** `/app/scripts/validate_atomic_ops.py`
+### Atomic Balance Tests: `/app/scripts/validate_atomic_ops.py`
 
 | Phase | Test | Result |
 |-------|------|--------|
@@ -188,7 +188,21 @@ POST /api/p2p/disputes/auto-resolve/{dispute_id}
 | PHASE 3 | Audit Trail Immutability | ✅ PASS |
 | PHASE 3 | API Response Time | ✅ PASS (Avg: 46ms) |
 
-**✅ ALL 12 VALIDATION TESTS PASSING**
+### P2P Security Tests: `/app/scripts/validate_p2p_fixes.py`
+
+| Phase | Test | Result |
+|-------|------|--------|
+| PHASE 1 | Payment Verification Endpoint | ✅ PASS |
+| PHASE 1 | Release Requires Verification | ✅ PASS |
+| PHASE 1 | Proof Upload Endpoint | ✅ PASS |
+| PHASE 2 | Dispute Evaluation Endpoint | ✅ PASS |
+| PHASE 2 | Auto-Resolve Endpoint | ✅ PASS |
+| PHASE 2 | Dynamic Penalty Calculation | ✅ PASS |
+| PHASE 3 | Admin Verify Endpoint | ✅ PASS |
+| PHASE 3 | Security Messaging | ✅ PASS |
+| PHASE 3 | Health Check | ✅ PASS |
+
+**✅ ALL 21 VALIDATION TESTS PASSING**
 
 ---
 
