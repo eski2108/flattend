@@ -32998,42 +32998,33 @@ async def initialize_savings_products():
             # Add Lock Vaults (for ALL currencies)
             vaults = [
                 {
-                    "product_id": "vault_30d",
-                    "product_type": "vault",
+                    "product_id": "notice_30d",
+                    "product_type": "notice",
                     "currency": "ALL",
-                    "apy_min": 8.0,
-                    "apy_max": 10.0,
+                    "notice_period": 30,
                     "lock_days": 30,
                     "min_deposit": 10,
-                    "payout_frequency": "maturity",
-                    "early_exit_penalty": 50,
-                    "description": "Lock any crypto for 30 days and earn 10% APY",
+                    "description": "30-Day Notice Account - Give 30 days notice before withdrawal",
                     "is_active": True
                 },
                 {
-                    "product_id": "vault_60d",
-                    "product_type": "vault",
+                    "product_id": "notice_60d",
+                    "product_type": "notice",
                     "currency": "ALL",
-                    "apy_min": 12.0,
-                    "apy_max": 15.0,
+                    "notice_period": 60,
                     "lock_days": 60,
                     "min_deposit": 10,
-                    "payout_frequency": "maturity",
-                    "early_exit_penalty": 60,
-                    "description": "Lock any crypto for 60 days and earn 15% APY",
+                    "description": "60-Day Notice Account - Give 60 days notice before withdrawal",
                     "is_active": True
                 },
                 {
-                    "product_id": "vault_90d",
-                    "product_type": "vault",
+                    "product_id": "notice_90d",
+                    "product_type": "notice",
                     "currency": "ALL",
-                    "apy_min": 15.0,
-                    "apy_max": 20.0,
+                    "notice_period": 90,
                     "lock_days": 90,
                     "min_deposit": 10,
-                    "payout_frequency": "maturity",
-                    "early_exit_penalty": 70,
-                    "description": "Lock any crypto for 90 days and earn 20% APY",
+                    "description": "90-Day Notice Account - Give 90 days notice before withdrawal",
                     "is_active": True
                 }
             ]
