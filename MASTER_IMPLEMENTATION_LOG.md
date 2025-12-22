@@ -20,6 +20,33 @@ When this chat context is forked or handed off, new contributors **MUST** check 
 
 ## 🔐 CRITICAL SECURITY & COMPLIANCE FIXES (LIVE & TESTED)
 
+### 0. P2P MARKETPLACE SECURITY (CRITICAL - JUST IMPLEMENTED)
+
+| Item | Status | Details |
+|------|--------|--------|
+| Payment verification before release | ✅ IMPLEMENTED & TESTED | Crypto CANNOT be released without verified payment |
+| TrueLayer integration | ✅ IMPLEMENTED | UK bank transfer verification |
+| PayPal integration | ✅ IMPLEMENTED | PayPal payment verification |
+| Manual proof upload | ✅ IMPLEMENTED | Screenshot/bank statement validation |
+| Dynamic dispute penalties | ✅ IMPLEMENTED | Replaces flat £5 with percentage-based (£25 min) |
+| Dispute rules engine | ✅ IMPLEMENTED | 8 automated rules, auto-resolve at 85%+ confidence |
+| Reputation scoring | ✅ IMPLEMENTED | excellent/good/neutral/poor/bad/scammer tiers |
+
+**Critical Files:**
+- `/app/backend/services/payment_verification/payment_verification_service.py`
+- `/app/backend/services/payment_verification/dispute_resolution.py`
+- `/app/backend/server.py` (updated release endpoint)
+- `/app/backend/p2p_wallet_service.py` (updated with verification check)
+
+**New API Endpoints:**
+```
+GET  /api/p2p/payment/verify/{trade_id}
+POST /api/p2p/payment/upload-proof
+POST /api/admin/p2p/payment/verify
+GET  /api/p2p/disputes/evaluate/{dispute_id}
+POST /api/p2p/disputes/auto-resolve/{dispute_id}
+```
+
 ### 1. Authentication & Account Security
 
 | Item | Status | Details |
