@@ -177,7 +177,7 @@ def generate_referral_code(username: str) -> str:
     random_suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
     return f"{clean_username}{random_suffix}"
 
-def generate_referral_link(referral_code: str, base_url: str = "https://coinhubx.com") -> str:
+def generate_referral_link(referral_code: str, base_url: str = "https://coinhubx.net") -> str:
     """Generate referral link"""
     return f"{base_url}/register?ref={referral_code}"
 
