@@ -279,7 +279,7 @@ export default function Dashboard() {
                   filter: 'blur(25px)',
                   pointerEvents: 'none'
                 }} />
-                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Change</div>
+                <div style={{ fontSize: '12px', color: '#8F9BB3', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('dashboard.change_24h')}</div>
                 <div style={{ 
                   fontSize: isMobile ? '28px' : '32px', 
                   fontWeight: '700', 
