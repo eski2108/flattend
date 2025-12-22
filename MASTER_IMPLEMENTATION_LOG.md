@@ -189,7 +189,7 @@ POST /api/p2p/disputes/auto-resolve/{dispute_id}
 
 ---
 
-## 🧪 VALIDATION TESTING (21/21 TESTS PASSING)
+## 🧪 VALIDATION TESTING (29/29 TESTS PASSING)
 
 ### Atomic Balance Tests: `/app/scripts/validate_atomic_ops.py`
 
@@ -222,7 +222,20 @@ POST /api/p2p/disputes/auto-resolve/{dispute_id}
 | PHASE 3 | Security Messaging | ✅ PASS |
 | PHASE 3 | Health Check | ✅ PASS |
 
-**✅ ALL 21 VALIDATION TESTS PASSING**
+### Cryptographic Security Tests: `/app/scripts/test_crypto_validation.py`
+
+| Test | Result |
+|------|--------|
+| ECDSA Key Generation | ✅ PASS |
+| Signature Roundtrip | ✅ PASS |
+| Invalid Signature Rejection | ✅ PASS |
+| Signature Randomness (No k Reuse) | ✅ PASS |
+| Timing Attack Resistance | ⚠️ PASS (Warning - library-dependent) |
+| Hash Chain Integrity | ✅ PASS |
+| Invalid Input Handling | ✅ PASS |
+| JSON Canonicalization | ✅ PASS |
+
+**✅ ALL 29 VALIDATION TESTS PASSING (1 warning - acceptable)**
 
 ---
 
