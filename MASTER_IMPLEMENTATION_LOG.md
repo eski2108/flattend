@@ -443,3 +443,40 @@ python scripts/validate_atomic_ops.py --phase all
 ---
 
 ⚠️ **This document MUST be updated with every significant change to the codebase. Validation tests MUST be run before and after any changes to payment/balance systems.**
+
+---
+
+## 🎯 P2P FRONTEND UI BUTTONS (VERIFIED IN CODE - 2025-08-26)
+
+**File:** `/app/frontend/src/pages/P2POrderPage.js`
+**Commit:** `996b8cd6d`
+
+### ALL 5 REQUIRED BUTTONS EXIST:
+
+| Button | Exists | Visible When | Handler | API Endpoint |
+|--------|--------|--------------|---------|--------------|
+| Mark as Paid | ✅ YES | `isBuyer && trade.status === 'pending_payment'` | `handleMarkAsPaid()` | `POST /api/p2p/trade/mark-paid` |
+| Release Crypto | ✅ YES | `!isBuyer && trade.status === 'payment_made'` | `handleReleaseCrypto()` | `POST /api/p2p/trade/release` |
+| Dispute | ✅ YES | `status !== 'completed/cancelled/disputed'` | `handleOpenDispute()` | `POST /api/p2p/trade/dispute` |
+| Upload Proof | ✅ YES | Always (in chat) | `handleSendMessage()` | `POST /api/p2p/trade/message` |
+| Cancel Order | ✅ YES | `isBuyer && trade.status === 'pending_payment'` | `handleCancel()` | `POST /api/p2p/trade/cancel` |
+
+### STATUS TRANSITIONS:
+```
+pending_payment → [Mark as Paid] → payment_made
+payment_made → [Release Crypto] → completed
+any active → [Dispute] → disputed
+pending_payment → [Cancel] → cancelled
+```
+
+### ⚠️ STATUS NAME DISCREPANCY TO VERIFY:
+- Frontend uses: `payment_made`
+- Backend docs mentioned: `buyer_marked_paid`
+- **NEEDS LIVE TEST TO CONFIRM WHICH IS CORRECT**
+
+### DO NOT REBUILD:
+- ❌ Do NOT recreate P2POrderPage.js
+- ❌ Do NOT add new buttons (all exist)
+- ❌ Do NOT change button handlers
+- ✅ Only fix bugs if live test reveals issues
+
