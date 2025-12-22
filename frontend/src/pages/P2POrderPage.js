@@ -153,7 +153,7 @@ export default function P2POrderPage() {
       });
       
       if (response.data.success) {
-        toast.success('✅ Payment marked! Waiting for seller to release.');
+        toast.success(t('p2p.paymentMarkedSuccess'));
         fetchTrade(currentUser.user_id);
       }
     } catch (error) {
