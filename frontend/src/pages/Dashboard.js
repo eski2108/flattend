@@ -363,7 +363,7 @@ export default function Dashboard() {
                     }}
                   >
                     <IoAdd size={12} />
-                    Buy
+                    {t('dashboard.buy_crypto')}
                   </button>
                   <button
                     onClick={() => navigate('/trading')}
@@ -383,7 +383,7 @@ export default function Dashboard() {
                     }}
                   >
                     <IoBarChart size={12} />
-                    Trade
+                    {t('trading.title')}
                   </button>
                 </div>
               </div>
