@@ -73,6 +73,18 @@ The following systems are **COMPLETE** and **LOCKED**. Any modification requires
 - **Fix:** Added `price_type` to formData state and API request
 - **Status:** ✅ FIXED
 
+### Bug 6: coinConfig.js - Cartoonish Emojis
+- **Problem:** COIN_EMOJIS had cartoon emojis: 💵 🪙 🔶 🐕 🔵 💧 🌀 🐺 etc.
+- **File:** `/app/frontend/src/utils/coinConfig.js`
+- **Fix:** Replaced ALL emojis with professional symbols: ₿ Ξ ₮ ◈ ◆ ◎ Ł Ð ₳ ● ▲ ✦ ⬡ ∞ Θ ⚛
+- **Status:** ✅ FIXED
+
+### Bug 7: P2PMarketplace.js - Translation Key Not Resolved
+- **Problem:** Title showing "p2p.marketplace.title" instead of actual text
+- **File:** `/app/frontend/src/i18n/en.json`, `es.json`, `fr.json`
+- **Fix:** Added nested `marketplace: { title: "..." }` structure to p2p section
+- **Status:** ✅ FIXED
+
 ---
 
 # ✅ SELLER FLOW - VERIFIED WORKING 2025-12-22
