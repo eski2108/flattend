@@ -11,13 +11,13 @@ const CURRENCIES = {
 };
 
 const COIN_EMOJIS = {
-  'BTC': '₿', 'ETH': '◆', 'USDT': '💵', 'USDC': '💲', 'BNB': '🔶', 
-  'XRP': '✖️', 'SOL': '☀️', 'LTC': '🌕', 'DOGE': '🐶', 'ADA': '🌐', 
-  'MATIC': '🔷', 'TRX': '🔺', 'DOT': '🎯', 'AVAX': '🏔️', 'XLM': '⭐', 
-  'BCH': '💚', 'SHIB': '🐾', 'TON': '🔵', 'DAI': '🟡', 'LINK': '🔗', 
-  'ATOM': '⚛️', 'XMR': '🕶️', 'FIL': '📁', 'UNI': '🦄', 'ETC': '🟢', 
-  'ALGO': '◯', 'VET': '♦️', 'WBTC': '🔄', 'APT': '🅰️', 'ARB': '🔷',
-  'OP': '🔴', 'ICP': '♾️', 'NEAR': '🌐'
+  'BTC': '₿', 'ETH': 'Ξ', 'USDT': '₮', 'USDC': '◈', 'BNB': '◆', 
+  'XRP': '✕', 'SOL': '◎', 'LTC': 'Ł', 'DOGE': 'Ð', 'ADA': '₳', 
+  'MATIC': '⬡', 'TRX': '◈', 'DOT': '●', 'AVAX': '▲', 'XLM': '✦', 
+  'BCH': '₿', 'SHIB': '◆', 'TON': '◆', 'DAI': '◈', 'LINK': '⬡', 
+  'ATOM': '⚛', 'XMR': '◈', 'FIL': '⬡', 'UNI': '◆', 'ETC': '◈', 
+  'ALGO': '◎', 'VET': '◆', 'WBTC': '₿', 'APT': '◆', 'ARB': '◈',
+  'OP': '◎', 'ICP': '∞', 'NEAR': '◈'
 };
 
 const COIN_COLORS = {
