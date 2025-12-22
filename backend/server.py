@@ -20460,40 +20460,62 @@ async def admin_wallet_payout(request: dict):
 async def get_admin_wallet_balance():
     """Get complete admin wallet balance across all currencies"""
     try:
-        admin_wallet_id = PLATFORM_CONFIG["admin_wallet_id"]
+        # Check both possible admin wallet IDs
+        admin_wallet_ids = [
+            PLATFORM_CONFIG["admin_wallet_id"],  # PLATFORM_TREASURY_WALLET
+            "admin_wallet"  # Legacy ID
+        ]
         
-        # Get all balances from WALLETS collection (source of truth)
-        wallet_balances = await db.wallets.find(
-            {"user_id": admin_wallet_id},
-            {"_id": 0, "currency": 1, "available_balance": 1, "locked_balance": 1, "total_balance": 1}
-        ).to_list(100)
-        
-        # Format response
         balance_dict = {}
         total_usd = 0
         
-        for bal in wallet_balances:
-            currency = bal.get("currency", "UNKNOWN")
-            # Use available_balance as the primary balance
-            balance = float(bal.get("available_balance", bal.get("total_balance", 0)))
-            balance_dict[currency] = balance
+        for admin_id in admin_wallet_ids:
+            # Get all balances from WALLETS collection (source of truth)
+            wallet_balances = await db.wallets.find(
+                {"user_id": admin_id},
+                {"_id": 0, "currency": 1, "available_balance": 1, "locked_balance": 1, "total_balance": 1}
+            ).to_list(100)
             
-            # Calculate USD value using live prices
+            for bal in wallet_balances:
+                currency = bal.get("currency", "UNKNOWN")
+                balance = float(bal.get("available_balance", bal.get("total_balance", 0)))
+                
+                # Accumulate if currency already exists
+                if currency in balance_dict:
+                    balance_dict[currency] += balance
+                else:
+                    balance_dict[currency] = balance
+            
+            # Also check crypto_balances (legacy)
+            crypto_balances = await db.crypto_balances.find(
+                {"user_id": admin_id},
+                {"_id": 0, "currency": 1, "balance": 1, "available_balance": 1}
+            ).to_list(100)
+            
+            for cb in crypto_balances:
+                currency = cb.get("currency", "UNKNOWN")
+                balance = float(cb.get("available_balance", cb.get("balance", 0)))
+                
+                # Only add if not already tracked from wallets
+                if currency not in balance_dict or balance_dict[currency] == 0:
+                    balance_dict[currency] = balance
+        
+        # Calculate USD values
+        for currency, balance in balance_dict.items():
             try:
                 if currency in ["BTC", "ETH", "USDT"]:
                     live_price = await get_live_price(currency, "usd")
                     if live_price > 0:
                         total_usd += balance * live_price
                 elif currency == "GBP":
-                    # GBP to USD approximate
                     total_usd += balance * 1.27
             except Exception:
                 pass
         
-        # Also check admin_revenue collection for accumulated fees
+        # Get accumulated revenue
         admin_revenue = await db.admin_revenue.find(
             {},
-            {"_id": 0, "currency": 1, "total_amount": 1}
+            {"_id": 0, "currency": 1, "total_amount": 1, "fee_type": 1}
         ).to_list(100)
         
         revenue_by_currency = {}
@@ -20505,7 +20527,7 @@ async def get_admin_wallet_balance():
         
         # Get fee transaction history
         recent_fees = await db.transactions.find(
-            {"to_user_id": admin_wallet_id, "transaction_type": {"$in": ["platform_fee", "trade_fee"]}},
+            {"to_user_id": {"$in": admin_wallet_ids}, "transaction_type": {"$in": ["platform_fee", "trade_fee"]}},
             {"_id": 0, "currency": 1, "amount": 1, "created_at": 1, "transaction_type": 1}
         ).sort("created_at", -1).limit(20).to_list(20)
         
@@ -20515,7 +20537,7 @@ async def get_admin_wallet_balance():
             "total_value_usd": total_usd,
             "accumulated_revenue": revenue_by_currency,
             "recent_fees": recent_fees,
-            "source": "wallets_collection"
+            "wallet_ids_checked": admin_wallet_ids
         }
     except Exception as e:
         logger.error(f"Error fetching admin wallet balance: {str(e)}")
