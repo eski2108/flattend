@@ -795,7 +795,7 @@ export default function Dashboard() {
                       textShadow: '0 0 15px rgba(155, 77, 255, 0.5)'
                     }}>
                       <IoTime size={20} color="#9B4DFF" />
-                      Recent Activity
+                      {t('dashboard.recent_transactions')}
                     </h3>
                     <button
                       onClick={() => navigate('/transactions')}
