@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://atomic-pay-fix.preview.emergentagent.com
+https://crypto-trust-guard.preview.emergentagent.com
 
 ### Test Route
 
-`https://atomic-pay-fix.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://crypto-trust-guard.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

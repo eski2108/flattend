@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://atomic-pay-fix.preview.emergentagent.com
+**Test it now at:** https://crypto-trust-guard.preview.emergentagent.com

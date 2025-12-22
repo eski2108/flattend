@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://atomic-pay-fix.preview.emergentagent.com
-P2P Page:     https://atomic-pay-fix.preview.emergentagent.com/p2p
-Backend API:  https://atomic-pay-fix.preview.emergentagent.com/api
+Frontend:     https://crypto-trust-guard.preview.emergentagent.com
+P2P Page:     https://crypto-trust-guard.preview.emergentagent.com/p2p
+Backend API:  https://crypto-trust-guard.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

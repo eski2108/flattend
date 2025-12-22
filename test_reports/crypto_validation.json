@@ -1,0 +1,49 @@
+{
+  "tests": [
+    {
+      "test": "ECDSA Key Generation",
+      "passed": true,
+      "details": "SECP256K1 keypair generated correctly"
+    },
+    {
+      "test": "Signature Roundtrip",
+      "passed": true,
+      "details": "Sign and verify successful"
+    },
+    {
+      "test": "Invalid Signature Rejection",
+      "passed": true,
+      "details": "Invalid signatures correctly rejected"
+    },
+    {
+      "test": "Signature Randomness",
+      "passed": true,
+      "details": "100/100 unique signatures (safe k generation)"
+    },
+    {
+      "test": "Timing Attack Resistance",
+      "passed": false,
+      "details": "Timing difference: 98.26% (vulnerable!)"
+    },
+    {
+      "test": "Hash Chain Integrity",
+      "passed": true,
+      "details": "Chain integrity verified, tampering detected"
+    },
+    {
+      "test": "Invalid Input Handling",
+      "passed": true,
+      "details": "All 5 invalid inputs safely rejected"
+    },
+    {
+      "test": "JSON Canonicalization",
+      "passed": true,
+      "details": "Consistent canonicalization"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 1,
+    "warnings": 1
+  }
+}

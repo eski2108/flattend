@@ -130,7 +130,7 @@ To complete the file locking:
 **Build Completed:** December 9, 2024
 **Frontend Restarted:** Yes
 **Services Status:** All running
-**Live URL:** https://atomic-pay-fix.preview.emergentagent.com
+**Live URL:** https://crypto-trust-guard.preview.emergentagent.com
 
 ---
 

@@ -30,7 +30,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://atomic-pay-fix.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://crypto-trust-guard.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class FinancialEngineTest:

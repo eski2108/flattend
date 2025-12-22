@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://atomic-pay-fix.preview.emergentagent.com
+https://crypto-trust-guard.preview.emergentagent.com
 
 ---
 

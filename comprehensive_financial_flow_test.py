@@ -13,7 +13,7 @@ from decimal import Decimal
 import sys
 
 # Configuration
-BASE_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 TEST_USER_A = {
     "email": "gads21083@gmail.com",
     "password": "123456789"

@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://atomic-pay-fix.preview.emergentagent.com/login
-2. Visit marketplace: https://atomic-pay-fix.preview.emergentagent.com/p2p
+1. Login at: https://crypto-trust-guard.preview.emergentagent.com/login
+2. Visit marketplace: https://crypto-trust-guard.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 
 print("🎯 FINAL 100% SUCCESS RATE TEST")
 print("=" * 70)

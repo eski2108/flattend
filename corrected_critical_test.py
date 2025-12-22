@@ -36,7 +36,7 @@ Tests the THREE critical features as requested in the review with corrected API 
    - User receives 99% of requested amount
 7. GET admin wallet balance and verify fees accumulated
 
-**Backend URL:** https://atomic-pay-fix.preview.emergentagent.com/api
+**Backend URL:** https://crypto-trust-guard.preview.emergentagent.com/api
 """
 
 import requests
@@ -46,7 +46,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

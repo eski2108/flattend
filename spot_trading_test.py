@@ -11,7 +11,7 @@ from datetime import datetime
 
 class SpotTradingTester:
     def __init__(self):
-        self.base_url = "https://atomic-pay-fix.preview.emergentagent.com"
+        self.base_url = "https://crypto-trust-guard.preview.emergentagent.com"
         self.api_url = f"{self.base_url}/api"
         self.token = None
         self.user_data = None

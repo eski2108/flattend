@@ -10,7 +10,7 @@ Tests ALL backend endpoints to achieve >95% success rate as requested in review.
 4. SendGrid Email Verification - Test email verification flow with updated SendGrid API key
 5. All remaining endpoints for comprehensive coverage
 
-**Backend URL:** https://atomic-pay-fix.preview.emergentagent.com/api
+**Backend URL:** https://crypto-trust-guard.preview.emergentagent.com/api
 """
 
 import requests
@@ -21,7 +21,7 @@ import time
 import uuid
 
 # Configuration
-BASE_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

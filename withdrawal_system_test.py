@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BASE_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 USER_EMAIL = "withdrawal_test@demo.com"
 USER_PASSWORD = "Test123!"
 ADMIN_EMAIL = "admin_test@demo.com"

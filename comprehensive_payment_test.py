@@ -7,7 +7,7 @@ This script creates the necessary test data and then tests the payment flows:
 2. Manual Payment Marking (Admin)  
 3. Seller Payout Request
 
-Backend URL: https://atomic-pay-fix.preview.emergentagent.com
+Backend URL: https://crypto-trust-guard.preview.emergentagent.com
 """
 
 import requests
@@ -18,7 +18,7 @@ from datetime import datetime, timezone, timedelta
 import sys
 
 # Configuration
-BACKEND_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 TEST_USER_ID = "testuser123"
 TEST_SELLER_ID = "testseller"
 TEST_BUYER_ID = "testbuyer"

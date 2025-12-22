@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://atomic-pay-fix.preview.emergentagent.com
+**URL:** https://crypto-trust-guard.preview.emergentagent.com
 
 **Services Status:**
 ```bash

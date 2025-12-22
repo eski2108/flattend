@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://atomic-pay-fix.preview.emergentagent.com/#/p2p
+   https://crypto-trust-guard.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://atomic-pay-fix.preview.emergentagent.com/#/p2p/merchant
+   https://crypto-trust-guard.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://atomic-pay-fix.preview.emergentagent.com/#/p2p/create-ad
+   https://crypto-trust-guard.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

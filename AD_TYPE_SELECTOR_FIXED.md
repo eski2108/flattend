@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://atomic-pay-fix.preview.emergentagent.com
+**Preview URL:** https://crypto-trust-guard.preview.emergentagent.com

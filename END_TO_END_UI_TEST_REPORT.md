@@ -18,7 +18,7 @@ All wallet backend endpoints are fully functional and tested with real data flow
 
 **Test:**
 ```bash
-curl https://atomic-pay-fix.preview.emergentagent.com/api/wallets/balances/test_user_alice
+curl https://crypto-trust-guard.preview.emergentagent.com/api/wallets/balances/test_user_alice
 ```
 
 **Response:**
@@ -64,7 +64,7 @@ curl https://atomic-pay-fix.preview.emergentagent.com/api/wallets/balances/test_
 
 **Test:**
 ```bash
-curl https://atomic-pay-fix.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
+curl https://crypto-trust-guard.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
 ```
 
 **Response:**

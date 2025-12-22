@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://atomic-pay-fix.preview.emergentagent.com/api
+https://crypto-trust-guard.preview.emergentagent.com/api
 ```
 
 This means:

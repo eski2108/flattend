@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://atomic-pay-fix.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-trust-guard.preview.emergentagent.com/api"
 
 def test_savings_portfolio_comprehensive():
     """Comprehensive test of all savings and portfolio endpoints"""
