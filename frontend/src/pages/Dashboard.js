@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { 
   IoTrendingUp, 
@@ -26,6 +27,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [user, setUser] = useState(null);
   const [totalValue, setTotalValue] = useState(0);
   const [loading, setLoading] = useState(true);
