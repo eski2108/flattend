@@ -359,7 +359,10 @@ python scripts/validate_atomic_ops.py --phase all
 | Savings Vault Terminology | ✅ COMPLETE | APY intentionally removed. Do NOT add yield references. |
 | Wallet Balance Retrieval | ✅ COMPLETE | Two-phase query fixes truncation issue. |
 | Integrity Check API | ✅ COMPLETE | Auto-reconciliation and monitoring in place. |
-| 12 Validation Tests | ✅ COMPLETE | All passing. Any changes must maintain passing status. |
+| **P2P Payment Verification** | ✅ COMPLETE | **CRITICAL: Release BLOCKED without verification.** |
+| **Dynamic Dispute Penalties** | ✅ COMPLETE | **Replaces flat £5 with percentage-based system.** |
+| **Dispute Rules Engine** | ✅ COMPLETE | **8 automated rules, auto-resolve enabled.** |
+| 21 Validation Tests | ✅ COMPLETE | All passing. Any changes must maintain passing status. |
 
 ---
 
