@@ -27993,8 +27993,11 @@ async def mark_p2p_trade_as_paid(request: Request):
         trade_id = data.get("trade_id")
         user_id = data.get("user_id")
         
+        logger.info(f"🔍 MARK-PAID: Looking for trade_id={trade_id} in db={db_name}")
+        
         # Get trade
         trade = await db.p2p_trades.find_one({"trade_id": trade_id})
+        logger.info(f"🔍 MARK-PAID: Trade found={trade is not None}")
         if not trade:
             raise HTTPException(status_code=404, detail="Trade not found")
         
