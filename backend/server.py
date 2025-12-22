@@ -33335,25 +33335,22 @@ async def get_savings_positions(user_id: str):
                 "pnl_percentage": round(pnl_percentage, 2),
                 "pnl_usd": round(pnl_usd, 2),
                 "pnl_crypto": round(pnl_crypto, 6),
-                "apy": apy,
-                "type": saving.get('type', 'flexible'),
-                "auto_compound": saving.get('auto_compound', False),
-                "interest_earned": interest_earned,
-                "interest_earned_usd": round(interest_earned_usd, 2),
-                "estimated_monthly": round(monthly_return, 2),
-                "lock_period": saving.get('lock_period', None),
+                "type": saving.get('type', 'notice'),
+                "notice_period": saving.get('notice_period', 30),
+                "notice_given": saving.get('notice_given', False),
+                "notice_date": saving.get('notice_date', None),
+                "available_date": saving.get('available_date', None),
                 "deposit_timestamp": entry_timestamp
             }
             
             positions.append(position_data)
             
             total_balance_usd += balance_usd
-            total_interest_earned_usd += interest_earned_usd
             
-            if position_data['type'] == 'flexible':
+            if position_data.get('notice_given'):
                 available_balance_usd += balance_usd
         
-        # Calculate locked balance
+        # Calculate locked balance (funds where notice not yet given)
         locked_balance_usd = total_balance_usd - available_balance_usd
         
         return {
@@ -33364,9 +33361,7 @@ async def get_savings_positions(user_id: str):
             "locked_balance_usd": round(locked_balance_usd, 2),
             "locked_balance_crypto": "0.00 BTC",
             "available_balance_usd": round(available_balance_usd, 2),
-            "available_balance_crypto": "0.00 BTC",
-            "total_interest_earned_usd": round(total_interest_earned_usd, 2),
-            "total_interest_earned_crypto": "0.00 BTC"
+            "available_balance_crypto": "0.00 BTC"
         }
     except Exception as e:
         logger.error(f"Error fetching savings positions: {str(e)}")
