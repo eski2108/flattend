@@ -22674,6 +22674,115 @@ logger = logging.getLogger(__name__)
 # P2P TRADE CHAT SYSTEM
 
 # ============================================================================
+# P2P CRYPTOGRAPHIC PROOF PROTOCOL
+# ============================================================================
+
+from services.p2p_proof_protocol import get_p2p_proof_protocol
+
+@api_router.get("/p2p/proof/chain/{trade_id}")
+async def get_trade_proof_chain(trade_id: str):
+    """
+    Get complete cryptographic proof chain for a trade
+    
+    This can be independently verified by any third party
+    using only public keys and protocol rules.
+    """
+    try:
+        proof_protocol = get_p2p_proof_protocol(db)
+        chain = await proof_protocol.get_trade_proof_chain(trade_id)
+        
+        return {
+            "success": True,
+            "trade_id": trade_id,
+            "proof_chain": chain
+        }
+    except Exception as e:
+        logger.error(f"Failed to get proof chain: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/p2p/proof/export/{trade_id}")
+async def export_verifiable_record(trade_id: str):
+    """
+    Export complete, independently verifiable record
+    
+    This record contains all cryptographic proofs and can be
+    verified by any third party without platform access.
+    
+    Contains:
+    - Hash chain (ordered blocks)
+    - All proof packages
+    - All signed receipts
+    - Verification instructions
+    """
+    try:
+        proof_protocol = get_p2p_proof_protocol(db)
+        export = await proof_protocol.export_verifiable_record(trade_id)
+        
+        return {
+            "success": True,
+            "export": export
+        }
+    except Exception as e:
+        logger.error(f"Failed to export verifiable record: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/proof/verify")
+async def verify_proof_package(request: dict):
+    """
+    Verify a proof package's integrity
+    
+    Checks:
+    - Data hash integrity
+    - Chain membership (journey proof)
+    - Origin attestation
+    """
+    try:
+        package = request.get("proof_package")
+        if not package:
+            raise HTTPException(status_code=400, detail="proof_package required")
+        
+        proof_protocol = get_p2p_proof_protocol(db)
+        result = await proof_protocol.proof_package.verify_proof_package(package)
+        
+        return {
+            "success": True,
+            "verification": result
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to verify proof package: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/p2p/proof/chain-verify/{chain_id}")
+async def verify_hash_chain(chain_id: str):
+    """
+    Verify integrity of a complete hash chain
+    
+    Checks:
+    - Sequence ordering
+    - Hash linkage (prev_hash → block_hash)
+    - Data integrity (data_hash matches data)
+    - Block hash integrity
+    """
+    try:
+        proof_protocol = get_p2p_proof_protocol(db)
+        result = await proof_protocol.crypto.verify_chain(chain_id)
+        
+        return {
+            "success": True,
+            "chain_id": chain_id,
+            "verification": result
+        }
+    except Exception as e:
+        logger.error(f"Failed to verify chain: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
 # P2P PAYMENT VERIFICATION SYSTEM
 # ============================================================================
 
