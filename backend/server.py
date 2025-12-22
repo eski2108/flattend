@@ -12070,13 +12070,14 @@ async def get_admin_dashboard_stats():
     total_disputes = await db.disputes.count_documents({})
     open_disputes = await db.disputes.count_documents({"status": {"$in": ["open", "under_review"]}})
     
-    # Revenue stats - Include all fee sources
-    transaction_fees = await db.transactions.aggregate([
-        {"$group": {"_id": None, "total": {"$sum": "$fee"}}}
+    # Revenue stats - Pull from admin_revenue (the main source)
+    admin_revenue_total = await db.admin_revenue.aggregate([
+        {"$match": {"amount": {"$gt": 0}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
     ]).to_list(1)
     
-    # P2P Express fees
-    p2p_express_fees = await db.platform_fees.aggregate([
+    # Fee transactions backup
+    fee_txns_total = await db.fee_transactions.aggregate([
         {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
     ]).to_list(1)
     
@@ -12085,9 +12086,13 @@ async def get_admin_dashboard_stats():
         {"user_id": "PLATFORM_FEES", "currency": "GBP"},
         {"_id": 0}
     )
+    admin_wallet = await db.wallets.find_one(
+        {"user_id": "admin_wallet", "currency": "GBP"},
+        {"_id": 0}
+    )
     
-    total_platform_fees = (transaction_fees[0]["total"] if transaction_fees else 0) + \
-                          (p2p_express_fees[0]["total"] if p2p_express_fees else 0)
+    total_platform_fees = admin_revenue_total[0]["total"] if admin_revenue_total else 0
+    total_fee_txns = fee_txns_total[0]["total"] if fee_txns_total else 0
     
     return {
         "success": True,
