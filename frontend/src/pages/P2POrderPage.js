@@ -470,7 +470,7 @@ export default function P2POrderPage() {
                     }}
                   >
                     <IoCheckmarkCircle size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                    Mark as Paid
+                    {t('p2p.buttons.markAsPaid')}
                   </button>
                 )}
 
