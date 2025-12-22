@@ -30390,6 +30390,9 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
                         tx_date = datetime.now(timezone.utc)
                 else:
                     tx_date = tx_timestamp
+                    # Ensure timezone awareness
+                    if tx_date.tzinfo is None:
+                        tx_date = tx_date.replace(tzinfo=timezone.utc)
                 
                 if tx_date >= start_date:
                     filtered_records.append(record)
