@@ -491,7 +491,7 @@ export default function P2POrderPage() {
                       boxShadow: '0 0 20px rgba(34, 197, 94, 0.4)'
                     }}
                   >
-                    Release Crypto
+                    {t('p2p.buttons.releaseCrypto')}
                   </button>
                 )}
 
@@ -511,7 +511,7 @@ export default function P2POrderPage() {
                       boxShadow: '0 0 20px rgba(255, 165, 0, 0.4)'
                     }}
                   >
-                    ⭐ Rate This Trade
+                    ⭐ {t('p2p.buttons.rateTrade')}
                   </button>
                 )}
 
@@ -532,7 +532,7 @@ export default function P2POrderPage() {
                       }}
                     >
                       <IoWarning size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                      Dispute
+                      {t('p2p.buttons.dispute')}
                     </button>
 
                     {isBuyer && trade.status === 'pending_payment' && (
@@ -550,7 +550,7 @@ export default function P2POrderPage() {
                           cursor: processing ? 'not-allowed' : 'pointer'
                         }}
                       >
-                        Cancel Order
+                        {t('p2p.buttons.cancelOrder')}
                       </button>
                     )}
                   </>
