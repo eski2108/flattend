@@ -59,7 +59,11 @@ const resources = {
 const getSavedLanguage = () => {
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
-      return localStorage.getItem('language') || 'en';
+      // Check multiple possible keys for backwards compatibility
+      return localStorage.getItem('userLanguage') || 
+             localStorage.getItem('language') || 
+             localStorage.getItem('i18nextLng') || 
+             'en';
     }
   } catch (e) {
     console.warn('localStorage not available:', e);
