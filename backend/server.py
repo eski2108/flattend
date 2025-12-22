@@ -23118,18 +23118,36 @@ async def resolve_dispute(dispute_id: str, request: dict):
         winner_id = dispute.get("buyer_id") if winner == "buyer" else dispute.get("seller_id")
         loser_id = dispute.get("seller_id") if winner == "buyer" else dispute.get("buyer_id")
         
-        # Charge £5 dispute fee to loser
-        dispute_fee = 5.0
+        # ═══════════════════════════════════════════════════════════════════
+        # 🔒 DYNAMIC PENALTY CALCULATION (replaces flat £5 fee)
+        # ═══════════════════════════════════════════════════════════════════
+        dispute_rules = get_dispute_rules_engine(db)
+        penalty_calc = await dispute_rules.penalty_calculator.calculate_penalty(
+            trade_id=dispute.get("trade_id"),
+            loser_id=loser_id,
+            winner_id=winner_id,
+            reason=dispute.get("reason", "other"),
+            admin_fault_override=request.get("fault_percentage")  # Admin can override
+        )
+        
+        dispute_fee = penalty_calc.get("penalty", 25.0)  # Default £25 minimum
+        fee_currency = penalty_calc.get("currency", "GBP")
+        fee_calculation = penalty_calc.get("calculation", {})
+        
+        logger.info(f"💰 Dynamic dispute fee calculated: £{dispute_fee} for trade {dispute.get('trade_id')}")
+        logger.info(f"   Calculation: {fee_calculation}")
+        
         fee_transaction_id = f"fee_dispute_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
         
         await db.fee_transactions.insert_one({
             "transaction_id": fee_transaction_id,
             "user_id": loser_id,
-            "type": "dispute_fee",
+            "type": "dispute_penalty",
             "amount": dispute_fee,
-            "currency": "GBP",
+            "currency": fee_currency,
             "dispute_id": dispute_id,
             "trade_id": dispute.get("trade_id"),
+            "calculation": fee_calculation,
             "status": "completed",
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
@@ -23143,6 +23161,7 @@ async def resolve_dispute(dispute_id: str, request: dict):
                     "transactions": {
                         "transaction_id": fee_transaction_id,
                         "amount": dispute_fee,
+                        "calculation_method": "dynamic",
                         "timestamp": datetime.now(timezone.utc).isoformat()
                     }
                 }
