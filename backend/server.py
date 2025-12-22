@@ -22674,6 +22674,154 @@ logger = logging.getLogger(__name__)
 # P2P TRADE CHAT SYSTEM
 
 # ============================================================================
+# P2P PAYMENT VERIFICATION SYSTEM
+# ============================================================================
+
+@api_router.get("/p2p/payment/verify/{trade_id}")
+async def verify_trade_payment(trade_id: str):
+    """
+    Check payment verification status for a trade
+    
+    Returns verification status from all providers (TrueLayer, PayPal, Manual)
+    """
+    try:
+        payment_service = get_payment_verification_service(db)
+        verification = await payment_service.verify_payment(trade_id)
+        
+        return {
+            "success": True,
+            "trade_id": trade_id,
+            "verification": verification
+        }
+    except Exception as e:
+        logger.error(f"Payment verification check failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/payment/upload-proof")
+async def upload_payment_proof(request: dict):
+    """
+    Upload payment proof (screenshot, bank statement) for manual verification
+    """
+    try:
+        trade_id = request.get("trade_id")
+        user_id = request.get("user_id")
+        file_data = request.get("file_data")  # Base64 encoded
+        file_type = request.get("file_type", "image/png")
+        extracted_data = request.get("extracted_data", {})  # OCR data from frontend
+        
+        if not all([trade_id, user_id, file_data]):
+            raise HTTPException(status_code=400, detail="trade_id, user_id, and file_data required")
+        
+        # Verify user is buyer
+        trade = await db.p2p_trades.find_one({"trade_id": trade_id}, {"buyer_id": 1})
+        if not trade:
+            trade = await db.trades.find_one({"trade_id": trade_id}, {"buyer_id": 1})
+        
+        if not trade:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        
+        if trade.get("buyer_id") != user_id:
+            raise HTTPException(status_code=403, detail="Only buyer can upload payment proof")
+        
+        payment_service = get_payment_verification_service(db)
+        result = await payment_service.upload_payment_proof(
+            trade_id=trade_id,
+            user_id=user_id,
+            file_data=file_data,
+            file_type=file_type,
+            extracted_data=extracted_data
+        )
+        
+        # Trigger verification
+        verification = await payment_service.verify_payment(trade_id)
+        
+        return {
+            "success": True,
+            "upload_result": result,
+            "verification": verification
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Payment proof upload failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/p2p/payment/verify")
+async def admin_verify_payment(request: dict):
+    """
+    Admin: Manually verify or reject payment
+    """
+    try:
+        trade_id = request.get("trade_id")
+        admin_id = request.get("admin_id")
+        verified = request.get("verified", False)
+        notes = request.get("notes", "")
+        
+        if not all([trade_id, admin_id]):
+            raise HTTPException(status_code=400, detail="trade_id and admin_id required")
+        
+        # Verify admin
+        admin = await db.users.find_one({"user_id": admin_id, "role": "admin"})
+        if not admin:
+            raise HTTPException(status_code=403, detail="Admin access required")
+        
+        payment_service = get_payment_verification_service(db)
+        result = await payment_service.admin_verify_payment(
+            trade_id=trade_id,
+            admin_id=admin_id,
+            verified=verified,
+            notes=notes
+        )
+        
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Admin payment verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/disputes/auto-resolve/{dispute_id}")
+async def auto_resolve_dispute(dispute_id: str):
+    """
+    Trigger automatic dispute resolution using rules engine
+    """
+    try:
+        dispute_engine = get_dispute_rules_engine(db)
+        result = await dispute_engine.auto_resolve_if_possible(dispute_id)
+        
+        return {
+            "success": True,
+            "dispute_id": dispute_id,
+            "result": result
+        }
+    except Exception as e:
+        logger.error(f"Auto dispute resolution failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/p2p/disputes/evaluate/{dispute_id}")
+async def evaluate_dispute(dispute_id: str):
+    """
+    Get automated evaluation of dispute (without resolving)
+    """
+    try:
+        dispute_engine = get_dispute_rules_engine(db)
+        evaluation = await dispute_engine.evaluate_dispute(dispute_id)
+        
+        return {
+            "success": True,
+            "dispute_id": dispute_id,
+            "evaluation": evaluation
+        }
+    except Exception as e:
+        logger.error(f"Dispute evaluation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
 # P2P DISPUTE SYSTEM
 # ============================================================================
 
