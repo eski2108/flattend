@@ -102,6 +102,7 @@ from services.atomic_balance_service import AtomicBalanceService, get_atomic_bal
 from services.liquidity_reservation import LiquidityReservationService, get_liquidity_reservation_service
 from services.balance_schema import BALANCE_FIELD_MAP, get_field, normalize_balance_doc
 from services.referral_chain import ReferralChainService, get_referral_chain_service
+from services.payment_verification import get_payment_verification_service, get_dispute_rules_engine, PaymentStatus
 from core.config import PaymentConfig, payment_config
 from api.integrity import router as integrity_router, set_database as set_integrity_db
 from telegram_service import get_telegram_service
