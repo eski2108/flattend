@@ -413,7 +413,7 @@ function PaymentMethods() {
                         justifyContent: 'center'
                       }}
                     >
-                      <Trash2 size={18} color="#EF4444" />
+                      <IoTrash size={18} color="#EF4444" />
                     </button>
                   </div>
                 </div>
