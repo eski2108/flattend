@@ -540,23 +540,34 @@ async def sync_balance_update(user_id: str, currency: str, new_available: float,
 # END PAYMENT SYSTEM v2.0 CORE BALANCE FUNCTIONS
 # ============================================================================
 
-# sync_release_balance function (for P2P escrow release)
-        new_locked = current_locked - amount
-        
-        await sync_balance_update(user_id, currency, new_available, new_locked, f"UNLOCK:{reason}")
-        logger.info(f"🔓 UNLOCKED {amount} {currency} for {user_id} ({reason})")
-        return True
-    except Exception as e:
-        logger.error(f"❌ UNLOCK ERROR: {user_id}/{currency}: {e}")
-        return False
-
-# ⚠️ SYNC_RELEASE - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
+# ⚠️ SYNC_RELEASE - Using AtomicBalanceService ⚠️
 async def sync_release_locked_balance(user_id: str, currency: str, amount: float, to_user_id: str, reason: str = "release"):
     """
-    FROZEN FUNCTION - Release locked balance to another user (e.g., P2P trade completion).
-    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    Release locked balance to another user (e.g., P2P trade completion).
+    PAYMENT SYSTEM v2.0 - Uses AtomicBalanceService.atomic_release
     """
     try:
+        import uuid
+        result = await atomic_balance_service.atomic_release(
+            from_user_id=user_id,
+            to_user_id=to_user_id,
+            currency=currency,
+            amount=amount,
+            release_type=reason,
+            ref_id=str(uuid.uuid4()),
+            metadata={"legacy_function": "sync_release_locked_balance", "reason": reason}
+        )
+        if result.get("success"):
+            logger.info(f"🔓 RELEASED {amount} {currency} from {user_id} to {to_user_id} ({reason}) [ATOMIC]")
+            return True
+        return False
+    except ValueError as ve:
+        logger.error(f"❌ RELEASE FAILED: {ve}")
+        return False
+    except Exception as e:
+        logger.error(f"❌ RELEASE ERROR: {user_id}/{currency}: {e}")
+        # Fallback to legacy method
+        try:
         # Debit from seller's locked balance
         seller_wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
         if not seller_wallet:
