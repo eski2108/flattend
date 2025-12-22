@@ -353,11 +353,11 @@ export default function P2POrderPage() {
                 color: trade.status === 'completed' ? '#22C55E' : '#FFA500',
                 fontWeight: '600'
               }}>
-                {trade.status === 'pending_payment' ? 'Waiting for Payment' :
-                 trade.status === 'payment_made' ? 'Payment Made' :
-                 trade.status === 'completed' ? 'Completed' :
-                 trade.status === 'cancelled' ? 'Cancelled' :
-                 trade.status === 'disputed' ? 'Disputed' : trade.status}
+                {trade.status === 'pending_payment' ? t('p2p.status.waitingForPayment') :
+                 trade.status === 'payment_made' ? t('p2p.status.paymentMade') :
+                 trade.status === 'completed' ? t('p2p.status.completed') :
+                 trade.status === 'cancelled' ? t('p2p.status.cancelled') :
+                 trade.status === 'disputed' ? t('p2p.status.disputed') : trade.status}
               </div>
             </div>
             
