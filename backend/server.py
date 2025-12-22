@@ -20462,26 +20462,46 @@ async def get_admin_wallet_balance():
     try:
         admin_wallet_id = PLATFORM_CONFIG["admin_wallet_id"]
         
-        # Get all balances
-        balances = await db.crypto_balances.find(
+        # Get all balances from WALLETS collection (source of truth)
+        wallet_balances = await db.wallets.find(
             {"user_id": admin_wallet_id},
-            {"_id": 0, "currency": 1, "balance": 1}
+            {"_id": 0, "currency": 1, "available_balance": 1, "locked_balance": 1, "total_balance": 1}
         ).to_list(100)
         
         # Format response
         balance_dict = {}
         total_usd = 0
         
-        for bal in balances:
-            balance_dict[bal["currency"]] = bal["balance"]
+        for bal in wallet_balances:
+            currency = bal.get("currency", "UNKNOWN")
+            # Use available_balance as the primary balance
+            balance = float(bal.get("available_balance", bal.get("total_balance", 0)))
+            balance_dict[currency] = balance
+            
             # Calculate USD value using live prices
             try:
-                live_price = await get_live_price(bal["currency"], "usd")
-                if live_price > 0:
-                    total_usd += bal["balance"] * live_price
+                if currency in ["BTC", "ETH", "USDT"]:
+                    live_price = await get_live_price(currency, "usd")
+                    if live_price > 0:
+                        total_usd += balance * live_price
+                elif currency == "GBP":
+                    # GBP to USD approximate
+                    total_usd += balance * 1.27
             except Exception:
-                # Fallback to 0 if price fetch fails
                 pass
+        
+        # Also check admin_revenue collection for accumulated fees
+        admin_revenue = await db.admin_revenue.find(
+            {},
+            {"_id": 0, "currency": 1, "total_amount": 1}
+        ).to_list(100)
+        
+        revenue_by_currency = {}
+        for rev in admin_revenue:
+            currency = rev.get("currency", "UNKNOWN")
+            if currency not in revenue_by_currency:
+                revenue_by_currency[currency] = 0
+            revenue_by_currency[currency] += float(rev.get("total_amount", 0))
         
         # Get fee transaction history
         recent_fees = await db.transactions.find(
@@ -20492,8 +20512,10 @@ async def get_admin_wallet_balance():
         return {
             "success": True,
             "balances": balance_dict,
-            "total_usd": total_usd,
-            "recent_fees": recent_fees
+            "total_value_usd": total_usd,
+            "accumulated_revenue": revenue_by_currency,
+            "recent_fees": recent_fees,
+            "source": "wallets_collection"
         }
     except Exception as e:
         logger.error(f"Error fetching admin wallet balance: {str(e)}")
