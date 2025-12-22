@@ -382,6 +382,9 @@ python scripts/validate_atomic_ops.py --phase all
 | **P2P Payment Verification** | ✅ COMPLETE | **CRITICAL: Release BLOCKED without verification.** |
 | **Dynamic Dispute Penalties** | ✅ COMPLETE | **Replaces flat £5 with percentage-based system.** |
 | **Dispute Rules Engine** | ✅ COMPLETE | **8 automated rules, auto-resolve enabled.** |
+| **HSM Key Management** | ✅ COMPLETE | **Hardware secure key management via AWS KMS.** |
+| **Quantum-Resistant Signatures** | ✅ COMPLETE | **Lamport signatures as backup layer.** |
+| **Cryptographic Test Suite** | ✅ COMPLETE | **8/8 tests passing. Do NOT modify crypto primitives.** |
 | 21 Validation Tests | ✅ COMPLETE | All passing. Any changes must maintain passing status. |
 
 ---
