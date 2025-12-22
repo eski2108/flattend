@@ -34940,3 +34940,59 @@ async def get_telegram_status_query(user_id: str):
     except Exception as e:
         logger.error(f"Error getting telegram status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== NOTICE ACCOUNT - GIVE NOTICE ====================
+@api_router.post("/savings/give-notice")
+async def give_withdrawal_notice(request: dict):
+    """Give notice to withdraw from notice account"""
+    try:
+        user_id = request.get('user_id')
+        currency = request.get('currency', '').upper()
+        
+        if not user_id or not currency:
+            raise HTTPException(status_code=400, detail="user_id and currency required")
+        
+        # Get the savings position
+        position = await db.savings_balances.find_one({
+            "user_id": user_id,
+            "currency": currency
+        })
+        
+        if not position:
+            raise HTTPException(status_code=404, detail="No savings position found")
+        
+        if position.get('notice_given'):
+            return {
+                "success": False,
+                "message": "Notice already given",
+                "available_date": position.get('available_date')
+            }
+        
+        # Get notice period (default 30 days)
+        notice_period = position.get('notice_period', 30)
+        notice_date = datetime.now(timezone.utc)
+        available_date = notice_date + timedelta(days=notice_period)
+        
+        # Update position
+        await db.savings_balances.update_one(
+            {"user_id": user_id, "currency": currency},
+            {"$set": {
+                "notice_given": True,
+                "notice_date": notice_date,
+                "available_date": available_date
+            }}
+        )
+        
+        return {
+            "success": True,
+            "message": f"Notice given. Funds available for withdrawal on {available_date.strftime('%Y-%m-%d')}",
+            "notice_period": notice_period,
+            "notice_date": notice_date.isoformat(),
+            "available_date": available_date.isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error giving notice: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
