@@ -201,7 +201,7 @@ export default function Dashboard() {
                   }}
                 >
                   <IoRefresh size={16} />
-                  Refresh
+                  {t('common.refresh')}
                 </button>
               </div>
               <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.6) 50%, transparent 100%)', boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)' }} />
