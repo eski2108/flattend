@@ -17174,7 +17174,19 @@ async def initiate_withdrawal(request: InitiateWithdrawalRequest, req: Request):
     
     # Initialize balance if it doesn't exist
     if not balance:
-        balance = {"user_id": request.user_id, "currency": request.currency, "balance": 0.0}
+        balance = {"user_id": request.user_id, "currency": request.currency, "balance": 0.0, "available_balance": 0.0}
+    
+    # 🔒 CRITICAL: VALIDATE SUFFICIENT BALANCE BEFORE CREATING WITHDRAWAL REQUEST
+    available_balance = float(balance.get("available_balance", balance.get("balance", 0.0)))
+    total_needed = float(request.amount)  # Full amount including fee will be deducted
+    
+    if available_balance < total_needed:
+        logger.warning(f"[WITHDRAWAL] Insufficient balance: user={request.user_id}, currency={request.currency}, "
+                      f"requested={total_needed}, available={available_balance}")
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Insufficient balance. Available: {available_balance:.8f} {request.currency}, Requested: {total_needed:.8f} {request.currency}"
+        )
     
     # AUTOMATED FEE CALCULATION
     withdrawal_fee_percent = PLATFORM_CONFIG["withdraw_fee_percent"]
