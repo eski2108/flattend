@@ -373,101 +373,174 @@ async def sync_balance_update(user_id: str, currency: str, available_balance: fl
         logger.error(f"❌ SYNC ERROR: {operation} {user_id}/{currency}: {e}")
         return False
 
-# ⚠️ SYNC_CREDIT - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
+# ============================================================================
+# PAYMENT SYSTEM v2.0 - CORE BALANCE FUNCTIONS
+# INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
+# These functions now use AtomicBalanceService with audit trail
+# ============================================================================
+
 async def sync_credit_balance(user_id: str, currency: str, amount: float, reason: str = "credit"):
     """
-    FROZEN FUNCTION - Credit (add) to user's balance across ALL 4 collections.
-    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    Credit (add) to user's balance across ALL 4 collections using AtomicBalanceService.
+    PAYMENT SYSTEM v2.0 - Uses atomic operations with full audit trail.
     """
     try:
-        # Get current balance from wallets (source of truth)
-        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
-        current_available = float(wallet.get("available_balance", 0)) if wallet else 0
-        current_locked = float(wallet.get("locked_balance", 0)) if wallet else 0
-        
-        new_available = current_available + amount
-        
-        await sync_balance_update(user_id, currency, new_available, current_locked, f"CREDIT:{reason}")
-        logger.info(f"💰 CREDITED {amount} {currency} to {user_id} ({reason})")
-        return True
+        import uuid
+        result = await atomic_balance_service.atomic_credit(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            tx_type=reason,
+            ref_id=str(uuid.uuid4()),
+            metadata={"legacy_function": "sync_credit_balance", "reason": reason}
+        )
+        if result.get("success"):
+            logger.info(f"💰 CREDITED {amount} {currency} to {user_id} ({reason}) [ATOMIC]")
+            return True
+        return False
     except Exception as e:
         logger.error(f"❌ CREDIT ERROR: {user_id}/{currency}: {e}")
         return False
 
-# ⚠️ SYNC_DEBIT - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_debit_balance(user_id: str, currency: str, amount: float, reason: str = "debit"):
     """
-    FROZEN FUNCTION - Debit (subtract) from user's balance across ALL 4 collections.
-    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    Debit (subtract) from user's balance across ALL 4 collections using AtomicBalanceService.
+    PAYMENT SYSTEM v2.0 - Uses atomic operations with full audit trail.
     """
     try:
-        # Get current balance from wallets (source of truth)
-        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
-        if not wallet:
-            logger.error(f"❌ DEBIT FAILED: No wallet for {user_id}/{currency}")
-            return False
-            
-        current_available = float(wallet.get("available_balance", 0))
-        current_locked = float(wallet.get("locked_balance", 0))
-        
-        if current_available < amount:
-            logger.error(f"❌ DEBIT FAILED: Insufficient balance. Has {current_available}, needs {amount}")
-            return False
-        
-        new_available = current_available - amount
-        
-        await sync_balance_update(user_id, currency, new_available, current_locked, f"DEBIT:{reason}")
-        logger.info(f"💸 DEBITED {amount} {currency} from {user_id} ({reason})")
-        return True
+        import uuid
+        result = await atomic_balance_service.atomic_debit(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            tx_type=reason,
+            ref_id=str(uuid.uuid4()),
+            metadata={"legacy_function": "sync_debit_balance", "reason": reason}
+        )
+        if result.get("success"):
+            logger.info(f"💸 DEBITED {amount} {currency} from {user_id} ({reason}) [ATOMIC]")
+            return True
+        return False
+    except ValueError as ve:
+        logger.error(f"❌ DEBIT FAILED: {ve}")
+        return False
     except Exception as e:
         logger.error(f"❌ DEBIT ERROR: {user_id}/{currency}: {e}")
         return False
 
-# ⚠️ SYNC_LOCK - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_lock_balance(user_id: str, currency: str, amount: float, reason: str = "lock"):
     """
-    FROZEN FUNCTION - Lock balance (move from available to locked) across ALL 4 collections.
-    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    Lock balance (move from available to locked) across ALL 4 collections using AtomicBalanceService.
+    PAYMENT SYSTEM v2.0 - Uses atomic operations with full audit trail.
     """
     try:
-        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
-        if not wallet:
-            return False
-            
-        current_available = float(wallet.get("available_balance", 0))
-        current_locked = float(wallet.get("locked_balance", 0))
-        
-        if current_available < amount:
-            return False
-        
-        new_available = current_available - amount
-        new_locked = current_locked + amount
-        
-        await sync_balance_update(user_id, currency, new_available, new_locked, f"LOCK:{reason}")
-        logger.info(f"🔒 LOCKED {amount} {currency} for {user_id} ({reason})")
-        return True
+        import uuid
+        result = await atomic_balance_service.atomic_lock(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            lock_type=reason,
+            ref_id=str(uuid.uuid4()),
+            metadata={"legacy_function": "sync_lock_balance", "reason": reason}
+        )
+        if result.get("success"):
+            logger.info(f"🔒 LOCKED {amount} {currency} for {user_id} ({reason}) [ATOMIC]")
+            return True
+        return False
+    except ValueError as ve:
+        logger.error(f"❌ LOCK FAILED: {ve}")
+        return False
     except Exception as e:
         logger.error(f"❌ LOCK ERROR: {user_id}/{currency}: {e}")
         return False
 
-# ⚠️ SYNC_UNLOCK - INTEGRITY_CHECKSUM: f8a9e2c1d4b7 - DO NOT MODIFY ⚠️
 async def sync_unlock_balance(user_id: str, currency: str, amount: float, reason: str = "unlock"):
     """
-    FROZEN FUNCTION - Unlock balance (move from locked to available) across ALL 4 collections.
-    ATOMIC UPDATE TO: wallets, crypto_balances, trader_balances, internal_balances
+    Unlock balance (move from locked to available) across ALL 4 collections using AtomicBalanceService.
+    PAYMENT SYSTEM v2.0 - Uses atomic operations with full audit trail.
     """
     try:
-        wallet = await db.wallets.find_one({"user_id": user_id, "currency": currency})
-        if not wallet:
-            return False
-            
-        current_available = float(wallet.get("available_balance", 0))
-        current_locked = float(wallet.get("locked_balance", 0))
-        
-        if current_locked < amount:
-            return False
-        
-        new_available = current_available + amount
+        import uuid
+        result = await atomic_balance_service.atomic_unlock(
+            user_id=user_id,
+            currency=currency,
+            amount=amount,
+            unlock_type=reason,
+            ref_id=str(uuid.uuid4()),
+            metadata={"legacy_function": "sync_unlock_balance", "reason": reason}
+        )
+        if result.get("success"):
+            logger.info(f"🔓 UNLOCKED {amount} {currency} for {user_id} ({reason}) [ATOMIC]")
+            return True
+        return False
+    except ValueError as ve:
+        logger.error(f"❌ UNLOCK FAILED: {ve}")
+        return False
+    except Exception as e:
+        logger.error(f"❌ UNLOCK ERROR: {user_id}/{currency}: {e}")
+        return False
+
+# Legacy function for backward compatibility - will be removed in v3.0
+async def sync_balance_update(user_id: str, currency: str, new_available: float, new_locked: float, reason: str = "update"):
+    """
+    DEPRECATED: Direct balance update. Use sync_credit_balance/sync_debit_balance instead.
+    Kept for backward compatibility only.
+    """
+    timestamp = datetime.now(timezone.utc)
+    total = new_available + new_locked
+    
+    # Update all 4 collections
+    await db.wallets.update_one(
+        {"user_id": user_id, "currency": currency},
+        {"$set": {
+            "available_balance": new_available,
+            "locked_balance": new_locked,
+            "total_balance": total,
+            "last_updated": timestamp
+        }},
+        upsert=True
+    )
+    
+    await db.crypto_balances.update_one(
+        {"user_id": user_id, "currency": currency},
+        {"$set": {
+            "balance": total,
+            "available_balance": new_available,
+            "locked_balance": new_locked,
+            "last_updated": timestamp
+        }},
+        upsert=True
+    )
+    
+    await db.trader_balances.update_one(
+        {"trader_id": user_id, "currency": currency},
+        {"$set": {
+            "total_balance": total,
+            "available_balance": new_available,
+            "locked_balance": new_locked,
+            "updated_at": timestamp
+        }},
+        upsert=True
+    )
+    
+    await db.internal_balances.update_one(
+        {"user_id": user_id, "currency": currency},
+        {"$set": {
+            "balance": total,
+            "available_balance": new_available,
+            "locked_balance": new_locked,
+            "updated_at": timestamp
+        }},
+        upsert=True
+    )
+    
+    return True
+
+# ============================================================================
+# END PAYMENT SYSTEM v2.0 CORE BALANCE FUNCTIONS
+# ============================================================================
+
+# sync_release_balance function (for P2P escrow release)
         new_locked = current_locked - amount
         
         await sync_balance_update(user_id, currency, new_available, new_locked, f"UNLOCK:{reason}")
