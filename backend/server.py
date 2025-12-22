@@ -35270,6 +35270,21 @@ async def force_sync_all_balances(user_id: str):
 
 
 # =====================================================================
+# PAYMENT SYSTEM v2.0 - INTEGRITY ROUTER REGISTRATION
+# INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
+# =====================================================================
+# Initialize integrity checking with database
+try:
+    set_integrity_db(db)
+    logger.info("✅ Integrity checking database initialized")
+except Exception as e:
+    logger.warning(f"⚠️ Could not initialize integrity database: {e}")
+
+# Register integrity router under /api prefix
+api_router.include_router(integrity_router, tags=["Integrity"])
+logger.info("✅ Integrity router registered at /api/integrity/*")
+
+# =====================================================================
 # FINAL ROUTER REGISTRATION - MUST BE AT END OF FILE
 # This ensures ALL endpoints defined above are registered
 # =====================================================================
