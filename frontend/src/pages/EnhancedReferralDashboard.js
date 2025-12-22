@@ -35,7 +35,7 @@ export default function EnhancedReferralDashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const response = await axios.get(`${API}/referral/enhanced-dashboard/${user.user_id}`);
+      const response = await axios.get(`${API}/api/referral/enhanced-dashboard/${user.user_id}`);
       setDashboard(response.data);
     } catch (error) {
       console.error('Error fetching dashboard:', error);
@@ -47,7 +47,7 @@ export default function EnhancedReferralDashboard() {
   const createPrivateCode = async () => {
     setCreatingPrivate(true);
     try {
-      await axios.post(`${API}/referral/create-private-code?user_id=${user.user_id}`);
+      await axios.post(`${API}/api/referral/create-private-code?user_id=${user.user_id}`);
       await fetchDashboard();
     } catch (error) {
       alert('Failed to create private code');
@@ -59,7 +59,7 @@ export default function EnhancedReferralDashboard() {
   const createPublicCode = async () => {
     setCreatingPublic(true);
     try {
-      await axios.post(`${API}/referral/create-public-code?user_id=${user.user_id}`);
+      await axios.post(`${API}/api/referral/create-public-code?user_id=${user.user_id}`);
       await fetchDashboard();
     } catch (error) {
       alert('Failed to create public code');

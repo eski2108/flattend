@@ -38,7 +38,7 @@ export default function AdminSetup() {
     setLoading(true);
     try {
       // Register the user
-      const response = await axios.post(`${API}/auth/register`, {
+      const response = await axios.post(`${API}/api/auth/register`, {
         email: formData.email,
         password: formData.password,
         full_name: formData.fullName

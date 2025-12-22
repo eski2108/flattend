@@ -99,7 +99,7 @@ export default function MarketplaceExpress() {
     setExpressMatch(null);
 
     try {
-      const response = await axios.post(`${API}/p2p/express-match`, {
+      const response = await axios.post(`${API}/api/p2p/express-match`, {
         user_id: currentUser.user_id,
         action: activeTab,
         cryptocurrency: selectedCrypto,
@@ -138,7 +138,7 @@ export default function MarketplaceExpress() {
       if (minAmount) params.min_amount = parseFloat(minAmount);
       if (maxAmount) params.max_amount = parseFloat(maxAmount);
 
-      const response = await axios.get(`${API}/p2p/manual-mode/adverts`, { params });
+      const response = await axios.get(`${API}/api/p2p/manual-mode/adverts`, { params });
 
       if (response.data.success) {
         setManualAdverts(response.data.adverts || []);

@@ -37,7 +37,7 @@ export default function OrderDetails() {
 
   const fetchOrderDetails = async (userId) => {
     try {
-      const ordersResp = await axios.get(`${API}/crypto-market/orders/${userId}`);
+      const ordersResp = await axios.get(`${API}/api/crypto-market/orders/${userId}`);
       const allOrders = [...ordersResp.data.buy_orders, ...ordersResp.data.sell_orders];
       const foundOrder = allOrders.find(o => o.order_id === orderId);
       
@@ -60,7 +60,7 @@ export default function OrderDetails() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/disputes/initiate`, {
+      const response = await axios.post(`${API}/api/disputes/initiate`, {
         user_address: currentUser.user_id,
         order_id: orderId,
         reason: disputeReason,
@@ -94,7 +94,7 @@ export default function OrderDetails() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/disputes/evidence`, {
+      const response = await axios.post(`${API}/api/disputes/evidence`, {
         dispute_id: dispute.dispute_id,
         uploaded_by: currentUser.user_id,
         evidence_type: evidenceType,
@@ -121,7 +121,7 @@ export default function OrderDetails() {
     try {
       const userRole = order.buyer_id === currentUser.user_id ? 'buyer' : 'seller';
       
-      const response = await axios.post(`${API}/disputes/message`, {
+      const response = await axios.post(`${API}/api/disputes/message`, {
         dispute_id: dispute.dispute_id,
         sender_address: currentUser.user_id,
         sender_role: userRole,

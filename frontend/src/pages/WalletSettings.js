@@ -51,7 +51,7 @@ export default function WalletSettings() {
 
   const fetchAddresses = async () => {
     try {
-      const response = await axios.get(`${API}/wallet/addresses/${user.user_id}`);
+      const response = await axios.get(`${API}/api/wallet/addresses/${user.user_id}`);
       setAddresses(response.data.addresses || {});
     } catch (error) {
       console.error('Error fetching addresses:', error);
@@ -64,7 +64,7 @@ export default function WalletSettings() {
     if (!newAddress.trim()) return;
 
     try {
-      await axios.post(`${API}/wallet/add-address`, {
+      await axios.post(`${API}/api/wallet/add-address`, {
         user_id: user.user_id,
         currency,
         address: newAddress.trim()
@@ -82,7 +82,7 @@ export default function WalletSettings() {
     if (!confirm(`Remove ${currency} address?`)) return;
 
     try {
-      await axios.delete(`${API}/wallet/remove-address/${user.user_id}/${currency}`);
+      await axios.delete(`${API}/api/wallet/remove-address/${user.user_id}/${currency}`);
       await fetchAddresses();
     } catch (error) {
       alert('Failed to remove address');

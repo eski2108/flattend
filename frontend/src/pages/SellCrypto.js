@@ -62,7 +62,7 @@ export default function SellCrypto() {
       ];
 
       if (userId) {
-        requests.push(axios.get(`${API}/kyc/status/${userId}`));
+        requests.push(axios.get(`${API}/api/kyc/status/${userId}`));
       }
 
       const responses = await Promise.all(requests);

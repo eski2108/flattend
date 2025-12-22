@@ -82,10 +82,10 @@ export default function ReferralDashboardComprehensive() {
   const fetchComprehensiveData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/referral/dashboard/comprehensive/${user.user_id}`);
+      const response = await axios.get(`${API}/api/referral/dashboard/comprehensive/${user.user_id}`);
       
       // Also fetch NEW referral links (Standard + Golden if applicable)
-      const linksResponse = await axios.get(`${API}/referral/links/${user.user_id}`);
+      const linksResponse = await axios.get(`${API}/api/referral/links/${user.user_id}`);
       
       if (response.data.success) {
         setComprehensiveData({

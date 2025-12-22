@@ -90,7 +90,7 @@ export default function Login2() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, formData);
+      const response = await axios.post(`${API}/api/auth/login`, formData);
       
       if (response.data.success) {
         // Check if 2FA is required
@@ -125,7 +125,7 @@ export default function Login2() {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/auth/2fa/login-verify`, {
+      const response = await axios.post(`${API}/api/auth/2fa/login-verify`, {
         user_id: tempUserId,
         code: twoFactorCode
       });
@@ -150,7 +150,7 @@ export default function Login2() {
   const handleGoogleSignIn = () => {
     try {
       setLoading(true);
-      const googleAuthUrl = `${API}/auth/google`;
+      const googleAuthUrl = `${API}/api/auth/google`;
       console.log('🔍 Redirecting to Google OAuth:', googleAuthUrl);
       window.location.href = googleAuthUrl;
     } catch (error) {

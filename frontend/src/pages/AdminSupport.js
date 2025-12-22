@@ -39,7 +39,7 @@ export default function AdminSupport() {
 
   const loadAllChats = async () => {
     try {
-      const response = await axios.get(`${API}/admin/support-chats`);
+      const response = await axios.get(`${API}/api/admin/support-chats`);
       if (response.data.success) {
         setChats(response.data.chats);
       }
@@ -53,7 +53,7 @@ export default function AdminSupport() {
 
   const loadChatMessages = async (chatId) => {
     try {
-      const response = await axios.get(`${API}/admin/support-chat/${chatId}`);
+      const response = await axios.get(`${API}/api/admin/support-chat/${chatId}`);
       if (response.data.success) {
         setMessages(response.data.messages);
         setSelectedChat(chatId);
@@ -68,7 +68,7 @@ export default function AdminSupport() {
     if (!replyMessage.trim() || !selectedChat) return;
 
     try {
-      await axios.post(`${API}/admin/support-reply`, {
+      await axios.post(`${API}/api/admin/support-reply`, {
         chat_id: selectedChat,
         message: replyMessage
       });
@@ -84,7 +84,7 @@ export default function AdminSupport() {
 
   const markAsResolved = async (chatId) => {
     try {
-      await axios.post(`${API}/admin/resolve-chat`, { chat_id: chatId });
+      await axios.post(`${API}/api/admin/resolve-chat`, { chat_id: chatId });
       toast.success('Chat marked as resolved');
       loadAllChats();
       setSelectedChat(null);

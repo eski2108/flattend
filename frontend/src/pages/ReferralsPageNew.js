@@ -38,7 +38,7 @@ export default function ReferralsPageNew() {
         return;
       }
 
-      const statsResponse = await axios.get(`${API}/referral/stats/${userId}`, {
+      const statsResponse = await axios.get(`${API}/api/referral/stats/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

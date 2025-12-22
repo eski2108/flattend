@@ -35,7 +35,7 @@ export default function WalletPage() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/user/deposit`, {
+      const response = await axios.post(`${API}/api/user/deposit`, {
         wallet_address: account,
         amount: parseFloat(depositAmount),
       });
@@ -60,7 +60,7 @@ export default function WalletPage() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/user/withdraw`, {
+      const response = await axios.post(`${API}/api/user/withdraw`, {
         wallet_address: account,
         amount: parseFloat(withdrawAmount),
       });

@@ -84,7 +84,7 @@ export default function PreviewOrder() {
 
     setValidatingWallet(true);
     try {
-      const response = await axios.post(`${API}/wallet/validate`, {
+      const response = await axios.post(`${API}/api/wallet/validate`, {
         address,
         currency,
         network: network || undefined
@@ -152,7 +152,7 @@ export default function PreviewOrder() {
 
     setProcessing(true);
     try {
-      const response = await axios.post(`${API}/p2p/create-trade`, {
+      const response = await axios.post(`${API}/api/p2p/create-trade`, {
         sell_order_id: offer.order_id,
         buyer_id: currentUser.user_id,
         crypto_amount: parseFloat(cryptoAmount),

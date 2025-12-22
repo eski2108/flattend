@@ -40,7 +40,7 @@ export default function P2PTradeDetailDemo() {
 
   const loadTradeDetails = async () => {
     try {
-      const response = await axios.get(`${API}/p2p/trade/${tradeId}`);
+      const response = await axios.get(`${API}/api/p2p/trade/${tradeId}`);
       if (response.data.success) {
         setTrade(response.data.trade);
         setTimeRemaining(response.data.time_remaining_seconds || 0);
@@ -60,7 +60,7 @@ export default function P2PTradeDetailDemo() {
 
   const handleMarkPaid = async () => {
     try {
-      const response = await axios.post(`${API}/p2p/mark-paid`, {
+      const response = await axios.post(`${API}/api/p2p/mark-paid`, {
         trade_id: tradeId,
         buyer_id: user.user_id
       });
@@ -81,7 +81,7 @@ export default function P2PTradeDetailDemo() {
 
   const confirmRelease = async () => {
     try {
-      const response = await axios.post(`${API}/p2p/release-crypto`, {
+      const response = await axios.post(`${API}/api/p2p/release-crypto`, {
         trade_id: tradeId,
         seller_id: user.user_id,
         otp_code: otpCode

@@ -26,7 +26,7 @@ export default function BuyCryptoPublic() {
 
   const fetchSellOrders = async () => {
     try {
-      const response = await axios.get(`${API}/crypto-market/sell/orders`);
+      const response = await axios.get(`${API}/api/crypto-market/sell/orders`);
       if (response.data.success) {
         setSellOrders(response.data.orders);
       }

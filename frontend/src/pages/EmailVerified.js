@@ -21,7 +21,7 @@ const EmailVerified = () => {
       }
 
       try {
-        const response = await axios.get(`${API}/auth/verify-email?token=${token}`);
+        const response = await axios.get(`${API}/api/auth/verify-email?token=${token}`);
         
         if (response.data.success) {
           setStatus('success');

@@ -31,7 +31,7 @@ export default function TraderBalance() {
   const loadBalances = async (userId) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/trader/my-balances/${userId}`);
+      const response = await axios.get(`${API}/api/trader/my-balances/${userId}`);
       
       if (response.data.success) {
         setBalances(response.data.balances || []);
