@@ -13354,7 +13354,9 @@ async def create_p2p_ad(request: Request):
         "available_amount": body.get("available_amount", 0)
     }
     
-    await db.p2p_ads.insert_one(ad)
+    logging.info(f"📝 Attempting to insert ad into DB: {ad['ad_id']}")
+    result = await db.p2p_ads.insert_one(ad)
+    logging.info(f"📝 Insert result: {result.inserted_id}")
     
     # Remove MongoDB _id and convert datetime for JSON serialization
     ad_response = ad.copy()
