@@ -5902,11 +5902,14 @@ async def create_p2p_express_order(order_data: Dict):
         admin_fee = order_data["express_fee"]
         referrer_commission = 0
     
+    # Determine if core coin for fee tracking
+    core_coin_flag = is_core_coin(crypto)
+    
     # Create fee transaction record
     fee_record = {
         "transaction_id": f"FEE_{trade_id}",
         "trade_id": trade_id,
-        "fee_type": "instant_buy" if is_core_coin else "express_buy",
+        "fee_type": "instant_buy" if core_coin_flag else "express_buy",
         "user_id": order_data["user_id"],
         "total_fee_amount": order_data["express_fee"],
         "admin_fee": admin_fee,
@@ -5917,14 +5920,14 @@ async def create_p2p_express_order(order_data: Dict):
         "fiat_currency": "GBP",
         "delivery_type": delivery_type,
         "delivery_source": delivery_source,
-        "is_core_coin": is_core_coin,
+        "is_core_coin": core_coin_flag,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.fee_transactions.insert_one(fee_record)
     
     # Update admin revenue
-    revenue_field = "instant_buy_revenue_gbp" if is_core_coin else "express_buy_revenue_gbp"
+    revenue_field = "instant_buy_revenue_gbp" if core_coin_flag else "express_buy_revenue_gbp"
     await db.admin_revenue.update_one(
         {"metric_id": "platform_total"},
         {
@@ -5941,7 +5944,7 @@ async def create_p2p_express_order(order_data: Dict):
     # Notify buyer
     try:
         from p2p_notification_service import create_p2p_notification
-        if is_core_coin:
+        if core_coin_flag:
             msg = f"Instant Buy completed! {crypto_amount:.8f} {crypto} credited to your wallet."
         else:
             msg = f"Express Buy completed! {crypto_amount:.8f} {crypto} credited via conversion."
