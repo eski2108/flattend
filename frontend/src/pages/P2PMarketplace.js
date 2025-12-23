@@ -442,6 +442,104 @@ function P2PMarketplace() {
             })()}
           </div>
 
+          {/* EXPRESS BUY SHORTCUT - Platform Liquidity Option */}
+          <div 
+            onClick={() => navigate('/p2p/express')}
+            style={{
+              display: 'flex',
+              alignItems: isMobile ? 'flex-start' : 'center',
+              justifyContent: 'space-between',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '12px' : '24px',
+              padding: isMobile ? '16px' : '20px 24px',
+              background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%)',
+              border: '1px solid rgba(0, 240, 255, 0.3)',
+              borderRadius: '16px',
+              marginBottom: '24px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 20px rgba(0, 240, 255, 0.15)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 240, 255, 0.25)';
+              e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 240, 255, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 20px rgba(0, 240, 255, 0.4)'
+              }}>
+                <IoFlash size={24} color="#fff" />
+              </div>
+              <div>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  marginBottom: '4px'
+                }}>
+                  <span style={{ 
+                    fontSize: '16px', 
+                    fontWeight: '700', 
+                    color: '#FFFFFF'
+                  }}>
+                    ⚡ Express Buy (2–5 min)
+                  </span>
+                  <span style={{
+                    padding: '2px 8px',
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                    borderRadius: '6px',
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#22C55E',
+                    textTransform: 'uppercase'
+                  }}>
+                    Instant
+                  </span>
+                </div>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '13px', 
+                  color: 'rgba(255, 255, 255, 0.6)'
+                }}>
+                  Fulfilled by CoinHubX • No other users involved
+                </p>
+              </div>
+            </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 20px',
+              background: 'linear-gradient(135deg, #00F0FF, #0099CC)',
+              borderRadius: '10px',
+              boxShadow: '0 0 15px rgba(0, 240, 255, 0.3)'
+            }}>
+              <span style={{ 
+                fontSize: '14px', 
+                fontWeight: '700', 
+                color: '#000'
+              }}>
+                Buy Now
+              </span>
+              <IoFlash size={16} color="#000" />
+            </div>
+          </div>
+
           {/* Premium Frosted Glass Filter Container */}
           <div style={{
             display: 'flex',
