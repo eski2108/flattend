@@ -376,17 +376,89 @@ export default function CreateAd() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <div>
                       <label style={LABEL_STYLE}>Crypto</label>
-                      <select value={formData.crypto_currency} onChange={(e) => handleChange('crypto_currency', e.target.value)}
-                        style={{ ...INPUT_STYLE, cursor: 'pointer' }}>
-                        {availableCryptos.map(c => <option key={c} value={c} style={{ background: '#0a0e27' }}>{c}</option>)}
-                      </select>
+                      <div style={{ position: 'relative' }}>
+                        <div 
+                          onClick={() => setCryptoDropdownOpen(!cryptoDropdownOpen)}
+                          style={{ 
+                            ...INPUT_STYLE, 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                            gap: '10px'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <Coin3DIcon symbol={formData.crypto_currency} size={28} />
+                            <span style={{ fontWeight: '600' }}>{formData.crypto_currency}</span>
+                          </div>
+                          <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: cryptoDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                        </div>
+                        {cryptoDropdownOpen && (
+                          <div style={{
+                            position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
+                            background: 'rgba(10, 13, 28, 0.98)', border: '1px solid rgba(0, 255, 200, 0.15)',
+                            borderRadius: '10px', maxHeight: '250px', overflowY: 'auto', zIndex: 100,
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
+                          }}>
+                            {availableCryptos.map(c => (
+                              <div key={c} onClick={() => { handleChange('crypto_currency', c); setCryptoDropdownOpen(false); }}
+                                style={{
+                                  padding: '12px 14px', display: 'flex', alignItems: 'center', gap: '12px',
+                                  cursor: 'pointer', background: formData.crypto_currency === c ? 'rgba(0, 255, 200, 0.08)' : 'transparent',
+                                  borderLeft: formData.crypto_currency === c ? '2px solid #00FFD0' : '2px solid transparent'
+                                }}>
+                                <Coin3DIcon symbol={c} size={24} />
+                                <span style={{ color: formData.crypto_currency === c ? '#00FFD0' : '#fff', fontWeight: '500' }}>{c}</span>
+                                {formData.crypto_currency === c && <IoCheckmarkCircle size={14} color="#00FFD0" style={{ marginLeft: 'auto' }} />}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label style={LABEL_STYLE}>Fiat</label>
-                      <select value={formData.fiat_currency} onChange={(e) => handleChange('fiat_currency', e.target.value)}
-                        style={{ ...INPUT_STYLE, cursor: 'pointer' }}>
-                        {availableFiats.map(f => <option key={f} value={f} style={{ background: '#0a0e27' }}>{f}</option>)}
-                      </select>
+                      <div style={{ position: 'relative' }}>
+                        <div 
+                          onClick={() => setFiatDropdownOpen(!fiatDropdownOpen)}
+                          style={{ 
+                            ...INPUT_STYLE, 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                            gap: '10px'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{ fontSize: '1.5rem' }}>{FIAT_CONFIG[formData.fiat_currency]?.flag || '💵'}</span>
+                            <span style={{ fontWeight: '600' }}>{formData.fiat_currency}</span>
+                          </div>
+                          <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: fiatDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                        </div>
+                        {fiatDropdownOpen && (
+                          <div style={{
+                            position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
+                            background: 'rgba(10, 13, 28, 0.98)', border: '1px solid rgba(0, 255, 200, 0.15)',
+                            borderRadius: '10px', maxHeight: '250px', overflowY: 'auto', zIndex: 100,
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
+                          }}>
+                            {availableFiats.map(f => (
+                              <div key={f} onClick={() => { handleChange('fiat_currency', f); setFiatDropdownOpen(false); }}
+                                style={{
+                                  padding: '12px 14px', display: 'flex', alignItems: 'center', gap: '12px',
+                                  cursor: 'pointer', background: formData.fiat_currency === f ? 'rgba(0, 255, 200, 0.08)' : 'transparent',
+                                  borderLeft: formData.fiat_currency === f ? '2px solid #00FFD0' : '2px solid transparent'
+                                }}>
+                                <span style={{ fontSize: '1.5rem' }}>{FIAT_CONFIG[f]?.flag || '💵'}</span>
+                                <span style={{ color: formData.fiat_currency === f ? '#00FFD0' : '#fff', fontWeight: '500' }}>{f}</span>
+                                {formData.fiat_currency === f && <IoCheckmarkCircle size={14} color="#00FFD0" style={{ marginLeft: 'auto' }} />}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
