@@ -545,25 +545,30 @@ export default function CreateAd() {
             {/* ROW 5: PUBLISH BUTTON */}
             <button type="submit" disabled={creating || !isFormValid()} style={{
               width: '100%',
-              height: '60px',
-              background: (creating || !isFormValid()) ? 'rgba(50, 50, 50, 0.6)' : 'linear-gradient(135deg, #22C55E 0%, #14B8A6 100%)',
-              border: 'none',
-              borderRadius: '14px',
-              fontSize: '1rem',
+              height: '68px',
+              background: (creating || !isFormValid()) 
+                ? 'rgba(40, 40, 50, 0.8)' 
+                : 'linear-gradient(135deg, #22C55E 0%, #10B981 50%, #14B8A6 100%)',
+              border: (creating || !isFormValid()) ? '1px solid rgba(255,255,255,0.05)' : 'none',
+              borderRadius: '16px',
+              fontSize: '1.125rem',
               fontWeight: '700',
-              color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
+              color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.2)' : '#fff',
               cursor: (creating || !isFormValid()) ? 'not-allowed' : 'pointer',
-              boxShadow: (creating || !isFormValid()) ? 'none' : '0 6px 30px rgba(34, 197, 94, 0.35), 0 0 60px rgba(34, 197, 94, 0.15)',
+              boxShadow: (creating || !isFormValid()) 
+                ? 'none' 
+                : '0 8px 40px rgba(34, 197, 94, 0.4), 0 0 80px rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(255,255,255,0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '10px',
+              gap: '12px',
               textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              transition: 'all 0.3s ease'
+              letterSpacing: '0.08em',
+              transition: 'all 0.3s ease',
+              textShadow: (creating || !isFormValid()) ? 'none' : '0 2px 10px rgba(0,0,0,0.3)',
             }}>
               {creating ? (
-                <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />Creating...</>
+                <><div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />Creating...</>
               ) : 'Publish Ad'}
             </button>
           </form>
@@ -574,6 +579,10 @@ export default function CreateAd() {
         @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 1024px) {
           form > div { grid-template-columns: 1fr !important; }
+        }
+        button[type="submit"]:not(:disabled):hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 50px rgba(34, 197, 94, 0.5), 0 0 100px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255,255,255,0.25) !important;
         }
       `}</style>
     </>
