@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { IoArrowBack, IoCheckmarkCircle } from 'react-icons/io5';
 import axiosInstance from '@/utils/axiosConfig';
 import { toast } from 'sonner';
@@ -9,11 +7,67 @@ import { toast } from 'sonner';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
 
+// ═══════════════════════════════════════════════════════════════════════════
+// UNIFIED BOX STYLES - Consistent across all sections
+// ═══════════════════════════════════════════════════════════════════════════
+const BOX_STYLE = {
+  background: 'rgba(12, 15, 30, 0.95)',
+  border: '1px solid rgba(0, 255, 200, 0.12)',
+  borderRadius: '12px',
+  padding: '28px',
+  marginBottom: '20px',
+  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255, 255, 255, 0.02)'
+};
+
+// Section title style - smaller, tighter, higher weight
+const SECTION_TITLE = {
+  color: 'rgba(255, 255, 255, 0.85)',
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.04em',
+  marginBottom: '16px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px'
+};
+
+// Label style - fades back
+const LABEL_STYLE = {
+  color: 'rgba(255, 255, 255, 0.4)',
+  fontSize: '0.625rem',
+  fontWeight: '600',
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  marginBottom: '8px',
+  display: 'block'
+};
+
+// Value/Input style - pops forward
+const INPUT_STYLE = {
+  width: '100%',
+  padding: '14px 16px',
+  background: 'rgba(0, 0, 0, 0.3)',
+  border: '1px solid rgba(0, 255, 200, 0.1)',
+  borderRadius: '10px',
+  color: '#fff',
+  fontSize: '1.0625rem',
+  fontWeight: '600',
+  outline: 'none',
+  transition: 'all 0.2s ease'
+};
+
+const INPUT_FOCUS = {
+  border: '1px solid rgba(0, 255, 200, 0.4)',
+  boxShadow: '0 0 0 3px rgba(0, 255, 200, 0.08)'
+};
+
 export default function CreateAd() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const [creating, setCreating] = useState(false);
   const [adType, setAdType] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
     crypto_currency: 'BTC',
@@ -32,8 +86,14 @@ export default function CreateAd() {
   const [availableCryptos, setAvailableCryptos] = useState(['BTC', 'ETH', 'USDT']);
   const availableFiats = ['GBP', 'USD', 'EUR'];
   const availablePaymentMethods = [
-    'sepa', 'faster_payments', 'swift', 'ach',
-    'local_bank_transfer', 'wire_transfer', 'pix', 'interac'
+    { id: 'sepa', label: 'SEPA' },
+    { id: 'faster_payments', label: 'FASTER PAYMENTS' },
+    { id: 'swift', label: 'SWIFT' },
+    { id: 'ach', label: 'ACH' },
+    { id: 'local_bank_transfer', label: 'BANK TRANSFER' },
+    { id: 'wire_transfer', label: 'WIRE TRANSFER' },
+    { id: 'pix', label: 'PIX' },
+    { id: 'interac', label: 'INTERAC' }
   ];
 
   useEffect(() => {
@@ -132,223 +192,199 @@ export default function CreateAd() {
       });
 
       if (response.data.success) {
-        toast.success(
-          <div style={{ lineHeight: '1.6' }}>
-            <div style={{ fontWeight: '700', fontSize: '1rem', marginBottom: '6px', color: '#22C55E' }}>
-              P2P Ad Created
-            </div>
-            <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>
-              Your ad is now live in the marketplace.
-            </div>
-            <div style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '6px' }}>
-              Manage it anytime from your Merchant page.
-            </div>
-          </div>,
-          { duration: 4000 }
-        );
-        navigate('/p2p/merchant', { state: { refreshAds: true, timestamp: Date.now() } });
+        // Show success banner (not popup)
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigate('/p2p/merchant', { state: { refreshAds: true, timestamp: Date.now() } });
+        }, 3000);
       }
     } catch (error) {
       console.error('Error creating ad:', error);
-      let errorMessage = "Couldn't create ad. Check your connection and try again.";
+      let errorMessage = "Couldn't create ad. Please try again.";
       if (error.response?.status === 400) {
         errorMessage = 'Please complete all required fields.';
       } else if (error.response?.status === 401) {
         errorMessage = 'Session expired. Please log in again.';
       } else if (error.response?.status === 403) {
-        errorMessage = 'You need to activate your seller account first.';
+        errorMessage = 'Activate your seller account first.';
       }
-      toast.error(
-        <div style={{ lineHeight: '1.5' }}>
-          <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>
-            {errorMessage}
-          </div>
-        </div>
-      );
+      toast.error(errorMessage);
     } finally {
       setCreating(false);
     }
   };
 
-  const handleAdTypeSelect = (type) => {
-    setAdType(type);
-  };
+  // Pill style generator - selected has soft glow, unselected has no glow
+  const getPillStyle = (isSelected, isHovered) => ({
+    height: '44px',
+    padding: '0 18px',
+    background: isSelected 
+      ? 'rgba(34, 197, 94, 0.15)' 
+      : isHovered 
+        ? 'rgba(255, 255, 255, 0.04)' 
+        : 'rgba(0, 0, 0, 0.25)',
+    border: isSelected 
+      ? '1px solid rgba(34, 197, 94, 0.5)' 
+      : '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: '10px',
+    color: isSelected ? '#22C55E' : isHovered ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.45)',
+    fontSize: '0.8125rem',
+    fontWeight: isSelected ? '600' : '500',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+    boxShadow: isSelected ? '0 0 12px rgba(34, 197, 94, 0.2)' : 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px'
+  });
+
+  // Payment pill style - consistent height, soft glow on selected only
+  const getPaymentPillStyle = (isSelected, isHovered) => ({
+    height: '42px',
+    minWidth: '140px',
+    padding: '0 16px',
+    background: isSelected 
+      ? 'rgba(0, 255, 200, 0.1)' 
+      : isHovered 
+        ? 'rgba(255, 255, 255, 0.03)' 
+        : 'rgba(0, 0, 0, 0.2)',
+    border: isSelected 
+      ? '1px solid rgba(0, 255, 200, 0.4)' 
+      : '1px solid rgba(255, 255, 255, 0.06)',
+    borderRadius: '10px',
+    color: isSelected ? '#00FFD0' : isHovered ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 255, 255, 0.4)',
+    fontSize: '0.75rem',
+    fontWeight: isSelected ? '600' : '500',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+    boxShadow: isSelected ? '0 0 10px rgba(0, 255, 200, 0.12)' : 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px'
+  });
 
   return (
     <>
-      {/* WIDE DESKTOP CONTAINER - Exchange-grade layout */}
+      {/* SUCCESS BANNER - Clean, soft green, auto-dismiss */}
+      {showSuccess && (
+        <div style={{
+          position: 'fixed',
+          top: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(22, 163, 74, 0.95))',
+          border: '1px solid rgba(34, 197, 94, 0.5)',
+          borderRadius: '12px',
+          padding: '16px 28px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          zIndex: 9999,
+          boxShadow: '0 8px 32px rgba(34, 197, 94, 0.3)'
+        }}>
+          <IoCheckmarkCircle size={22} color="#fff" />
+          <div>
+            <div style={{ color: '#fff', fontWeight: '700', fontSize: '0.9375rem', marginBottom: '2px' }}>
+              P2P Ad Created Successfully
+            </div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.8125rem' }}>
+              Your ad is now live and visible in the marketplace.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MAIN CONTAINER */}
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)',
         padding: '24px 32px 40px'
       }}>
-        {/* MAX WIDTH 1600px for desktop - proper exchange width */}
-        <div style={{
-          maxWidth: '1600px',
-          margin: '0 auto',
-          width: '100%'
-        }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+          
           {/* Back Button */}
           <button
             onClick={() => navigate('/p2p/merchant')}
             style={{
-              background: 'linear-gradient(135deg, rgba(0, 255, 200, 0.08), rgba(0, 255, 200, 0.03))',
-              border: '1px solid rgba(0, 255, 200, 0.25)',
+              background: 'rgba(0, 255, 200, 0.06)',
+              border: '1px solid rgba(0, 255, 200, 0.15)',
               borderRadius: '10px',
-              color: 'rgba(0, 255, 200, 0.9)',
+              color: 'rgba(0, 255, 200, 0.8)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              fontSize: '0.875rem',
+              fontSize: '0.8125rem',
               fontWeight: '600',
               cursor: 'pointer',
-              padding: '10px 18px',
+              padding: '10px 16px',
               marginBottom: '24px',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.08))';
-              e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.5)';
+              e.currentTarget.style.background = 'rgba(0, 255, 200, 0.1)';
+              e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.3)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 255, 200, 0.08), rgba(0, 255, 200, 0.03))';
-              e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.25)';
+              e.currentTarget.style.background = 'rgba(0, 255, 200, 0.06)';
+              e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.15)';
             }}
           >
-            <IoArrowBack size={18} />
+            <IoArrowBack size={16} />
             Back to Merchant Center
           </button>
 
-          {/* Page Header - Left aligned for wide layout */}
-          <div style={{ marginBottom: '32px' }}>
+          {/* Page Header */}
+          <div style={{ marginBottom: '28px' }}>
             <h1 style={{ 
-              fontSize: '2.25rem', 
-              fontWeight: '800', 
-              background: 'linear-gradient(135deg, #00FFD0 0%, #00E5FF 50%, #7B61FF 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '8px',
-              letterSpacing: '-0.02em'
+              fontSize: '1.875rem', 
+              fontWeight: '700', 
+              color: '#fff',
+              marginBottom: '6px',
+              letterSpacing: '-0.01em'
             }}>
               Create New P2P Ad
             </h1>
-            <p style={{ 
-              color: 'rgba(255, 255, 255, 0.5)', 
-              fontSize: '1rem', 
-              fontWeight: '400'
-            }}>
-              Set your trading terms and start receiving orders from buyers worldwide
+            <p style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '0.9375rem' }}>
+              Set your trading terms and start receiving orders
             </p>
           </div>
 
-          {/* MAIN FORM - Wide layout with 2-column grid for desktop */}
           <form onSubmit={handleSubmit}>
-            
-            {/* TOP ROW: Ad Type + Asset Selection side by side */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '24px',
-              marginBottom: '24px'
-            }}>
-              {/* TIER 1: AD TYPE */}
-              <div style={{
-                background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.05), rgba(0, 255, 200, 0.02))',
-                border: '1.5px solid rgba(0, 255, 200, 0.2)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 30px rgba(0, 255, 200, 0.06)'
-              }}>
-                <label style={{ 
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  fontSize: '0.8125rem',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em'
-                }}>
+            {/* ROW 1: Ad Type + Trading Pair */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              
+              {/* AD TYPE BOX */}
+              <div style={BOX_STYLE}>
+                <div style={SECTION_TITLE}>
                   Ad Type
                   <span style={{ 
-                    background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+                    background: '#EF4444',
                     color: '#fff',
-                    fontSize: '0.5625rem',
+                    fontSize: '0.5rem',
                     fontWeight: '700',
-                    padding: '3px 8px',
+                    padding: '3px 6px',
                     borderRadius: '4px'
                   }}>REQUIRED</span>
-                </label>
+                </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <button
                     type="button"
-                    onClick={() => handleAdTypeSelect('sell')}
-                    style={{
-                      height: '56px',
-                      background: adType === 'sell' 
-                        ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.08))' 
-                        : 'rgba(0, 0, 0, 0.25)',
-                      border: adType === 'sell' 
-                        ? '2px solid rgba(34, 197, 94, 0.7)' 
-                        : '1.5px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      color: adType === 'sell' ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
-                      fontSize: '0.9375rem',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: adType === 'sell' ? '0 0 30px rgba(34, 197, 94, 0.3)' : 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (adType !== 'sell') {
-                        e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.4)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (adType !== 'sell') {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
-                      }
-                    }}
+                    onClick={() => setAdType('sell')}
+                    style={getPillStyle(adType === 'sell', false)}
                   >
+                    {adType === 'sell' && <IoCheckmarkCircle size={16} />}
                     SELL Crypto
                   </button>
-                  
                   <button
                     type="button"
-                    onClick={() => handleAdTypeSelect('buy')}
-                    style={{
-                      height: '56px',
-                      background: adType === 'buy' 
-                        ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.08))' 
-                        : 'rgba(0, 0, 0, 0.25)',
-                      border: adType === 'buy' 
-                        ? '2px solid rgba(34, 197, 94, 0.7)' 
-                        : '1.5px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      color: adType === 'buy' ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
-                      fontSize: '0.9375rem',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: adType === 'buy' ? '0 0 30px rgba(34, 197, 94, 0.3)' : 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (adType !== 'buy') {
-                        e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.4)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (adType !== 'buy') {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
-                      }
-                    }}
+                    onClick={() => setAdType('buy')}
+                    style={getPillStyle(adType === 'buy', false)}
                   >
+                    {adType === 'buy' && <IoCheckmarkCircle size={16} />}
                     BUY Crypto
                   </button>
                 </div>
@@ -356,121 +392,57 @@ export default function CreateAd() {
                 {adType && (
                   <div style={{
                     marginTop: '14px',
-                    padding: '12px 16px',
-                    background: 'rgba(34, 197, 94, 0.1)',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                    borderRadius: '10px',
+                    padding: '10px 14px',
+                    background: 'rgba(34, 197, 94, 0.08)',
+                    border: '1px solid rgba(34, 197, 94, 0.2)',
+                    borderRadius: '8px',
                     color: '#22C55E',
-                    fontSize: '0.875rem',
-                    fontWeight: '600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
+                    fontSize: '0.8125rem',
+                    fontWeight: '500',
+                    textAlign: 'center'
                   }}>
-                    <IoCheckmarkCircle size={18} />
-                    You are {adType === 'sell' ? 'SELLING' : 'BUYING'} {formData.crypto_currency}
+                    You are {adType === 'sell' ? 'selling' : 'buying'} {formData.crypto_currency}
                   </div>
                 )}
               </div>
 
-              {/* TIER 1: ASSET SELECTION */}
-              <div style={{
-                background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.05), rgba(0, 255, 200, 0.02))',
-                border: '1.5px solid rgba(0, 255, 200, 0.2)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 30px rgba(0, 255, 200, 0.06)'
-              }}>
-                <label style={{ 
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  fontSize: '0.8125rem',
-                  fontWeight: '700',
-                  display: 'block',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em'
-                }}>
-                  Trading Pair
-                </label>
-
+              {/* TRADING PAIR BOX */}
+              <div style={BOX_STYLE}>
+                <div style={SECTION_TITLE}>Trading Pair</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
-                    <label style={{ 
-                      color: 'rgba(255, 255, 255, 0.45)',
-                      fontSize: '0.625rem',
-                      fontWeight: '600',
-                      display: 'block',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em'
-                    }}>
-                      Crypto
-                    </label>
+                    <label style={LABEL_STYLE}>Crypto</label>
                     <select
                       value={formData.crypto_currency}
                       onChange={(e) => handleChange('crypto_currency', e.target.value)}
                       onFocus={() => setFocusedField('crypto')}
                       onBlur={() => setFocusedField(null)}
                       style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        background: 'rgba(0, 0, 0, 0.35)',
-                        border: focusedField === 'crypto' 
-                          ? '2px solid rgba(0, 255, 200, 0.5)' 
-                          : '1.5px solid rgba(0, 255, 200, 0.12)',
-                        borderRadius: '10px',
-                        color: '#fff',
-                        fontSize: '1.125rem',
-                        fontWeight: '700',
-                        outline: 'none',
+                        ...INPUT_STYLE,
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        boxShadow: focusedField === 'crypto' ? '0 0 20px rgba(0, 255, 200, 0.1)' : 'none'
+                        ...(focusedField === 'crypto' ? INPUT_FOCUS : {})
                       }}
                     >
-                      {availableCryptos.map(crypto => (
-                        <option key={crypto} value={crypto} style={{ background: '#0a0e27', color: '#fff' }}>{crypto}</option>
+                      {availableCryptos.map(c => (
+                        <option key={c} value={c} style={{ background: '#0a0e27' }}>{c}</option>
                       ))}
                     </select>
                   </div>
-
                   <div>
-                    <label style={{ 
-                      color: 'rgba(255, 255, 255, 0.45)',
-                      fontSize: '0.625rem',
-                      fontWeight: '600',
-                      display: 'block',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em'
-                    }}>
-                      Fiat
-                    </label>
+                    <label style={LABEL_STYLE}>Fiat</label>
                     <select
                       value={formData.fiat_currency}
                       onChange={(e) => handleChange('fiat_currency', e.target.value)}
                       onFocus={() => setFocusedField('fiat')}
                       onBlur={() => setFocusedField(null)}
                       style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        background: 'rgba(0, 0, 0, 0.35)',
-                        border: focusedField === 'fiat' 
-                          ? '2px solid rgba(0, 255, 200, 0.5)' 
-                          : '1.5px solid rgba(0, 255, 200, 0.12)',
-                        borderRadius: '10px',
-                        color: '#fff',
-                        fontSize: '1.125rem',
-                        fontWeight: '700',
-                        outline: 'none',
+                        ...INPUT_STYLE,
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        boxShadow: focusedField === 'fiat' ? '0 0 20px rgba(0, 255, 200, 0.1)' : 'none'
+                        ...(focusedField === 'fiat' ? INPUT_FOCUS : {})
                       }}
                     >
-                      {availableFiats.map(fiat => (
-                        <option key={fiat} value={fiat} style={{ background: '#0a0e27', color: '#fff' }}>{fiat}</option>
+                      {availableFiats.map(f => (
+                        <option key={f} value={f} style={{ background: '#0a0e27' }}>{f}</option>
                       ))}
                     </select>
                   </div>
@@ -478,64 +450,39 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* SECOND ROW: Pricing + Trade Limits side by side */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '24px',
-              marginBottom: '24px'
-            }}>
-              {/* TIER 1: PRICING */}
+            {/* ROW 2: Pricing Mode + Trade Limits */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              
+              {/* PRICING MODE BOX - with subtle visual separation */}
               <div style={{
-                background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.05), rgba(0, 255, 200, 0.02))',
-                border: '1.5px solid rgba(0, 255, 200, 0.2)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 30px rgba(0, 255, 200, 0.06)'
+                ...BOX_STYLE,
+                background: 'rgba(15, 18, 35, 0.95)',
+                borderTop: '2px solid rgba(0, 255, 200, 0.08)'
               }}>
-                <label style={{ 
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  fontSize: '0.8125rem',
-                  fontWeight: '700',
-                  display: 'block',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em'
+                <div style={SECTION_TITLE}>Pricing Mode</div>
+                <p style={{ 
+                  color: 'rgba(255, 255, 255, 0.35)', 
+                  fontSize: '0.6875rem', 
+                  marginBottom: '14px',
+                  marginTop: '-8px'
                 }}>
-                  Pricing Mode
-                </label>
+                  Choose how your price is calculated
+                </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                   <button
                     type="button"
                     onClick={() => handleChange('price_type', 'fixed')}
                     style={{
-                      padding: '14px',
+                      ...getPillStyle(formData.price_type === 'fixed', false),
                       background: formData.price_type === 'fixed' 
-                        ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.06))' 
-                        : 'transparent',
+                        ? 'rgba(0, 255, 200, 0.1)' 
+                        : 'rgba(0, 0, 0, 0.25)',
                       border: formData.price_type === 'fixed' 
-                        ? '2px solid rgba(0, 255, 200, 0.5)' 
-                        : '1.5px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '10px',
-                      color: formData.price_type === 'fixed' ? '#00FFD0' : 'rgba(255, 255, 255, 0.4)',
-                      fontSize: '0.875rem',
-                      fontWeight: formData.price_type === 'fixed' ? '700' : '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      boxShadow: formData.price_type === 'fixed' ? '0 0 20px rgba(0, 255, 200, 0.15)' : 'none'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (formData.price_type !== 'fixed') {
-                        e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.3)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (formData.price_type !== 'fixed') {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
-                      }
+                        ? '1px solid rgba(0, 255, 200, 0.4)' 
+                        : '1px solid rgba(255, 255, 255, 0.08)',
+                      color: formData.price_type === 'fixed' ? '#00FFD0' : 'rgba(255, 255, 255, 0.45)',
+                      boxShadow: formData.price_type === 'fixed' ? '0 0 10px rgba(0, 255, 200, 0.1)' : 'none'
                     }}
                   >
                     Fixed Price
@@ -544,32 +491,15 @@ export default function CreateAd() {
                     type="button"
                     onClick={() => handleChange('price_type', 'floating')}
                     style={{
-                      padding: '14px',
+                      ...getPillStyle(formData.price_type === 'floating', false),
                       background: formData.price_type === 'floating' 
-                        ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.06))' 
-                        : 'transparent',
+                        ? 'rgba(0, 255, 200, 0.1)' 
+                        : 'rgba(0, 0, 0, 0.25)',
                       border: formData.price_type === 'floating' 
-                        ? '2px solid rgba(0, 255, 200, 0.5)' 
-                        : '1.5px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '10px',
-                      color: formData.price_type === 'floating' ? '#00FFD0' : 'rgba(255, 255, 255, 0.4)',
-                      fontSize: '0.875rem',
-                      fontWeight: formData.price_type === 'floating' ? '700' : '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      boxShadow: formData.price_type === 'floating' ? '0 0 20px rgba(0, 255, 200, 0.15)' : 'none'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (formData.price_type !== 'floating') {
-                        e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.3)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (formData.price_type !== 'floating') {
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
-                      }
+                        ? '1px solid rgba(0, 255, 200, 0.4)' 
+                        : '1px solid rgba(255, 255, 255, 0.08)',
+                      color: formData.price_type === 'floating' ? '#00FFD0' : 'rgba(255, 255, 255, 0.45)',
+                      boxShadow: formData.price_type === 'floating' ? '0 0 10px rgba(0, 255, 200, 0.1)' : 'none'
                     }}
                   >
                     Floating %
@@ -582,62 +512,27 @@ export default function CreateAd() {
                   onChange={(e) => handleChange('price_value', e.target.value)}
                   onFocus={() => setFocusedField('price')}
                   onBlur={() => setFocusedField(null)}
-                  placeholder={formData.price_type === 'fixed' ? 'Enter price (e.g., 45000)' : 'Enter margin % (e.g., 2.5)'}
+                  placeholder={formData.price_type === 'fixed' ? 'Enter price' : 'Enter margin %'}
                   style={{
-                    width: '100%',
-                    padding: '16px',
-                    background: 'rgba(0, 0, 0, 0.35)',
-                    border: focusedField === 'price' 
-                      ? '2px solid rgba(0, 255, 200, 0.5)' 
-                      : '1.5px solid rgba(0, 255, 200, 0.12)',
-                    borderRadius: '10px',
-                    color: '#fff',
+                    ...INPUT_STYLE,
                     fontSize: '1.25rem',
                     fontWeight: '700',
-                    outline: 'none',
-                    transition: 'all 0.2s ease',
-                    boxShadow: focusedField === 'price' ? '0 0 20px rgba(0, 255, 200, 0.1)' : 'none'
+                    ...(focusedField === 'price' ? INPUT_FOCUS : {})
                   }}
                 />
                 {formData.price_type === 'floating' && (
-                  <p style={{ marginTop: '10px', fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.4)' }}>
-                    Positive = above market | Negative = below market
+                  <p style={{ marginTop: '8px', fontSize: '0.6875rem', color: 'rgba(255, 255, 255, 0.35)' }}>
+                    Positive = above market • Negative = below market
                   </p>
                 )}
               </div>
 
-              {/* TIER 2: TRADE LIMITS */}
-              <div style={{
-                background: 'rgba(0, 255, 200, 0.02)',
-                border: '1px solid rgba(0, 255, 200, 0.12)',
-                borderRadius: '16px',
-                padding: '24px'
-              }}>
-                <label style={{ 
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '0.8125rem',
-                  fontWeight: '700',
-                  display: 'block',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em'
-                }}>
-                  Trade Limits ({formData.crypto_currency})
-                </label>
-
+              {/* TRADE LIMITS BOX */}
+              <div style={BOX_STYLE}>
+                <div style={SECTION_TITLE}>Trade Limits ({formData.crypto_currency})</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
-                    <label style={{ 
-                      color: 'rgba(255, 255, 255, 0.4)',
-                      fontSize: '0.5625rem',
-                      fontWeight: '600',
-                      display: 'block',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em'
-                    }}>
-                      Minimum
-                    </label>
+                    <label style={LABEL_STYLE}>Minimum</label>
                     <input
                       type="number"
                       step="0.00000001"
@@ -647,34 +542,16 @@ export default function CreateAd() {
                       onBlur={() => setFocusedField(null)}
                       placeholder="0.01"
                       style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: focusedField === 'min' 
-                          ? '2px solid rgba(0, 255, 200, 0.4)' 
-                          : '1px solid rgba(0, 255, 200, 0.1)',
-                        borderRadius: '10px',
-                        color: '#fff',
-                        fontSize: '1.0625rem',
-                        fontWeight: '600',
-                        outline: 'none',
-                        transition: 'all 0.2s ease',
-                        boxShadow: focusedField === 'min' ? '0 0 15px rgba(0, 255, 200, 0.08)' : 'none'
+                        ...INPUT_STYLE,
+                        ...(focusedField === 'min' ? INPUT_FOCUS : {})
                       }}
                     />
+                    <p style={{ marginTop: '6px', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.3)' }}>
+                      Minimum per trade
+                    </p>
                   </div>
                   <div>
-                    <label style={{ 
-                      color: 'rgba(255, 255, 255, 0.4)',
-                      fontSize: '0.5625rem',
-                      fontWeight: '600',
-                      display: 'block',
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em'
-                    }}>
-                      Maximum
-                    </label>
+                    <label style={LABEL_STYLE}>Maximum</label>
                     <input
                       type="number"
                       step="0.00000001"
@@ -684,45 +561,21 @@ export default function CreateAd() {
                       onBlur={() => setFocusedField(null)}
                       placeholder="1.0"
                       style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        background: 'rgba(0, 0, 0, 0.3)',
-                        border: focusedField === 'max' 
-                          ? '2px solid rgba(0, 255, 200, 0.4)' 
-                          : '1px solid rgba(0, 255, 200, 0.1)',
-                        borderRadius: '10px',
-                        color: '#fff',
-                        fontSize: '1.0625rem',
-                        fontWeight: '600',
-                        outline: 'none',
-                        transition: 'all 0.2s ease',
-                        boxShadow: focusedField === 'max' ? '0 0 15px rgba(0, 255, 200, 0.08)' : 'none'
+                        ...INPUT_STYLE,
+                        ...(focusedField === 'max' ? INPUT_FOCUS : {})
                       }}
                     />
+                    <p style={{ marginTop: '6px', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.3)' }}>
+                      Maximum per trade
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* THIRD ROW: Payment Methods - Full Width */}
-            <div style={{
-              background: 'rgba(0, 255, 200, 0.02)',
-              border: '1px solid rgba(0, 255, 200, 0.12)',
-              borderRadius: '16px',
-              padding: '24px',
-              marginBottom: '24px'
-            }}>
-              <label style={{ 
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontSize: '0.8125rem',
-                fontWeight: '700',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                marginBottom: '18px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em'
-              }}>
+            {/* ROW 3: Payment Methods - Full Width */}
+            <div style={{ ...BOX_STYLE, marginBottom: '20px' }}>
+              <div style={SECTION_TITLE}>
                 Payment Methods
                 <span style={{ 
                   background: 'rgba(239, 68, 68, 0.15)',
@@ -732,106 +585,61 @@ export default function CreateAd() {
                   padding: '3px 6px',
                   borderRadius: '4px'
                 }}>SELECT AT LEAST ONE</span>
-              </label>
+              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
                 {availablePaymentMethods.map(method => {
-                  const isSelected = formData.payment_methods.includes(method);
-                  const isHovered = hoveredPill === method;
+                  const isSelected = formData.payment_methods.includes(method.id);
+                  const isHovered = hoveredPill === method.id;
                   return (
                     <button
-                      key={method}
+                      key={method.id}
                       type="button"
-                      onClick={() => togglePaymentMethod(method)}
-                      onMouseEnter={() => setHoveredPill(method)}
+                      onClick={() => togglePaymentMethod(method.id)}
+                      onMouseEnter={() => setHoveredPill(method.id)}
                       onMouseLeave={() => setHoveredPill(null)}
-                      style={{
-                        padding: '14px 16px',
-                        background: isSelected 
-                          ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.18), rgba(0, 255, 200, 0.08))' 
-                          : isHovered 
-                            ? 'rgba(0, 255, 200, 0.04)' 
-                            : 'transparent',
-                        border: isSelected 
-                          ? '2px solid rgba(0, 255, 200, 0.6)' 
-                          : isHovered 
-                            ? '1.5px solid rgba(0, 255, 200, 0.3)' 
-                            : '1.5px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: '10px',
-                        color: isSelected 
-                          ? '#00FFD0' 
-                          : isHovered 
-                            ? 'rgba(255, 255, 255, 0.7)' 
-                            : 'rgba(255, 255, 255, 0.4)',
-                        fontSize: '0.8125rem',
-                        fontWeight: isSelected ? '700' : '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease',
-                        boxShadow: isSelected ? '0 0 20px rgba(0, 255, 200, 0.2)' : 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px'
-                      }}
+                      title="Buyer must pay using this method"
+                      style={getPaymentPillStyle(isSelected, isHovered)}
                     >
-                      {isSelected && <IoCheckmarkCircle size={15} />}
-                      {method.replace(/_/g, ' ').toUpperCase()}
+                      {isSelected && <IoCheckmarkCircle size={14} />}
+                      {method.label}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* FOURTH ROW: Terms (Optional) + Submit Button side by side */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '2fr 1fr',
-              gap: '24px',
-              alignItems: 'end'
-            }}>
-              {/* TIER 3: TERMS */}
+            {/* ROW 4: Terms + Submit */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', alignItems: 'end' }}>
+              
+              {/* TERMS BOX - Optional, muted */}
               <div style={{
-                background: 'rgba(0, 0, 0, 0.15)',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                borderRadius: '14px',
-                padding: '20px'
+                ...BOX_STYLE,
+                background: 'rgba(8, 10, 22, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.04)',
+                marginBottom: 0
               }}>
-                <label style={{ 
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '12px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em'
-                }}>
+                <div style={{ ...SECTION_TITLE, color: 'rgba(255, 255, 255, 0.5)' }}>
                   Terms & Conditions
-                  <span style={{ color: 'rgba(255, 255, 255, 0.25)', fontSize: '0.5rem' }}>OPTIONAL</span>
-                </label>
+                  <span style={{ 
+                    color: 'rgba(255, 255, 255, 0.25)',
+                    fontSize: '0.5rem',
+                    fontWeight: '500'
+                  }}>OPTIONAL</span>
+                </div>
                 <textarea
                   value={formData.terms}
                   onChange={(e) => handleChange('terms', e.target.value)}
                   onFocus={() => setFocusedField('terms')}
                   onBlur={() => setFocusedField(null)}
-                  placeholder="Enter any special terms or instructions for buyers..."
+                  placeholder="Enter any special terms or instructions..."
                   rows={3}
                   style={{
-                    width: '100%',
-                    padding: '14px',
-                    background: 'rgba(0, 0, 0, 0.25)',
-                    border: focusedField === 'terms' 
-                      ? '1.5px solid rgba(0, 255, 200, 0.25)' 
-                      : '1px solid rgba(255, 255, 255, 0.06)',
-                    borderRadius: '10px',
-                    color: '#fff',
-                    fontSize: '0.9375rem',
-                    outline: 'none',
+                    ...INPUT_STYLE,
                     resize: 'vertical',
                     fontFamily: 'inherit',
                     minHeight: '80px',
-                    transition: 'all 0.2s ease'
+                    ...(focusedField === 'terms' ? { border: '1px solid rgba(255, 255, 255, 0.15)' } : {})
                   }}
                 />
               </div>
@@ -843,53 +651,49 @@ export default function CreateAd() {
                   disabled={creating || !isFormValid()}
                   style={{
                     width: '100%',
-                    height: '60px',
+                    height: '56px',
                     background: (creating || !isFormValid())
-                      ? 'rgba(60, 60, 60, 0.4)' 
-                      : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
-                    border: (creating || !isFormValid())
-                      ? '1.5px solid rgba(100, 100, 100, 0.2)'
-                      : 'none',
-                    borderRadius: '14px',
-                    fontSize: '1rem',
-                    fontWeight: '800',
-                    color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.2)' : '#fff',
+                      ? 'rgba(50, 50, 50, 0.5)' 
+                      : 'linear-gradient(135deg, #22C55E, #16A34A)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '0.9375rem',
+                    fontWeight: '700',
+                    color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
                     cursor: (creating || !isFormValid()) ? 'not-allowed' : 'pointer',
                     boxShadow: (creating || !isFormValid()) 
                       ? 'none' 
-                      : '0 6px 30px rgba(34, 197, 94, 0.45)',
+                      : '0 4px 20px rgba(34, 197, 94, 0.3)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '10px',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                    transition: 'all 0.25s ease',
-                    opacity: (creating || !isFormValid()) ? 0.5 : 1
+                    letterSpacing: '0.04em',
+                    transition: 'all 0.2s ease',
+                    opacity: (creating || !isFormValid()) ? 0.6 : 1
                   }}
                   onMouseEnter={(e) => {
                     if (!creating && isFormValid()) {
-                      e.currentTarget.style.boxShadow = '0 8px 40px rgba(34, 197, 94, 0.55)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 24px rgba(34, 197, 94, 0.4)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!creating && isFormValid()) {
-                      e.currentTarget.style.boxShadow = '0 6px 30px rgba(34, 197, 94, 0.45)';
-                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(34, 197, 94, 0.3)';
                     }
                   }}
                 >
                   {creating ? (
                     <>
                       <div style={{
-                        width: '20px',
-                        height: '20px',
+                        width: '18px',
+                        height: '18px',
                         border: '2px solid rgba(255,255,255,0.2)',
                         borderTopColor: '#fff',
                         borderRadius: '50%',
                         animation: 'spin 0.8s linear infinite'
-                      }}></div>
+                      }} />
                       Creating...
                     </>
                   ) : (
@@ -900,7 +704,7 @@ export default function CreateAd() {
                   <p style={{
                     textAlign: 'center',
                     marginTop: '10px',
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     color: 'rgba(255, 255, 255, 0.3)'
                   }}>
                     Complete all fields to publish
