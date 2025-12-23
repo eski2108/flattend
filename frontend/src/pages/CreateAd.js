@@ -917,6 +917,6 @@ export default function CreateAd() {
           to { transform: rotate(360deg); }
         }
       `}</style>
-    </Layout>
+    </>
   );
 }
