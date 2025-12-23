@@ -159,10 +159,19 @@ export default function P2PExpress() {
 
       if (response.data.success) {
         setHasAdminLiquidity(response.data.has_liquidity);
+        // Set delivery type based on response
+        if (response.data.delivery_type === 'instant') {
+          setDeliveryType('instant');
+        } else if (response.data.delivery_type === 'express') {
+          setDeliveryType('express');
+        } else {
+          setDeliveryType('unavailable');
+        }
       }
     } catch (error) {
       console.error('Error checking liquidity:', error);
       setHasAdminLiquidity(false);
+      setDeliveryType('unavailable');
     }
   };
 
