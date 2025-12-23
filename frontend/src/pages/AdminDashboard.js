@@ -2724,7 +2724,8 @@ export default function AdminDashboard() {
                           // Show results
                           const resultsDiv = document.getElementById('golden-search-results');
                           resultsDiv.style.display = 'block';
-                          resultsDiv.innerHTML = response.data.users.map(user => `
+                          // SECURITY: Sanitize user data before innerHTML to prevent XSS
+                          const sanitizedHTML = DOMPurify.sanitize(response.data.users.map(user => `
                             <div style="padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 8px; margin-bottom: 0.5rem;">
                               <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
@@ -2752,7 +2753,8 @@ export default function AdminDashboard() {
                                 </button>
                               </div>
                             </div>
-                          `).join('');
+                          `).join(''));
+                          resultsDiv.innerHTML = sanitizedHTML;
                         } else {
                           toast.error('No users found');
                         }
