@@ -334,8 +334,8 @@ export default function CreateAd() {
                   </p>
                 </div>
 
-                {/* 7. PAYMENT METHODS - FILLS REMAINING SPACE */}
-                <div style={{ ...cardStyle(ACCENT.amber), flex: 1, minHeight: '200px' }} ref={paymentRef}>
+                {/* 7. PAYMENT METHODS - CONTENT HEIGHT ONLY */}
+                <div style={cardStyle(ACCENT.amber)} ref={paymentRef}>
                   <div style={{ ...TITLE, display: 'flex', alignItems: 'center', gap: '10px' }}>
                     Payment methods
                     <span style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626', fontSize: '0.5625rem', fontWeight: '600', padding: '3px 8px', borderRadius: '4px' }}>REQUIRED</span>
@@ -362,14 +362,7 @@ export default function CreateAd() {
                     <IoChevronDown size={16} style={{ transform: paymentDropdownOpen ? 'rotate(180deg)' : 'none' }} />
                   </div>
 
-                  {/* Helper text when nothing selected */}
-                  {formData.payment_methods.length === 0 && !paymentDropdownOpen && (
-                    <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.8125rem', marginTop: '12px' }}>
-                      Select at least one payment method that you accept for this trade.
-                    </p>
-                  )}
-
-                  {/* Dropdown */}
+                  {/* Dropdown - OVERLAYS, does not expand card */}
                   {paymentDropdownOpen && (
                     <div style={{ position: 'absolute', left: '26px', right: '26px', marginTop: '4px', background: 'rgba(10,14,32,0.98)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '12px', maxHeight: '320px', overflowY: 'auto', zIndex: 300, boxShadow: '0 12px 40px rgba(0,0,0,0.6)' }}>
                       <div style={{ padding: '12px', borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, background: 'rgba(10,14,32,0.98)' }}>
