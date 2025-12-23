@@ -6734,9 +6734,12 @@ async def savings_nowpayments_webhook(request: Request):
                     hashlib.sha512
                 ).hexdigest()
                 
+                # ═══════════════════════════════════════════════════════════════════════
+                # FIX #7: ENFORCE WEBHOOK SIGNATURE - Reject invalid signatures
+                # ═══════════════════════════════════════════════════════════════════════
                 if not hmac.compare_digest(received_sig, expected_sig):
-                    logger.warning("⚠️ Invalid webhook signature")
-                    # Continue anyway for now - some webhooks may not have sig
+                    logger.error("❌ REJECTED: Invalid webhook signature")
+                    return {"status": "error", "message": "Invalid signature"}
         
         # ============ EXTRACT DATA ============
         order_id = payload.get('order_id')  # This is our savings_id
