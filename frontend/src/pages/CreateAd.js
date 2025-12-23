@@ -300,11 +300,11 @@ export default function CreateAd() {
                   </div>
                 </div>
 
-                {/* 4. ADVANCED OPTIONS - COLLAPSED BY DEFAULT */}
-                <div style={cardStyle(ACCENT.grey)}>
+                {/* 4. ADVANCED OPTIONS - FILLS REMAINING HEIGHT */}
+                <div style={{ ...cardStyle(ACCENT.grey), flex: 1 }}>
                   <div onClick={() => setAdvancedOpen(!advancedOpen)} style={{ ...TITLE, marginBottom: advancedOpen ? '16px' : '0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Advanced options <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '400', fontSize: '0.8125rem' }}>(optional)</span></span>
-                    <IoChevronDown size={18} style={{ color: 'rgba(255,255,255,0.4)', transform: advancedOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                    <span>Advanced options <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '400', fontSize: '0.75rem' }}>(optional)</span></span>
+                    <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: advancedOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </div>
                   {advancedOpen && (
                     <textarea value={formData.terms} onChange={(e) => handleChange('terms', e.target.value)} placeholder="Special terms, instructions, or routing notes..." rows={3} style={{ ...INPUT, resize: 'none', minHeight: '80px', fontSize: '0.875rem' }} />
@@ -313,7 +313,7 @@ export default function CreateAd() {
               </div>
 
               {/* RIGHT COLUMN */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 
                 {/* 5. PRICING MODE */}
                 <div style={cardStyle(ACCENT.teal)}>
