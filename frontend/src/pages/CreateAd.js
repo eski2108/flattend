@@ -451,7 +451,7 @@ export default function CreateAd() {
             </div>
 
             {/* ROW 2: Pricing Mode + Trade Limits */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
               
               {/* PRICING MODE BOX - with subtle visual separation */}
               <div style={{
