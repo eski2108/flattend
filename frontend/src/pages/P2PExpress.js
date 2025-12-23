@@ -247,10 +247,19 @@ export default function P2PExpress() {
       }
     } catch (error) {
       console.error('Error getting quote:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.detail || '';
-      // Check if it's a liquidity issue
-      if (errorMsg.toLowerCase().includes('liquidity') || errorMsg.toLowerCase().includes('insufficient') || errorMsg.toLowerCase().includes('unavailable')) {
+      const status = error.response?.status;
+      const errorData = error.response?.data;
+      const errorMsg = errorData?.message || errorData?.detail || '';
+      const errorCode = errorData?.error || '';
+      
+      // Check for 409 (liquidity unavailable) or liquidity-related errors
+      if (status === 409 || errorCode === 'liquidity_unavailable' || 
+          errorMsg.toLowerCase().includes('liquidity') || 
+          errorMsg.toLowerCase().includes('unavailable')) {
         setShowNoLiquidityModal(true);
+      } else if (errorCode === 'coin_not_supported_for_instant') {
+        // Non-core coin attempted on Instant Buy
+        toast.error(`${selectedCoin} is not available for Instant Buy. Please use Express Buy.`);
       } else {
         toast.error(errorMsg || 'Failed to get quote');
       }
