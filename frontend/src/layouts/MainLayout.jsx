@@ -1,11 +1,16 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import Layout from '@/components/Layout';
 
 /**
  * MainLayout - Authenticated layout wrapper
- * Individual pages handle their own Layout wrapper
- * This just provides the route outlet
+ * Sidebar is always mounted on the left
+ * All authenticated pages render in <Outlet />
  */
 export default function MainLayout() {
-  return <Outlet />;
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
 }
