@@ -7020,7 +7020,7 @@ async def withdraw_from_savings(request: dict):
             # ALSO update the 'wallets' collection which the frontend reads from
             await db.wallets.update_one(
                 {"user_id": user_id, "currency": coin},
-                {"$inc": {"balance": net_amount_to_user, "available_balance": net_amount_to_user}},
+                {"$inc": {"balance": net_amount_to_user, "available_balance": net_amount_to_user, "total_balance": net_amount_to_user}},
                 upsert=True
             )
             
