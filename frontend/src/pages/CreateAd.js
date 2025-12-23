@@ -79,23 +79,22 @@ const ACCENT_COLORS = {
 };
 
 const cardStyle = (accentColor) => ({
-  background: 'rgba(15, 20, 40, 0.95)',
-  border: '1px solid rgba(255, 255, 255, 0.06)',
+  background: `linear-gradient(180deg, rgba(20, 28, 58, 0.98) 0%, rgba(12, 18, 40, 0.98) 100%)`,
+  border: `1px solid ${accentColor}25`,
+  borderTop: `3px solid ${accentColor}`,
   borderRadius: '14px',
   padding: '0',
   overflow: 'hidden',
-  boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.2)',
+  boxShadow: `inset 0 1px 0 rgba(255,255,255,0.03), 0 4px 24px rgba(0, 0, 0, 0.25), 0 0 40px ${accentColor}08`,
   position: 'relative',
 });
 
 const cardAccent = (color) => ({
-  height: '3px',
-  background: `linear-gradient(90deg, ${color}, ${color}88)`,
-  width: '100%',
+  display: 'none', // Now using border-top instead
 });
 
 const cardContent = {
-  padding: '20px 24px',
+  padding: '22px 26px',
 };
 
 const SECTION_TITLE = {
