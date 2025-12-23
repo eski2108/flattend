@@ -572,7 +572,7 @@ export default function CreateAd() {
                       right: '20px', 
                       marginTop: '4px', 
                       background: 'rgba(14,18,38,0.99)', 
-                      border: '1px solid rgba(245,158,11,0.4)', 
+                      border: '1px solid rgba(20,184,166,0.4)', 
                       borderRadius: '10px', 
                       maxHeight: '280px', 
                       overflowY: 'auto', 
