@@ -1,202 +1,190 @@
-<analysis>**original_problem_statement**: The user's primary goal is to finalize the CoinHubX platform. Initial requests in this session focused on verifying existing functionality rather than building new features. The user demanded confirmation that cryptographic security features were complete, that P2P fees were correctly routed to the admin dashboard, that the P2P trading model was an internal ledger system (like Paxful), and that all frontend UI buttons for the P2P flow existed and worked. After extensive verification, testing, and debugging, the user requested a new feature to withdraw collected platform fees from an admin panel. Finally, the user reported that the language translation feature was broken and demanded it be fixed. A strict set of non-negotiable rules was established, forbidding any refactoring or changes to existing locked-down logic (P2P, wallet, escrow, fees).
+<analysis>**original_problem_statement**: The user's initial request was to finalize the UI/UX for the 'Create New P2P Ad' page () to match a premium crypto exchange's look and feel (e.g., Binance, OKX). This involved specific layout requirements (full-width, two-column), component placements, and visual polish (gradients, icons, sticky footer).
 
-**User's preferred language**: English. The user is direct, profane, and technically demanding. They expect immediate action, hard proof (logs, test scripts, DB records), and have zero tolerance for repeated work or credit wastage. The next agent MUST be concise, action-oriented, and adhere strictly to the project rules.
+The scope expanded significantly to include:
+1.  End-to-end functional testing of the P2P ad creation flow.
+2.  Debugging and fixing the entire backend process for ad creation, which was completely broken.
+3.  Resolving a major architectural issue where newly created ads did not appear in the public marketplace due to the system using two separate, incompatible data collections ( and ).
+4.  Hardening the new, unified API endpoint with tests and a debug endpoint to prevent future regressions.
+5.  Documenting the complete code-level flow for the P2P Express feature, including its connection to admin liquidity and behavior when liquidity is unavailable.
+
+**User's preferred language**: English. The user is extremely direct, uses profanity, and expects the agent to follow precise technical instructions without fluff or asking for permission on approved tasks. The next agent MUST be concise and execute instructions exactly as given.
 
 **what currently exists?**
-- A full-stack crypto exchange (React/FastAPI) with a locked-down architecture for core financial logic.
-- **P2P System**: A complete, end-to-end tested P2P flow using an internal database ledger for trades. All required frontend buttons (, , , , ) are implemented in  and wired to working backend endpoints.
-- **Fee Collection**: A verified system that automatically collects P2P maker/taker/express fees into platform wallets (, ) and logs them to the  collection for the dashboard.
-- **Admin Fee Withdrawal**: A new feature on the  page allowing an admin to withdraw collected fees (both fiat and crypto) to an external destination. The backend endpoints and frontend UI (including a modal) are complete and have been tested.
-- **Cryptographic Security**: A verified security foundation including Hardware Secure Key Management (HSM via KMS), Quantum-Resistant Signatures, and a passing test suite ().
-- **i18n System**:  is installed and configured with language files for ~30 languages. A  component exists. However, it is only integrated into 2 out of 141 pages, making the feature non-functional across the site.
-- **Project Governance**: A  tracks all completed work to prevent repetition, and a  file codifies the development freeze on core logic.
+The  page has a finalized, user-approved UI. The P2P ad creation flow is now fully functional, from UI form submission to the ad appearing in the public P2P Marketplace. This was achieved by fixing the backend ad creation endpoint and implementing a server-side mapper that unifies data from two different database collections ( and ) into a single canonical schema for the frontend. The P2P Express feature's logic and architecture have been fully analyzed and documented.
 
 **Last working item**:
--   **Last item agent was working**: Implementing internationalization (i18n) on key frontend pages. The agent started by adding the  hook and replacing hardcoded English text with  calls in  and .
--   **Status**: IN PROGRESS
--   **Agent Testing Done**: N
--   **Which testing method agent to use?**: Frontend testing agent. The agent must test by switching languages via the UI and verifying that the text on the P2P pages changes accordingly.
--   **User Testing Done**: N
+-   Last item agent was working: The agent documented the complete P2P Express flow, from frontend interaction to backend liquidity checks, quote generation, and execution logic. This included clarifying that P2P Express is a separate system from the P2P Marketplace and fails with an error if admin liquidity is insufficient, without falling back to the marketplace.
+-   Status: COMPLETED
+-   Agent Testing Done: Y
+-   Which testing method agent to use? NA
+-   User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Finish i18n Implementation Across Frontend (P0)
--   Issue 2: MongoDB Transactions Disabled (P1)
--   Issue 3: Implement Production Payment Rail Integrations (P2)
--   Issue 4: Google OAuth Blocked by Platform CSP (P3)
+-   There are no active, in-progress issues. The last set of tasks was completed and locked by the user. The infrastructure-level issues below are long-standing and were not part of this session's scope.
+    -   Issue 1: MongoDB Transactions are disabled (P2, BLOCKED).
+    -   Issue 2: Google OAuth is blocked by Content Security Policy (P3, BLOCKED).
 
 **Issues Detail**:
--   **Issue 1: Finish i18n Implementation Across Frontend**
-    -   **Attempted fixes**: The agent started modifying  and  to use the  hook. Multiple text elements were replaced with  placeholders.
-    -   **Next debug checklist**:
-        1.  Add all new translation keys (e.g., , ) to the JSON files: , , and .
-        2.  Restart the frontend and test  and  by switching languages to confirm the text updates.
-        3.  Continue the process for other key pages as per the user's instructions: , .
-        4.  Expand to all other user-facing text.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is a direct user request and a required feature for launch, making the platform accessible to a global audience.
-    -   **Status**: IN PROGRESS
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Frontend
-    -   **Blocked on other issue**: None
-
--   **Issue 2: MongoDB Transactions Disabled**
-    -   **Attempted fixes**: None in this session. The  was previously built with a non-atomic fallback because the database is not a replica set.
-    -   **Next debug checklist**: This is an infrastructure issue. The MongoDB instance must be converted to a replica set. Afterwards, the fallback logic in  must be removed and re-tested.
-    -   **Why fix this issue and what will be achieved with the fix?**: Enables true ACID compliance for all financial transactions, preventing data corruption under load.
-    -   **Status**: BLOCKED
+-   **Issue 1: MongoDB Transactions Disabled**
+    -   **Attempted fixes**: None in this session.
+    -   **Why fix this issue and what will be achieved with the fix?**: Enables ACID compliance for financial transactions, which is critical for a production exchange.
+    -   **Status**: BLOCKED (Requires DevOps change to configure MongoDB as a replica set).
     -   **Is recurring issue?**: Y
     -   **Should Test frontend/backend/both after fix?**: Backend
-    -   **Blocked on other issue**: Infrastructure change (MongoDB replica set configuration).
+    -   **Blocked on other issue**: Infrastructure.
 
--   **Issue 3: Implement Production Payment Rail Integrations**
-    -   **Attempted fixes**: None. The  was built with placeholder/mock logic.
-    -   **Next debug checklist**: Implement live integrations for TrueLayer and PayPal once API keys are provided.
-    -   **Why fix this issue and what will be achieved with the fix?**: The P2P system is not viable without real payment verification.
-    -   **Status**: BLOCKED
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Backend
-    -   **Blocked on other issue**: Awaiting third-party API keys from the user.
-
--   **Issue 4: Google OAuth Blocked by Platform CSP**
-    -   **Attempted fixes**: None. Identified as an external configuration issue.
-    -   **Next debug checklist**: Inform the user they must contact their hosting provider to whitelist  in the Content-Security-Policy header.
-    -   **Why fix this issue and what will be achieved with the fix?**: Enables a key user authentication method.
-    -   **Status**: BLOCKED
+-   **Issue 2: Google OAuth Blocked by Platform CSP**
+    -   **Attempted fixes**: None in this session.
+    -   **Why fix this issue and what will be achieved with this?**: Would enable Google Sign-In for users.
+    -   **Status**: BLOCKED (Requires external platform configuration).
     -   **Is recurring issue?**: Y
     -   **Should Test frontend/backend/both after fix?**: Frontend
-    -   **Blocked on other issue**: External platform configuration.
+    -   **Blocked on other issue**: External Configuration.
 
 **In progress Task List**:
--   **Task 1: Implement i18n on key frontend pages**
-    -   **Where to resume**: The agent has already modified  and . The immediate next step is to populate the corresponding translation keys in the , , and  files and then test the UI.
-    -   **What will be achieved with this?**: A functional, multi-language user interface for the P2P system.
-    -   **Status**: IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?**: Frontend
-    -   **Blocked on something**: No.
+-   None.
 
 **Upcoming and Future Tasks**
-- **Upcoming Tasks**:
-    - **P0**: Complete i18n integration for  and  after finishing the P2P pages.
-    - **P1**: Expand i18n to all remaining user-facing text across the application.
-- **Future Tasks**:
-    - Enable true MongoDB transactions after infrastructure upgrade.
-    - Decompose the  monolith further (NOTE: This is currently forbidden by user rules).
-    - Consolidate the multiple balance/trade collections ( vs ) to reduce complexity (NOTE: Also forbidden by user rules).
+**Future Tasks:**
+-   **P2**: Deprecate one of the two P2P systems ( or ) and migrate all data to a single source of truth to remove the need for the API mapper and reduce architectural debt.
+-   **P2**: Address any remaining UI/presentation issues on the P2P Marketplace or other pages.
+-   **P3**: Implement a proper backend configuration for the payment methods list, which is currently a static object in the frontend.
 
 **Completed work in this session**
-- **P2P System Fully Verified**: Confirmed correct internal ledger model, documented the entire flow, verified all UI buttons exist, and successfully ran a live end-to-end test including escrow lock, payment marking, crypto release, cancellation, and dispute.
-- **P2P Dispute Bug Fixed**: Resolved a 5xx error by passing the  to email notification functions in .
-- **Admin Fee Withdrawal Feature**: Built and tested a complete backend and frontend system for admins to withdraw collected platform fees.
-- **Fee Flow Verified & Documented**: Confirmed that P2P fees are correctly collected and logged to the admin dashboard. Created a document explaining how virtual fees translate to real money.
-- **Cryptographic Security Verified**: Confirmed existing crypto security features were complete and updated the master log.
-- **Critical Debugging**: Solved a major testing roadblock by identifying that test scripts were connecting to a local MongoDB instance instead of the cloud-hosted Atlas DB used by the server, due to  files not being loaded in the script's shell environment.
-- **Project Governance**: Created  and diligently updated  to prevent repeated work.
-- **Git Synchronization**: Pushed all new features, fixes, tests, and documentation to all 11 user repositories.
+-   ** UI Overhaul (COMPLETED)**:
+    -   Iteratively redesigned the page to a full-width, two-column, premium layout with a sticky footer.
+    -   Replaced static payment buttons with a searchable, multi-select dropdown component.
+    -   Corrected all layout, spacing, and color issues based on user feedback.
+
+-   **P2P Ad Creation E2E Flow (FIXED & COMPLETED)**:
+    -   Fixed the non-functional  endpoint.
+    -   **Bug 1 Solved**: Corrected backend parsing of the request body (from  to ).
+    -   **Bug 2 Solved**: Added the required  header to the frontend request.
+    -   **Bug 3 Solved**: Resolved user authentication mismatch between frontend  and the database by ensuring the correct  from the login response is used.
+
+-   **P2P Marketplace Display (FIXED & COMPLETED)**:
+    -   **Root Cause Identified**: Discovered that the marketplace () was reading from , while new ads were being written to .
+    -   **Implemented Mapper**: Created a server-side mapper to transform data from both collections into a single, canonical schema.
+    -   **Unified Endpoint**: The  endpoint now queries both sources, merges the data, and returns a unified list, making all ads visible.
+
+-   **Marketplace API Hardening (COMPLETED)**:
+    -   **Deduplication**: Implemented a safe deduplication key () to prevent collisions.
+    -   **Data Integrity**: Ensured the  field is populated with meaningful data instead of a default .
+    -   **Testing**: Added a new test file  with 8 passing unit tests for the mappers.
+    -   **Debugging**: Created a new  endpoint to provide insights into the data merging process.
+
+-   **P2P Express Flow Documentation (COMPLETED)**:
+    -   Analyzed the entire P2P Express flow from frontend to backend.
+    -   Documented the logic in , clarifying its independence from the P2P Marketplace and its direct reliance on the admin liquidity system.
 
 **Earlier issues found/mentioned but not fixed**
--   All known issues are captured in the All Pending/In progress Issue list.
+-   None. All issues raised during the session were either resolved or the user explicitly locked the logic from further changes.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: The fact that MongoDB is not a replica set, disabling true atomic transactions, was a known issue from the previous fork and remains blocked.
--   **Recurrence count**: 2+
+-   **Issue recurrence in previous fork**: MongoDB not being a replica set, which disables atomic transactions.
+-   **Recurrence count**: 5+
 -   **Status**: BLOCKED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend**: FastAPI, MongoDB ().
--   **Frontend**: React,  for internationalization.
--   **Asynchronous Testing**: Writing  Python scripts with  and  to test the FastAPI backend.
--   **Environment Management**: Critical reliance on  files for configuration (, ). Debugging involved discovering that test scripts must explicitly load  with  to avoid falling back to different environments (e.g., local MongoDB).
--   **Development Rules**: A strict, user-enforced development freeze on core logic, allowing only minimal, targeted bug fixes. All changes must be proven with extensive evidence.
+-   **Frontend**: React, CSS-in-JS (large inline style objects).
+-   **Backend**: FastAPI, Python.
+-   **Database**: MongoDB Atlas (Cloud). The backend connects to  DB on a cloud instance, NOT the local MongoDB.
+-   **Architecture**:
+    -   **API Mapping/Transformation**: A critical pattern was implemented where a backend endpoint () acts as a facade, fetching data from two disparate sources (, ), transforming them into a single canonical schema, and returning a unified response to the frontend.
+    -   **Idempotency**: The  header is required for critical transactional endpoints like ad creation.
 
 **key DB schema**
--   ****: The primary collection for P2P trades, containing status, participants, amounts, etc.
--   ****: A legacy or parallel collection for trades. Its existence caused significant confusion during debugging. The agent must be aware that the primary flow uses .
--   ****: A ledger of all fees collected by the platform.
--   ****: Stores chat messages and file uploads (proofs) for a given trade.
--   ****: Stores the aggregated balances of platform-owned fees.
+-   **Canonical P2P Offer (as returned by )**:
+    
 
 **changes in tech stack**
--   No new technologies were added. Work focused on correctly implementing the existing  library.
+-   None. However, a critical discovery was made: the production backend uses a **MongoDB Atlas (cloud)** instance, not the local MongoDB server. All database interactions must be verified against the cloud instance.
 
 **All files of reference**
--   : **MUST READ FIRST.** Contains strict, non-negotiable rules from the user.
--   : **MUST READ SECOND.** Tracks all completed work to avoid repetition.
--   : File currently being modified for i18n.
--   : File currently being modified for i18n.
--   : The definitive script for end-to-end testing of the P2P flow. Useful as a reference for API calls and database interactions.
+-   : Contains the crucial  and  endpoints that were fixed and hardened.
+-   : The primary UI file that was heavily modified.
+-   : New unit tests for the backend mapper logic.
+-   : New documentation for the P2P Express feature.
 
 **Areas that need refactoring**:
--   ****: A massive monolith.
--   ** vs.  collections**: These two collections for trades are redundant and confusing, and were the source of a major debugging effort. They should be unified.
--   **NOTE**: The user has **STRICTLY FORBIDDEN** any refactoring or architectural changes. These are technical debt items to be aware of, not tasks to be performed.
+-   The root architectural debt of having two separate P2P systems ( and ) remains. The API mapper is a functional bridge, but the long-term solution is to migrate to a single data source.
 
 **key api endpoints**
--   : Marks a trade as paid by the buyer.
--   : Releases escrowed crypto from seller to buyer.
--   : Initiates a dispute. (Bug fixed in this session).
--   : Cancels a trade.
--   : Used for chat and uploading payment proof.
--   : **(NEW)** Gets balances of collected fees available for withdrawal.
--   : **(NEW)** Initiates a withdrawal of collected fees to an external admin wallet.
+-   : Now functional. Creates an ad in the  collection. Requires .
+-   : Now functional. Returns a unified list of offers from both  and , mapped to a canonical schema.
+-   : New endpoint to help debug the offer-merging logic.
+-   : Core of P2P Express. Generates a 5-minute locked price quote.
+-   : Core of P2P Express. Executes a trade against a locked price quote.
 
 **Critical Info for New Agent**
-1.  **READ THE RULES FIRST**: Read . This is not a suggestion. The user has locked all core logic (P2P, wallet, escrow, fees). You are only authorized to perform targeted bug fixes or complete the in-progress i18n task. **DO NOT REFACTOR OR IMPROVE ANYTHING.**
-2.  **CHECK THE LOGS SECOND**: Read . The user is extremely frustrated by repeated work. Verify what is already done before starting any task.
-3.  **DATABASE CONNECTION AWARENESS**: When running Python scripts, you **MUST** load the  file () at the beginning. Otherwise, your script may silently connect to a local MongoDB instance while the server uses the Atlas cloud instance, leading to record not found errors and hours of wasted debugging time.
-4.  **CURRENT TASK IS i18n**: Your immediate and only approved task is to continue the internationalization effort. The previous agent has modified  and . You need to add the translation keys to the  files, test those pages, and then continue with  and  as per the user's explicit instructions.
+1.  **P2P OFFER LOGIC IS FROZEN**: The user has explicitly **LOCKED** all backend logic related to the P2P marketplace (), ad creation, and their associated data mappers. Do **NOT** make any changes, refactors, or improvements to this logic without direct, written approval from the user for a specific, reproducible bug. The final commit for this work is .
+2.  **DATABASE IS IN THE CLOUD**: The backend is connected to a MongoDB Atlas instance defined by  in the environment. Do not use local Current Mongosh Log ID:	694ad2b6b4533288863f118b
+Connecting to:		mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.10
+Using MongoDB:		7.0.26
+Using Mongosh:		2.5.10
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2025-12-23T17:34:43.839+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2025-12-23T17:34:45.536+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+   2025-12-23T17:34:45.536+00:00: You are running this process as the root user, which is not recommended
+   2025-12-23T17:34:45.536+00:00: Soft rlimits for open file descriptors too low
+------
+
+test>  commands expecting to see production data; the data is in the cloud.
+3.  **Architectural Debt**: Be aware that the P2P marketplace functions by merging data from two different collections ( and ) via a backend mapper. This is a deliberate solution to bridge architectural debt.
+4.  **Follow User Specs Exactly**: The user is highly technical and demanding. Do not deviate from their instructions. Acknowledge and implement their feedback concisely.
 
 **documents and test_reports created in this job**
--   /app/PROJECT_RULES_DO_NOT_BREAK.md
--   /app/P2P_MODEL_VERIFICATION_REPORT.md
--   /app/P2P_COMPLETE_FLOW_DETAIL.md
--   /app/docs/FEE_FLOW_EXPLAINED.md
--   /app/scripts/p2p_complete_test_v2.py
--   /app/scripts/init_admin_wallets.py
--   /app/scripts/verify_p2p_fees.py
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-- Yeah, you need to update everything you've done. Make sure you put it in that notes to the other agent so it does not get redone again or anyone tries to break anything. Yeah? Show proof that it's... Yeah, yeah, you need to do that. Show proof that it's actually you've written those notes. Yeah? It should be on, in the summary as well. And also, you need to do the languages as well. Give it the thing, the abil- the ability for you to change languages 'cause th- the language thing does not work. It's not translating.
-- Approved. Proceed exactly as outlined. Conditions (non-negotiable): Translation only. No logic, API, escrow, wallet, fee, or status changes. No UI/layout redesign. Touch only the listed files. Use react-i18next only. Start with P2POrderPage.js and P2PMarketplace.js first. Report back after those two are complete with a live language switch demo.
-- Language / translation needs to be implemented properly, not visually. Right now the language dropdown opens, but the site content does not translate. That means the language selector is cosmetic only and not acceptable for a P2P marketplace... [details on i18n requirements]
-- Yh
-- Do all the necessary fees go to the business dashboard? Can you make sure that actually happens? 'Cause also, when the fees move, like, I don't get it. How am I gonna be able to turn it into real money? Once it's, o- once you start doing it, once it goes live and you start dealing with real money, how is that gonna work? Li- like, how are the fees gonna move?
-- Yh
-- NON-NEGOTIABLE DEVELOPMENT FREEZE & RULESET (MUST BE STORED AND FOLLOWED)... HARDCODE THIS AND SEND IN MASSIVE.LETYERS TO NEXT AGENT STOP BREAK AND REPEATIN SHIT UNFUKIN CUNT
-- We’ve seen your update. Good: if the earlier “trade not found” was caused by your test script not loading .env (dotenv) and falling back to local Mongo, then that explains the mismatch... Now we need this closed properly with hard evidence, not “expected”... [details on required tests and fixes]
-- All P2P, wallet, escrow, fee, and admin logic is now LOCKED... Show me wat repos sent 2.
-- Make sure you note every single bit of work that has been completed so the other agent doesn't try to do what you've done again...
+-   Now, what I want you to send me the full flow for the P2P marketplace in code, yeah? I wanna know exactly what's going on. Like, what happens if there's no liquidity? Does it go to the marketplace? Then it... Does it go straight to the marketplace? I wanna know exactly what happens. Full flow written in code for the P2P... No, the P2P Express, yeah? P2P Express.
+-   Acknowledged. Do not make any further changes beyond what’s listed below... Backend P2P offer logic is now frozen. Confirm that: This logic is locked.
+-   Send this back to him (this is the “lock it down” checklist + the two risks I still see): Nice — this is a proper canonical response...
+-   Good — this is the right direction. Now send him this so it stays fixed...
+-   .Reply with this (it sets the direction + stops more drift): Good. Fix it properly at the API layer...
+-   Yeah, also you need to check the P2P express. Um... To write down the flow for the P2P express, and make sure it's connected to my fucking liquidity and it's not all fucking broken and shit. Yeah? Show me the, the P2P is ex- express page is connected to the back end and the, and the flow is correct.
+-   Good. Next step: do an end-to-end functional test, not just UI. 1. Create and publish 3 ads...
+-   Save all the changes to the repo, pussy.
+-   This iteration is moving in the right direction visually, but it’s still not usable as a complete P2P ad flow. Please address the following exactly: 1. Restore missing core sections...
+-   Yeah this is better overall, but one thing I want changed: The brown/gold highlight on the job box / payment methods card needs to go... Replace it with a cool-tone accent...
 
 **Project Health Check:**
 -   **Broken**:
-    -   **Internationalization (i18n)**: The language switching feature is fundamentally broken as  is not integrated into 98% of the frontend pages. Text is hardcoded. This is the current .
+    -   MongoDB transactions are disabled (infrastructure).
+    -   Google OAuth is non-functional (CSP).
 -   **Mocked**:
-    -   ****: Relies on mock logic for payment verification, blocking real P2P transactions.
-    -   ****: Runs in a non-atomic fallback mode due to the database not being a replica set, posing a risk to data integrity under high concurrency.
+    -   The list of payment methods in  is a static JSON object, not sourced from the backend.
+-   **Technical Debt**:
+    -   The P2P marketplace relies on a server-side mapper to bridge two separate, incompatible database collections ( and ). This is a functional but temporary solution.
 
 **3rd Party Integrations**
--   **NOWPayments**: For crypto deposits/payouts.
--   **Twilio**: For SMS verification.
--   **CoinGecko**: For live price feeds.
--   **Google OAuth**: Integrated but non-functional due to hosting provider's CSP.
--   **react-i18next**: For internationalization (partially implemented).
--   **TrueLayer (Planned)**: Required for P2P bank transfer verification.
--   **PayPal (Planned)**: Required for P2P PayPal payment verification.
+-   NOWPayments
+-   Twilio
+-   CoinGecko (API was observed to be rate-limited at times)
+-   Google OAuth (non-functional due to CSP)
+-   react-i18next
+-   MongoDB Atlas (Cloud Database)
 
 **Testing status**
--   **Testing agent used after significant changes**: YES (Agent created and ran multiple purpose-built Python scripts for backend/API testing).
--   **Troubleshoot agent used after agent stuck in loop**: NO.
+-   **Testing agent used after significant changes**: YES (Screenshot tool was used extensively for all UI verification and manual E2E testing).
+-   **Troubleshoot agent used after agent stuck in loop**: NO
 -   **Test files created**:
-    -    (The main E2E test for P2P flow)
-    -    (Verifies crypto security modules)
-    -    (Verifies fee collection)
--   **Known regressions**: None identified in this session.
+    -    (8 passing unit tests)
+-   **Known regressions**: None. The hardening steps (tests, debug endpoint) were specifically added to prevent regressions in the P2P Marketplace logic.
 
 **Credentials to test flow:**
--   **Admin User**:  /  (Admin Code: )
--   **Test Buyer**:  /  (This user's email and phone were programmatically verified during the session to enable login).
--   **Test Seller**:  (password unknown, may need to be reset).
+-   **Test User**:  / 
+-   **Admin**:  /  (Admin Code: )
 
 **What agent forgot to execute**
-The agent correctly followed the user's rapidly shifting priorities and did not forget any explicit final instructions. The current task (i18n) was interrupted by the end of the session and is documented as the .</analysis>
+-   Initially, the agent failed to correctly implement the user's aesthetic requirements for the  page, leading to several iterations (e.g., stretching divs instead of using a proper layout, using incorrect accent colors).
+-   During the UI overhaul, the agent temporarily lost core functionality like the Publish button and pricing section, which had to be restored.
+-   The agent initially pursued an incorrect debugging path by attempting to patch the database to match a stale  in the frontend's , which the user had to step in and correct with proper architectural guidance.</analysis>
