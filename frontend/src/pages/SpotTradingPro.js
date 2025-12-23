@@ -263,17 +263,16 @@ export default function SpotTradingPro() {
   // DESKTOP VERSION - FULL PAGE TRADING LAYOUT LIKE BINANCE
   if (!isMobile) {
     return (
-      <Layout>
-        <div style={{
-          width: '100%',
-          height: 'calc(100vh - 60px)',
-          background: '#0A0E17',
-          padding: '0',
-          margin: '0',
-          fontFamily: 'Inter, sans-serif',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
+      <div style={{
+        width: '100%',
+        height: 'calc(100vh - 60px)',
+        background: '#0A0E17',
+        padding: '0',
+        margin: '0',
+        fontFamily: 'Inter, sans-serif',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
           
           {/* TOP BAR - PAIR SELECTOR + STATS */}
           <div style={{
