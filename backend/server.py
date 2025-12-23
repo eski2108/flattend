@@ -2827,8 +2827,22 @@ async def get_enhanced_offers(
         # Normalize ad_type to lowercase
         ad_type = (ad.get("ad_type") or ad.get("type") or "sell").lower()
         
+        # Get offer_id
+        offer_id = ad.get("ad_id") or ad.get("offer_id") or str(uuid.uuid4())
+        
+        # Available amount: use stored value, or default to max_order_limit for sell ads
+        stored_available = ad.get("available_amount")
+        if stored_available is not None and stored_available > 0:
+            available = float(stored_available)
+        elif ad_type == "sell":
+            # For sell ads, assume max_order_limit as available if not explicitly set
+            available = float(max_limit) if max_limit else None
+        else:
+            available = None  # For buy ads, available_amount doesn't apply
+        
         return {
-            "offer_id": ad.get("ad_id") or ad.get("offer_id") or str(uuid.uuid4()),
+            "offer_id": offer_id,
+            "canonical_offer_id": f"p2p_ads:{offer_id}",  # Guaranteed unique across sources
             "seller_id": ad.get("seller_id", ""),
             "seller_name": ad.get("seller_name", "Seller"),
             "ad_type": ad_type,
@@ -2844,7 +2858,7 @@ async def get_enhanced_offers(
             "status": ad.get("status", "active"),
             "created_at": ad.get("created_at").isoformat() if hasattr(ad.get("created_at"), 'isoformat') else str(ad.get("created_at", "")),
             "total_trades": ad.get("total_trades", 0),
-            "available_amount": ad.get("available_amount", 0),
+            "available_amount": available,
             "source": "p2p_ads"
         }
     
