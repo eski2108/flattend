@@ -5252,9 +5252,11 @@ async def create_p2p_express_order(order_data: Dict):
         
         # Get target coin price in USDT
         try:
-            price_data = await get_crypto_price_cached(crypto)
-            target_price_usd = price_data.get("usd", 0) if price_data else 0
-        except:
+            # Use the live prices endpoint
+            price_response = await get_crypto_prices()
+            prices = price_response.get("prices", {})
+            target_price_usd = prices.get(crypto, {}).get("usd", 0)
+        except Exception:
             target_price_usd = 0
         
         if target_price_usd <= 0:
