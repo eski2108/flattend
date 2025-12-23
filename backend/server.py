@@ -2722,6 +2722,7 @@ async def create_enhanced_sell_offer(offer_data: Dict):
 
 @api_router.get("/p2p/offers")
 async def get_enhanced_offers(
+    ad_type: Optional[str] = None,
     crypto_currency: Optional[str] = None,
     fiat_currency: Optional[str] = None,
     payment_method: Optional[str] = None,
@@ -2742,8 +2743,12 @@ async def get_enhanced_offers(
     favorites_only: Optional[bool] = False,
     user_id: Optional[str] = None
 ):
-    """Get enhanced sell offers with comprehensive filters and sorting"""
+    """Get enhanced offers with comprehensive filters and sorting"""
     query = {"status": "active"}
+    
+    # Ad type filter (sell/buy)
+    if ad_type:
+        query["ad_type"] = ad_type.lower()
     
     # Basic filters
     if crypto_currency:
