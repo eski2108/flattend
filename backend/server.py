@@ -2720,6 +2720,64 @@ async def create_enhanced_sell_offer(offer_data: Dict):
         "message": "Offer created successfully"
     }
 
+# ==================== P2P OFFERS DEBUG ENDPOINT ====================
+@api_router.get("/p2p/offers/debug")
+async def get_p2p_offers_debug(
+    ad_type: Optional[str] = None,
+    crypto_currency: Optional[str] = None,
+    fiat_currency: Optional[str] = None
+):
+    """
+    Debug endpoint for P2P offers - shows counts by source and filters applied.
+    Use this to diagnose "missing offers" issues.
+    """
+    # Build queries
+    enhanced_query = {"status": "active"}
+    p2p_ads_query = {"status": "active"}
+    
+    if ad_type:
+        enhanced_query["ad_type"] = ad_type.lower()
+        p2p_ads_query["ad_type"] = ad_type.lower()
+    if crypto_currency:
+        enhanced_query["crypto_currency"] = crypto_currency
+        p2p_ads_query["crypto_currency"] = crypto_currency
+    if fiat_currency:
+        enhanced_query["fiat_currency"] = fiat_currency
+        p2p_ads_query["fiat_currency"] = fiat_currency
+    
+    # Count documents
+    enhanced_count = await db.enhanced_sell_orders.count_documents(enhanced_query)
+    p2p_ads_count = await db.p2p_ads.count_documents(p2p_ads_query)
+    
+    # Total without filters
+    enhanced_total = await db.enhanced_sell_orders.count_documents({"status": "active"})
+    p2p_ads_total = await db.p2p_ads.count_documents({"status": "active"})
+    
+    return {
+        "success": True,
+        "debug": {
+            "filters_applied": {
+                "ad_type": ad_type,
+                "crypto_currency": crypto_currency,
+                "fiat_currency": fiat_currency
+            },
+            "counts": {
+                "enhanced_sell_orders": {
+                    "total_active": enhanced_total,
+                    "after_filters": enhanced_count
+                },
+                "p2p_ads": {
+                    "total_active": p2p_ads_total,
+                    "after_filters": p2p_ads_count
+                },
+                "merged_total": enhanced_count + p2p_ads_count
+            },
+            "database": "MongoDB Atlas (coinhubx_production)",
+            "canonical_schema_version": "v2",
+            "dedup_key": "canonical_offer_id (source:offer_id)"
+        }
+    }
+
 @api_router.get("/p2p/offers")
 async def get_enhanced_offers(
     ad_type: Optional[str] = None,
