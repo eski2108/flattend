@@ -312,10 +312,10 @@ export default function CreateAd() {
                   <div style={SECTION_TITLE}>Pricing mode</div>
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
                     <button type="button" onClick={() => handleChange('price_type', 'fixed')} style={getPillStyle(formData.price_type === 'fixed', '#14B8A6')}>
-                      Fixed price
+                      💰 Fixed price
                     </button>
                     <button type="button" onClick={() => handleChange('price_type', 'floating')} style={getPillStyle(formData.price_type === 'floating', '#14B8A6')}>
-                      Floating %
+                      📊 Floating %
                     </button>
                   </div>
                 </div>
