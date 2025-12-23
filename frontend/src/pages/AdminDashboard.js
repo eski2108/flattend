@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import AdminPlatformWallet from './AdminPlatformWallet';
 import AdminSupportChat from './AdminSupportChat';
+import DOMPurify from 'dompurify';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
