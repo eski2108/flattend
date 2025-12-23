@@ -3,6 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { IoArrowBack, IoCheckmarkCircle, IoClose, IoSearch, IoChevronDown } from 'react-icons/io5';
 import axiosInstance from '@/utils/axiosConfig';
 import { toast } from 'sonner';
+import Coin3DIcon from '@/components/Coin3DIcon';
+import { getCryptoEmoji } from '@/utils/cryptoIcons';
+
+// Fiat currency config with flags
+const FIAT_CONFIG = {
+  GBP: { flag: '🇬🇧', name: 'British Pound' },
+  USD: { flag: '🇺🇸', name: 'US Dollar' },
+  EUR: { flag: '🇪🇺', name: 'Euro' },
+  NGN: { flag: '🇳🇬', name: 'Nigerian Naira' },
+  CAD: { flag: '🇨🇦', name: 'Canadian Dollar' },
+  AUD: { flag: '🇦🇺', name: 'Australian Dollar' },
+};
 
 // Payment methods config - grouped by region
 const PAYMENT_METHODS_CONFIG = {
