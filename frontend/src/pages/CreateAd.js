@@ -140,6 +140,8 @@ export default function CreateAd() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [paymentDropdownOpen, setPaymentDropdownOpen] = useState(false);
   const [paymentSearch, setPaymentSearch] = useState('');
+  const [cryptoDropdownOpen, setCryptoDropdownOpen] = useState(false);
+  const [fiatDropdownOpen, setFiatDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   
   const [formData, setFormData] = useState({
@@ -154,8 +156,8 @@ export default function CreateAd() {
   });
 
   const [focusedField, setFocusedField] = useState(null);
-  const [availableCryptos, setAvailableCryptos] = useState(['BTC', 'ETH', 'USDT']);
-  const availableFiats = ['GBP', 'USD', 'EUR'];
+  const [availableCryptos, setAvailableCryptos] = useState(['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'MATIC']);
+  const availableFiats = ['GBP', 'USD', 'EUR', 'NGN'];
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
