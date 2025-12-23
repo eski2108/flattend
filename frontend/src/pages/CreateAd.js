@@ -457,7 +457,7 @@ export default function CreateAd() {
                 Payment methods
                 <span style={{ background: 'rgba(220, 38, 38, 0.15)', color: '#DC2626', fontSize: '0.5rem', fontWeight: '600', padding: '2px 6px', borderRadius: '3px' }}>SELECT AT LEAST ONE</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '6px', justifyContent: 'start' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {availablePaymentMethods.map(method => {
                   const isSelected = formData.payment_methods.includes(method.id);
                   const isHovered = hoveredPill === method.id;
