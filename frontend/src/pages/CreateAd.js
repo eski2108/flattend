@@ -380,20 +380,20 @@ export default function CreateAd() {
                             border: '1px solid rgba(59, 130, 246, 0.25)',
                             boxShadow: '0 0 20px rgba(59, 130, 246, 0.1)'
                           }}>
-                          style={{ ...INPUT_STYLE, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <span style={{ fontSize: '1.25rem' }}>{FIAT_CONFIG[formData.fiat_currency]?.flag}</span>
-                            <span>{formData.fiat_currency}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '1.75rem' }}>{FIAT_CONFIG[formData.fiat_currency]?.flag}</span>
+                            <span style={{ fontSize: '1.125rem', fontWeight: '700' }}>{formData.fiat_currency}</span>
                           </div>
-                          <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: fiatDropdownOpen ? 'rotate(180deg)' : 'none' }} />
+                          <IoChevronDown size={18} style={{ color: 'rgba(255,255,255,0.5)', transform: fiatDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                         </div>
                         {fiatDropdownOpen && (
-                          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'rgba(10, 15, 30, 0.98)', border: '1px solid rgba(0, 255, 200, 0.2)', borderRadius: '10px', maxHeight: '240px', overflowY: 'auto', zIndex: 200, boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)' }}>
+                          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'rgba(10, 15, 30, 0.98)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px', maxHeight: '260px', overflowY: 'auto', zIndex: 200, boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)' }}>
                             {availableFiats.map(f => (
                               <div key={f} onClick={() => { handleChange('fiat_currency', f); setFiatDropdownOpen(false); }}
-                                style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: formData.fiat_currency === f ? 'rgba(0, 255, 200, 0.1)' : 'transparent', borderLeft: formData.fiat_currency === f ? '3px solid #00FFD0' : '3px solid transparent' }}>
-                                <span style={{ fontSize: '1.25rem' }}>{FIAT_CONFIG[f]?.flag}</span>
-                                <span style={{ color: formData.fiat_currency === f ? '#00FFD0' : '#fff', fontWeight: '500' }}>{f}</span>
+                                style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', background: formData.fiat_currency === f ? 'rgba(59, 130, 246, 0.15)' : 'transparent', borderLeft: formData.fiat_currency === f ? '3px solid #3B82F6' : '3px solid transparent', transition: 'all 0.15s' }}>
+                                <span style={{ fontSize: '1.5rem' }}>{FIAT_CONFIG[f]?.flag}</span>
+                                <span style={{ color: formData.fiat_currency === f ? '#fff' : 'rgba(255,255,255,0.8)', fontWeight: formData.fiat_currency === f ? '600' : '500', fontSize: '0.9375rem' }}>{f}</span>
+                                {formData.fiat_currency === f && <IoCheckmarkCircle size={16} color="#3B82F6" style={{ marginLeft: 'auto' }} />}
                               </div>
                             ))}
                           </div>
