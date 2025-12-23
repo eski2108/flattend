@@ -7003,6 +7003,20 @@ async def withdraw_from_savings(request: dict):
         # Calculate actual amount user receives
         net_amount_to_user = amount - penalty_on_principal
         
+        # ═══════════════════════════════════════════════════════════════════════
+        # CRITICAL FIX: CREDIT USER'S MAIN WALLET WITH NET AMOUNT
+        # Previously this was missing - user's funds were not being returned
+        # ═══════════════════════════════════════════════════════════════════════
+        if net_amount_to_user > 0:
+            # Credit user's main wallet with net amount (after penalty deduction)
+            await sync_credit_balance(
+                user_id=user_id,
+                currency=coin,
+                amount=net_amount_to_user,
+                reason="savings_withdrawal"
+            )
+            logger.info(f"✅ SAVINGS WITHDRAWAL: Credited {net_amount_to_user} {coin} to user {user_id} main wallet")
+        
         return {
             "success": True,
             "message": "Withdrawal completed" if not is_early else "Early withdrawal completed with penalties",
@@ -7011,6 +7025,7 @@ async def withdraw_from_savings(request: dict):
                 "requested_amount": amount,
                 "early_withdrawal": is_early,
                 "penalty_on_principal": penalty_on_principal,
+                "penalty_applied": penalty_on_principal,  # Added for frontend compatibility
                 "forfeited_interest": forfeited_interest,
                 "total_platform_profit": total_platform_profit,
                 "penalty_percentage": penalty_percentage * 100,
