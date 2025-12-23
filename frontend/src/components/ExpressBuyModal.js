@@ -364,9 +364,9 @@ function ExpressBuyModal({ isOpen, onClose }) {
               <IoShield size={20} color="#22C55E" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
               <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>
                 <div style={{ fontWeight: '700', color: '#22C55E', marginBottom: '0.25rem' }}>
-                  Instant & Secure
+                  Platform Liquidity
                 </div>
-                Crypto will be locked in escrow. Payment required to complete the trade.
+                This purchase is fulfilled directly by CoinHubX, not another user.
               </div>
             </div>
 
