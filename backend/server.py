@@ -5066,7 +5066,7 @@ async def check_express_liquidity(data: Dict):
                 # Use the live prices endpoint
                 price_response = await get_crypto_prices()
                 prices = price_response.get("prices", {})
-                target_price_usd = prices.get(crypto, {}).get("usd", 0)
+                target_price_usd = prices.get(crypto, {}).get("price_usd", 0)
                 
                 if target_price_usd <= 0:
                     return {
