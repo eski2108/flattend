@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://express-buy-flow.preview.emergentagent.com/#/p2p
+   https://layout-restore-2.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://express-buy-flow.preview.emergentagent.com/#/p2p/merchant
+   https://layout-restore-2.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://express-buy-flow.preview.emergentagent.com/#/p2p/create-ad
+   https://layout-restore-2.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

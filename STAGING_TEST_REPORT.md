@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://express-buy-flow.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://layout-restore-2.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

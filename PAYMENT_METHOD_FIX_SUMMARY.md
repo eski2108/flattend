@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://express-buy-flow.preview.emergentagent.com
+https://layout-restore-2.preview.emergentagent.com
 
 ### Test Route
 
-`https://express-buy-flow.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://layout-restore-2.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -222,13 +222,13 @@ User Loads Trading Page
 ## 🎯 LIVE PREVIEW URLS
 
 **Main App:**  
-https://express-buy-flow.preview.emergentagent.com/
+https://layout-restore-2.preview.emergentagent.com/
 
 **Trading Page:**  
-https://express-buy-flow.preview.emergentagent.com/#/trading
+https://layout-restore-2.preview.emergentagent.com/#/trading
 
 **Direct API Test:**  
-https://express-buy-flow.preview.emergentagent.com/api/prices/live?coins=BTC
+https://layout-restore-2.preview.emergentagent.com/api/prices/live?coins=BTC
 
 ---
 
@@ -269,7 +269,7 @@ Size: 2.1 MB
 ## 🚪 NEXT STEPS FOR USER
 
 ### Immediate Testing:
-1. Open: https://express-buy-flow.preview.emergentagent.com/#/trading
+1. Open: https://layout-restore-2.preview.emergentagent.com/#/trading
 2. Verify stats panel shows price and 24h change
 3. Verify gradient colors match spec (cyan to teal)
 4. Verify timeframe buttons have correct styling

@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://express-buy-flow.preview.emergentagent.com
+**Test it now at:** https://layout-restore-2.preview.emergentagent.com

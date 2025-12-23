@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://express-buy-flow.preview.emergentagent.com/api
-- **Frontend App**: https://express-buy-flow.preview.emergentagent.com
+- **Backend API**: https://layout-restore-2.preview.emergentagent.com/api
+- **Frontend App**: https://layout-restore-2.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

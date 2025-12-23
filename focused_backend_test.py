@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
+BASE_URL = "https://layout-restore-2.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

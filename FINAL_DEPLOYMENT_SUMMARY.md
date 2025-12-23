@@ -46,7 +46,7 @@ Referrals:    0  (no test data)
 ### ✅ Fixed 30 Files
 
 **Removed ALL hardcoded URLs:**
-- ❌ `https://express-buy-flow.preview.emergentagent.com`
+- ❌ `https://layout-restore-2.preview.emergentagent.com`
 - ❌ `http://localhost:8001`
 - ❌ Any other hardcoded references
 

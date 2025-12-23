@@ -12,7 +12,7 @@ import re
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://express-buy-flow.preview.emergentagent.com"
+BACKEND_URL = "https://layout-restore-2.preview.emergentagent.com"
 
 class NOWPaymentsDepositTest:
     def __init__(self):

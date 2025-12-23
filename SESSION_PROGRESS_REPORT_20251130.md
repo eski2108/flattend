@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://express-buy-flow.preview.emergentagent.com/api/admin/fees/test
+$ curl https://layout-restore-2.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://express-buy-flow.preview.emergentagent.com/api/admin/fees/all
+$ curl https://layout-restore-2.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {
