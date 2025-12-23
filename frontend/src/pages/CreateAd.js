@@ -165,16 +165,21 @@ export default function CreateAd() {
         return;
       }
       
+      // Generate idempotency key
+      const idempotencyKey = crypto.randomUUID();
+      
       const res = await axiosInstance.post('/p2p/create-ad', {
         user_id: userId,
         ad_type: adType, crypto_currency: formData.crypto_currency, fiat_currency: formData.fiat_currency,
         price_type: formData.price_type, price_value: parseFloat(formData.price_value),
         min_amount: parseFloat(formData.min_amount), max_amount: parseFloat(formData.max_amount),
         payment_methods: formData.payment_methods, terms: formData.terms || ''
+      }, {
+        headers: { 'Idempotency-Key': idempotencyKey }
       });
       if (res.data.success) { setShowSuccess(true); setTimeout(() => navigate('/p2p/merchant'), 2000); }
     } catch (err) { 
-      const errorMsg = err.response?.data?.detail || 'Failed to create ad';
+      const errorMsg = err.response?.data?.message || err.response?.data?.detail || 'Failed to create ad';
       toast.error(errorMsg);
     }
     finally { setCreating(false); }
