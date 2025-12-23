@@ -54,11 +54,7 @@ export default function OrderPreview() {
       return;
     }
     
-    // console.log('📊 Offer fields:', {
-      min_purchase: offer.min_purchase,
-      max_purchase: offer.max_purchase,
-      price_per_unit: offer.price_per_unit
-    });
+    // Debug logging removed for production
     
     if (!offer.min_purchase || !offer.max_purchase || !offer.price_per_unit) {
       // console.log('❌ Missing required fields!');
