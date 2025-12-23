@@ -110,6 +110,7 @@ export default function CreateAd() {
   const [paymentSearch, setPaymentSearch] = useState('');
   const [cryptoDropdownOpen, setCryptoDropdownOpen] = useState(false);
   const [fiatDropdownOpen, setFiatDropdownOpen] = useState(false);
+  const [touched, setTouched] = useState(false);
   const paymentRef = useRef(null);
   
   const [formData, setFormData] = useState({
