@@ -2799,7 +2799,8 @@ export default function AdminDashboard() {
                         if (users.length === 0) {
                           container.innerHTML = '<p style="color: #888; textAlign: center; padding: 2rem;">No Golden VIP users yet</p>';
                         } else {
-                          container.innerHTML = users.map(user => `
+                          // SECURITY: Sanitize user data before innerHTML to prevent XSS
+                          const sanitizedHTML = DOMPurify.sanitize(users.map(user => `
                             <div style="
                               padding: 1.5rem;
                               background: rgba(255, 215, 0, 0.05);
@@ -2859,7 +2860,8 @@ export default function AdminDashboard() {
                                 </p>
                               </div>
                             </div>
-                          `).join('');
+                          `).join(''));
+                          container.innerHTML = sanitizedHTML;
                         }
                       }
                     } catch (error) {
