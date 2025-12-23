@@ -523,6 +523,109 @@ function InstantBuy() {
           </div>
         </div>
       )}
+
+      {/* NO LIQUIDITY MODAL - Mandatory UX per Binance pattern */}
+      {showNoLiquidityModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(8px)'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0A1929 0%, #051018 100%)',
+            border: '1px solid rgba(245, 197, 66, 0.3)',
+            borderRadius: '20px',
+            padding: '32px',
+            maxWidth: '420px',
+            width: '90%',
+            textAlign: 'center',
+            boxShadow: '0 0 40px rgba(245, 197, 66, 0.2), 0 8px 32px rgba(0, 0, 0, 0.5)'
+          }}>
+            {/* Warning Icon */}
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: 'rgba(245, 197, 66, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px'
+            }}>
+              <Clock size={32} color="#F5C542" />
+            </div>
+
+            <h2 style={{ 
+              fontSize: '22px', 
+              fontWeight: '700', 
+              color: '#FFFFFF', 
+              marginBottom: '12px' 
+            }}>
+              Instant liquidity is currently unavailable.
+            </h2>
+            
+            <p style={{ 
+              fontSize: '14px', 
+              color: '#8F9BB3', 
+              marginBottom: '28px',
+              lineHeight: '1.6'
+            }}>
+              CoinHubX platform liquidity for {noLiquidityCoin || 'this coin'} is temporarily unavailable. 
+              You can browse the P2P Marketplace to trade directly with other users.
+            </p>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button
+                onClick={() => {
+                  setShowNoLiquidityModal(false);
+                  navigate('/p2p/marketplace');
+                }}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  background: 'linear-gradient(135deg, #00C6FF, #0099CC)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: '#000',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 20px rgba(0, 198, 255, 0.4)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Go to P2P Marketplace
+              </button>
+              <button
+                onClick={() => setShowNoLiquidityModal(false)}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  background: 'rgba(143, 155, 179, 0.1)',
+                  border: '1px solid rgba(143, 155, 179, 0.3)',
+                  borderRadius: '12px',
+                  color: '#8F9BB3',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
