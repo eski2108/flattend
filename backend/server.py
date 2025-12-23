@@ -2890,19 +2890,29 @@ async def get_enhanced_offers(
             "fast_payment": False
         }
     
-    # Mark existing offers with source
+    # Mark existing offers with source and canonical_offer_id
     for offer in offers:
         offer["source"] = "enhanced_sell_orders"
+        offer_id = offer.get("offer_id") or offer.get("order_id") or ""
+        offer["canonical_offer_id"] = f"enhanced_sell_orders:{offer_id}"
+        # Fix available_amount for enhanced offers too
+        if offer.get("available_amount") is None or offer.get("available_amount") == 0:
+            if offer.get("ad_type", "sell").lower() == "sell":
+                offer["available_amount"] = offer.get("max_order_limit") or offer.get("available_crypto")
     
     # ========== MERGE PIPELINE: merge → dedup → filter → sort ==========
-    # Merge both sources (avoid duplicates by offer_id)
-    # Dedup key: offer_id (guaranteed unique per source, prefixed to avoid collision)
-    existing_ids = {o.get("offer_id") or o.get("order_id") for o in offers}
-    for mapped_ad in p2p_ads_mapped:
-        if mapped_ad["offer_id"] not in existing_ids:
-            offers.append(mapped_ad)
+    # Dedup key: canonical_offer_id (source:offer_id) - guaranteed unique across sources
+    existing_canonical_ids = {o.get("canonical_offer_id") for o in offers if o.get("canonical_offer_id")}
     
-    logger.info(f"📊 Offers merged: {len(offers)} total (enhanced: {len(offers) - len(p2p_ads_mapped)}, p2p_ads: {len(p2p_ads_mapped)})")
+    # Debug logging
+    logger.info(f"📊 P2P Offers Debug: enhanced_sell_orders={len(offers)}, p2p_ads_mapped={len(p2p_ads_mapped)}")
+    
+    for mapped_ad in p2p_ads_mapped:
+        if mapped_ad["canonical_offer_id"] not in existing_canonical_ids:
+            offers.append(mapped_ad)
+            existing_canonical_ids.add(mapped_ad["canonical_offer_id"])
+    
+    logger.info(f"📊 Offers merged: {len(offers)} total (filters: ad_type={ad_type}, crypto={crypto_currency}, fiat={fiat_currency})")
     # ========== END CANONICAL SCHEMA MAPPER ==========
     
     # **BLOCKING FILTER**: Remove blocked users' offers
