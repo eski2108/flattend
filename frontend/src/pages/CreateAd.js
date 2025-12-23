@@ -75,9 +75,10 @@ const getAllPaymentMethods = () => {
 const BOX_STYLE = {
   background: 'rgba(10, 13, 28, 0.98)',
   border: '1px solid rgba(0, 255, 200, 0.08)',
-  borderRadius: '12px',
-  padding: '24px',
-  boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.25)'
+  borderRadius: '14px',
+  padding: '28px',
+  boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.25)',
+  width: '100%'
 };
 
 const SECTION_TITLE = {
