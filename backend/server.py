@@ -2784,6 +2784,91 @@ async def get_enhanced_offers(
     # Get offers
     offers = await db.enhanced_sell_orders.find(query, {"_id": 0}).to_list(1000)
     
+    # ========== CANONICAL SCHEMA MAPPER ==========
+    # Also fetch from p2p_ads and map to canonical format
+    def map_p2p_ad_to_canonical(ad):
+        """
+        Maps a p2p_ad document to the canonical offer schema.
+        
+        CANONICAL OFFER SCHEMA:
+        {
+            "offer_id": str,           # Unique ID
+            "seller_id": str,          # User ID of seller
+            "seller_name": str,        # Display name
+            "ad_type": str,            # "sell" or "buy" (lowercase)
+            "crypto_currency": str,    # "BTC", "ETH", etc.
+            "fiat_currency": str,      # "GBP", "USD", etc.
+            "price_per_unit": float,   # Price in fiat per 1 crypto
+            "price_type": str,         # "fixed" or "floating"
+            "price_margin": float,     # For floating: % above/below market (optional)
+            "min_order_limit": float,  # Min trade amount in fiat
+            "max_order_limit": float,  # Max trade amount in fiat
+            "payment_methods": list,   # ["bank_transfer", "paypal", etc.]
+            "terms": str,              # Trading terms
+            "status": str,             # "active", "paused", etc.
+            "created_at": str,         # ISO timestamp
+            "total_trades": int,       # Number of completed trades
+            "available_amount": float, # Available crypto balance
+            "source": str              # "p2p_ads" or "enhanced_sell_orders"
+        }
+        """
+        # Determine price - use price_value for fixed, or price_per_unit if exists
+        price = ad.get("price_per_unit") or ad.get("price_value") or ad.get("price", 0)
+        
+        # Determine order limits - handle both schemas
+        min_limit = ad.get("min_order_limit") or ad.get("min_amount", 0)
+        max_limit = ad.get("max_order_limit") or ad.get("max_amount", 0)
+        
+        # Normalize ad_type to lowercase
+        ad_type = (ad.get("ad_type") or ad.get("type") or "sell").lower()
+        
+        return {
+            "offer_id": ad.get("ad_id") or ad.get("offer_id") or str(uuid.uuid4()),
+            "seller_id": ad.get("seller_id", ""),
+            "seller_name": ad.get("seller_name", "Seller"),
+            "ad_type": ad_type,
+            "crypto_currency": ad.get("crypto_currency") or ad.get("crypto", "BTC"),
+            "fiat_currency": ad.get("fiat_currency") or ad.get("fiat", "GBP"),
+            "price_per_unit": float(price) if price else 0,
+            "price_type": ad.get("price_type", "fixed"),
+            "price_margin": ad.get("price_value") if ad.get("price_type") == "floating" else None,
+            "min_order_limit": float(min_limit) if min_limit else 0,
+            "max_order_limit": float(max_limit) if max_limit else 0,
+            "payment_methods": ad.get("payment_methods", []),
+            "terms": ad.get("terms", ""),
+            "status": ad.get("status", "active"),
+            "created_at": ad.get("created_at").isoformat() if hasattr(ad.get("created_at"), 'isoformat') else str(ad.get("created_at", "")),
+            "total_trades": ad.get("total_trades", 0),
+            "available_amount": ad.get("available_amount", 0),
+            "source": "p2p_ads"
+        }
+    
+    # Build query for p2p_ads collection
+    p2p_ads_query = {"status": "active"}
+    if crypto_currency:
+        p2p_ads_query["crypto_currency"] = crypto_currency
+    if fiat_currency:
+        p2p_ads_query["fiat_currency"] = fiat_currency
+    if payment_method:
+        p2p_ads_query["payment_methods"] = payment_method
+    
+    # Fetch and map p2p_ads
+    p2p_ads_raw = await db.p2p_ads.find(p2p_ads_query, {"_id": 0}).to_list(500)
+    p2p_ads_mapped = [map_p2p_ad_to_canonical(ad) for ad in p2p_ads_raw]
+    
+    # Mark existing offers with source
+    for offer in offers:
+        offer["source"] = "enhanced_sell_orders"
+    
+    # Merge both sources (avoid duplicates by offer_id)
+    existing_ids = {o.get("offer_id") or o.get("order_id") for o in offers}
+    for mapped_ad in p2p_ads_mapped:
+        if mapped_ad["offer_id"] not in existing_ids:
+            offers.append(mapped_ad)
+    
+    logger.info(f"📊 Offers merged: {len(offers)} total (enhanced: {len(offers) - len(p2p_ads_mapped)}, p2p_ads: {len(p2p_ads_mapped)})")
+    # ========== END CANONICAL SCHEMA MAPPER ==========
+    
     # **BLOCKING FILTER**: Remove blocked users' offers
     if user_id:
         try:
