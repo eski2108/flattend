@@ -519,13 +519,12 @@ export default function SpotTradingPro() {
             </div>
           </div>
         </div>
-      </Layout>
     );
   }
 
   // MOBILE VERSION
   return (
-    <Layout>
+    <div>
       <style>
         {`
           .main-content {
