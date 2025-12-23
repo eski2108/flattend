@@ -614,15 +614,15 @@ export default function CreateAd() {
                                     alignItems: 'center', 
                                     gap: '10px', 
                                     cursor: 'pointer', 
-                                    background: selected ? 'rgba(245,158,11,0.12)' : 'transparent', 
-                                    borderLeft: selected ? '3px solid #F59E0B' : '3px solid transparent', 
+                                    background: selected ? 'rgba(20,184,166,0.12)' : 'transparent', 
+                                    borderLeft: selected ? '3px solid #14B8A6' : '3px solid transparent', 
                                     fontSize: '0.8rem',
                                     transition: 'background 0.15s'
                                   }}
                                 >
                                   <span style={{ fontSize: '1rem' }}>{m.icon}</span>
-                                  <span style={{ color: selected ? '#F59E0B' : 'rgba(255,255,255,0.85)', fontWeight: selected ? '600' : '400' }}>{m.label}</span>
-                                  {selected && <IoCheckmarkCircle size={14} color="#F59E0B" style={{ marginLeft: 'auto' }} />}
+                                  <span style={{ color: selected ? '#14B8A6' : 'rgba(255,255,255,0.85)', fontWeight: selected ? '600' : '400' }}>{m.label}</span>
+                                  {selected && <IoCheckmarkCircle size={14} color="#14B8A6" style={{ marginLeft: 'auto' }} />}
                                 </div>
                               );
                             })}
