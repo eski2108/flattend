@@ -161,8 +161,25 @@ function ExpressBuyModal({ isOpen, onClose }) {
           </button>
         </div>
 
+        {/* MANDATORY DISCLOSURE */}
+        <div style={{
+          padding: '12px 16px',
+          background: 'rgba(34, 197, 94, 0.1)',
+          border: '1px solid rgba(34, 197, 94, 0.3)',
+          borderRadius: '10px',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <IoShield size={18} color="#22C55E" />
+          <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
+            Orders are executed instantly using CoinHubX platform liquidity, not another user.
+          </span>
+        </div>
+
         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-          Get matched with the cheapest seller instantly. One-click purchase with 1.5% express fee.
+          Get matched with platform liquidity instantly. One-click purchase with 1.5% express fee.
         </p>
 
         {!matchedOffer ? (
