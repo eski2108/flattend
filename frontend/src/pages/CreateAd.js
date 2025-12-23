@@ -19,10 +19,9 @@ const BOX_STYLE = {
 
 const SECTION_TITLE = {
   color: 'rgba(255, 255, 255, 0.9)',
-  fontSize: '0.6875rem',
-  fontWeight: '700',
-  textTransform: 'uppercase',
-  letterSpacing: '0.03em',
+  fontSize: '0.8125rem',
+  fontWeight: '600',
+  letterSpacing: '0.02em',
   marginBottom: '14px',
   display: 'flex',
   alignItems: 'center',
