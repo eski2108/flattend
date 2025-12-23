@@ -283,13 +283,13 @@ export default function CreateAd() {
   });
 
   const getPricingPillStyle = (isSelected) => ({
-    height: '40px',
-    padding: '0 14px',
+    height: '48px',
+    padding: '0 20px',
     background: isSelected ? 'rgba(0, 255, 200, 0.08)' : 'rgba(0, 0, 0, 0.3)',
     border: isSelected ? '1px solid rgba(0, 255, 200, 0.35)' : '1px solid rgba(255, 255, 255, 0.06)',
     borderRadius: '10px',
     color: isSelected ? '#00FFD0' : 'rgba(255, 255, 255, 0.4)',
-    fontSize: '0.8125rem',
+    fontSize: '0.9375rem',
     fontWeight: isSelected ? '600' : '500',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
