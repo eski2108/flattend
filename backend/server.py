@@ -46,14 +46,19 @@ COINGECKO_API_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_CACHE_TTL = 60  # Cache for 60 seconds
 
 # ============================================================================
-# CORE LIQUIDITY COINS - PLATFORM PRE-FUNDED INVENTORY
-# ONLY these coins are available for Instant Buy (direct platform delivery)
-# All other coins require Express Buy (conversion via NowPayments, 2-5 min)
+# LIQUIDITY CONFIGURATION - Import from shared module
 # ============================================================================
-CORE_LIQUIDITY_COINS = ["BTC", "ETH", "USDT", "USDC"]
-
-# Conversion source for Express Buy (non-core coins)
-EXPRESS_CONVERSION_SOURCE = "USDT"  # Always convert FROM USDT to target coin
+from liquidity_config import (
+    CORE_LIQUIDITY_COINS,
+    EXPRESS_CONVERSION_SOURCE,
+    DELIVERY_TIME_INSTANT,
+    DELIVERY_TIME_EXPRESS,
+    EXPRESS_ORDER_TIMEOUT_MINUTES,
+    is_core_coin,
+    get_core_coins_list,
+    validate_instant_buy_coin,
+    validate_express_buy_coin
+)
 
 # ============================================================================
 # DYNAMIC URL CONFIGURATION
