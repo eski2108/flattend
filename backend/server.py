@@ -5063,8 +5063,8 @@ async def check_express_liquidity(data: Dict):
         else:
             # Get current price of target coin in USDT
             try:
-                # Use the live prices endpoint
-                price_response = await get_crypto_prices()
+                # Use the live prices endpoint (has all coins)
+                price_response = await get_live_prices_endpoint()
                 prices = price_response.get("prices", {})
                 target_price_usd = prices.get(crypto, {}).get("price_usd", 0)
                 
