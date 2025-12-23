@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '@/components/Layout';
 import CHXButton from '@/components/CHXButton';
 import { IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
+import DOMPurify from 'dompurify';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
