@@ -6802,7 +6802,8 @@ async def savings_nowpayments_webhook(request: Request):
             "payment_id": payment_id,
             "actually_paid": actually_paid,
             "created_at": now.isoformat(),
-            "activated_at": now.isoformat()
+            "activated_at": now.isoformat(),
+            "deposit_timestamp": int(now.timestamp())  # FIX #9: Set deposit_timestamp for early withdrawal calculation
         }
         
         await db.savings_balances.insert_one(savings_record)
