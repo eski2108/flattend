@@ -149,13 +149,16 @@ export default function SpotTradingPro() {
     if (!container) return;
     container.innerHTML = '';
 
+    // SECURITY: Sanitize symbol to prevent injection (only allow alphanumeric)
+    const sanitizedPair = selectedPair.replace(/[^A-Za-z0-9]/g, '');
+
     const widgetHTML = `
       <div class="tradingview-widget-container" style="height:100%;width:100%;background:transparent">
         <div class="tradingview-widget-container__widget" style="height:100%;width:100%;background:transparent"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
         {
           "autosize": true,
-          "symbol": "${selectedPair}",
+          "symbol": "${sanitizedPair}",
           "interval": "15",
           "timezone": "Etc/UTC",
           "theme": "dark",
@@ -176,7 +179,8 @@ export default function SpotTradingPro() {
       </div>
     `;
 
-    container.innerHTML = widgetHTML;
+    // SECURITY: Sanitize widget HTML (though it's not user data)
+    container.innerHTML = DOMPurify.sanitize(widgetHTML, { ADD_TAGS: ['script'], ADD_ATTR: ['async'] });
     const scripts = container.getElementsByTagName('script');
     for (let i = 0; i < scripts.length; i++) {
       if (scripts[i].src) {
