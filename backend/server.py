@@ -6606,9 +6606,10 @@ async def initiate_savings_deposit(request: dict):
         now = datetime.now(timezone.utc)
         unlock_date = now + timedelta(days=lock_period_days)
         
-        # Early withdrawal fee by period
-        fee_map = {30: 1.5, 60: 1.0, 90: 0.5}
-        early_withdrawal_fee = fee_map.get(lock_period_days, 1.5)
+        # Early withdrawal fee by period (ALIGNED WITH WITHDRAW ENDPOINT)
+        # 30-day: 2%, 60-day: 3.5%, 90-day: 5%
+        fee_map = {30: 2.0, 60: 3.5, 90: 5.0}
+        early_withdrawal_fee = fee_map.get(lock_period_days, 2.0)
         
         pending_savings = {
             "savings_id": savings_id,
