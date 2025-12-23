@@ -527,12 +527,36 @@ export default function P2PExpress() {
                       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
                     }}
                   >
-                    {coins.map(coin => (
-                      <option key={coin.symbol} value={coin.symbol}>
-                        {coin.logo} {coin.name} ({coin.symbol})
-                      </option>
-                    ))}
+                    {coins.map(coin => {
+                      const isCoreC = CORE_LIQUIDITY_COINS.includes(coin.symbol.toUpperCase());
+                      return (
+                        <option key={coin.symbol} value={coin.symbol}>
+                          {coin.logo} {coin.name} ({coin.symbol}) {isCoreC ? '⚡ Instant' : '🔄 Express'}
+                        </option>
+                      );
+                    })}
                   </select>
+                  {/* Core coin indicator */}
+                  <div style={{ 
+                    marginTop: '8px', 
+                    fontSize: '12px', 
+                    color: isCoreCoin ? '#22C55E' : '#00F0FF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    {isCoreCoin ? (
+                      <>
+                        <IoFlash size={14} />
+                        <span>Core coin - Instant delivery from platform liquidity</span>
+                      </>
+                    ) : (
+                      <>
+                        <IoTime size={14} />
+                        <span>Express delivery via USDT conversion (2-5 min)</span>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
