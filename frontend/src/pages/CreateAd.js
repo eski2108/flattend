@@ -361,7 +361,7 @@ export default function CreateAd() {
 
             {/* SECTION 2: TRADING PAIR */}
             <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Trading Pair</div>
+              <div style={SECTION_TITLE}>Trading pair</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={LABEL_STYLE}>Crypto</label>
@@ -390,10 +390,72 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* SECTION 3: PAYMENT METHODS - EARLY, VISIBLE, IMPORTANT */}
+            {/* SECTION 3: PRICING MODE */}
+            <div style={BOX_STYLE}>
+              <div style={SECTION_TITLE}>Pricing mode</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+                <button type="button" onClick={() => handleChange('price_type', 'fixed')} style={getPricingPillStyle(formData.price_type === 'fixed')}>
+                  Fixed price
+                </button>
+                <button type="button" onClick={() => handleChange('price_type', 'floating')} style={getPricingPillStyle(formData.price_type === 'floating')}>
+                  Floating %
+                </button>
+              </div>
+              <input
+                type="number"
+                value={formData.price_value}
+                onChange={(e) => handleChange('price_value', e.target.value)}
+                onFocus={() => setFocusedField('price')}
+                onBlur={() => setFocusedField(null)}
+                placeholder={formData.price_type === 'fixed' ? '48,500' : 'Enter margin %'}
+                style={{ ...INPUT_STYLE, fontSize: '1.125rem', fontWeight: '700', ...(focusedField === 'price' ? INPUT_FOCUS : {}) }}
+              />
+              {formData.price_type === 'floating' && (
+                <p style={{ marginTop: '6px', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.3)' }}>
+                  Positive = above market • Negative = below
+                </p>
+              )}
+            </div>
+
+            {/* SECTION 4: TRADE LIMITS */}
+            <div style={BOX_STYLE}>
+              <div style={SECTION_TITLE}>Trade limits ({formData.crypto_currency})</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={LABEL_STYLE}>Minimum</label>
+                  <input
+                    type="number"
+                    step="0.00000001"
+                    value={formData.min_amount}
+                    onChange={(e) => handleChange('min_amount', e.target.value)}
+                    onFocus={() => setFocusedField('min')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="0.01"
+                    style={{ ...INPUT_STYLE, ...(focusedField === 'min' ? INPUT_FOCUS : {}) }}
+                  />
+                  <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Minimum per trade</p>
+                </div>
+                <div>
+                  <label style={LABEL_STYLE}>Maximum</label>
+                  <input
+                    type="number"
+                    step="0.00000001"
+                    value={formData.max_amount}
+                    onChange={(e) => handleChange('max_amount', e.target.value)}
+                    onFocus={() => setFocusedField('max')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="10"
+                    style={{ ...INPUT_STYLE, ...(focusedField === 'max' ? INPUT_FOCUS : {}) }}
+                  />
+                  <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Maximum per trade</p>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 5: PAYMENT METHODS */}
             <div style={BOX_STYLE}>
               <div style={SECTION_TITLE}>
-                Payment Methods
+                Payment methods
                 <span style={{ background: 'rgba(220, 38, 38, 0.15)', color: '#DC2626', fontSize: '0.5rem', fontWeight: '600', padding: '2px 6px', borderRadius: '3px' }}>SELECT AT LEAST ONE</span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -410,6 +472,8 @@ export default function CreateAd() {
                       style={getPaymentPillStyle(isSelected, isHovered)}
                     >
                       {isSelected && <IoCheckmarkCircle size={12} />}
+                      {method.id === 'local_bank_transfer' && '🏦 '}
+                      {method.id === 'wire_transfer' && '📤 '}
                       {method.label}
                     </button>
                   );
@@ -417,69 +481,7 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* SECTION 4: PRICING MODE */}
-            <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Pricing</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-                <button type="button" onClick={() => handleChange('price_type', 'fixed')} style={getPricingPillStyle(formData.price_type === 'fixed')}>
-                  Fixed Price
-                </button>
-                <button type="button" onClick={() => handleChange('price_type', 'floating')} style={getPricingPillStyle(formData.price_type === 'floating')}>
-                  Floating %
-                </button>
-              </div>
-              <input
-                type="number"
-                value={formData.price_value}
-                onChange={(e) => handleChange('price_value', e.target.value)}
-                onFocus={() => setFocusedField('price')}
-                onBlur={() => setFocusedField(null)}
-                placeholder={formData.price_type === 'fixed' ? 'Enter price' : 'Enter margin %'}
-                style={{ ...INPUT_STYLE, fontSize: '1.125rem', fontWeight: '700', ...(focusedField === 'price' ? INPUT_FOCUS : {}) }}
-              />
-              {formData.price_type === 'floating' && (
-                <p style={{ marginTop: '6px', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.3)' }}>
-                  Positive = above market • Negative = below
-                </p>
-              )}
-            </div>
-
-            {/* SECTION 5: TRADE LIMITS */}
-            <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Trade Limits ({formData.crypto_currency})</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={LABEL_STYLE}>Minimum</label>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    value={formData.min_amount}
-                    onChange={(e) => handleChange('min_amount', e.target.value)}
-                    onFocus={() => setFocusedField('min')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="0.01"
-                    style={{ ...INPUT_STYLE, ...(focusedField === 'min' ? INPUT_FOCUS : {}) }}
-                  />
-                  <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Min per trade</p>
-                </div>
-                <div>
-                  <label style={LABEL_STYLE}>Maximum</label>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    value={formData.max_amount}
-                    onChange={(e) => handleChange('max_amount', e.target.value)}
-                    onFocus={() => setFocusedField('max')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="1.0"
-                    style={{ ...INPUT_STYLE, ...(focusedField === 'max' ? INPUT_FOCUS : {}) }}
-                  />
-                  <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Max per trade</p>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION 6: TERMS (Optional) */}
+            {/* SECTION 6: TERMS (Optional - Advanced) */}
             <div style={{ ...BOX_STYLE, background: 'rgba(8, 10, 20, 0.95)', border: '1px solid rgba(255, 255, 255, 0.03)' }}>
               <div style={{ ...SECTION_TITLE, color: 'rgba(255, 255, 255, 0.45)' }}>
                 Terms
