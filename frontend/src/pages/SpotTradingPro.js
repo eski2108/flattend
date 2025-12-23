@@ -783,6 +783,6 @@ export default function SpotTradingPro() {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }
