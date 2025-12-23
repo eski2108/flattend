@@ -5996,7 +5996,9 @@ async def get_liquidity_config():
     """
     # Get current liquidity status for core coins
     liquidity_status = {}
-    for coin in CORE_LIQUIDITY_COINS:
+    core_coins_list = get_core_coins_list()
+    
+    for coin in core_coins_list:
         liq = await db.admin_liquidity.find_one(
             {"currency": coin, "status": "active"},
             {"_id": 0, "amount_available": 1}
@@ -6008,16 +6010,16 @@ async def get_liquidity_config():
     
     return {
         "success": True,
-        "core_coins": CORE_LIQUIDITY_COINS,
+        "core_coins": core_coins_list,
         "conversion_source": EXPRESS_CONVERSION_SOURCE,
         "delivery_times": {
-            "instant": "Instant",
-            "express": "2-5 minutes"
+            "instant": DELIVERY_TIME_INSTANT,
+            "express": DELIVERY_TIME_EXPRESS
         },
         "liquidity_status": liquidity_status,
         "rules": {
-            "instant_buy": "Available ONLY for core coins (BTC, ETH, USDT, USDC) with platform liquidity",
-            "express_buy": "Available for ALL other coins via USDT conversion (2-5 min delivery)",
+            "instant_buy": f"Available ONLY for core coins ({', '.join(core_coins_list)}) with platform liquidity",
+            "express_buy": f"Available for ALL other coins via {EXPRESS_CONVERSION_SOURCE} conversion ({DELIVERY_TIME_EXPRESS})",
             "no_p2p_fallback": "If liquidity unavailable, user must explicitly choose P2P Marketplace"
         }
     }
