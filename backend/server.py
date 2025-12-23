@@ -13307,10 +13307,16 @@ async def activate_seller(request: dict):
 @api_router.post("/p2p/create-ad")
 async def create_p2p_ad(request: dict):
     """Create a new P2P ad"""
+    import logging
+    logging.info(f"📝 P2P Create Ad request received: {request}")
+    
     user_id = request.get("user_id")
+    logging.info(f"📝 User ID from request: {user_id}")
     
     # Verify user is seller
     user = await db.users.find_one({"user_id": user_id})
+    logging.info(f"📝 User found in DB: {user is not None}, is_seller: {user.get('is_seller') if user else 'N/A'}")
+    
     if not user or not user.get("is_seller"):
         raise HTTPException(status_code=403, detail="Seller account required")
     
