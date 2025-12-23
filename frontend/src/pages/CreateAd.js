@@ -452,12 +452,12 @@ export default function CreateAd() {
             </div>
 
             {/* SECTION 5: PAYMENT METHODS */}
-            <div style={BOX_STYLE}>
+            <div style={{ ...BOX_STYLE, marginBottom: '8px' }}>
               <div style={SECTION_TITLE}>
                 Payment methods
                 <span style={{ background: 'rgba(220, 38, 38, 0.15)', color: '#DC2626', fontSize: '0.5rem', fontWeight: '600', padding: '2px 6px', borderRadius: '3px' }}>SELECT AT LEAST ONE</span>
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '6px', justifyContent: 'start' }}>
                 {availablePaymentMethods.map(method => {
                   const isSelected = formData.payment_methods.includes(method.id);
                   const isHovered = hoveredPill === method.id;
@@ -480,8 +480,8 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* SECTION 6: TERMS (Optional - Advanced) */}
-            <div style={{ ...BOX_STYLE, background: 'rgba(8, 10, 20, 0.95)', border: '1px solid rgba(255, 255, 255, 0.03)' }}>
+            {/* SECTION 6: ADVANCED OPTIONS */}
+            <div style={{ ...BOX_STYLE, background: 'rgba(8, 10, 20, 0.95)', border: '1px solid rgba(255, 255, 255, 0.03)', marginBottom: '8px' }}>
               <div style={{ ...SECTION_TITLE, color: 'rgba(255, 255, 255, 0.45)' }}>
                 Advanced options
                 <span style={{ color: 'rgba(255, 255, 255, 0.2)', fontSize: '0.5rem' }}>OPTIONAL</span>
