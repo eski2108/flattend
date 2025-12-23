@@ -317,7 +317,7 @@ export default function CreateAd() {
         </div>
       )}
 
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)', padding: '20px' }}>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)', padding: '24px 32px' }}>
         <div style={{ maxWidth: '100%', margin: '0 auto', padding: '0 32px' }}>
           
           <button onClick={() => navigate('/p2p/merchant')} style={{
