@@ -499,9 +499,9 @@ export default function CreateAd() {
                 </div>
 
                 {/* PAYMENT METHODS - Highlighted card */}
-                <div style={{ ...cardStyle(ACCENT.amber, true), position: 'relative' }} ref={paymentRef}>
-                  <div style={titleStyle(ACCENT.amber)}>
-                    <IoCard size={16} color={ACCENT.amber} />
+                <div style={{ ...cardStyle(ACCENT.teal, true), position: 'relative' }} ref={paymentRef}>
+                  <div style={titleStyle(ACCENT.teal)}>
+                    <IoCard size={16} color={ACCENT.teal} />
                     Payment methods
                     <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
                   </div>
