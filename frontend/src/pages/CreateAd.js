@@ -574,7 +574,7 @@ export default function CreateAd() {
             </div>
 
             {/* ROW 3: Payment Methods - Full Width */}
-            <div style={{ ...BOX_STYLE, marginBottom: '20px' }}>
+            <div style={{ ...BOX_STYLE, marginBottom: '24px' }}>
               <div style={SECTION_TITLE}>
                 Payment Methods
                 <span style={{ 
