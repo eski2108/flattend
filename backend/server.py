@@ -5014,29 +5014,110 @@ EXPRESS_RELEASE_TIMEOUT = 600  # 10 minutes in seconds
 
 @api_router.post("/p2p/express/check-liquidity")
 async def check_express_liquidity(data: Dict):
-    """Check if admin liquidity is available for instant delivery"""
+    """
+    Check liquidity availability for Instant Buy vs Express Buy
+    
+    CORE COINS (BTC, ETH, USDT, USDC): 
+        - Check admin_liquidity for instant delivery
+        - delivery_type = "instant" if available
+        
+    NON-CORE COINS:
+        - Always use Express Buy (NowPayments conversion)
+        - delivery_type = "express" (2-5 min via USDT conversion)
+        - Check if we have enough USDT to convert
+    """
     try:
-        crypto = data.get("crypto")
-        crypto_amount = data.get("crypto_amount")
+        crypto = data.get("crypto", "").upper()
+        crypto_amount = float(data.get("crypto_amount", 0))
         
-        if not crypto or not crypto_amount:
-            return {"success": False, "has_liquidity": False}
+        if not crypto or crypto_amount <= 0:
+            return {"success": False, "has_liquidity": False, "error": "Invalid crypto or amount"}
         
-        # Check admin_liquidity collection (uses 'currency' field)
-        admin_liquidity = await db.admin_liquidity.find_one({
-            "currency": crypto,
-            "amount_available": {"$gte": crypto_amount},
-            "status": "active"
-        })
+        # CORE COINS - Check for direct admin liquidity (Instant Buy)
+        if crypto in CORE_LIQUIDITY_COINS:
+            admin_liquidity = await db.admin_liquidity.find_one({
+                "currency": crypto,
+                "amount_available": {"$gte": crypto_amount},
+                "status": "active"
+            })
+            
+            if admin_liquidity:
+                return {
+                    "success": True,
+                    "has_liquidity": True,
+                    "delivery_type": "instant",
+                    "is_core_coin": True,
+                    "message": "Instant delivery available - platform liquidity"
+                }
+            else:
+                # Core coin but insufficient liquidity
+                return {
+                    "success": True,
+                    "has_liquidity": False,
+                    "delivery_type": "unavailable",
+                    "is_core_coin": True,
+                    "message": "Instant liquidity is currently unavailable."
+                }
         
-        return {
-            "success": True,
-            "has_liquidity": admin_liquidity is not None,
-            "delivery_type": "instant" if admin_liquidity else "express_seller"
-        }
+        # NON-CORE COINS - Express Buy via NowPayments conversion
+        else:
+            # Get current price of target coin in USDT
+            try:
+                price_data = await get_crypto_price_cached(crypto)
+                target_price_usd = price_data.get("usd", 0) if price_data else 0
+                
+                if target_price_usd <= 0:
+                    return {
+                        "success": False,
+                        "has_liquidity": False,
+                        "delivery_type": "unavailable",
+                        "is_core_coin": False,
+                        "message": f"Price data unavailable for {crypto}"
+                    }
+                
+                # Calculate USDT needed for conversion
+                usdt_needed = crypto_amount * target_price_usd * 1.02  # 2% buffer for slippage
+                
+                # Check if we have enough USDT for conversion
+                usdt_liquidity = await db.admin_liquidity.find_one({
+                    "currency": "USDT",
+                    "amount_available": {"$gte": usdt_needed},
+                    "status": "active"
+                })
+                
+                if usdt_liquidity:
+                    return {
+                        "success": True,
+                        "has_liquidity": True,
+                        "delivery_type": "express",
+                        "is_core_coin": False,
+                        "conversion_source": EXPRESS_CONVERSION_SOURCE,
+                        "usdt_required": round(usdt_needed, 2),
+                        "estimated_delivery": "2-5 minutes",
+                        "message": f"Express Buy available - converting from {EXPRESS_CONVERSION_SOURCE}"
+                    }
+                else:
+                    return {
+                        "success": True,
+                        "has_liquidity": False,
+                        "delivery_type": "unavailable",
+                        "is_core_coin": False,
+                        "message": "Instant liquidity is currently unavailable."
+                    }
+                    
+            except Exception as price_error:
+                logger.error(f"Price fetch error for {crypto}: {price_error}")
+                return {
+                    "success": False,
+                    "has_liquidity": False,
+                    "delivery_type": "unavailable",
+                    "is_core_coin": False,
+                    "message": "Unable to check liquidity at this time"
+                }
+                
     except Exception as e:
         logger.error(f"Error checking liquidity: {e}")
-        return {"success": False, "has_liquidity": False}
+        return {"success": False, "has_liquidity": False, "error": str(e)}
 
 
 @api_router.post("/p2p/express/create")
