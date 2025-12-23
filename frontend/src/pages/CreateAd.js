@@ -98,7 +98,7 @@ const ACCENT = {
   blue: '#3B82F6', 
   purple: '#8B5CF6', 
   amber: '#F59E0B', 
-  grey: '#6B7280' 
+  grey: '#64748B' 
 };
 
 export default function CreateAd() {
@@ -165,261 +165,242 @@ export default function CreateAd() {
     finally { setCreating(false); }
   };
 
-  // Card with premium gradient
-  const cardStyle = (accent) => ({
-    background: `linear-gradient(145deg, rgba(30, 40, 70, 0.95) 0%, rgba(18, 24, 48, 0.98) 50%, rgba(12, 16, 36, 1) 100%)`,
-    border: `1px solid ${accent}40`,
+  // Card style
+  const cardStyle = (accent, highlight = false) => ({
+    background: highlight 
+      ? `linear-gradient(145deg, rgba(40, 50, 85, 0.95) 0%, rgba(25, 32, 58, 0.98) 50%, rgba(18, 22, 42, 1) 100%)`
+      : `linear-gradient(145deg, rgba(28, 36, 65, 0.92) 0%, rgba(18, 24, 48, 0.96) 50%, rgba(12, 16, 36, 1) 100%)`,
+    border: highlight ? `1px solid ${accent}60` : `1px solid ${accent}35`,
     borderTop: `3px solid ${accent}`,
-    borderRadius: '14px',
-    padding: '20px 24px',
-    boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 60px ${accent}08, inset 0 1px 0 rgba(255,255,255,0.05)`,
+    borderRadius: '12px',
+    padding: '16px 20px',
+    boxShadow: highlight 
+      ? `0 8px 32px rgba(0,0,0,0.35), 0 0 40px ${accent}12, inset 0 1px 0 rgba(255,255,255,0.08)`
+      : `0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)`,
   });
 
-  // Section title with icon
-  const titleStyle = {
+  // Section title
+  const titleStyle = (accent) => ({
     color: '#fff',
-    fontSize: '0.9rem',
+    fontSize: '0.8rem',
     fontWeight: '700',
-    marginBottom: '16px',
+    marginBottom: '14px',
     display: 'flex',
     alignItems: 'center',
-    gap: '10px'
-  };
+    gap: '8px',
+    textShadow: `0 0 20px ${accent}30`
+  });
 
   // Label
   const labelStyle = { 
     color: 'rgba(255,255,255,0.5)', 
-    fontSize: '0.65rem', 
+    fontSize: '0.6rem', 
     fontWeight: '600', 
     textTransform: 'uppercase', 
     letterSpacing: '0.06em', 
-    marginBottom: '8px', 
+    marginBottom: '6px', 
     display: 'block' 
   };
 
   // Input
   const inputStyle = { 
     width: '100%', 
-    padding: '14px 16px', 
-    background: 'rgba(0,0,0,0.4)', 
+    padding: '12px 14px', 
+    background: 'rgba(0,0,0,0.45)', 
     border: '1px solid rgba(255,255,255,0.1)', 
-    borderRadius: '10px', 
+    borderRadius: '8px', 
     color: '#fff', 
-    fontSize: '0.9375rem', 
+    fontSize: '0.875rem', 
     fontWeight: '600', 
     outline: 'none', 
     boxSizing: 'border-box', 
     transition: 'all 0.2s' 
   };
 
-  // Toggle button (BUY/SELL)
+  // Toggle button
   const toggleStyle = (active, color) => ({
     flex: 1,
-    height: '52px',
+    height: '46px',
     background: active 
-      ? `linear-gradient(135deg, ${color}30 0%, ${color}15 100%)` 
+      ? `linear-gradient(135deg, ${color}35 0%, ${color}18 100%)` 
       : 'rgba(0,0,0,0.4)',
     border: active 
       ? `2px solid ${color}` 
       : '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '12px',
+    borderRadius: '10px',
     color: active ? '#fff' : 'rgba(255,255,255,0.4)',
-    fontSize: '0.9rem',
+    fontSize: '0.8rem',
     fontWeight: '700',
     cursor: 'pointer',
     boxShadow: active 
-      ? `0 0 24px ${color}40, 0 4px 16px ${color}20, inset 0 1px 0 rgba(255,255,255,0.15)` 
+      ? `0 0 20px ${color}35, 0 4px 12px ${color}20, inset 0 1px 0 rgba(255,255,255,0.15)` 
       : 'none',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    transition: 'all 0.25s ease'
+    gap: '6px',
+    transition: 'all 0.2s ease'
   });
 
-  // Dropdown panel
+  // Dropdown
   const dropdownStyle = { 
     position: 'absolute', 
     top: '100%', 
     left: 0, 
     right: 0, 
-    marginTop: '6px', 
+    marginTop: '4px', 
     background: 'rgba(12,16,36,0.99)', 
-    border: '1px solid rgba(59,130,246,0.35)', 
-    borderRadius: '12px', 
-    maxHeight: '260px', 
+    border: '1px solid rgba(59,130,246,0.4)', 
+    borderRadius: '10px', 
+    maxHeight: '240px', 
     overflowY: 'auto', 
     zIndex: 500, 
-    boxShadow: '0 16px 48px rgba(0,0,0,0.5)' 
+    boxShadow: '0 12px 40px rgba(0,0,0,0.5)' 
   };
 
   const dropdownItem = (active) => ({ 
-    padding: '12px 16px', 
+    padding: '10px 14px', 
     display: 'flex', 
     alignItems: 'center', 
-    gap: '12px', 
+    gap: '10px', 
     cursor: 'pointer', 
     background: active ? 'rgba(59,130,246,0.15)' : 'transparent', 
     borderLeft: active ? '3px solid #3B82F6' : '3px solid transparent', 
-    fontSize: '0.875rem',
+    fontSize: '0.8rem',
     transition: 'background 0.15s'
   });
 
   return (
     <>
       {showSuccess && (
-        <div style={{ position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #22C55E, #16A34A)', borderRadius: '12px', padding: '16px 28px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 9999, boxShadow: '0 8px 32px rgba(34,197,94,0.4)' }}>
-          <IoCheckmarkCircle size={22} color="#fff" />
-          <span style={{ color: '#fff', fontWeight: '600', fontSize: '0.9rem' }}>Ad created successfully!</span>
+        <div style={{ position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #22C55E, #16A34A)', borderRadius: '10px', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 9999, boxShadow: '0 8px 32px rgba(34,197,94,0.4)' }}>
+          <IoCheckmarkCircle size={20} color="#fff" />
+          <span style={{ color: '#fff', fontWeight: '600', fontSize: '0.85rem' }}>Ad created successfully!</span>
         </div>
       )}
 
-      {/* MAIN CONTAINER - Full width */}
+      {/* PAGE - Full width, no wrapper */}
       <div style={{ 
         width: '100%',
         minHeight: 'calc(100vh - 64px)',
-        background: 'linear-gradient(180deg, rgba(10,14,30,1) 0%, rgba(14,20,42,1) 40%, rgba(10,14,30,1) 100%)',
-        paddingBottom: '100px'
+        background: 'linear-gradient(180deg, rgba(12,16,32,1) 0%, rgba(16,22,44,1) 100%)',
+        paddingBottom: '70px'
       }}>
         
-        {/* PAGE HEADER */}
+        {/* HEADER - Compact */}
         <div style={{ 
-          background: 'linear-gradient(180deg, rgba(30, 42, 80, 0.5) 0%, transparent 100%)',
-          borderBottom: '1px solid rgba(59, 130, 246, 0.15)',
-          padding: '20px 32px'
+          borderBottom: '1px solid rgba(59, 130, 246, 0.12)',
+          padding: '14px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px'
         }}>
-          <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '4px' }}>
-              <button 
-                onClick={() => navigate('/p2p/merchant')} 
-                style={{ 
-                  background: 'rgba(255,255,255,0.05)', 
-                  border: '1px solid rgba(255,255,255,0.1)', 
-                  borderRadius: '8px', 
-                  padding: '8px 12px', 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  color: 'rgba(255,255,255,0.6)',
-                  fontSize: '0.8rem'
-                }}
-              >
-                <IoArrowBack size={14} /> Back
-              </button>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', margin: 0 }}>Create new P2P ad</h1>
-            </div>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', margin: 0, marginLeft: '90px' }}>Set your trading terms and start receiving orders</p>
+          <button 
+            onClick={() => navigate('/p2p/merchant')} 
+            style={{ 
+              background: 'rgba(255,255,255,0.04)', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              borderRadius: '6px', 
+              padding: '6px 10px', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              color: 'rgba(255,255,255,0.6)',
+              fontSize: '0.75rem'
+            }}
+          >
+            <IoArrowBack size={12} /> Back
+          </button>
+          <div>
+            <h1 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff', margin: 0 }}>Create new P2P ad</h1>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', margin: 0 }}>Set your trading terms and start receiving orders</p>
           </div>
         </div>
 
-        {/* FORM CONTENT - Full width with max constraint */}
-        <div style={{ 
-          width: '100%',
-          maxWidth: '1600px', 
-          margin: '0 auto',
-          padding: '24px 32px'
-        }}>
+        {/* FORM - Full width grid */}
+        <div style={{ padding: '16px 24px' }}>
           <form onSubmit={handleSubmit}>
-            {/* TWO COLUMN GRID */}
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr 1fr', 
-              gap: '24px',
+              gap: '16px',
               alignItems: 'start'
             }}>
               
-              {/* ========== LEFT COLUMN ========== */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* LEFT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 
-                {/* 1. AD TYPE */}
+                {/* AD TYPE */}
                 <div style={cardStyle(ACCENT.green)}>
-                  <div style={titleStyle}>
-                    <IoSwapHorizontal size={18} color={ACCENT.green} />
+                  <div style={titleStyle(ACCENT.green)}>
+                    <IoSwapHorizontal size={16} color={ACCENT.green} />
                     Ad type
-                    <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.55rem', fontWeight: '700', padding: '3px 8px', borderRadius: '4px' }}>REQUIRED</span>
+                    <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
                   </div>
-                  <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="button" onClick={() => setAdType('sell')} style={toggleStyle(adType === 'sell', ACCENT.red)}>
-                      {adType === 'sell' && <IoCheckmarkCircle size={16} />} I want to SELL
+                      {adType === 'sell' && <IoCheckmarkCircle size={14} />} I want to SELL
                     </button>
                     <button type="button" onClick={() => setAdType('buy')} style={toggleStyle(adType === 'buy', ACCENT.green)}>
-                      {adType === 'buy' && <IoCheckmarkCircle size={16} />} I want to BUY
+                      {adType === 'buy' && <IoCheckmarkCircle size={14} />} I want to BUY
                     </button>
                   </div>
                 </div>
 
-                {/* 2. TRADING PAIR */}
+                {/* TRADING PAIR */}
                 <div style={cardStyle(ACCENT.blue)}>
-                  <div style={titleStyle}>
-                    <IoSwapHorizontal size={18} color={ACCENT.blue} />
+                  <div style={titleStyle(ACCENT.blue)}>
+                    <IoSwapHorizontal size={16} color={ACCENT.blue} />
                     Trading pair
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    {/* Crypto */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div className="crypto-dropdown">
                       <label style={labelStyle}>Crypto asset</label>
                       <div style={{ position: 'relative' }}>
                         <div 
                           onClick={() => { setCryptoDropdownOpen(!cryptoDropdownOpen); setFiatDropdownOpen(false); }}
-                          style={{ 
-                            ...inputStyle, 
-                            cursor: 'pointer', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'space-between', 
-                            height: '52px',
-                            border: cryptoDropdownOpen ? '1px solid #3B82F6' : '1px solid rgba(255,255,255,0.1)'
-                          }}
+                          style={{ ...inputStyle, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '46px', border: cryptoDropdownOpen ? '1px solid #3B82F6' : '1px solid rgba(255,255,255,0.1)' }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <Coin3DIcon symbol={formData.crypto_currency} size={24} />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Coin3DIcon symbol={formData.crypto_currency} size={22} />
                             <span>{formData.crypto_currency}</span>
                           </div>
-                          <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: cryptoDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                          <IoChevronDown size={14} style={{ color: 'rgba(255,255,255,0.4)', transform: cryptoDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                         </div>
                         {cryptoDropdownOpen && (
                           <div style={dropdownStyle}>
                             {cryptos.map(c => (
                               <div key={c} onClick={() => { handleChange('crypto_currency', c); setCryptoDropdownOpen(false); }} style={dropdownItem(formData.crypto_currency === c)}>
-                                <Coin3DIcon symbol={c} size={22} />
+                                <Coin3DIcon symbol={c} size={20} />
                                 <span style={{ fontWeight: '600', color: formData.crypto_currency === c ? '#fff' : 'rgba(255,255,255,0.85)' }}>{c}</span>
-                                <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem', marginLeft: 'auto' }}>{CRYPTO_CONFIG[c]?.name}</span>
+                                <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', marginLeft: 'auto' }}>{CRYPTO_CONFIG[c]?.name}</span>
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
                     </div>
-                    {/* Fiat */}
                     <div className="fiat-dropdown">
                       <label style={labelStyle}>Fiat currency</label>
                       <div style={{ position: 'relative' }}>
                         <div 
                           onClick={() => { setFiatDropdownOpen(!fiatDropdownOpen); setCryptoDropdownOpen(false); }}
-                          style={{ 
-                            ...inputStyle, 
-                            cursor: 'pointer', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'space-between', 
-                            height: '52px',
-                            border: fiatDropdownOpen ? '1px solid #3B82F6' : '1px solid rgba(255,255,255,0.1)'
-                          }}
+                          style={{ ...inputStyle, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '46px', border: fiatDropdownOpen ? '1px solid #3B82F6' : '1px solid rgba(255,255,255,0.1)' }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <span style={{ fontSize: '1.4rem' }}>{FIAT_CONFIG[formData.fiat_currency]?.flag}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '1.2rem' }}>{FIAT_CONFIG[formData.fiat_currency]?.flag}</span>
                             <span>{formData.fiat_currency}</span>
                           </div>
-                          <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: fiatDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                          <IoChevronDown size={14} style={{ color: 'rgba(255,255,255,0.4)', transform: fiatDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                         </div>
                         {fiatDropdownOpen && (
                           <div style={dropdownStyle}>
                             {fiats.map(f => (
                               <div key={f} onClick={() => { handleChange('fiat_currency', f); setFiatDropdownOpen(false); }} style={dropdownItem(formData.fiat_currency === f)}>
-                                <span style={{ fontSize: '1.4rem' }}>{FIAT_CONFIG[f]?.flag}</span>
+                                <span style={{ fontSize: '1.2rem' }}>{FIAT_CONFIG[f]?.flag}</span>
                                 <span style={{ fontWeight: '600', color: formData.fiat_currency === f ? '#fff' : 'rgba(255,255,255,0.85)' }}>{f}</span>
-                                <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem', marginLeft: 'auto' }}>{FIAT_CONFIG[f]?.name}</span>
+                                <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', marginLeft: 'auto' }}>{FIAT_CONFIG[f]?.name}</span>
                               </div>
                             ))}
                           </div>
@@ -429,91 +410,76 @@ export default function CreateAd() {
                   </div>
                 </div>
 
-                {/* 3. TRADE LIMITS */}
+                {/* TRADE LIMITS */}
                 <div style={cardStyle(ACCENT.purple)}>
-                  <div style={titleStyle}>
-                    <IoWallet size={18} color={ACCENT.purple} />
+                  <div style={titleStyle(ACCENT.purple)}>
+                    <IoWallet size={16} color={ACCENT.purple} />
                     Trade limits
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
                       <label style={labelStyle}>Minimum amount</label>
                       <div style={{ position: 'relative' }}>
-                        <input 
-                          type="number" 
-                          step="0.00000001" 
-                          value={formData.min_amount} 
-                          onChange={(e) => handleChange('min_amount', e.target.value)} 
-                          placeholder="0.001" 
-                          style={{ ...inputStyle, paddingRight: '55px' }} 
-                        />
-                        <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontWeight: '600' }}>{formData.crypto_currency}</span>
+                        <input type="number" step="0.00000001" value={formData.min_amount} onChange={(e) => handleChange('min_amount', e.target.value)} placeholder="0.001" style={{ ...inputStyle, paddingRight: '50px' }} />
+                        <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', fontSize: '0.65rem', fontWeight: '600' }}>{formData.crypto_currency}</span>
                       </div>
                     </div>
                     <div>
                       <label style={labelStyle}>Maximum amount</label>
                       <div style={{ position: 'relative' }}>
-                        <input 
-                          type="number" 
-                          step="0.00000001" 
-                          value={formData.max_amount} 
-                          onChange={(e) => handleChange('max_amount', e.target.value)} 
-                          placeholder="10" 
-                          style={{ ...inputStyle, paddingRight: '55px' }} 
-                        />
-                        <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontWeight: '600' }}>{formData.crypto_currency}</span>
+                        <input type="number" step="0.00000001" value={formData.max_amount} onChange={(e) => handleChange('max_amount', e.target.value)} placeholder="10" style={{ ...inputStyle, paddingRight: '50px' }} />
+                        <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', fontSize: '0.65rem', fontWeight: '600' }}>{formData.crypto_currency}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* 4. ADVANCED OPTIONS */}
+                {/* ADVANCED OPTIONS */}
                 <div style={cardStyle(ACCENT.grey)}>
-                  <div style={titleStyle}>
-                    <IoSettings size={18} color={ACCENT.grey} />
+                  <div style={titleStyle(ACCENT.grey)}>
+                    <IoSettings size={16} color={ACCENT.grey} />
                     Advanced options
-                    <span style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.3)', fontSize: '0.65rem', fontWeight: '500' }}>OPTIONAL</span>
+                    <span style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.25)', fontSize: '0.55rem', fontWeight: '500' }}>OPTIONAL</span>
                   </div>
                   <label style={labelStyle}>Terms & instructions</label>
                   <textarea 
                     value={formData.terms} 
                     onChange={(e) => handleChange('terms', e.target.value)} 
-                    placeholder="Add special terms, payment instructions, or requirements for traders..." 
-                    rows={4} 
-                    style={{ ...inputStyle, resize: 'none', minHeight: '100px', fontSize: '0.85rem' }} 
+                    placeholder="Add special terms, payment instructions, or requirements..." 
+                    rows={3} 
+                    style={{ ...inputStyle, resize: 'none', minHeight: '80px', fontSize: '0.8rem' }} 
                   />
-                  <p style={{ marginTop: '10px', fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)' }}>These will be shown to traders before they initiate an order</p>
                 </div>
               </div>
 
-              {/* ========== RIGHT COLUMN ========== */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* RIGHT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 
-                {/* 5. PRICING MODE */}
+                {/* PRICING MODE */}
                 <div style={cardStyle(ACCENT.teal)}>
-                  <div style={titleStyle}>
-                    <IoPricetag size={18} color={ACCENT.teal} />
+                  <div style={titleStyle(ACCENT.teal)}>
+                    <IoPricetag size={16} color={ACCENT.teal} />
                     Pricing mode
                   </div>
-                  <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="button" onClick={() => handleChange('price_type', 'fixed')} style={toggleStyle(formData.price_type === 'fixed', ACCENT.teal)}>
-                      {formData.price_type === 'fixed' && <IoCheckmarkCircle size={16} />} Fixed price
+                      {formData.price_type === 'fixed' && <IoCheckmarkCircle size={14} />} Fixed price
                     </button>
                     <button type="button" onClick={() => handleChange('price_type', 'floating')} style={toggleStyle(formData.price_type === 'floating', ACCENT.teal)}>
-                      {formData.price_type === 'floating' && <IoCheckmarkCircle size={16} />} Floating %
+                      {formData.price_type === 'floating' && <IoCheckmarkCircle size={14} />} Floating %
                     </button>
                   </div>
-                  <p style={{ marginTop: '12px', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)' }}>
+                  <p style={{ marginTop: '10px', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>
                     {formData.price_type === 'fixed' ? 'Set a specific price per coin' : 'Price adjusts with market rate'}
                   </p>
                 </div>
 
-                {/* 6. PRICE */}
+                {/* PRICE */}
                 <div style={cardStyle(ACCENT.teal)}>
-                  <div style={titleStyle}>
-                    <IoPricetag size={18} color={ACCENT.teal} />
+                  <div style={titleStyle(ACCENT.teal)}>
+                    <IoPricetag size={16} color={ACCENT.teal} />
                     Your price
-                    <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.55rem', fontWeight: '700', padding: '3px 8px', borderRadius: '4px' }}>REQUIRED</span>
+                    <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
                   </div>
                   <div style={{ position: 'relative' }}>
                     <input 
@@ -521,60 +487,60 @@ export default function CreateAd() {
                       value={formData.price_value} 
                       onChange={(e) => handleChange('price_value', e.target.value)}
                       placeholder={formData.price_type === 'fixed' ? '45,500' : '+2.5'}
-                      style={{ ...inputStyle, fontSize: '1.25rem', fontWeight: '700', height: '60px', paddingRight: '70px' }} 
+                      style={{ ...inputStyle, fontSize: '1.1rem', fontWeight: '700', height: '54px', paddingRight: '60px' }} 
                     />
-                    <span style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', fontWeight: '600' }}>
+                    <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', fontWeight: '600' }}>
                       {formData.price_type === 'fixed' ? formData.fiat_currency : '%'}
                     </span>
                   </div>
-                  <p style={{ marginTop: '10px', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)' }}>
-                    {formData.price_type === 'fixed' ? `Price per 1 ${formData.crypto_currency} in ${formData.fiat_currency}` : 'Percentage above/below market price'}
+                  <p style={{ marginTop: '8px', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>
+                    {formData.price_type === 'fixed' ? `Price per 1 ${formData.crypto_currency} in ${formData.fiat_currency}` : 'Percentage above/below market'}
                   </p>
                 </div>
 
-                {/* 7. PAYMENT METHODS */}
-                <div style={{ ...cardStyle(ACCENT.amber), position: 'relative' }} ref={paymentRef}>
-                  <div style={titleStyle}>
-                    <IoCard size={18} color={ACCENT.amber} />
+                {/* PAYMENT METHODS - Highlighted card */}
+                <div style={{ ...cardStyle(ACCENT.amber, true), position: 'relative' }} ref={paymentRef}>
+                  <div style={titleStyle(ACCENT.amber)}>
+                    <IoCard size={16} color={ACCENT.amber} />
                     Payment methods
-                    <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.55rem', fontWeight: '700', padding: '3px 8px', borderRadius: '4px' }}>REQUIRED</span>
+                    <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
                   </div>
                   
                   {/* Selected chips */}
                   <div style={{ 
-                    minHeight: '48px', 
-                    marginBottom: '12px', 
-                    padding: '10px 12px', 
-                    background: 'rgba(0,0,0,0.35)', 
-                    borderRadius: '10px', 
-                    border: '1px solid rgba(255,255,255,0.06)' 
+                    minHeight: '44px', 
+                    marginBottom: '10px', 
+                    padding: '8px 10px', 
+                    background: 'rgba(0,0,0,0.4)', 
+                    borderRadius: '8px', 
+                    border: '1px solid rgba(245,158,11,0.2)' 
                   }}>
                     {formData.payment_methods.length > 0 ? (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                         {formData.payment_methods.map(id => {
                           const m = getMethod(id);
                           return m ? (
                             <div key={id} style={{ 
                               display: 'flex', 
                               alignItems: 'center', 
-                              gap: '6px', 
-                              background: 'linear-gradient(135deg, rgba(245,158,11,0.25) 0%, rgba(245,158,11,0.15) 100%)', 
+                              gap: '5px', 
+                              background: 'linear-gradient(135deg, rgba(245,158,11,0.3) 0%, rgba(245,158,11,0.15) 100%)', 
                               border: '1px solid rgba(245,158,11,0.5)', 
-                              borderRadius: '20px', 
-                              padding: '6px 12px', 
-                              fontSize: '0.8rem', 
+                              borderRadius: '16px', 
+                              padding: '5px 10px', 
+                              fontSize: '0.75rem', 
                               color: '#F59E0B',
                               fontWeight: '500'
                             }}>
                               <span>{m.icon}</span>
                               <span>{m.label}</span>
-                              <IoClose size={14} style={{ cursor: 'pointer', opacity: 0.8, marginLeft: '2px' }} onClick={() => removePayment(id)} />
+                              <IoClose size={12} style={{ cursor: 'pointer', opacity: 0.7 }} onClick={() => removePayment(id)} />
                             </div>
                           ) : null;
                         })}
                       </div>
                     ) : (
-                      <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.8rem' }}>No payment methods selected yet</span>
+                      <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.75rem' }}>No payment methods selected</span>
                     )}
                   </div>
 
@@ -587,41 +553,43 @@ export default function CreateAd() {
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'space-between', 
-                      color: 'rgba(255,255,255,0.4)', 
-                      fontSize: '0.85rem',
-                      border: paymentDropdownOpen ? '1px solid #F59E0B' : '1px solid rgba(255,255,255,0.1)'
+                      color: 'rgba(255,255,255,0.5)', 
+                      fontSize: '0.8rem',
+                      height: '44px',
+                      background: 'rgba(0,0,0,0.5)',
+                      border: paymentDropdownOpen ? '1px solid #F59E0B' : '1px solid rgba(245,158,11,0.3)'
                     }}
                   >
                     <span>+ Add payment methods...</span>
-                    <IoChevronDown size={16} style={{ transform: paymentDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                    <IoChevronDown size={14} style={{ transform: paymentDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </div>
 
                   {/* Dropdown panel */}
                   {paymentDropdownOpen && (
                     <div style={{ 
                       position: 'absolute', 
-                      left: '24px', 
-                      right: '24px', 
-                      marginTop: '6px', 
-                      background: 'rgba(12,16,36,0.99)', 
-                      border: '1px solid rgba(245,158,11,0.35)', 
-                      borderRadius: '12px', 
-                      maxHeight: '320px', 
+                      left: '20px', 
+                      right: '20px', 
+                      marginTop: '4px', 
+                      background: 'rgba(14,18,38,0.99)', 
+                      border: '1px solid rgba(245,158,11,0.4)', 
+                      borderRadius: '10px', 
+                      maxHeight: '280px', 
                       overflowY: 'auto', 
                       zIndex: 500, 
-                      boxShadow: '0 16px 48px rgba(0,0,0,0.5)' 
+                      boxShadow: '0 12px 40px rgba(0,0,0,0.5)' 
                     }}>
                       {/* Search */}
-                      <div style={{ padding: '12px', borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, background: 'rgba(12,16,36,0.99)', zIndex: 1 }}>
+                      <div style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, background: 'rgba(14,18,38,0.99)', zIndex: 1 }}>
                         <div style={{ position: 'relative' }}>
-                          <IoSearch size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
+                          <IoSearch size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
                           <input 
                             type="text" 
                             value={paymentSearch} 
                             onChange={(e) => setPaymentSearch(e.target.value)} 
-                            placeholder="Search payment methods..." 
+                            placeholder="Search..." 
                             autoFocus 
-                            style={{ ...inputStyle, padding: '10px 12px 10px 36px', fontSize: '0.85rem' }} 
+                            style={{ ...inputStyle, padding: '8px 10px 8px 32px', fontSize: '0.8rem', height: '38px' }} 
                           />
                         </div>
                       </div>
@@ -631,15 +599,7 @@ export default function CreateAd() {
                         if (!filtered.length) return null;
                         return (
                           <div key={group}>
-                            <div style={{ 
-                              padding: '10px 16px 6px', 
-                              fontSize: '0.65rem', 
-                              fontWeight: '700', 
-                              color: ACCENT.amber, 
-                              textTransform: 'uppercase', 
-                              letterSpacing: '0.05em',
-                              background: 'rgba(0,0,0,0.25)' 
-                            }}>
+                            <div style={{ padding: '8px 14px 4px', fontSize: '0.6rem', fontWeight: '700', color: ACCENT.amber, textTransform: 'uppercase', letterSpacing: '0.04em', background: 'rgba(0,0,0,0.2)' }}>
                               {REGION_LABELS[group]}
                             </div>
                             {filtered.map(m => {
@@ -649,20 +609,20 @@ export default function CreateAd() {
                                   key={m.id} 
                                   onClick={() => togglePayment(m.id)} 
                                   style={{ 
-                                    padding: '12px 16px', 
+                                    padding: '10px 14px', 
                                     display: 'flex', 
                                     alignItems: 'center', 
-                                    gap: '12px', 
+                                    gap: '10px', 
                                     cursor: 'pointer', 
                                     background: selected ? 'rgba(245,158,11,0.12)' : 'transparent', 
                                     borderLeft: selected ? '3px solid #F59E0B' : '3px solid transparent', 
-                                    fontSize: '0.85rem',
+                                    fontSize: '0.8rem',
                                     transition: 'background 0.15s'
                                   }}
                                 >
-                                  <span style={{ fontSize: '1.1rem' }}>{m.icon}</span>
+                                  <span style={{ fontSize: '1rem' }}>{m.icon}</span>
                                   <span style={{ color: selected ? '#F59E0B' : 'rgba(255,255,255,0.85)', fontWeight: selected ? '600' : '400' }}>{m.label}</span>
-                                  {selected && <IoCheckmarkCircle size={16} color="#F59E0B" style={{ marginLeft: 'auto' }} />}
+                                  {selected && <IoCheckmarkCircle size={14} color="#F59E0B" style={{ marginLeft: 'auto' }} />}
                                 </div>
                               );
                             })}
@@ -678,44 +638,43 @@ export default function CreateAd() {
         </div>
       </div>
 
-      {/* STICKY FOOTER */}
+      {/* STICKY FOOTER - Compact */}
       <div style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
-        padding: '16px 32px',
-        background: 'linear-gradient(180deg, rgba(20, 28, 55, 0.98) 0%, rgba(12, 16, 36, 1) 100%)',
-        borderTop: '1px solid rgba(59, 130, 246, 0.2)',
-        backdropFilter: 'blur(12px)',
+        padding: '12px 24px',
+        background: 'linear-gradient(180deg, rgba(18, 24, 48, 0.98) 0%, rgba(12, 16, 36, 1) 100%)',
+        borderTop: '1px solid rgba(59, 130, 246, 0.15)',
+        backdropFilter: 'blur(10px)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         zIndex: 100
       }}>
-        <div style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '0.85rem' }}>
+        <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8rem' }}>
           {isValid() ? (
-            <span style={{ color: '#22C55E', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <IoCheckmarkCircle size={18} /> Ready to publish your ad
+            <span style={{ color: '#22C55E', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <IoCheckmarkCircle size={16} /> Ready to publish your ad
             </span>
           ) : (
             <span>Complete all required fields to publish</span>
           )}
         </div>
-        <div style={{ display: 'flex', gap: '14px' }}>
+        <div style={{ display: 'flex', gap: '10px' }}>
           <button 
             type="button" 
             onClick={() => navigate('/p2p/merchant')} 
             style={{
-              padding: '12px 28px',
+              padding: '10px 22px',
               background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255,0.15)',
-              borderRadius: '10px',
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '0.875rem',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '8px',
+              color: 'rgba(255, 255, 255, 0.65)',
+              fontSize: '0.8rem',
               fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
+              cursor: 'pointer'
             }}
           >
             Cancel
@@ -725,26 +684,23 @@ export default function CreateAd() {
             disabled={creating || !isValid()} 
             onClick={handleSubmit} 
             style={{
-              padding: '12px 36px',
+              padding: '10px 28px',
               background: (creating || !isValid()) 
                 ? 'rgba(40, 45, 60, 0.6)' 
                 : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
               border: 'none',
-              borderRadius: '10px',
+              borderRadius: '8px',
               color: (creating || !isValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               fontWeight: '700',
               cursor: (creating || !isValid()) ? 'not-allowed' : 'pointer',
-              boxShadow: (creating || !isValid()) 
-                ? 'none' 
-                : '0 6px 20px rgba(34, 197, 94, 0.4)',
+              boxShadow: (creating || !isValid()) ? 'none' : '0 4px 16px rgba(34, 197, 94, 0.35)',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              transition: 'all 0.2s'
+              gap: '6px'
             }}
           >
-            {creating && <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
+            {creating && <div style={{ width: '12px', height: '12px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
             Publish ad
           </button>
         </div>
@@ -752,11 +708,9 @@ export default function CreateAd() {
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        input:focus, textarea:focus { border-color: rgba(59,130,246,0.5) !important; box-shadow: 0 0 0 2px rgba(59,130,246,0.15); }
-        input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25); }
-        @media (max-width: 1024px) { 
-          form > div { grid-template-columns: 1fr !important; } 
-        }
+        input:focus, textarea:focus { border-color: rgba(59,130,246,0.5) !important; }
+        input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.2); }
+        @media (max-width: 1024px) { form > div { grid-template-columns: 1fr !important; } }
       `}</style>
     </>
   );
