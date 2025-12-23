@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://trade-form-polish.preview.emergentagent.com
+https://binancelike-ui.preview.emergentagent.com
 
 ---
 

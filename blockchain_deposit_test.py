@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://trade-form-polish.preview.emergentagent.com"
+BACKEND_URL = "https://binancelike-ui.preview.emergentagent.com"
 
 class BlockchainDepositTester:
     def __init__(self):

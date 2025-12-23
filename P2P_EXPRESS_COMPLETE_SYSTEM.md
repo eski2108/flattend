@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://trade-form-polish.preview.emergentagent.com/p2p-express
+https://binancelike-ui.preview.emergentagent.com/p2p-express
 
 ---
 

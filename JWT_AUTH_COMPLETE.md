@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://trade-form-polish.preview.emergentagent.com
+**Live URL:** https://binancelike-ui.preview.emergentagent.com
 
 ---
 

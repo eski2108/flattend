@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://trade-form-polish.preview.emergentagent.com
+**Preview URL:** https://binancelike-ui.preview.emergentagent.com

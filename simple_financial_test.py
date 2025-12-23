@@ -9,7 +9,7 @@ import json
 import uuid
 from datetime import datetime
 
-BACKEND_URL = "https://trade-form-polish.preview.emergentagent.com/api"
+BACKEND_URL = "https://binancelike-ui.preview.emergentagent.com/api"
 
 async def test_endpoints():
     """Test available endpoints and execute basic transactions"""

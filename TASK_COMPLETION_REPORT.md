@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://trade-form-polish.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://binancelike-ui.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://trade-form-polish.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://binancelike-ui.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://trade-form-polish.preview.emergentagent.com/#/admin/disputes/{dispute_id
 ```
 📧 URLs found in dispute email template:
 
-1. https://trade-form-polish.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://binancelike-ui.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://trade-form-polish.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://binancelike-ui.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://trade-form-polish.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://binancelike-ui.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://trade-form-polish.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://binancelike-ui.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

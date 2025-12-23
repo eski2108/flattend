@@ -5,7 +5,7 @@
 Date: December 9, 2024
 Time: 15:41 UTC
 Environment: Production Preview
-URL: https://trade-form-polish.preview.emergentagent.com
+URL: https://binancelike-ui.preview.emergentagent.com
 
 ================================================================================
                             SERVICE STATUS
@@ -166,7 +166,7 @@ The CoinHubX platform has been successfully updated with the following fixes:
                          LIVE PREVIEW ACCESS
 ================================================================================
 
-URL: https://trade-form-polish.preview.emergentagent.com
+URL: https://binancelike-ui.preview.emergentagent.com
 
 Test Deposit: /#/deposit/btc
 Test Trading: /#/trading

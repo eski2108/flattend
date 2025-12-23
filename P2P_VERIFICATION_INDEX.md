@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://trade-form-polish.preview.emergentagent.com
-- Backend API: https://trade-form-polish.preview.emergentagent.com/api
-- P2P Marketplace: https://trade-form-polish.preview.emergentagent.com/p2p
+- Frontend: https://binancelike-ui.preview.emergentagent.com
+- Backend API: https://binancelike-ui.preview.emergentagent.com/api
+- P2P Marketplace: https://binancelike-ui.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

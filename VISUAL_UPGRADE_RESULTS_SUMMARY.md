@@ -420,7 +420,7 @@ Subtitle: "Buy and sell crypto with verified users. Fully escrow-protected."
 
 ### URL:
 ```
-https://trade-form-polish.preview.emergentagent.com/p2p
+https://binancelike-ui.preview.emergentagent.com/p2p
 ```
 
 ### Manual Testing Required:
@@ -467,7 +467,7 @@ https://trade-form-polish.preview.emergentagent.com/p2p
 
 The marketplace now looks production-ready and professional enough to show investors, partners, and users with confidence.
 
-**Preview URL:** https://trade-form-polish.preview.emergentagent.com/p2p
+**Preview URL:** https://binancelike-ui.preview.emergentagent.com/p2p
 
 Ready for final review and production deployment."
 

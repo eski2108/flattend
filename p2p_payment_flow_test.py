@@ -12,7 +12,7 @@ Tests the complete P2P payment flow as requested in the review:
 7. Check balances - Verify buyer received crypto and seller received payment
 8. Dispute flow - POST /api/disputes/initiate to verify dispute system works
 
-Backend URL: https://trade-form-polish.preview.emergentagent.com/api
+Backend URL: https://binancelike-ui.preview.emergentagent.com/api
 """
 
 import requests
@@ -22,7 +22,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
+BASE_URL = "https://binancelike-ui.preview.emergentagent.com/api"
 
 # Test Users for P2P Payment Flow
 BUYER_USER = {

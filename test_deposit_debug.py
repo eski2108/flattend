@@ -6,7 +6,7 @@ Test NOWPayments deposit creation to debug 400 error
 import requests
 import json
 
-BACKEND_URL = "https://trade-form-polish.preview.emergentagent.com/api"
+BACKEND_URL = "https://binancelike-ui.preview.emergentagent.com/api"
 
 # Step 1: Register/Login a test user
 print("Step 1: Logging in...")

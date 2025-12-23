@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://trade-form-polish.preview.emergentagent.com
-P2P Page:     https://trade-form-polish.preview.emergentagent.com/p2p
-Backend API:  https://trade-form-polish.preview.emergentagent.com/api
+Frontend:     https://binancelike-ui.preview.emergentagent.com
+P2P Page:     https://binancelike-ui.preview.emergentagent.com/p2p
+Backend API:  https://binancelike-ui.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

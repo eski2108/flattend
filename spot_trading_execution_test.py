@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://trade-form-polish.preview.emergentagent.com"
+BACKEND_URL = "https://binancelike-ui.preview.emergentagent.com"
 TEST_USER_ID = "test_user_123"
 
 def log_test(test_name, status, details=""):

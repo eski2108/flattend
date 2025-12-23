@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://trade-form-polish.preview.emergentagent.com
+https://binancelike-ui.preview.emergentagent.com
 
 ### Test Route
 
-`https://trade-form-polish.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://binancelike-ui.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

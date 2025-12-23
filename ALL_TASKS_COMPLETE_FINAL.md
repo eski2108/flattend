@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://trade-form-polish.preview.emergentagent.com
+**URL:** https://binancelike-ui.preview.emergentagent.com
 
 **Services Status:**
 ```bash

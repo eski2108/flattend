@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
+BASE_URL = "https://binancelike-ui.preview.emergentagent.com/api"
 USER_EMAIL = "withdrawal_test@demo.com"
 USER_PASSWORD = "Test123!"
 ADMIN_EMAIL = "admin_test@demo.com"

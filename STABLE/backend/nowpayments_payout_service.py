@@ -108,7 +108,7 @@ class NOWPaymentsPayoutService:
         """
         try:
             # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://trade-form-polish.preview.emergentagent.com')
+            backend_url = os.getenv('BACKEND_URL', 'https://binancelike-ui.preview.emergentagent.com')
             
             payload = {
                 "withdrawals": [

@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://trade-form-polish.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://binancelike-ui.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {
