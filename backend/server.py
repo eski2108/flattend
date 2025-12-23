@@ -5958,16 +5958,16 @@ async def create_p2p_express_order(order_data: Dict):
     except Exception as e:
         logger.error(f"Failed to notify buyer: {e}")
     
-    logger.info(f"✅ {'INSTANT' if is_core_coin else 'EXPRESS'} BUY COMPLETED: {trade_id} | {crypto_amount} {crypto} | £{fiat_amount}")
+    logger.info(f"✅ {'INSTANT' if core_coin_flag else 'EXPRESS'} BUY COMPLETED: {trade_id} | {crypto_amount} {crypto} | £{fiat_amount}")
     
     return {
         "success": True,
         "trade_id": trade_id,
         "delivery_type": delivery_type,
         "estimated_delivery": estimated_delivery,
-        "is_instant": is_core_coin,
-        "is_core_coin": is_core_coin,
-        "message": f"{'Instant' if is_core_coin else 'Express'} Buy completed successfully"
+        "is_instant": core_coin_flag,
+        "is_core_coin": core_coin_flag,
+        "message": f"{'Instant' if core_coin_flag else 'Express'} Buy completed successfully"
     }
 
 
