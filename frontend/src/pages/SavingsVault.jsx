@@ -50,7 +50,8 @@ const SavingsVault = () => {
   const [displayCurrency, setDisplayCurrency] = useState('GBP');
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
   const currencySymbols = { GBP: '£', USD: '$', EUR: '€' };
-  const currencyRates = { GBP: 1, USD: 1.27, EUR: 1.17 }; // Approximate rates from GBP
+  // FIX #8: Live currency rates - fetched from API, with fallback defaults
+  const [currencyRates, setCurrencyRates] = useState({ GBP: 1, USD: 1.27, EUR: 1.17 });
   
   // Modal state for deposit flow
   const [depositStep, setDepositStep] = useState(1); // 1-5 steps
@@ -64,6 +65,23 @@ const SavingsVault = () => {
   const [showNoticeRulesModal, setShowNoticeRulesModal] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
 
+  // FIX #8: Fetch live currency rates on mount
+  const loadCurrencyRates = async () => {
+    try {
+      const response = await axios.get(`${API}/api/exchange-rates`);
+      if (response.data && response.data.rates) {
+        setCurrencyRates({
+          GBP: 1,
+          USD: response.data.rates.USD || 1.27,
+          EUR: response.data.rates.EUR || 1.17
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch currency rates, using defaults');
+      // Keep default rates on error
+    }
+  };
+
   // Helper to format balance with selected currency
   const formatBalance = (amount) => {
     const converted = amount * currencyRates[displayCurrency];
@@ -73,6 +91,7 @@ const SavingsVault = () => {
   useEffect(() => {
     loadSavingsData();
     loadAvailableCoins();
+    loadCurrencyRates(); // FIX #8: Load live rates
     
     // Check for payment success/cancel from URL params
     const urlParams = new URLSearchParams(window.location.search);
