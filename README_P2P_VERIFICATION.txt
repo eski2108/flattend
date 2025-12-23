@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://i18n-p2p-fixes.preview.emergentagent.com
-P2P Page:     https://i18n-p2p-fixes.preview.emergentagent.com/p2p
-Backend API:  https://i18n-p2p-fixes.preview.emergentagent.com/api
+Frontend:     https://trade-form-polish.preview.emergentagent.com
+P2P Page:     https://trade-form-polish.preview.emergentagent.com/p2p
+Backend API:  https://trade-form-polish.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

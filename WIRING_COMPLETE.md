@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://i18n-p2p-fixes.preview.emergentagent.com/api
-- **Frontend App**: https://i18n-p2p-fixes.preview.emergentagent.com
+- **Backend API**: https://trade-form-polish.preview.emergentagent.com/api
+- **Frontend App**: https://trade-form-polish.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

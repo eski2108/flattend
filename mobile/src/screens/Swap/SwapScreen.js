@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://i18n-p2p-fixes.preview.emergentagent.com/api';
+const API_URL = 'https://trade-form-polish.preview.emergentagent.com/api';
 
 const SWAP_CURRENCIES = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'LTC', 'USDC', 'XRP', 'ADA', 'DOGE'];
 

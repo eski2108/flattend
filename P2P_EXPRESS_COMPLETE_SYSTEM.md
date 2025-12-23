@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://i18n-p2p-fixes.preview.emergentagent.com/p2p-express
+https://trade-form-polish.preview.emergentagent.com/p2p-express
 
 ---
 

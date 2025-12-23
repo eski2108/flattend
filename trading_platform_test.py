@@ -11,7 +11,7 @@ Testing all features requested in the review:
 6. Referral commissions (20%/50%)
 7. Real prices from CoinGecko
 
-Backend URL: https://i18n-p2p-fixes.preview.emergentagent.com/api
+Backend URL: https://trade-form-polish.preview.emergentagent.com/api
 """
 
 import requests
@@ -19,7 +19,7 @@ import json
 import sys
 from datetime import datetime
 
-BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
+BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
 
 class TradingPlatformTester:
     def __init__(self):

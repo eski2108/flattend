@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://i18n-p2p-fixes.preview.emergentagent.com/api
+https://trade-form-polish.preview.emergentagent.com/api
 ```
 
 This means:

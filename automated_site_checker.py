@@ -11,7 +11,7 @@ from datetime import datetime
 from playwright.async_api import async_playwright
 import json
 
-SITE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com"
+SITE_URL = "https://trade-form-polish.preview.emergentagent.com"
 TEST_USER = "gads21083@gmail.com"
 TEST_PASS = "123456789"
 

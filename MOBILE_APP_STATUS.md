@@ -59,7 +59,7 @@ Added the following CSS fixes to `/app/frontend/src/pages/SavingsVault.css`:
 
 ### Technology Stack
 - React Native (Expo)
-- Pointing to same backend: `https://i18n-p2p-fixes.preview.emergentagent.com/api`
+- Pointing to same backend: `https://trade-form-polish.preview.emergentagent.com/api`
 
 ### Existing Screens
 1. Auth (Login/Register)
@@ -88,7 +88,7 @@ Added the following CSS fixes to `/app/frontend/src/pages/SavingsVault.css`:
 ✅ Mobile tap fixes - COMPLETE
 
 ### Access
-- URL: `https://i18n-p2p-fixes.preview.emergentagent.com/savings`
+- URL: `https://trade-form-polish.preview.emergentagent.com/savings`
 - Works on all devices via responsive web
 - Mobile browsers (Safari, Chrome, Firefox) fully supported
 
@@ -97,8 +97,8 @@ Added the following CSS fixes to `/app/frontend/src/pages/SavingsVault.css`:
 ## BACKEND API
 
 ### Endpoint Base
-- Web: `https://i18n-p2p-fixes.preview.emergentagent.com/api`
-- Mobile: `https://i18n-p2p-fixes.preview.emergentagent.com/api` (SAME)
+- Web: `https://trade-form-polish.preview.emergentagent.com/api`
+- Mobile: `https://trade-form-polish.preview.emergentagent.com/api` (SAME)
 
 ### Savings Endpoints Available
 1. `GET /api/savings/positions/{user_id}` - Get user's savings positions
@@ -116,13 +116,13 @@ Added the following CSS fixes to `/app/frontend/src/pages/SavingsVault.css`:
 
 1. **Web App (Frontend)**
    - Code location: `/app/frontend/src/`
-   - Deployed to: `https://i18n-p2p-fixes.preview.emergentagent.com`
+   - Deployed to: `https://trade-form-polish.preview.emergentagent.com`
    - Updates: Automatic on restart
    - Mobile access: Via mobile browser (Safari/Chrome)
 
 2. **Backend API**
    - Code location: `/app/backend/server.py`
-   - Deployed to: `https://i18n-p2p-fixes.preview.emergentagent.com/api`
+   - Deployed to: `https://trade-form-polish.preview.emergentagent.com/api`
    - Updates: Automatic on restart
    - Used by: Web app + Mobile app
 
@@ -144,7 +144,7 @@ Added the following CSS fixes to `/app/frontend/src/pages/SavingsVault.css`:
 
 ### Option 1: Mobile Web Browser (AVAILABLE NOW) ✅
 - Open Safari/Chrome on mobile
-- Go to: `https://i18n-p2p-fixes.preview.emergentagent.com/savings`
+- Go to: `https://trade-form-polish.preview.emergentagent.com/savings`
 - Full functionality available
 - Mobile-optimized UI
 - No app installation required
@@ -179,7 +179,7 @@ Added the following CSS fixes to `/app/frontend/src/pages/SavingsVault.css`:
 
 ### Test on Mobile Browser
 1. Open Safari/Chrome on iPhone/Android
-2. Navigate to: `https://i18n-p2p-fixes.preview.emergentagent.com/savings`
+2. Navigate to: `https://trade-form-polish.preview.emergentagent.com/savings`
 3. Tap buttons - should NOT show black highlight
 4. All functionality should work
 

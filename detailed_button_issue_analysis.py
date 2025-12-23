@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
+BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
+**Live URL:** https://trade-form-polish.preview.emergentagent.com/#/trading
 
 ---
 

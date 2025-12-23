@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://i18n-p2p-fixes.preview.emergentagent.com
-- Backend API: https://i18n-p2p-fixes.preview.emergentagent.com/api
-- P2P Marketplace: https://i18n-p2p-fixes.preview.emergentagent.com/p2p
+- Frontend: https://trade-form-polish.preview.emergentagent.com
+- Backend API: https://trade-form-polish.preview.emergentagent.com/api
+- P2P Marketplace: https://trade-form-polish.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

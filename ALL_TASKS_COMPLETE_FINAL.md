@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://i18n-p2p-fixes.preview.emergentagent.com
+**URL:** https://trade-form-polish.preview.emergentagent.com
 
 **Services Status:**
 ```bash

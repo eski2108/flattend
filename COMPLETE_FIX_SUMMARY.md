@@ -37,7 +37,7 @@
 1. **CORS Hardened**
    - Changed from `*` to specific domains
    - File: `/app/backend/.env`
-   - Line: `CORS_ORIGINS=https://coinhubx.net,https://i18n-p2p-fixes.preview.emergentagent.com`
+   - Line: `CORS_ORIGINS=https://coinhubx.net,https://trade-form-polish.preview.emergentagent.com`
 
 2. **/wallet/credit Protected**
    - Added INTERNAL_API_KEY requirement
@@ -60,7 +60,7 @@
 
 ### Testing Results (Dec 9, 2024):
 
-**URL Tested**: https://i18n-p2p-fixes.preview.emergentagent.com
+**URL Tested**: https://trade-form-polish.preview.emergentagent.com
 
 #### Issues Reported vs Actual Status:
 
@@ -134,7 +134,7 @@ nginx           RUNNING   pid 6323
 ### Cache Clearing Instructions:
 
 **For User**:
-1. Open https://i18n-p2p-fixes.preview.emergentagent.com
+1. Open https://trade-form-polish.preview.emergentagent.com
 2. Press `Ctrl+Shift+R` (Windows/Linux) or `Cmd+Shift+R` (Mac)
 3. Or: Open DevTools → Network Tab → Check "Disable cache"
 4. Or: Clear browser cache completely

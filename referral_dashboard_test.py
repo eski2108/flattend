@@ -20,7 +20,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 # Backend URL from environment
-BACKEND_URL = "https://i18n-p2p-fixes.preview.emergentagent.com"
+BACKEND_URL = "https://trade-form-polish.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test users

@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://i18n-p2p-fixes.preview.emergentagent.com
+https://trade-form-polish.preview.emergentagent.com
 
 ### Test Route
 
-`https://i18n-p2p-fixes.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://trade-form-polish.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

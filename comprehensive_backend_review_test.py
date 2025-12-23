@@ -22,7 +22,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
+BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
 TEST_USERS = [
     {"email": "alice@test.com", "password": "Test123456", "name": "Alice Test"},
     {"email": "bob@test.com", "password": "Test123456", "name": "Bob Test"}

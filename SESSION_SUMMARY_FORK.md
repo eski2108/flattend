@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://i18n-p2p-fixes.preview.emergentagent.com
+https://trade-form-polish.preview.emergentagent.com
 
 ---
 

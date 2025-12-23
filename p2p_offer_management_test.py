@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
+BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
 TEST_EMAIL = "p2p_offer_test@test.com"
 TEST_PASSWORD = "Test123456"
 TEST_FULL_NAME = "P2P Offer Tester"

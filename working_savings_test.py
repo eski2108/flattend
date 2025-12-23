@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
+BACKEND_URL = "https://trade-form-polish.preview.emergentagent.com/api"
 
 def test_savings_with_proper_setup():
     """Test with proper user data setup"""

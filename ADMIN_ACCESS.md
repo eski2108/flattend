@@ -4,19 +4,19 @@
 
 **Admin Panel URL:**
 ```
-https://i18n-p2p-fixes.preview.emergentagent.com/admin/login
+https://trade-form-polish.preview.emergentagent.com/admin/login
 ```
 
 **How to Create Your Admin Account:**
 
 1. **First, Register a Regular Account:**
-   - Go to: https://i18n-p2p-fixes.preview.emergentagent.com/register
+   - Go to: https://trade-form-polish.preview.emergentagent.com/register
    - Use YOUR email (e.g., admin@coinhubx.com)
    - Choose a strong password
    - Complete registration
 
 2. **Then Login as Admin:**
-   - Go to: https://i18n-p2p-fixes.preview.emergentagent.com/admin/login
+   - Go to: https://trade-form-polish.preview.emergentagent.com/admin/login
    - Enter your email
    - Enter your password
    - **Admin Code:** `CRYPTOLEND_ADMIN_2025`
@@ -94,7 +94,7 @@ To change it later, update it in:
 
 ## 📱 Accessing Admin Panel
 
-**Desktop:** https://i18n-p2p-fixes.preview.emergentagent.com/admin/login
+**Desktop:** https://trade-form-polish.preview.emergentagent.com/admin/login
 **Mobile:** Same URL works on mobile devices
 
 ---

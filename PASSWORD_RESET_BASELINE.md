@@ -35,7 +35,7 @@ sudo supervisorctl restart all
 ---
 
 ## Test Password Reset Flow:
-1. Visit: https://i18n-p2p-fixes.preview.emergentagent.com/forgot-password
+1. Visit: https://trade-form-polish.preview.emergentagent.com/forgot-password
 2. Enter email: admin@coinhubx.com
 3. Click "Send Reset Link"
 4. Check email for reset link

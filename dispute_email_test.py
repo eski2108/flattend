@@ -8,7 +8,7 @@ Testing the complete email system with direct dispute link as requested:
 2. Create a dispute via API 
 3. Verify email sent to info@coinhubx.net
 4. Extract the dispute_id from the API response
-5. Show me the exact button URL that will be in the email: https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{dispute_id}
+5. Show me the exact button URL that will be in the email: https://trade-form-polish.preview.emergentagent.com/admin/disputes/{dispute_id}
 6. Verify the URL format is correct (not using query params)
 7. Check backend logs for email send confirmation
 
@@ -29,7 +29,7 @@ from datetime import datetime
 import uuid
 
 # Configuration
-BASE_URL = "https://i18n-p2p-fixes.preview.emergentagent.com/api"
+BASE_URL = "https://trade-form-polish.preview.emergentagent.com/api"
 
 class DisputeEmailTester:
     def __init__(self):
@@ -262,7 +262,7 @@ class DisputeEmailTester:
                     self.log_test("Dispute Creation", True, f"Dispute ID: {self.dispute_id}")
                     
                     # Show expected URL format (NEW FORMAT - NO QUERY PARAMS)
-                    expected_url = f"https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
+                    expected_url = f"https://trade-form-polish.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
                     print(f"   📧 Expected Email Button URL: {expected_url}")
                     print(f"   ✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
                     
@@ -325,13 +325,13 @@ class DisputeEmailTester:
             return False
         
         # Generate the exact URL that should be in the email (NEW FORMAT)
-        admin_url = f"https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
+        admin_url = f"https://trade-form-polish.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
         
         print(f"   🎯 EXACT EMAIL BUTTON URL:")
         print(f"   {admin_url}")
         print(f"")
         print(f"   📋 URL Components:")
-        print(f"   - Base URL: https://i18n-p2p-fixes.preview.emergentagent.com")
+        print(f"   - Base URL: https://trade-form-polish.preview.emergentagent.com")
         print(f"   - Admin Path: /admin/disputes/{self.dispute_id}")
         print(f"   - Format: PATH PARAMETER (NOT query parameter)")
         print(f"")
@@ -352,7 +352,7 @@ class DisputeEmailTester:
             return False
 
         # Construct the expected URL
-        expected_url = f"https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
+        expected_url = f"https://trade-form-polish.preview.emergentagent.com/admin/disputes/{self.dispute_id}"
         
         # Verify it doesn't use query parameters
         if "?dispute_id=" in expected_url:
@@ -451,7 +451,7 @@ class DisputeEmailTester:
             print("\n🎉 DISPUTE EMAIL TEST COMPLETED SUCCESSFULLY!")
             print(f"✅ Dispute ID: {self.dispute_id}")
             print(f"✅ Email should be sent to: info@coinhubx.net")
-            print(f"✅ Clickable URL: https://i18n-p2p-fixes.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
+            print(f"✅ Clickable URL: https://trade-form-polish.preview.emergentagent.com/admin/disputes/{self.dispute_id}")
             print(f"✅ URL Format: /admin/disputes/{self.dispute_id} (NOT ?dispute_id=)")
             return 0
         else:

@@ -222,13 +222,13 @@ User Loads Trading Page
 ## 🎯 LIVE PREVIEW URLS
 
 **Main App:**  
-https://i18n-p2p-fixes.preview.emergentagent.com/
+https://trade-form-polish.preview.emergentagent.com/
 
 **Trading Page:**  
-https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
+https://trade-form-polish.preview.emergentagent.com/#/trading
 
 **Direct API Test:**  
-https://i18n-p2p-fixes.preview.emergentagent.com/api/prices/live?coins=BTC
+https://trade-form-polish.preview.emergentagent.com/api/prices/live?coins=BTC
 
 ---
 
@@ -269,7 +269,7 @@ Size: 2.1 MB
 ## 🚪 NEXT STEPS FOR USER
 
 ### Immediate Testing:
-1. Open: https://i18n-p2p-fixes.preview.emergentagent.com/#/trading
+1. Open: https://trade-form-polish.preview.emergentagent.com/#/trading
 2. Verify stats panel shows price and 24h change
 3. Verify gradient colors match spec (cyan to teal)
 4. Verify timeframe buttons have correct styling

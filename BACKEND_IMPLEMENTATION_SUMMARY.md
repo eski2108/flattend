@@ -212,7 +212,7 @@ curl http://localhost:8001/api/trader/stats/{actual_user_id}
 
 **External URL:**
 ```bash
-curl https://i18n-p2p-fixes.preview.emergentagent.com/api/trader/stats/{user_id}
+curl https://trade-form-polish.preview.emergentagent.com/api/trader/stats/{user_id}
 ```
 
 ---
