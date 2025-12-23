@@ -5257,7 +5257,7 @@ async def create_p2p_express_order(order_data: Dict):
             # Use the live prices endpoint
             price_response = await get_crypto_prices()
             prices = price_response.get("prices", {})
-            target_price_usd = prices.get(crypto, {}).get("usd", 0)
+            target_price_usd = prices.get(crypto, {}).get("price_usd", 0)
         except Exception:
             target_price_usd = 0
         
