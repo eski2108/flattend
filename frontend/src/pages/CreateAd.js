@@ -408,7 +408,7 @@ export default function CreateAd() {
               </div>
 
               {/* RIGHT COLUMN */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
                 
                 {/* PRICING MODE */}
                 <div style={BOX_STYLE}>
