@@ -165,13 +165,21 @@ function InstantBuy() {
         toast.error(quoteResponse.data.message || 'Failed to get quote');
       }
     } catch (error) {
-      const msg = error.response?.data?.detail || error.response?.data?.message || error.message;
-      // Check if it's a liquidity issue - show modal instead of toast
-      if (msg.toLowerCase().includes('liquidity') || msg.toLowerCase().includes('insufficient') || msg.toLowerCase().includes('unavailable')) {
+      const status = error.response?.status;
+      const errorData = error.response?.data;
+      const msg = errorData?.detail || errorData?.message || error.message;
+      const errorCode = typeof errorData?.detail === 'object' ? errorData.detail?.error : (errorData?.error || '');
+      
+      // Check for 409 (liquidity unavailable) or liquidity-related errors
+      if (status === 409 || errorCode === 'liquidity_unavailable' || 
+          (typeof msg === 'string' && (msg.toLowerCase().includes('liquidity') || msg.toLowerCase().includes('unavailable')))) {
         setNoLiquidityCoin(coin.symbol);
         setShowNoLiquidityModal(true);
+      } else if (errorCode === 'coin_not_supported_for_instant') {
+        // Non-core coin attempted on Instant Buy
+        toast.error(`${coin.symbol} is not available for Instant Buy. Only BTC, ETH, USDT, USDC are supported.`);
       } else {
-        toast.error(`Quote failed: ${msg}`);
+        toast.error(`Quote failed: ${typeof msg === 'string' ? msg : JSON.stringify(msg)}`);
       }
     } finally {
       setProcessing(false);
