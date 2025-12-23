@@ -231,7 +231,13 @@ export default function P2PExpress() {
       }
     } catch (error) {
       console.error('Error getting quote:', error);
-      toast.error(error.response?.data?.message || 'Failed to get quote');
+      const errorMsg = error.response?.data?.message || error.response?.data?.detail || '';
+      // Check if it's a liquidity issue
+      if (errorMsg.toLowerCase().includes('liquidity') || errorMsg.toLowerCase().includes('insufficient') || errorMsg.toLowerCase().includes('unavailable')) {
+        setShowNoLiquidityModal(true);
+      } else {
+        toast.error(errorMsg || 'Failed to get quote');
+      }
     } finally {
       setLoading(false);
     }
