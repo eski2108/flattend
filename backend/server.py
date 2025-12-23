@@ -1556,6 +1556,43 @@ def calculate_collateral_ratio(collateral: float, loan: float) -> float:
 async def root():
     return {"message": "Crypto P2P Lending Platform API"}
 
+@api_router.get("/exchange-rates")
+async def get_exchange_rates():
+    """Get live fiat exchange rates from GBP base"""
+    try:
+        # Try to fetch live rates from a free API
+        import requests
+        response = requests.get(
+            "https://api.exchangerate-api.com/v4/latest/GBP",
+            timeout=5
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return {
+                "success": True,
+                "base": "GBP",
+                "rates": {
+                    "GBP": 1,
+                    "USD": data.get("rates", {}).get("USD", 1.27),
+                    "EUR": data.get("rates", {}).get("EUR", 1.17)
+                },
+                "source": "live"
+            }
+    except Exception as e:
+        logger.warning(f"Failed to fetch live exchange rates: {e}")
+    
+    # Fallback to approximate rates
+    return {
+        "success": True,
+        "base": "GBP",
+        "rates": {
+            "GBP": 1,
+            "USD": 1.27,
+            "EUR": 1.17
+        },
+        "source": "fallback"
+    }
+
 @api_router.post("/auth/connect-wallet")
 async def connect_wallet(request: ConnectWalletRequest):
     """Connect wallet and create/get user"""
