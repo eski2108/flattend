@@ -721,21 +721,21 @@ export default function P2PExpress() {
               }}>
                 <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <IoCheckmarkCircle size={22} color="#0CEBFF" strokeWidth={2.5} />
-                  Express Features
+                  Platform Liquidity Features
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
                     <IoFlash size={22} color="#0CEBFF" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
                       <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>Instant Processing</div>
-                      <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Your order is processed immediately</div>
+                      <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Order fulfilled directly by CoinHubX</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
                     <IoShield size={22} color="#22C55E" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div>
-                      <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>Secure Escrow</div>
-                      <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>Your funds are protected during the transaction</div>
+                      <div style={{ fontSize: '15px', color: '#FFFFFF', fontWeight: '700', marginBottom: '4px' }}>Direct from Platform</div>
+                      <div style={{ fontSize: '13px', color: '#8F9BB3', lineHeight: '1.5' }}>No other users involved - platform liquidity only</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
