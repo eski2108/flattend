@@ -13305,20 +13305,34 @@ async def activate_seller(request: dict):
     }
 
 @api_router.post("/p2p/create-ad")
-async def create_p2p_ad(request: dict):
+async def create_p2p_ad(request: Request):
     """Create a new P2P ad"""
     import logging
-    logging.info(f"📝 P2P Create Ad request received: {request}")
     
-    user_id = request.get("user_id")
+    # Parse JSON body
+    try:
+        body = await request.json()
+    except Exception as e:
+        logging.error(f"📝 Failed to parse request body: {e}")
+        raise HTTPException(status_code=400, detail="Invalid JSON body")
+    
+    logging.info(f"📝 P2P Create Ad request received: {body}")
+    
+    user_id = body.get("user_id")
     logging.info(f"📝 User ID from request: {user_id}")
+    
+    if not user_id:
+        raise HTTPException(status_code=400, detail="user_id is required")
     
     # Verify user is seller
     user = await db.users.find_one({"user_id": user_id})
     logging.info(f"📝 User found in DB: {user is not None}, is_seller: {user.get('is_seller') if user else 'N/A'}")
     
-    if not user or not user.get("is_seller"):
-        raise HTTPException(status_code=403, detail="Seller account required")
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if not user.get("is_seller"):
+        raise HTTPException(status_code=403, detail="Seller account required. Please activate seller status first.")
     
     ad_id = str(uuid.uuid4())
     ad = {
