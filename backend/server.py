@@ -13339,19 +13339,19 @@ async def create_p2p_ad(request: Request):
         "ad_id": ad_id,
         "seller_id": user_id,
         "seller_name": user.get("full_name", "Seller"),
-        "ad_type": request.get("ad_type", "sell"),  # buy or sell
-        "crypto_currency": request.get("crypto_currency", "BTC"),
-        "fiat_currency": request.get("fiat_currency", "GBP"),
-        "price_type": request.get("price_type", "fixed"),  # fixed or floating
-        "price_value": request.get("price_value", 0),  # fixed price or % margin
-        "min_amount": request.get("min_amount", 0),
-        "max_amount": request.get("max_amount", 0),
-        "payment_methods": request.get("payment_methods", []),
-        "terms": request.get("terms", ""),
+        "ad_type": body.get("ad_type", "sell"),  # buy or sell
+        "crypto_currency": body.get("crypto_currency", "BTC"),
+        "fiat_currency": body.get("fiat_currency", "GBP"),
+        "price_type": body.get("price_type", "fixed"),  # fixed or floating
+        "price_value": body.get("price_value", 0),  # fixed price or % margin
+        "min_amount": body.get("min_amount", 0),
+        "max_amount": body.get("max_amount", 0),
+        "payment_methods": body.get("payment_methods", []),
+        "terms": body.get("terms", ""),
         "status": "active",
         "created_at": datetime.now(timezone.utc),
         "total_trades": 0,
-        "available_amount": request.get("available_amount", 0)
+        "available_amount": body.get("available_amount", 0)
     }
     
     await db.p2p_ads.insert_one(ad)
