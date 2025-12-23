@@ -3,7 +3,7 @@
 # FINAL COMPLETE END-TO-END WITHDRAWAL TEST (ALL FIXES APPLIED)
 # Testing complete withdrawal flow including rejection
 
-BASE_URL="https://peer-listings.preview.emergentagent.com/api"
+BASE_URL="https://express-buy-flow.preview.emergentagent.com/api"
 USER_EMAIL="withdrawal_test@demo.com"
 USER_PASSWORD="Test123!"
 ADMIN_EMAIL="admin_test@demo.com"

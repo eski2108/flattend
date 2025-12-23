@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://peer-listings.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://express-buy-flow.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

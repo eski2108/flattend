@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
+BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 SENDGRID_API_KEY = "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"
 
 def test_email_verification():

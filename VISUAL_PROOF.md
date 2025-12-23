@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://peer-listings.preview.emergentagent.com/admin/disputes/dispute_123
+https://express-buy-flow.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://peer-listings.preview.emergentagent.com/admin/disputes/dispute_123
 
 ### ✅ AFTER (FIXED)
 ```
-https://peer-listings.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://peer-listings.preview.emergentagent.com/`
+2. Browser loads: `https://express-buy-flow.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://peer-listings.preview.emergentagent.com/#/admin/disputes/dispute_123
 
 #### ❌ BEFORE
 ```html
-<a href="https://peer-listings.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://express-buy-flow.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://peer-listings.preview.emergentagent.com/#/admin/disputes/dispute_123
 
 #### ❌ BEFORE
 ```
-https://peer-listings.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://express-buy-flow.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 
 #### ❌ BEFORE
 ```html
-<a href="https://peer-listings.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://express-buy-flow.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

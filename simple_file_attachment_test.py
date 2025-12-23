@@ -14,7 +14,7 @@ import time
 from PIL import Image
 
 # Configuration
-BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
+BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 
 def print_test_header(test_name):
     """Print formatted test header"""

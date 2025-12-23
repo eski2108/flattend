@@ -18,7 +18,7 @@ All wallet backend endpoints are fully functional and tested with real data flow
 
 **Test:**
 ```bash
-curl https://peer-listings.preview.emergentagent.com/api/wallets/balances/test_user_alice
+curl https://express-buy-flow.preview.emergentagent.com/api/wallets/balances/test_user_alice
 ```
 
 **Response:**
@@ -64,7 +64,7 @@ curl https://peer-listings.preview.emergentagent.com/api/wallets/balances/test_u
 
 **Test:**
 ```bash
-curl https://peer-listings.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
+curl https://express-buy-flow.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
 ```
 
 **Response:**

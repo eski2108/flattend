@@ -24,7 +24,7 @@ import jwt
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://peer-listings.preview.emergentagent.com/api"
+BACKEND_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 
 def test_user_registration_and_login():
     """Test complete user registration and immediate login flow"""

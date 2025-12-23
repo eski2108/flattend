@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://peer-listings.preview.emergentagent.com
-- Backend API: https://peer-listings.preview.emergentagent.com/api
-- P2P Marketplace: https://peer-listings.preview.emergentagent.com/p2p
+- Frontend: https://express-buy-flow.preview.emergentagent.com
+- Backend API: https://express-buy-flow.preview.emergentagent.com/api
+- P2P Marketplace: https://express-buy-flow.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

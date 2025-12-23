@@ -6,7 +6,7 @@ Quick script to verify test users for file attachment testing
 import requests
 import json
 
-BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
+BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 
 def verify_user_directly(email):
     """Try to verify user by updating database directly via API"""

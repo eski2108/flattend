@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Get backend URL from environment
-BACKEND_URL = "https://peer-listings.preview.emergentagent.com"
+BACKEND_URL = "https://express-buy-flow.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 def log_test(message):

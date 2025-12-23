@@ -149,7 +149,7 @@
 
 ## How to Test
 
-1. **Go to:** https://peer-listings.preview.emergentagent.com/settings
+1. **Go to:** https://express-buy-flow.preview.emergentagent.com/settings
 2. **Log in with:** admin@coinhubx.net / test123
 3. **Test each button:**
    - Click every button

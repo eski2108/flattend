@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Backend URL
-BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
+BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 
 def test_referral_commission_system():
     """Test referral commission processing"""

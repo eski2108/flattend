@@ -20,7 +20,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://peer-listings.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://express-buy-flow.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class P2PBackendTest:

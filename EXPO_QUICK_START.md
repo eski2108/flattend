@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://peer-listings.preview.emergentagent.com/api
+https://express-buy-flow.preview.emergentagent.com/api
 ```
 
 This means:

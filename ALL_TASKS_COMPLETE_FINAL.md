@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://peer-listings.preview.emergentagent.com
+**URL:** https://express-buy-flow.preview.emergentagent.com
 
 **Services Status:**
 ```bash

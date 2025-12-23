@@ -257,7 +257,7 @@ if current_price > 0 and high_24h > 0:  # Both are guaranteed to be numbers
 ### On Live Preview:
 
 1. **Can you log in now?**
-   - Go to: https://peer-listings.preview.emergentagent.com/
+   - Go to: https://express-buy-flow.preview.emergentagent.com/
    - Try logging in with your credentials
    - Should work without errors
 
@@ -326,7 +326,7 @@ if current_price > 0 and high_24h > 0:  # Both are guaranteed to be numbers
    - Wait 5 minutes for fresh data
 
 3. **Check if backend is responding:**
-   - Try this URL: https://peer-listings.preview.emergentagent.com/api/health
+   - Try this URL: https://express-buy-flow.preview.emergentagent.com/api/health
    - Should show: `{"status":"healthy"}`
 
 ---

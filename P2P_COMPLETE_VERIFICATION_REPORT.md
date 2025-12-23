@@ -252,12 +252,12 @@ Offers created: 2
 To test the complete P2P flow:
 
 Step 1: Login
-Visit: https://peer-listings.preview.emergentagent.com/login
+Visit: https://express-buy-flow.preview.emergentagent.com/login
 Email: p2ptest@test.com
 Password: test1234
 
 Step 2: View Marketplace
-Navigate to: https://peer-listings.preview.emergentagent.com/p2p
+Navigate to: https://express-buy-flow.preview.emergentagent.com/p2p
 Verify filters work
 Check coin selector
 Click Become a Seller button

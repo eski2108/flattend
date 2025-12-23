@@ -20,7 +20,7 @@ Go to: https://console.cloud.google.com
 Add these exact URLs:
 ```
 http://localhost:3000/auth/google/callback
-https://peer-listings.preview.emergentagent.com/auth/google/callback
+https://express-buy-flow.preview.emergentagent.com/auth/google/callback
 ```
 
 (Add your custom domain if you have one)

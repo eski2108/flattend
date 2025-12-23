@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://peer-listings.preview.emergentagent.com
-P2P Page:     https://peer-listings.preview.emergentagent.com/p2p
-Backend API:  https://peer-listings.preview.emergentagent.com/api
+Frontend:     https://express-buy-flow.preview.emergentagent.com
+P2P Page:     https://express-buy-flow.preview.emergentagent.com/p2p
+Backend API:  https://express-buy-flow.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

@@ -210,28 +210,28 @@ All CMS settings are stored in MongoDB:
 
 ### Example 1: Change Withdrawal Fee to 0.5%
 ```bash
-curl -X PUT https://peer-listings.preview.emergentagent.com/api/cms/settings/fees \
+curl -X PUT https://express-buy-flow.preview.emergentagent.com/api/cms/settings/fees \
   -H "Content-Type: application/json" \
   -d '{"withdraw_fee_percent": 0.5}'
 ```
 
 ### Example 2: Hide Seller Ratings
 ```bash
-curl -X PUT https://peer-listings.preview.emergentagent.com/api/cms/settings/marketplace-visibility \
+curl -X PUT https://express-buy-flow.preview.emergentagent.com/api/cms/settings/marketplace-visibility \
   -H "Content-Type: application/json" \
   -d '{"show_ratings": false}'
 ```
 
 ### Example 3: Change Default Sort to Highest Rating
 ```bash
-curl -X PUT https://peer-listings.preview.emergentagent.com/api/cms/settings/display \
+curl -X PUT https://express-buy-flow.preview.emergentagent.com/api/cms/settings/display \
   -H "Content-Type: application/json" \
   -d '{"sort_by": "rating"}'
 ```
 
 ### Example 4: Set KYC Requirement at $500
 ```bash
-curl -X PUT https://peer-listings.preview.emergentagent.com/api/cms/settings/seller-limits \
+curl -X PUT https://express-buy-flow.preview.emergentagent.com/api/cms/settings/seller-limits \
   -H "Content-Type: application/json" \
   -d '{"require_kyc_above_amount": 500}'
 ```

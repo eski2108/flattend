@@ -3,7 +3,7 @@
 FEE COLLECTION VERIFICATION TEST
 Tests that the 1% withdrawal fee is properly collected as requested in review.
 
-Backend URL: https://peer-listings.preview.emergentagent.com/api
+Backend URL: https://express-buy-flow.preview.emergentagent.com/api
 """
 
 import requests
@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
+BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 
 # Test User for fee testing
 FEE_TEST_USER = {

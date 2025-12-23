@@ -34,7 +34,7 @@ Test these correct paths:
 5. Verify all responses have correct structure
 
 ## BACKEND URL:
-https://peer-listings.preview.emergentagent.com/api
+https://express-buy-flow.preview.emergentagent.com/api
 
 **GOAL: Verify all previously failing tests now pass with 100% success rate**
 """
@@ -46,7 +46,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
+BASE_URL = "https://express-buy-flow.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USER = {

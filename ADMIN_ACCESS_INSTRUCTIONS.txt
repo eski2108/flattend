@@ -18,7 +18,7 @@ HOW TO ACCESS THE DISPUTE:
 ================================================================================
 
 Option 1: Login to Admin Panel
-1. Go to: https://peer-listings.preview.emergentagent.com/admin/login
+1. Go to: https://express-buy-flow.preview.emergentagent.com/admin/login
 2. Login as admin
 3. Navigate to: Disputes section
 4. Find dispute: live_dispute_003
@@ -28,7 +28,7 @@ Backend endpoint: http://localhost:8001/api/admin/disputes/live_dispute_003/reso
 
 Option 3: Frontend Route
 Route exists at: /admin/disputes/:disputeId
-Full URL: https://peer-listings.preview.emergentagent.com/admin/disputes/live_dispute_003
+Full URL: https://express-buy-flow.preview.emergentagent.com/admin/disputes/live_dispute_003
 
 ================================================================================
 WHAT THE ADMIN PAGE SHOULD SHOW:

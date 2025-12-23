@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://peer-listings.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://express-buy-flow.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 📧 URLs found in dispute email template:
 
-1. https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://peer-listings.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://express-buy-flow.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://peer-listings.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://express-buy-flow.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 
