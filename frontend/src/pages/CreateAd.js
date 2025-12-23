@@ -301,7 +301,7 @@ export default function CreateAd() {
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)',
-        padding: '24px 32px 40px'
+        padding: '24px 48px 40px'
       }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
           
