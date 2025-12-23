@@ -410,10 +410,7 @@ export default function P2PExpress() {
                     </div>
                   </div>
                   <div style={{ fontSize: '16px', color: '#FFFFFF', marginBottom: '8px' }}>
-                    {hasAdminLiquidity 
-                      ? 'Your crypto has been credited instantly to your wallet!'
-                      : 'Your order has been matched with an express seller!'
-                    }
+                    Your crypto has been credited to your wallet via CoinHubX platform liquidity!
                   </div>
                   <div style={{ fontSize: '14px', color: '#D1D5DB' }}>
                     You can make another purchase or check your wallet to see your new balance.
