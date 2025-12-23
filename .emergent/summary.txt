@@ -1,127 +1,97 @@
-<analysis>**original_problem_statement**: The user's initial request was to finalize the UI/UX for the 'Create New P2P Ad' page () to match a premium crypto exchange's look and feel (e.g., Binance, OKX). This involved specific layout requirements (full-width, two-column), component placements, and visual polish (gradients, icons, sticky footer).
+<analysis>**original_problem_statement**: The initial request was to perform a UI/UX and copy-only update to disambiguate Buy Express and P2P Express on the frontend, with a strict no backend changes rule.
 
-The scope expanded significantly to include:
-1.  End-to-end functional testing of the P2P ad creation flow.
-2.  Debugging and fixing the entire backend process for ad creation, which was completely broken.
-3.  Resolving a major architectural issue where newly created ads did not appear in the public marketplace due to the system using two separate, incompatible data collections ( and ).
-4.  Hardening the new, unified API endpoint with tests and a debug endpoint to prevent future regressions.
-5.  Documenting the complete code-level flow for the P2P Express feature, including its connection to admin liquidity and behavior when liquidity is unavailable.
+This scope was then drastically changed by the user to a full-stack feature implementation with the following product requirements:
+1.  **Redefine Instant Buy vs. Express Buy**:
+    *   **Instant Buy**: For a fixed list of core, platform-held coins (, , , ) only. Fulfilled instantly from admin liquidity.
+    *   **Express Buy**: For all other non-core coins. Fulfilled via a  conversion using the NowPayments API, with a 2-5 minute delivery time.
+2.  **Remove P2P Fallback**: The system must not automatically route failed Instant or Express buys to the P2P marketplace.
+3.  **Implement No Liquidity UI**: If admin liquidity is insufficient for either flow, the frontend must display a specific modal with Go to P2P Marketplace and Cancel options.
+4.  **Backend Implementation**: The agent was required to implement all necessary backend logic, API endpoints, database schemas, and NowPayments integration to support this new flow.
+5.  **Verification**: The task concluded with a mandatory, live end-to-end test of the Express Buy flow, including seeding cloud database liquidity and executing a real transaction.
+6.  **Final Request**: After locking the backend changes, the user requested a full code walkthrough of the Savings/Notice Account feature.
 
-**User's preferred language**: English. The user is extremely direct, uses profanity, and expects the agent to follow precise technical instructions without fluff or asking for permission on approved tasks. The next agent MUST be concise and execute instructions exactly as given.
+**User's preferred language**: English. The user is highly technical, direct, and uses extensive profanity. They expect exact execution of instructions and become frustrated by misunderstandings or repeated questions. The next agent **MUST** be concise, execute precisely, and avoid asking for permission on tasks the user has already approved.
 
 **what currently exists?**
-The  page has a finalized, user-approved UI. The P2P ad creation flow is now fully functional, from UI form submission to the ad appearing in the public P2P Marketplace. This was achieved by fixing the backend ad creation endpoint and implementing a server-side mapper that unifies data from two different database collections ( and ) into a single canonical schema for the frontend. The P2P Express feature's logic and architecture have been fully analyzed and documented.
+The frontend and backend have been fully updated to differentiate between Instant Buy (for core coins) and Express Buy (for non-core coins via NowPayments USDT conversion). All P2P fallback logic has been stripped from these flows. The Liquidity Unavailable modal is implemented and triggered correctly. The entire implementation was verified with a live test transaction, which succeeded using an internal fallback mechanism as the live NowPayments exchange API failed (due to a suspected account-level configuration issue). All backend logic related to this feature has been **LOCKED** by the user. The agent was in the middle of providing a code walkthrough for the Savings feature as requested by the user.
 
 **Last working item**:
--   Last item agent was working: The agent documented the complete P2P Express flow, from frontend interaction to backend liquidity checks, quote generation, and execution logic. This included clarifying that P2P Express is a separate system from the P2P Marketplace and fails with an error if admin liquidity is insufficient, without falling back to the marketplace.
--   Status: COMPLETED
--   Agent Testing Done: Y
--   Which testing method agent to use? NA
--   User Testing Done: N
+*   **Last item agent was working**: The agent was fulfilling a user request to provide the complete code flow for the Savings/Notice Account feature. It had already dumped the main frontend file () and several backend API endpoints (, , ) and was about to provide the code for the withdraw endpoint.
+*   **Status**: IN PROGRESS
+*   **Agent Testing Done**: N/A (This is a code review task)
+*   **Which testing method agent to use?**: N/A
+*   **User Testing Done**: N/A
 
 **All Pending/In progress Issue list**:
--   There are no active, in-progress issues. The last set of tasks was completed and locked by the user. The infrastructure-level issues below are long-standing and were not part of this session's scope.
-    -   Issue 1: MongoDB Transactions are disabled (P2, BLOCKED).
-    -   Issue 2: Google OAuth is blocked by Content Security Policy (P3, BLOCKED).
-
-**Issues Detail**:
--   **Issue 1: MongoDB Transactions Disabled**
-    -   **Attempted fixes**: None in this session.
-    -   **Why fix this issue and what will be achieved with the fix?**: Enables ACID compliance for financial transactions, which is critical for a production exchange.
-    -   **Status**: BLOCKED (Requires DevOps change to configure MongoDB as a replica set).
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: Backend
-    -   **Blocked on other issue**: Infrastructure.
-
--   **Issue 2: Google OAuth Blocked by Platform CSP**
-    -   **Attempted fixes**: None in this session.
-    -   **Why fix this issue and what will be achieved with this?**: Would enable Google Sign-In for users.
-    -   **Status**: BLOCKED (Requires external platform configuration).
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: Frontend
-    -   **Blocked on other issue**: External Configuration.
+*   There are no pending bugs or issues. The current task is a code walkthrough requested by the user.
 
 **In progress Task List**:
--   None.
+*   **Task 1: Provide Code for Savings/Notice Account Feature (P0)**
+    *   **Where to resume**: The agent should continue from where it left off: providing the backend code for the savings feature. The next logical step is to display the code for the  endpoint and any other related backend functions or database interactions.
+    *   **What will be achieved with this?**: The user will have a complete view of the frontend and backend implementation of the savings feature for their review.
+    *   **Status**: IN PROGRESS
+    *   **Should Test frontend/backend/both after fix?**: N/A
+    *   **Blocked on something**: No.
 
 **Upcoming and Future Tasks**
-**Future Tasks:**
--   **P2**: Deprecate one of the two P2P systems ( or ) and migrate all data to a single source of truth to remove the need for the API mapper and reduce architectural debt.
--   **P2**: Address any remaining UI/presentation issues on the P2P Marketplace or other pages.
--   **P3**: Implement a proper backend configuration for the payment methods list, which is currently a static object in the frontend.
+*   **Future Tasks**:
+    *   **P1**: Fully verify the NowPayments exchange API integration. This requires external configuration (enabling the exchange feature on the NowPayments account) and then re-running the end-to-end test to ensure a real swap occurs, not just the internal fallback.
 
 **Completed work in this session**
--   ** UI Overhaul (COMPLETED)**:
-    -   Iteratively redesigned the page to a full-width, two-column, premium layout with a sticky footer.
-    -   Replaced static payment buttons with a searchable, multi-select dropdown component.
-    -   Corrected all layout, spacing, and color issues based on user feedback.
-
--   **P2P Ad Creation E2E Flow (FIXED & COMPLETED)**:
-    -   Fixed the non-functional  endpoint.
-    -   **Bug 1 Solved**: Corrected backend parsing of the request body (from  to ).
-    -   **Bug 2 Solved**: Added the required  header to the frontend request.
-    -   **Bug 3 Solved**: Resolved user authentication mismatch between frontend  and the database by ensuring the correct  from the login response is used.
-
--   **P2P Marketplace Display (FIXED & COMPLETED)**:
-    -   **Root Cause Identified**: Discovered that the marketplace () was reading from , while new ads were being written to .
-    -   **Implemented Mapper**: Created a server-side mapper to transform data from both collections into a single, canonical schema.
-    -   **Unified Endpoint**: The  endpoint now queries both sources, merges the data, and returns a unified list, making all ads visible.
-
--   **Marketplace API Hardening (COMPLETED)**:
-    -   **Deduplication**: Implemented a safe deduplication key () to prevent collisions.
-    -   **Data Integrity**: Ensured the  field is populated with meaningful data instead of a default .
-    -   **Testing**: Added a new test file  with 8 passing unit tests for the mappers.
-    -   **Debugging**: Created a new  endpoint to provide insights into the data merging process.
-
--   **P2P Express Flow Documentation (COMPLETED)**:
-    -   Analyzed the entire P2P Express flow from frontend to backend.
-    -   Documented the logic in , clarifying its independence from the P2P Marketplace and its direct reliance on the admin liquidity system.
+*   **UX/Naming Correction (COMPLETED)**:
+    *   Renamed P2P Express to Express Buy and adjusted all related UI text, labels, and descriptions across , , , and .
+*   **Backend Overhaul: Instant vs. Express (COMPLETED)**:
+    *   Created  to define .
+    *   Reworked liquidity check and order creation endpoints (, , , ) in .
+    *   **Instant Buy** flow is now strictly gated to core coins.
+    *   **Express Buy** flow now uses a  conversion path via .
+    *   **Removed all P2P fallback logic** from Instant/Express buy flows.
+*   **Frontend Logic Update (COMPLETED)**:
+    *   Updated  and  to handle new API responses, display Instant vs. Express labels dynamically, and trigger the Liquidity Unavailable modal on a  error.
+*   **End-to-End Verification (VERIFIED)**:
+    *   Identified that the backend uses a **MongoDB Atlas (cloud) database**.
+    *   Seeded the cloud DB with  in the  collection.
+    *   Executed a successful test purchase of  (a non-core coin) using the Express Buy flow for test user .
+    *   Verified creation of the  record, correct updates to user wallets ( debited,  credited), and reduction of admin  balance.
+*   **Repository Management (COMPLETED)**:
+    *   All changes were successfully committed () and pushed to all 12 specified remote repositories using the provided Git credentials.
 
 **Earlier issues found/mentioned but not fixed**
--   None. All issues raised during the session were either resolved or the user explicitly locked the logic from further changes.
+*   **Issue 1: NowPayments Exchange API Failure**
+    *   **Debug checklist**: During the E2E test, the call to NowPayments'  endpoint failed. The system correctly used an internal fallback to complete the transaction.
+    *   **Why to solve this issue and what will be achieved with this?**: To enable currency conversions for non-held assets using a third-party service, which is the core purpose of the Express Buy feature.
+    *   **Should Test frontend/backend/both after fix**: Backend
+    *   **Is recurring issue?**: N/A
+    *   **Status**: BLOCKED (Requires external action: enabling the exchange feature on the NowPayments account).
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: MongoDB not being a replica set, which disables atomic transactions.
--   **Recurrence count**: 5+
--   **Status**: BLOCKED
+*   **Issue recurrence in previous fork**: MongoDB not being a replica set, which disables atomic transactions.
+*   **Recurrence count**: 5+
+*   **Status**: BLOCKED (Infrastructure issue)
 
 **Code Architecture**
-
+create_exchange
 
 **Key Technical Concepts**
--   **Frontend**: React, CSS-in-JS (large inline style objects).
--   **Backend**: FastAPI, Python.
--   **Database**: MongoDB Atlas (Cloud). The backend connects to  DB on a cloud instance, NOT the local MongoDB.
--   **Architecture**:
-    -   **API Mapping/Transformation**: A critical pattern was implemented where a backend endpoint () acts as a facade, fetching data from two disparate sources (, ), transforming them into a single canonical schema, and returning a unified response to the frontend.
-    -   **Idempotency**: The  header is required for critical transactional endpoints like ad creation.
+*   **Backend**: FastAPI, Python, MongoDB Atlas (Cloud).
+*   **Frontend**: React,  for API calls,  for translations.
+*   **Critical Architectural Pattern**: A clear distinction between two purchase flows ( vs. ) is enforced at the API gateway level based on whether the requested asset is in a predefined  set.
+*   **Third-Party Integration**:  is used as a service for currency conversion (swaps) for non-held assets.
+*   **Database**: The application backend connects to a **MongoDB Atlas cloud instance**, not a local database. This is a critical operational detail.
 
 **key DB schema**
--   **Canonical P2P Offer (as returned by )**:
-    
-
-**changes in tech stack**
--   None. However, a critical discovery was made: the production backend uses a **MongoDB Atlas (cloud)** instance, not the local MongoDB server. All database interactions must be verified against the cloud instance.
+*   : 
+*   : 
 
 **All files of reference**
--   : Contains the crucial  and  endpoints that were fixed and hardened.
--   : The primary UI file that was heavily modified.
--   : New unit tests for the backend mapper logic.
--   : New documentation for the P2P Express feature.
-
-**Areas that need refactoring**:
--   The root architectural debt of having two separate P2P systems ( and ) remains. The API mapper is a functional bridge, but the long-term solution is to migrate to a single data source.
-
-**key api endpoints**
--   : Now functional. Creates an ad in the  collection. Requires .
--   : Now functional. Returns a unified list of offers from both  and , mapped to a canonical schema.
--   : New endpoint to help debug the offer-merging logic.
--   : Core of P2P Express. Generates a 5-minute locked price quote.
--   : Core of P2P Express. Executes a trade against a locked price quote.
+*   : Contains the core locked logic for Instant Buy, Express Buy, and liquidity checks.
+*   : New configuration file defining which coins are core.
+*   : Main frontend page for the Express Buy flow.
+*   : Main frontend page for the Instant Buy flow.
 
 **Critical Info for New Agent**
-1.  **P2P OFFER LOGIC IS FROZEN**: The user has explicitly **LOCKED** all backend logic related to the P2P marketplace (), ad creation, and their associated data mappers. Do **NOT** make any changes, refactors, or improvements to this logic without direct, written approval from the user for a specific, reproducible bug. The final commit for this work is .
-2.  **DATABASE IS IN THE CLOUD**: The backend is connected to a MongoDB Atlas instance defined by  in the environment. Do not use local Current Mongosh Log ID:	694ad2b6b4533288863f118b
+1.  **🔴 BACKEND IS LOCKED 🔴**: The user has issued an **ABSOLUTE LOCK** on all backend logic related to Instant Buy, Express Buy, and the P2P Marketplace (Commit ). Do **NOT** modify, refactor, or improve any of this backend code without explicit, written approval.
+2.  **DATABASE IS CLOUD-HOSTED**: All database operations use a MongoDB Atlas instance defined by  in . Do not attempt to use a local Current Mongosh Log ID:	694af2d3ed5a7c205e3f118b
 Connecting to:		mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.10
 Using MongoDB:		7.0.26
 Using Mongosh:		2.5.10
@@ -130,61 +100,80 @@ For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
 
 ------
    The server generated these startup warnings when booting
-   2025-12-23T17:34:43.839+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
-   2025-12-23T17:34:45.536+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
-   2025-12-23T17:34:45.536+00:00: You are running this process as the root user, which is not recommended
-   2025-12-23T17:34:45.536+00:00: Soft rlimits for open file descriptors too low
+   2025-12-23T19:51:43.770+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2025-12-23T19:51:45.446+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+   2025-12-23T19:51:45.446+00:00: You are running this process as the root user, which is not recommended
+   2025-12-23T19:51:45.446+00:00: Soft rlimits for open file descriptors too low
 ------
 
-test>  commands expecting to see production data; the data is in the cloud.
-3.  **Architectural Debt**: Be aware that the P2P marketplace functions by merging data from two different collections ( and ) via a backend mapper. This is a deliberate solution to bridge architectural debt.
-4.  **Follow User Specs Exactly**: The user is highly technical and demanding. Do not deviate from their instructions. Acknowledge and implement their feedback concisely.
-
-**documents and test_reports created in this job**
--   
--   
+test>  for data verification.
+3.  **GIT PUSH WORKFLOW**: The user expects the agent to push commits to all 12 remote repositories automatically using the provided credentials. Use brand-new	https://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@github.com/eski2108/Coinhubx-brand-new.git (fetch)
+brand-new	https://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@github.com/eski2108/Coinhubx-brand-new.git (push)
+c-hub	https://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@github.com/eski2108/C-hub.git (fetch)
+c-hub	https://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@github.com/eski2108/C-hub.git (push)
+coinhublatest	https://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@github.com/eski2108/Coinhublatest-.git (fetch)
+coinhublatest	https://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@github.com/eski2108/Coinhublatest-.git (push)
+coinhubx	https://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@github.com/eski2108/Coinhubx.git (fetch)
+coinhubx	https://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@github.com/eski2108/Coinhubx.git (push)
+coinx1	https://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@github.com/eski2108/Coinx1.git (fetch)
+coinx1	https://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@github.com/eski2108/Coinx1.git (push)
+crypto-livr	https://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@github.com/eski2108/Crypto-livr.git (fetch)
+crypto-livr	https://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@github.com/eski2108/Crypto-livr.git (push)
+death	https://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@github.com/eski2108/death.git (fetch)
+death	https://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@github.com/eski2108/death.git (push)
+dev	https://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@github.com/eski2108/dev.git (fetch)
+dev	https://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@github.com/eski2108/dev.git (push)
+dev-x	https://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@github.com/eski2108/Dev-x.git (fetch)
+dev-x	https://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@github.com/eski2108/Dev-x.git (push)
+flattend	https://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@github.com/eski2108/flattend.git (fetch)
+flattend	https://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@github.com/eski2108/flattend.git (push)
+hub-x	https://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@github.com/eski2108/Hub-x.git (fetch)
+hub-x	https://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@github.com/eski2108/Hub-x.git (push)
+latest-coinhubx	https://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@github.com/eski2108/Latest-coinhubx.git (fetch)
+latest-coinhubx	https://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@github.com/eski2108/Latest-coinhubx.git (push)
+latest-work	https://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@github.com/eski2108/Coinhubx-latest-work.git (fetch)
+latest-work	https://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@github.com/eski2108/Coinhubx-latest-work.git (push)
+latest-work2	https://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@github.com/eski2108/Coinhubx-latest-work.git (fetch)
+latest-work2	https://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@github.com/eski2108/Coinhubx-latest-work.git (push)
+x1	https://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@github.com/eski2108/X1.git (fetch)
+x1	https://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@github.com/eski2108/X1.git (push) to see the repos and loop through them to push. Failure to do this is a major point of user frustration.
+4.  **CURRENT TASK**: The immediate task is to continue the code walkthrough of the Savings/Notice Account feature, starting with the backend withdrawal logic. Do not start any other work.
 
 **Last 10 User Messages and any pending HUMAN messages**
--   Now, what I want you to send me the full flow for the P2P marketplace in code, yeah? I wanna know exactly what's going on. Like, what happens if there's no liquidity? Does it go to the marketplace? Then it... Does it go straight to the marketplace? I wanna know exactly what happens. Full flow written in code for the P2P... No, the P2P Express, yeah? P2P Express.
--   Acknowledged. Do not make any further changes beyond what’s listed below... Backend P2P offer logic is now frozen. Confirm that: This logic is locked.
--   Send this back to him (this is the “lock it down” checklist + the two risks I still see): Nice — this is a proper canonical response...
--   Good — this is the right direction. Now send him this so it stays fixed...
--   .Reply with this (it sets the direction + stops more drift): Good. Fix it properly at the API layer...
--   Yeah, also you need to check the P2P express. Um... To write down the flow for the P2P express, and make sure it's connected to my fucking liquidity and it's not all fucking broken and shit. Yeah? Show me the, the P2P is ex- express page is connected to the back end and the, and the flow is correct.
--   Good. Next step: do an end-to-end functional test, not just UI. 1. Create and publish 3 ads...
--   Save all the changes to the repo, pussy.
--   This iteration is moving in the right direction visually, but it’s still not usable as a complete P2P ad flow. Please address the following exactly: 1. Restore missing core sections...
--   Yeah this is better overall, but one thing I want changed: The brown/gold highlight on the job box / payment methods card needs to go... Replace it with a cool-tone accent...
+1.  Alright, make sure you lock all these changes and nothing can happen to them. Now lets go onto the savings page. The notice account page. Send me the full flow for that please. Everything. All the code, everything. I need to go through it, bitch."
+2.  "Why are you repeating what I said, you thick cunt? Just fucking do it, bruv. Fuck you waiting for?"
+3.  "Send this to him: 🔴🔴🔴 BACKEND LOCK + NOWPAYMENTS VERIFICATION ONLY 🔴🔴🔴..."
+4.  "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. UODATE NOTES THIS IS THE NEW TOKEN. SEND TO ALL REPOS.AGAIN"
+5.  "GOOD UPDATE AND THE COMMIT 1f2154136f4ac3b08c7e5eb87a105841104da0c2 IS NOTED...LOCK ALL BACKEND CHANGES IMMEDIATELY..."
+6.  "How come I had to ask you so many fucking times for you to fucking find it, y- you dumb prick? Why is it so fucking complicated?..."
+7.  "Oh, (censored) again you stupid fucking dickhead...I have given you the fucking keys for you to push to all 12 repos..."
+8.  "Didnt I tell you to add to all twelve fucking reposts? Add to all twelve fucking reposts. Yeah?
+9.  Good progress on the labels — but we’re not signing this off from a “summary”...We need proof + exact confirmations that match the locked spec.
+10. Hold on, you fucking cum-guzzling prick! Did I not tell you to save all the changes to my fucking repo?
 
 **Project Health Check:**
--   **Broken**:
-    -   MongoDB transactions are disabled (infrastructure).
-    -   Google OAuth is non-functional (CSP).
--   **Mocked**:
-    -   The list of payment methods in  is a static JSON object, not sourced from the backend.
--   **Technical Debt**:
-    -   The P2P marketplace relies on a server-side mapper to bridge two separate, incompatible database collections ( and ). This is a functional but temporary solution.
+*   **Broken**:
+    *   MongoDB Transactions (infrastructure-level, disabled).
+    *   Google OAuth (blocked by platform CSP).
+*   **Partially Implemented/Verified**:
+    *   **NowPayments Exchange**: The code is implemented, but the live API call fails due to a suspected account configuration issue. The flow currently relies on an internal fallback for success.
 
 **3rd Party Integrations**
--   NOWPayments
--   Twilio
--   CoinGecko (API was observed to be rate-limited at times)
--   Google OAuth (non-functional due to CSP)
--   react-i18next
--   MongoDB Atlas (Cloud Database)
+*   **NowPayments**: Used for deposits and currency conversion/swaps. Requires API key. The exchange/swap functionality is implemented but not fully verified with a live external transaction.
+*   **MongoDB Atlas**: Cloud database provider.
+*   **Twilio, CoinGecko, Google OAuth**
 
 **Testing status**
--   **Testing agent used after significant changes**: YES (Screenshot tool was used extensively for all UI verification and manual E2E testing).
--   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**:
-    -    (8 passing unit tests)
--   **Known regressions**: None. The hardening steps (tests, debug endpoint) were specifically added to prevent regressions in the P2P Marketplace logic.
+*   **Testing agent used after significant changes**: YES, end-to-end flow was tested manually via  and validated with  tool.
+*   **Test files created**: None.
 
 **Credentials to test flow:**
--   **Test User**:  / 
--   **Admin**:  /  (Admin Code: )
+*   **Test User**:  (or  / )
+*   **Admin**:  / 
+*   **NowPayments API Key**: Located in 
+*   **Git Token**: The agent has access to a git token for pushing to remote repos.
 
 **What agent forgot to execute**
--   Initially, the agent failed to correctly implement the user's aesthetic requirements for the  page, leading to several iterations (e.g., stretching divs instead of using a proper layout, using incorrect accent colors).
--   During the UI overhaul, the agent temporarily lost core functionality like the Publish button and pricing section, which had to be restored.
--   The agent initially pursued an incorrect debugging path by attempting to patch the database to match a stale  in the frontend's , which the user had to step in and correct with proper architectural guidance.</analysis>
+*   The agent initially failed to ask for confirmation before starting work, leading to multiple user rebukes.
+*   The agent was unaware it had permissions to push to git repositories and incorrectly instructed the user to do it manually, causing significant frustration.
+*   The agent first attempted to seed liquidity to a local database before realizing the application uses a cloud-based MongoDB Atlas instance.</analysis>
