@@ -142,8 +142,8 @@ export default function CreateAd() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
-  const togglePayment = (id) => setFormData(prev => ({ ...prev, payment_methods: prev.payment_methods.includes(id) ? prev.payment_methods.filter(m => m !== id) : [...prev.payment_methods, id] }));
+  const handleChange = (field, value) => { setTouched(true); setFormData(prev => ({ ...prev, [field]: value })); };
+  const togglePayment = (id) => { setTouched(true); setFormData(prev => ({ ...prev, payment_methods: prev.payment_methods.includes(id) ? prev.payment_methods.filter(m => m !== id) : [...prev.payment_methods, id] })); };
   const removePayment = (id) => setFormData(prev => ({ ...prev, payment_methods: prev.payment_methods.filter(m => m !== id) }));
   const getMethod = (id) => getAllPaymentMethods().find(m => m.id === id);
   const filterMethods = (methods) => !paymentSearch ? methods : methods.filter(m => m.label.toLowerCase().includes(paymentSearch.toLowerCase()));
