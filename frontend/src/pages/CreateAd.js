@@ -408,55 +408,53 @@ export default function CreateAd() {
 
             {/* FOOTER - CLOSES THE PAGE */}
             <div style={{
-              marginTop: '20px',
+              marginTop: '16px',
               marginLeft: '-32px',
               marginRight: '-32px',
-              marginBottom: '-20px',
-              padding: '18px 32px',
-              background: 'linear-gradient(180deg, rgba(12, 18, 38, 0.95) 0%, rgba(8, 12, 28, 1) 100%)',
-              borderTop: '1px solid rgba(0, 255, 200, 0.12)',
+              padding: '16px 32px',
+              background: 'linear-gradient(180deg, rgba(15, 22, 45, 1) 0%, rgba(10, 14, 32, 1) 100%)',
+              borderTop: '1px solid rgba(0, 255, 200, 0.15)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)'
+              alignItems: 'center'
             }}>
-              <div style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '0.8125rem' }}>
+              <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.8125rem' }}>
                 {isValid() ? (
-                  <span style={{ color: '#22C55E', fontWeight: '500' }}>✓ Ready to publish</span>
+                  <span style={{ color: '#22C55E', fontWeight: '600' }}>✓ Ready to publish</span>
                 ) : (
                   <span>Complete all required fields to publish your ad</span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '14px' }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <button type="button" onClick={() => navigate('/p2p/merchant')} style={{
-                  padding: '11px 26px',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  borderRadius: '10px',
-                  color: 'rgba(255, 255, 255, 0.65)',
-                  fontSize: '0.875rem',
+                  padding: '10px 24px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '0.8125rem',
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}>
                   Cancel
                 </button>
                 <button type="submit" disabled={creating || !isValid()} style={{
-                  padding: '12px 36px',
+                  padding: '10px 32px',
                   background: (creating || !isValid()) 
                     ? 'rgba(40, 40, 50, 0.6)' 
                     : 'linear-gradient(135deg, #22C55E 0%, #14B8A6 100%)',
                   border: 'none',
-                  borderRadius: '10px',
+                  borderRadius: '8px',
                   color: (creating || !isValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
-                  fontSize: '0.875rem',
+                  fontSize: '0.8125rem',
                   fontWeight: '700',
                   cursor: (creating || !isValid()) ? 'not-allowed' : 'pointer',
                   boxShadow: (creating || !isValid()) 
                     ? 'none' 
-                    : '0 4px 20px rgba(34, 197, 94, 0.35)',
+                    : '0 4px 16px rgba(34, 197, 94, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '6px'
                 }}>
                   {creating && <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
                   Publish ad
