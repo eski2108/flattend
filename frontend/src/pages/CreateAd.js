@@ -103,12 +103,12 @@ const LABEL_STYLE = {
 
 const INPUT_STYLE = {
   width: '100%',
-  padding: '12px 14px',
+  padding: '16px 18px',
   background: 'rgba(0, 0, 0, 0.35)',
   border: '1px solid rgba(255, 255, 255, 0.06)',
   borderRadius: '10px',
   color: '#fff',
-  fontSize: '0.9375rem',
+  fontSize: '1rem',
   fontWeight: '600',
   outline: 'none',
   transition: 'all 0.2s ease'
