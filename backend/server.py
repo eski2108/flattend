@@ -2850,6 +2850,8 @@ async def get_enhanced_offers(
     
     # Build query for p2p_ads collection
     p2p_ads_query = {"status": "active"}
+    if ad_type:
+        p2p_ads_query["ad_type"] = ad_type.lower()
     if crypto_currency:
         p2p_ads_query["crypto_currency"] = crypto_currency
     if fiat_currency:
