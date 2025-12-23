@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
 import { IoArrowBack, IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
+import DOMPurify from 'dompurify';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
