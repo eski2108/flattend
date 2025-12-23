@@ -5582,10 +5582,10 @@ async def create_p2p_express_order(order_data: Dict):
     
     # ==========================================================================
     # DETERMINE BUY TYPE: INSTANT (core coins) vs EXPRESS (conversion)
+    # NO P2P FALLBACK - If liquidity unavailable, return 409 error
     # ==========================================================================
-    is_core_coin = crypto in CORE_LIQUIDITY_COINS
     
-    if is_core_coin:
+    if is_core_coin(crypto):
         # ==========================================================================
         # INSTANT BUY - Core coins with direct platform liquidity
         # ==========================================================================
@@ -5598,16 +5598,19 @@ async def create_p2p_express_order(order_data: Dict):
         })
         
         if not admin_liquidity:
-            # NO FALLBACK - Return clear error
+            # NO FALLBACK - Return 409 Conflict
             raise HTTPException(
-                status_code=400, 
-                detail="Instant liquidity is currently unavailable.",
-                headers={"X-Liquidity-Status": "unavailable"}
+                status_code=409, 
+                detail={
+                    "error": "liquidity_unavailable",
+                    "message": "Instant liquidity is currently unavailable.",
+                    "coin": crypto
+                }
             )
         
         delivery_type = "instant"
         delivery_source = "platform_liquidity"
-        estimated_delivery = "Instant"
+        estimated_delivery = DELIVERY_TIME_INSTANT
         
         # 1. DEBIT GBP from user wallet
         try:
