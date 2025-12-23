@@ -298,11 +298,27 @@ export default function P2PExpress() {
                   gap: '16px'
                 }}>
                   <IoFlash size={isMobile ? 32 : 42} color="#00F0FF" strokeWidth={2.5} />
-                  P2P Express
+                  Express Buy
                 </h1>
                 <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#8F9BB3', margin: 0 }}>
-                  Buy crypto with GBP instantly • 2-5 minute delivery
+                  Buy crypto with GBP instantly • Platform Liquidity
                 </p>
+                {/* MANDATORY DISCLOSURE */}
+                <div style={{
+                  marginTop: '12px',
+                  padding: '10px 16px',
+                  background: 'rgba(0, 240, 255, 0.08)',
+                  border: '1px solid rgba(0, 240, 255, 0.25)',
+                  borderRadius: '10px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <IoShield size={16} color="#00F0FF" />
+                  <span style={{ fontSize: '13px', color: '#D1D5DB' }}>
+                    This is an instant purchase fulfilled by CoinHubX, not another user.
+                  </span>
+                </div>
               </div>
             </div>
 
