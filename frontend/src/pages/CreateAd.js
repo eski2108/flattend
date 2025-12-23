@@ -1,19 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoArrowBack, IoCheckmarkCircle } from 'react-icons/io5';
+import { IoArrowBack, IoCheckmarkCircle, IoClose, IoSearch, IoChevronDown } from 'react-icons/io5';
 import axiosInstance from '@/utils/axiosConfig';
 import { toast } from 'sonner';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = BACKEND_URL;
+// Payment methods config - grouped by region
+const PAYMENT_METHODS_CONFIG = {
+  popular: [
+    { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+    { id: 'wise', label: 'Wise', icon: '📱' },
+    { id: 'bank_transfer_uk', label: 'Bank Transfer (UK)', icon: '🏦' },
+    { id: 'revolut', label: 'Revolut', icon: '🧾' },
+    { id: 'sepa', label: 'SEPA Transfer', icon: '🏦' },
+  ],
+  uk: [
+    { id: 'bank_transfer_uk', label: 'Bank Transfer (UK)', icon: '🏦' },
+    { id: 'debit_card', label: 'Debit Card', icon: '💳' },
+    { id: 'credit_card', label: 'Credit Card', icon: '💳' },
+    { id: 'wise', label: 'Wise', icon: '📱' },
+    { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+    { id: 'revolut', label: 'Revolut', icon: '🧾' },
+    { id: 'monzo', label: 'Monzo', icon: '🏦' },
+    { id: 'starling', label: 'Starling', icon: '🏦' },
+  ],
+  eu: [
+    { id: 'sepa', label: 'SEPA Transfer', icon: '🏦' },
+    { id: 'sepa_instant', label: 'SEPA Instant', icon: '🏦' },
+    { id: 'revolut', label: 'Revolut', icon: '🧾' },
+    { id: 'wise', label: 'Wise', icon: '📱' },
+    { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+    { id: 'ideal', label: 'iDEAL', icon: '🇳🇱' },
+    { id: 'blik', label: 'BLIK', icon: '🇵🇱' },
+    { id: 'swish', label: 'Swish', icon: '🇸🇪' },
+  ],
+  nigeria: [
+    { id: 'bank_transfer_ng', label: 'Bank Transfer (NG)', icon: '🇳🇬' },
+    { id: 'opay', label: 'Opay', icon: '🧾' },
+    { id: 'moniepoint', label: 'Moniepoint', icon: '🧾' },
+    { id: 'palmpay', label: 'PalmPay', icon: '🧾' },
+    { id: 'paga', label: 'Paga', icon: '🧾' },
+  ],
+  global: [
+    { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+    { id: 'wise', label: 'Wise', icon: '📱' },
+    { id: 'western_union', label: 'Western Union', icon: '🌍' },
+    { id: 'moneygram', label: 'MoneyGram', icon: '🌍' },
+    { id: 'cash_in_person', label: 'Cash (In-Person)', icon: '💵' },
+    { id: 'skrill', label: 'Skrill', icon: '💳' },
+    { id: 'neteller', label: 'Neteller', icon: '💳' },
+  ],
+};
 
-// Unified box style
+const REGION_LABELS = {
+  popular: '⭐ Popular',
+  uk: '🇬🇧 United Kingdom',
+  eu: '🇪🇺 Europe / SEPA',
+  nigeria: '🇳🇬 Nigeria',
+  global: '🌍 Global',
+};
+
+// Get all unique payment methods
+const getAllPaymentMethods = () => {
+  const seen = new Set();
+  const all = [];
+  Object.values(PAYMENT_METHODS_CONFIG).flat().forEach(m => {
+    if (!seen.has(m.id)) {
+      seen.add(m.id);
+      all.push(m);
+    }
+  });
+  return all;
+};
+
 const BOX_STYLE = {
   background: 'rgba(10, 13, 28, 0.98)',
   border: '1px solid rgba(0, 255, 200, 0.08)',
   borderRadius: '12px',
   padding: '16px',
-  marginBottom: '10px',
   boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.25)'
 };
 
@@ -22,7 +85,7 @@ const SECTION_TITLE = {
   fontSize: '0.8125rem',
   fontWeight: '600',
   letterSpacing: '0.02em',
-  marginBottom: '14px',
+  marginBottom: '12px',
   display: 'flex',
   alignItems: 'center',
   gap: '10px'
@@ -40,12 +103,12 @@ const LABEL_STYLE = {
 
 const INPUT_STYLE = {
   width: '100%',
-  padding: '14px 16px',
+  padding: '12px 14px',
   background: 'rgba(0, 0, 0, 0.35)',
   border: '1px solid rgba(255, 255, 255, 0.06)',
   borderRadius: '10px',
   color: '#fff',
-  fontSize: '1rem',
+  fontSize: '0.9375rem',
   fontWeight: '600',
   outline: 'none',
   transition: 'all 0.2s ease'
@@ -62,6 +125,9 @@ export default function CreateAd() {
   const [creating, setCreating] = useState(false);
   const [adType, setAdType] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [paymentDropdownOpen, setPaymentDropdownOpen] = useState(false);
+  const [paymentSearch, setPaymentSearch] = useState('');
+  const dropdownRef = useRef(null);
   
   const [formData, setFormData] = useState({
     crypto_currency: 'BTC',
@@ -75,20 +141,8 @@ export default function CreateAd() {
   });
 
   const [focusedField, setFocusedField] = useState(null);
-  const [hoveredPill, setHoveredPill] = useState(null);
-
   const [availableCryptos, setAvailableCryptos] = useState(['BTC', 'ETH', 'USDT']);
   const availableFiats = ['GBP', 'USD', 'EUR'];
-  const availablePaymentMethods = [
-    { id: 'sepa', label: 'SEPA' },
-    { id: 'faster_payments', label: 'FASTER PAYMENTS' },
-    { id: 'swift', label: 'SWIFT' },
-    { id: 'ach', label: 'ACH' },
-    { id: 'local_bank_transfer', label: 'BANK TRANSFER' },
-    { id: 'wire_transfer', label: 'WIRE TRANSFER' },
-    { id: 'pix', label: 'PIX' },
-    { id: 'interac', label: 'INTERAC' }
-  ];
 
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
@@ -99,6 +153,16 @@ export default function CreateAd() {
     setCurrentUser(JSON.parse(userData));
     fetchAvailableCryptos();
   }, [navigate]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setPaymentDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchAvailableCryptos = async () => {
     try {
@@ -115,13 +179,30 @@ export default function CreateAd() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const togglePaymentMethod = (method) => {
+  const togglePaymentMethod = (methodId) => {
     setFormData(prev => ({
       ...prev,
-      payment_methods: prev.payment_methods.includes(method)
-        ? prev.payment_methods.filter(m => m !== method)
-        : [...prev.payment_methods, method]
+      payment_methods: prev.payment_methods.includes(methodId)
+        ? prev.payment_methods.filter(m => m !== methodId)
+        : [...prev.payment_methods, methodId]
     }));
+  };
+
+  const removePaymentMethod = (methodId) => {
+    setFormData(prev => ({
+      ...prev,
+      payment_methods: prev.payment_methods.filter(m => m !== methodId)
+    }));
+  };
+
+  const getMethodById = (id) => getAllPaymentMethods().find(m => m.id === id);
+
+  const filterMethods = (methods) => {
+    if (!paymentSearch) return methods;
+    return methods.filter(m => 
+      m.label.toLowerCase().includes(paymentSearch.toLowerCase()) ||
+      m.id.toLowerCase().includes(paymentSearch.toLowerCase())
+    );
   };
 
   const isFormValid = () => {
@@ -140,37 +221,18 @@ export default function CreateAd() {
   };
 
   const validateForm = () => {
-    if (!adType) {
-      toast.error('Please select an ad type');
-      return false;
-    }
-    if (!formData.price_value || parseFloat(formData.price_value) <= 0) {
-      toast.error('Please enter a valid price');
-      return false;
-    }
-    if (!formData.min_amount || parseFloat(formData.min_amount) <= 0) {
-      toast.error('Please enter minimum amount');
-      return false;
-    }
-    if (!formData.max_amount || parseFloat(formData.max_amount) <= 0) {
-      toast.error('Please enter maximum amount');
-      return false;
-    }
-    if (parseFloat(formData.min_amount) >= parseFloat(formData.max_amount)) {
-      toast.error('Maximum must be greater than minimum');
-      return false;
-    }
-    if (formData.payment_methods.length === 0) {
-      toast.error('Select at least one payment method');
-      return false;
-    }
+    if (!adType) { toast.error('Please select an ad type'); return false; }
+    if (!formData.price_value || parseFloat(formData.price_value) <= 0) { toast.error('Please enter a valid price'); return false; }
+    if (!formData.min_amount || parseFloat(formData.min_amount) <= 0) { toast.error('Please enter minimum amount'); return false; }
+    if (!formData.max_amount || parseFloat(formData.max_amount) <= 0) { toast.error('Please enter maximum amount'); return false; }
+    if (parseFloat(formData.min_amount) >= parseFloat(formData.max_amount)) { toast.error('Maximum must be greater than minimum'); return false; }
+    if (formData.payment_methods.length === 0) { toast.error('Select at least one payment method'); return false; }
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setCreating(true);
     try {
       const response = await axiosInstance.post('/p2p/create-ad', {
@@ -184,7 +246,6 @@ export default function CreateAd() {
         payment_methods: formData.payment_methods,
         terms: formData.terms || ''
       });
-
       if (response.data.success) {
         setShowSuccess(true);
         setTimeout(() => {
@@ -203,8 +264,8 @@ export default function CreateAd() {
     }
   };
 
-  const getAdTypePillStyle = (isSelected) => ({
-    height: '48px',
+  const getPillStyle = (isSelected) => ({
+    height: '44px',
     padding: '0 16px',
     background: isSelected ? 'rgba(34, 197, 94, 0.12)' : 'rgba(0, 0, 0, 0.3)',
     border: isSelected ? '1px solid rgba(34, 197, 94, 0.45)' : '1px solid rgba(255, 255, 255, 0.06)',
@@ -222,8 +283,8 @@ export default function CreateAd() {
   });
 
   const getPricingPillStyle = (isSelected) => ({
-    height: '44px',
-    padding: '0 16px',
+    height: '40px',
+    padding: '0 14px',
     background: isSelected ? 'rgba(0, 255, 200, 0.08)' : 'rgba(0, 0, 0, 0.3)',
     border: isSelected ? '1px solid rgba(0, 255, 200, 0.35)' : '1px solid rgba(255, 255, 255, 0.06)',
     borderRadius: '10px',
@@ -238,43 +299,15 @@ export default function CreateAd() {
     justifyContent: 'center'
   });
 
-  const getPaymentPillStyle = (isSelected, isHovered) => ({
-    height: '38px',
-    padding: '0 12px',
-    background: isSelected ? 'rgba(0, 255, 200, 0.08)' : isHovered ? 'rgba(255, 255, 255, 0.02)' : 'transparent',
-    border: isSelected ? '1px solid rgba(0, 255, 200, 0.35)' : '1px solid rgba(255, 255, 255, 0.06)',
-    borderRadius: '8px',
-    color: isSelected ? '#00FFD0' : isHovered ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.4)',
-    fontSize: '0.625rem',
-    fontWeight: isSelected ? '600' : '500',
-    cursor: 'pointer',
-    transition: 'all 0.15s ease',
-    boxShadow: isSelected ? '0 0 8px rgba(0, 255, 200, 0.1)' : 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '5px',
-    whiteSpace: 'nowrap'
-  });
-
   return (
     <>
-      {/* SUCCESS BANNER */}
       {showSuccess && (
         <div style={{
-          position: 'fixed',
-          top: '80px',
-          left: '50%',
-          transform: 'translateX(-50%)',
+          position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)',
           background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(22, 163, 74, 0.95))',
-          border: '1px solid rgba(34, 197, 94, 0.4)',
-          borderRadius: '12px',
-          padding: '14px 24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          zIndex: 9999,
-          boxShadow: '0 8px 32px rgba(34, 197, 94, 0.25)'
+          border: '1px solid rgba(34, 197, 94, 0.4)', borderRadius: '12px',
+          padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '12px',
+          zIndex: 9999, boxShadow: '0 8px 32px rgba(34, 197, 94, 0.25)'
         }}>
           <IoCheckmarkCircle size={20} color="#fff" />
           <div>
@@ -284,278 +317,236 @@ export default function CreateAd() {
         </div>
       )}
 
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)',
-        padding: '20px'
-      }}>
-        <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)', padding: '20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
-          {/* Back Button */}
-          <button
-            onClick={() => navigate('/p2p/merchant')}
-            style={{
-              background: 'rgba(0, 255, 200, 0.05)',
-              border: '1px solid rgba(0, 255, 200, 0.12)',
-              borderRadius: '8px',
-              color: 'rgba(0, 255, 200, 0.75)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.75rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              padding: '8px 14px',
-              marginBottom: '16px'
-            }}
-          >
-            <IoArrowBack size={14} />
-            Back
+          <button onClick={() => navigate('/p2p/merchant')} style={{
+            background: 'rgba(0, 255, 200, 0.05)', border: '1px solid rgba(0, 255, 200, 0.12)',
+            borderRadius: '8px', color: 'rgba(0, 255, 200, 0.75)', display: 'inline-flex',
+            alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: '600',
+            cursor: 'pointer', padding: '8px 14px', marginBottom: '16px'
+          }}>
+            <IoArrowBack size={14} /> Back
           </button>
 
-          {/* Header */}
           <div style={{ marginBottom: '20px' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
-              Create new P2P ad
-            </h1>
-            <p style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8125rem' }}>
-              Set your trading terms and start receiving orders
-            </p>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>Create new P2P ad</h1>
+            <p style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8125rem' }}>Set your trading terms and start receiving orders</p>
           </div>
 
           <form onSubmit={handleSubmit}>
-            
-            {/* SECTION 1: AD TYPE */}
-            <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>
-                Ad type
-                <span style={{ background: '#DC2626', color: '#fff', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <button type="button" onClick={() => setAdType('sell')} style={getAdTypePillStyle(adType === 'sell')}>
-                  {adType === 'sell' && <IoCheckmarkCircle size={14} />}
-                  SELL
-                </button>
-                <button type="button" onClick={() => setAdType('buy')} style={getAdTypePillStyle(adType === 'buy')}>
-                  {adType === 'buy' && <IoCheckmarkCircle size={14} />}
-                  BUY
-                </button>
-              </div>
-              {adType && (
-                <div style={{
-                  marginTop: '12px',
-                  padding: '10px',
-                  background: 'rgba(34, 197, 94, 0.06)',
-                  border: '1px solid rgba(34, 197, 94, 0.15)',
-                  borderRadius: '8px',
-                  color: '#22C55E',
-                  fontSize: '0.75rem',
-                  fontWeight: '500',
-                  textAlign: 'center'
-                }}>
-                  You are {adType === 'sell' ? 'selling' : 'buying'} {formData.crypto_currency}
-                </div>
-              )}
-            </div>
-
-            {/* SECTION 2: TRADING PAIR */}
-            <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Trading pair</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={LABEL_STYLE}>Crypto</label>
-                  <select
-                    value={formData.crypto_currency}
-                    onChange={(e) => handleChange('crypto_currency', e.target.value)}
-                    onFocus={() => setFocusedField('crypto')}
-                    onBlur={() => setFocusedField(null)}
-                    style={{ ...INPUT_STYLE, cursor: 'pointer', ...(focusedField === 'crypto' ? INPUT_FOCUS : {}) }}
-                  >
-                    {availableCryptos.map(c => <option key={c} value={c} style={{ background: '#0a0e27' }}>{c}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={LABEL_STYLE}>Fiat</label>
-                  <select
-                    value={formData.fiat_currency}
-                    onChange={(e) => handleChange('fiat_currency', e.target.value)}
-                    onFocus={() => setFocusedField('fiat')}
-                    onBlur={() => setFocusedField(null)}
-                    style={{ ...INPUT_STYLE, cursor: 'pointer', ...(focusedField === 'fiat' ? INPUT_FOCUS : {}) }}
-                  >
-                    {availableFiats.map(f => <option key={f} value={f} style={{ background: '#0a0e27' }}>{f}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION 3: PRICING MODE */}
-            <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Pricing mode</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-                <button type="button" onClick={() => handleChange('price_type', 'fixed')} style={getPricingPillStyle(formData.price_type === 'fixed')}>
-                  Fixed price
-                </button>
-                <button type="button" onClick={() => handleChange('price_type', 'floating')} style={getPricingPillStyle(formData.price_type === 'floating')}>
-                  Floating %
-                </button>
-              </div>
-              <input
-                type="number"
-                value={formData.price_value}
-                onChange={(e) => handleChange('price_value', e.target.value)}
-                onFocus={() => setFocusedField('price')}
-                onBlur={() => setFocusedField(null)}
-                placeholder={formData.price_type === 'fixed' ? '48,500' : 'Enter margin %'}
-                style={{ ...INPUT_STYLE, fontSize: '1.125rem', fontWeight: '700', ...(focusedField === 'price' ? INPUT_FOCUS : {}) }}
-              />
-              {formData.price_type === 'floating' && (
-                <p style={{ marginTop: '6px', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.3)' }}>
-                  Positive = above market • Negative = below
-                </p>
-              )}
-            </div>
-
-            {/* SECTION 4: TRADE LIMITS */}
-            <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Trade limits</div>
-              <p style={{ fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.3)', marginBottom: '10px', marginTop: '-8px' }}>
-                Limits shown in base asset of selected trading pair
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={LABEL_STYLE}>Minimum</label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type="number"
-                      step="0.00000001"
-                      value={formData.min_amount}
-                      onChange={(e) => handleChange('min_amount', e.target.value)}
-                      onFocus={() => setFocusedField('min')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="0.01"
-                      style={{ ...INPUT_STYLE, paddingRight: '50px', ...(focusedField === 'min' ? INPUT_FOCUS : {}) }}
-                    />
-                    <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.75rem', fontWeight: '600' }}>
-                      {formData.crypto_currency}
-                    </span>
+            {/* 2-COLUMN GRID LAYOUT */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+              
+              {/* LEFT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                
+                {/* AD TYPE */}
+                <div style={BOX_STYLE}>
+                  <div style={SECTION_TITLE}>
+                    Ad type
+                    <span style={{ background: '#DC2626', color: '#fff', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
                   </div>
-                  <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Minimum per trade</p>
-                </div>
-                <div>
-                  <label style={LABEL_STYLE}>Maximum</label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type="number"
-                      step="0.00000001"
-                      value={formData.max_amount}
-                      onChange={(e) => handleChange('max_amount', e.target.value)}
-                      onFocus={() => setFocusedField('max')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="10"
-                      style={{ ...INPUT_STYLE, paddingRight: '50px', ...(focusedField === 'max' ? INPUT_FOCUS : {}) }}
-                    />
-                    <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.75rem', fontWeight: '600' }}>
-                      {formData.crypto_currency}
-                    </span>
-                  </div>
-                  <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Maximum per trade</p>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION 5: PAYMENT METHODS */}
-            <div style={{ ...BOX_STYLE, marginBottom: '8px' }}>
-              <div style={SECTION_TITLE}>
-                Payment methods
-                <span style={{ background: 'rgba(220, 38, 38, 0.15)', color: '#DC2626', fontSize: '0.5rem', fontWeight: '600', padding: '2px 6px', borderRadius: '3px' }}>SELECT AT LEAST ONE</span>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {availablePaymentMethods.map(method => {
-                  const isSelected = formData.payment_methods.includes(method.id);
-                  const isHovered = hoveredPill === method.id;
-                  return (
-                    <button
-                      key={method.id}
-                      type="button"
-                      onClick={() => togglePaymentMethod(method.id)}
-                      onMouseEnter={() => setHoveredPill(method.id)}
-                      onMouseLeave={() => setHoveredPill(null)}
-                      style={getPaymentPillStyle(isSelected, isHovered)}
-                    >
-                      {isSelected && <IoCheckmarkCircle size={12} />}
-                      {method.id === 'local_bank_transfer' && '🏦 '}
-                      {method.id === 'wire_transfer' && '📤 '}
-                      {method.label}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <button type="button" onClick={() => setAdType('sell')} style={getPillStyle(adType === 'sell')}>
+                      {adType === 'sell' && <IoCheckmarkCircle size={14} />} SELL
                     </button>
-                  );
-                })}
-              </div>
-            </div>
+                    <button type="button" onClick={() => setAdType('buy')} style={getPillStyle(adType === 'buy')}>
+                      {adType === 'buy' && <IoCheckmarkCircle size={14} />} BUY
+                    </button>
+                  </div>
+                </div>
 
-            {/* SECTION 6: ADVANCED OPTIONS */}
-            <div style={{ ...BOX_STYLE, background: 'rgba(8, 10, 20, 0.95)', border: '1px solid rgba(255, 255, 255, 0.03)', marginBottom: '8px' }}>
-              <div style={{ ...SECTION_TITLE, color: 'rgba(255, 255, 255, 0.45)' }}>
-                Advanced options
-                <span style={{ color: 'rgba(255, 255, 255, 0.2)', fontSize: '0.5rem' }}>OPTIONAL</span>
+                {/* TRADING PAIR */}
+                <div style={BOX_STYLE}>
+                  <div style={SECTION_TITLE}>Trading pair</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div>
+                      <label style={LABEL_STYLE}>Crypto</label>
+                      <select value={formData.crypto_currency} onChange={(e) => handleChange('crypto_currency', e.target.value)}
+                        style={{ ...INPUT_STYLE, cursor: 'pointer' }}>
+                        {availableCryptos.map(c => <option key={c} value={c} style={{ background: '#0a0e27' }}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={LABEL_STYLE}>Fiat</label>
+                      <select value={formData.fiat_currency} onChange={(e) => handleChange('fiat_currency', e.target.value)}
+                        style={{ ...INPUT_STYLE, cursor: 'pointer' }}>
+                        {availableFiats.map(f => <option key={f} value={f} style={{ background: '#0a0e27' }}>{f}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* TRADE LIMITS */}
+                <div style={BOX_STYLE}>
+                  <div style={SECTION_TITLE}>Trade limits</div>
+                  <p style={{ fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.3)', marginBottom: '10px', marginTop: '-8px' }}>Limits shown in base asset</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div>
+                      <label style={LABEL_STYLE}>Minimum</label>
+                      <div style={{ position: 'relative' }}>
+                        <input type="number" step="0.00000001" value={formData.min_amount}
+                          onChange={(e) => handleChange('min_amount', e.target.value)}
+                          onFocus={() => setFocusedField('min')} onBlur={() => setFocusedField(null)}
+                          placeholder="0.01" style={{ ...INPUT_STYLE, paddingRight: '50px', ...(focusedField === 'min' ? INPUT_FOCUS : {}) }} />
+                        <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.7rem', fontWeight: '600' }}>{formData.crypto_currency}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label style={LABEL_STYLE}>Maximum</label>
+                      <div style={{ position: 'relative' }}>
+                        <input type="number" step="0.00000001" value={formData.max_amount}
+                          onChange={(e) => handleChange('max_amount', e.target.value)}
+                          onFocus={() => setFocusedField('max')} onBlur={() => setFocusedField(null)}
+                          placeholder="10" style={{ ...INPUT_STYLE, paddingRight: '50px', ...(focusedField === 'max' ? INPUT_FOCUS : {}) }} />
+                        <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.7rem', fontWeight: '600' }}>{formData.crypto_currency}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <textarea
-                value={formData.terms}
-                onChange={(e) => handleChange('terms', e.target.value)}
-                placeholder="Special terms or instructions for buyers/sellers..."
-                rows={2}
-                style={{ ...INPUT_STYLE, resize: 'none', fontFamily: 'inherit', minHeight: '50px', fontSize: '0.8125rem' }}
-              />
-              <p style={{ marginTop: '6px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.2)' }}>
-                Lock ad to specific users or route through escrow
-              </p>
+
+              {/* RIGHT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                
+                {/* PRICING MODE */}
+                <div style={BOX_STYLE}>
+                  <div style={SECTION_TITLE}>Pricing mode</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+                    <button type="button" onClick={() => handleChange('price_type', 'fixed')} style={getPricingPillStyle(formData.price_type === 'fixed')}>Fixed price</button>
+                    <button type="button" onClick={() => handleChange('price_type', 'floating')} style={getPricingPillStyle(formData.price_type === 'floating')}>Floating %</button>
+                  </div>
+                  <input type="number" value={formData.price_value} onChange={(e) => handleChange('price_value', e.target.value)}
+                    onFocus={() => setFocusedField('price')} onBlur={() => setFocusedField(null)}
+                    placeholder={formData.price_type === 'fixed' ? '48,500' : 'Enter margin %'}
+                    style={{ ...INPUT_STYLE, fontSize: '1rem', fontWeight: '700', ...(focusedField === 'price' ? INPUT_FOCUS : {}) }} />
+                </div>
+
+                {/* PAYMENT METHODS - SEARCHABLE DROPDOWN */}
+                <div style={BOX_STYLE} ref={dropdownRef}>
+                  <div style={SECTION_TITLE}>
+                    Payment methods
+                    <span style={{ background: 'rgba(220, 38, 38, 0.15)', color: '#DC2626', fontSize: '0.5rem', fontWeight: '600', padding: '2px 6px', borderRadius: '3px' }}>SELECT AT LEAST ONE</span>
+                  </div>
+                  
+                  {/* Selected chips */}
+                  {formData.payment_methods.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+                      {formData.payment_methods.map(id => {
+                        const method = getMethodById(id);
+                        return method ? (
+                          <div key={id} style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            background: 'rgba(0, 255, 200, 0.1)', border: '1px solid rgba(0, 255, 200, 0.3)',
+                            borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', color: '#00FFD0'
+                          }}>
+                            <span>{method.icon}</span>
+                            <span>{method.label}</span>
+                            <IoClose size={14} style={{ cursor: 'pointer', opacity: 0.7 }} onClick={() => removePaymentMethod(id)} />
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
+
+                  {/* Dropdown trigger */}
+                  <div onClick={() => setPaymentDropdownOpen(!paymentDropdownOpen)} style={{
+                    ...INPUT_STYLE, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8125rem',
+                    ...(paymentDropdownOpen ? INPUT_FOCUS : {})
+                  }}>
+                    <span>Search payment methods (Wise, PayPal, SEPA...)</span>
+                    <IoChevronDown size={16} style={{ transform: paymentDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </div>
+
+                  {/* Dropdown content */}
+                  {paymentDropdownOpen && (
+                    <div style={{
+                      position: 'absolute', left: 0, right: 0, marginTop: '4px',
+                      background: 'rgba(10, 13, 28, 0.98)', border: '1px solid rgba(0, 255, 200, 0.15)',
+                      borderRadius: '10px', maxHeight: '280px', overflowY: 'auto', zIndex: 100,
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
+                    }}>
+                      {/* Search input */}
+                      <div style={{ padding: '10px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', position: 'sticky', top: 0, background: 'rgba(10, 13, 28, 0.98)' }}>
+                        <div style={{ position: 'relative' }}>
+                          <IoSearch size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.3)' }} />
+                          <input type="text" value={paymentSearch} onChange={(e) => setPaymentSearch(e.target.value)}
+                            placeholder="Search..." autoFocus
+                            style={{ ...INPUT_STYLE, padding: '8px 10px 8px 30px', fontSize: '0.8125rem' }} />
+                        </div>
+                      </div>
+
+                      {/* Grouped options */}
+                      {Object.entries(PAYMENT_METHODS_CONFIG).map(([region, methods]) => {
+                        const filtered = filterMethods(methods);
+                        if (filtered.length === 0) return null;
+                        return (
+                          <div key={region}>
+                            <div style={{ padding: '8px 12px', fontSize: '0.625rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              {REGION_LABELS[region]}
+                            </div>
+                            {filtered.map(method => {
+                              const isSelected = formData.payment_methods.includes(method.id);
+                              return (
+                                <div key={method.id} onClick={() => togglePaymentMethod(method.id)} style={{
+                                  padding: '10px 12px', display: 'flex', alignItems: 'center', gap: '10px',
+                                  cursor: 'pointer', background: isSelected ? 'rgba(0, 255, 200, 0.08)' : 'transparent',
+                                  borderLeft: isSelected ? '2px solid #00FFD0' : '2px solid transparent',
+                                  transition: 'all 0.15s'
+                                }}>
+                                  <span style={{ fontSize: '1rem' }}>{method.icon}</span>
+                                  <span style={{ color: isSelected ? '#00FFD0' : 'rgba(255, 255, 255, 0.8)', fontSize: '0.8125rem', fontWeight: isSelected ? '600' : '400' }}>{method.label}</span>
+                                  {isSelected && <IoCheckmarkCircle size={14} color="#00FFD0" style={{ marginLeft: 'auto' }} />}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* ADVANCED OPTIONS */}
+                <div style={{ ...BOX_STYLE, background: 'rgba(8, 10, 20, 0.95)', border: '1px solid rgba(255, 255, 255, 0.03)' }}>
+                  <div style={{ ...SECTION_TITLE, color: 'rgba(255, 255, 255, 0.45)' }}>
+                    Advanced options
+                    <span style={{ color: 'rgba(255, 255, 255, 0.2)', fontSize: '0.5rem' }}>OPTIONAL</span>
+                  </div>
+                  <textarea value={formData.terms} onChange={(e) => handleChange('terms', e.target.value)}
+                    placeholder="Special terms or instructions..." rows={2}
+                    style={{ ...INPUT_STYLE, resize: 'none', fontFamily: 'inherit', minHeight: '50px', fontSize: '0.8125rem' }} />
+                </div>
+              </div>
             </div>
 
             {/* SUBMIT BUTTON */}
-            <button
-              type="submit"
-              disabled={creating || !isFormValid()}
-              style={{
-                width: '100%',
-                height: '52px',
-                background: (creating || !isFormValid()) ? 'rgba(50, 50, 50, 0.5)' : 'linear-gradient(135deg, #22C55E, #16A34A)',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '0.875rem',
-                fontWeight: '700',
-                color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.2)' : '#fff',
-                cursor: (creating || !isFormValid()) ? 'not-allowed' : 'pointer',
-                boxShadow: (creating || !isFormValid()) ? 'none' : '0 4px 16px rgba(34, 197, 94, 0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                marginTop: '8px',
-                opacity: (creating || !isFormValid()) ? 0.6 : 1
-              }}
-            >
+            <button type="submit" disabled={creating || !isFormValid()} style={{
+              width: '100%', height: '52px', marginTop: '16px',
+              background: (creating || !isFormValid()) ? 'rgba(50, 50, 50, 0.5)' : 'linear-gradient(135deg, #22C55E, #16A34A)',
+              border: 'none', borderRadius: '12px', fontSize: '0.875rem', fontWeight: '700',
+              color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.2)' : '#fff',
+              cursor: (creating || !isFormValid()) ? 'not-allowed' : 'pointer',
+              boxShadow: (creating || !isFormValid()) ? 'none' : '0 4px 16px rgba(34, 197, 94, 0.25)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              textTransform: 'uppercase', letterSpacing: '0.04em',
+              opacity: (creating || !isFormValid()) ? 0.6 : 1
+            }}>
               {creating ? (
-                <>
-                  <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                  Creating...
-                </>
-              ) : (
-                'Publish Ad'
-              )}
+                <><div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />Creating...</>
+              ) : 'Publish Ad'}
             </button>
-            {!isFormValid() && !creating && (
-              <p style={{ textAlign: 'center', marginTop: '8px', fontSize: '0.625rem', color: 'rgba(255, 255, 255, 0.25)' }}>
-                Complete all fields
-              </p>
-            )}
           </form>
         </div>
       </div>
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+          form > div:first-child { grid-template-columns: 1fr !important; }
+        }
       `}</style>
     </>
   );
