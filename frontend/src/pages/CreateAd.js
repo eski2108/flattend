@@ -182,14 +182,22 @@ export default function CreateAd() {
         </div>
       )}
 
-      <div style={{ width: '100%', minHeight: '100vh' }}>
-        <div style={{ width: '100%', padding: '24px 32px' }}>
-          
-          <div style={{ marginBottom: '28px' }}>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#fff', marginBottom: '6px' }}>Create new P2P ad</h1>
-            <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9375rem' }}>Set your trading terms and start receiving orders</p>
-          </div>
+      {/* MAIN CONTAINER - NO DEAD SPACE */}
+      <div style={{ width: '100%' }}>
+        
+        {/* HEADER WITH VISUAL ANCHOR */}
+        <div style={{ 
+          background: 'linear-gradient(180deg, rgba(20, 30, 60, 0.6) 0%, transparent 100%)',
+          borderBottom: '1px solid rgba(0, 255, 200, 0.08)',
+          padding: '20px 32px',
+          marginBottom: '0'
+        }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>Create new P2P ad</h1>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.875rem', margin: 0 }}>Set your trading terms and start receiving orders</p>
+        </div>
 
+        {/* FORM AREA - FULL WIDTH */}
+        <div style={{ padding: '24px 32px 0 32px' }}>
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
               
