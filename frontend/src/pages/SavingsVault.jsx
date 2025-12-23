@@ -232,10 +232,7 @@ const SavingsVault = () => {
     }
   };
 
-  useEffect(() => {
-    loadSavingsData();
-    loadAvailableCoins();  // LOAD COINS ON PAGE MOUNT
-  }, []);
+  // REMOVED DUPLICATE useEffect - already called in first useEffect at line 73
 
   const loadSavingsData = async () => {
     try {
