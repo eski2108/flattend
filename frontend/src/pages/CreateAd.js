@@ -329,25 +329,36 @@ export default function CreateAd() {
                 <div style={cardAccent(ACCENT_COLORS.tradingPair)} />
                 <div style={cardContent}>
                   <div style={SECTION_TITLE}>Trading pair</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                     <div>
                       <label style={LABEL_STYLE}>Crypto</label>
                       <div style={{ position: 'relative' }}>
                         <div onClick={(e) => { e.stopPropagation(); setCryptoDropdownOpen(!cryptoDropdownOpen); setFiatDropdownOpen(false); }}
-                          style={{ ...INPUT_STYLE, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <Coin3DIcon symbol={formData.crypto_currency} size={26} />
-                            <span>{formData.crypto_currency}</span>
+                          style={{ 
+                            ...INPUT_STYLE, 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                            height: '58px',
+                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(0,0,0,0.4) 100%)',
+                            border: '1px solid rgba(59, 130, 246, 0.25)',
+                            boxShadow: '0 0 20px rgba(59, 130, 246, 0.1)'
+                          }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <Coin3DIcon symbol={formData.crypto_currency} size={32} />
+                            <span style={{ fontSize: '1.125rem', fontWeight: '700' }}>{formData.crypto_currency}</span>
                           </div>
-                          <IoChevronDown size={16} style={{ color: 'rgba(255,255,255,0.4)', transform: cryptoDropdownOpen ? 'rotate(180deg)' : 'none' }} />
+                          <IoChevronDown size={18} style={{ color: 'rgba(255,255,255,0.5)', transform: cryptoDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                         </div>
                         {cryptoDropdownOpen && (
-                          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'rgba(10, 15, 30, 0.98)', border: '1px solid rgba(0, 255, 200, 0.2)', borderRadius: '10px', maxHeight: '240px', overflowY: 'auto', zIndex: 200, boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)' }}>
+                          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'rgba(10, 15, 30, 0.98)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px', maxHeight: '260px', overflowY: 'auto', zIndex: 200, boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)' }}>
                             {availableCryptos.map(c => (
                               <div key={c} onClick={() => { handleChange('crypto_currency', c); setCryptoDropdownOpen(false); }}
-                                style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: formData.crypto_currency === c ? 'rgba(0, 255, 200, 0.1)' : 'transparent', borderLeft: formData.crypto_currency === c ? '3px solid #00FFD0' : '3px solid transparent' }}>
-                                <Coin3DIcon symbol={c} size={22} />
-                                <span style={{ color: formData.crypto_currency === c ? '#00FFD0' : '#fff', fontWeight: '500' }}>{c}</span>
+                                style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', background: formData.crypto_currency === c ? 'rgba(59, 130, 246, 0.15)' : 'transparent', borderLeft: formData.crypto_currency === c ? '3px solid #3B82F6' : '3px solid transparent', transition: 'all 0.15s' }}>
+                                <Coin3DIcon symbol={c} size={26} />
+                                <span style={{ color: formData.crypto_currency === c ? '#fff' : 'rgba(255,255,255,0.8)', fontWeight: formData.crypto_currency === c ? '600' : '500', fontSize: '0.9375rem' }}>{c}</span>
+                                {formData.crypto_currency === c && <IoCheckmarkCircle size={16} color="#3B82F6" style={{ marginLeft: 'auto' }} />}
                               </div>
                             ))}
                           </div>
@@ -358,6 +369,17 @@ export default function CreateAd() {
                       <label style={LABEL_STYLE}>Fiat</label>
                       <div style={{ position: 'relative' }}>
                         <div onClick={(e) => { e.stopPropagation(); setFiatDropdownOpen(!fiatDropdownOpen); setCryptoDropdownOpen(false); }}
+                          style={{ 
+                            ...INPUT_STYLE, 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                            height: '58px',
+                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(0,0,0,0.4) 100%)',
+                            border: '1px solid rgba(59, 130, 246, 0.25)',
+                            boxShadow: '0 0 20px rgba(59, 130, 246, 0.1)'
+                          }}>
                           style={{ ...INPUT_STYLE, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span style={{ fontSize: '1.25rem' }}>{FIAT_CONFIG[formData.fiat_currency]?.flag}</span>
