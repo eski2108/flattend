@@ -387,8 +387,18 @@ export default function P2PExpress() {
 
               {fiatAmount && parseFloat(fiatAmount) > 0 && quote && (
                 <div style={{
-                  background: hasAdminLiquidity ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 197, 66, 0.1)',
-                  border: `2px solid ${hasAdminLiquidity ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 197, 66, 0.3)'}`,
+                  background: deliveryType === 'instant' 
+                    ? 'rgba(34, 197, 94, 0.1)' 
+                    : deliveryType === 'express'
+                      ? 'rgba(0, 240, 255, 0.1)'
+                      : 'rgba(245, 197, 66, 0.1)',
+                  border: `2px solid ${
+                    deliveryType === 'instant' 
+                      ? 'rgba(34, 197, 94, 0.3)' 
+                      : deliveryType === 'express'
+                        ? 'rgba(0, 240, 255, 0.3)'
+                        : 'rgba(245, 197, 66, 0.3)'
+                  }`,
                   borderRadius: '16px',
                   padding: '16px 20px',
                   marginBottom: '24px',
@@ -396,20 +406,54 @@ export default function P2PExpress() {
                   alignItems: 'center',
                   gap: '12px'
                 }}>
-                  {hasAdminLiquidity ? (
+                  {deliveryType === 'instant' ? (
                     <>
                       <IoFlash size={20} color="#22C55E" />
                       <div>
-                        <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>Platform Liquidity Available</div>
-                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Fulfilled instantly by CoinHubX</div>
+                        <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>
+                          Instant Buy Available
+                          <span style={{ 
+                            marginLeft: '8px', 
+                            fontSize: '10px', 
+                            padding: '2px 6px', 
+                            background: 'rgba(34, 197, 94, 0.2)', 
+                            borderRadius: '4px',
+                            textTransform: 'uppercase'
+                          }}>Core Coin</span>
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>
+                          {selectedCoin} is pre-funded • Instant delivery
+                        </div>
+                      </div>
+                    </>
+                  ) : deliveryType === 'express' ? (
+                    <>
+                      <IoTime size={20} color="#00F0FF" />
+                      <div>
+                        <div style={{ fontSize: '15px', color: '#00F0FF', fontWeight: '700' }}>
+                          Express Buy (2-5 min)
+                          <span style={{ 
+                            marginLeft: '8px', 
+                            fontSize: '10px', 
+                            padding: '2px 6px', 
+                            background: 'rgba(0, 240, 255, 0.2)', 
+                            borderRadius: '4px',
+                            textTransform: 'uppercase'
+                          }}>Conversion</span>
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>
+                          {selectedCoin} via USDT conversion • 2-5 min delivery
+                        </div>
                       </div>
                     </>
                   ) : (
                     <>
                       <IoTime size={20} color="#F5C542" />
                       <div>
-                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Platform Delivery (2-5 min)</div>
-                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Fulfilled by CoinHubX platform liquidity</div>
+                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Liquidity Unavailable</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>
+                          Try the P2P Marketplace for this coin
+                        </div>
                       </div>
                     </>
                   )}
