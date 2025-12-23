@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import Layout from '@/components/Layout';
+// Layout removed - already wrapped by MainLayout in App.js
 import CHXButton from '@/components/CHXButton';
 import { IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
 import DOMPurify from 'dompurify';
