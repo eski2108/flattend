@@ -182,7 +182,7 @@ export default function CreateAd() {
       )}
 
       <div style={{ width: '100%', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '1600px', width: '100%', margin: '0 auto', padding: '24px 32px' }}>
+        <div style={{ width: '100%', padding: '24px 32px' }}>
           
           <div style={{ marginBottom: '28px' }}>
             <h1 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#fff', marginBottom: '6px' }}>Create new P2P ad</h1>
