@@ -610,7 +610,7 @@ export default function CreateAd() {
             </div>
 
             {/* ROW 4: Terms + Submit */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', alignItems: 'end' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', alignItems: 'end' }}>
               
               {/* TERMS BOX - Optional, muted */}
               <div style={{
