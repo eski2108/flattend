@@ -354,7 +354,7 @@ export default function CreateAd() {
 
           <form onSubmit={handleSubmit}>
             {/* ROW 1: Ad Type + Trading Pair */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
               
               {/* AD TYPE BOX */}
               <div style={BOX_STYLE}>
