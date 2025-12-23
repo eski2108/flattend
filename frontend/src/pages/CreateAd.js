@@ -90,9 +90,10 @@ const cardStyle = (accent) => ({
   position: 'relative',
 });
 
-const LABEL = { color: 'rgba(255,255,255,0.5)', fontSize: '0.6875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px', display: 'block' };
-const TITLE = { color: '#fff', fontSize: '0.9375rem', fontWeight: '600', marginBottom: '16px' };
-const INPUT = { width: '100%', padding: '14px 16px', background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', color: '#fff', fontSize: '1rem', fontWeight: '600', outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s' };
+const LABEL = { color: 'rgba(255,255,255,0.55)', fontSize: '0.6875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px', display: 'block' };
+const TITLE = { color: '#fff', fontSize: '0.9375rem', fontWeight: '700', marginBottom: '16px', letterSpacing: '0.01em' };
+const INPUT = { width: '100%', padding: '14px 16px', background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: '#fff', fontSize: '1rem', fontWeight: '600', outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s' };
+const INPUT_FOCUS = { border: '1px solid rgba(0, 255, 200, 0.4)', boxShadow: '0 0 0 3px rgba(0, 255, 200, 0.08)' };
 
 export default function CreateAd() {
   const navigate = useNavigate();
