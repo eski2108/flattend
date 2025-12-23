@@ -339,7 +339,7 @@ export default function CreateAd() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', width: '100%' }}>
               
               {/* LEFT COLUMN */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
                 
                 {/* AD TYPE */}
                 <div style={BOX_STYLE}>
