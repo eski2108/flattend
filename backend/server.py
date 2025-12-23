@@ -6878,6 +6878,24 @@ async def withdraw_from_savings(request: dict):
         coin = request.get('coin')
         amount = request.get('amount')
         
+        # ═══════════════════════════════════════════════════════════════════════
+        # FIX #5: VALIDATE AMOUNT - Prevent null, zero, or negative withdrawals
+        # ═══════════════════════════════════════════════════════════════════════
+        if not user_id:
+            raise HTTPException(status_code=400, detail="User ID required")
+        if not coin:
+            raise HTTPException(status_code=400, detail="Coin/currency required")
+        if amount is None:
+            raise HTTPException(status_code=400, detail="Amount required")
+        
+        try:
+            amount = float(amount)
+        except (TypeError, ValueError):
+            raise HTTPException(status_code=400, detail="Invalid amount format")
+        
+        if amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
+        
         # Get savings balance
         savings = await db.savings_balances.find_one({
             "user_id": user_id,
