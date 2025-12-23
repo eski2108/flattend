@@ -484,16 +484,19 @@ export default function CreateAd() {
             {/* SECTION 6: TERMS (Optional - Advanced) */}
             <div style={{ ...BOX_STYLE, background: 'rgba(8, 10, 20, 0.95)', border: '1px solid rgba(255, 255, 255, 0.03)' }}>
               <div style={{ ...SECTION_TITLE, color: 'rgba(255, 255, 255, 0.45)' }}>
-                Terms
+                Advanced options
                 <span style={{ color: 'rgba(255, 255, 255, 0.2)', fontSize: '0.5rem' }}>OPTIONAL</span>
               </div>
               <textarea
                 value={formData.terms}
                 onChange={(e) => handleChange('terms', e.target.value)}
-                placeholder="Special terms or instructions..."
+                placeholder="Special terms or instructions for buyers/sellers..."
                 rows={2}
                 style={{ ...INPUT_STYLE, resize: 'none', fontFamily: 'inherit', minHeight: '50px', fontSize: '0.8125rem' }}
               />
+              <p style={{ marginTop: '6px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.2)' }}>
+                Lock ad to specific users or route through escrow
+              </p>
             </div>
 
             {/* SUBMIT BUTTON */}
