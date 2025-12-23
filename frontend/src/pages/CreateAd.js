@@ -319,7 +319,7 @@ export default function CreateAd() {
       )}
 
       <div style={{ width: '100%', padding: '0' }}>
-        <div style={{ maxWidth: '100%', margin: '0 auto', padding: '0 32px' }}>
+        <div style={{ width: '100%' }}>
           
           <button onClick={() => navigate('/p2p/merchant')} style={{
             background: 'rgba(0, 255, 200, 0.05)', border: '1px solid rgba(0, 255, 200, 0.12)',
