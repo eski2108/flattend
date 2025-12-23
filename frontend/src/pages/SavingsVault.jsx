@@ -1352,16 +1352,16 @@ const SavingsVault = () => {
               
               <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Interest Rates</h4>
               <ul>
-                <li><strong>30-day lock:</strong> 1.5% early withdrawal fee</li>
-                <li><strong>60-day lock:</strong> 1.0% early withdrawal fee</li>
-                <li><strong>90-day lock:</strong> 0.5% early withdrawal fee</li>
+                <li><strong>30-day lock:</strong> 2% early withdrawal fee</li>
+                <li><strong>60-day lock:</strong> 3.5% early withdrawal fee</li>
+                <li><strong>90-day lock:</strong> 5% early withdrawal fee</li>
               </ul>
               
               <h4 style={{ color: 'var(--accent)', marginTop: '24px' }}>Early Withdrawal Penalties (OPTION A)</h4>
               <p style={{ color: '#ff6b6b', fontWeight: 600 }}>If you withdraw before the lock period ends:</p>
               <ul>
                 <li><strong>30-day lock:</strong> 2% penalty on principal + forfeit 100% interest</li>
-                <li><strong>60-day lock:</strong> 1.0% fee deducted from principal</li>
+                <li><strong>60-day lock:</strong> 3.5% penalty on principal + forfeit 100% interest</li>
                 <li><strong>90-day lock:</strong> 5% penalty on principal + forfeit 100% interest</li>
               </ul>
               
