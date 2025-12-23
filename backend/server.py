@@ -7016,6 +7016,14 @@ async def withdraw_from_savings(request: dict):
                 amount=net_amount_to_user,
                 reason="savings_withdrawal"
             )
+            
+            # ALSO update the 'wallets' collection which the frontend reads from
+            await db.wallets.update_one(
+                {"user_id": user_id, "currency": coin},
+                {"$inc": {"balance": net_amount_to_user, "available_balance": net_amount_to_user}},
+                upsert=True
+            )
+            
             logger.info(f"✅ SAVINGS WITHDRAWAL: Credited {net_amount_to_user} {coin} to user {user_id} main wallet")
         
         return {
