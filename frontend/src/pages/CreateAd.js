@@ -344,8 +344,8 @@ export default function CreateAd() {
                   </p>
                 </div>
 
-                {/* 7. PAYMENT METHODS - CONTENT HEIGHT ONLY */}
-                <div style={cardStyle(ACCENT.amber)} ref={paymentRef}>
+                {/* 7. PAYMENT METHODS - FILLS REMAINING HEIGHT */}
+                <div style={{ ...cardStyle(ACCENT.amber), flex: 1 }} ref={paymentRef}>
                   <div style={{ ...TITLE, display: 'flex', alignItems: 'center', gap: '10px' }}>
                     Payment methods
                     <span style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626', fontSize: '0.5625rem', fontWeight: '600', padding: '3px 8px', borderRadius: '4px' }}>REQUIRED</span>
