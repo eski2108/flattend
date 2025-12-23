@@ -173,6 +173,8 @@ export default function CreateAd() {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setPaymentDropdownOpen(false);
+        setCryptoDropdownOpen(false);
+        setFiatDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
