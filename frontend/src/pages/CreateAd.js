@@ -192,13 +192,12 @@ export default function CreateAd() {
     textShadow: `0 0 20px ${accent}30`
   });
 
-  // Label
+  // Label - sentence case
   const labelStyle = { 
     color: 'rgba(255,255,255,0.5)', 
-    fontSize: '0.6rem', 
+    fontSize: '0.65rem', 
     fontWeight: '600', 
-    textTransform: 'uppercase', 
-    letterSpacing: '0.06em', 
+    letterSpacing: '0.03em', 
     marginBottom: '6px', 
     display: 'block' 
   };
