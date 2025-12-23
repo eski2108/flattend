@@ -274,6 +274,7 @@ function App() {
               <Route path="/deposit/:coin" element={<SimpleDeposit />} />
               <Route path="/withdraw/:coin" element={<WithdrawalRequest />} />
               <Route path="/kyc-verification" element={<KYCVerification />} />
+              <Route path="/kyc" element={<KYCVerification />} />
               <Route path="/admin/cms" element={<AdminCMS />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/settings" element={<Settings />} />
