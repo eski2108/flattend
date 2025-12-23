@@ -335,8 +335,8 @@ export default function CreateAd() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {/* 2-COLUMN GRID LAYOUT */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+            {/* 2-COLUMN GRID LAYOUT - FULL WIDTH */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
               
               {/* LEFT COLUMN */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
