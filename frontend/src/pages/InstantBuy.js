@@ -271,8 +271,24 @@ function InstantBuy() {
               <Zap size={22} color="#fff" />
               <span style={{ color: '#fff', fontWeight: '700', fontSize: '15px', letterSpacing: '0.5px' }}>INSTANT BUY</span>
             </div>
-            <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Buy Crypto Instantly</h1>
-            <p style={{ color: '#A3AEC2', fontSize: '15px', marginBottom: '16px', lineHeight: '1.4' }}>Expand any coin to see Deposit, Withdraw & Swap options</p>
+            <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#FFFFFF', marginBottom: '6px', lineHeight: '1.2' }}>Instant Buy (Platform Liquidity)</h1>
+            <p style={{ color: '#A3AEC2', fontSize: '15px', marginBottom: '12px', lineHeight: '1.4' }}>Expand any coin to see Deposit, Withdraw & Swap options</p>
+            {/* MANDATORY DISCLOSURE */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              background: 'rgba(0, 198, 255, 0.08)',
+              border: '1px solid rgba(0, 198, 255, 0.25)',
+              borderRadius: '10px',
+              marginBottom: '16px'
+            }}>
+              <Lock size={16} color="#00C6FF" />
+              <span style={{ fontSize: '13px', color: '#D1D5DB' }}>
+                This order is fulfilled instantly using CoinHubX platform liquidity.
+              </span>
+            </div>
             <div style={{ 
               padding: '12px 24px', 
               background: 'rgba(0,198,255,0.08)', 
