@@ -5546,6 +5546,45 @@ async def get_p2p_express_order(trade_id: str):
     }
 
 
+@api_router.get("/liquidity/config")
+async def get_liquidity_config():
+    """
+    Get liquidity configuration for frontend
+    
+    Returns:
+        - core_coins: List of coins with instant delivery (pre-funded)
+        - conversion_source: Currency used for Express Buy conversion
+        - delivery_times: Expected delivery times for each type
+    """
+    # Get current liquidity status for core coins
+    liquidity_status = {}
+    for coin in CORE_LIQUIDITY_COINS:
+        liq = await db.admin_liquidity.find_one(
+            {"currency": coin, "status": "active"},
+            {"_id": 0, "amount_available": 1}
+        )
+        liquidity_status[coin] = {
+            "available": liq.get("amount_available", 0) if liq else 0,
+            "has_liquidity": liq is not None and liq.get("amount_available", 0) > 0
+        }
+    
+    return {
+        "success": True,
+        "core_coins": CORE_LIQUIDITY_COINS,
+        "conversion_source": EXPRESS_CONVERSION_SOURCE,
+        "delivery_times": {
+            "instant": "Instant",
+            "express": "2-5 minutes"
+        },
+        "liquidity_status": liquidity_status,
+        "rules": {
+            "instant_buy": "Available ONLY for core coins (BTC, ETH, USDT, USDC) with platform liquidity",
+            "express_buy": "Available for ALL other coins via USDT conversion (2-5 min delivery)",
+            "no_p2p_fallback": "If liquidity unavailable, user must explicitly choose P2P Marketplace"
+        }
+    }
+
+
 # MANUAL MODE ENDPOINTS
 @api_router.get("/p2p/manual-mode/adverts")
 async def get_manual_mode_adverts(
