@@ -14,8 +14,8 @@ const BOX_STYLE = {
   background: 'rgba(12, 15, 30, 0.95)',
   border: '1px solid rgba(0, 255, 200, 0.12)',
   borderRadius: '12px',
-  padding: '28px',
-  marginBottom: '20px',
+  padding: '32px',
+  marginBottom: '24px',
   boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255, 255, 255, 0.02)'
 };
 
