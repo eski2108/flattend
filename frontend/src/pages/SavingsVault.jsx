@@ -1205,7 +1205,7 @@ const SavingsVault = () => {
                   <div className="summary-row"><span>Notice Period:</span><span>{selectedNoticePeriod} days</span></div>
                   <div className="summary-row"><span>Lock Period:</span><span className="success-text">{selectedNoticePeriod} Days</span></div>
                   <div className="summary-row"><span>Unlock Date:</span><span>{new Date(Date.now() + selectedNoticePeriod * 24 * 60 * 60 * 1000).toLocaleDateString()}</span></div>
-                  <div className="summary-row"><span>Early Withdrawal Fee:</span><span className="danger-text">{selectedNoticePeriod === 30 ? '1.5%' : selectedNoticePeriod === 60 ? '1.0%' : '0.5%'} of principal</span></div>
+                  <div className="summary-row"><span>Early Withdrawal Fee:</span><span className="danger-text">{selectedNoticePeriod === 30 ? '2%' : selectedNoticePeriod === 60 ? '3.5%' : '5%'} of principal</span></div>
                 </div>
                 <button 
                   className="modal-cta-btn" 
