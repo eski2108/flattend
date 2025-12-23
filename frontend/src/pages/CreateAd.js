@@ -186,24 +186,24 @@ export default function CreateAd() {
       {/* MAIN CONTAINER - NO DEAD SPACE */}
       <div style={{ width: '100%' }}>
         
-        {/* HEADER WITH VISUAL ANCHOR - TIGHT TO TOP */}
+        {/* HEADER - TIGHT TO TOP */}
         <div style={{ 
-          background: 'linear-gradient(180deg, rgba(20, 30, 60, 0.6) 0%, transparent 100%)',
+          background: 'linear-gradient(180deg, rgba(20, 30, 60, 0.5) 0%, transparent 100%)',
           borderBottom: '1px solid rgba(0, 255, 200, 0.1)',
-          padding: '14px 32px',
+          padding: '10px 32px',
           marginBottom: '0'
         }}>
-          <h1 style={{ fontSize: '1.375rem', fontWeight: '700', color: '#fff', marginBottom: '2px' }}>Create new P2P ad</h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8125rem', margin: 0 }}>Set your trading terms and start receiving orders</p>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '2px' }}>Create new P2P ad</h1>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', margin: 0 }}>Set your trading terms and start receiving orders</p>
         </div>
 
         {/* FORM AREA - FULL WIDTH */}
-        <div style={{ padding: '20px 32px 0 32px' }}>
+        <div style={{ padding: '16px 32px 0 32px' }}>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'stretch' }}>
               
               {/* LEFT COLUMN */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 
                 {/* 1. AD TYPE */}
                 <div style={cardStyle(ACCENT.green)}>
