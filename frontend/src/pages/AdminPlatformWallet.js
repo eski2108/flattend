@@ -380,7 +380,7 @@ export default function AdminPlatformWallet() {
           <li>Paying 20% lifetime commissions to referrers</li>
           <li>Receiving all 3% withdrawal fees automatically</li>
           <li>Funding trading liquidity for Spot Trading</li>
-          <li>Funding P2P Express Buy liquidity</li>
+          <li>Funding Express Buy / Instant Buy platform liquidity</li>
           <li>All internal platform operations and payouts</li>
         </ul>
         <p style={{ margin: '1rem 0 0', color: '#888', fontSize: '13px' }}>
