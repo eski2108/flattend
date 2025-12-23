@@ -339,11 +339,11 @@ export default function CreateAd() {
                     <span style={{ marginLeft: 'auto', background: 'rgba(239,68,68,0.15)', color: '#EF4444', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <button type="button" onClick={() => setAdType('sell')} style={toggleStyle(adType === 'sell', ACCENT.red)}>
-                      {adType === 'sell' && <IoCheckmarkCircle size={14} />} I want to SELL
+                    <button type="button" onClick={() => { setTouched(true); setAdType('sell'); }} style={toggleStyle(adType === 'sell', ACCENT.red)}>
+                      {adType === 'sell' && <IoCheckmarkCircle size={14} />} I want to sell
                     </button>
-                    <button type="button" onClick={() => setAdType('buy')} style={toggleStyle(adType === 'buy', ACCENT.green)}>
-                      {adType === 'buy' && <IoCheckmarkCircle size={14} />} I want to BUY
+                    <button type="button" onClick={() => { setTouched(true); setAdType('buy'); }} style={toggleStyle(adType === 'buy', ACCENT.green)}>
+                      {adType === 'buy' && <IoCheckmarkCircle size={14} />} I want to buy
                     </button>
                   </div>
                 </div>
