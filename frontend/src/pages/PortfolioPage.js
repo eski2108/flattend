@@ -42,12 +42,7 @@ export default function PortfolioPage() {
       });
       if (response.data.success) {
         const value = response.data.total_value_usd || 0;
-        // console.log('🔍 Portfolio API Response:', {
-          total_value_usd: value,
-          timestamp: new Date().toISOString(),
-          url: response.config.url
-        });
-        // console.log(`💰 PORTFOLIO PAGE VALUE: £${value.toFixed(2)}`);
+        // Debug logging removed for production
         // Transform the backend response to match frontend expectations
         const transformedAllocations = response.data.allocations.map(alloc => ({
           currency: alloc.currency,
