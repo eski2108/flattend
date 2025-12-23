@@ -163,7 +163,13 @@ function InstantBuy() {
       }
     } catch (error) {
       const msg = error.response?.data?.detail || error.response?.data?.message || error.message;
-      toast.error(`Quote failed: ${msg}`);
+      // Check if it's a liquidity issue - show modal instead of toast
+      if (msg.toLowerCase().includes('liquidity') || msg.toLowerCase().includes('insufficient') || msg.toLowerCase().includes('unavailable')) {
+        setNoLiquidityCoin(coin.symbol);
+        setShowNoLiquidityModal(true);
+      } else {
+        toast.error(`Quote failed: ${msg}`);
+      }
     } finally {
       setProcessing(false);
     }
