@@ -10,7 +10,7 @@ const FEE_CATEGORIES = {
   'P2P FEES': [
     { key: 'p2p_maker_fee_percent', label: '1. P2P Maker Fee', type: 'percent' },
     { key: 'p2p_taker_fee_percent', label: '2. P2P Taker Fee', type: 'percent' },
-    { key: 'p2p_express_fee_percent', label: '3. P2P Express Fee', type: 'percent' }
+    { key: 'p2p_express_fee_percent', label: '3. Express Buy Fee (Platform)', type: 'percent' }
   ],
   'INSTANT BUY/SELL & SWAP': [
     { key: 'instant_buy_fee_percent', label: '4. Instant Buy Fee', type: 'percent' },
