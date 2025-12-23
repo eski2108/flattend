@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { IoArrowBack, IoCheckmarkCircle } from 'react-icons/io5';
 import axiosInstance from '@/utils/axiosConfig';
 import { toast } from 'sonner';
+import Layout from '@/components/Layout';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
