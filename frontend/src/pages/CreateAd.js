@@ -83,10 +83,10 @@ const BOX_STYLE = {
 
 const SECTION_TITLE = {
   color: 'rgba(255, 255, 255, 0.9)',
-  fontSize: '0.8125rem',
+  fontSize: '1rem',
   fontWeight: '600',
   letterSpacing: '0.02em',
-  marginBottom: '12px',
+  marginBottom: '16px',
   display: 'flex',
   alignItems: 'center',
   gap: '10px'
