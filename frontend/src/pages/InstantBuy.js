@@ -430,7 +430,7 @@ function InstantBuy() {
             }}>
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '13px', color: '#8F9BB3', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  You're Buying
+                  You&apos;re Buying
                 </div>
                 <div style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
                   {currentQuote.cryptoAmount.toFixed(8)} {currentQuote.coin.symbol}
