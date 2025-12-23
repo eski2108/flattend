@@ -317,19 +317,19 @@ export default function CreateAd() {
           {/* Header */}
           <div style={{ marginBottom: '20px' }}>
             <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
-              Create P2P Ad
+              Create new P2P ad
             </h1>
             <p style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8125rem' }}>
-              Set your trading terms
+              Set your trading terms and start receiving orders
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             
-            {/* SECTION 1: AD TYPE - First thing user sees */}
+            {/* SECTION 1: AD TYPE */}
             <div style={BOX_STYLE}>
               <div style={SECTION_TITLE}>
-                Ad Type
+                Ad type
                 <span style={{ background: '#DC2626', color: '#fff', fontSize: '0.5rem', fontWeight: '700', padding: '2px 6px', borderRadius: '3px' }}>REQUIRED</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
