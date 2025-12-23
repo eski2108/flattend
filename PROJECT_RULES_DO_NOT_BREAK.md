@@ -172,6 +172,7 @@ See: `/app/MASTER_IMPLEMENTATION_LOG.md`
 | Cartoonish emoji icons | coinConfig.js | Replaced with professional symbols | ✅ FIXED |
 | price_type not sent | CreateAd.js | Added to formData and API request | ✅ FIXED |
 | Translation key not resolved | en.json, es.json, fr.json | Added p2p.marketplace.title structure | ✅ FIXED |
+|| CreateAd.js UI needs polish | CreateAd.js | Applied 3-tier box hierarchy, typography, pill states, button states, success/error messages | ✅ FIXED 2025-12-23 |
 
 ---
 
