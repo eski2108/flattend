@@ -444,7 +444,7 @@ function P2PMarketplace() {
 
           {/* EXPRESS BUY SHORTCUT - Platform Liquidity Option */}
           <div 
-            onClick={() => navigate('/p2p/express')}
+            onClick={() => navigate('/p2p-express')}
             style={{
               display: 'flex',
               alignItems: isMobile ? 'flex-start' : 'center',
