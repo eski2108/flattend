@@ -110,7 +110,8 @@ export default function MobileTradingPage() {
     if (!container) return;
     container.innerHTML = '';
 
-    const tvSymbol = pairSymbol.replace('USD', 'USDT');
+    // SECURITY: Sanitize symbol to prevent injection (only allow alphanumeric)
+    const tvSymbol = pairSymbol.replace('USD', 'USDT').replace(/[^A-Za-z0-9]/g, '');
 
     const widgetHTML = `
       <div class="tradingview-widget-container" style="height:100%;width:100%;background:transparent">
@@ -141,7 +142,8 @@ export default function MobileTradingPage() {
       </div>
     `;
 
-    container.innerHTML = widgetHTML;
+    // SECURITY: Sanitize widget HTML (though it's not user data)
+    container.innerHTML = DOMPurify.sanitize(widgetHTML, { ADD_TAGS: ['script'], ADD_ATTR: ['async'] });
     const scripts = container.getElementsByTagName('script');
     for (let i = 0; i < scripts.length; i++) {
       if (scripts[i].src) {
