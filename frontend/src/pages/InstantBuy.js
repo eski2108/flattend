@@ -19,6 +19,9 @@ import Coin3DIcon from '@/components/Coin3DIcon';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// CORE COINS - Only these have Instant Buy (pre-funded platform liquidity)
+const CORE_LIQUIDITY_COINS = ['BTC', 'ETH', 'USDT', 'USDC'];
+
 function InstantBuy() {
   const navigate = useNavigate();
   const [coins, setCoins] = useState([]);
