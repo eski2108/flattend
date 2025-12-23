@@ -23816,7 +23816,8 @@ async def get_fee_statistics():
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    # SECURITY: CORS origins from environment - NO wildcard fallback in production
+    allow_origins=os.environ.get('CORS_ORIGINS', 'https://coinhubx.net').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
