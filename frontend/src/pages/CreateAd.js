@@ -177,604 +177,565 @@ export default function CreateAd() {
 
   return (
     <Layout>
+      {/* WIDE DESKTOP CONTAINER - Exchange-grade layout */}
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #050816 0%, #0a0e27 50%, #0d1229 100%)',
-        padding: '3rem 2rem 4rem',
-        maxWidth: '900px',
-        margin: '0 auto'
+        background: 'linear-gradient(180deg, #050816 0%, #0a0e27 100%)',
+        padding: '24px 32px 40px'
       }}>
-        {/* Back Button */}
-        <button
-          onClick={() => navigate('/p2p/merchant')}
-          style={{
-            background: 'linear-gradient(135deg, rgba(0, 255, 200, 0.08), rgba(0, 255, 200, 0.03))',
-            border: '1px solid rgba(0, 255, 200, 0.25)',
-            borderRadius: '12px',
-            color: 'rgba(0, 255, 200, 0.9)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '10px',
-            fontSize: '0.875rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            padding: '12px 20px',
-            marginBottom: '2.5rem',
-            transition: 'all 0.25s ease',
-            letterSpacing: '0.02em'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.08))';
-            e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.5)';
-            e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 200, 0.2)';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 255, 200, 0.08), rgba(0, 255, 200, 0.03))';
-            e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.25)';
-            e.currentTarget.style.boxShadow = 'none';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <IoArrowBack size={18} />
-          Back to Merchant Center
-        </button>
-
-        {/* Page Header */}
-        <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-          <h1 style={{ 
-            fontSize: '2.75rem', 
-            fontWeight: '800', 
-            background: 'linear-gradient(135deg, #00FFD0 0%, #00E5FF 50%, #7B61FF 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            marginBottom: '1rem',
-            letterSpacing: '-0.02em',
-            textShadow: '0 0 80px rgba(0, 255, 200, 0.3)'
-          }}>
-            Create New P2P Ad
-          </h1>
-          <p style={{ 
-            color: 'rgba(255, 255, 255, 0.5)', 
-            fontSize: '1.0625rem', 
-            fontWeight: '400',
-            letterSpacing: '0.01em',
-            maxWidth: '500px',
-            margin: '0 auto'
-          }}>
-            Set your trading terms and start receiving orders from buyers worldwide
-          </p>
-        </div>
-
-        {/* Main Form Card */}
+        {/* MAX WIDTH 1600px for desktop - proper exchange width */}
         <div style={{
-          background: 'linear-gradient(165deg, rgba(15, 20, 45, 0.98), rgba(10, 15, 35, 0.99))',
-          border: '1px solid rgba(0, 255, 200, 0.12)',
-          borderRadius: '28px',
-          padding: '2.5rem',
-          boxShadow: '0 25px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 255, 200, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.03)'
+          maxWidth: '1600px',
+          margin: '0 auto',
+          width: '100%'
         }}>
-          <form onSubmit={handleSubmit}>
+          {/* Back Button */}
+          <button
+            onClick={() => navigate('/p2p/merchant')}
+            style={{
+              background: 'linear-gradient(135deg, rgba(0, 255, 200, 0.08), rgba(0, 255, 200, 0.03))',
+              border: '1px solid rgba(0, 255, 200, 0.25)',
+              borderRadius: '10px',
+              color: 'rgba(0, 255, 200, 0.9)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              padding: '10px 18px',
+              marginBottom: '24px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.08))';
+              e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 255, 200, 0.08), rgba(0, 255, 200, 0.03))';
+              e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.25)';
+            }}
+          >
+            <IoArrowBack size={18} />
+            Back to Merchant Center
+          </button>
 
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* TIER 1: AD TYPE - Primary Box with strongest visual presence */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            <div style={{
-              background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.06), rgba(0, 255, 200, 0.02))',
-              border: '2px solid rgba(0, 255, 200, 0.25)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 8px 40px rgba(0, 255, 200, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+          {/* Page Header - Left aligned for wide layout */}
+          <div style={{ marginBottom: '32px' }}>
+            <h1 style={{ 
+              fontSize: '2.25rem', 
+              fontWeight: '800', 
+              background: 'linear-gradient(135deg, #00FFD0 0%, #00E5FF 50%, #7B61FF 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              marginBottom: '8px',
+              letterSpacing: '-0.02em'
             }}>
-              <label style={{ 
-                color: 'rgba(255, 255, 255, 0.95)',
-                fontSize: '0.9375rem',
-                fontWeight: '700',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                marginBottom: '1.25rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em'
-              }}>
-                Ad Type
-                <span style={{ 
-                  background: 'linear-gradient(135deg, #EF4444, #DC2626)',
-                  color: '#fff',
-                  fontSize: '0.625rem',
-                  fontWeight: '700',
-                  padding: '4px 10px',
-                  borderRadius: '6px',
-                  letterSpacing: '0.08em'
-                }}>REQUIRED</span>
-              </label>
+              Create New P2P Ad
+            </h1>
+            <p style={{ 
+              color: 'rgba(255, 255, 255, 0.5)', 
+              fontSize: '1rem', 
+              fontWeight: '400'
+            }}>
+              Set your trading terms and start receiving orders from buyers worldwide
+            </p>
+          </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                {/* SELL Button */}
-                <button
-                  type="button"
-                  onClick={() => handleAdTypeSelect('sell')}
-                  style={{
-                    height: '70px',
-                    padding: '0 2rem',
-                    background: adType === 'sell' 
-                      ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1))' 
-                      : 'rgba(0, 0, 0, 0.3)',
-                    border: adType === 'sell' 
-                      ? '2px solid rgba(34, 197, 94, 0.8)' 
-                      : '2px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '16px',
-                    color: adType === 'sell' ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
-                    fontSize: '1rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    boxShadow: adType === 'sell' 
-                      ? '0 0 40px rgba(34, 197, 94, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)' 
-                      : 'none',
-                    transition: 'all 0.3s ease',
-                    transform: adType === 'sell' ? 'scale(1.02)' : 'scale(1)',
-                    letterSpacing: '0.02em'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (adType !== 'sell') {
-                      e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.5)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.08)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (adType !== 'sell') {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
-                      e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                    }
-                  }}
-                >
-                  I Want to SELL Crypto
-                </button>
-                
-                {/* BUY Button */}
-                <button
-                  type="button"
-                  onClick={() => handleAdTypeSelect('buy')}
-                  style={{
-                    height: '70px',
-                    padding: '0 2rem',
-                    background: adType === 'buy' 
-                      ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1))' 
-                      : 'rgba(0, 0, 0, 0.3)',
-                    border: adType === 'buy' 
-                      ? '2px solid rgba(34, 197, 94, 0.8)' 
-                      : '2px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '16px',
-                    color: adType === 'buy' ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
-                    fontSize: '1rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    boxShadow: adType === 'buy' 
-                      ? '0 0 40px rgba(34, 197, 94, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)' 
-                      : 'none',
-                    transition: 'all 0.3s ease',
-                    transform: adType === 'buy' ? 'scale(1.02)' : 'scale(1)',
-                    letterSpacing: '0.02em'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (adType !== 'buy') {
-                      e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.5)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.08)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (adType !== 'buy') {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
-                      e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                    }
-                  }}
-                >
-                  I Want to BUY Crypto
-                </button>
-              </div>
-              
-              {/* Selection Indicator */}
-              {adType && (
-                <div style={{
-                  marginTop: '1.25rem',
-                  padding: '14px 20px',
-                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04))',
-                  border: '1px solid rgba(34, 197, 94, 0.4)',
-                  borderRadius: '14px',
-                  color: '#22C55E',
-                  fontSize: '0.9375rem',
-                  fontWeight: '600',
-                  textAlign: 'center',
+          {/* MAIN FORM - Wide layout with 2-column grid for desktop */}
+          <form onSubmit={handleSubmit}>
+            
+            {/* TOP ROW: Ad Type + Asset Selection side by side */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '24px',
+              marginBottom: '24px'
+            }}>
+              {/* TIER 1: AD TYPE */}
+              <div style={{
+                background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.05), rgba(0, 255, 200, 0.02))',
+                border: '1.5px solid rgba(0, 255, 200, 0.2)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 30px rgba(0, 255, 200, 0.06)'
+              }}>
+                <label style={{ 
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '0.8125rem',
+                  fontWeight: '700',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
                   gap: '10px',
-                  boxShadow: '0 4px 20px rgba(34, 197, 94, 0.15)'
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em'
                 }}>
-                  <IoCheckmarkCircle size={20} />
-                  <span>You are <strong style={{ fontWeight: '700' }}>{adType === 'sell' ? 'SELLING' : 'BUYING'}</strong> {formData.crypto_currency}</span>
-                </div>
-              )}
-            </div>
+                  Ad Type
+                  <span style={{ 
+                    background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+                    color: '#fff',
+                    fontSize: '0.5625rem',
+                    fontWeight: '700',
+                    padding: '3px 8px',
+                    borderRadius: '4px'
+                  }}>REQUIRED</span>
+                </label>
 
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* TIER 1: ASSET SELECTION - Primary Box */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            <div style={{
-              background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.06), rgba(0, 255, 200, 0.02))',
-              border: '2px solid rgba(0, 255, 200, 0.25)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 8px 40px rgba(0, 255, 200, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
-            }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                <div>
-                  <label style={{ 
-                    color: 'rgba(255, 255, 255, 0.55)',
-                    fontSize: '0.6875rem',
-                    fontWeight: '600',
-                    display: 'block',
-                    marginBottom: '10px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em'
-                  }}>
-                    Crypto Asset
-                  </label>
-                  <select
-                    value={formData.crypto_currency}
-                    onChange={(e) => handleChange('crypto_currency', e.target.value)}
-                    onFocus={() => setFocusedField('crypto')}
-                    onBlur={() => setFocusedField(null)}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleAdTypeSelect('sell')}
                     style={{
-                      width: '100%',
-                      padding: '18px 20px',
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: focusedField === 'crypto' 
-                        ? '2px solid rgba(0, 255, 200, 0.6)' 
-                        : '2px solid rgba(0, 255, 200, 0.15)',
-                      borderRadius: '14px',
-                      color: '#fff',
-                      fontSize: '1.125rem',
+                      height: '56px',
+                      background: adType === 'sell' 
+                        ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.08))' 
+                        : 'rgba(0, 0, 0, 0.25)',
+                      border: adType === 'sell' 
+                        ? '2px solid rgba(34, 197, 94, 0.7)' 
+                        : '1.5px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      color: adType === 'sell' ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.9375rem',
                       fontWeight: '700',
-                      outline: 'none',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      boxShadow: focusedField === 'crypto' 
-                        ? '0 0 30px rgba(0, 255, 200, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2)' 
-                        : 'none'
+                      boxShadow: adType === 'sell' ? '0 0 30px rgba(34, 197, 94, 0.3)' : 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (adType !== 'sell') {
+                        e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (adType !== 'sell') {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
+                      }
                     }}
                   >
-                    {availableCryptos.map(crypto => (
-                      <option key={crypto} value={crypto} style={{ background: '#0a0e27', color: '#fff' }}>{crypto}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ 
-                    color: 'rgba(255, 255, 255, 0.55)',
-                    fontSize: '0.6875rem',
-                    fontWeight: '600',
-                    display: 'block',
-                    marginBottom: '10px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em'
-                  }}>
-                    Fiat Currency
-                  </label>
-                  <select
-                    value={formData.fiat_currency}
-                    onChange={(e) => handleChange('fiat_currency', e.target.value)}
-                    onFocus={() => setFocusedField('fiat')}
-                    onBlur={() => setFocusedField(null)}
+                    SELL Crypto
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => handleAdTypeSelect('buy')}
                     style={{
-                      width: '100%',
-                      padding: '18px 20px',
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: focusedField === 'fiat' 
-                        ? '2px solid rgba(0, 255, 200, 0.6)' 
-                        : '2px solid rgba(0, 255, 200, 0.15)',
-                      borderRadius: '14px',
-                      color: '#fff',
-                      fontSize: '1.125rem',
+                      height: '56px',
+                      background: adType === 'buy' 
+                        ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.08))' 
+                        : 'rgba(0, 0, 0, 0.25)',
+                      border: adType === 'buy' 
+                        ? '2px solid rgba(34, 197, 94, 0.7)' 
+                        : '1.5px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      color: adType === 'buy' ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.9375rem',
                       fontWeight: '700',
-                      outline: 'none',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      boxShadow: focusedField === 'fiat' 
-                        ? '0 0 30px rgba(0, 255, 200, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2)' 
-                        : 'none'
+                      boxShadow: adType === 'buy' ? '0 0 30px rgba(34, 197, 94, 0.3)' : 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (adType !== 'buy') {
+                        e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (adType !== 'buy') {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
+                      }
                     }}
                   >
-                    {availableFiats.map(fiat => (
-                      <option key={fiat} value={fiat} style={{ background: '#0a0e27', color: '#fff' }}>{fiat}</option>
-                    ))}
-                  </select>
+                    BUY Crypto
+                  </button>
                 </div>
+                
+                {adType && (
+                  <div style={{
+                    marginTop: '14px',
+                    padding: '12px 16px',
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    borderRadius: '10px',
+                    color: '#22C55E',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}>
+                    <IoCheckmarkCircle size={18} />
+                    You are {adType === 'sell' ? 'SELLING' : 'BUYING'} {formData.crypto_currency}
+                  </div>
+                )}
               </div>
-            </div>
 
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* TIER 1: PRICING - Primary Box */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            <div style={{
-              background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.06), rgba(0, 255, 200, 0.02))',
-              border: '2px solid rgba(0, 255, 200, 0.25)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 8px 40px rgba(0, 255, 200, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
-            }}>
-              <label style={{ 
-                color: 'rgba(255, 255, 255, 0.95)',
-                fontSize: '0.9375rem',
-                fontWeight: '700',
-                display: 'block',
-                marginBottom: '1.25rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em'
+              {/* TIER 1: ASSET SELECTION */}
+              <div style={{
+                background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.05), rgba(0, 255, 200, 0.02))',
+                border: '1.5px solid rgba(0, 255, 200, 0.2)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 30px rgba(0, 255, 200, 0.06)'
               }}>
-                Pricing Mode
-              </label>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
-                <button
-                  type="button"
-                  onClick={() => handleChange('price_type', 'fixed')}
-                  style={{
-                    padding: '18px',
-                    background: formData.price_type === 'fixed' 
-                      ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.18), rgba(0, 255, 200, 0.08))' 
-                      : 'transparent',
-                    border: formData.price_type === 'fixed' 
-                      ? '2px solid rgba(0, 255, 200, 0.6)' 
-                      : '2px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '14px',
-                    color: formData.price_type === 'fixed' ? '#00FFD0' : 'rgba(255, 255, 255, 0.45)',
-                    fontSize: '0.9375rem',
-                    fontWeight: formData.price_type === 'fixed' ? '700' : '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
-                    boxShadow: formData.price_type === 'fixed' 
-                      ? '0 0 30px rgba(0, 255, 200, 0.2)' 
-                      : 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (formData.price_type !== 'fixed') {
-                      e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.4)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (formData.price_type !== 'fixed') {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)';
-                    }
-                  }}
-                >
-                  Fixed Price
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleChange('price_type', 'floating')}
-                  style={{
-                    padding: '18px',
-                    background: formData.price_type === 'floating' 
-                      ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.18), rgba(0, 255, 200, 0.08))' 
-                      : 'transparent',
-                    border: formData.price_type === 'floating' 
-                      ? '2px solid rgba(0, 255, 200, 0.6)' 
-                      : '2px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '14px',
-                    color: formData.price_type === 'floating' ? '#00FFD0' : 'rgba(255, 255, 255, 0.45)',
-                    fontSize: '0.9375rem',
-                    fontWeight: formData.price_type === 'floating' ? '700' : '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
-                    boxShadow: formData.price_type === 'floating' 
-                      ? '0 0 30px rgba(0, 255, 200, 0.2)' 
-                      : 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (formData.price_type !== 'floating') {
-                      e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.4)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (formData.price_type !== 'floating') {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)';
-                    }
-                  }}
-                >
-                  Floating (% Margin)
-                </button>
-              </div>
-
-              <input
-                type="number"
-                value={formData.price_value}
-                onChange={(e) => handleChange('price_value', e.target.value)}
-                onFocus={() => setFocusedField('price')}
-                onBlur={() => setFocusedField(null)}
-                placeholder={formData.price_type === 'fixed' ? 'Enter price (e.g., 45000)' : 'Enter margin % (e.g., 2.5 or -1.5)'}
-                style={{
-                  width: '100%',
-                  padding: '20px',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: focusedField === 'price' 
-                    ? '2px solid rgba(0, 255, 200, 0.6)' 
-                    : '2px solid rgba(0, 255, 200, 0.15)',
-                  borderRadius: '14px',
-                  color: '#fff',
-                  fontSize: '1.25rem',
+                <label style={{ 
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '0.8125rem',
                   fontWeight: '700',
-                  outline: 'none',
-                  transition: 'all 0.2s ease',
-                  boxShadow: focusedField === 'price' 
-                    ? '0 0 30px rgba(0, 255, 200, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2)' 
-                    : 'none'
-                }}
-              />
-              {formData.price_type === 'floating' && (
-                <p style={{ 
-                  marginTop: '12px', 
-                  fontSize: '0.8125rem', 
-                  color: 'rgba(255, 255, 255, 0.4)',
-                  letterSpacing: '0.02em'
+                  display: 'block',
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em'
                 }}>
-                  Positive = above market rate | Negative = below market rate
-                </p>
-              )}
-            </div>
+                  Trading Pair
+                </label>
 
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* TIER 2: TRADE LIMITS - Secondary Box with lighter styling */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            <div style={{
-              background: 'rgba(0, 255, 200, 0.02)',
-              border: '1.5px solid rgba(0, 255, 200, 0.15)',
-              borderRadius: '18px',
-              padding: '1.75rem',
-              marginBottom: '1.75rem',
-              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
-            }}>
-              <label style={{ 
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontSize: '0.875rem',
-                fontWeight: '700',
-                display: 'block',
-                marginBottom: '1rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em'
-              }}>
-                Trade Limits ({formData.crypto_currency})
-              </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ 
+                      color: 'rgba(255, 255, 255, 0.45)',
+                      fontSize: '0.625rem',
+                      fontWeight: '600',
+                      display: 'block',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em'
+                    }}>
+                      Crypto
+                    </label>
+                    <select
+                      value={formData.crypto_currency}
+                      onChange={(e) => handleChange('crypto_currency', e.target.value)}
+                      onFocus={() => setFocusedField('crypto')}
+                      onBlur={() => setFocusedField(null)}
+                      style={{
+                        width: '100%',
+                        padding: '14px 16px',
+                        background: 'rgba(0, 0, 0, 0.35)',
+                        border: focusedField === 'crypto' 
+                          ? '2px solid rgba(0, 255, 200, 0.5)' 
+                          : '1.5px solid rgba(0, 255, 200, 0.12)',
+                        borderRadius: '10px',
+                        color: '#fff',
+                        fontSize: '1.125rem',
+                        fontWeight: '700',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: focusedField === 'crypto' ? '0 0 20px rgba(0, 255, 200, 0.1)' : 'none'
+                      }}
+                    >
+                      {availableCryptos.map(crypto => (
+                        <option key={crypto} value={crypto} style={{ background: '#0a0e27', color: '#fff' }}>{crypto}</option>
+                      ))}
+                    </select>
+                  </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                <div>
-                  <label style={{ 
-                    color: 'rgba(255, 255, 255, 0.45)',
-                    fontSize: '0.625rem',
-                    fontWeight: '600',
-                    display: 'block',
-                    marginBottom: '8px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em'
-                  }}>
-                    Minimum
-                  </label>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    value={formData.min_amount}
-                    onChange={(e) => handleChange('min_amount', e.target.value)}
-                    onFocus={() => setFocusedField('min')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="0.01"
-                    style={{
-                      width: '100%',
-                      padding: '16px 18px',
-                      background: 'rgba(0, 0, 0, 0.35)',
-                      border: focusedField === 'min' 
-                        ? '2px solid rgba(0, 255, 200, 0.5)' 
-                        : '1.5px solid rgba(0, 255, 200, 0.12)',
-                      borderRadius: '12px',
-                      color: '#fff',
-                      fontSize: '1.0625rem',
+                  <div>
+                    <label style={{ 
+                      color: 'rgba(255, 255, 255, 0.45)',
+                      fontSize: '0.625rem',
                       fontWeight: '600',
-                      outline: 'none',
-                      transition: 'all 0.2s ease',
-                      boxShadow: focusedField === 'min' 
-                        ? '0 0 20px rgba(0, 255, 200, 0.1)' 
-                        : 'none'
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ 
-                    color: 'rgba(255, 255, 255, 0.45)',
-                    fontSize: '0.625rem',
-                    fontWeight: '600',
-                    display: 'block',
-                    marginBottom: '8px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em'
-                  }}>
-                    Maximum
-                  </label>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    value={formData.max_amount}
-                    onChange={(e) => handleChange('max_amount', e.target.value)}
-                    onFocus={() => setFocusedField('max')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="1.0"
-                    style={{
-                      width: '100%',
-                      padding: '16px 18px',
-                      background: 'rgba(0, 0, 0, 0.35)',
-                      border: focusedField === 'max' 
-                        ? '2px solid rgba(0, 255, 200, 0.5)' 
-                        : '1.5px solid rgba(0, 255, 200, 0.12)',
-                      borderRadius: '12px',
-                      color: '#fff',
-                      fontSize: '1.0625rem',
-                      fontWeight: '600',
-                      outline: 'none',
-                      transition: 'all 0.2s ease',
-                      boxShadow: focusedField === 'max' 
-                        ? '0 0 20px rgba(0, 255, 200, 0.1)' 
-                        : 'none'
-                    }}
-                  />
+                      display: 'block',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em'
+                    }}>
+                      Fiat
+                    </label>
+                    <select
+                      value={formData.fiat_currency}
+                      onChange={(e) => handleChange('fiat_currency', e.target.value)}
+                      onFocus={() => setFocusedField('fiat')}
+                      onBlur={() => setFocusedField(null)}
+                      style={{
+                        width: '100%',
+                        padding: '14px 16px',
+                        background: 'rgba(0, 0, 0, 0.35)',
+                        border: focusedField === 'fiat' 
+                          ? '2px solid rgba(0, 255, 200, 0.5)' 
+                          : '1.5px solid rgba(0, 255, 200, 0.12)',
+                        borderRadius: '10px',
+                        color: '#fff',
+                        fontSize: '1.125rem',
+                        fontWeight: '700',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: focusedField === 'fiat' ? '0 0 20px rgba(0, 255, 200, 0.1)' : 'none'
+                      }}
+                    >
+                      {availableFiats.map(fiat => (
+                        <option key={fiat} value={fiat} style={{ background: '#0a0e27', color: '#fff' }}>{fiat}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* TIER 2: PAYMENT METHODS - Secondary Box */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
+            {/* SECOND ROW: Pricing + Trade Limits side by side */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '24px',
+              marginBottom: '24px'
+            }}>
+              {/* TIER 1: PRICING */}
+              <div style={{
+                background: 'linear-gradient(145deg, rgba(0, 255, 200, 0.05), rgba(0, 255, 200, 0.02))',
+                border: '1.5px solid rgba(0, 255, 200, 0.2)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 30px rgba(0, 255, 200, 0.06)'
+              }}>
+                <label style={{ 
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '0.8125rem',
+                  fontWeight: '700',
+                  display: 'block',
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em'
+                }}>
+                  Pricing Mode
+                </label>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleChange('price_type', 'fixed')}
+                    style={{
+                      padding: '14px',
+                      background: formData.price_type === 'fixed' 
+                        ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.06))' 
+                        : 'transparent',
+                      border: formData.price_type === 'fixed' 
+                        ? '2px solid rgba(0, 255, 200, 0.5)' 
+                        : '1.5px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '10px',
+                      color: formData.price_type === 'fixed' ? '#00FFD0' : 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.875rem',
+                      fontWeight: formData.price_type === 'fixed' ? '700' : '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: formData.price_type === 'fixed' ? '0 0 20px rgba(0, 255, 200, 0.15)' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (formData.price_type !== 'fixed') {
+                        e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.3)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (formData.price_type !== 'fixed') {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
+                      }
+                    }}
+                  >
+                    Fixed Price
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleChange('price_type', 'floating')}
+                    style={{
+                      padding: '14px',
+                      background: formData.price_type === 'floating' 
+                        ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0.06))' 
+                        : 'transparent',
+                      border: formData.price_type === 'floating' 
+                        ? '2px solid rgba(0, 255, 200, 0.5)' 
+                        : '1.5px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '10px',
+                      color: formData.price_type === 'floating' ? '#00FFD0' : 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.875rem',
+                      fontWeight: formData.price_type === 'floating' ? '700' : '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: formData.price_type === 'floating' ? '0 0 20px rgba(0, 255, 200, 0.15)' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (formData.price_type !== 'floating') {
+                        e.currentTarget.style.borderColor = 'rgba(0, 255, 200, 0.3)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (formData.price_type !== 'floating') {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
+                      }
+                    }}
+                  >
+                    Floating %
+                  </button>
+                </div>
+
+                <input
+                  type="number"
+                  value={formData.price_value}
+                  onChange={(e) => handleChange('price_value', e.target.value)}
+                  onFocus={() => setFocusedField('price')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder={formData.price_type === 'fixed' ? 'Enter price (e.g., 45000)' : 'Enter margin % (e.g., 2.5)'}
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    background: 'rgba(0, 0, 0, 0.35)',
+                    border: focusedField === 'price' 
+                      ? '2px solid rgba(0, 255, 200, 0.5)' 
+                      : '1.5px solid rgba(0, 255, 200, 0.12)',
+                    borderRadius: '10px',
+                    color: '#fff',
+                    fontSize: '1.25rem',
+                    fontWeight: '700',
+                    outline: 'none',
+                    transition: 'all 0.2s ease',
+                    boxShadow: focusedField === 'price' ? '0 0 20px rgba(0, 255, 200, 0.1)' : 'none'
+                  }}
+                />
+                {formData.price_type === 'floating' && (
+                  <p style={{ marginTop: '10px', fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.4)' }}>
+                    Positive = above market | Negative = below market
+                  </p>
+                )}
+              </div>
+
+              {/* TIER 2: TRADE LIMITS */}
+              <div style={{
+                background: 'rgba(0, 255, 200, 0.02)',
+                border: '1px solid rgba(0, 255, 200, 0.12)',
+                borderRadius: '16px',
+                padding: '24px'
+              }}>
+                <label style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '0.8125rem',
+                  fontWeight: '700',
+                  display: 'block',
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em'
+                }}>
+                  Trade Limits ({formData.crypto_currency})
+                </label>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ 
+                      color: 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.5625rem',
+                      fontWeight: '600',
+                      display: 'block',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em'
+                    }}>
+                      Minimum
+                    </label>
+                    <input
+                      type="number"
+                      step="0.00000001"
+                      value={formData.min_amount}
+                      onChange={(e) => handleChange('min_amount', e.target.value)}
+                      onFocus={() => setFocusedField('min')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="0.01"
+                      style={{
+                        width: '100%',
+                        padding: '14px 16px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: focusedField === 'min' 
+                          ? '2px solid rgba(0, 255, 200, 0.4)' 
+                          : '1px solid rgba(0, 255, 200, 0.1)',
+                        borderRadius: '10px',
+                        color: '#fff',
+                        fontSize: '1.0625rem',
+                        fontWeight: '600',
+                        outline: 'none',
+                        transition: 'all 0.2s ease',
+                        boxShadow: focusedField === 'min' ? '0 0 15px rgba(0, 255, 200, 0.08)' : 'none'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ 
+                      color: 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.5625rem',
+                      fontWeight: '600',
+                      display: 'block',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em'
+                    }}>
+                      Maximum
+                    </label>
+                    <input
+                      type="number"
+                      step="0.00000001"
+                      value={formData.max_amount}
+                      onChange={(e) => handleChange('max_amount', e.target.value)}
+                      onFocus={() => setFocusedField('max')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="1.0"
+                      style={{
+                        width: '100%',
+                        padding: '14px 16px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: focusedField === 'max' 
+                          ? '2px solid rgba(0, 255, 200, 0.4)' 
+                          : '1px solid rgba(0, 255, 200, 0.1)',
+                        borderRadius: '10px',
+                        color: '#fff',
+                        fontSize: '1.0625rem',
+                        fontWeight: '600',
+                        outline: 'none',
+                        transition: 'all 0.2s ease',
+                        boxShadow: focusedField === 'max' ? '0 0 15px rgba(0, 255, 200, 0.08)' : 'none'
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* THIRD ROW: Payment Methods - Full Width */}
             <div style={{
               background: 'rgba(0, 255, 200, 0.02)',
-              border: '1.5px solid rgba(0, 255, 200, 0.15)',
-              borderRadius: '18px',
-              padding: '1.75rem',
-              marginBottom: '1.75rem',
-              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)'
+              border: '1px solid rgba(0, 255, 200, 0.12)',
+              borderRadius: '16px',
+              padding: '24px',
+              marginBottom: '24px'
             }}>
               <label style={{ 
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontSize: '0.875rem',
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.8125rem',
                 fontWeight: '700',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
-                marginBottom: '1.25rem',
+                gap: '10px',
+                marginBottom: '18px',
                 textTransform: 'uppercase',
-                letterSpacing: '0.1em'
+                letterSpacing: '0.08em'
               }}>
                 Payment Methods
                 <span style={{ 
-                  background: 'rgba(239, 68, 68, 0.2)',
+                  background: 'rgba(239, 68, 68, 0.15)',
                   color: '#EF4444',
-                  fontSize: '0.5625rem',
+                  fontSize: '0.5rem',
                   fontWeight: '700',
-                  padding: '4px 8px',
-                  borderRadius: '5px',
-                  letterSpacing: '0.06em'
+                  padding: '3px 6px',
+                  borderRadius: '4px'
                 }}>SELECT AT LEAST ONE</span>
               </label>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 {availablePaymentMethods.map(method => {
                   const isSelected = formData.payment_methods.includes(method);
                   const isHovered = hoveredPill === method;
@@ -788,36 +749,33 @@ export default function CreateAd() {
                       style={{
                         padding: '14px 16px',
                         background: isSelected 
-                          ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.2), rgba(0, 255, 200, 0.1))' 
+                          ? 'linear-gradient(135deg, rgba(0, 255, 200, 0.18), rgba(0, 255, 200, 0.08))' 
                           : isHovered 
-                            ? 'rgba(0, 255, 200, 0.05)' 
+                            ? 'rgba(0, 255, 200, 0.04)' 
                             : 'transparent',
                         border: isSelected 
-                          ? '2px solid rgba(0, 255, 200, 0.7)' 
+                          ? '2px solid rgba(0, 255, 200, 0.6)' 
                           : isHovered 
-                            ? '1.5px solid rgba(0, 255, 200, 0.4)' 
-                            : '1.5px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '12px',
+                            ? '1.5px solid rgba(0, 255, 200, 0.3)' 
+                            : '1.5px solid rgba(255, 255, 255, 0.08)',
+                        borderRadius: '10px',
                         color: isSelected 
                           ? '#00FFD0' 
                           : isHovered 
-                            ? 'rgba(255, 255, 255, 0.75)' 
-                            : 'rgba(255, 255, 255, 0.45)',
+                            ? 'rgba(255, 255, 255, 0.7)' 
+                            : 'rgba(255, 255, 255, 0.4)',
                         fontSize: '0.8125rem',
                         fontWeight: isSelected ? '700' : '500',
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        boxShadow: isSelected 
-                          ? '0 0 25px rgba(0, 255, 200, 0.25)' 
-                          : 'none',
+                        transition: 'all 0.15s ease',
+                        boxShadow: isSelected ? '0 0 20px rgba(0, 255, 200, 0.2)' : 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
-                        letterSpacing: '0.02em'
+                        gap: '6px'
                       }}
                     >
-                      {isSelected && <IoCheckmarkCircle size={16} />}
+                      {isSelected && <IoCheckmarkCircle size={15} />}
                       {method.replace(/_/g, ' ').toUpperCase()}
                     </button>
                   );
@@ -825,139 +783,132 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* TIER 3: TERMS - Optional Box with muted styling */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
+            {/* FOURTH ROW: Terms (Optional) + Submit Button side by side */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              marginBottom: '2rem'
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr',
+              gap: '24px',
+              alignItems: 'end'
             }}>
-              <label style={{ 
-                color: 'rgba(255, 255, 255, 0.55)',
-                fontSize: '0.8125rem',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                marginBottom: '1rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em'
+              {/* TIER 3: TERMS */}
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: '14px',
+                padding: '20px'
               }}>
-                Terms & Conditions
-                <span style={{ 
-                  color: 'rgba(255, 255, 255, 0.3)',
-                  fontSize: '0.5625rem',
-                  fontWeight: '500',
+                <label style={{ 
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '12px',
+                  textTransform: 'uppercase',
                   letterSpacing: '0.06em'
-                }}>OPTIONAL</span>
-              </label>
-              <textarea
-                value={formData.terms}
-                onChange={(e) => handleChange('terms', e.target.value)}
-                onFocus={() => setFocusedField('terms')}
-                onBlur={() => setFocusedField(null)}
-                placeholder="Enter any special terms or instructions for buyers..."
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '16px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: focusedField === 'terms' 
-                    ? '1.5px solid rgba(0, 255, 200, 0.35)' 
-                    : '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '0.9375rem',
-                  outline: 'none',
-                  resize: 'vertical',
-                  fontFamily: 'inherit',
-                  minHeight: '90px',
-                  transition: 'all 0.2s ease',
-                  boxShadow: focusedField === 'terms' 
-                    ? '0 0 15px rgba(0, 255, 200, 0.08)' 
-                    : 'none'
-                }}
-              />
+                }}>
+                  Terms & Conditions
+                  <span style={{ color: 'rgba(255, 255, 255, 0.25)', fontSize: '0.5rem' }}>OPTIONAL</span>
+                </label>
+                <textarea
+                  value={formData.terms}
+                  onChange={(e) => handleChange('terms', e.target.value)}
+                  onFocus={() => setFocusedField('terms')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Enter any special terms or instructions for buyers..."
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: 'rgba(0, 0, 0, 0.25)',
+                    border: focusedField === 'terms' 
+                      ? '1.5px solid rgba(0, 255, 200, 0.25)' 
+                      : '1px solid rgba(255, 255, 255, 0.06)',
+                    borderRadius: '10px',
+                    color: '#fff',
+                    fontSize: '0.9375rem',
+                    outline: 'none',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    minHeight: '80px',
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+              </div>
+
+              {/* SUBMIT BUTTON */}
+              <div>
+                <button
+                  type="submit"
+                  disabled={creating || !isFormValid()}
+                  style={{
+                    width: '100%',
+                    height: '60px',
+                    background: (creating || !isFormValid())
+                      ? 'rgba(60, 60, 60, 0.4)' 
+                      : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+                    border: (creating || !isFormValid())
+                      ? '1.5px solid rgba(100, 100, 100, 0.2)'
+                      : 'none',
+                    borderRadius: '14px',
+                    fontSize: '1rem',
+                    fontWeight: '800',
+                    color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.2)' : '#fff',
+                    cursor: (creating || !isFormValid()) ? 'not-allowed' : 'pointer',
+                    boxShadow: (creating || !isFormValid()) 
+                      ? 'none' 
+                      : '0 6px 30px rgba(34, 197, 94, 0.45)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    transition: 'all 0.25s ease',
+                    opacity: (creating || !isFormValid()) ? 0.5 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!creating && isFormValid()) {
+                      e.currentTarget.style.boxShadow = '0 8px 40px rgba(34, 197, 94, 0.55)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!creating && isFormValid()) {
+                      e.currentTarget.style.boxShadow = '0 6px 30px rgba(34, 197, 94, 0.45)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }
+                  }}
+                >
+                  {creating ? (
+                    <>
+                      <div style={{
+                        width: '20px',
+                        height: '20px',
+                        border: '2px solid rgba(255,255,255,0.2)',
+                        borderTopColor: '#fff',
+                        borderRadius: '50%',
+                        animation: 'spin 0.8s linear infinite'
+                      }}></div>
+                      Creating...
+                    </>
+                  ) : (
+                    'Publish Ad'
+                  )}
+                </button>
+                {!isFormValid() && !creating && (
+                  <p style={{
+                    textAlign: 'center',
+                    marginTop: '10px',
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.3)'
+                  }}>
+                    Complete all fields to publish
+                  </p>
+                )}
+              </div>
             </div>
-
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            {/* SUBMIT BUTTON */}
-            {/* ══════════════════════════════════════════════════════════════════ */}
-            <button
-              type="submit"
-              disabled={creating || !isFormValid()}
-              style={{
-                width: '100%',
-                minHeight: '68px',
-                background: (creating || !isFormValid())
-                  ? 'rgba(60, 60, 60, 0.4)' 
-                  : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
-                border: (creating || !isFormValid())
-                  ? '2px solid rgba(100, 100, 100, 0.2)'
-                  : 'none',
-                borderRadius: '18px',
-                fontSize: '1.125rem',
-                fontWeight: '800',
-                color: (creating || !isFormValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
-                cursor: (creating || !isFormValid()) ? 'not-allowed' : 'pointer',
-                boxShadow: (creating || !isFormValid()) 
-                  ? 'none' 
-                  : '0 8px 40px rgba(34, 197, 94, 0.5), 0 0 60px rgba(34, 197, 94, 0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                transition: 'all 0.3s ease',
-                opacity: (creating || !isFormValid()) ? 0.5 : 1,
-                transform: 'scale(1)'
-              }}
-              onMouseEnter={(e) => {
-                if (!creating && isFormValid()) {
-                  e.currentTarget.style.boxShadow = '0 12px 50px rgba(34, 197, 94, 0.6), 0 0 80px rgba(34, 197, 94, 0.35)';
-                  e.currentTarget.style.transform = 'scale(1.02) translateY(-2px)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!creating && isFormValid()) {
-                  e.currentTarget.style.boxShadow = '0 8px 40px rgba(34, 197, 94, 0.5), 0 0 60px rgba(34, 197, 94, 0.25)';
-                  e.currentTarget.style.transform = 'scale(1) translateY(0)';
-                }
-              }}
-            >
-              {creating ? (
-                <>
-                  <div style={{
-                    width: '22px',
-                    height: '22px',
-                    border: '3px solid rgba(255,255,255,0.2)',
-                    borderTopColor: '#fff',
-                    borderRadius: '50%',
-                    animation: 'spin 0.8s linear infinite'
-                  }}></div>
-                  Creating Ad...
-                </>
-              ) : (
-                'Publish Ad'
-              )}
-            </button>
-
-            {/* Validation hint */}
-            {!isFormValid() && !creating && (
-              <p style={{
-                textAlign: 'center',
-                marginTop: '16px',
-                fontSize: '0.8125rem',
-                color: 'rgba(255, 255, 255, 0.35)',
-                letterSpacing: '0.02em'
-              }}>
-                Complete all required fields to publish
-              </p>
-            )}
           </form>
         </div>
       </div>
