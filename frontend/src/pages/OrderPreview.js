@@ -166,20 +166,15 @@ export default function OrderPreview() {
         buyer_wallet_network: walletNetwork || null
       };
       
-      // console.log('🚀 Creating trade with payload:', tradePayload);
-      // console.log('📊 Offer data:', {
-        order_id: offer.order_id,
-        payment_methods: offer.payment_methods,
-        crypto_currency: offer.crypto_currency
-      });
+      // Debug logging removed for production
       
       const response = await axios.post(`${API}/api/p2p/create-trade`, tradePayload);
 
-      // console.log('✅ API Response:', response.data);
+      // Debug logging removed for production
       
       if (response.data.success) {
         const tradeId = response.data.trade_id || response.data.trade?.trade_id || response.data.id;
-        // console.log('🚀 Navigating to trade:', tradeId);
+        // Debug logging removed for production
         
         if (!tradeId) {
           console.error('❌ No trade_id in response!', response.data);
