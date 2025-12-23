@@ -337,9 +337,6 @@ export default function Layout({ children }) {
         />
         
         {children}
-        
-        {/* Global Footer - Added to all authenticated pages */}
-        <Footer />
       </main>
 
       {/* AI + Live Chat Widget */}
