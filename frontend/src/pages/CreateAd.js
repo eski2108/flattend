@@ -406,32 +406,34 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* STICKY ACTION FOOTER */}
+            {/* FOOTER - CLOSES THE PAGE */}
             <div style={{
-              marginTop: '24px',
+              marginTop: '20px',
               marginLeft: '-32px',
               marginRight: '-32px',
-              padding: '20px 32px',
-              background: 'linear-gradient(180deg, rgba(15, 20, 40, 0.98) 0%, rgba(8, 12, 28, 0.99) 100%)',
-              borderTop: '1px solid rgba(0, 255, 200, 0.08)',
+              marginBottom: '-20px',
+              padding: '18px 32px',
+              background: 'linear-gradient(180deg, rgba(12, 18, 38, 0.95) 0%, rgba(8, 12, 28, 1) 100%)',
+              borderTop: '1px solid rgba(0, 255, 200, 0.12)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)'
             }}>
-              <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8125rem' }}>
+              <div style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '0.8125rem' }}>
                 {isValid() ? (
-                  <span style={{ color: '#22C55E' }}>✓ Ready to publish</span>
+                  <span style={{ color: '#22C55E', fontWeight: '500' }}>✓ Ready to publish</span>
                 ) : (
                   <span>Complete all required fields to publish your ad</span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '14px' }}>
                 <button type="button" onClick={() => navigate('/p2p/merchant')} style={{
-                  padding: '12px 28px',
-                  background: 'transparent',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  padding: '11px 26px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '10px',
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  color: 'rgba(255, 255, 255, 0.65)',
                   fontSize: '0.875rem',
                   fontWeight: '600',
                   cursor: 'pointer'
