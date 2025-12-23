@@ -418,34 +418,47 @@ export default function CreateAd() {
 
             {/* SECTION 4: TRADE LIMITS */}
             <div style={BOX_STYLE}>
-              <div style={SECTION_TITLE}>Trade limits ({formData.crypto_currency})</div>
+              <div style={SECTION_TITLE}>Trade limits</div>
+              <p style={{ fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.3)', marginBottom: '10px', marginTop: '-8px' }}>
+                Limits shown in base asset of selected trading pair
+              </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={LABEL_STYLE}>Minimum</label>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    value={formData.min_amount}
-                    onChange={(e) => handleChange('min_amount', e.target.value)}
-                    onFocus={() => setFocusedField('min')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="0.01"
-                    style={{ ...INPUT_STYLE, ...(focusedField === 'min' ? INPUT_FOCUS : {}) }}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="number"
+                      step="0.00000001"
+                      value={formData.min_amount}
+                      onChange={(e) => handleChange('min_amount', e.target.value)}
+                      onFocus={() => setFocusedField('min')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="0.01"
+                      style={{ ...INPUT_STYLE, paddingRight: '50px', ...(focusedField === 'min' ? INPUT_FOCUS : {}) }}
+                    />
+                    <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.75rem', fontWeight: '600' }}>
+                      {formData.crypto_currency}
+                    </span>
+                  </div>
                   <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Minimum per trade</p>
                 </div>
                 <div>
                   <label style={LABEL_STYLE}>Maximum</label>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    value={formData.max_amount}
-                    onChange={(e) => handleChange('max_amount', e.target.value)}
-                    onFocus={() => setFocusedField('max')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder="10"
-                    style={{ ...INPUT_STYLE, ...(focusedField === 'max' ? INPUT_FOCUS : {}) }}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="number"
+                      step="0.00000001"
+                      value={formData.max_amount}
+                      onChange={(e) => handleChange('max_amount', e.target.value)}
+                      onFocus={() => setFocusedField('max')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="10"
+                      style={{ ...INPUT_STYLE, paddingRight: '50px', ...(focusedField === 'max' ? INPUT_FOCUS : {}) }}
+                    />
+                    <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.75rem', fontWeight: '600' }}>
+                      {formData.crypto_currency}
+                    </span>
+                  </div>
                   <p style={{ marginTop: '4px', fontSize: '0.5rem', color: 'rgba(255, 255, 255, 0.25)' }}>Maximum per trade</p>
                 </div>
               </div>
