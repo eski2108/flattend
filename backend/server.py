@@ -5677,11 +5677,11 @@ async def create_p2p_express_order(order_data: Dict):
     else:
         # ==========================================================================
         # EXPRESS BUY - Non-core coins via NowPayments USDT conversion
+        # NO P2P FALLBACK - Return 409 if liquidity unavailable
         # ==========================================================================
         
         # Get target coin price in USDT
         try:
-            # Use the live prices endpoint (has all coins)
             price_response = await get_live_prices_endpoint()
             prices = price_response.get("prices", {})
             target_price_usd = prices.get(crypto, {}).get("price_usd", 0)
@@ -5702,16 +5702,20 @@ async def create_p2p_express_order(order_data: Dict):
         })
         
         if not usdt_liquidity:
-            # NO FALLBACK - Return clear error
+            # NO FALLBACK - Return 409 Conflict
             raise HTTPException(
-                status_code=400, 
-                detail="Instant liquidity is currently unavailable.",
-                headers={"X-Liquidity-Status": "unavailable"}
+                status_code=409, 
+                detail={
+                    "error": "liquidity_unavailable",
+                    "message": "Instant liquidity is currently unavailable.",
+                    "coin": crypto,
+                    "usdt_required": round(usdt_needed, 2)
+                }
             )
         
         delivery_type = "express"
         delivery_source = "nowpayments_conversion"
-        estimated_delivery = "2-5 minutes"
+        estimated_delivery = DELIVERY_TIME_EXPRESS
         
         # 1. DEBIT GBP from user wallet
         try:
