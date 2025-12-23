@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import Layout from '@/components/Layout';
+
 import { IoChatbubbles, IoCheckmark as Check, IoCheckmarkCircle, IoCloudUpload, IoDocument, IoImage as Image, IoSend, IoWarning } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -106,24 +106,24 @@ function DisputeCentre() {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div style={{ padding: '2rem', textAlign: 'center', color: '#888', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', minHeight: '100vh' }}>
           Loading dispute...
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (!dispute) {
     return (
-      <Layout>
+      <>
         <div style={{ padding: '2rem', textAlign: 'center', background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', minHeight: '100vh' }}>
           <div style={{ color: '#888', fontSize: '16px', marginBottom: '1rem' }}>Dispute not found</div>
           <button onClick={() => navigate('/dashboard')} style={{ padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #00F0FF, #A855F7)', border: 'none', borderRadius: '8px', color: '#000', fontWeight: '700', cursor: 'pointer' }}>
             Back to Dashboard
           </button>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -135,7 +135,7 @@ function DisputeCentre() {
   };
 
   return (
-    <Layout>
+    <>
       <div style={{ background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1.5rem' }}>
           
@@ -289,7 +289,7 @@ function DisputeCentre() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Layout from '@/components/Layout';
+
 import { generateTradingPairs, getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
 import { IoSearchOutline, IoStarOutline, IoStar } from 'react-icons/io5';
@@ -103,7 +103,7 @@ export default function MobileMarketSelection() {
   ];
 
   return (
-    <Layout>
+    <>
       <style>
         {`
           .main-content {
@@ -358,6 +358,6 @@ export default function MobileMarketSelection() {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { DollarSign, IoCash, IoTrendingDown, IoTrendingUp, PieChart } from 'react-icons/io5';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout';
+
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -74,16 +74,16 @@ export default function PortfolioPage() {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div style={{ minHeight: '100vh', background: '#0B0E13', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ color: '#FFF' }}>Loading portfolio...</div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div style={{ minHeight: '100vh', background: '#0B0E13', padding: '2rem' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
@@ -296,6 +296,6 @@ export default function PortfolioPage() {
         </div>
       </div>
     </div>
-    </Layout>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Layout from '@/components/Layout';
+
 import '../styles/globalSwapTheme.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -31,7 +31,7 @@ export default function Markets() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="swap-theme-page">
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           <div className="swap-theme-card">
@@ -64,6 +64,6 @@ export default function Markets() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

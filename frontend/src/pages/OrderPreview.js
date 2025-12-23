@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Layout from '@/components/Layout';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { IoCard, IoCheckmarkCircle as CheckCircle2, IoShield, IoStar } from 'react-icons/io5';
@@ -197,12 +197,12 @@ export default function OrderPreview() {
 
   if (!offer) {
     return (
-      <Layout>
+      <>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
           <p style={{ color: '#888', fontSize: '18px' }}>No offer selected</p>
           <Button onClick={() => navigate('/p2p-marketplace')}>Back to Marketplace</Button>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -213,7 +213,7 @@ export default function OrderPreview() {
   const cryptoCurrency = offer.crypto_currency || 'BTC';
 
   return (
-    <Layout>
+    <>
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1.5rem 1rem' }}>
 
         {/* Header */}
@@ -509,6 +509,6 @@ export default function OrderPreview() {
           )}
         </button>
       </div>
-    </Layout>
+    </>
   );
 }

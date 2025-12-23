@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '@/components/Layout';
+
 import { ArrowLeft, IoAdd, IoArrowBack, IoClose, Plus } from 'react-icons/io5';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -144,7 +144,7 @@ export default function CreateOffer() {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
           <div style={{
             width: '48px',
@@ -155,7 +155,7 @@ export default function CreateOffer() {
             animation: 'spin 1s linear infinite'
           }}></div>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -163,7 +163,7 @@ export default function CreateOffer() {
   const currencySymbol = config?.currencies[fiatCurrency]?.symbol || '';
 
   return (
-    <Layout>
+    <>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1rem' }}>
         {/* Header */}
         <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -580,6 +580,6 @@ export default function CreateOffer() {
           </div>
         </form>
       </div>
-    </Layout>
+    </>
   );
 }

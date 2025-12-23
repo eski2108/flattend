@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout';
+
 import CHXButton from '@/components/CHXButton';
 import { IoAlertCircle, IoCheckmark as Check, IoCheckmarkCircle, IoCloudDownload, IoCopy, IoKey, IoMail as Mail, IoPhonePortrait, IoShield } from 'react-icons/io5';
 
@@ -144,7 +144,7 @@ export default function TwoFactorSetup() {
   };
 
   return (
-    <Layout>
+    <>
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #05121F 0%, #0A1F2E 50%, #051018 100%)',
@@ -424,6 +424,6 @@ export default function TwoFactorSetup() {
 
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
