@@ -407,10 +407,10 @@ export default function AdminFees() {
             </div>
             <div className="fee-card">
               <div className="fee-card-header">
-                <div className="fee-name">P2P Express Fee</div>
+                <div className="fee-name">Express Buy Fee (Platform Liquidity)</div>
                 <div className="fee-value">{feeSettings.p2p_express_fee_percent || 2}%</div>
               </div>
-              <div className="fee-description">Express buy premium fee</div>
+              <div className="fee-description">Express buy premium fee - platform liquidity</div>
               <button className="edit-fee-btn" onClick={() => { setEditFeeData({ fee_type: 'p2p_express_fee_percent', value: feeSettings.p2p_express_fee_percent || 2 }); setEditFeeModal(true); }}>Edit</button>
             </div>
             <div className="fee-card">
