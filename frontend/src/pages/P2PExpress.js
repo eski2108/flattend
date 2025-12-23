@@ -31,6 +31,7 @@ export default function P2PExpress() {
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(null);
   const [countdown, setCountdown] = useState(0);
+  const [showNoLiquidityModal, setShowNoLiquidityModal] = useState(false);
 
   const EXPRESS_FEE_PERCENT = 2.5;
 
