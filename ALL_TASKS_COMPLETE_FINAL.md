@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://binancelike-ui.preview.emergentagent.com
+**URL:** https://peer-listings.preview.emergentagent.com
 
 **Services Status:**
 ```bash

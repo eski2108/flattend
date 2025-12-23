@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://binancelike-ui.preview.emergentagent.com
+**Live URL:** https://peer-listings.preview.emergentagent.com
 
 ---
 

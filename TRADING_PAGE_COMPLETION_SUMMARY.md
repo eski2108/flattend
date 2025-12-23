@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://binancelike-ui.preview.emergentagent.com/#/trading
+**Live URL:** https://peer-listings.preview.emergentagent.com/#/trading
 
 ---
 

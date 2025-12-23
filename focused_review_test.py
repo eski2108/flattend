@@ -43,7 +43,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://binancelike-ui.preview.emergentagent.com/api"
+BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
 
 # Test credentials from review request
 EXISTING_USER = {

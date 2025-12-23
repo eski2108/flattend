@@ -26,7 +26,7 @@ YOU ASKED FOR PROOF. HERE IT IS.
    ```
    
    LIVE TEST:
-   $ curl "https://binancelike-ui.preview.emergentagent.com/api/wallet/send/BTC/metadata?user_id=test"
+   $ curl "https://peer-listings.preview.emergentagent.com/api/wallet/send/BTC/metadata?user_id=test"
    
    RESULT: ✅ Returns real data from backend
 
@@ -46,7 +46,7 @@ YOU ASKED FOR PROOF. HERE IT IS.
    ```
    
    LIVE TEST:
-   $ curl "https://binancelike-ui.preview.emergentagent.com/api/crypto-bank/deposit-address/btc"
+   $ curl "https://peer-listings.preview.emergentagent.com/api/crypto-bank/deposit-address/btc"
    
    RESULT: ✅ Returns REAL Bitcoin address: 3MwVmtfXczEUJE3C23visrCptPhnLHQ2XC
 
@@ -94,10 +94,10 @@ THE PAGES THAT DON'T NEED THEM ARE NOT CONNECTED.
    $ cat /app/backend/server.py | grep -A 5 "nowpayments.create_payout"
    
 3. Test live endpoint:
-   $ curl "https://binancelike-ui.preview.emergentagent.com/api/wallet/send/BTC/metadata?user_id=test"
+   $ curl "https://peer-listings.preview.emergentagent.com/api/wallet/send/BTC/metadata?user_id=test"
 
 4. Test deposit address:
-   $ curl "https://binancelike-ui.preview.emergentagent.com/api/crypto-bank/deposit-address/btc"
+   $ curl "https://peer-listings.preview.emergentagent.com/api/crypto-bank/deposit-address/btc"
 
 ================================================================================
 📁 PROOF DOCUMENTS:

@@ -13,7 +13,7 @@ This test verifies the P2P escrow system architecture and available functionalit
 8. Dispute system endpoints
 9. P2P trade management endpoints
 
-Backend URL: https://binancelike-ui.preview.emergentagent.com
+Backend URL: https://peer-listings.preview.emergentagent.com
 """
 
 import asyncio
@@ -25,7 +25,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://binancelike-ui.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://peer-listings.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class P2PEscrowFinalTest:

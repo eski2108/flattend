@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Backend URL from environment
-BACKEND_URL = "https://binancelike-ui.preview.emergentagent.com/api"
+BACKEND_URL = "https://peer-listings.preview.emergentagent.com/api"
 
 class FinancialEngineProofTest:
     def __init__(self):

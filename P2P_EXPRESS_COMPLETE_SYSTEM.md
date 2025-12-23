@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://binancelike-ui.preview.emergentagent.com/p2p-express
+https://peer-listings.preview.emergentagent.com/p2p-express
 
 ---
 

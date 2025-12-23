@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://binancelike-ui.preview.emergentagent.com/api"
+BACKEND_URL = "https://peer-listings.preview.emergentagent.com/api"
 
 class WalletPageTester:
     def __init__(self):

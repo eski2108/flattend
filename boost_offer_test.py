@@ -21,7 +21,7 @@ import sys
 from datetime import datetime, timezone
 
 # Configuration
-BASE_URL = "https://binancelike-ui.preview.emergentagent.com/api"
+BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
 
 class BoostOfferTester:
     def __init__(self):

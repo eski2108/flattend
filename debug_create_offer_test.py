@@ -32,7 +32,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://binancelike-ui.preview.emergentagent.com/api"
+BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
 
 # Test User for debugging
 DEBUG_USER = {

@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://binancelike-ui.preview.emergentagent.com`
-- Backend API: `https://binancelike-ui.preview.emergentagent.com/api`
+- Frontend: `https://peer-listings.preview.emergentagent.com`
+- Backend API: `https://peer-listings.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

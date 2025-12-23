@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://binancelike-ui.preview.emergentagent.com
+https://peer-listings.preview.emergentagent.com
 
 ---
 

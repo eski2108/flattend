@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://binancelike-ui.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://peer-listings.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {

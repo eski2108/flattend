@@ -19,7 +19,7 @@ Tests the 8-point verification plan for Spot Trading backend as requested in rev
 7. NEW PAIR ADDITION - Verify admin liquidity makes pairs tradable
 8. LIQUIDITY PROTECTION - Verify admin liquidity updates correctly
 
-**Backend URL:** https://binancelike-ui.preview.emergentagent.com/api
+**Backend URL:** https://peer-listings.preview.emergentagent.com/api
 """
 
 import requests
@@ -29,7 +29,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://binancelike-ui.preview.emergentagent.com/api"
+BASE_URL = "https://peer-listings.preview.emergentagent.com/api"
 
 class SpotTradingTester:
     def __init__(self):

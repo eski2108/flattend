@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://binancelike-ui.preview.emergentagent.com
+https://peer-listings.preview.emergentagent.com
 
 ### Test Route
 
-`https://binancelike-ui.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://peer-listings.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 
