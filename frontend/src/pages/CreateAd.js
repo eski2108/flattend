@@ -396,24 +396,62 @@ export default function CreateAd() {
               </div>
             </div>
 
-            {/* BUTTONS */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '28px' }}>
-              <button type="button" onClick={() => navigate('/p2p/merchant')} style={{ padding: '14px 32px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'rgba(255,255,255,0.6)', fontSize: '0.9375rem', fontWeight: '600', cursor: 'pointer' }}>
-                Cancel
-              </button>
-              <button type="submit" disabled={creating || !isValid()} style={{
-                padding: '14px 40px',
-                background: (creating || !isValid()) ? 'rgba(40,40,50,0.8)' : 'linear-gradient(135deg, #22C55E, #14B8A6)',
-                border: 'none', borderRadius: '12px',
-                color: (creating || !isValid()) ? 'rgba(255,255,255,0.25)' : '#fff',
-                fontSize: '0.9375rem', fontWeight: '700',
-                cursor: (creating || !isValid()) ? 'not-allowed' : 'pointer',
-                boxShadow: (creating || !isValid()) ? 'none' : '0 6px 30px rgba(34,197,94,0.35)',
-                display: 'flex', alignItems: 'center', gap: '8px'
-              }}>
-                {creating && <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
-                Publish ad
-              </button>
+            {/* STICKY ACTION FOOTER */}
+            <div style={{
+              marginTop: '32px',
+              padding: '24px 32px',
+              background: 'linear-gradient(180deg, rgba(8, 12, 28, 0.95) 0%, rgba(5, 8, 20, 0.98) 100%)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: '16px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.3)'
+            }}>
+              <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8125rem' }}>
+                {isValid() ? (
+                  <span style={{ color: '#22C55E' }}>✓ Ready to publish</span>
+                ) : (
+                  <span>Complete all required fields to publish</span>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <button type="button" onClick={() => navigate('/p2p/merchant')} style={{
+                  padding: '14px 32px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontSize: '0.9375rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}>
+                  Cancel
+                </button>
+                <button type="submit" disabled={creating || !isValid()} style={{
+                  padding: '14px 48px',
+                  background: (creating || !isValid()) 
+                    ? 'rgba(40, 40, 50, 0.6)' 
+                    : 'linear-gradient(135deg, #22C55E 0%, #14B8A6 100%)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: (creating || !isValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
+                  fontSize: '1rem',
+                  fontWeight: '700',
+                  cursor: (creating || !isValid()) ? 'not-allowed' : 'pointer',
+                  boxShadow: (creating || !isValid()) 
+                    ? 'none' 
+                    : '0 6px 30px rgba(34, 197, 94, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s'
+                }}>
+                  {creating && <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
+                  Publish ad
+                </button>
+              </div>
             </div>
           </form>
         </div>
