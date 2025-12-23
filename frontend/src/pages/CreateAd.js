@@ -230,20 +230,25 @@ export default function CreateAd() {
 
   const getPillStyle = (isSelected, color = '#22C55E') => ({
     flex: 1,
-    height: '50px',
-    background: isSelected ? `${color}18` : 'rgba(0, 0, 0, 0.3)',
-    border: isSelected ? `2px solid ${color}` : '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: '10px',
-    color: isSelected ? color : 'rgba(255, 255, 255, 0.5)',
-    fontSize: '0.9375rem',
-    fontWeight: '600',
+    height: '54px',
+    background: isSelected 
+      ? `linear-gradient(135deg, ${color}25 0%, ${color}15 100%)` 
+      : 'rgba(0, 0, 0, 0.4)',
+    border: isSelected ? `2px solid ${color}` : '1px solid rgba(255, 255, 255, 0.06)',
+    borderRadius: '12px',
+    color: isSelected ? '#fff' : 'rgba(255, 255, 255, 0.4)',
+    fontSize: '1rem',
+    fontWeight: '700',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    boxShadow: isSelected ? `0 0 20px ${color}30` : 'none',
+    transition: 'all 0.25s ease',
+    boxShadow: isSelected 
+      ? `0 0 25px ${color}40, inset 0 1px 0 rgba(255,255,255,0.1)` 
+      : 'inset 0 1px 0 rgba(255,255,255,0.02)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px'
+    gap: '8px',
+    textShadow: isSelected ? `0 0 20px ${color}` : 'none',
   });
 
   return (
