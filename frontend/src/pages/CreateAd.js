@@ -557,7 +557,7 @@ export default function CreateAd() {
                       fontSize: '0.8rem',
                       height: '44px',
                       background: 'rgba(0,0,0,0.5)',
-                      border: paymentDropdownOpen ? '1px solid #F59E0B' : '1px solid rgba(245,158,11,0.3)'
+                      border: paymentDropdownOpen ? '1px solid #14B8A6' : '1px solid rgba(20,184,166,0.3)'
                     }}
                   >
                     <span>+ Add payment methods...</span>
