@@ -30,6 +30,8 @@ function InstantBuy() {
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(null);
   const [countdown, setCountdown] = useState(0);
+  const [showNoLiquidityModal, setShowNoLiquidityModal] = useState(false);
+  const [noLiquidityCoin, setNoLiquidityCoin] = useState(null);
 
   useEffect(() => {
     // Load in parallel but stop spinner after first critical data
