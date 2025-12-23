@@ -377,16 +377,16 @@ export default function P2PExpress() {
                     <>
                       <IoFlash size={20} color="#22C55E" />
                       <div>
-                        <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>Instant Delivery Available</div>
-                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Crypto will be credited immediately</div>
+                        <div style={{ fontSize: '15px', color: '#22C55E', fontWeight: '700' }}>Platform Liquidity Available</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Fulfilled instantly by CoinHubX</div>
                       </div>
                     </>
                   ) : (
                     <>
                       <IoTime size={20} color="#F5C542" />
                       <div>
-                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Express Seller (2-5 min)</div>
-                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Matched with fastest qualified seller</div>
+                        <div style={{ fontSize: '15px', color: '#F5C542', fontWeight: '700' }}>Platform Delivery (2-5 min)</div>
+                        <div style={{ fontSize: '13px', color: '#D1D5DB', marginTop: '2px' }}>Fulfilled by CoinHubX platform liquidity</div>
                       </div>
                     </>
                   )}
