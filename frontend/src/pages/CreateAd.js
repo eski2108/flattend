@@ -265,13 +265,13 @@ export default function CreateAd() {
   };
 
   const getPillStyle = (isSelected) => ({
-    height: '44px',
-    padding: '0 16px',
+    height: '52px',
+    padding: '0 24px',
     background: isSelected ? 'rgba(34, 197, 94, 0.12)' : 'rgba(0, 0, 0, 0.3)',
     border: isSelected ? '1px solid rgba(34, 197, 94, 0.45)' : '1px solid rgba(255, 255, 255, 0.06)',
     borderRadius: '10px',
     color: isSelected ? '#22C55E' : 'rgba(255, 255, 255, 0.4)',
-    fontSize: '0.8125rem',
+    fontSize: '0.9375rem',
     fontWeight: isSelected ? '600' : '500',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
@@ -279,7 +279,7 @@ export default function CreateAd() {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '6px'
+    gap: '8px'
   });
 
   const getPricingPillStyle = (isSelected) => ({
