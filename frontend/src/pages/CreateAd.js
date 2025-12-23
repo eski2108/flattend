@@ -190,7 +190,7 @@ export default function CreateAd() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', minHeight: 'calc(100vh - 200px)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
               
               {/* LEFT COLUMN */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
