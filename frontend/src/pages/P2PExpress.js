@@ -7,6 +7,9 @@ import { IoCash, IoCheckmark as Check, IoCheckmarkCircle, IoFlash, IoShield, IoT
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// CORE COINS - Only these have Instant Buy (pre-funded platform liquidity)
+const CORE_LIQUIDITY_COINS = ['BTC', 'ETH', 'USDT', 'USDC'];
+
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany',
   'France', 'Spain', 'Italy', 'Netherlands', 'Switzerland', 'Sweden',
@@ -32,8 +35,12 @@ export default function P2PExpress() {
   const [currentQuote, setCurrentQuote] = useState(null);
   const [countdown, setCountdown] = useState(0);
   const [showNoLiquidityModal, setShowNoLiquidityModal] = useState(false);
+  const [deliveryType, setDeliveryType] = useState('instant'); // 'instant' or 'express'
 
   const EXPRESS_FEE_PERCENT = 2.5;
+  
+  // Check if selected coin is a core coin (instant delivery)
+  const isCoreCoin = CORE_LIQUIDITY_COINS.includes(selectedCoin.toUpperCase());
 
   // Handle window resize for mobile responsiveness
   useEffect(() => {
