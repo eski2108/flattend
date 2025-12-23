@@ -175,7 +175,7 @@ export default function CreateAd() {
   };
 
   return (
-    <Layout>
+    <>
       {/* WIDE DESKTOP CONTAINER - Exchange-grade layout */}
       <div style={{
         minHeight: '100vh',
