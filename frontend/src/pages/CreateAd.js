@@ -81,17 +81,18 @@ const getAllPaymentMethods = () => Object.values(PAYMENT_METHODS_CONFIG).flat();
 const ACCENT = { green: '#22C55E', teal: '#14B8A6', blue: '#3B82F6', purple: '#8B5CF6', amber: '#F59E0B', grey: '#6B7280' };
 
 const cardStyle = (accent) => ({
-  background: 'linear-gradient(180deg, rgba(18, 24, 50, 0.98) 0%, rgba(10, 14, 32, 0.98) 100%)',
+  background: `linear-gradient(180deg, rgba(20, 28, 55, 0.95) 0%, rgba(12, 16, 38, 0.98) 100%)`,
   borderTop: `3px solid ${accent}`,
-  border: `1px solid ${accent}20`,
+  border: `1px solid ${accent}25`,
   borderRadius: '14px',
   padding: '22px 26px',
-  boxShadow: `0 4px 24px rgba(0,0,0,0.25), 0 0 40px ${accent}08`,
+  boxShadow: `0 4px 24px rgba(0,0,0,0.3), 0 0 60px ${accent}10, inset 0 1px 0 rgba(255,255,255,0.03)`,
+  position: 'relative',
 });
 
-const LABEL = { color: 'rgba(255,255,255,0.45)', fontSize: '0.6875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px', display: 'block' };
+const LABEL = { color: 'rgba(255,255,255,0.5)', fontSize: '0.6875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px', display: 'block' };
 const TITLE = { color: '#fff', fontSize: '0.9375rem', fontWeight: '600', marginBottom: '16px' };
-const INPUT = { width: '100%', padding: '14px 16px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', color: '#fff', fontSize: '1rem', fontWeight: '600', outline: 'none', boxSizing: 'border-box' };
+const INPUT = { width: '100%', padding: '14px 16px', background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', color: '#fff', fontSize: '1rem', fontWeight: '600', outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s' };
 
 export default function CreateAd() {
   const navigate = useNavigate();
