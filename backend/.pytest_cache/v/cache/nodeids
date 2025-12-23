@@ -1,0 +1,10 @@
+[
+  "tests/test_p2p_offers_mapper.py::TestDedupLogic::test_dedup_by_canonical_id",
+  "tests/test_p2p_offers_mapper.py::TestDedupLogic::test_no_collision_between_sources",
+  "tests/test_p2p_offers_mapper.py::TestEnhancedSellOrdersMapper::test_adds_source_and_canonical_id",
+  "tests/test_p2p_offers_mapper.py::TestEnhancedSellOrdersMapper::test_fixes_zero_available_amount",
+  "tests/test_p2p_offers_mapper.py::TestP2PAdsMapper::test_basic_sell_ad_mapping",
+  "tests/test_p2p_offers_mapper.py::TestP2PAdsMapper::test_canonical_offer_id_format",
+  "tests/test_p2p_offers_mapper.py::TestP2PAdsMapper::test_floating_price_mapping",
+  "tests/test_p2p_offers_mapper.py::TestP2PAdsMapper::test_missing_fields_defaults"
+]
