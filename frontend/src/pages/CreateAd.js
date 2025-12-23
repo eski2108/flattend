@@ -599,7 +599,7 @@ export default function CreateAd() {
                         if (!filtered.length) return null;
                         return (
                           <div key={group}>
-                            <div style={{ padding: '8px 14px 4px', fontSize: '0.6rem', fontWeight: '700', color: ACCENT.amber, textTransform: 'uppercase', letterSpacing: '0.04em', background: 'rgba(0,0,0,0.2)' }}>
+                            <div style={{ padding: '8px 14px 4px', fontSize: '0.6rem', fontWeight: '700', color: ACCENT.teal, textTransform: 'uppercase', letterSpacing: '0.04em', background: 'rgba(0,0,0,0.2)' }}>
                               {REGION_LABELS[group]}
                             </div>
                             {filtered.map(m => {
