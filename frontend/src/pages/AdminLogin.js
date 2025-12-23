@@ -30,7 +30,7 @@ export default function AdminLogin() {
 
     setLoading(true);
     try {
-      console.log('🔐 Attempting admin login...', { email, adminCode });
+      // console.log('🔐 Attempting admin login...', { email, adminCode });
       
       const response = await axios.post(`${API}/api/admin/login`, {
         email,
@@ -38,7 +38,7 @@ export default function AdminLogin() {
         admin_code: adminCode,
       });
 
-      console.log('📊 Admin login response:', response.data);
+      // console.log('📊 Admin login response:', response.data);
 
       if (response.data.success) {
         // Store admin user data
@@ -46,7 +46,7 @@ export default function AdminLogin() {
         localStorage.setItem('cryptobank_user', JSON.stringify(response.data.admin));
         
         toast.success('Admin login successful!');
-        console.log('🚀 Navigating to admin dashboard...');
+        // console.log('🚀 Navigating to admin dashboard...');
         
         // Use window.location for guaranteed navigation
         window.location.href = '/admin/dashboard';

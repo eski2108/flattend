@@ -134,8 +134,8 @@ export default function P2PTradeDetailDemo() {
   const isBuyer = user?.user_id === trade.buyer_id;
   const isSeller = user?.user_id === trade.seller_id;
   
-  console.log('User:', user?.user_id, 'Buyer:', trade.buyer_id, 'Seller:', trade.seller_id);
-  console.log('isBuyer:', isBuyer, 'isSeller:', isSeller, 'Trade Status:', trade.status);
+  // console.log('User:', user?.user_id, 'Buyer:', trade.buyer_id, 'Seller:', trade.seller_id);
+  // console.log('isBuyer:', isBuyer, 'isSeller:', isSeller, 'Trade Status:', trade.status);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 p-6">

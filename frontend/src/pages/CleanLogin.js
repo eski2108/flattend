@@ -9,7 +9,7 @@ import CHXButton from '@/components/CHXButton';
 const API_BASE = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function CleanLogin() {
-  console.log('📝 CLEAN LOGIN COMPONENT LOADED - No external dependencies');
+  // console.log('📝 CLEAN LOGIN COMPONENT LOADED - No external dependencies');
   
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -45,11 +45,11 @@ export default function CleanLogin() {
     setLoading(true);
     
     try {
-      console.log('🚀 CLEAN LOGIN - Attempting login to:', `${API_BASE}/auth/login`);
+      // console.log('🚀 CLEAN LOGIN - Attempting login to:', `${API_BASE}/auth/login`);
       
       const response = await axios.post(`${API_BASE}/auth/login`, formData);
       
-      console.log('✅ CLEAN LOGIN - Response received:', response.data);
+      // console.log('✅ CLEAN LOGIN - Response received:', response.data);
       
       if (response.data.success) {
         // Store user data

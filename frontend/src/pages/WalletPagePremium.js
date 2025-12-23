@@ -134,7 +134,7 @@ export default function WalletPagePremium() {
       
       // Load balances
       const balRes = await axios.get(`${API}/api/wallets/balances/${userId}`);
-      console.log('🔍 Wallet API Response:', balRes.data);
+      // console.log('🔍 Wallet API Response:', balRes.data);
       
       // VALIDATION: Ensure response has correct structure
       if (!balRes.data || typeof balRes.data !== 'object') {
@@ -156,21 +156,21 @@ export default function WalletPagePremium() {
       
       if (balRes.data.success) {
         const bals = balRes.data.balances || [];
-        console.log('🔍 Balances array:', bals);
+        // console.log('🔍 Balances array:', bals);
         setBalances(bals);
         
         // Calculate totals
         const total = bals.reduce((sum, bal) => {
           const value = bal.gbp_value || bal.value_gbp || 0;
-          console.log(`💰 ${bal.currency}: gbp_value=${value}`);
+          // console.log(`💰 ${bal.currency}: gbp_value=${value}`);
           return sum + value;
         }, 0);
         const available = bals.reduce((sum, bal) => sum + (bal.available_balance * (bal.price_gbp || 0)), 0);
         const locked = bals.reduce((sum, bal) => sum + ((bal.locked_balance || 0) * (bal.price_gbp || 0)), 0);
         
-        console.log('💰 Total Portfolio GBP:', total);
-        console.log('💰 Total Available:', available);
-        console.log('💰 Total Locked:', locked);
+        // console.log('💰 Total Portfolio GBP:', total);
+        // console.log('💰 Total Available:', available);
+        // console.log('💰 Total Locked:', locked);
         
         setTotalPortfolioGBP(total);
         setTotalAvailable(available);

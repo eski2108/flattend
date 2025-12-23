@@ -29,9 +29,9 @@ function DisputeCentre() {
     try {
       setLoading(true);
       const apiUrl = `${API}/api/disputes/${disputeId}`;
-      console.log('Fetching dispute from:', apiUrl);
+      // console.log('Fetching dispute from:', apiUrl);
       const response = await axios.get(apiUrl);
-      console.log('Dispute response:', response.data);
+      // console.log('Dispute response:', response.data);
       if (response.data.success) {
         setDispute(response.data.dispute);
       } else {

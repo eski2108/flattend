@@ -99,10 +99,10 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log('Login attempt with:', { email: formData.email, API });
+      // console.log('Login attempt with:', { email: formData.email, API });
       // USE OLD AUTH ENDPOINT FOR NOW (working)
       const response = await axios.post(`${API}/api/auth/login`, formData);
-      console.log('Login response:', response.data);
+      // console.log('Login response:', response.data);
       
       if (response.data.success) {
         // Check if 2FA is required
@@ -176,7 +176,7 @@ export default function Login() {
     try {
       setLoading(true);
       const googleAuthUrl = `${API}/api/auth/google`;
-      console.log('🔍 Redirecting to Google OAuth:', googleAuthUrl);
+      // console.log('🔍 Redirecting to Google OAuth:', googleAuthUrl);
       window.location.href = googleAuthUrl;
     } catch (error) {
       console.error('Google sign-in error:', error);

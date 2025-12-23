@@ -641,7 +641,7 @@ export default function AdminDashboard() {
         const resp = await axios.get(`${API}/api/admin/search/trades?q=${query}`);
         if (resp.data.success) {
           // Handle trades display
-          console.log('Trades:', resp.data.trades);
+          // console.log('Trades:', resp.data.trades);
         }
       }
     } catch (error) {

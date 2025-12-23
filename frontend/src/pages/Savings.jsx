@@ -51,12 +51,12 @@ const Savings = () => {
 
   const handleToggleFlexibleStaked = (index, newType) => {
     // Handle toggle
-    console.log('Toggle flexible/staked', index, newType);
+    // console.log('Toggle flexible/staked', index, newType);
   };
 
   const handleToggleAutoCompound = (index) => {
     // Handle auto-compound toggle
-    console.log('Toggle auto-compound', index);
+    // console.log('Toggle auto-compound', index);
   };
 
   return (

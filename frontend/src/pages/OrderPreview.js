@@ -36,7 +36,7 @@ export default function OrderPreview() {
   }, []);
 
   useEffect(() => {
-    console.log('🔍 OrderPreview loaded. Offer:', offer);
+    // console.log('🔍 OrderPreview loaded. Offer:', offer);
     
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
@@ -48,26 +48,26 @@ export default function OrderPreview() {
     setCurrentUser(user);
     
     if (!offer) {
-      console.log('❌ No offer found!');
+      // console.log('❌ No offer found!');
       toast.error('No offer data received');
       navigate('/p2p-marketplace');
       return;
     }
     
-    console.log('📊 Offer fields:', {
+    // console.log('📊 Offer fields:', {
       min_purchase: offer.min_purchase,
       max_purchase: offer.max_purchase,
       price_per_unit: offer.price_per_unit
     });
     
     if (!offer.min_purchase || !offer.max_purchase || !offer.price_per_unit) {
-      console.log('❌ Missing required fields!');
+      // console.log('❌ Missing required fields!');
       toast.error('Invalid or incomplete offer data');
       navigate('/p2p-marketplace');
       return;
     }
     
-    console.log('✅ Offer is valid!');
+    // console.log('✅ Offer is valid!');
     
     // Set default to mid-range
     const midCrypto = (offer.min_purchase + offer.max_purchase) / 2;
@@ -104,7 +104,7 @@ export default function OrderPreview() {
   // NEW: Validate wallet address (optional, non-blocking)
   const validateWalletAddress = async () => {
     if (!walletAddress.trim()) {
-      console.log('No wallet address provided');
+      // console.log('No wallet address provided');
       return;
     }
     
@@ -121,10 +121,10 @@ export default function OrderPreview() {
       if (response.data.valid) {
         setWalletValidation(response.data);
       } else {
-        console.log('Wallet validation returned invalid');
+        // console.log('Wallet validation returned invalid');
       }
     } catch (error) {
-      console.log('Wallet validation skipped - endpoint may not exist');
+      // console.log('Wallet validation skipped - endpoint may not exist');
       // Don't block trade creation
     } finally {
       setValidatingWallet(false);
@@ -155,7 +155,7 @@ export default function OrderPreview() {
     try {
       await validateWalletAddress();
     } catch (err) {
-      console.log('Wallet validation skipped:', err);
+      // console.log('Wallet validation skipped:', err);
       // Continue anyway - validation is optional
     }
 
@@ -170,8 +170,8 @@ export default function OrderPreview() {
         buyer_wallet_network: walletNetwork || null
       };
       
-      console.log('🚀 Creating trade with payload:', tradePayload);
-      console.log('📊 Offer data:', {
+      // console.log('🚀 Creating trade with payload:', tradePayload);
+      // console.log('📊 Offer data:', {
         order_id: offer.order_id,
         payment_methods: offer.payment_methods,
         crypto_currency: offer.crypto_currency
@@ -179,11 +179,11 @@ export default function OrderPreview() {
       
       const response = await axios.post(`${API}/api/p2p/create-trade`, tradePayload);
 
-      console.log('✅ API Response:', response.data);
+      // console.log('✅ API Response:', response.data);
       
       if (response.data.success) {
         const tradeId = response.data.trade_id || response.data.trade?.trade_id || response.data.id;
-        console.log('🚀 Navigating to trade:', tradeId);
+        // console.log('🚀 Navigating to trade:', tradeId);
         
         if (!tradeId) {
           console.error('❌ No trade_id in response!', response.data);

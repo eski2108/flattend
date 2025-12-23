@@ -67,9 +67,9 @@ export default function TradePage() {
   const loadTradeDetails = async () => {
     try {
       const apiUrl = `${BACKEND_URL}/api/p2p/trade/${tradeId}`;
-      console.log('Loading trade from:', apiUrl);
+      // console.log('Loading trade from:', apiUrl);
       const response = await axios.get(apiUrl);
-      console.log('Trade response:', response.data);
+      // console.log('Trade response:', response.data);
       
       if (response.data.success && response.data.trade) {
         setTrade(response.data.trade);

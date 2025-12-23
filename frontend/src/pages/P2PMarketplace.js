@@ -268,7 +268,7 @@ function P2PMarketplace() {
 
   const handleBuyOffer = async (offer) => {
     try {
-      console.log('🔥 handleBuyOffer called!', offer);
+      // console.log('🔥 handleBuyOffer called!', offer);
       
       const userData = localStorage.getItem('cryptobank_user');
       if (!userData) {

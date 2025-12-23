@@ -7,15 +7,15 @@ import Layout from '../components/Layout';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function AddPaymentMethod() {
-  console.log('🔥 AddPaymentMethod component MOUNTED');
-  console.log('🔥 API URL:', API);
+  // console.log('🔥 AddPaymentMethod component MOUNTED');
+  // console.log('🔥 API URL:', API);
   
   const navigate = useNavigate();
   
   useEffect(() => {
-    console.log('🔥 AddPaymentMethod useEffect running');
+    // console.log('🔥 AddPaymentMethod useEffect running');
     const userData = localStorage.getItem('cryptobank_user');
-    console.log('🔥 User data from localStorage:', userData);
+    // console.log('🔥 User data from localStorage:', userData);
   }, []);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState({
@@ -36,8 +36,8 @@ export default function AddPaymentMethod() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('🔥 Form submitted');
-    console.log('🔥 Payment method data:', paymentMethod);
+    // console.log('🔥 Form submitted');
+    // console.log('🔥 Payment method data:', paymentMethod);
     
     // Validation
     if (paymentMethod.type === 'bank_transfer') {
@@ -63,15 +63,15 @@ export default function AddPaymentMethod() {
       }
 
       const user = JSON.parse(userData);
-      console.log('🔥 Sending request to:', `${API}/api/user/payment-methods`);
-      console.log('🔥 User ID:', user.user_id);
+      // console.log('🔥 Sending request to:', `${API}/api/user/payment-methods`);
+      // console.log('🔥 User ID:', user.user_id);
       
       const response = await axios.post(`${API}/api/user/payment-methods`, {
         user_id: user.user_id,
         payment_method: paymentMethod
       });
 
-      console.log('🔥 Response:', response.data);
+      // console.log('🔥 Response:', response.data);
 
       if (response.data.success) {
         toast.success('Payment method added successfully! ✅');
@@ -89,7 +89,7 @@ export default function AddPaymentMethod() {
     }
   };
 
-  console.log('🔥 Rendering AddPaymentMethod component');
+  // console.log('🔥 Rendering AddPaymentMethod component');
   
   return (
     <Layout>

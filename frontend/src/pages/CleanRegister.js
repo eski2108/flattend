@@ -9,7 +9,7 @@ import CHXButton from '@/components/CHXButton';
 const API_BASE = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function CleanRegister() {
-  console.log('📝 CLEAN REGISTER COMPONENT LOADED - No external dependencies');
+  // console.log('📝 CLEAN REGISTER COMPONENT LOADED - No external dependencies');
   
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -85,11 +85,11 @@ export default function CleanRegister() {
     setLoading(true);
     
     try {
-      console.log('🚀 CLEAN REGISTER - Attempting registration to:', `${API_BASE}/auth/register`);
+      // console.log('🚀 CLEAN REGISTER - Attempting registration to:', `${API_BASE}/auth/register`);
       
       const response = await axios.post(`${API_BASE}/auth/register`, formData);
       
-      console.log('✅ CLEAN REGISTER - Response received:', response.data);
+      // console.log('✅ CLEAN REGISTER - Response received:', response.data);
       
       if (response.data.success) {
         toast.success('Registration successful! Please check your email for verification.');

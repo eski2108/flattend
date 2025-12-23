@@ -45,11 +45,11 @@ function PremiumAuth() {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      console.log('Initiating Google sign-in...');
+      // console.log('Initiating Google sign-in...');
       const response = await axios.get(`${API}/api/auth/google`);
-      console.log('Google auth response:', response.data);
+      // console.log('Google auth response:', response.data);
       if (response.data.auth_url) {
-        console.log('Redirecting to:', response.data.auth_url);
+        // console.log('Redirecting to:', response.data.auth_url);
         window.location.href = response.data.auth_url;
       } else {
         toast.error('No auth URL received');
@@ -79,11 +79,11 @@ function PremiumAuth() {
     setLoading(true);
     try {
       const fullPhone = `${countryCode}${phoneNumber}`;
-      console.log('Sending OTP to:', fullPhone);
+      // console.log('Sending OTP to:', fullPhone);
       const response = await axios.post(`${API}/api/auth/phone/send-otp`, {
         phone_number: fullPhone
       });
-      console.log('OTP response:', response.data);
+      // console.log('OTP response:', response.data);
 
       if (response.data.success) {
         toast.success(`Verification code sent to ${fullPhone}! Check your messages. (Status: ${response.data.status})`);

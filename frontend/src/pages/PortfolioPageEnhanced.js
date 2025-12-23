@@ -52,7 +52,7 @@ export default function PortfolioPageEnhanced() {
         setTotalInvested(totalGBP);
         setTotalPL(0);
         setTotalPLPercent(0);
-        console.log('💵 PortfolioPage Total: £' + totalGBP.toFixed(2));
+        // console.log('💵 PortfolioPage Total: £' + totalGBP.toFixed(2));
       }
       setLoading(false);
       setRefreshing(false);
@@ -80,7 +80,7 @@ export default function PortfolioPageEnhanced() {
 
       // Auto-refresh portfolio every 10 seconds
       const refreshInterval = setInterval(() => {
-        console.log('🔄 Auto-refreshing portfolio...');
+        // console.log('🔄 Auto-refreshing portfolio...');
         fetchPortfolio(user.user_id);
       }, 10000); // 10 seconds
 

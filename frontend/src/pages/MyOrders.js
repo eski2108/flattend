@@ -15,20 +15,20 @@ export default function MyOrders() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    console.log('MyOrders: Component mounted, checking auth...');
+    // console.log('MyOrders: Component mounted, checking auth...');
     const userData = localStorage.getItem('cryptobank_user');
-    console.log('MyOrders: localStorage user data:', userData ? 'Found' : 'NOT FOUND');
+    // console.log('MyOrders: localStorage user data:', userData ? 'Found' : 'NOT FOUND');
     
     if (!userData) {
-      console.log('MyOrders: No user data, redirecting to login');
+      // console.log('MyOrders: No user data, redirecting to login');
       navigate('/login');
       return;
     }
     
     const user = JSON.parse(userData);
-    console.log('MyOrders: Parsed user:', user);
+    // console.log('MyOrders: Parsed user:', user);
     setCurrentUser(user);
-    console.log('MyOrders: Calling fetchTrades with userId:', user.user_id);
+    // console.log('MyOrders: Calling fetchTrades with userId:', user.user_id);
     fetchTrades(user.user_id);
 
     // Poll for updates every 10 seconds
@@ -42,13 +42,13 @@ export default function MyOrders() {
   const fetchTrades = async (userId) => {
     try {
       const apiUrl = `${API}/api/p2p/trades/user/${userId}`;
-      console.log('Fetching trades from:', apiUrl);
+      // console.log('Fetching trades from:', apiUrl);
       const response = await axios.get(apiUrl);
-      console.log('Trades response:', response.data);
+      // console.log('Trades response:', response.data);
       
       if (response.data.success) {
         setTrades(response.data.trades || []);
-        console.log('Loaded trades:', response.data.trades?.length || 0);
+        // console.log('Loaded trades:', response.data.trades?.length || 0);
       } else {
         console.error('Invalid response format:', response.data);
         setTrades([]);

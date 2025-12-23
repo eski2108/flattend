@@ -38,7 +38,7 @@ export default function SimpleDeposit() {
     setError('');
     
     try {
-      console.log('Generating address for:', currency);
+      // console.log('Generating address for:', currency);
       
       const response = await axios.post(`${API}/api/nowpayments/create-deposit`, {
         user_id: user?.user_id || 'demo_deposit_user',
@@ -49,7 +49,7 @@ export default function SimpleDeposit() {
         timeout: 15000 // 15 second timeout
       });
 
-      console.log('API Response:', response.data);
+      // console.log('API Response:', response.data);
 
       if (response.data.success && response.data.deposit_address) {
         const addr = response.data.deposit_address || response.data.address || response.data.pay_address;
@@ -59,7 +59,7 @@ export default function SimpleDeposit() {
         const qr = await QRCode.toDataURL(addr);
         setQrCode(qr);
         
-        console.log('Address generated successfully:', addr);
+        // console.log('Address generated successfully:', addr);
         toast.success('Deposit address generated!');
       } else {
         setError(response.data.message || 'Failed to generate address');
@@ -72,7 +72,7 @@ export default function SimpleDeposit() {
       toast.error(errorMsg);
     } finally {
       setLoading(false);
-      console.log('Loading complete');
+      // console.log('Loading complete');
     }
   };
 

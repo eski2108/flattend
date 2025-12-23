@@ -33,7 +33,7 @@ export default function SpotTradingPro() {
   useEffect(() => {
     const checkMobile = () => {
       const width = window.innerWidth;
-      console.log('📱 Window width:', width, 'isMobile:', width <= 768);
+      // console.log('📱 Window width:', width, 'isMobile:', width <= 768);
       setIsMobile(width <= 768);
     };
     checkMobile();

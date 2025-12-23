@@ -41,9 +41,9 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('🔴 SUBMIT BUTTON CLICKED');
-    console.log('API URL:', API);
-    console.log('Form data:', formData);
+    // console.log('🔴 SUBMIT BUTTON CLICKED');
+    // console.log('API URL:', API);
+    // console.log('Form data:', formData);
     
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
@@ -56,7 +56,7 @@ export default function Register() {
     }
     
     setLoading(true);
-    console.log('🔴 Making API call...');
+    // console.log('🔴 Making API call...');
     
     try {
       const requestData = {
@@ -67,22 +67,22 @@ export default function Register() {
         referral_code: formData.referral_code || undefined
       };
       
-      console.log('🔴 Request data:', requestData);
+      // console.log('🔴 Request data:', requestData);
       
       const response = await axios.post(`${API}/api/auth/register`, requestData);
       
-      console.log('🔴 Response received:', response.data);
+      // console.log('🔴 Response received:', response.data);
       
       if (response.data.success) {
-        console.log('🔴 Registration successful!');
+        // console.log('🔴 Registration successful!');
         
         if (response.data.phone_verification_required) {
-          console.log('🔵 VERIFICATION REQUIRED - Setting up verification screen');
-          console.log('🔵 Test code:', response.data.test_verification_code);
+          // console.log('🔵 VERIFICATION REQUIRED - Setting up verification screen');
+          // console.log('🔵 Test code:', response.data.test_verification_code);
           
           // Store test code in state if provided
           if (response.data.test_verification_code) {
-            console.log('🔵 Setting verification code in state');
+            // console.log('🔵 Setting verification code in state');
             setVerificationCode(response.data.test_verification_code);
             
             toast.success(`📱 CODE: ${response.data.test_verification_code}`, { 
@@ -99,22 +99,22 @@ export default function Register() {
           }
           
           // Show verification step - CRITICAL
-          console.log('🔵 Setting user email:', formData.email);
+          // console.log('🔵 Setting user email:', formData.email);
           setUserEmail(formData.email);
           
-          console.log('🔵 About to set verificationStep to TRUE');
+          // console.log('🔵 About to set verificationStep to TRUE');
           setVerificationStep(true);
           
           // Force React to re-render by updating multiple states
-          console.log('🔵 Verification step set to TRUE');
-          console.log('🔵 Current verificationStep state should be TRUE now');
+          // console.log('🔵 Verification step set to TRUE');
+          // console.log('🔵 Current verificationStep state should be TRUE now');
         } else {
-          console.log('🔴 No verification required, going to login');
+          // console.log('🔴 No verification required, going to login');
           toast.success('✅ Account created successfully! Please login.');
           setTimeout(() => navigate('/login'), 1500);
         }
       } else {
-        console.log('🔴 Registration response success=false');
+        // console.log('🔴 Registration response success=false');
         toast.error(response.data.message || 'Registration failed');
       }
     } catch (error) {
@@ -122,7 +122,7 @@ export default function Register() {
       console.error('🔴 Error response:', error.response?.data);
       toast.error(error.response?.data?.detail || error.message || 'Registration failed');
     } finally {
-      console.log('🔴 Setting loading to false');
+      // console.log('🔴 Setting loading to false');
       setLoading(false);
     }
   };

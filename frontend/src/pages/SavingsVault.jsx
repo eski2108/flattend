@@ -206,7 +206,7 @@ const SavingsVault = () => {
         }));
         setAvailableCoins(coinList);
         setLoadingCoins(false);  // FIX: SET TO FALSE HERE
-        console.log(`✅ Loaded ${coinList.length} coins from NowPayments`);
+        // console.log(`✅ Loaded ${coinList.length} coins from NowPayments`);
         return;
       }
     } catch (error) {
@@ -224,7 +224,7 @@ const SavingsVault = () => {
           emoji: getCoinEmoji(symbol)
         }));
         setAvailableCoins(coinList);
-        console.log(`✅ Loaded ${coinList.length} coins from backend`);
+        // console.log(`✅ Loaded ${coinList.length} coins from backend`);
       }
     } catch (error) {
       console.error('Error loading coins:', error);
@@ -245,7 +245,7 @@ const SavingsVault = () => {
         { symbol: 'LINK', name: 'Chainlink', emoji: '🔗' },
         { symbol: 'AVAX', name: 'Avalanche', emoji: '🏔️' }
       ]);
-      console.log('✅ Using fallback coin list');
+      // console.log('✅ Using fallback coin list');
     } finally {
       setLoadingCoins(false);
     }

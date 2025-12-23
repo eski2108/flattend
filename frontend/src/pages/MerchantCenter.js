@@ -11,7 +11,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
 
 export default function MerchantCenter() {
-  console.log('🎯 MerchantCenter component MOUNTED');
+  // console.log('🎯 MerchantCenter component MOUNTED');
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -108,11 +108,11 @@ export default function MerchantCenter() {
       toast.error('Failed to load seller information');
       
       // Set default state so page can still render
-      console.log('💾 Setting default seller status');
+      // console.log('💾 Setting default seller status');
       setSellerStatus({ is_seller: false, can_activate: false });
       setMyAds([]);
     } finally {
-      console.log('🏁 fetchSellerStatus finally block - setting loading false');
+      // console.log('🏁 fetchSellerStatus finally block - setting loading false');
       setLoading(false);
     }
   };
@@ -220,10 +220,10 @@ export default function MerchantCenter() {
     }
   };
 
-  console.log('🎨 MerchantCenter render - loading:', loading, 'user:', currentUser, 'sellerStatus:', sellerStatus);
+  // console.log('🎨 MerchantCenter render - loading:', loading, 'user:', currentUser, 'sellerStatus:', sellerStatus);
   
   if (loading) {
-    console.log('⏳ Rendering loading spinner');
+    // console.log('⏳ Rendering loading spinner');
     return (
       <Layout>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
