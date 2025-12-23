@@ -155,14 +155,28 @@ export default function CreateAd() {
     if (!isValid()) { toast.error('Please complete all required fields'); return; }
     setCreating(true);
     try {
+      // Get user_id from localStorage
+      const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
+      const userId = userData.user_id;
+      
+      if (!userId) {
+        toast.error('Please log in to create an ad');
+        setCreating(false);
+        return;
+      }
+      
       const res = await axiosInstance.post('/p2p/create-ad', {
+        user_id: userId,
         ad_type: adType, crypto_currency: formData.crypto_currency, fiat_currency: formData.fiat_currency,
         price_type: formData.price_type, price_value: parseFloat(formData.price_value),
         min_amount: parseFloat(formData.min_amount), max_amount: parseFloat(formData.max_amount),
         payment_methods: formData.payment_methods, terms: formData.terms || ''
       });
       if (res.data.success) { setShowSuccess(true); setTimeout(() => navigate('/p2p/merchant'), 2000); }
-    } catch (err) { toast.error('Failed to create ad'); }
+    } catch (err) { 
+      const errorMsg = err.response?.data?.detail || 'Failed to create ad';
+      toast.error(errorMsg);
+    }
     finally { setCreating(false); }
   };
 
