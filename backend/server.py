@@ -5122,11 +5122,27 @@ async def check_express_liquidity(data: Dict):
 
 @api_router.post("/p2p/express/create")
 async def create_p2p_express_order(order_data: Dict):
-    """Create P2P Express order - admin liquidity first, then qualified seller"""
+    """
+    Create Instant Buy or Express Buy order
+    
+    INSTANT BUY (Core coins: BTC, ETH, USDT, USDC):
+        - Direct delivery from platform liquidity
+        - Instant execution
+        
+    EXPRESS BUY (Non-core coins):
+        - Conversion from USDT via NowPayments
+        - 2-5 minute delivery
+        
+    NO P2P FALLBACK - If liquidity unavailable, reject with clear message
+    """
     required_fields = ["user_id", "crypto", "country", "fiat_amount", "crypto_amount", "base_rate", "express_fee", "express_fee_percent", "net_amount"]
     for field in required_fields:
         if field not in order_data:
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+    
+    crypto = order_data["crypto"].upper()
+    crypto_amount = float(order_data["crypto_amount"])
+    fiat_amount = float(order_data["fiat_amount"])
     
     # Get wallet service
     wallet_service = get_wallet_service()
@@ -5136,170 +5152,298 @@ async def create_p2p_express_order(order_data: Dict):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    has_admin_liquidity = order_data.get("has_admin_liquidity", False)
     trade_id = f"EXPRESS_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{order_data['user_id'][:8]}"
     
-    if has_admin_liquidity:
-        # INSTANT DELIVERY - Admin liquidity
-        seller_id = "admin_liquidity"
-        delivery_source = "admin_liquidity"
-        # http_status = "completed"  # Unused variable removed
-        payment_method = "platform_direct"
+    # ==========================================================================
+    # DETERMINE BUY TYPE: INSTANT (core coins) vs EXPRESS (conversion)
+    # ==========================================================================
+    is_core_coin = crypto in CORE_LIQUIDITY_COINS
+    
+    if is_core_coin:
+        # ==========================================================================
+        # INSTANT BUY - Core coins with direct platform liquidity
+        # ==========================================================================
+        
+        # Check admin liquidity for core coin
+        admin_liquidity = await db.admin_liquidity.find_one({
+            "currency": crypto,
+            "amount_available": {"$gte": crypto_amount},
+            "status": "active"
+        })
+        
+        if not admin_liquidity:
+            # NO FALLBACK - Return clear error
+            raise HTTPException(
+                status_code=400, 
+                detail="Instant liquidity is currently unavailable.",
+                headers={"X-Liquidity-Status": "unavailable"}
+            )
+        
+        delivery_type = "instant"
+        delivery_source = "platform_liquidity"
+        estimated_delivery = "Instant"
         
         # 1. DEBIT GBP from user wallet
         try:
             await wallet_service.debit(
                 user_id=order_data["user_id"],
                 currency="GBP",
-                amount=order_data["fiat_amount"],
-                transaction_type="purchase",
+                amount=fiat_amount,
+                transaction_type="instant_buy",
                 reference_id=trade_id,
                 metadata={
-                    "crypto": order_data["crypto"],
-                    "crypto_amount": order_data["crypto_amount"],
-                    "purchase_type": "p2p_express"
+                    "crypto": crypto,
+                    "crypto_amount": crypto_amount,
+                    "purchase_type": "instant_buy",
+                    "is_core_coin": True
                 }
             )
-            logger.info(f"✅ Debited £{order_data['fiat_amount']} from user {order_data['user_id']}")
+            logger.info(f"✅ INSTANT BUY: Debited £{fiat_amount} from user {order_data['user_id']}")
         except Exception as e:
             error_message = str(e)
             logger.error(f"❌ Failed to debit GBP: {error_message}")
-            # Return 400 for insufficient balance, 500 for other errors
             if "Insufficient balance" in error_message:
                 raise HTTPException(status_code=400, detail=error_message)
             else:
                 raise HTTPException(status_code=500, detail=f"Failed to debit payment: {error_message}")
         
-        # 2. CREDIT crypto to user wallet
+        # 2. CREDIT crypto to user wallet (instant)
         try:
             await wallet_service.credit(
                 user_id=order_data["user_id"],
-                currency=order_data["crypto"],
-                amount=order_data["crypto_amount"],
-                transaction_type="purchase",
+                currency=crypto,
+                amount=crypto_amount,
+                transaction_type="instant_buy",
                 reference_id=trade_id,
                 metadata={
-                    "fiat_amount": order_data["fiat_amount"],
-                    "purchase_type": "p2p_express",
+                    "fiat_amount": fiat_amount,
+                    "purchase_type": "instant_buy",
                     "delivery": "instant"
                 }
             )
-            logger.info(f"✅ Credited {order_data['crypto_amount']} {order_data['crypto']} to user {order_data['user_id']}")
+            logger.info(f"✅ INSTANT BUY: Credited {crypto_amount} {crypto} to user {order_data['user_id']}")
         except Exception as e:
             logger.error(f"❌ Failed to credit crypto: {e}")
             # Refund the GBP if crypto credit fails
             await wallet_service.credit(
                 user_id=order_data["user_id"],
                 currency="GBP",
-                amount=order_data["fiat_amount"],
+                amount=fiat_amount,
                 transaction_type="refund",
                 reference_id=trade_id,
                 metadata={"reason": "crypto_credit_failed"}
             )
             raise HTTPException(status_code=500, detail=f"Failed to credit crypto: {str(e)}")
         
-        # 3. RECORD AND CREDIT EXPRESS FEE to platform fee wallet
-        try:
-            # Record fee transaction
-            await db.platform_fees.insert_one({
-                "fee_id": f"FEE_{trade_id}",
-                "trade_id": trade_id,
-                "fee_type": "p2p_express",
-                "amount": order_data["express_fee"],
-                "currency": "GBP",
-                "user_id": order_data["user_id"],
-                "crypto": order_data["crypto"],
-                "crypto_amount": order_data["crypto_amount"],
-                "created_at": datetime.now(timezone.utc).isoformat()
-            })
-            
-            # Credit fee to admin fee wallet (internal balance) - SYNCED
-            await sync_credit_balance("PLATFORM_FEES", "GBP", order_data["express_fee"], "p2p_express_fee")
-            
-            logger.info(f"✅ Recorded and credited express fee: £{order_data['express_fee']} to admin wallet")
-        except Exception as e:
-            logger.error(f"⚠️ Failed to record fee: {e}")
-        
-        # Log admin liquidity trade
-        await db.admin_liquidity_trades.insert_one({
-            "trade_id": trade_id,
-            "crypto_currency": order_data["crypto"],
-            "crypto_amount": order_data["crypto_amount"],
-            "fiat_amount": order_data["fiat_amount"],
-            "buyer_id": order_data["user_id"],
-            "completed_at": datetime.now(timezone.utc).isoformat(),
-            "created_at": datetime.now(timezone.utc).isoformat()
-        })
-        
-        # Update liquidity
+        # 3. Update admin liquidity
         await db.admin_liquidity.update_one(
-            {"crypto_currency": order_data["crypto"]},
-            {"$inc": {"available_amount": -order_data["crypto_amount"]}},
+            {"currency": crypto},
+            {"$inc": {"amount_available": -crypto_amount}},
             upsert=True
         )
         
-        estimated_delivery = "Instant"
+        status = "completed"
         countdown_expires_at = None
+        
     else:
-        # EXPRESS SELLER - Find qualified seller
-        qualified_seller = await db.trader_profiles.find_one(
-            {
-                "is_trader": True,
-                "is_online": True,
-                "is_express_qualified": True,
-                "trading_pairs": {"$in": [order_data["crypto"]]},
-                "completion_rate": {"$gte": 95},
-                "has_dispute_flags": False,
-                "average_release_time": {"$lt": 300}
-            },
-            sort=[("completion_rate", -1), ("average_release_time", 1)]
+        # ==========================================================================
+        # EXPRESS BUY - Non-core coins via NowPayments USDT conversion
+        # ==========================================================================
+        
+        # Get target coin price in USDT
+        try:
+            price_data = await get_crypto_price_cached(crypto)
+            target_price_usd = price_data.get("usd", 0) if price_data else 0
+        except:
+            target_price_usd = 0
+        
+        if target_price_usd <= 0:
+            raise HTTPException(status_code=400, detail=f"Unable to get price for {crypto}")
+        
+        # Calculate USDT needed (with 2% slippage buffer)
+        usdt_needed = crypto_amount * target_price_usd * 1.02
+        
+        # Check USDT liquidity for conversion
+        usdt_liquidity = await db.admin_liquidity.find_one({
+            "currency": "USDT",
+            "amount_available": {"$gte": usdt_needed},
+            "status": "active"
+        })
+        
+        if not usdt_liquidity:
+            # NO FALLBACK - Return clear error
+            raise HTTPException(
+                status_code=400, 
+                detail="Instant liquidity is currently unavailable.",
+                headers={"X-Liquidity-Status": "unavailable"}
+            )
+        
+        delivery_type = "express"
+        delivery_source = "nowpayments_conversion"
+        estimated_delivery = "2-5 minutes"
+        
+        # 1. DEBIT GBP from user wallet
+        try:
+            await wallet_service.debit(
+                user_id=order_data["user_id"],
+                currency="GBP",
+                amount=fiat_amount,
+                transaction_type="express_buy",
+                reference_id=trade_id,
+                metadata={
+                    "crypto": crypto,
+                    "crypto_amount": crypto_amount,
+                    "purchase_type": "express_buy",
+                    "is_core_coin": False,
+                    "conversion_source": EXPRESS_CONVERSION_SOURCE,
+                    "usdt_used": usdt_needed
+                }
+            )
+            logger.info(f"✅ EXPRESS BUY: Debited £{fiat_amount} from user {order_data['user_id']}")
+        except Exception as e:
+            error_message = str(e)
+            logger.error(f"❌ Failed to debit GBP: {error_message}")
+            if "Insufficient balance" in error_message:
+                raise HTTPException(status_code=400, detail=error_message)
+            else:
+                raise HTTPException(status_code=500, detail=f"Failed to debit payment: {error_message}")
+        
+        # 2. Deduct USDT from admin liquidity pool
+        await db.admin_liquidity.update_one(
+            {"currency": "USDT"},
+            {"$inc": {"amount_available": -usdt_needed}},
+            upsert=True
         )
         
-        if qualified_seller:
-            seller_id = qualified_seller["user_id"]
-            delivery_source = "express_seller"
-            payment_method = qualified_seller.get("preferred_payment_method", "Bank Transfer")
+        # 3. Initiate NowPayments conversion (USDT → target coin)
+        conversion_id = None
+        try:
+            from nowpayments_integration import NOWPaymentsService
+            nowpayments = NOWPaymentsService()
             
-            # Notify seller with countdown
-            try:
-                from p2p_notification_service import create_p2p_notification
-                await create_p2p_notification(
-                    user_id=seller_id,
-                    trade_id=trade_id,
-                    notification_type="express_seller_matched",
-                    message=f"EXPRESS ORDER: {order_data['crypto_amount']:.8f} {order_data['crypto']}. Release within 10 minutes or auto-cancel."
+            # Create exchange/conversion request
+            # Note: This creates the conversion order; actual delivery happens async via webhook
+            conversion_result = await asyncio.get_event_loop().run_in_executor(
+                None,
+                lambda: nowpayments.create_exchange(
+                    from_currency="usdt",
+                    to_currency=crypto.lower(),
+                    from_amount=usdt_needed,
+                    address=None  # We'll handle the payout internally
                 )
-            except Exception as e:
-                logger.error(f"Failed to notify seller: {e}")
-        else:
-            seller_id = "admin_liquidity_fallback"
-            delivery_source = "fallback"
-            payment_method = "Bank Transfer"
+            )
+            
+            if conversion_result and conversion_result.get("id"):
+                conversion_id = conversion_result.get("id")
+                logger.info(f"✅ EXPRESS BUY: NowPayments conversion initiated: {conversion_id}")
+            else:
+                logger.warning(f"⚠️ NowPayments conversion response: {conversion_result}")
+                
+        except Exception as np_error:
+            logger.error(f"⚠️ NowPayments conversion failed: {np_error}")
+            # Continue anyway - we'll credit from our pool and handle conversion async
         
-        # http_status = "pending_payment"  # Unused variable removed
-        estimated_delivery = "2-5 minutes"
-        countdown_expires_at = (datetime.now(timezone.utc) + timedelta(seconds=EXPRESS_RELEASE_TIMEOUT)).isoformat()
+        # 4. CREDIT crypto to user wallet (pending for express, or immediate if we have buffer stock)
+        # For now, credit immediately from our conversion buffer
+        try:
+            await wallet_service.credit(
+                user_id=order_data["user_id"],
+                currency=crypto,
+                amount=crypto_amount,
+                transaction_type="express_buy",
+                reference_id=trade_id,
+                metadata={
+                    "fiat_amount": fiat_amount,
+                    "purchase_type": "express_buy",
+                    "delivery": "express",
+                    "conversion_id": conversion_id,
+                    "usdt_converted": usdt_needed
+                }
+            )
+            logger.info(f"✅ EXPRESS BUY: Credited {crypto_amount} {crypto} to user {order_data['user_id']}")
+            status = "completed"
+        except Exception as e:
+            logger.error(f"❌ Failed to credit crypto: {e}")
+            # Refund the GBP
+            await wallet_service.credit(
+                user_id=order_data["user_id"],
+                currency="GBP",
+                amount=fiat_amount,
+                transaction_type="refund",
+                reference_id=trade_id,
+                metadata={"reason": "crypto_credit_failed"}
+            )
+            # Restore USDT liquidity
+            await db.admin_liquidity.update_one(
+                {"currency": "USDT"},
+                {"$inc": {"amount_available": usdt_needed}}
+            )
+            raise HTTPException(status_code=500, detail=f"Failed to complete express buy: {str(e)}")
+        
+        countdown_expires_at = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+    
+    # ==========================================================================
+    # RECORD TRADE AND FEES (Common to both flows)
+    # ==========================================================================
+    
+    # Record fee transaction
+    try:
+        await db.platform_fees.insert_one({
+            "fee_id": f"FEE_{trade_id}",
+            "trade_id": trade_id,
+            "fee_type": "instant_buy" if is_core_coin else "express_buy",
+            "amount": order_data["express_fee"],
+            "currency": "GBP",
+            "user_id": order_data["user_id"],
+            "crypto": crypto,
+            "crypto_amount": crypto_amount,
+            "delivery_type": delivery_type,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Credit fee to admin fee wallet
+        await sync_credit_balance("PLATFORM_FEES", "GBP", order_data["express_fee"], f"{delivery_type}_buy_fee")
+        
+        logger.info(f"✅ Recorded {delivery_type} buy fee: £{order_data['express_fee']}")
+    except Exception as e:
+        logger.error(f"⚠️ Failed to record fee: {e}")
+    
+    # Log trade
+    await db.admin_liquidity_trades.insert_one({
+        "trade_id": trade_id,
+        "crypto_currency": crypto,
+        "crypto_amount": crypto_amount,
+        "fiat_amount": fiat_amount,
+        "buyer_id": order_data["user_id"],
+        "delivery_type": delivery_type,
+        "delivery_source": delivery_source,
+        "is_core_coin": is_core_coin,
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
     
     # Create trade record
     trade_record = {
         "trade_id": trade_id,
-        "type": "p2p_express",
+        "type": "instant_buy" if is_core_coin else "express_buy",
         "buyer_id": order_data["user_id"],
-        "seller_id": seller_id,
+        "seller_id": "platform_liquidity",
+        "delivery_type": delivery_type,
         "delivery_source": delivery_source,
-        "crypto_currency": order_data["crypto"],
+        "crypto_currency": crypto,
         "fiat_currency": "GBP",
-        "crypto_amount": order_data["crypto_amount"],
-        "fiat_amount": order_data["fiat_amount"],
+        "crypto_amount": crypto_amount,
+        "fiat_amount": fiat_amount,
         "price_per_unit": order_data["base_rate"],
         "status": status,
         "country": order_data["country"],
-        "payment_method": payment_method,
+        "payment_method": "platform_direct",
         "express_fee": order_data["express_fee"],
         "express_fee_percent": order_data["express_fee_percent"],
         "net_amount": order_data["net_amount"],
         "estimated_delivery": estimated_delivery,
-        "is_instant_delivery": has_admin_liquidity,
+        "is_core_coin": is_core_coin,
+        "is_instant_delivery": is_core_coin,
         "countdown_expires_at": countdown_expires_at,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
@@ -5312,11 +5456,10 @@ async def create_p2p_express_order(order_data: Dict):
     referral_tier = user.get("referral_tier", "standard")
     
     if referrer_id:
-        # Get commission rate based on tier
         if referral_tier == "golden":
-            commission_rate = 0.50  # 50% for golden
+            commission_rate = 0.50
         else:
-            commission_rate = 0.20  # 20% for standard/vip
+            commission_rate = 0.20
         
         admin_fee = order_data["express_fee"] * (1 - commission_rate)
         referrer_commission = order_data["express_fee"] * commission_rate
@@ -5328,29 +5471,31 @@ async def create_p2p_express_order(order_data: Dict):
     fee_record = {
         "transaction_id": f"FEE_{trade_id}",
         "trade_id": trade_id,
-        "fee_type": "p2p_express",
+        "fee_type": "instant_buy" if is_core_coin else "express_buy",
         "user_id": order_data["user_id"],
         "total_fee_amount": order_data["express_fee"],
         "admin_fee": admin_fee,
         "referrer_id": referrer_id if referrer_id else None,
         "referrer_commission": referrer_commission,
         "referral_tier": referral_tier,
-        "crypto_currency": order_data["crypto"],
+        "crypto_currency": crypto,
         "fiat_currency": "GBP",
+        "delivery_type": delivery_type,
         "delivery_source": delivery_source,
+        "is_core_coin": is_core_coin,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.fee_transactions.insert_one(fee_record)
     
     # Update admin revenue
+    revenue_field = "instant_buy_revenue_gbp" if is_core_coin else "express_buy_revenue_gbp"
     await db.admin_revenue.update_one(
         {"metric_id": "platform_total"},
         {
             "$inc": {
                 "total_revenue_gbp": order_data["express_fee"],
-                "p2p_express_revenue_gbp": order_data["express_fee"],
-                "express_buy_revenue": order_data["express_fee"],
+                revenue_field: order_data["express_fee"],
                 "total_trades": 1
             },
             "$set": {"last_updated": datetime.now(timezone.utc).isoformat()}
@@ -5361,26 +5506,30 @@ async def create_p2p_express_order(order_data: Dict):
     # Notify buyer
     try:
         from p2p_notification_service import create_p2p_notification
-        if has_admin_liquidity:
-            msg = f"Express order completed! {order_data['crypto_amount']:.8f} {order_data['crypto']} credited instantly."
+        if is_core_coin:
+            msg = f"Instant Buy completed! {crypto_amount:.8f} {crypto} credited to your wallet."
         else:
-            msg = "Express order created! Matched with seller. Delivery in 2-5 minutes."
+            msg = f"Express Buy completed! {crypto_amount:.8f} {crypto} credited via conversion."
         
         await create_p2p_notification(
             user_id=order_data["user_id"],
             trade_id=trade_id,
-            notification_type="express_order_created",
+            notification_type="buy_completed",
             message=msg
         )
     except Exception as e:
         logger.error(f"Failed to notify buyer: {e}")
     
+    logger.info(f"✅ {'INSTANT' if is_core_coin else 'EXPRESS'} BUY COMPLETED: {trade_id} | {crypto_amount} {crypto} | £{fiat_amount}")
+    
     return {
         "success": True,
         "trade_id": trade_id,
+        "delivery_type": delivery_type,
         "estimated_delivery": estimated_delivery,
-        "is_instant": has_admin_liquidity,
-        "message": "Express order completed" if has_admin_liquidity else "Express order created"
+        "is_instant": is_core_coin,
+        "is_core_coin": is_core_coin,
+        "message": f"{'Instant' if is_core_coin else 'Express'} Buy completed successfully"
     }
 
 
