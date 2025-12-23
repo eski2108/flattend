@@ -513,7 +513,7 @@ export default function CreateAd() {
                     padding: '8px 10px', 
                     background: 'rgba(0,0,0,0.4)', 
                     borderRadius: '8px', 
-                    border: '1px solid rgba(245,158,11,0.2)' 
+                    border: '1px solid rgba(20,184,166,0.2)' 
                   }}>
                     {formData.payment_methods.length > 0 ? (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -524,12 +524,12 @@ export default function CreateAd() {
                               display: 'flex', 
                               alignItems: 'center', 
                               gap: '5px', 
-                              background: 'linear-gradient(135deg, rgba(245,158,11,0.3) 0%, rgba(245,158,11,0.15) 100%)', 
-                              border: '1px solid rgba(245,158,11,0.5)', 
+                              background: 'linear-gradient(135deg, rgba(20,184,166,0.3) 0%, rgba(20,184,166,0.15) 100%)', 
+                              border: '1px solid rgba(20,184,166,0.5)', 
                               borderRadius: '16px', 
                               padding: '5px 10px', 
                               fontSize: '0.75rem', 
-                              color: '#F59E0B',
+                              color: '#14B8A6',
                               fontWeight: '500'
                             }}>
                               <span>{m.icon}</span>
