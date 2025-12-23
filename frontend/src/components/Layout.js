@@ -37,6 +37,7 @@ import PromoBanner from '@/components/PromoBanner';
 import ChatWidget from '@/components/ChatWidget';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import PremiumDownloadButtons from '@/components/PremiumDownloadButtons';
+import Footer from '@/components/Footer';
 
 export default function Layout({ children }) {
   const { user, disconnectWallet } = useWallet();
