@@ -290,21 +290,14 @@ export default function CreateAd() {
                   </div>
                 </div>
 
-                {/* 4. ADVANCED OPTIONS - FILLS REMAINING SPACE */}
-                <div style={{ ...cardStyle(ACCENT.grey), flex: 1, minHeight: '180px' }}>
+                {/* 4. ADVANCED OPTIONS - COLLAPSED BY DEFAULT */}
+                <div style={cardStyle(ACCENT.grey)}>
                   <div onClick={() => setAdvancedOpen(!advancedOpen)} style={{ ...TITLE, marginBottom: advancedOpen ? '16px' : '0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Advanced options <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '400', fontSize: '0.8125rem' }}>(optional)</span></span>
                     <IoChevronDown size={18} style={{ color: 'rgba(255,255,255,0.4)', transform: advancedOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </div>
                   {advancedOpen && (
-                    <>
-                      <textarea value={formData.terms} onChange={(e) => handleChange('terms', e.target.value)} placeholder="Special terms, instructions, or routing notes..." rows={5} style={{ ...INPUT, resize: 'none', minHeight: '120px', fontSize: '0.875rem', height: '100%' }} />
-                    </>
-                  )}
-                  {!advancedOpen && (
-                    <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.8125rem', marginTop: '12px' }}>
-                      Click to add special terms, escrow instructions, or trader requirements.
-                    </p>
+                    <textarea value={formData.terms} onChange={(e) => handleChange('terms', e.target.value)} placeholder="Special terms, instructions, or routing notes..." rows={3} style={{ ...INPUT, resize: 'none', minHeight: '80px', fontSize: '0.875rem' }} />
                   )}
                 </div>
               </div>
