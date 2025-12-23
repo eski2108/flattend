@@ -638,72 +638,72 @@ export default function CreateAd() {
         </div>
       </div>
 
-      {/* STICKY FOOTER - Compact */}
+      {/* STICKY FOOTER */}
       <div style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
-        padding: '12px 24px',
+        padding: '14px 28px',
         background: 'linear-gradient(180deg, rgba(18, 24, 48, 0.98) 0%, rgba(12, 16, 36, 1) 100%)',
         borderTop: '1px solid rgba(59, 130, 246, 0.15)',
         backdropFilter: 'blur(10px)',
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         alignItems: 'center',
+        gap: '16px',
         zIndex: 100
       }}>
-        <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8rem' }}>
-          {isValid() ? (
-            <span style={{ color: '#22C55E', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <IoCheckmarkCircle size={16} /> Ready to publish your ad
-            </span>
-          ) : (
-            <span>Complete all required fields to publish</span>
-          )}
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            type="button" 
-            onClick={() => navigate('/p2p/merchant')} 
-            style={{
-              padding: '10px 22px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '8px',
-              color: 'rgba(255, 255, 255, 0.65)',
-              fontSize: '0.8rem',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Cancel
-          </button>
-          <button 
-            type="submit" 
-            disabled={creating || !isValid()} 
-            onClick={handleSubmit} 
-            style={{
-              padding: '10px 28px',
-              background: (creating || !isValid()) 
-                ? 'rgba(40, 45, 60, 0.6)' 
-                : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
-              border: 'none',
-              borderRadius: '8px',
-              color: (creating || !isValid()) ? 'rgba(255, 255, 255, 0.25)' : '#fff',
-              fontSize: '0.8rem',
-              fontWeight: '700',
-              cursor: (creating || !isValid()) ? 'not-allowed' : 'pointer',
-              boxShadow: (creating || !isValid()) ? 'none' : '0 4px 16px rgba(34, 197, 94, 0.35)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            {creating && <div style={{ width: '12px', height: '12px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
-            Publish ad
-          </button>
-        </div>
+        {touched && !isValid() && (
+          <span style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.8rem', marginRight: 'auto' }}>
+            Complete all required fields to publish
+          </span>
+        )}
+        {isValid() && (
+          <span style={{ color: '#22C55E', fontWeight: '600', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px', marginRight: 'auto' }}>
+            <IoCheckmarkCircle size={16} /> Ready to publish
+          </span>
+        )}
+        <button 
+          type="button" 
+          onClick={() => navigate('/p2p/merchant')} 
+          style={{
+            padding: '10px 24px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '8px',
+            color: 'rgba(255, 255, 255, 0.65)',
+            fontSize: '0.8rem',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          disabled={creating || !isValid()} 
+          onClick={handleSubmit} 
+          style={{
+            padding: '10px 32px',
+            background: (creating || !isValid()) 
+              ? 'rgba(40, 45, 60, 0.6)' 
+              : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            color: (creating || !isValid()) ? 'rgba(255, 255, 255, 0.3)' : '#fff',
+            fontSize: '0.85rem',
+            fontWeight: '700',
+            cursor: (creating || !isValid()) ? 'not-allowed' : 'pointer',
+            boxShadow: (creating || !isValid()) ? 'none' : '0 4px 16px rgba(34, 197, 94, 0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          {creating && <div style={{ width: '12px', height: '12px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />}
+          Publish ad
+        </button>
       </div>
 
       <style>{`
