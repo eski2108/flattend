@@ -266,20 +266,11 @@ function SwapCrypto() {
 
     // 2. fromAmount is already in crypto (converted by DualCurrencyInput)
     const actualCryptoAmount = parseFloat(fromAmount);
-    // console.log('Swap attempt:', {
-      fromCrypto,
-      toCrypto,
-      actualCryptoAmount,
-      fromAmount
-    });
+    // Debug logging removed for production
 
     // 3. Check if user has enough balance
     const availableBalance = walletBalances[fromCrypto] || 0;
-    // console.log('Balance check:', {
-      availableBalance,
-      required: actualCryptoAmount,
-      hasSufficient: actualCryptoAmount <= availableBalance
-    });
+    // Debug logging removed for production
     
     // 4. Check zero balance
     if (availableBalance === 0) {
