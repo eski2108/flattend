@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://trade-master-126.preview.emergentagent.com/p2p-express
+https://fee-analytics.preview.emergentagent.com/p2p-express
 
 ---
 

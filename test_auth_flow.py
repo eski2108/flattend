@@ -3,7 +3,7 @@
 
 import requests
 
-BASE_URL = "https://trade-master-126.preview.emergentagent.com/api"
+BASE_URL = "https://fee-analytics.preview.emergentagent.com/api"
 
 print("🔍 TESTING AUTHENTICATION FLOW\n")
 print("=" * 60)

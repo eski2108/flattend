@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://trade-master-126.preview.emergentagent.com/api/admin/fees/test
+$ curl https://fee-analytics.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://trade-master-126.preview.emergentagent.com/api/admin/fees/all
+$ curl https://fee-analytics.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

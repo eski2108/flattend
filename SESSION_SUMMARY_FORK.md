@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://trade-master-126.preview.emergentagent.com
+https://fee-analytics.preview.emergentagent.com
 
 ---
 

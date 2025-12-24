@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://trade-master-126.preview.emergentagent.com
+**Live URL:** https://fee-analytics.preview.emergentagent.com
 
 ---
 

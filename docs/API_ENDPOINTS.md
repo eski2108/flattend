@@ -29,7 +29,7 @@
 REACT_APP_BACKEND_URL=https://coinhubx.com
 
 # Staging/Preview
-REACT_APP_BACKEND_URL=https://trade-master-126.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://fee-analytics.preview.emergentagent.com
 
 # Local Development
 REACT_APP_BACKEND_URL=http://localhost:8001

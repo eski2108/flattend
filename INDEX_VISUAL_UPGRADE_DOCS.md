@@ -6,7 +6,7 @@
 **Status:** ✅ COMPLETE  
 **Date:** December 12, 2024  
 **Environment:** Preview (Production-Ready)  
-**URL:** https://trade-master-126.preview.emergentagent.com/p2p
+**URL:** https://fee-analytics.preview.emergentagent.com/p2p
 
 ---
 
@@ -186,7 +186,7 @@ Code file modified:
 ## 🔗 QUICK LINKS
 
 ### Preview Environment:
-- **URL:** https://trade-master-126.preview.emergentagent.com/p2p
+- **URL:** https://fee-analytics.preview.emergentagent.com/p2p
 - **Status:** LIVE
 - **Last Updated:** December 12, 2024
 

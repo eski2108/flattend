@@ -111,7 +111,7 @@ BTC: 0.12382175857852622
 
 ### API Endpoint Test
 ```bash
-$ curl https://trade-master-126.preview.emergentagent.com/api/portfolio/summary/USER_ID
+$ curl https://fee-analytics.preview.emergentagent.com/api/portfolio/summary/USER_ID
 
 {
   "success": true,

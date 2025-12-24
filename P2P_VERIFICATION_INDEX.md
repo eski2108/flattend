@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://trade-master-126.preview.emergentagent.com
-- Backend API: https://trade-master-126.preview.emergentagent.com/api
-- P2P Marketplace: https://trade-master-126.preview.emergentagent.com/p2p
+- Frontend: https://fee-analytics.preview.emergentagent.com
+- Backend API: https://fee-analytics.preview.emergentagent.com/api
+- P2P Marketplace: https://fee-analytics.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

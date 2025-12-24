@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://trade-master-126.preview.emergentagent.com
+**URL:** https://fee-analytics.preview.emergentagent.com
 
 **Services Status:**
 ```bash

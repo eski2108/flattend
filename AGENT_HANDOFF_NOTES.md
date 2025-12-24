@@ -117,7 +117,7 @@ Admin routes were being caught by the `{bot_id}` catch-all route. Fixed by movin
 
 ### Environment Variables (Backend)
 ```
-BACKEND_URL=https://trade-master-126.preview.emergentagent.com
+BACKEND_URL=https://fee-analytics.preview.emergentagent.com
 DB_NAME=coinhubx_production
 ```
 
@@ -179,7 +179,7 @@ The backend supports custom date range queries, but the frontend doesn't have da
 ### Test Bot Creation & Execution:
 ```bash
 # Create a Signal Bot
-curl -X POST "https://trade-master-126.preview.emergentagent.com/api/bots/create" \
+curl -X POST "https://fee-analytics.preview.emergentagent.com/api/bots/create" \
   -H "Content-Type: application/json" \
   -H "x-user-id: aby-925330f1" \
   -d '{
@@ -196,17 +196,17 @@ curl -X POST "https://trade-master-126.preview.emergentagent.com/api/bots/create
   }'
 
 # Start the bot
-curl -X POST "https://trade-master-126.preview.emergentagent.com/api/bots/start" \
+curl -X POST "https://fee-analytics.preview.emergentagent.com/api/bots/start" \
   -H "Content-Type: application/json" \
   -H "x-user-id: aby-925330f1" \
   -d '{"bot_id": "<BOT_ID_FROM_CREATE>"}'
 
 # Check admin stats
-curl "https://trade-master-126.preview.emergentagent.com/api/bots/admin/stats" \
+curl "https://fee-analytics.preview.emergentagent.com/api/bots/admin/stats" \
   -H "x-admin-id: admin"
 
 # Check revenue analytics
-curl "https://trade-master-126.preview.emergentagent.com/api/admin/revenue/analytics?period=all"
+curl "https://fee-analytics.preview.emergentagent.com/api/admin/revenue/analytics?period=all"
 ```
 
 ### Verify in Database:

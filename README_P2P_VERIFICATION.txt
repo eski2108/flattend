@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://trade-master-126.preview.emergentagent.com
-P2P Page:     https://trade-master-126.preview.emergentagent.com/p2p
-Backend API:  https://trade-master-126.preview.emergentagent.com/api
+Frontend:     https://fee-analytics.preview.emergentagent.com
+P2P Page:     https://fee-analytics.preview.emergentagent.com/p2p
+Backend API:  https://fee-analytics.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

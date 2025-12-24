@@ -1,7 +1,7 @@
 # COINHUBX TRADING PAGE - EXACT SPECIFICATION IMPLEMENTATION
 
 **Deployment Status:** ✅ LIVE
-**URL:** https://trade-master-126.preview.emergentagent.com
+**URL:** https://fee-analytics.preview.emergentagent.com
 **Date:** December 10, 2025 01:35 UTC
 
 ---
@@ -169,7 +169,7 @@
 - MongoDB: pid 8285
 - Nginx: pid 8281
 
-**Live URL:** https://trade-master-126.preview.emergentagent.com
+**Live URL:** https://fee-analytics.preview.emergentagent.com
 
 ---
 

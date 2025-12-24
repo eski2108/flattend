@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://trade-master-126.preview.emergentagent.com/api
+https://fee-analytics.preview.emergentagent.com/api
 ```
 
 This means:

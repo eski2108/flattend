@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://trade-master-126.preview.emergentagent.com
+https://fee-analytics.preview.emergentagent.com
 
 ### Test Route
 
-`https://trade-master-126.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://fee-analytics.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

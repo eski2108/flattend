@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://trade-master-126.preview.emergentagent.com/login
-2. Visit marketplace: https://trade-master-126.preview.emergentagent.com/p2p
+1. Login at: https://fee-analytics.preview.emergentagent.com/login
+2. Visit marketplace: https://fee-analytics.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

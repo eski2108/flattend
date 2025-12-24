@@ -43,7 +43,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://trade-master-126.preview.emergentagent.com/api"
+BASE_URL = "https://fee-analytics.preview.emergentagent.com/api"
 
 # Test credentials from review request
 EXISTING_USER = {
