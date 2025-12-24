@@ -183,19 +183,27 @@ export default function MobileMarketSelection() {
     return `$${num.toFixed(2)}`;
   };
 
-  // Simple sparkline component
-  const Sparkline = ({ positive }) => {
+  // Sparkline component - taller and more visible
+  const Sparkline = ({ positive, large = false }) => {
     const color = positive ? '#00E599' : '#FF5C5C';
+    const height = large ? 48 : 32;
+    const width = large ? 100 : 70;
     const points = positive 
-      ? "0,20 10,18 20,15 30,17 40,10 50,12 60,5"
-      : "0,5 10,8 20,12 30,10 40,15 50,18 60,20";
+      ? `0,${height-4} ${width*0.15},${height-8} ${width*0.3},${height-12} ${width*0.45},${height-10} ${width*0.6},${height-18} ${width*0.75},${height-14} ${width},4`
+      : `0,4 ${width*0.15},8 ${width*0.3},14 ${width*0.45},10 ${width*0.6},${height-12} ${width*0.75},${height-8} ${width},${height-4}`;
     return (
-      <svg width="60" height="24" viewBox="0 0 60 24">
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <defs>
+          <linearGradient id={`sparkGrad${positive ? 'Up' : 'Down'}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
         <polyline
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
