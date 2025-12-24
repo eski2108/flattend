@@ -278,27 +278,6 @@ export default function MobileMarketSelection() {
                   margin: '8px 0 0'
                 }}>Select a trading pair to view chart and trade</p>
               </div>
-              {/* Trading Bots Button */}
-              <button
-                onClick={() => navigate('/trading-bots')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '10px 16px',
-                  borderRadius: '10px',
-                  background: 'rgba(0,229,153,0.1)',
-                  border: '1px solid rgba(0,229,153,0.3)',
-                  color: '#00E599',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 150ms ease'
-                }}
-              >
-                <IoRocket size={16} />
-                Trading Bots
-              </button>
             </div>
           )}
 
