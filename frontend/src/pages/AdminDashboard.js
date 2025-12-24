@@ -4611,34 +4611,38 @@ export default function AdminDashboard() {
                   ))}
                 </div>
                 
-                {/* Referrals Summary Box */}
+                {/* Referrals & Deductions Summary Box */}
                 {revenueAnalytics.referrals && (
                   <div style={{
                     background: 'linear-gradient(135deg, rgba(14,165,233,0.1), rgba(168,85,247,0.05))',
                     border: '2px solid rgba(14,165,233,0.3)',
                     borderRadius: '12px',
                     padding: '1rem 1.5rem',
-                    marginBottom: '2rem',
-                    display: 'flex',
-                    gap: '2rem',
-                    alignItems: 'center',
-                    flexWrap: 'wrap'
+                    marginBottom: '2rem'
                   }}>
-                    <div style={{ fontSize: '12px', fontWeight: '700', color: '#0EA5E9' }}>
-                      REFERRAL SUMMARY:
+                    <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '700', color: '#0EA5E9' }}>
+                        REFERRAL BREAKDOWN:
+                      </div>
+                      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px' }}>
+                          <span style={{ color: '#888' }}>IN (Revenue):</span>{' '}
+                          <span style={{ color: '#10B981', fontWeight: '900' }}>£{revenueAnalytics.referrals.income?.toFixed(2)}</span>
+                        </span>
+                        <span style={{ fontSize: '13px' }}>
+                          <span style={{ color: '#888' }}>OUT (Deduction):</span>{' '}
+                          <span style={{ color: '#EF4444', fontWeight: '900' }}>-£{revenueAnalytics.referrals.payouts?.toFixed(2)}</span>
+                        </span>
+                        <span style={{ fontSize: '13px', padding: '4px 12px', background: 'rgba(14,165,233,0.2)', borderRadius: '6px' }}>
+                          <span style={{ color: '#888' }}>NET:</span>{' '}
+                          <span style={{ color: '#0EA5E9', fontWeight: '900' }}>£{revenueAnalytics.referrals.net?.toFixed(2)}</span>
+                        </span>
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                      <span style={{ fontSize: '13px' }}>
-                        <span style={{ color: '#888' }}>IN:</span>{' '}
-                        <span style={{ color: '#22C55E', fontWeight: '900' }}>£{revenueAnalytics.referrals.income?.toFixed(2)}</span>
-                      </span>
-                      <span style={{ fontSize: '13px' }}>
-                        <span style={{ color: '#888' }}>OUT:</span>{' '}
-                        <span style={{ color: '#EF4444', fontWeight: '900' }}>-£{revenueAnalytics.referrals.payouts?.toFixed(2)}</span>
-                      </span>
-                      <span style={{ fontSize: '13px', padding: '4px 12px', background: 'rgba(14,165,233,0.2)', borderRadius: '6px' }}>
-                        <span style={{ color: '#888' }}>NET:</span>{' '}
-                        <span style={{ color: '#0EA5E9', fontWeight: '900' }}>£{revenueAnalytics.referrals.net?.toFixed(2)}</span>
+                    <div style={{ fontSize: '10px', color: '#888', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.5rem' }}>
+                      ℹ️ <strong>Note:</strong> Referral OUT is NOT included in Total Revenue. It is deducted to calculate Net Profit.
+                      <span style={{ marginLeft: '1rem', color: '#00F0FF' }}>
+                        Net Profit = Total Revenue (£{revenueAnalytics.totals?.grand_total?.toFixed(2)}) − Ref OUT (£{revenueAnalytics.referrals.payouts?.toFixed(2)}) = <strong>£{revenueAnalytics.totals?.net_profit?.toFixed(2)}</strong>
                       </span>
                     </div>
                   </div>
