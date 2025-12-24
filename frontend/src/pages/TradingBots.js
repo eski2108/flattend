@@ -434,7 +434,14 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
     interval: 'daily',
     total_budget: '',
     side: 'buy',
-    // Advanced (both)
+    // Signal defaults
+    order_amount: '',
+    entry_rules: { operator: 'AND', conditions: [] },
+    exit_rules: { operator: 'OR', conditions: [] },
+    // Advanced (all)
+    stop_loss_percent: '',
+    take_profit_percent: '',
+    trailing_stop_percent: '',
     stop_loss_price: '',
     take_profit_price: '',
     max_drawdown_percent: '',
@@ -445,6 +452,26 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
   const [creating, setCreating] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [botCreated, setBotCreated] = useState(null);
+  const [indicators, setIndicators] = useState([]);
+  const [timeframes, setTimeframes] = useState([]);
+  const [indicatorCategories, setIndicatorCategories] = useState({});
+
+  // Fetch available indicators on mount
+  useEffect(() => {
+    const fetchIndicators = async () => {
+      try {
+        const response = await axios.get(`${API}/api/bots/indicators`);
+        if (response.data.success) {
+          setIndicators(response.data.indicators);
+          setTimeframes(response.data.timeframes);
+          setIndicatorCategories(response.data.categories);
+        }
+      } catch (err) {
+        console.error('Failed to fetch indicators:', err);
+      }
+    };
+    fetchIndicators();
+  }, []);
 
   const stepTitles = [
     'Choose Bot Type',
