@@ -513,9 +513,270 @@ export default function TradingBots() {
                 >
                   <IoTrash size={14} />
                 </button>
+                <button
+                  onClick={() => fetchBotDetails(bot.bot_id)}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    background: 'rgba(0,240,255,0.15)',
+                    border: '1px solid rgba(0,240,255,0.3)',
+                    color: '#00F0FF',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}
+                >
+                  View
+                </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Live Bot Panel Modal */}
+      {selectedBot && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.9)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(180deg, #0B1220 0%, #0A0F1A 100%)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255,255,255,0.08)',
+            width: '100%',
+            maxWidth: '900px',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            {/* Header */}
+            <div style={{
+              padding: '24px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <h2 style={{ margin: 0, color: '#FFFFFF', fontSize: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ 
+                    background: selectedBot.type === 'grid' ? 'rgba(0,229,153,0.2)' : selectedBot.type === 'dca' ? 'rgba(0,184,212,0.2)' : 'rgba(255,107,107,0.2)',
+                    color: selectedBot.type === 'grid' ? '#00E599' : selectedBot.type === 'dca' ? '#00B8D4' : '#FF6B6B',
+                    padding: '4px 10px', borderRadius: '6px', fontSize: '12px', textTransform: 'uppercase'
+                  }}>{selectedBot.type}</span>
+                  {selectedBot.pair}
+                </h2>
+                <p style={{ margin: '4px 0 0', color: '#8B9BB4', fontSize: '13px' }}>
+                  Created: {new Date(selectedBot.created_at).toLocaleString()}
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span style={{
+                  background: selectedBot.status === 'running' ? 'rgba(34,197,94,0.2)' : selectedBot.status === 'paused' ? 'rgba(251,191,36,0.2)' : 'rgba(108,117,125,0.2)',
+                  color: selectedBot.status === 'running' ? '#22C55E' : selectedBot.status === 'paused' ? '#FBBF24' : '#6C757D',
+                  padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase'
+                }}>{selectedBot.status}</span>
+                <button onClick={() => setSelectedBot(null)} style={{ background: 'transparent', border: 'none', color: '#8B9BB4', fontSize: '24px', cursor: 'pointer' }}>×</button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '24px' }}>
+              {/* Stats Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase', marginBottom: '4px' }}>Total PnL</div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: (selectedBot.state?.total_pnl || 0) >= 0 ? '#22C55E' : '#EF4444' }}>
+                    {(selectedBot.state?.total_pnl || 0) >= 0 ? '+' : ''}${(selectedBot.state?.total_pnl || 0).toFixed(2)}
+                  </div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase', marginBottom: '4px' }}>24h PnL</div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: (selectedBot.state?.pnl_24h || 0) >= 0 ? '#22C55E' : '#EF4444' }}>
+                    {(selectedBot.state?.pnl_24h || 0) >= 0 ? '+' : ''}${(selectedBot.state?.pnl_24h || 0).toFixed(2)}
+                  </div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase', marginBottom: '4px' }}>Total Trades</div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF' }}>{selectedBot.state?.total_trades || 0}</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase', marginBottom: '4px' }}>Fees Paid</div>
+                  <div style={{ fontSize: '20px', fontWeight: '700', color: '#FBBF24' }}>${(selectedBot.state?.total_fees || 0).toFixed(2)}</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase', marginBottom: '4px' }}>Last Signal</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: selectedBot.state?.last_entry_triggered ? '#22C55E' : '#8B9BB4' }}>
+                    {selectedBot.state?.last_entry_triggered ? 'Triggered' : 'No trigger'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Rules Summary (Signal Bot) */}
+              {selectedBot.type === 'signal' && selectedBot.params?.entry_rules && (
+                <div style={{ marginBottom: '24px' }}>
+                  <h4 style={{ margin: '0 0 12px', color: '#FFFFFF', fontSize: '14px' }}>📊 Active Rules</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div style={{ background: 'rgba(0,229,153,0.08)', borderRadius: '10px', padding: '14px', border: '1px solid rgba(0,229,153,0.2)' }}>
+                      <div style={{ fontSize: '12px', color: '#00E599', fontWeight: '600', marginBottom: '8px' }}>Entry ({selectedBot.params.entry_rules.operator})</div>
+                      {selectedBot.params.entry_rules.conditions?.map((c, i) => (
+                        <div key={i} style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '4px' }}>
+                          {c.indicator?.toUpperCase()} ({c.timeframe}) {c.operator} {c.value}
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ background: 'rgba(255,92,92,0.08)', borderRadius: '10px', padding: '14px', border: '1px solid rgba(255,92,92,0.2)' }}>
+                      <div style={{ fontSize: '12px', color: '#FF5C5C', fontWeight: '600', marginBottom: '8px' }}>Exit ({selectedBot.params.exit_rules?.operator || 'OR'})</div>
+                      {selectedBot.params.exit_rules?.conditions?.map((c, i) => (
+                        <div key={i} style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '4px' }}>
+                          {c.indicator?.toUpperCase()} ({c.timeframe}) {c.operator} {c.value}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Trades */}
+              <div style={{ marginBottom: '24px' }}>
+                <h4 style={{ margin: '0 0 12px', color: '#FFFFFF', fontSize: '14px' }}>📈 Recent Trades</h4>
+                <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                  {botTrades.length === 0 ? (
+                    <div style={{ padding: '24px', textAlign: 'center', color: '#8B9BB4', fontSize: '13px' }}>No trades yet</div>
+                  ) : (
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                          <th style={{ padding: '10px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600' }}>TIME</th>
+                          <th style={{ padding: '10px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600' }}>SIDE</th>
+                          <th style={{ padding: '10px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600' }}>AMOUNT</th>
+                          <th style={{ padding: '10px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600' }}>PRICE</th>
+                          <th style={{ padding: '10px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600' }}>FEE</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {botTrades.slice(0, 10).map((trade, i) => (
+                          <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                            <td style={{ padding: '10px', color: '#8B9BB4', fontSize: '12px' }}>{new Date(trade.timestamp).toLocaleString()}</td>
+                            <td style={{ padding: '10px' }}>
+                              <span style={{ color: trade.side === 'buy' ? '#22C55E' : '#EF4444', fontWeight: '600', textTransform: 'uppercase' }}>{trade.side}</span>
+                            </td>
+                            <td style={{ padding: '10px', textAlign: 'right', color: '#FFFFFF', fontSize: '12px' }}>${trade.amount?.toFixed(2)}</td>
+                            <td style={{ padding: '10px', textAlign: 'right', color: '#FFFFFF', fontSize: '12px' }}>${trade.price?.toLocaleString()}</td>
+                            <td style={{ padding: '10px', textAlign: 'right', color: '#FBBF24', fontSize: '12px' }}>${trade.fee?.toFixed(4)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+
+              {/* Event Logs */}
+              <div>
+                <h4 style={{ margin: '0 0 12px', color: '#FFFFFF', fontSize: '14px' }}>📋 Event Log</h4>
+                <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', maxHeight: '200px', overflow: 'auto' }}>
+                  {botEvents.length === 0 ? (
+                    <div style={{ padding: '24px', textAlign: 'center', color: '#8B9BB4', fontSize: '13px' }}>No events yet</div>
+                  ) : botEvents.slice(0, 20).map((event, i) => (
+                    <div key={i} style={{ 
+                      padding: '10px 14px', 
+                      borderBottom: '1px solid rgba(255,255,255,0.03)',
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'flex-start'
+                    }}>
+                      <span style={{ color: '#8B9BB4', fontSize: '11px', whiteSpace: 'nowrap' }}>
+                        {new Date(event.timestamp).toLocaleString()}
+                      </span>
+                      <span style={{
+                        fontSize: '10px',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        background: event.event_type === 'trade_placed' ? 'rgba(34,197,94,0.2)' : 
+                                   event.event_type === 'error' ? 'rgba(239,68,68,0.2)' : 'rgba(168,85,247,0.2)',
+                        color: event.event_type === 'trade_placed' ? '#22C55E' : 
+                               event.event_type === 'error' ? '#EF4444' : '#A855F7'
+                      }}>{event.event_type}</span>
+                      <span style={{ color: '#FFFFFF', fontSize: '12px', flex: 1 }}>
+                        {typeof event.data === 'string' ? event.data : JSON.stringify(event.data).slice(0, 100)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                {selectedBot.status === 'running' ? (
+                  <button
+                    onClick={() => { handlePauseBot(selectedBot.bot_id); setSelectedBot(null); }}
+                    style={{
+                      flex: 1,
+                      padding: '14px',
+                      borderRadius: '10px',
+                      background: 'rgba(251,191,36,0.15)',
+                      border: '1px solid rgba(251,191,36,0.3)',
+                      color: '#FBBF24',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >Pause Bot</button>
+                ) : (
+                  <button
+                    onClick={() => { handleStartBot(selectedBot.bot_id); setSelectedBot(null); }}
+                    style={{
+                      flex: 1,
+                      padding: '14px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
+                      border: 'none',
+                      color: '#020617',
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      cursor: 'pointer'
+                    }}
+                  >Start Bot</button>
+                )}
+                <button
+                  onClick={() => { handleStopBot(selectedBot.bot_id); setSelectedBot(null); }}
+                  style={{
+                    padding: '14px 24px',
+                    borderRadius: '10px',
+                    background: 'rgba(108,117,125,0.15)',
+                    border: '1px solid rgba(108,117,125,0.3)',
+                    color: '#6C757D',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >Stop</button>
+                <button
+                  onClick={() => setSelectedBot(null)}
+                  style={{
+                    padding: '14px 24px',
+                    borderRadius: '10px',
+                    background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#8B9BB4',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >Close</button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
