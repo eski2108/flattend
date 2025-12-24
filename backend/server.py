@@ -38103,6 +38103,147 @@ async def preview_bot(request: BotPreviewRequest):
     return {"success": True, "preview": preview}
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 2 - SIGNAL ENGINE ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class StrategyConfigRequest(BaseModel):
+    name: str
+    description: str = ""
+    primary_timeframe: str = "1h"
+    entry_rules: Dict[str, Any]
+    exit_rules: Dict[str, Any]
+    confirmation_rules: Optional[Dict[str, Any]] = None
+    order_type: str = "market"
+    order_size_value: float = 100
+    cooldown_after_trade_minutes: int = 5
+
+
+@api_router.post("/bots/strategy/validate")
+async def validate_strategy(request: StrategyConfigRequest):
+    """Validate a strategy configuration"""
+    try:
+        from signal_engine import StrategyBuilder, DecisionEngine
+        
+        # Try to build the strategy
+        strategy = StrategyBuilder.from_dict(request.dict())
+        
+        # Extract required indicators
+        indicators = DecisionEngine.extract_indicators_from_strategy(strategy)
+        
+        return {
+            "success": True,
+            "valid": True,
+            "strategy_id": strategy.strategy_id,
+            "indicators_required": [
+                {
+                    "indicator": ind.indicator_id,
+                    "params": ind.params,
+                    "timeframe": ind.timeframe,
+                    "output": ind.output
+                }
+                for ind in indicators
+            ],
+            "entry_conditions_count": len(strategy.entry_rules.conditions),
+            "exit_conditions_count": len(strategy.exit_rules.conditions)
+        }
+    except Exception as e:
+        logger.error(f"Strategy validation error: {e}")
+        return {"success": False, "valid": False, "error": str(e)}
+
+
+@api_router.post("/bots/strategy/evaluate")
+async def evaluate_strategy_now(request: dict, x_user_id: str = Header(None)):
+    """Evaluate a strategy against current market conditions"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from signal_engine import StrategyBuilder, DecisionEngine
+        
+        strategy_config = request.get("strategy")
+        pair = request.get("pair", "BTCUSD")
+        
+        if not strategy_config:
+            return {"success": False, "error": "Strategy configuration required"}
+        
+        # Build strategy
+        strategy = StrategyBuilder.from_dict(strategy_config)
+        
+        # Evaluate
+        signal, details = await DecisionEngine.evaluate_strategy(
+            strategy=strategy,
+            pair=pair,
+            bot_id="test_evaluation",
+            current_position=None
+        )
+        
+        return {
+            "success": True,
+            "signal": {
+                "generated": signal is not None,
+                "type": signal.signal_type if signal else None,
+                "side": signal.side if signal else None,
+                "confidence": signal.confidence if signal else 0,
+                "trigger_reason": signal.trigger_reason if signal else None
+            } if signal else None,
+            "evaluation": {
+                "entry_result": details.get("entry_evaluation", {}).get("result"),
+                "entry_confidence": details.get("entry_evaluation", {}).get("confidence"),
+                "exit_result": details.get("exit_evaluation", {}).get("result"),
+                "exit_confidence": details.get("exit_evaluation", {}).get("confidence")
+            },
+            "indicator_snapshot": details.get("indicator_snapshot", {}),
+            "current_price": details.get("current_price")
+        }
+    except Exception as e:
+        logger.error(f"Strategy evaluation error: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/strategy/indicators")
+async def get_strategy_indicators():
+    """Get available indicators for strategy building"""
+    try:
+        from signal_engine import INDICATOR_OUTPUTS, SUPPORTED_TIMEFRAMES
+        
+        indicators = []
+        for ind_id, outputs in INDICATOR_OUTPUTS.items():
+            # Get default params from indicator registry
+            from indicators import INDICATOR_REGISTRY
+            registry_info = INDICATOR_REGISTRY.get(ind_id, {})
+            default_params = registry_info.get("default_params", {})
+            
+            indicators.append({
+                "id": ind_id,
+                "outputs": outputs,
+                "default_params": default_params
+            })
+        
+        comparators = [
+            {"id": ">", "name": "Greater Than", "description": "Value is greater than threshold"},
+            {"id": "<", "name": "Less Than", "description": "Value is less than threshold"},
+            {"id": ">=", "name": "Greater or Equal"},
+            {"id": "<=", "name": "Less or Equal"},
+            {"id": "==", "name": "Equals"},
+            {"id": "crosses_above", "name": "Crosses Above", "description": "Value crosses above another"},
+            {"id": "crosses_below", "name": "Crosses Below", "description": "Value crosses below another"},
+            {"id": "rising", "name": "Rising", "description": "Value is increasing"},
+            {"id": "falling", "name": "Falling", "description": "Value is decreasing"}
+        ]
+        
+        return {
+            "success": True,
+            "indicators": indicators,
+            "timeframes": SUPPORTED_TIMEFRAMES,
+            "comparators": comparators,
+            "logical_operators": ["AND", "OR"]
+        }
+    except Exception as e:
+        logger.error(f"Error fetching indicators: {e}")
+        return {"success": False, "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # NEW BOT ENDPOINTS - Backtest, Paper Trading, Decision Logs
 # ═══════════════════════════════════════════════════════════════════════════════
 
