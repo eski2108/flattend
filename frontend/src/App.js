@@ -78,6 +78,8 @@ const AdminProofPage = lazy(() => import("@/pages/AdminProofPage"));
 const TradePage = lazy(() => import("@/pages/TradePageNew"));
 const CreateOffer = lazy(() => import("@/pages/CreateOffer"));
 const MobileAppPage = lazy(() => import("@/pages/MobileAppPage"));
+// Trading Bots - ADDITIVE FEATURE
+const TradingBots = lazy(() => import("@/pages/TradingBots"));
 const ChartTest = lazy(() => import("@/pages/ChartTest"));
 const OrderConfirmation = lazy(() => import("@/pages/OrderConfirmation"));
 import SwapCrypto from "@/pages/SwapCrypto";
