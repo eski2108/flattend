@@ -231,6 +231,8 @@ export default function SpotTradingPro() {
         padding: '0',
         margin: '0'
       }}>
+        {/* DEBUG MARKER - REMOVE AFTER TESTING */}
+        <div style={{ position: 'fixed', top: 0, right: 0, background: 'red', color: 'white', padding: '5px', zIndex: 9999 }}>DESKTOP MODE</div>
         {/* TOP BAR - ONLY ONE SELECTED PAIR TEXT + STATS */}
         <div style={{
           display: 'flex',
