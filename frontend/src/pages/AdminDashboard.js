@@ -508,7 +508,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchRevenueBreakdown = async (period = 'day') => {
+  const fetchRevenueBreakdown = async (period = 'week') => {
     try {
       const response = await axios.get(`${API}/api/admin/revenue/breakdown?timeframe=${period}`);
       if (response.data.success) {
@@ -516,6 +516,31 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error fetching revenue breakdown:', error);
+    }
+  };
+
+  const fetchRevenueAnalytics = async (period = 'week') => {
+    try {
+      const response = await axios.get(`${API}/api/admin/revenue/analytics?period=${period}`);
+      if (response.data.success) {
+        setRevenueAnalytics(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching revenue analytics:', error);
+    }
+  };
+
+  const fetchDayDrilldown = async (date) => {
+    setDrilldownLoading(true);
+    try {
+      const response = await axios.get(`${API}/api/admin/revenue/drilldown/${date}`);
+      if (response.data.success) {
+        setSelectedDayDrilldown(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching day drilldown:', error);
+    } finally {
+      setDrilldownLoading(false);
     }
   };
 
