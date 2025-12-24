@@ -5737,7 +5737,7 @@ export default function AdminDashboard() {
 
         {/* TRADING BOTS ADMIN SECTION */}
         {activeTab === 'bots' && (
-          <AdminBotsSection API={API} adminId={adminId} />
+          <AdminBotsSection API={API} adminId={admin?.admin_id || 'admin'} />
         )}
 
       </div>
