@@ -277,13 +277,6 @@ export default function MobileMarketSelection() {
           )}
 
         {/* Search Bar */}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-        {/* Search Bar */}
         <div style={{
           position: 'sticky',
           top: 0,
