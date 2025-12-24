@@ -230,78 +230,122 @@ export default function SpotTradingPro() {
         gap: '12px',
         width: '100%'
       }}>
-        {/* Box 1: Last Price */}
+        {/* Box 1: Last Price - CYAN GLOW */}
         <div style={{
-          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
-          border: '1px solid rgba(110,140,255,0.18)',
-          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
+          border: '1px solid rgba(0, 212, 255, 0.3)',
+          boxShadow: '0 4px 20px rgba(0, 212, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(0, 212, 255, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '80px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>LAST PRICE</span>
-          <span style={{ fontSize: '24px', fontWeight: '600', color: '#E9EEFF' }}>
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: 'linear-gradient(90deg, transparent, #00d4ff, transparent)',
+            boxShadow: '0 0 20px #00d4ff, 0 0 40px #00d4ff'
+          }}></div>
+          <span style={{ fontSize: '12px', color: '#00d4ff', marginBottom: '6px', fontWeight: '500' }}>LAST PRICE</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
-        {/* Box 2: 24h Change */}
+        {/* Box 2: 24h Change - RED GLOW */}
         <div style={{
-          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
-          border: '1px solid rgba(110,140,255,0.18)',
-          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
+          border: '1px solid rgba(255, 92, 106, 0.3)',
+          boxShadow: '0 4px 20px rgba(255, 92, 106, 0.4), 0 0 40px rgba(255, 92, 106, 0.2), inset 0 1px 0 rgba(255, 92, 106, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '80px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>24H CHANGE</span>
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: 'linear-gradient(90deg, transparent, #ff5c6a, transparent)',
+            boxShadow: '0 0 20px #ff5c6a, 0 0 40px #ff5c6a'
+          }}></div>
+          <span style={{ fontSize: '12px', color: '#ff5c6a', marginBottom: '6px', fontWeight: '500' }}>24H CHANGE</span>
           <span style={{ 
             fontSize: '24px', 
-            fontWeight: '600', 
+            fontWeight: '700', 
             color: marketStats.change24h >= 0 ? '#20E3A2' : '#FF5C6A'
           }}>
             {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
           </span>
         </div>
 
-        {/* Box 3: 24h High */}
+        {/* Box 3: 24h High - PURPLE GLOW */}
         <div style={{
-          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
-          border: '1px solid rgba(110,140,255,0.18)',
-          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
+          border: '1px solid rgba(168, 85, 247, 0.3)',
+          boxShadow: '0 4px 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(168, 85, 247, 0.2), inset 0 1px 0 rgba(168, 85, 247, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '80px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>24H HIGH</span>
-          <span style={{ fontSize: '24px', fontWeight: '600', color: '#E9EEFF' }}>
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: 'linear-gradient(90deg, transparent, #a855f7, transparent)',
+            boxShadow: '0 0 20px #a855f7, 0 0 40px #a855f7'
+          }}></div>
+          <span style={{ fontSize: '12px', color: '#a855f7', marginBottom: '6px', fontWeight: '500' }}>24H HIGH</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
-        {/* Box 4: 24h Low */}
+        {/* Box 4: 24h Low - YELLOW/GOLD GLOW */}
         <div style={{
-          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
-          border: '1px solid rgba(110,140,255,0.18)',
-          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
+          border: '1px solid rgba(250, 204, 21, 0.3)',
+          boxShadow: '0 4px 20px rgba(250, 204, 21, 0.4), 0 0 40px rgba(250, 204, 21, 0.2), inset 0 1px 0 rgba(250, 204, 21, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '80px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>24H LOW</span>
-          <span style={{ fontSize: '24px', fontWeight: '600', color: '#E9EEFF' }}>
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: 'linear-gradient(90deg, transparent, #facc15, transparent)',
+            boxShadow: '0 0 20px #facc15, 0 0 40px #facc15'
+          }}></div>
+          <span style={{ fontSize: '12px', color: '#facc15', marginBottom: '6px', fontWeight: '500' }}>24H LOW</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
