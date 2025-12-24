@@ -503,7 +503,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0,0,0,0.8)',
+      background: 'rgba(0,0,0,0.85)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -515,38 +515,39 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
         borderRadius: '20px',
         border: '1px solid rgba(255,255,255,0.1)',
         width: '100%',
-        maxWidth: '500px',
+        maxWidth: '560px',
         maxHeight: '90vh',
         overflow: 'auto'
       }}>
-        {/* Modal Header */}
+        {/* Modal Header with Step Indicator */}
         <div style={{
           padding: '20px',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
+          borderBottom: '1px solid rgba(255,255,255,0.06)'
         }}>
-          <h2 style={{ margin: 0, fontSize: '18px', color: '#FFFFFF' }}>
-            {step === 1 ? 'Choose Bot Type' : step === 2 ? 'Configure Bot' : 'Review & Create'}
-          </h2>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#8B9BB4',
-              fontSize: '24px',
-              cursor: 'pointer'
-            }}
-          >
-            ×
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ margin: 0, fontSize: '18px', color: '#FFFFFF' }}>
+              {stepTitles[step - 1]}
+            </h2>
+            <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#8B9BB4', fontSize: '24px', cursor: 'pointer' }}>×</button>
+          </div>
+          {/* Step Progress */}
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {[1, 2, 3, 4, 5].map((s) => (
+              <div key={s} style={{
+                flex: 1,
+                height: '4px',
+                borderRadius: '2px',
+                background: s <= step ? 'linear-gradient(90deg, #00E599, #00B8D4)' : 'rgba(255,255,255,0.1)'
+              }} />
+            ))}
+          </div>
+          <div style={{ fontSize: '12px', color: '#8B9BB4', marginTop: '8px' }}>Step {step} of 5</div>
         </div>
 
         {/* Modal Content */}
         <div style={{ padding: '20px' }}>
-          {/* Step 1: Choose Type */}
+          
+          {/* STEP 1: Choose Type */}
           {step === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
@@ -554,18 +555,21 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                 style={{
                   padding: '20px',
                   borderRadius: '12px',
-                  background: selectedType === 'grid' ? 'rgba(0,229,153,0.15)' : 'rgba(255,255,255,0.03)',
-                  border: selectedType === 'grid' ? '2px solid #00E599' : '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                   cursor: 'pointer',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  transition: 'all 0.2s'
                 }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#00E599'; e.currentTarget.style.background = 'rgba(0,229,153,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                   <IoGrid size={24} style={{ color: '#00E599' }} />
                   <span style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>Grid Bot</span>
                 </div>
                 <p style={{ margin: 0, fontSize: '13px', color: '#8B9BB4' }}>
-                  Automatically buy low and sell high within a price range. Best for sideways markets.
+                  Automatically buy low and sell high within a price range. Best for sideways/ranging markets.
                 </p>
               </button>
               <button
@@ -573,11 +577,14 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                 style={{
                   padding: '20px',
                   borderRadius: '12px',
-                  background: selectedType === 'dca' ? 'rgba(0,184,212,0.15)' : 'rgba(255,255,255,0.03)',
-                  border: selectedType === 'dca' ? '2px solid #00B8D4' : '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                   cursor: 'pointer',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  transition: 'all 0.2s'
                 }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#00B8D4'; e.currentTarget.style.background = 'rgba(0,184,212,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                   <IoTrendingUp size={24} style={{ color: '#00B8D4' }} />
@@ -587,215 +594,269 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                   Dollar-cost average into a position over time. Best for long-term accumulation.
                 </p>
               </button>
+              <div style={{
+                padding: '20px',
+                borderRadius: '12px',
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px dashed rgba(255,255,255,0.1)',
+                textAlign: 'left',
+                opacity: 0.6
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <IoRocket size={24} style={{ color: '#8B9BB4' }} />
+                  <span style={{ fontSize: '16px', fontWeight: '700', color: '#8B9BB4' }}>Signal Bot</span>
+                  <span style={{ fontSize: '10px', background: 'rgba(255,193,7,0.2)', color: '#FFC107', padding: '2px 8px', borderRadius: '4px' }}>COMING SOON</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '13px', color: '#6C757D' }}>
+                  Trade based on technical indicators (RSI, MACD, EMA crossovers).
+                </p>
+              </div>
             </div>
           )}
 
-          {/* Step 2: Configure */}
+          {/* STEP 2: Select Pair */}
           {step === 2 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Pair Selection */}
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Trading Pair</label>
-                <select
-                  value={pair}
-                  onChange={(e) => setPair(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    borderRadius: '10px',
-                    background: '#0E1626',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    color: '#FFFFFF',
-                    fontSize: '14px'
-                  }}
-                >
-                  <option value="">Select a pair</option>
-                  {tradingPairs.map(p => (
-                    <option key={p.symbol} value={p.symbol}>{p.name}</option>
-                  ))}
-                </select>
+              <div style={{ fontSize: '13px', color: '#8B9BB4', marginBottom: '8px' }}>
+                Select a trading pair for your {selectedType === 'grid' ? 'Grid' : 'DCA'} Bot
               </div>
-
-              {/* Grid Bot Params */}
-              {selectedType === 'grid' && (
-                <>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Investment Amount (USD)</label>
-                    <input
-                      type="number"
-                      value={params.investment_amount || ''}
-                      onChange={(e) => setParams({ ...params, investment_amount: parseFloat(e.target.value) || 0 })}
-                      placeholder="e.g., 1000"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#0E1626',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#FFFFFF',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Lower Price</label>
-                      <input
-                        type="number"
-                        value={params.lower_price || ''}
-                        onChange={(e) => setParams({ ...params, lower_price: parseFloat(e.target.value) || 0 })}
-                        placeholder="e.g., 80000"
-                        style={{
-                          width: '100%',
-                          padding: '12px',
-                          borderRadius: '10px',
-                          background: '#0E1626',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          color: '#FFFFFF',
-                          fontSize: '14px'
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Upper Price</label>
-                      <input
-                        type="number"
-                        value={params.upper_price || ''}
-                        onChange={(e) => setParams({ ...params, upper_price: parseFloat(e.target.value) || 0 })}
-                        placeholder="e.g., 100000"
-                        style={{
-                          width: '100%',
-                          padding: '12px',
-                          borderRadius: '10px',
-                          background: '#0E1626',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          color: '#FFFFFF',
-                          fontSize: '14px'
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Grid Count (2-100)</label>
-                    <input
-                      type="number"
-                      value={params.grid_count || ''}
-                      onChange={(e) => setParams({ ...params, grid_count: parseInt(e.target.value) || 0 })}
-                      placeholder="e.g., 10"
-                      min="2"
-                      max="100"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#0E1626',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#FFFFFF',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* DCA Bot Params */}
-              {selectedType === 'dca' && (
-                <>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Amount Per Order (USD)</label>
-                    <input
-                      type="number"
-                      value={params.amount_per_interval || ''}
-                      onChange={(e) => setParams({ ...params, amount_per_interval: parseFloat(e.target.value) || 0 })}
-                      placeholder="e.g., 100"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#0E1626',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#FFFFFF',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Interval</label>
-                    <select
-                      value={params.interval || ''}
-                      onChange={(e) => setParams({ ...params, interval: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#0E1626',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#FFFFFF',
-                        fontSize: '14px'
-                      }}
-                    >
-                      <option value="">Select interval</option>
-                      <option value="hourly">Hourly</option>
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: '#8B9BB4' }}>Total Budget (USD)</label>
-                    <input
-                      type="number"
-                      value={params.total_budget || ''}
-                      onChange={(e) => setParams({ ...params, total_budget: parseFloat(e.target.value) || 0 })}
-                      placeholder="e.g., 1000"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#0E1626',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#FFFFFF',
-                        fontSize: '14px'
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-
-              <button
-                onClick={fetchPreview}
-                disabled={!pair}
+              <select
+                value={pair}
+                onChange={(e) => setPair(e.target.value)}
                 style={{
                   width: '100%',
                   padding: '14px',
                   borderRadius: '10px',
-                  background: pair ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441',
-                  border: 'none',
-                  color: pair ? '#020617' : '#6C757D',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  cursor: pair ? 'pointer' : 'not-allowed'
+                  background: '#0E1626',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  color: '#FFFFFF',
+                  fontSize: '15px'
                 }}
               >
-                Preview Bot
-              </button>
+                <option value="">Choose a trading pair</option>
+                {tradingPairs.map(p => (
+                  <option key={p.symbol} value={p.symbol}>{p.name}</option>
+                ))}
+              </select>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button
+                  onClick={() => { setStep(1); setSelectedType(null); }}
+                  style={{
+                    flex: 1, padding: '14px', borderRadius: '10px', background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.2)', color: '#8B9BB4', fontSize: '14px', fontWeight: '600', cursor: 'pointer'
+                  }}
+                >Back</button>
+                <button
+                  onClick={() => pair && setStep(3)}
+                  disabled={!pair}
+                  style={{
+                    flex: 2, padding: '14px', borderRadius: '10px',
+                    background: pair ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441',
+                    border: 'none', color: pair ? '#020617' : '#6C757D', fontSize: '14px', fontWeight: '700',
+                    cursor: pair ? 'pointer' : 'not-allowed'
+                  }}
+                >Continue</button>
+              </div>
             </div>
           )}
 
-          {/* Step 3: Review & Create */}
-          {step === 3 && preview && (
+          {/* STEP 3: Configure Strategy */}
+          {step === 3 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: '12px',
-                padding: '16px'
-              }}>
-                <h4 style={{ margin: '0 0 12px', color: '#FFFFFF', fontSize: '14px' }}>Bot Summary</h4>
+              {/* Grid Bot Config */}
+              {selectedType === 'grid' && (
+                <>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Investment Amount (USD) *</label>
+                    <input
+                      type="number"
+                      value={params.investment_amount}
+                      onChange={(e) => setParams({ ...params, investment_amount: e.target.value })}
+                      placeholder="e.g., 1000"
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                    />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Lower Price *</label>
+                      <input
+                        type="number"
+                        value={params.lower_price}
+                        onChange={(e) => setParams({ ...params, lower_price: e.target.value })}
+                        placeholder="e.g., 80000"
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Upper Price *</label>
+                      <input
+                        type="number"
+                        value={params.upper_price}
+                        onChange={(e) => setParams({ ...params, upper_price: e.target.value })}
+                        placeholder="e.g., 100000"
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                      />
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Grid Count (2-100)</label>
+                      <input
+                        type="number"
+                        value={params.grid_count}
+                        onChange={(e) => setParams({ ...params, grid_count: parseInt(e.target.value) || 10 })}
+                        min="2" max="100"
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Grid Mode</label>
+                      <select
+                        value={params.mode}
+                        onChange={(e) => setParams({ ...params, mode: e.target.value })}
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                      >
+                        <option value="arithmetic">Arithmetic</option>
+                        <option value="geometric">Geometric</option>
+                      </select>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* DCA Bot Config */}
+              {selectedType === 'dca' && (
+                <>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Direction</label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => setParams({ ...params, side: 'buy' })}
+                        style={{
+                          flex: 1, padding: '12px', borderRadius: '8px',
+                          background: params.side === 'buy' ? 'rgba(0,229,153,0.15)' : 'rgba(255,255,255,0.03)',
+                          border: params.side === 'buy' ? '1px solid #00E599' : '1px solid rgba(255,255,255,0.1)',
+                          color: params.side === 'buy' ? '#00E599' : '#8B9BB4', fontWeight: '600', cursor: 'pointer'
+                        }}
+                      >Accumulate (Buy)</button>
+                      <button
+                        onClick={() => setParams({ ...params, side: 'sell' })}
+                        style={{
+                          flex: 1, padding: '12px', borderRadius: '8px',
+                          background: params.side === 'sell' ? 'rgba(255,92,92,0.15)' : 'rgba(255,255,255,0.03)',
+                          border: params.side === 'sell' ? '1px solid #FF5C5C' : '1px solid rgba(255,255,255,0.1)',
+                          color: params.side === 'sell' ? '#FF5C5C' : '#8B9BB4', fontWeight: '600', cursor: 'pointer'
+                        }}
+                      >Distribute (Sell)</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Amount Per Order (USD) *</label>
+                    <input
+                      type="number"
+                      value={params.amount_per_interval}
+                      onChange={(e) => setParams({ ...params, amount_per_interval: e.target.value })}
+                      placeholder="e.g., 100"
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                    />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Interval</label>
+                      <select
+                        value={params.interval}
+                        onChange={(e) => setParams({ ...params, interval: e.target.value })}
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                      >
+                        <option value="hourly">Every Hour</option>
+                        <option value="4h">Every 4 Hours</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Total Budget (USD) *</label>
+                      <input
+                        type="number"
+                        value={params.total_budget}
+                        onChange={(e) => setParams({ ...params, total_budget: e.target.value })}
+                        placeholder="e.g., 1000"
+                        style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ADVANCED SETTINGS (Both) */}
+              <div style={{ marginTop: '8px', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF', marginBottom: '12px' }}>⚙️ Advanced Settings (Optional)</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Stop Loss Price</label>
+                    <input
+                      type="number"
+                      value={params.stop_loss_price}
+                      onChange={(e) => setParams({ ...params, stop_loss_price: e.target.value })}
+                      placeholder="Optional"
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Take Profit Price</label>
+                    <input
+                      type="number"
+                      value={params.take_profit_price}
+                      onChange={(e) => setParams({ ...params, take_profit_price: e.target.value })}
+                      placeholder="Optional"
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Max Drawdown %</label>
+                    <input
+                      type="number"
+                      value={params.max_drawdown_percent}
+                      onChange={(e) => setParams({ ...params, max_drawdown_percent: e.target.value })}
+                      placeholder="e.g., 10"
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Max Daily Loss ($)</label>
+                    <input
+                      type="number"
+                      value={params.max_daily_loss}
+                      onChange={(e) => setParams({ ...params, max_daily_loss: e.target.value })}
+                      placeholder="e.g., 100"
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button
+                  onClick={() => setStep(2)}
+                  style={{ flex: 1, padding: '14px', borderRadius: '10px', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#8B9BB4', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+                >Back</button>
+                <button
+                  onClick={fetchPreview}
+                  style={{ flex: 2, padding: '14px', borderRadius: '10px', background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)', border: 'none', color: '#020617', fontSize: '14px', fontWeight: '700', cursor: 'pointer' }}
+                >Preview Bot</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: Review */}
+          {step === 4 && preview && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px' }}>
+                <h4 style={{ margin: '0 0 12px', color: '#FFFFFF', fontSize: '14px' }}>📊 Bot Summary</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Type</span>
-                    <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>
-                      {preview.bot_type === 'grid' ? 'Grid Bot' : 'DCA Bot'}
-                    </span>
+                    <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.bot_type === 'grid' ? 'Grid Bot' : 'DCA Bot'}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Pair</span>
@@ -814,88 +875,76 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                     </>
                   )}
                   {preview.bot_type === 'dca' && (
-                    <>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Interval</span>
-                        <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600', textTransform: 'capitalize' }}>{preview.interval}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Duration</span>
-                        <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.estimated_duration_days} days</span>
-                      </div>
-                    </>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Interval</span>
+                      <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600', textTransform: 'capitalize' }}>{preview.interval}</span>
+                    </div>
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Estimated Orders</span>
+                    <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Est. Orders</span>
                     <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.estimated_orders}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Total Investment</span>
-                    <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>${preview.total_investment || preview.total_budget}</span>
+                    <span style={{ color: '#00E599', fontSize: '13px', fontWeight: '600' }}>${preview.total_investment || preview.total_budget}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Est. Fees</span>
-                    <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>${preview.estimated_fees}</span>
+                    <span style={{ color: '#FFC107', fontSize: '13px', fontWeight: '600' }}>${preview.estimated_fees}</span>
                   </div>
                 </div>
               </div>
+              
+              <div style={{ padding: '12px', background: 'rgba(0,184,212,0.1)', borderRadius: '10px', border: '1px solid rgba(0,184,212,0.3)', fontSize: '12px', color: '#00B8D4' }}>
+                ℹ️ Standard platform maker/taker fees apply to all bot trades. Fees are identical to manual trading.
+              </div>
 
-              {/* Risk Acknowledgment */}
-              <label style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px',
-                cursor: 'pointer',
-                padding: '12px',
-                background: 'rgba(255,193,7,0.1)',
-                borderRadius: '10px',
-                border: '1px solid rgba(255,193,7,0.3)'
-              }}>
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  style={{ marginTop: '2px' }}
-                />
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', padding: '12px', background: 'rgba(255,193,7,0.1)', borderRadius: '10px', border: '1px solid rgba(255,193,7,0.3)' }}>
+                <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} style={{ marginTop: '2px' }} />
                 <span style={{ fontSize: '12px', color: '#FFC107' }}>
                   I understand that trading bots do not guarantee profit. Trades will use my wallet balance. I accept all risks associated with automated trading.
                 </span>
               </label>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={() => setStep(2)}
-                  style={{
-                    flex: 1,
-                    padding: '14px',
-                    borderRadius: '10px',
-                    background: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    color: '#8B9BB4',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back
-                </button>
+                <button onClick={() => setStep(3)} style={{ flex: 1, padding: '14px', borderRadius: '10px', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#8B9BB4', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>Back</button>
                 <button
                   onClick={handleCreate}
                   disabled={!agreed || creating}
-                  style={{
-                    flex: 2,
-                    padding: '14px',
-                    borderRadius: '10px',
-                    background: agreed ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441',
-                    border: 'none',
-                    color: agreed ? '#020617' : '#6C757D',
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    cursor: agreed ? 'pointer' : 'not-allowed'
+                  style={{ flex: 2, padding: '14px', borderRadius: '10px', background: agreed ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441', border: 'none', color: agreed ? '#020617' : '#6C757D', fontSize: '14px', fontWeight: '700', cursor: agreed ? 'pointer' : 'not-allowed' }}
+                >{creating ? 'Creating...' : 'Create Bot'}</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5: Success */}
+          {step === 5 && botCreated && (
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(0,229,153,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <IoCheckmarkCircle size={40} style={{ color: '#00E599' }} />
+              </div>
+              <h3 style={{ color: '#FFFFFF', margin: '0 0 8px', fontSize: '20px' }}>Bot Created Successfully!</h3>
+              <p style={{ color: '#8B9BB4', margin: '0 0 24px', fontSize: '14px' }}>
+                Your {selectedType === 'grid' ? 'Grid' : 'DCA'} Bot for {pair} is ready.
+              </p>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => { onSuccess(); }}
+                  style={{ flex: 1, padding: '14px', borderRadius: '10px', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#8B9BB4', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+                >View All Bots</button>
+                <button
+                  onClick={async () => {
+                    try {
+                      const userId = localStorage.getItem('userId');
+                      await axios.post(`${API}/api/bots/start`, { bot_id: botCreated.bot_id }, { headers: { 'x-user-id': userId } });
+                      toast.success('Bot started!');
+                      onSuccess();
+                    } catch (err) {
+                      toast.error('Failed to start bot');
+                    }
                   }}
-                >
-                  {creating ? 'Creating...' : 'Create Bot'}
-                </button>
+                  style={{ flex: 2, padding: '14px', borderRadius: '10px', background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)', border: 'none', color: '#020617', fontSize: '14px', fontWeight: '700', cursor: 'pointer' }}
+                >🚀 Start Bot Now</button>
               </div>
             </div>
           )}
