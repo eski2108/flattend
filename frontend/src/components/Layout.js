@@ -56,6 +56,7 @@ export default function Layout({ children }) {
     { path: '/p2p-express', label: t('nav.p2p_express'), icon: IoTrendingUp },
     { path: '/p2p-marketplace', label: t('nav.p2p_marketplace'), icon: IoBag },
     { path: '/trading', label: t('nav.trading'), icon: IoBarChart },
+    { path: '/trading-bots', label: 'Trading Bots', icon: IoRocket },
     { path: '/swap-crypto', label: t('nav.swap'), icon: IoFlash },
     { path: '/referrals', label: t('nav.referrals'), icon: IoGift },
     { path: '/my-orders', label: t('nav.transaction_history'), icon: IoDocument },
