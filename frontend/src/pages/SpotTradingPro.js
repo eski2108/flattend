@@ -207,17 +207,146 @@ export default function SpotTradingPro() {
       padding: '16px',
       gap: '12px'
     }}>
-      {/* TOP BAR - Selected pair + stats (NO PAIR TABS, NO COIN SELECTOR) */}
+      {/* PAGE TITLE */}
+      <div style={{ marginBottom: '4px' }}>
+        <h1 style={{ 
+          fontSize: '24px', 
+          fontWeight: '700', 
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          margin: 0
+        }}>
+          <span style={{ fontSize: '28px' }}>📈</span> Spot Trading
+        </h1>
+        <p style={{ fontSize: '13px', color: '#6B7280', margin: '4px 0 0 0' }}>
+          Advanced trading with TradingView charts and real-time data
+        </p>
+      </div>
+
+      {/* TOP INFO BOXES - 4 boxes in a row (DESKTOP ONLY) */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '12px',
+        width: '100%'
+      }}>
+        {/* Box 1: Last Price */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0b1220, #0f1b2d)',
+          border: '1px solid rgba(0, 255, 200, 0.15)',
+          boxShadow: '0 0 18px rgba(0, 255, 200, 0.12)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#9aa4bf', marginBottom: '6px' }}>LAST PRICE</span>
+          <span style={{ fontSize: '22px', fontWeight: '700', color: '#ffffff' }}>
+            ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+
+        {/* Box 2: 24h Change */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0b1220, #0f1b2d)',
+          border: '1px solid rgba(0, 255, 200, 0.15)',
+          boxShadow: '0 0 18px rgba(0, 255, 200, 0.12)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#9aa4bf', marginBottom: '6px' }}>24H CHANGE</span>
+          <span style={{ 
+            fontSize: '22px', 
+            fontWeight: '700', 
+            color: marketStats.change24h >= 0 ? '#00f5a0' : '#ff4d4f',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            {marketStats.change24h >= 0 ? '↗' : '↘'} {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+          </span>
+        </div>
+
+        {/* Box 3: 24h High */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0b1220, #0f1b2d)',
+          border: '1px solid rgba(0, 255, 200, 0.15)',
+          boxShadow: '0 0 18px rgba(0, 255, 200, 0.12)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#9aa4bf', marginBottom: '6px' }}>24H HIGH</span>
+          <span style={{ fontSize: '22px', fontWeight: '700', color: '#ffffff' }}>
+            ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+
+        {/* Box 4: 24h Low */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0b1220, #0f1b2d)',
+          border: '1px solid rgba(0, 255, 200, 0.15)',
+          boxShadow: '0 0 18px rgba(0, 255, 200, 0.12)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#9aa4bf', marginBottom: '6px' }}>24H LOW</span>
+          <span style={{ fontSize: '22px', fontWeight: '700', color: '#ffffff' }}>
+            ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+      </div>
+
+      {/* PAIR TABS ROW - Styled like the old version */}
       <div style={{
         display: 'flex',
-        alignItems: 'center',
-        padding: '12px 16px',
-        background: 'rgba(13, 20, 33, 0.9)',
-        borderRadius: '12px',
-        border: '1px solid rgba(255,255,255,0.1)',
-        gap: '24px'
+        gap: '8px',
+        flexWrap: 'wrap'
       }}>
-        {/* Pair dropdown - NOT a list of tabs */}
+        {['BTCUSD', 'ETHUSD', 'SOLUSD', 'XRPUSD', 'BNBUSD'].map((pair) => (
+          <button
+            key={pair}
+            onClick={() => {
+              setSelectedPair(pair);
+              navigate(`/spot-trading?pair=${pair}`);
+            }}
+            style={{
+              padding: '10px 20px',
+              background: selectedPair === pair 
+                ? 'linear-gradient(135deg, #00f5a0, #00d9f5)' 
+                : 'linear-gradient(135deg, #0b1220, #0f1b2d)',
+              border: selectedPair === pair 
+                ? 'none' 
+                : '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '8px',
+              color: selectedPair === pair ? '#000' : '#fff',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            {pair.replace('USD', '/USD')}
+          </button>
+        ))}
+      </div>
+
+      {/* MAIN GRID - Chart + Right Column (Trade Panel + Market Info) */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
