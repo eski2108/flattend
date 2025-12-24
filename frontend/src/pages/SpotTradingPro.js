@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 // Layout removed - already wrapped by MainLayout in App.js
 import CHXButton from '@/components/CHXButton';
-import { IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
+import { IoTrendingUp, IoTrendingDown, IoChevronDown } from 'react-icons/io5';
 import DOMPurify from 'dompurify';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTradingPro() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedPair, setSelectedPair] = useState('BTCUSD');
   const [orderType, setOrderType] = useState('buy');
   const [amount, setAmount] = useState('');
@@ -29,6 +30,15 @@ export default function SpotTradingPro() {
   const [tradingPairs, setTradingPairs] = useState([]);
   // Default to desktop (false) - useEffect will correct if needed
   const [isMobile, setIsMobile] = useState(false);
+  const [showPairDropdown, setShowPairDropdown] = useState(false);
+
+  // Read pair from URL query parameter
+  useEffect(() => {
+    const pairFromUrl = searchParams.get('pair');
+    if (pairFromUrl) {
+      setSelectedPair(pairFromUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const checkMobile = () => {
