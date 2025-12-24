@@ -506,7 +506,7 @@ export default function MobileMarketSelection() {
           {isDesktop && !loading && sortedPairs.length > 0 && (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 1fr 1fr 80px 100px',
+              gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 1fr 1fr 80px 120px',
               padding: '16px',
               borderBottom: '1px solid rgba(255,255,255,0.1)',
               color: '#8B9BB4',
@@ -519,11 +519,11 @@ export default function MobileMarketSelection() {
               <div>Pair</div>
               <SortableHeader column="lastPrice" label="Price" />
               <SortableHeader column="change24h" label="24h %" />
-              <SortableHeader column="volume24h" label="24h Volume" />
-              <SortableHeader column="high24h" label="24h High" />
-              <SortableHeader column="low24h" label="24h Low" />
+              <SortableHeader column="volume24h" label="Volume" />
+              <SortableHeader column="high24h" label="High" />
+              <SortableHeader column="low24h" label="Low" />
               <div style={{ textAlign: 'center' }}>Trend</div>
-              <div style={{ textAlign: 'right' }}>Actions</div>
+              <div style={{ textAlign: 'right' }}></div>
             </div>
           )}
           
