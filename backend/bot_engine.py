@@ -90,8 +90,8 @@ class BotEngine:
             }
         
         # Validate bot type
-        if bot_type not in ['grid', 'dca']:
-            return {"success": False, "error": "Invalid bot type. Use 'grid' or 'dca'"}
+        if bot_type not in ['grid', 'dca', 'signal']:
+            return {"success": False, "error": "Invalid bot type. Use 'grid', 'dca', or 'signal'"}
         
         # Validate params
         validation = await BotEngine._validate_params(bot_type, params)
