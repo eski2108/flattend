@@ -763,56 +763,78 @@ export default function MobileTradingPage() {
             </div>
           )}
 
-          {/* BUY and SELL Buttons */}
+          {/* BUY and SELL Buttons - Premium style matching info boxes */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
             <button
               onClick={() => handleTrade('buy')}
               disabled={isLoading}
               style={{
-                height: '56px',
-                borderRadius: '0',
+                height: '48px',
+                borderRadius: '12px',
                 background: isLoading 
-                  ? 'rgba(0,255,148,0.5)'
-                  : 'linear-gradient(135deg, #00FF94 0%, #0ACB72 100%)',
-                color: '#020617',
-                fontWeight: '800',
-                fontSize: '16px',
-                textTransform: 'uppercase',
-                border: 'none',
+                  ? 'rgba(34,230,161,0.5)'
+                  : 'linear-gradient(180deg, rgba(34,230,161,0.15) 0%, rgba(34,230,161,0.35) 100%)',
+                color: '#22E6A1',
+                fontWeight: '700',
+                fontSize: '15px',
+                border: '1px solid rgba(34,230,161,0.4)',
                 boxShadow: isLoading 
                   ? 'none'
-                  : '0 0 28px rgba(0,255,148,0.65), inset 0 1px 0 rgba(255,255,255,0.3)',
+                  : '0 0 20px rgba(34,230,161,0.25), inset 0 0 20px rgba(34,230,161,0.1)',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
                 letterSpacing: '0.5px',
-                transition: 'all 200ms ease'
+                transition: 'all 200ms ease',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
-              {isLoading ? 'PROCESSING...' : 'BUY'}
+              <span style={{
+                position: 'absolute',
+                bottom: 0,
+                left: '15%',
+                right: '15%',
+                height: '3px',
+                background: '#22E6A1',
+                boxShadow: '0 0 15px #22E6A1, 0 0 30px #22E6A1',
+                filter: 'blur(2px)'
+              }}></span>
+              {isLoading ? 'Processing...' : `Buy ${selectedCoin}`}
             </button>
 
             <button
               onClick={() => handleTrade('sell')}
               disabled={isLoading}
               style={{
-                height: '56px',
-                borderRadius: '0',
+                height: '48px',
+                borderRadius: '12px',
                 background: isLoading 
-                  ? 'rgba(255,75,75,0.5)'
-                  : 'linear-gradient(135deg, #FF4B4B 0%, #C22222 100%)',
-                color: '#FFFFFF',
-                fontWeight: '800',
-                fontSize: '16px',
-                textTransform: 'uppercase',
-                border: 'none',
+                  ? 'rgba(255,106,108,0.5)'
+                  : 'linear-gradient(180deg, rgba(255,106,108,0.15) 0%, rgba(255,106,108,0.35) 100%)',
+                color: '#FF6A6C',
+                fontWeight: '700',
+                fontSize: '15px',
+                border: '1px solid rgba(255,106,108,0.4)',
                 boxShadow: isLoading 
                   ? 'none'
-                  : '0 0 28px rgba(255,75,75,0.65), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  : '0 0 20px rgba(255,106,108,0.25), inset 0 0 20px rgba(255,106,108,0.1)',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
                 letterSpacing: '0.5px',
-                transition: 'all 200ms ease'
+                transition: 'all 200ms ease',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
-              {isLoading ? 'PROCESSING...' : 'SELL'}
+              <span style={{
+                position: 'absolute',
+                bottom: 0,
+                left: '15%',
+                right: '15%',
+                height: '3px',
+                background: '#FF6A6C',
+                boxShadow: '0 0 15px #FF6A6C, 0 0 30px #FF6A6C',
+                filter: 'blur(2px)'
+              }}></span>
+              {isLoading ? 'Processing...' : `Sell ${selectedCoin}`}
             </button>
           </div>
         </div>
