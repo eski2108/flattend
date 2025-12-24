@@ -32183,6 +32183,232 @@ async def get_admin_revenue_dashboard(timeframe: str = "all"):
         logger.error(f"Revenue dashboard error: {e}")
         return {"success": False, "error": str(e)}
 
+@api_router.get("/admin/revenue/breakdown")
+async def get_admin_revenue_breakdown(timeframe: str = "day"):
+    """
+    Get EXPLICIT revenue breakdown by source with clear labels.
+    
+    Returns separate totals for:
+    - Spot Trading (Manual)
+    - Trading Bots (separate from manual)
+    - Swap / Instant Buy-Sell
+    - P2P Marketplace
+    - Savings / Vaults
+    - Referrals
+    """
+    try:
+        from datetime import datetime, timedelta, timezone
+        
+        now = datetime.now(timezone.utc)
+        if timeframe == "day":
+            start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        elif timeframe == "week":
+            start_date = now - timedelta(days=7)
+        elif timeframe == "month":
+            start_date = now - timedelta(days=30)
+        else:  # all
+            start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        
+        # Helper to check if record is in timeframe
+        def in_timeframe(record):
+            ts = record.get("timestamp") or record.get("created_at")
+            if not ts:
+                return True
+            if isinstance(ts, str):
+                try:
+                    ts = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                except:
+                    return True
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            return ts >= start_date
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 1. SPOT TRADING (MANUAL) - fee_type = spot_trading, source != bot
+        # ═══════════════════════════════════════════════════════════════
+        manual_trades = await db.fee_transactions.find({
+            "fee_type": "spot_trading",
+            "source": {"$ne": "bot"}
+        }).to_list(10000)
+        manual_trades = [t for t in manual_trades if in_timeframe(t)]
+        
+        manual_trading_total = sum(float(t.get("amount", 0)) for t in manual_trades)
+        manual_trading_count = len(manual_trades)
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 2. TRADING BOTS - source = bot
+        # ═══════════════════════════════════════════════════════════════
+        bot_trades = await db.fee_transactions.find({"source": "bot"}).to_list(10000)
+        bot_trades = [t for t in bot_trades if in_timeframe(t)]
+        
+        bot_trading_total = sum(float(t.get("amount", 0)) for t in bot_trades)
+        bot_trading_count = len(bot_trades)
+        
+        # Get bot volume from spot_trades
+        bot_spot_trades = await db.spot_trades.find({"source": "bot"}).to_list(10000)
+        bot_spot_trades = [t for t in bot_spot_trades if in_timeframe(t)]
+        bot_volume = sum(float(t.get("amount", 0)) for t in bot_spot_trades)
+        
+        # Strategy breakdown for bots
+        bot_by_strategy = {}
+        for t in bot_trades:
+            strategy = t.get("strategy_type", "unknown")
+            if strategy not in bot_by_strategy:
+                bot_by_strategy[strategy] = {"count": 0, "amount": 0}
+            bot_by_strategy[strategy]["count"] += 1
+            bot_by_strategy[strategy]["amount"] += float(t.get("amount", 0))
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 3. SWAP / INSTANT BUY-SELL
+        # ═══════════════════════════════════════════════════════════════
+        swap_fees = await db.fee_transactions.find({
+            "fee_type": {"$in": ["swap", "instant_buy", "instant_sell", "express_buy", "express_sell"]}
+        }).to_list(10000)
+        swap_fees = [t for t in swap_fees if in_timeframe(t)]
+        
+        swap_total = sum(float(t.get("amount", 0)) for t in swap_fees)
+        swap_count = len(swap_fees)
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 4. P2P MARKETPLACE
+        # ═══════════════════════════════════════════════════════════════
+        p2p_fees = await db.fee_transactions.find({
+            "fee_type": {"$in": ["p2p", "p2p_escrow", "p2p_release", "p2p_fee"]}
+        }).to_list(10000)
+        p2p_fees = [t for t in p2p_fees if in_timeframe(t)]
+        
+        p2p_total = sum(float(t.get("amount", 0)) for t in p2p_fees)
+        p2p_count = len(p2p_fees)
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 5. SAVINGS / VAULTS
+        # ═══════════════════════════════════════════════════════════════
+        savings_fees = await db.fee_transactions.find({
+            "fee_type": {"$in": ["savings", "vault", "early_withdrawal", "savings_penalty"]}
+        }).to_list(10000)
+        savings_fees = [t for t in savings_fees if in_timeframe(t)]
+        
+        savings_total = sum(float(t.get("amount", 0)) for t in savings_fees)
+        savings_count = len(savings_fees)
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 6. LENDING / BORROWING
+        # ═══════════════════════════════════════════════════════════════
+        lending_fees = await db.fee_transactions.find({
+            "fee_type": {"$in": ["lending", "borrowing", "loan_interest", "liquidation"]}
+        }).to_list(10000)
+        lending_fees = [t for t in lending_fees if in_timeframe(t)]
+        
+        lending_total = sum(float(t.get("amount", 0)) for t in lending_fees)
+        lending_count = len(lending_fees)
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 7. REFERRALS
+        # ═══════════════════════════════════════════════════════════════
+        referral_fees = await db.fee_transactions.find({
+            "fee_type": {"$in": ["referral", "referral_commission"]}
+        }).to_list(10000)
+        referral_fees = [t for t in referral_fees if in_timeframe(t)]
+        
+        referral_paid = sum(float(t.get("amount", 0)) for t in referral_fees)
+        referral_count = len(referral_fees)
+        
+        # ═══════════════════════════════════════════════════════════════
+        # CALCULATE TOTALS
+        # ═══════════════════════════════════════════════════════════════
+        total_revenue = manual_trading_total + bot_trading_total + swap_total + p2p_total + savings_total + lending_total
+        total_trading = manual_trading_total + bot_trading_total
+        bot_percentage_of_trading = (bot_trading_total / total_trading * 100) if total_trading > 0 else 0
+        
+        return {
+            "success": True,
+            "timeframe": timeframe,
+            "generated_at": now.isoformat(),
+            
+            # GRAND TOTALS
+            "totals": {
+                "total_revenue": round(total_revenue, 4),
+                "total_trading_fees": round(total_trading, 4),
+                "referral_paid": round(referral_paid, 4),
+                "net_profit": round(total_revenue - referral_paid, 4)
+            },
+            
+            # EXPLICIT BREAKDOWN BY SOURCE
+            "breakdown": {
+                # 1. Spot Trading (Manual)
+                "spot_trading_manual": {
+                    "label": "Spot Trading (Manual)",
+                    "description": "Trading fees from manual user trades",
+                    "total_fees": round(manual_trading_total, 4),
+                    "trade_count": manual_trading_count,
+                    "fee_rate": "0.1%",
+                    "color": "#00F0FF"
+                },
+                
+                # 2. Trading Bots
+                "trading_bots": {
+                    "label": "🤖 Trading Bots",
+                    "description": "Fees from automated bot trades (same fee engine as manual)",
+                    "total_fees": round(bot_trading_total, 4),
+                    "trade_count": bot_trading_count,
+                    "total_volume": round(bot_volume, 2),
+                    "fee_rate": "0.1%",
+                    "percentage_of_trading": round(bot_percentage_of_trading, 2),
+                    "by_strategy": bot_by_strategy,
+                    "color": "#FF6B6B"
+                },
+                
+                # 3. Swap / Instant Buy-Sell
+                "swap_instant": {
+                    "label": "Swap / Instant Buy-Sell",
+                    "description": "Swap fees and spread profit",
+                    "total_fees": round(swap_total, 4),
+                    "trade_count": swap_count,
+                    "color": "#A855F7"
+                },
+                
+                # 4. P2P Marketplace
+                "p2p_marketplace": {
+                    "label": "P2P Marketplace",
+                    "description": "Escrow and release fees from P2P trades",
+                    "total_fees": round(p2p_total, 4),
+                    "trade_count": p2p_count,
+                    "color": "#EC4899"
+                },
+                
+                # 5. Savings / Vaults
+                "savings_vaults": {
+                    "label": "Savings / Vaults",
+                    "description": "Early withdrawal penalties and vault fees",
+                    "total_fees": round(savings_total, 4),
+                    "trade_count": savings_count,
+                    "color": "#22C55E"
+                },
+                
+                # 6. Lending / Borrowing
+                "lending_borrowing": {
+                    "label": "Lending / Borrowing",
+                    "description": "Interest and liquidation fees",
+                    "total_fees": round(lending_total, 4),
+                    "trade_count": lending_count,
+                    "color": "#F59E0B"
+                },
+                
+                # 7. Referrals
+                "referrals": {
+                    "label": "Referral Commissions",
+                    "description": "Commissions paid to referrers",
+                    "total_paid": round(referral_paid, 4),
+                    "payout_count": referral_count,
+                    "color": "#0EA5E9"
+                }
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Revenue breakdown error: {e}")
+        return {"success": False, "error": str(e)}
+
 @api_router.get("/admin/revenue/summary")
 async def get_admin_revenue_summary():
     """Get comprehensive revenue breakdown - all fees and profits collected"""
