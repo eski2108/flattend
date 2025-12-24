@@ -419,30 +419,51 @@ class BotWorker:
         """
         try:
             backend_url = os.environ.get('BACKEND_URL', 'http://localhost:8001')
+            
+            # Get current price first
+            current_price = 1.0  # Default
+            try:
+                async with httpx.AsyncClient() as price_client:
+                    price_resp = await price_client.get(f"{backend_url}/api/prices/live", timeout=5.0)
+                    if price_resp.status_code == 200:
+                        prices = price_resp.json().get('prices', {})
+                        # Extract base currency from pair (e.g., BTC from BTCUSD)
+                        base = pair[:3] if len(pair) >= 3 else pair
+                        if base in prices:
+                            current_price = float(prices[base].get('price', 1.0))
+            except Exception as price_err:
+                logger.warning(f"Could not fetch price for {pair}: {price_err}")
+            
             async with httpx.AsyncClient() as client:
+                # Use the correct field names expected by the endpoint
                 response = await client.post(
                     f"{backend_url}/api/trading/place-order",
                     json={
+                        "user_id": user_id,  # Required in body
                         "pair": pair,
-                        "side": side,
-                        "order_type": "market",
+                        "type": side,  # Endpoint uses 'type' not 'side'
                         "amount": amount,
+                        "price": current_price,  # Required
+                        "fee_percent": 0.1,  # Default fee
                         "source": "bot",
                         "bot_id": bot_id,
-                        "strategy_type": strategy_type,
-                        "idempotency_key": idempotency_key
+                        "strategy_type": strategy_type
                     },
-                    headers={"x-user-id": user_id},
+                    headers={
+                        "x-user-id": user_id,
+                        "Idempotency-Key": idempotency_key
+                    },
                     timeout=30.0
                 )
                 
                 result = response.json()
+                logger.info(f"Bot order result for {bot_id}: {result}")
                 return {
                     "success": result.get("success", False),
                     "order_id": result.get("order_id"),
                     "trade_id": result.get("trade_id"),
-                    "fee": result.get("fee"),
-                    "error": result.get("error") or result.get("detail")
+                    "fee": result.get("fee") or result.get("fee_amount"),
+                    "error": result.get("error") or result.get("detail") or result.get("message")
                 }
         except Exception as e:
             logger.error(f"Error placing bot order: {e}")
