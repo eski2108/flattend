@@ -14,6 +14,253 @@ import DOMPurify from 'dompurify';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = BACKEND_URL;
 
+// Admin Bots Section Component
+function AdminBotsSection({ API, adminId }) {
+  const [botStats, setBotStats] = useState(null);
+  const [activeBots, setActiveBots] = useState([]);
+  const [recentBotTrades, setRecentBotTrades] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedBot, setSelectedBot] = useState(null);
+
+  useEffect(() => {
+    fetchBotData();
+    const interval = setInterval(fetchBotData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchBotData = async () => {
+    try {
+      const [statsRes, botsRes, tradesRes] = await Promise.all([
+        axios.get(`${API}/api/bots/admin/stats`, { headers: { 'x-admin-id': adminId } }),
+        axios.get(`${API}/api/bots/admin/bots`, { headers: { 'x-admin-id': adminId } }),
+        axios.get(`${API}/api/bots/admin/trades`, { headers: { 'x-admin-id': adminId } })
+      ]);
+      
+      if (statsRes.data.success) setBotStats(statsRes.data.stats);
+      if (botsRes.data.success) setActiveBots(botsRes.data.bots || []);
+      if (tradesRes.data.success) setRecentBotTrades(tradesRes.data.trades || []);
+    } catch (err) {
+      console.error('Error fetching bot data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmergencyStop = async (botId = null, userId = null) => {
+    const action = botId ? `bot ${botId}` : userId ? `all bots for user ${userId}` : 'ALL bots';
+    if (!window.confirm(`Are you sure you want to EMERGENCY STOP ${action}?`)) return;
+    
+    try {
+      const response = await axios.post(`${API}/api/bots/admin/emergency-stop`, 
+        { bot_id: botId, user_id: userId },
+        { headers: { 'x-admin-id': adminId } }
+      );
+      if (response.data.success) {
+        toast.success(`Emergency stop executed: ${response.data.stopped_count} bot(s) stopped`);
+        fetchBotData();
+      }
+    } catch (err) {
+      toast.error('Failed to execute emergency stop');
+    }
+  };
+
+  if (loading) {
+    return <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Loading bot data...</div>;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* Emergency Stop Banner */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1))', 
+        border: '2px solid rgba(239, 68, 68, 0.4)', 
+        borderRadius: '12px', 
+        padding: '1rem 1.5rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <div>
+          <div style={{ color: '#EF4444', fontWeight: '700', fontSize: '14px' }}>⚠️ Emergency Controls</div>
+          <div style={{ color: '#888', fontSize: '12px' }}>Stop all running bots immediately if needed</div>
+        </div>
+        <button
+          onClick={() => handleEmergencyStop()}
+          style={{
+            background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+            color: '#FFF',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '10px 20px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            fontSize: '13px'
+          }}
+        >
+          🛑 STOP ALL BOTS
+        </button>
+      </div>
+
+      {/* Stats Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+        <Card style={{ background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 180, 220, 0.05))', border: '2px solid rgba(0, 240, 255, 0.3)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase' }}>Total Bots</div>
+          <div style={{ fontSize: '28px', fontWeight: '900', color: '#00F0FF' }}>{botStats?.total_bots || 0}</div>
+        </Card>
+        <Card style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05))', border: '2px solid rgba(34, 197, 94, 0.3)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase' }}>Active Bots</div>
+          <div style={{ fontSize: '28px', fontWeight: '900', color: '#22C55E' }}>{botStats?.active_bots || 0}</div>
+        </Card>
+        <Card style={{ background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.05))', border: '2px solid rgba(168, 85, 247, 0.3)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase' }}>Bot Users</div>
+          <div style={{ fontSize: '28px', fontWeight: '900', color: '#A855F7' }}>{botStats?.bot_users || 0}</div>
+        </Card>
+        <Card style={{ background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05))', border: '2px solid rgba(251, 191, 36, 0.3)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase' }}>Bot Trades (24h)</div>
+          <div style={{ fontSize: '28px', fontWeight: '900', color: '#FBBF24' }}>{botStats?.trades_24h || 0}</div>
+        </Card>
+        <Card style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05))', border: '2px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase' }}>Bot Volume (24h)</div>
+          <div style={{ fontSize: '28px', fontWeight: '900', color: '#3B82F6' }}>£{(botStats?.volume_24h || 0).toLocaleString()}</div>
+        </Card>
+        <Card style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(219, 39, 119, 0.05))', border: '2px solid rgba(236, 72, 153, 0.3)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase' }}>Bot Fees (24h)</div>
+          <div style={{ fontSize: '28px', fontWeight: '900', color: '#EC4899' }}>£{(botStats?.fees_24h || 0).toLocaleString()}</div>
+        </Card>
+      </div>
+
+      {/* Strategy Breakdown */}
+      {botStats?.strategy_breakdown && (
+        <Card style={{ background: 'rgba(0,0,0,0.3)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 1rem', color: '#FFF', fontSize: '16px' }}>📊 Strategy Breakdown</h3>
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+            {Object.entries(botStats.strategy_breakdown).map(([strategy, count]) => (
+              <div key={strategy} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ 
+                  background: strategy === 'grid' ? '#00E599' : strategy === 'dca' ? '#00B8D4' : '#FF6B6B',
+                  width: '12px', height: '12px', borderRadius: '50%'
+                }} />
+                <span style={{ color: '#888', fontSize: '13px', textTransform: 'capitalize' }}>{strategy}: </span>
+                <span style={{ color: '#FFF', fontWeight: '600' }}>{count}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Active Bots Table */}
+      <Card style={{ background: 'rgba(0,0,0,0.3)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '1.5rem' }}>
+        <h3 style={{ margin: '0 0 1rem', color: '#FFF', fontSize: '16px' }}>🤖 Active Bots</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>BOT ID</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>USER</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>TYPE</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>PAIR</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>STATUS</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>TRADES</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>FEES</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {activeBots.length === 0 ? (
+                <tr>
+                  <td colSpan="8" style={{ padding: '24px', textAlign: 'center', color: '#666' }}>No active bots</td>
+                </tr>
+              ) : activeBots.map(bot => (
+                <tr key={bot.bot_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '12px 8px', color: '#00F0FF', fontSize: '12px', fontFamily: 'monospace' }}>{bot.bot_id?.slice(0, 8)}...</td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>{bot.user_email || bot.user_id?.slice(0, 8)}</td>
+                  <td style={{ padding: '12px 8px' }}>
+                    <span style={{ 
+                      background: bot.type === 'grid' ? 'rgba(0,229,153,0.2)' : bot.type === 'dca' ? 'rgba(0,184,212,0.2)' : 'rgba(255,107,107,0.2)',
+                      color: bot.type === 'grid' ? '#00E599' : bot.type === 'dca' ? '#00B8D4' : '#FF6B6B',
+                      padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase'
+                    }}>{bot.type}</span>
+                  </td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>{bot.pair}</td>
+                  <td style={{ padding: '12px 8px' }}>
+                    <span style={{ 
+                      background: bot.status === 'running' ? 'rgba(34,197,94,0.2)' : bot.status === 'paused' ? 'rgba(251,191,36,0.2)' : 'rgba(239,68,68,0.2)',
+                      color: bot.status === 'running' ? '#22C55E' : bot.status === 'paused' ? '#FBBF24' : '#EF4444',
+                      padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase'
+                    }}>{bot.status}</span>
+                  </td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>{bot.trade_count || 0}</td>
+                  <td style={{ padding: '12px 8px', color: '#22C55E', fontSize: '13px' }}>£{(bot.fees_generated || 0).toFixed(2)}</td>
+                  <td style={{ padding: '12px 8px' }}>
+                    <button
+                      onClick={() => handleEmergencyStop(bot.bot_id)}
+                      style={{
+                        background: 'rgba(239,68,68,0.2)',
+                        color: '#EF4444',
+                        border: '1px solid rgba(239,68,68,0.3)',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        fontSize: '11px',
+                        cursor: 'pointer'
+                      }}
+                    >Stop</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Recent Bot Trades */}
+      <Card style={{ background: 'rgba(0,0,0,0.3)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '1.5rem' }}>
+        <h3 style={{ margin: '0 0 1rem', color: '#FFF', fontSize: '16px' }}>📈 Recent Bot Trades</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>TIME</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>USER</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>PAIR</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>SIDE</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>AMOUNT</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>PRICE</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>FEE</th>
+                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#888', fontSize: '12px', fontWeight: '600' }}>STRATEGY</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentBotTrades.length === 0 ? (
+                <tr>
+                  <td colSpan="8" style={{ padding: '24px', textAlign: 'center', color: '#666' }}>No bot trades yet</td>
+                </tr>
+              ) : recentBotTrades.map((trade, idx) => (
+                <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td style={{ padding: '12px 8px', color: '#888', fontSize: '12px' }}>{new Date(trade.timestamp).toLocaleString()}</td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>{trade.user_email || trade.user_id?.slice(0, 8)}</td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>{trade.pair}</td>
+                  <td style={{ padding: '12px 8px' }}>
+                    <span style={{ color: trade.side === 'buy' ? '#22C55E' : '#EF4444', fontWeight: '600', textTransform: 'uppercase' }}>{trade.side}</span>
+                  </td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>£{trade.amount?.toFixed(2)}</td>
+                  <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>£{trade.price?.toLocaleString()}</td>
+                  <td style={{ padding: '12px 8px', color: '#22C55E', fontSize: '13px' }}>£{trade.fee?.toFixed(4)}</td>
+                  <td style={{ padding: '12px 8px' }}>
+                    <span style={{ 
+                      background: 'rgba(168,85,247,0.2)', color: '#A855F7',
+                      padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase'
+                    }}>{trade.strategy_type || 'unknown'}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
