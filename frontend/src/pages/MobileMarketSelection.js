@@ -385,6 +385,31 @@ export default function MobileMarketSelection() {
           )}
         </div>
 
+        {/* Mobile Bots Pill */}
+        {!isDesktop && (
+          <div style={{ padding: '0 16px 12px' }}>
+            <button
+              onClick={() => navigate('/trading-bots')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                borderRadius: '20px',
+                background: 'rgba(0,229,153,0.1)',
+                border: '1px solid rgba(0,229,153,0.3)',
+                color: '#00E599',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              <IoRocket size={14} />
+              Trading Bots
+            </button>
+          </div>
+        )}
+
         {/* Tabs */}
         <div style={{
           display: 'flex',
