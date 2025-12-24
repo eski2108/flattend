@@ -588,7 +588,9 @@ export default function SpotTradingPro() {
               <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
             </div>
           </div>
+        </div>
 
+        {/* BOT PANEL OVERLAY */}
         {showBotPanel && (
           <BotPanelDesktop
             pair={selectedPair}
@@ -841,6 +843,8 @@ export default function SpotTradingPro() {
             background: 'transparent'
           }}></div>
         </div>
+
+        {/* Amount input removed - buttons moved to top */}
 
         {/* MOBILE FOOTER */}
         <div style={{
