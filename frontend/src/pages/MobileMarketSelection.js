@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { generateTradingPairs, getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
-import { IoSearchOutline, IoStarOutline, IoStar } from 'react-icons/io5';
+import { IoSearchOutline, IoStarOutline, IoStar, IoTrendingUp, IoSwapHorizontal, IoChevronUp, IoChevronDown } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -16,6 +16,18 @@ export default function MobileMarketSelection() {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [selectedCoin, setSelectedCoin] = useState(null);
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const [sortColumn, setSortColumn] = useState('volume24h');
+  const [sortDirection, setSortDirection] = useState('desc');
+  const [quoteFilter, setQuoteFilter] = useState('USD');
+  const [marketSummary, setMarketSummary] = useState({
+    totalMarketCap: 0,
+    totalVolume24h: 0,
+    btcDominance: 0,
+    topGainer: null,
+    topLoser: null
+  });
 
   // Detect desktop vs mobile
   useEffect(() => {
@@ -54,11 +66,42 @@ export default function MobileMarketSelection() {
             volume24h: priceData?.volume_24h || 0,
             high24h: priceData?.high_24h || 0,
             low24h: priceData?.low_24h || 0,
-            marketCap: priceData?.market_cap || 0
+            marketCap: priceData?.market_cap || 0,
+            circulatingSupply: priceData?.circulating_supply || 0
           };
         });
         
         setTradingPairs(enrichedPairs);
+        
+        // Calculate market summary from real data
+        if (enrichedPairs.length > 0) {
+          const totalMarketCap = enrichedPairs.reduce((sum, p) => sum + (p.marketCap || 0), 0);
+          const totalVolume24h = enrichedPairs.reduce((sum, p) => sum + (p.volume24h || 0), 0);
+          
+          // Find BTC for dominance calculation
+          const btcPair = enrichedPairs.find(p => p.base === 'BTC');
+          const btcDominance = btcPair && totalMarketCap > 0 
+            ? ((btcPair.marketCap / totalMarketCap) * 100) 
+            : 0;
+          
+          // Find top gainer and loser
+          const sortedByChange = [...enrichedPairs].sort((a, b) => b.change24h - a.change24h);
+          const topGainer = sortedByChange[0];
+          const topLoser = sortedByChange[sortedByChange.length - 1];
+          
+          setMarketSummary({
+            totalMarketCap,
+            totalVolume24h,
+            btcDominance,
+            topGainer,
+            topLoser
+          });
+          
+          // Set first coin as selected for info panel
+          if (!selectedCoin) {
+            setSelectedCoin(enrichedPairs[0]);
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching trading pairs:', error);
