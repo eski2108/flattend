@@ -4665,25 +4665,7 @@ export default function AdminDashboard() {
                   border: '1px solid rgba(255,255,255,0.1)',
                   marginBottom: '2rem'
                 }}>
-                  {/* Table Header */}
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '120px 100px 1fr 80px',
-                    padding: '1rem',
-                    background: 'rgba(0,240,255,0.1)',
-                    borderBottom: '1px solid rgba(255,255,255,0.1)',
-                    fontWeight: '700',
-                    fontSize: '11px',
-                    color: '#888',
-                    textTransform: 'uppercase'
-                  }}>
-                    <div>Date</div>
-                    <div>Day Total</div>
-                    <div>Breakdown by Source (All Amounts)</div>
-                    <div>Action</div>
-                  </div>
-
-                  {/* Daily Rows - Scrollable */}
+                  {/* Daily Rows - Scrollable (single-line readable format) */}
                   <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
                     {revenueAnalytics.daily.map((day, idx) => {
                       // Get amounts for each source category
