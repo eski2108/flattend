@@ -418,14 +418,41 @@ export default function TradingBots() {
   );
 }
 
-// Create Bot Modal Component
+// Create Bot Modal Component - 5-STEP WIZARD
 function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSelectedType }) {
   const [step, setStep] = useState(1);
   const [pair, setPair] = useState('');
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({
+    // Grid defaults
+    investment_amount: '',
+    lower_price: '',
+    upper_price: '',
+    grid_count: 10,
+    mode: 'arithmetic',
+    // DCA defaults
+    amount_per_interval: '',
+    interval: 'daily',
+    total_budget: '',
+    side: 'buy',
+    // Advanced (both)
+    stop_loss_price: '',
+    take_profit_price: '',
+    max_drawdown_percent: '',
+    max_daily_loss: '',
+    max_open_orders: 20
+  });
   const [preview, setPreview] = useState(null);
   const [creating, setCreating] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [botCreated, setBotCreated] = useState(null);
+
+  const stepTitles = [
+    'Choose Bot Type',
+    'Select Trading Pair',
+    'Configure Strategy',
+    'Review Settings',
+    'Bot Created'
+  ];
 
   const fetchPreview = async () => {
     try {
@@ -436,7 +463,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
       });
       if (response.data.success) {
         setPreview(response.data.preview);
-        setStep(3);
+        setStep(4);
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to generate preview');
@@ -459,8 +486,8 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
         headers: { 'x-user-id': userId }
       });
       if (response.data.success) {
-        toast.success('Bot created! Click Start to begin trading.');
-        onSuccess();
+        setBotCreated(response.data);
+        setStep(5);
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create bot');
