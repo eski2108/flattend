@@ -1392,6 +1392,23 @@ export default function AdminDashboard() {
             Support Chat
           </button>
 
+          <button
+            onClick={() => setActiveTab('bots')}
+            style={{
+              padding: '1rem 1.5rem',
+              background: activeTab === 'bots' ? 'linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 159, 28, 0.2))' : 'none',
+              border: 'none',
+              borderBottom: activeTab === 'bots' ? '3px solid #FF6B6B' : '3px solid transparent',
+              color: activeTab === 'bots' ? '#FF6B6B' : '#888',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.3s'
+            }}
+          >
+            🤖 Trading Bots
+          </button>
+
         </div>
 
         {/* UNIFIED BUSINESS DASHBOARD - ALL IN ONE */}
