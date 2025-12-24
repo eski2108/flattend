@@ -866,3 +866,361 @@ export default function SpotTradingPro() {
     </div>
   );
 }
+
+// Bot Panel Component for Desktop
+function BotPanelDesktop({ pair, currentPrice, onClose, navigate }) {
+  const [step, setStep] = useState(1);
+  const [botType, setBotType] = useState(null);
+  const [params, setParams] = useState({});
+  const [preview, setPreview] = useState(null);
+  const [creating, setCreating] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const API = process.env.REACT_APP_BACKEND_URL || '';
+
+  const fetchPreview = async () => {
+    try {
+      const response = await axios.post(`${API}/api/bots/preview`, {
+        bot_type: botType,
+        pair,
+        params
+      });
+      if (response.data.success) {
+        setPreview(response.data.preview);
+        setStep(3);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to generate preview');
+    }
+  };
+
+  const handleCreate = async () => {
+    if (!agreed) {
+      toast.error('Please acknowledge the risk disclaimer');
+      return;
+    }
+    setCreating(true);
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await axios.post(`${API}/api/bots/create`, {
+        bot_type: botType,
+        pair,
+        params
+      }, {
+        headers: { 'x-user-id': userId }
+      });
+      if (response.data.success) {
+        toast.success('Bot created! Go to Trading Bots to start it.');
+        navigate('/trading-bots');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create bot');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      right: 0,
+      width: '420px',
+      height: '100vh',
+      background: '#0B1220',
+      borderLeft: '1px solid rgba(255,255,255,0.1)',
+      boxShadow: '-10px 0 40px rgba(0,0,0,0.5)',
+      zIndex: 1000,
+      display: 'flex',
+      flexDirection: 'column',
+      animation: 'slideIn 200ms ease'
+    }}>
+      <style>{`
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+      `}</style>
+
+      {/* Header */}
+      <div style={{
+        padding: '20px',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <IoRocket style={{ color: '#00E599' }} />
+            Trading Bot
+          </h2>
+          <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#8B9BB4' }}>{pair.replace('USD', '/USD')}</p>
+        </div>
+        <button
+          onClick={onClose}
+          style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: 'none',
+            color: '#8B9BB4',
+            fontSize: '20px',
+            cursor: 'pointer',
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >×</button>
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '20px' }}>
+        {/* Step 1: Choose Type */}
+        {step === 1 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <p style={{ color: '#8B9BB4', fontSize: '13px', marginBottom: '8px' }}>Select a bot strategy:</p>
+            <button
+              onClick={() => { setBotType('grid'); setStep(2); }}
+              style={{
+                padding: '16px',
+                borderRadius: '12px',
+                background: 'rgba(0,229,153,0.08)',
+                border: '1px solid rgba(0,229,153,0.3)',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                <IoGrid size={20} style={{ color: '#00E599' }} />
+                <span style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>Grid Bot</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '12px', color: '#8B9BB4' }}>
+                Buy low, sell high within a price range. Best for sideways markets.
+              </p>
+            </button>
+            <button
+              onClick={() => { setBotType('dca'); setStep(2); }}
+              style={{
+                padding: '16px',
+                borderRadius: '12px',
+                background: 'rgba(77,163,255,0.08)',
+                border: '1px solid rgba(77,163,255,0.3)',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                <IoTrendingUp size={20} style={{ color: '#4DA3FF' }} />
+                <span style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>DCA Bot</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '12px', color: '#8B9BB4' }}>
+                Dollar-cost average over time. Best for long-term accumulation.
+              </p>
+            </button>
+            <button
+              onClick={() => navigate('/trading-bots')}
+              style={{
+                marginTop: '12px',
+                padding: '12px',
+                borderRadius: '10px',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#8B9BB4',
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              View My Bots →
+            </button>
+          </div>
+        )}
+
+        {/* Step 2: Configure */}
+        {step === 2 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <button onClick={() => setStep(1)} style={{ background: 'none', border: 'none', color: '#8B9BB4', fontSize: '13px', cursor: 'pointer', textAlign: 'left' }}>← Back</button>
+            
+            {botType === 'grid' && (
+              <>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Investment Amount (USD)</label>
+                  <input
+                    type="number"
+                    value={params.investment_amount || ''}
+                    onChange={(e) => setParams({ ...params, investment_amount: parseFloat(e.target.value) || 0 })}
+                    placeholder={`e.g., 1000`}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Lower Price</label>
+                    <input
+                      type="number"
+                      value={params.lower_price || ''}
+                      onChange={(e) => setParams({ ...params, lower_price: parseFloat(e.target.value) || 0 })}
+                      placeholder={`${(currentPrice * 0.9).toFixed(0)}`}
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Upper Price</label>
+                    <input
+                      type="number"
+                      value={params.upper_price || ''}
+                      onChange={(e) => setParams({ ...params, upper_price: parseFloat(e.target.value) || 0 })}
+                      placeholder={`${(currentPrice * 1.1).toFixed(0)}`}
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Grid Count (2-100)</label>
+                  <input
+                    type="number"
+                    value={params.grid_count || ''}
+                    onChange={(e) => setParams({ ...params, grid_count: parseInt(e.target.value) || 0 })}
+                    placeholder="e.g., 10"
+                    min="2"
+                    max="100"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                  />
+                </div>
+              </>
+            )}
+
+            {botType === 'dca' && (
+              <>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Amount Per Order (USD)</label>
+                  <input
+                    type="number"
+                    value={params.amount_per_interval || ''}
+                    onChange={(e) => setParams({ ...params, amount_per_interval: parseFloat(e.target.value) || 0 })}
+                    placeholder="e.g., 100"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Interval</label>
+                  <select
+                    value={params.interval || ''}
+                    onChange={(e) => setParams({ ...params, interval: e.target.value })}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                  >
+                    <option value="">Select interval</option>
+                    <option value="hourly">Hourly</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Total Budget (USD)</label>
+                  <input
+                    type="number"
+                    value={params.total_budget || ''}
+                    onChange={(e) => setParams({ ...params, total_budget: parseFloat(e.target.value) || 0 })}
+                    placeholder="e.g., 1000"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                  />
+                </div>
+              </>
+            )}
+
+            <button
+              onClick={fetchPreview}
+              disabled={!params.investment_amount && !params.amount_per_interval}
+              style={{
+                width: '100%',
+                padding: '14px',
+                borderRadius: '10px',
+                background: (params.investment_amount || params.amount_per_interval) ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441',
+                border: 'none',
+                color: (params.investment_amount || params.amount_per_interval) ? '#020617' : '#6C757D',
+                fontSize: '14px',
+                fontWeight: '700',
+                cursor: (params.investment_amount || params.amount_per_interval) ? 'pointer' : 'not-allowed'
+              }}
+            >
+              Preview Bot
+            </button>
+          </div>
+        )}
+
+        {/* Step 3: Review & Create */}
+        {step === 3 && preview && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <button onClick={() => setStep(2)} style={{ background: 'none', border: 'none', color: '#8B9BB4', fontSize: '13px', cursor: 'pointer', textAlign: 'left' }}>← Back</button>
+            
+            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px' }}>
+              <h4 style={{ margin: '0 0 12px', color: '#FFFFFF', fontSize: '14px' }}>Bot Summary</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Type</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.bot_type === 'grid' ? 'Grid Bot' : 'DCA Bot'}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Pair</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.pair}</span>
+                </div>
+                {preview.price_range && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Price Range</span>
+                    <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.price_range}</span>
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Est. Orders</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>{preview.estimated_orders}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Total Investment</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>${preview.total_investment || preview.total_budget}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9BB4', fontSize: '13px' }}>Est. Fees</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: '600' }}>${preview.estimated_fees}</span>
+                </div>
+              </div>
+            </div>
+
+            <label style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+              cursor: 'pointer',
+              padding: '12px',
+              background: 'rgba(255,193,7,0.1)',
+              borderRadius: '10px',
+              border: '1px solid rgba(255,193,7,0.3)'
+            }}>
+              <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} style={{ marginTop: '2px' }} />
+              <span style={{ fontSize: '12px', color: '#FFC107' }}>
+                I understand that trading bots do not guarantee profit. Trades will use my wallet balance. I accept all risks.
+              </span>
+            </label>
+
+            <button
+              onClick={handleCreate}
+              disabled={!agreed || creating}
+              style={{
+                width: '100%',
+                padding: '14px',
+                borderRadius: '10px',
+                background: agreed ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441',
+                border: 'none',
+                color: agreed ? '#020617' : '#6C757D',
+                fontSize: '14px',
+                fontWeight: '700',
+                cursor: agreed ? 'pointer' : 'not-allowed'
+              }}
+            >
+              {creating ? 'Creating...' : 'Create Bot'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
