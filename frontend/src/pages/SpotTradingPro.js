@@ -231,11 +231,11 @@ export default function SpotTradingPro() {
         gap: '12px',
         width: '100%'
       }}>
-        {/* Box 1: Last Price - CYAN GRADIENT FILL */}
+        {/* Box 1: Last Price - CYAN GRADIENT FILL (lighter) */}
         <div style={{
-          background: 'linear-gradient(180deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 212, 255, 0.25) 100%)',
-          border: '1px solid rgba(0, 212, 255, 0.4)',
-          boxShadow: '0 0 30px rgba(0, 212, 255, 0.3), 0 0 60px rgba(0, 212, 255, 0.15), inset 0 0 30px rgba(0, 212, 255, 0.1)',
+          background: 'linear-gradient(180deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 212, 255, 0.35) 100%)',
+          border: '1px solid rgba(0, 212, 255, 0.5)',
+          boxShadow: '0 0 35px rgba(0, 212, 255, 0.35), 0 0 70px rgba(0, 212, 255, 0.2), inset 0 0 40px rgba(0, 212, 255, 0.15)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '90px',
@@ -261,11 +261,11 @@ export default function SpotTradingPro() {
           </span>
         </div>
 
-        {/* Box 2: 24h Change - RED GRADIENT FILL */}
+        {/* Box 2: 24h Change - RED GRADIENT FILL (lighter) */}
         <div style={{
-          background: 'linear-gradient(180deg, rgba(255, 50, 80, 0.05) 0%, rgba(255, 50, 80, 0.25) 100%)',
-          border: '1px solid rgba(255, 50, 80, 0.4)',
-          boxShadow: '0 0 30px rgba(255, 50, 80, 0.3), 0 0 60px rgba(255, 50, 80, 0.15), inset 0 0 30px rgba(255, 50, 80, 0.1)',
+          background: 'linear-gradient(180deg, rgba(255, 50, 80, 0.08) 0%, rgba(255, 50, 80, 0.35) 100%)',
+          border: '1px solid rgba(255, 50, 80, 0.5)',
+          boxShadow: '0 0 35px rgba(255, 50, 80, 0.35), 0 0 70px rgba(255, 50, 80, 0.2), inset 0 0 40px rgba(255, 50, 80, 0.15)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '90px',
@@ -295,11 +295,11 @@ export default function SpotTradingPro() {
           </span>
         </div>
 
-        {/* Box 3: 24h High - PURPLE GRADIENT FILL */}
+        {/* Box 3: 24h High - PURPLE GRADIENT FILL (lighter) */}
         <div style={{
-          background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.05) 0%, rgba(168, 85, 247, 0.25) 100%)',
-          border: '1px solid rgba(168, 85, 247, 0.4)',
-          boxShadow: '0 0 30px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.15), inset 0 0 30px rgba(168, 85, 247, 0.1)',
+          background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.08) 0%, rgba(168, 85, 247, 0.35) 100%)',
+          border: '1px solid rgba(168, 85, 247, 0.5)',
+          boxShadow: '0 0 35px rgba(168, 85, 247, 0.35), 0 0 70px rgba(168, 85, 247, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '90px',
@@ -325,11 +325,11 @@ export default function SpotTradingPro() {
           </span>
         </div>
 
-        {/* Box 4: 24h Low - YELLOW GRADIENT FILL */}
+        {/* Box 4: 24h Low - YELLOW GRADIENT FILL (lighter) */}
         <div style={{
-          background: 'linear-gradient(180deg, rgba(250, 204, 21, 0.05) 0%, rgba(250, 204, 21, 0.25) 100%)',
-          border: '1px solid rgba(250, 204, 21, 0.4)',
-          boxShadow: '0 0 30px rgba(250, 204, 21, 0.3), 0 0 60px rgba(250, 204, 21, 0.15), inset 0 0 30px rgba(250, 204, 21, 0.1)',
+          background: 'linear-gradient(180deg, rgba(250, 204, 21, 0.08) 0%, rgba(250, 204, 21, 0.35) 100%)',
+          border: '1px solid rgba(250, 204, 21, 0.5)',
+          boxShadow: '0 0 35px rgba(250, 204, 21, 0.35), 0 0 70px rgba(250, 204, 21, 0.2), inset 0 0 40px rgba(250, 204, 21, 0.15)',
           borderRadius: '14px',
           padding: '16px 20px',
           height: '90px',
