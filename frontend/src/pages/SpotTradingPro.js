@@ -16,6 +16,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { BuyButton, SellButton, TradingButtonsContainer } from '../components/TradingButtons';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
