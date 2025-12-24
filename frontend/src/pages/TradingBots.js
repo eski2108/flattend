@@ -262,12 +262,89 @@ export default function TradingBots() {
         ⚠️ Bots do not guarantee profit. Trades use your wallet balance. Past performance does not indicate future results.
       </div>
 
+      {/* Filters Row */}
+      <div style={{
+        display: 'flex',
+        gap: '12px',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        alignItems: 'center'
+      }}>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          style={{
+            padding: '10px 14px',
+            borderRadius: '8px',
+            background: '#0E1626',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#FFFFFF',
+            fontSize: '13px',
+            minWidth: '120px'
+          }}
+        >
+          <option value="all">All Types</option>
+          <option value="grid">Grid Bot</option>
+          <option value="dca">DCA Bot</option>
+          <option value="signal">Signal Bot</option>
+        </select>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          style={{
+            padding: '10px 14px',
+            borderRadius: '8px',
+            background: '#0E1626',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#FFFFFF',
+            fontSize: '13px',
+            minWidth: '120px'
+          }}
+        >
+          <option value="all">All Status</option>
+          <option value="running">Running</option>
+          <option value="paused">Paused</option>
+          <option value="stopped">Stopped</option>
+          <option value="draft">Draft</option>
+        </select>
+        <select
+          value={filterPair}
+          onChange={(e) => setFilterPair(e.target.value)}
+          style={{
+            padding: '10px 14px',
+            borderRadius: '8px',
+            background: '#0E1626',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#FFFFFF',
+            fontSize: '13px',
+            minWidth: '120px'
+          }}
+        >
+          <option value="all">All Pairs</option>
+          {tradingPairs.map(p => (
+            <option key={p.symbol} value={p.symbol}>{p.name}</option>
+          ))}
+        </select>
+        <div style={{ flex: 1 }} />
+        <span style={{ color: '#8B9BB4', fontSize: '13px' }}>
+          {bots.filter(b => 
+            (filterType === 'all' || b.type === filterType) &&
+            (filterStatus === 'all' || b.status === filterStatus) &&
+            (filterPair === 'all' || b.pair === filterPair)
+          ).length} bot{bots.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
       {/* Bot Cards */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '60px', color: '#8B9BB4' }}>
           Loading bots...
         </div>
-      ) : bots.length === 0 ? (
+      ) : bots.filter(b => 
+          (filterType === 'all' || b.type === filterType) &&
+          (filterStatus === 'all' || b.status === filterStatus) &&
+          (filterPair === 'all' || b.pair === filterPair)
+        ).length === 0 ? (
         <div style={{
           textAlign: 'center',
           padding: '60px 20px',
