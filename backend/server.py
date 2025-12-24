@@ -36965,9 +36965,10 @@ logger.info("✅ Integrity router registered at /api/integrity/*")
 # MUST NOT BE MODIFIED. BOT FEATURE IS ADDITIVE ONLY. 🟥🔴
 # =====================================================================
 from bot_engine import BotEngine, BotAdmin
+from indicators import get_available_indicators, TIMEFRAMES, INDICATOR_REGISTRY
 
 class CreateBotRequest(BaseModel):
-    bot_type: str  # 'grid' or 'dca'
+    bot_type: str  # 'grid', 'dca', or 'signal'
     pair: str
     params: dict
 
@@ -36982,6 +36983,22 @@ class BotPreviewRequest(BaseModel):
     bot_type: str
     pair: str
     params: dict
+
+@api_router.get("/bots/indicators")
+async def get_indicators():
+    """Get list of all available indicators with their parameters"""
+    indicators = get_available_indicators()
+    return {
+        "success": True,
+        "indicators": indicators,
+        "timeframes": TIMEFRAMES,
+        "categories": {
+            "trend": ["ema", "sma", "wma", "vwap", "ichimoku", "supertrend"],
+            "momentum": ["rsi", "macd", "stochastic", "stochastic_rsi", "cci", "momentum"],
+            "volatility": ["bollinger", "atr", "keltner", "donchian"],
+            "volume": ["volume", "volume_ma", "obv", "ad"]
+        }
+    }
 
 @api_router.post("/bots/create")
 async def create_bot(request: CreateBotRequest, x_user_id: str = Header(None)):
