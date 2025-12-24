@@ -1,14 +1,16 @@
 /**
- * TradingButtons.js - PREMIUM BUY/SELL BUTTONS
+ * TradingButtons.js - PREMIUM NEON BUTTONS
  * 
- * EXACT SPEC - DO NOT MODIFY
- * 
- * BUY: #22E6A8 → #16CFA0 gradient
- * SELL: #FF6A6A → #FF8A4C gradient
+ * MATCHES THE TOP INFO BOXES STYLE:
+ * - Gradient background with glow
+ * - Neon border
+ * - Bottom glow bar
+ * - Glass/frosted effect
  */
 
 import React from 'react';
 
+// BUY: Green/Cyan glow style (matches info box pattern)
 export function BuyButton({ onClick, disabled, loading, label, isMobile = false }) {
   const [isHovered, setIsHovered] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
@@ -16,16 +18,21 @@ export function BuyButton({ onClick, disabled, loading, label, isMobile = false 
   const height = isMobile ? '52px' : '48px';
   const isDisabledState = disabled || loading;
 
-  const getFilter = () => {
-    if (isDisabledState) return 'brightness(0.85) saturate(0.7)';
-    if (isPressed) return 'brightness(0.95)';
-    if (isHovered) return 'brightness(1.05)';
-    return 'none';
+  // Color: Green/Teal like the cyan info box but green
+  const baseColor = '32, 227, 162'; // #20E3A2
+  const glowColor = '#20E3A2';
+
+  const getOpacity = () => {
+    if (isDisabledState) return 0.5;
+    if (isPressed) return 0.95;
+    if (isHovered) return 1;
+    return 0.9;
   };
 
-  const getBoxShadow = () => {
-    if (isDisabledState) return 'none';
-    return '0 0 18px rgba(34,230,168,0.35), inset 0 1px 0 rgba(255,255,255,0.18)';
+  const getTransform = () => {
+    if (isPressed) return 'scale(0.98)';
+    if (isHovered) return 'translateY(-1px)';
+    return 'none';
   };
 
   return (
@@ -38,34 +45,47 @@ export function BuyButton({ onClick, disabled, loading, label, isMobile = false 
         flex: 1,
         minWidth: 0,
         borderRadius: '12px',
-        border: 'none',
-        background: 'linear-gradient(135deg, #22E6A8 0%, #16CFA0 100%)',
-        color: '#0B1F1A',
+        border: `1px solid rgba(${baseColor}, 0.4)`,
+        background: `linear-gradient(180deg, rgba(${baseColor}, 0.08) 0%, rgba(${baseColor}, 0.25) 100%)`,
+        boxShadow: isDisabledState ? 'none' : `0 0 20px rgba(${baseColor}, 0.25), inset 0 0 15px rgba(${baseColor}, 0.08)`,
+        color: glowColor,
         fontSize: '14px',
         fontWeight: '600',
         cursor: isDisabledState ? 'not-allowed' : 'pointer',
-        opacity: isDisabledState ? 0.6 : 1,
-        boxShadow: getBoxShadow(),
-        filter: getFilter(),
-        transition: 'filter 120ms ease, box-shadow 120ms ease, opacity 120ms ease',
+        opacity: getOpacity(),
+        transform: getTransform(),
+        transition: 'all 150ms ease',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: '8px',
-        position: 'relative'
+        position: 'relative',
+        overflow: 'hidden'
       }}
       onMouseEnter={() => !isDisabledState && setIsHovered(true)}
       onMouseLeave={() => { setIsHovered(false); setIsPressed(false); }}
       onMouseDown={() => !isDisabledState && setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
     >
+      {/* Bottom glow bar - matches info boxes */}
+      <span style={{
+        position: 'absolute',
+        bottom: 0,
+        left: '15%',
+        right: '15%',
+        height: '2px',
+        background: glowColor,
+        boxShadow: `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`,
+        filter: 'blur(1px)',
+        opacity: isDisabledState ? 0.3 : 1
+      }} />
       {loading && (
         <span style={{
           display: 'inline-block',
           width: '14px',
           height: '14px',
-          border: '2px solid rgba(11,31,26,0.3)',
-          borderTopColor: '#0B1F1A',
+          border: `2px solid rgba(${baseColor}, 0.3)`,
+          borderTopColor: glowColor,
           borderRadius: '50%',
           animation: 'tradingBtnSpin 0.8s linear infinite'
         }} />
@@ -75,6 +95,7 @@ export function BuyButton({ onClick, disabled, loading, label, isMobile = false 
   );
 }
 
+// SELL: Red/Orange glow style (matches info box pattern)
 export function SellButton({ onClick, disabled, loading, label, isMobile = false }) {
   const [isHovered, setIsHovered] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
@@ -82,16 +103,21 @@ export function SellButton({ onClick, disabled, loading, label, isMobile = false
   const height = isMobile ? '52px' : '48px';
   const isDisabledState = disabled || loading;
 
-  const getFilter = () => {
-    if (isDisabledState) return 'brightness(0.85) saturate(0.7)';
-    if (isPressed) return 'brightness(0.95)';
-    if (isHovered) return 'brightness(1.05)';
-    return 'none';
+  // Color: Red/Coral like the red info box
+  const baseColor = '255, 50, 80'; // #ff3250
+  const glowColor = '#ff3250';
+
+  const getOpacity = () => {
+    if (isDisabledState) return 0.5;
+    if (isPressed) return 0.95;
+    if (isHovered) return 1;
+    return 0.9;
   };
 
-  const getBoxShadow = () => {
-    if (isDisabledState) return 'none';
-    return '0 0 18px rgba(255,106,106,0.35), inset 0 1px 0 rgba(255,255,255,0.18)';
+  const getTransform = () => {
+    if (isPressed) return 'scale(0.98)';
+    if (isHovered) return 'translateY(-1px)';
+    return 'none';
   };
 
   return (
@@ -104,34 +130,47 @@ export function SellButton({ onClick, disabled, loading, label, isMobile = false
         flex: 1,
         minWidth: 0,
         borderRadius: '12px',
-        border: 'none',
-        background: 'linear-gradient(135deg, #FF6A6A 0%, #FF8A4C 100%)',
-        color: '#2A0F0F',
+        border: `1px solid rgba(${baseColor}, 0.4)`,
+        background: `linear-gradient(180deg, rgba(${baseColor}, 0.08) 0%, rgba(${baseColor}, 0.25) 100%)`,
+        boxShadow: isDisabledState ? 'none' : `0 0 20px rgba(${baseColor}, 0.25), inset 0 0 15px rgba(${baseColor}, 0.08)`,
+        color: glowColor,
         fontSize: '14px',
         fontWeight: '600',
         cursor: isDisabledState ? 'not-allowed' : 'pointer',
-        opacity: isDisabledState ? 0.6 : 1,
-        boxShadow: getBoxShadow(),
-        filter: getFilter(),
-        transition: 'filter 120ms ease, box-shadow 120ms ease, opacity 120ms ease',
+        opacity: getOpacity(),
+        transform: getTransform(),
+        transition: 'all 150ms ease',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: '8px',
-        position: 'relative'
+        position: 'relative',
+        overflow: 'hidden'
       }}
       onMouseEnter={() => !isDisabledState && setIsHovered(true)}
       onMouseLeave={() => { setIsHovered(false); setIsPressed(false); }}
       onMouseDown={() => !isDisabledState && setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
     >
+      {/* Bottom glow bar - matches info boxes */}
+      <span style={{
+        position: 'absolute',
+        bottom: 0,
+        left: '15%',
+        right: '15%',
+        height: '2px',
+        background: glowColor,
+        boxShadow: `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`,
+        filter: 'blur(1px)',
+        opacity: isDisabledState ? 0.3 : 1
+      }} />
       {loading && (
         <span style={{
           display: 'inline-block',
           width: '14px',
           height: '14px',
-          border: '2px solid rgba(42,15,15,0.3)',
-          borderTopColor: '#2A0F0F',
+          border: `2px solid rgba(${baseColor}, 0.3)`,
+          borderTopColor: glowColor,
           borderRadius: '50%',
           animation: 'tradingBtnSpin 0.8s linear infinite'
         }} />
