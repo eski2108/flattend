@@ -38377,6 +38377,229 @@ async def export_bot_trades_csv(bot_id: str, x_user_id: str = Header(None)):
         return {"success": False, "error": str(e)}
 
 # Admin endpoints
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 1 - CORE BOT ENGINE ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@api_router.get("/bots/{bot_id}/state")
+async def get_bot_state(bot_id: str, x_user_id: str = Header(None)):
+    """Get detailed bot state including positions and orders"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from bot_execution_engine import StateManager, PositionManager, OrderManager
+        
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Load state
+        state = await StateManager.load_state(bot_id)
+        if not state:
+            return {"success": True, "state": None, "message": "No state found for this bot"}
+        
+        # Get open positions
+        positions = await PositionManager.get_open_positions(bot_id)
+        
+        # Get active orders
+        orders = await OrderManager.get_active_orders(bot_id)
+        
+        return {
+            "success": True,
+            "state": {
+                "bot_id": state.bot_id,
+                "status": state.status,
+                "capital_allocated": state.capital_allocated,
+                "capital_available": state.capital_available,
+                "total_invested": state.total_invested,
+                "realized_pnl": state.realized_pnl,
+                "unrealized_pnl": state.unrealized_pnl,
+                "total_fees_paid": state.total_fees_paid,
+                "total_orders_placed": state.total_orders_placed,
+                "total_orders_filled": state.total_orders_filled,
+                "last_tick_at": state.last_tick_at.isoformat() if state.last_tick_at else None,
+                "consecutive_errors": state.consecutive_errors,
+                "cooldown_until": state.cooldown_until.isoformat() if state.cooldown_until else None
+            },
+            "open_positions": len(positions),
+            "active_orders": len(orders)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting bot state: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/{bot_id}/decisions")
+async def get_bot_decisions(bot_id: str, limit: int = 50, decision_type: str = None, x_user_id: str = Header(None)):
+    """Get decision audit trail for a bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from bot_execution_engine import DecisionLogger
+        
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        logs = await DecisionLogger.get_decision_logs(bot_id, limit, decision_type)
+        
+        return {"success": True, "decisions": logs, "count": len(logs)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting bot decisions: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/{bot_id}/positions")
+async def get_bot_positions(bot_id: str, x_user_id: str = Header(None)):
+    """Get all open positions for a bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from bot_execution_engine import PositionManager
+        from dataclasses import asdict
+        
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        positions = await PositionManager.get_open_positions(bot_id)
+        
+        return {
+            "success": True,
+            "positions": [
+                {
+                    "position_id": p.position_id,
+                    "pair": p.pair,
+                    "side": p.side,
+                    "quantity": p.quantity,
+                    "entry_price": p.entry_price,
+                    "current_price": p.current_price,
+                    "unrealized_pnl": p.unrealized_pnl,
+                    "total_fees": p.total_fees,
+                    "opened_at": p.opened_at.isoformat() if p.opened_at else None
+                }
+                for p in positions
+            ]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting bot positions: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/{bot_id}/orders")
+async def get_bot_orders(bot_id: str, status: str = "active", limit: int = 50, x_user_id: str = Header(None)):
+    """Get orders for a bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Build query based on status filter
+        query = {"bot_id": bot_id}
+        if status == "active":
+            query["status"] = {"$in": ["pending", "submitted", "open", "partially_filled"]}
+        elif status != "all":
+            query["status"] = status
+        
+        orders = []
+        async for order in db.bot_orders.find(query).sort("created_at", -1).limit(limit):
+            orders.append({
+                "order_id": order.get("order_id"),
+                "pair": order.get("pair"),
+                "side": order.get("side"),
+                "order_type": order.get("order_type"),
+                "quantity": order.get("quantity"),
+                "filled_quantity": order.get("filled_quantity", 0),
+                "price": order.get("price"),
+                "average_fill_price": order.get("average_fill_price"),
+                "status": order.get("status"),
+                "fee": order.get("fee", 0),
+                "created_at": order.get("created_at").isoformat() if order.get("created_at") else None,
+                "error_message": order.get("error_message")
+            })
+        
+        return {"success": True, "orders": orders, "count": len(orders)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting bot orders: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/admin/bots/kill-switch")
+async def admin_kill_switch(request: dict, x_admin_id: str = Header(None)):
+    """Admin: Activate/deactivate kill switch (global or per-bot)"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        from bot_execution_engine import KillSwitch
+        
+        action = request.get("action")  # "activate" or "deactivate"
+        scope = request.get("scope", "global")  # "global" or "bot"
+        bot_id = request.get("bot_id")
+        reason = request.get("reason", "admin_action")
+        
+        if action == "activate":
+            if scope == "global":
+                await KillSwitch.activate_global()
+                return {"success": True, "message": "Global kill switch activated"}
+            elif bot_id:
+                await KillSwitch.activate_bot(bot_id, reason)
+                return {"success": True, "message": f"Kill switch activated for bot {bot_id}"}
+        elif action == "deactivate":
+            if scope == "global":
+                await KillSwitch.deactivate_global()
+                return {"success": True, "message": "Global kill switch deactivated"}
+            elif bot_id:
+                await KillSwitch.deactivate_bot(bot_id)
+                return {"success": True, "message": f"Kill switch deactivated for bot {bot_id}"}
+        
+        return {"success": False, "error": "Invalid action or scope"}
+    except Exception as e:
+        logger.error(f"Error in kill switch: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/admin/bots/kill-switch/status")
+async def admin_kill_switch_status(x_admin_id: str = Header(None)):
+    """Admin: Get kill switch status"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        config = await db.platform_config.find_one({"config_id": "bot_engine"})
+        
+        # Get per-bot kill switches
+        killed_bots = await db.bot_configs.find({"kill_switch": True}).to_list(100)
+        
+        return {
+            "success": True,
+            "global_kill_switch": config.get("global_kill_switch", False) if config else False,
+            "kill_switch_activated_at": config.get("kill_switch_activated_at").isoformat() if config and config.get("kill_switch_activated_at") else None,
+            "killed_bots": [b.get("bot_id") for b in killed_bots]
+        }
+    except Exception as e:
+        logger.error(f"Error getting kill switch status: {e}")
+        return {"success": False, "error": str(e)}
+
+
 @api_router.post("/admin/bots/toggle-engine")
 async def admin_toggle_bot_engine(request: dict, x_admin_id: str = Header(None)):
     """Admin: Enable/disable the bot engine globally"""
