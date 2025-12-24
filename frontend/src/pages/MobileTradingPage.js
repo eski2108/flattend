@@ -7,6 +7,7 @@ import { getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
 import { IoArrowBack, IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
 import DOMPurify from 'dompurify';
+import { BuyButton, SellButton, TradingButtonsContainer } from '@/components/TradingButtons';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
