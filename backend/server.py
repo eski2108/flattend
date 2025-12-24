@@ -32224,25 +32224,28 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
             return ts >= start_date
         
         # ═══════════════════════════════════════════════════════════════
-        # 1. SPOT TRADING (MANUAL) - fee_type = spot_trading, source != bot
+        # QUERY FROM admin_revenue (main source of truth for revenue)
         # ═══════════════════════════════════════════════════════════════
-        manual_trades = await db.fee_transactions.find({
-            "fee_type": "spot_trading",
-            "source": {"$ne": "bot"}
-        }).to_list(10000)
-        manual_trades = [t for t in manual_trades if in_timeframe(t)]
+        all_revenue = await db.admin_revenue.find({}).to_list(100000)
+        all_revenue = [r for r in all_revenue if in_timeframe(r)]
         
-        manual_trading_total = sum(float(t.get("amount", 0)) for t in manual_trades)
-        manual_trading_count = len(manual_trades)
+        # Also get fee_transactions for additional data
+        all_fees = await db.fee_transactions.find({}).to_list(100000)
+        all_fees = [f for f in all_fees if in_timeframe(f)]
+        
+        # ═══════════════════════════════════════════════════════════════
+        # 1. SPOT TRADING (MANUAL) - spot_trading_fee, NOT from bot
+        # ═══════════════════════════════════════════════════════════════
+        manual_trading_rev = [r for r in all_revenue if r.get("source") in ["spot_trading_fee", "spot_trading"] and r.get("source") != "bot"]
+        manual_trading_total = sum(float(r.get("amount", 0)) for r in manual_trading_rev)
+        manual_trading_count = len(manual_trading_rev)
         
         # ═══════════════════════════════════════════════════════════════
         # 2. TRADING BOTS - source = bot
         # ═══════════════════════════════════════════════════════════════
-        bot_trades = await db.fee_transactions.find({"source": "bot"}).to_list(10000)
-        bot_trades = [t for t in bot_trades if in_timeframe(t)]
-        
-        bot_trading_total = sum(float(t.get("amount", 0)) for t in bot_trades)
-        bot_trading_count = len(bot_trades)
+        bot_rev = [r for r in all_revenue if r.get("source") == "bot"]
+        bot_trading_total = sum(float(r.get("amount", 0)) for r in bot_rev)
+        bot_trading_count = len(bot_rev)
         
         # Get bot volume from spot_trades
         bot_spot_trades = await db.spot_trades.find({"source": "bot"}).to_list(10000)
@@ -32251,72 +32254,73 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
         
         # Strategy breakdown for bots
         bot_by_strategy = {}
-        for t in bot_trades:
-            strategy = t.get("strategy_type", "unknown")
+        for r in bot_rev:
+            strategy = r.get("strategy_type", "unknown")
             if strategy not in bot_by_strategy:
                 bot_by_strategy[strategy] = {"count": 0, "amount": 0}
             bot_by_strategy[strategy]["count"] += 1
-            bot_by_strategy[strategy]["amount"] += float(t.get("amount", 0))
+            bot_by_strategy[strategy]["amount"] += float(r.get("amount", 0))
         
         # ═══════════════════════════════════════════════════════════════
         # 3. SWAP / INSTANT BUY-SELL
         # ═══════════════════════════════════════════════════════════════
-        swap_fees = await db.fee_transactions.find({
-            "fee_type": {"$in": ["swap", "instant_buy", "instant_sell", "express_buy", "express_sell"]}
-        }).to_list(10000)
-        swap_fees = [t for t in swap_fees if in_timeframe(t)]
-        
-        swap_total = sum(float(t.get("amount", 0)) for t in swap_fees)
-        swap_count = len(swap_fees)
+        swap_sources = ["swap_fee", "instant_buy_fee", "instant_buy_spread", "instant_sell_fee", "instant_sell_spread"]
+        swap_rev = [r for r in all_revenue if r.get("source") in swap_sources]
+        swap_total = sum(float(r.get("amount", 0)) for r in swap_rev)
+        swap_count = len(swap_rev)
         
         # ═══════════════════════════════════════════════════════════════
         # 4. P2P MARKETPLACE
         # ═══════════════════════════════════════════════════════════════
-        p2p_fees = await db.fee_transactions.find({
-            "fee_type": {"$in": ["p2p", "p2p_escrow", "p2p_release", "p2p_fee"]}
-        }).to_list(10000)
-        p2p_fees = [t for t in p2p_fees if in_timeframe(t)]
-        
-        p2p_total = sum(float(t.get("amount", 0)) for t in p2p_fees)
-        p2p_count = len(p2p_fees)
+        p2p_sources = ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee", "p2p_escrow_fee"]
+        p2p_rev = [r for r in all_revenue if r.get("source") in p2p_sources]
+        p2p_total = sum(float(r.get("amount", 0)) for r in p2p_rev)
+        p2p_count = len(p2p_rev)
         
         # ═══════════════════════════════════════════════════════════════
-        # 5. SAVINGS / VAULTS
+        # 5. DEPOSITS & WITHDRAWALS
         # ═══════════════════════════════════════════════════════════════
-        savings_fees = await db.fee_transactions.find({
-            "fee_type": {"$in": ["savings", "vault", "early_withdrawal", "savings_penalty"]}
-        }).to_list(10000)
-        savings_fees = [t for t in savings_fees if in_timeframe(t)]
-        
-        savings_total = sum(float(t.get("amount", 0)) for t in savings_fees)
-        savings_count = len(savings_fees)
+        deposit_withdraw_sources = ["deposit_fee", "withdrawal_fee", "network_withdrawal_fee"]
+        dw_rev = [r for r in all_revenue if r.get("source") in deposit_withdraw_sources]
+        dw_total = sum(float(r.get("amount", 0)) for r in dw_rev)
+        dw_count = len(dw_rev)
         
         # ═══════════════════════════════════════════════════════════════
-        # 6. LENDING / BORROWING
+        # 6. SAVINGS / VAULTS
         # ═══════════════════════════════════════════════════════════════
-        lending_fees = await db.fee_transactions.find({
-            "fee_type": {"$in": ["lending", "borrowing", "loan_interest", "liquidation"]}
-        }).to_list(10000)
-        lending_fees = [t for t in lending_fees if in_timeframe(t)]
-        
-        lending_total = sum(float(t.get("amount", 0)) for t in lending_fees)
-        lending_count = len(lending_fees)
+        savings_sources = ["savings_early_withdrawal_penalty", "vault_fee", "savings_fee"]
+        savings_rev = [r for r in all_revenue if r.get("source") in savings_sources]
+        savings_total = sum(float(r.get("amount", 0)) for r in savings_rev)
+        savings_count = len(savings_rev)
         
         # ═══════════════════════════════════════════════════════════════
-        # 7. REFERRALS
+        # 7. DISPUTES
         # ═══════════════════════════════════════════════════════════════
-        referral_fees = await db.fee_transactions.find({
-            "fee_type": {"$in": ["referral", "referral_commission"]}
-        }).to_list(10000)
-        referral_fees = [t for t in referral_fees if in_timeframe(t)]
+        dispute_rev = [r for r in all_revenue if r.get("source") == "dispute_fee"]
+        dispute_total = sum(float(r.get("amount", 0)) for r in dispute_rev)
+        dispute_count = len(dispute_rev)
         
-        referral_paid = sum(float(t.get("amount", 0)) for t in referral_fees)
-        referral_count = len(referral_fees)
+        # ═══════════════════════════════════════════════════════════════
+        # 8. REFERRALS (Commissions and Net Share)
+        # ═══════════════════════════════════════════════════════════════
+        referral_sources = ["referral_commission", "referral_payout", "referral_net_share_trading", 
+                          "referral_net_share_p2p_maker", "referral_net_share_p2p_taker",
+                          "referral_net_share_p2p_express", "referral_net_share_instant_buy",
+                          "referral_net_share_instant_sell", "referral_net_share_fiat_withdrawal"]
+        referral_rev = [r for r in all_revenue if r.get("source") in referral_sources]
+        
+        # Separate payouts (negative) from income
+        referral_income = sum(float(r.get("amount", 0)) for r in referral_rev if float(r.get("amount", 0)) > 0)
+        referral_paid = abs(sum(float(r.get("amount", 0)) for r in referral_rev if float(r.get("amount", 0)) < 0))
+        referral_count = len(referral_rev)
         
         # ═══════════════════════════════════════════════════════════════
         # CALCULATE TOTALS
         # ═══════════════════════════════════════════════════════════════
-        total_revenue = manual_trading_total + bot_trading_total + swap_total + p2p_total + savings_total + lending_total
+        total_revenue = sum(float(r.get("amount", 0)) for r in all_revenue if float(r.get("amount", 0)) > 0)
+        total_payouts = abs(sum(float(r.get("amount", 0)) for r in all_revenue if float(r.get("amount", 0)) < 0))
+        net_profit = total_revenue - total_payouts
+        
         total_trading = manual_trading_total + bot_trading_total
         bot_percentage_of_trading = (bot_trading_total / total_trading * 100) if total_trading > 0 else 0
         
@@ -32328,9 +32332,9 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
             # GRAND TOTALS
             "totals": {
                 "total_revenue": round(total_revenue, 4),
-                "total_trading_fees": round(total_trading, 4),
-                "referral_paid": round(referral_paid, 4),
-                "net_profit": round(total_revenue - referral_paid, 4)
+                "total_payouts": round(total_payouts, 4),
+                "net_profit": round(net_profit, 4),
+                "total_trading_fees": round(total_trading, 4)
             },
             
             # EXPLICIT BREAKDOWN BY SOURCE
@@ -32361,7 +32365,7 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
                 # 3. Swap / Instant Buy-Sell
                 "swap_instant": {
                     "label": "Swap / Instant Buy-Sell",
-                    "description": "Swap fees and spread profit",
+                    "description": "Swap fees and spread profit from instant trades",
                     "total_fees": round(swap_total, 4),
                     "trade_count": swap_count,
                     "color": "#A855F7"
@@ -32370,13 +32374,22 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
                 # 4. P2P Marketplace
                 "p2p_marketplace": {
                     "label": "P2P Marketplace",
-                    "description": "Escrow and release fees from P2P trades",
+                    "description": "Escrow, maker, taker and express fees from P2P trades",
                     "total_fees": round(p2p_total, 4),
                     "trade_count": p2p_count,
                     "color": "#EC4899"
                 },
                 
-                # 5. Savings / Vaults
+                # 5. Deposits & Withdrawals
+                "deposits_withdrawals": {
+                    "label": "Deposits & Withdrawals",
+                    "description": "Deposit and withdrawal processing fees",
+                    "total_fees": round(dw_total, 4),
+                    "trade_count": dw_count,
+                    "color": "#F59E0B"
+                },
+                
+                # 6. Savings / Vaults
                 "savings_vaults": {
                     "label": "Savings / Vaults",
                     "description": "Early withdrawal penalties and vault fees",
@@ -32385,20 +32398,22 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
                     "color": "#22C55E"
                 },
                 
-                # 6. Lending / Borrowing
-                "lending_borrowing": {
-                    "label": "Lending / Borrowing",
-                    "description": "Interest and liquidation fees",
-                    "total_fees": round(lending_total, 4),
-                    "trade_count": lending_count,
-                    "color": "#F59E0B"
+                # 7. Disputes
+                "disputes": {
+                    "label": "Dispute Fees",
+                    "description": "Fees collected from dispute resolutions",
+                    "total_fees": round(dispute_total, 4),
+                    "trade_count": dispute_count,
+                    "color": "#EF4444"
                 },
                 
-                # 7. Referrals
+                # 8. Referrals
                 "referrals": {
-                    "label": "Referral Commissions",
-                    "description": "Commissions paid to referrers",
+                    "label": "Referral Program",
+                    "description": "Referral commissions (income and payouts)",
+                    "total_income": round(referral_income, 4),
                     "total_paid": round(referral_paid, 4),
+                    "net": round(referral_income - referral_paid, 4),
                     "payout_count": referral_count,
                     "color": "#0EA5E9"
                 }
@@ -32407,6 +32422,8 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
         
     except Exception as e:
         logger.error(f"Revenue breakdown error: {e}")
+        import traceback
+        traceback.print_exc()
         return {"success": False, "error": str(e)}
 
 @api_router.get("/admin/revenue/summary")
