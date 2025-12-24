@@ -661,23 +661,29 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                   Dollar-cost average into a position over time. Best for long-term accumulation.
                 </p>
               </button>
-              <div style={{
-                padding: '20px',
-                borderRadius: '12px',
-                background: 'rgba(255,255,255,0.02)',
-                border: '1px dashed rgba(255,255,255,0.1)',
-                textAlign: 'left',
-                opacity: 0.6
-              }}>
+              <button
+                onClick={() => { setSelectedType('signal'); setStep(2); }}
+                style={{
+                  padding: '20px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF6B6B'; e.currentTarget.style.background = 'rgba(255,107,107,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                  <IoRocket size={24} style={{ color: '#8B9BB4' }} />
-                  <span style={{ fontSize: '16px', fontWeight: '700', color: '#8B9BB4' }}>Signal Bot</span>
-                  <span style={{ fontSize: '10px', background: 'rgba(255,193,7,0.2)', color: '#FFC107', padding: '2px 8px', borderRadius: '4px' }}>COMING SOON</span>
+                  <IoRocket size={24} style={{ color: '#FF6B6B' }} />
+                  <span style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>Signal Bot</span>
+                  <span style={{ fontSize: '10px', background: 'rgba(0,229,153,0.2)', color: '#00E599', padding: '2px 8px', borderRadius: '4px' }}>NEW</span>
                 </div>
-                <p style={{ margin: 0, fontSize: '13px', color: '#6C757D' }}>
-                  Trade based on technical indicators (RSI, MACD, EMA crossovers).
+                <p style={{ margin: 0, fontSize: '13px', color: '#8B9BB4' }}>
+                  Trade based on technical indicators. Build custom rules with 20+ indicators.
                 </p>
-              </div>
+              </button>
             </div>
           )}
 
@@ -685,7 +691,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
           {step === 2 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ fontSize: '13px', color: '#8B9BB4', marginBottom: '8px' }}>
-                Select a trading pair for your {selectedType === 'grid' ? 'Grid' : 'DCA'} Bot
+                Select a trading pair for your {selectedType === 'grid' ? 'Grid' : selectedType === 'dca' ? 'DCA' : 'Signal'} Bot
               </div>
               <select
                 value={pair}
