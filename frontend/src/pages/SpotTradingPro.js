@@ -569,10 +569,11 @@ export default function SpotTradingPro() {
         const res = await axios.get(`${API}/api/prices/live`);
         if (res.data.success && res.data.prices[base]) {
           const d = res.data.prices[base];
+          const price = d.price_usd || d.price || 0;
           setMarketStats({
-            lastPrice: d.price || 0,
-            high24h: d.high_24h || d.price * 1.02,
-            low24h: d.low_24h || d.price * 0.98,
+            lastPrice: price,
+            high24h: d.high_24h || price * 1.02,
+            low24h: d.low_24h || price * 0.98,
             volume24h: d.volume_24h || 0,
             change24h: d.change_24h || 0
           });
