@@ -10,7 +10,7 @@ export default function SpotTradingPro() {
   const [searchParams] = useSearchParams();
   
   // State
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  const [isDesktop, setIsDesktop] = useState(true); // Default to desktop, will be corrected in useEffect
   const [tradingPairs, setTradingPairs] = useState([]);
   const [selectedPair, setSelectedPair] = useState('BTCUSD');
   const [amount, setAmount] = useState('');
