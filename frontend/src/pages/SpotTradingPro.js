@@ -534,7 +534,7 @@ export default function SpotTradingPro() {
             <div style={{ 
               fontSize: '14px', 
               fontWeight: '600', 
-              color: '#f5f7ff', 
+              color: '#00ffd5', 
               marginBottom: '16px',
               display: 'flex',
               alignItems: 'center',
@@ -545,32 +545,32 @@ export default function SpotTradingPro() {
             
             {/* Pair */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#8f9bbd' }}>Pair</span>
-              <span style={{ fontSize: '13px', color: '#f5f7ff', fontWeight: '500' }}>
+              <span style={{ fontSize: '13px', color: '#7dd3d8' }}>Pair</span>
+              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>
                 {selectedPair.replace('USD', '/USDT')}
               </span>
             </div>
             
             {/* Min Order */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#8f9bbd' }}>Min Order</span>
-              <span style={{ fontSize: '13px', color: '#f5f7ff', fontWeight: '500' }}>$10.00</span>
+              <span style={{ fontSize: '13px', color: '#7dd3d8' }}>Min Order</span>
+              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>$10.00</span>
             </div>
             
             {/* Order Type */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#8f9bbd' }}>Order Type</span>
-              <span style={{ fontSize: '13px', color: '#f5f7ff', fontWeight: '500', textTransform: 'capitalize' }}>
+              <span style={{ fontSize: '13px', color: '#7dd3d8' }}>Order Type</span>
+              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500', textTransform: 'capitalize' }}>
                 {orderType}
               </span>
             </div>
             
             {/* Status */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '13px', color: '#8f9bbd' }}>Status</span>
+              <span style={{ fontSize: '13px', color: '#7dd3d8' }}>Status</span>
               <span style={{ 
                 fontSize: '13px', 
-                color: '#00e6a8', 
+                color: '#00ff88', 
                 fontWeight: '500',
                 display: 'flex',
                 alignItems: 'center',
@@ -580,7 +580,8 @@ export default function SpotTradingPro() {
                   width: '6px', 
                   height: '6px', 
                   borderRadius: '50%', 
-                  background: '#00e6a8',
+                  background: '#00ff88',
+                  boxShadow: '0 0 8px rgba(0, 255, 136, 0.6)',
                   display: 'inline-block'
                 }}></span>
                 Active
