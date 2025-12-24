@@ -347,10 +347,8 @@ export default function MobileMarketSelection() {
                 );
               })}
             </div>
-          )} 
-                      fontSize: '16px', 
-                      fontWeight: '700', 
-                      color: '#FF5C5C',
+          )}
+
         {/* Search Bar */}
         <div style={{
           position: 'sticky',
