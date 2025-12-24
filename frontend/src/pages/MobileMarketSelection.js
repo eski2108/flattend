@@ -129,7 +129,7 @@ export default function MobileMarketSelection() {
         `}
       </style>
       <div style={{
-        maxWidth: '430px',
+        maxWidth: isDesktop ? '100%' : '430px',
         width: '100%',
         margin: '0 auto',
         background: '#020617',
@@ -137,18 +137,39 @@ export default function MobileMarketSelection() {
         paddingTop: '0',
         paddingBottom: '60px'
       }}>
+        {/* Page Title - Desktop Only */}
+        {isDesktop && (
+          <div style={{
+            padding: '24px 32px 16px',
+            borderBottom: '1px solid rgba(255,255,255,0.08)'
+          }}>
+            <h1 style={{
+              fontSize: '28px',
+              fontWeight: '700',
+              color: '#FFFFFF',
+              margin: 0
+            }}>Markets</h1>
+            <p style={{
+              fontSize: '14px',
+              color: '#8F9BB3',
+              margin: '8px 0 0'
+            }}>Select a trading pair to view chart and trade</p>
+          </div>
+        )}
+
         {/* Search Bar */}
         <div style={{
           position: 'sticky',
           top: 0,
           background: '#020617',
-          padding: '12px 16px',
+          padding: isDesktop ? '16px 32px' : '12px 16px',
           zIndex: 10,
           borderBottom: '1px solid rgba(255,255,255,0.08)'
         }}>
           <div style={{
             position: 'relative',
-            width: '100%'
+            width: '100%',
+            maxWidth: isDesktop ? '400px' : '100%'
           }}>
             <IoSearchOutline style={{
               position: 'absolute',
