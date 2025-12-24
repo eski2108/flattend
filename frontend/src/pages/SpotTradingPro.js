@@ -231,14 +231,14 @@ export default function SpotTradingPro() {
         gap: '12px',
         width: '100%'
       }}>
-        {/* Box 1: Last Price - CYAN GLOW */}
+        {/* Box 1: Last Price - CYAN GRADIENT FILL */}
         <div style={{
-          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
-          border: '1px solid rgba(0, 212, 255, 0.3)',
-          boxShadow: '0 4px 20px rgba(0, 212, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(0, 212, 255, 0.1)',
+          background: 'linear-gradient(180deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 212, 255, 0.25) 100%)',
+          border: '1px solid rgba(0, 212, 255, 0.4)',
+          boxShadow: '0 0 30px rgba(0, 212, 255, 0.3), 0 0 60px rgba(0, 212, 255, 0.15), inset 0 0 30px rgba(0, 212, 255, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
-          height: '80px',
+          height: '90px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -248,26 +248,27 @@ export default function SpotTradingPro() {
           <div style={{
             position: 'absolute',
             bottom: 0,
-            left: 0,
-            right: 0,
-            height: '3px',
-            background: 'linear-gradient(90deg, transparent, #00d4ff, transparent)',
-            boxShadow: '0 0 20px #00d4ff, 0 0 40px #00d4ff'
+            left: '10%',
+            right: '10%',
+            height: '4px',
+            background: '#00d4ff',
+            boxShadow: '0 0 20px #00d4ff, 0 0 40px #00d4ff, 0 0 60px #00d4ff',
+            filter: 'blur(2px)'
           }}></div>
-          <span style={{ fontSize: '12px', color: '#00d4ff', marginBottom: '6px', fontWeight: '500' }}>LAST PRICE</span>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#00d4ff', marginBottom: '8px', fontWeight: '600', letterSpacing: '1px' }}>LAST PRICE</span>
+          <span style={{ fontSize: '26px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
-        {/* Box 2: 24h Change - RED GLOW */}
+        {/* Box 2: 24h Change - RED GRADIENT FILL */}
         <div style={{
-          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
-          border: '1px solid rgba(255, 92, 106, 0.3)',
-          boxShadow: '0 4px 20px rgba(255, 92, 106, 0.4), 0 0 40px rgba(255, 92, 106, 0.2), inset 0 1px 0 rgba(255, 92, 106, 0.1)',
+          background: 'linear-gradient(180deg, rgba(255, 50, 80, 0.05) 0%, rgba(255, 50, 80, 0.25) 100%)',
+          border: '1px solid rgba(255, 50, 80, 0.4)',
+          boxShadow: '0 0 30px rgba(255, 50, 80, 0.3), 0 0 60px rgba(255, 50, 80, 0.15), inset 0 0 30px rgba(255, 50, 80, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
-          height: '80px',
+          height: '90px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -277,30 +278,31 @@ export default function SpotTradingPro() {
           <div style={{
             position: 'absolute',
             bottom: 0,
-            left: 0,
-            right: 0,
-            height: '3px',
-            background: 'linear-gradient(90deg, transparent, #ff5c6a, transparent)',
-            boxShadow: '0 0 20px #ff5c6a, 0 0 40px #ff5c6a'
+            left: '10%',
+            right: '10%',
+            height: '4px',
+            background: '#ff3250',
+            boxShadow: '0 0 20px #ff3250, 0 0 40px #ff3250, 0 0 60px #ff3250',
+            filter: 'blur(2px)'
           }}></div>
-          <span style={{ fontSize: '12px', color: '#ff5c6a', marginBottom: '6px', fontWeight: '500' }}>24H CHANGE</span>
+          <span style={{ fontSize: '12px', color: '#ff3250', marginBottom: '8px', fontWeight: '600', letterSpacing: '1px' }}>24H CHANGE</span>
           <span style={{ 
-            fontSize: '24px', 
+            fontSize: '26px', 
             fontWeight: '700', 
-            color: marketStats.change24h >= 0 ? '#20E3A2' : '#FF5C6A'
+            color: marketStats.change24h >= 0 ? '#20E3A2' : '#ff3250'
           }}>
             {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
           </span>
         </div>
 
-        {/* Box 3: 24h High - PURPLE GLOW */}
+        {/* Box 3: 24h High - PURPLE GRADIENT FILL */}
         <div style={{
-          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
-          border: '1px solid rgba(168, 85, 247, 0.3)',
-          boxShadow: '0 4px 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(168, 85, 247, 0.2), inset 0 1px 0 rgba(168, 85, 247, 0.1)',
+          background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.05) 0%, rgba(168, 85, 247, 0.25) 100%)',
+          border: '1px solid rgba(168, 85, 247, 0.4)',
+          boxShadow: '0 0 30px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.15), inset 0 0 30px rgba(168, 85, 247, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
-          height: '80px',
+          height: '90px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -310,26 +312,27 @@ export default function SpotTradingPro() {
           <div style={{
             position: 'absolute',
             bottom: 0,
-            left: 0,
-            right: 0,
-            height: '3px',
-            background: 'linear-gradient(90deg, transparent, #a855f7, transparent)',
-            boxShadow: '0 0 20px #a855f7, 0 0 40px #a855f7'
+            left: '10%',
+            right: '10%',
+            height: '4px',
+            background: '#a855f7',
+            boxShadow: '0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 60px #a855f7',
+            filter: 'blur(2px)'
           }}></div>
-          <span style={{ fontSize: '12px', color: '#a855f7', marginBottom: '6px', fontWeight: '500' }}>24H HIGH</span>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#a855f7', marginBottom: '8px', fontWeight: '600', letterSpacing: '1px' }}>24H HIGH</span>
+          <span style={{ fontSize: '26px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
-        {/* Box 4: 24h Low - YELLOW/GOLD GLOW */}
+        {/* Box 4: 24h Low - YELLOW GRADIENT FILL */}
         <div style={{
-          background: 'linear-gradient(180deg, #0d1520 0%, #0a1018 100%)',
-          border: '1px solid rgba(250, 204, 21, 0.3)',
-          boxShadow: '0 4px 20px rgba(250, 204, 21, 0.4), 0 0 40px rgba(250, 204, 21, 0.2), inset 0 1px 0 rgba(250, 204, 21, 0.1)',
+          background: 'linear-gradient(180deg, rgba(250, 204, 21, 0.05) 0%, rgba(250, 204, 21, 0.25) 100%)',
+          border: '1px solid rgba(250, 204, 21, 0.4)',
+          boxShadow: '0 0 30px rgba(250, 204, 21, 0.3), 0 0 60px rgba(250, 204, 21, 0.15), inset 0 0 30px rgba(250, 204, 21, 0.1)',
           borderRadius: '14px',
           padding: '16px 20px',
-          height: '80px',
+          height: '90px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -339,14 +342,15 @@ export default function SpotTradingPro() {
           <div style={{
             position: 'absolute',
             bottom: 0,
-            left: 0,
-            right: 0,
-            height: '3px',
-            background: 'linear-gradient(90deg, transparent, #facc15, transparent)',
-            boxShadow: '0 0 20px #facc15, 0 0 40px #facc15'
+            left: '10%',
+            right: '10%',
+            height: '4px',
+            background: '#facc15',
+            boxShadow: '0 0 20px #facc15, 0 0 40px #facc15, 0 0 60px #facc15',
+            filter: 'blur(2px)'
           }}></div>
-          <span style={{ fontSize: '12px', color: '#facc15', marginBottom: '6px', fontWeight: '500' }}>24H LOW</span>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#facc15', marginBottom: '8px', fontWeight: '600', letterSpacing: '1px' }}>24H LOW</span>
+          <span style={{ fontSize: '26px', fontWeight: '700', color: '#facc15' }}>
             ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
