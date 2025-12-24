@@ -614,7 +614,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
         </div>
 
         {/* Modal Content */}
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '28px' }}>
           
           {/* STEP 1: Choose Type */}
           {step === 1 && (
