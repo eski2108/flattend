@@ -483,8 +483,7 @@ export default function MobileMarketSelection() {
               <SortableHeader column="high24h" label="24h High" />
               <SortableHeader column="low24h" label="24h Low" />
               <div style={{ textAlign: 'center' }}>Trend</div>
-              <div></div>
-              <div style={{ textAlign: 'right' }}>Volume</div>
+              <div style={{ textAlign: 'right' }}>Actions</div>
             </div>
           )}
           
@@ -530,15 +529,20 @@ export default function MobileMarketSelection() {
               <div
                 key={pair.symbol}
                 onClick={() => handlePairSelect(pair)}
+                onMouseEnter={() => setHoveredRow(pair.symbol)}
+                onMouseLeave={() => setHoveredRow(null)}
                 style={isDesktop ? {
                   display: 'grid',
-                  gridTemplateColumns: '50px 2fr 1fr 1fr 1fr',
+                  gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 1fr 1fr 80px 100px',
                   alignItems: 'center',
-                  padding: '16px',
+                  padding: '12px 16px',
+                  height: '60px',
                   borderBottom: '1px solid rgba(255,255,255,0.05)',
                   cursor: 'pointer',
-                  transition: 'all 200ms ease',
-                  background: 'transparent'
+                  transition: 'all 120ms ease',
+                  background: hoveredRow === pair.symbol ? 'rgba(0,255,200,0.04)' : 'transparent',
+                  borderLeft: hoveredRow === pair.symbol ? '3px solid #00E599' : '3px solid transparent',
+                  position: 'relative'
                 } : {
                   height: '68px',
                   display: 'flex',
@@ -546,15 +550,9 @@ export default function MobileMarketSelection() {
                   padding: '0 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.05)',
                   cursor: 'pointer',
-                  transition: 'all 200ms ease',
+                  transition: 'all 120ms ease',
                   background: 'transparent',
                   position: 'relative'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(15,242,242,0.06)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
                 }}
               >
                 {/* Favorite Star */}
@@ -571,9 +569,9 @@ export default function MobileMarketSelection() {
                   }}
                 >
                   {favorites.includes(pair.symbol) ? (
-                    <IoStar style={{ fontSize: '20px', color: '#FFD700' }} />
+                    <IoStar style={{ fontSize: '18px', color: '#FFD700' }} />
                   ) : (
-                    <IoStarOutline style={{ fontSize: '20px', color: '#8F9BB3' }} />
+                    <IoStarOutline style={{ fontSize: '18px', color: '#8B9BB4' }} />
                   )}
                 </div>
 
@@ -587,23 +585,24 @@ export default function MobileMarketSelection() {
                     src={`/crypto-logos/${pair.base.toLowerCase()}.png`}
                     alt={pair.base}
                     style={{
-                      width: isDesktop ? '32px' : '28px',
-                      height: isDesktop ? '32px' : '28px',
+                      width: isDesktop ? '28px' : '28px',
+                      height: isDesktop ? '28px' : '28px',
                       objectFit: 'contain',
-                      marginRight: '12px'
+                      marginRight: '10px'
                     }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
                   />
                   <div>
                     <div style={{
-                      fontSize: isDesktop ? '15px' : '16px',
+                      fontSize: '14px',
                       fontWeight: '700',
                       color: '#FFFFFF',
                       marginBottom: '2px'
                     }}>
-                      {pair.base}/USD
+                      {pair.base}/{quoteFilter}
                     </div>
                     <div style={{
-                      fontSize: '12px',
+                      fontSize: '11px',
                       color: 'rgba(255,255,255,0.5)'
                     }}>
                       {pair.fullName}
@@ -614,7 +613,7 @@ export default function MobileMarketSelection() {
                 {/* Price */}
                 <div style={{ textAlign: 'right' }}>
                   <div style={{
-                    fontSize: '15px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     color: '#FFFFFF'
                   }}>
@@ -629,7 +628,7 @@ export default function MobileMarketSelection() {
                     <div style={{
                       fontSize: '13px',
                       fontWeight: '700',
-                      color: pair.change24h >= 0 ? '#00FF94' : '#FF4B4B',
+                      color: pair.change24h >= 0 ? '#00E599' : '#FF5C5C',
                       marginTop: '2px'
                     }}>
                       {pair.change24h >= 0 ? '+' : ''}{pair.change24h.toFixed(2)}%
@@ -643,31 +642,249 @@ export default function MobileMarketSelection() {
                     textAlign: 'right',
                     fontSize: '14px',
                     fontWeight: '600',
-                    color: pair.change24h >= 0 ? '#00FF94' : '#FF4B4B'
+                    color: pair.change24h >= 0 ? '#00E599' : '#FF5C5C'
                   }}>
                     {pair.change24h >= 0 ? '+' : ''}{pair.change24h.toFixed(2)}%
                   </div>
                 )}
 
-                {/* Volume - Desktop Only */}
+                {/* 24h Volume - Desktop Only */}
                 {isDesktop && (
                   <div style={{ 
                     textAlign: 'right',
-                    fontSize: '14px',
+                    fontSize: '13px',
                     fontWeight: '500',
                     color: '#FFFFFF'
                   }}>
-                    {pair.volume24h >= 1e9 
-                      ? `$${(pair.volume24h / 1e9).toFixed(2)}B`
-                      : pair.volume24h >= 1e6
-                        ? `$${(pair.volume24h / 1e6).toFixed(2)}M`
-                        : `$${(pair.volume24h / 1000).toFixed(1)}K`}
+                    {formatNumber(pair.volume24h)}
+                  </div>
+                )}
+
+                {/* 24h High - Desktop Only */}
+                {isDesktop && (
+                  <div style={{ 
+                    textAlign: 'right',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    color: '#FFFFFF'
+                  }}>
+                    {pair.high24h > 0 ? `$${pair.high24h.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                  </div>
+                )}
+
+                {/* 24h Low - Desktop Only */}
+                {isDesktop && (
+                  <div style={{ 
+                    textAlign: 'right',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    color: '#FFFFFF'
+                  }}>
+                    {pair.low24h > 0 ? `$${pair.low24h.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                  </div>
+                )}
+
+                {/* Trend Sparkline - Desktop Only */}
+                {isDesktop && (
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Sparkline positive={pair.change24h >= 0} />
+                  </div>
+                )}
+
+                {/* Quick Actions - Desktop Only, Show on Hover */}
+                {isDesktop && (
+                  <div style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    gap: '8px',
+                    opacity: hoveredRow === pair.symbol ? 1 : 0,
+                    transition: 'opacity 120ms ease'
+                  }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite(pair.symbol, e); }}
+                      title="Add to Favorites"
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '6px',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: favorites.includes(pair.symbol) ? '#FFD700' : '#8B9BB4',
+                        transition: 'all 120ms ease'
+                      }}
+                    >
+                      {favorites.includes(pair.symbol) ? <IoStar size={14} /> : <IoStarOutline size={14} />}
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSelectedCoin(pair); }}
+                      title="View Chart"
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '6px',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#8B9BB4',
+                        transition: 'all 120ms ease'
+                      }}
+                    >
+                      <IoTrendingUp size={14} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate(`/spot-trading?pair=${pair.symbol}`); }}
+                      title="Trade"
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        background: 'linear-gradient(135deg, #00E599, #00B8D4)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        color: '#020617',
+                        transition: 'all 120ms ease'
+                      }}
+                    >
+                      Trade
+                    </button>
                   </div>
                 )}
               </div>
             ))
           )}
         </div>
+        </div>
+
+        {/* RIGHT SIDE INFO PANEL - Desktop Only */}
+        {isDesktop && selectedCoin && (
+          <div style={{
+            width: '320px',
+            flexShrink: 0,
+            padding: '24px 16px',
+            borderLeft: '1px solid rgba(255,255,255,0.06)'
+          }}>
+            <div style={{
+              background: 'linear-gradient(180deg, #0B1220 0%, #0E1626 100%)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '16px',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.55)',
+              padding: '20px',
+              position: 'sticky',
+              top: '100px'
+            }}>
+              {/* Coin Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <img
+                  src={`/crypto-logos/${selectedCoin.base.toLowerCase()}.png`}
+                  alt={selectedCoin.base}
+                  style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+                <div>
+                  <div style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
+                    {selectedCoin.fullName}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#8B9BB4' }}>
+                    {selectedCoin.base}/{quoteFilter}
+                  </div>
+                </div>
+              </div>
+
+              {/* Price */}
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '28px', fontWeight: '700', color: '#FFFFFF' }}>
+                  ${selectedCoin.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div style={{ 
+                  fontSize: '14px', 
+                  fontWeight: '600', 
+                  color: selectedCoin.change24h >= 0 ? '#00E599' : '#FF5C5C',
+                  marginTop: '4px'
+                }}>
+                  {selectedCoin.change24h >= 0 ? '+' : ''}{selectedCoin.change24h.toFixed(2)}% (24h)
+                </div>
+              </div>
+
+              {/* Mini Chart Placeholder */}
+              <div style={{
+                height: '80px',
+                background: 'rgba(0,0,0,0.2)',
+                borderRadius: '8px',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Sparkline positive={selectedCoin.change24h >= 0} />
+              </div>
+
+              {/* Stats */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>Market Cap</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                    {formatNumber(selectedCoin.marketCap)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h Volume</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                    {formatNumber(selectedCoin.volume24h)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h High</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                    ${selectedCoin.high24h?.toLocaleString() || '—'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h Low</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                    ${selectedCoin.low24h?.toLocaleString() || '—'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>Circulating Supply</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                    {selectedCoin.circulatingSupply > 0 
+                      ? `${(selectedCoin.circulatingSupply / 1e6).toFixed(2)}M ${selectedCoin.base}`
+                      : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <button
+                onClick={() => navigate(`/spot-trading?pair=${selectedCoin.symbol}`)}
+                style={{
+                  width: '100%',
+                  height: '44px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
+                  border: 'none',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#020617',
+                  cursor: 'pointer',
+                  transition: 'all 120ms ease',
+                  boxShadow: '0 4px 16px rgba(0,229,153,0.3)'
+                }}
+              >
+                Open Trading View
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
