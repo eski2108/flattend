@@ -125,6 +125,10 @@ export default function SpotTradingPro() {
   if (isDesktop) {
     return (
       <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 60px)',background:'#0A0E17'}}>
+        {/* VISIBLE DEBUG */}
+        <div style={{background:'#FF0000',color:'#FFF',padding:'20px',fontSize:'24px',fontWeight:'bold',textAlign:'center'}}>
+          === DESKTOP MODE - NO PAIR TABS ===
+        </div>
         {/* TOP BAR - SINGLE PAIR TEXT + STATS */}
         <div style={{display:'flex',alignItems:'center',padding:'12px 16px',background:'#0D1421',borderBottom:'1px solid rgba(255,255,255,0.1)',gap:'24px'}}>
           <div style={{fontSize:'20px',fontWeight:'700',color:'#FFF'}}>{selectedPair.replace('USD',' / USD')}</div>
