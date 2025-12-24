@@ -364,17 +364,17 @@ export default function SpotTradingPro() {
         gap: '16px',
         minHeight: 0
       }}>
-        {/* CHART CONTAINER - EXACT SPEC */}
+        {/* CHART CONTAINER - matches website background */}
         <div style={{
-          background: 'linear-gradient(180deg, #0C1326 0%, #0A0F1E 100%)',
+          background: '#0B0F1A',
           borderRadius: '14px',
           border: '1px solid rgba(110,140,255,0.14)',
           boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65)',
           overflow: 'hidden',
-          padding: '12px',
+          padding: '0',
           minHeight: '500px'
         }}>
-          <div id="tv-chart-desktop" style={{ width: '100%', height: '100%', minHeight: '480px' }}></div>
+          <div id="tv-chart-desktop" style={{ width: '100%', height: '100%', minHeight: '500px', background: '#0B0F1A' }}></div>
         </div>
 
         {/* RIGHT COLUMN - Trade Panel + Market Info */}
