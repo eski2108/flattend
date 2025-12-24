@@ -4880,61 +4880,79 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       );
-                    })}
+                        });
+                      })()}
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
-
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* WEEKLY TOTALS */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {revenueAnalytics && revenueAnalytics.weekly && revenueAnalytics.weekly.length > 0 && (
-              <>
-                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                  📆 Weekly Totals
-                </h3>
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-                  {revenueAnalytics.weekly.slice(0, 6).map((week, idx) => (
-                    <div key={idx} style={{ 
-                      padding: '1rem 1.5rem', 
-                      background: 'linear-gradient(135deg, rgba(168,85,247,0.1), rgba(139,92,246,0.05))', 
-                      border: '1px solid rgba(168,85,247,0.3)',
-                      borderRadius: '10px',
-                      minWidth: '160px'
-                    }}>
-                      <div style={{ fontSize: '11px', color: '#888', fontWeight: '600' }}>Week of {week.week_start}</div>
-                      <div style={{ fontSize: '28px', fontWeight: '900', color: '#A855F7' }}>£{week.total?.toFixed(2)}</div>
-                      <div style={{ fontSize: '10px', color: '#666' }}>{week.count} transactions</div>
+                )}
+                
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {/* WEEKLY VIEW */}
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {revenueViewMode === 'weekly' && revenueAnalytics.weekly && revenueAnalytics.weekly.length > 0 && (
+                  <div style={{ 
+                    background: 'rgba(0,0,0,0.2)', 
+                    borderRadius: '12px', 
+                    padding: '1.5rem',
+                    border: '1px solid rgba(168,85,247,0.3)',
+                    marginBottom: '2rem'
+                  }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                      {revenueAnalytics.weekly.map((week, idx) => (
+                        <div key={idx} style={{ 
+                          padding: '1.25rem', 
+                          background: 'linear-gradient(135deg, rgba(168,85,247,0.15), rgba(139,92,246,0.05))', 
+                          border: '2px solid rgba(168,85,247,0.4)',
+                          borderRadius: '12px'
+                        }}>
+                          <div style={{ fontSize: '12px', color: '#A855F7', fontWeight: '700', marginBottom: '0.5rem' }}>
+                            📆 Week of {week.week_start}
+                          </div>
+                          <div style={{ fontSize: '32px', fontWeight: '900', color: '#fff' }}>
+                            £{week.total?.toFixed(2)}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#888', marginTop: '0.25rem' }}>
+                            {week.count} transactions
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* MONTHLY TOTALS */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {revenueAnalytics && revenueAnalytics.monthly && revenueAnalytics.monthly.length > 0 && (
-              <>
-                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                  📅 Monthly Totals
-                </h3>
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-                  {revenueAnalytics.monthly.slice(0, 6).map((month, idx) => (
-                    <div key={idx} style={{ 
-                      padding: '1rem 1.5rem', 
-                      background: 'linear-gradient(135deg, rgba(0,240,255,0.1), rgba(14,165,233,0.05))', 
-                      border: '1px solid rgba(0,240,255,0.3)',
-                      borderRadius: '10px',
-                      minWidth: '160px'
-                    }}>
-                      <div style={{ fontSize: '11px', color: '#888', fontWeight: '600' }}>{month.month}</div>
-                      <div style={{ fontSize: '28px', fontWeight: '900', color: '#00F0FF' }}>£{month.total?.toFixed(2)}</div>
-                      <div style={{ fontSize: '10px', color: '#666' }}>{month.count} transactions</div>
+                  </div>
+                )}
+                
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {/* MONTHLY VIEW */}
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {revenueViewMode === 'monthly' && revenueAnalytics.monthly && revenueAnalytics.monthly.length > 0 && (
+                  <div style={{ 
+                    background: 'rgba(0,0,0,0.2)', 
+                    borderRadius: '12px', 
+                    padding: '1.5rem',
+                    border: '1px solid rgba(236,72,153,0.3)',
+                    marginBottom: '2rem'
+                  }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
+                      {revenueAnalytics.monthly.map((month, idx) => (
+                        <div key={idx} style={{ 
+                          padding: '1.25rem', 
+                          background: 'linear-gradient(135deg, rgba(236,72,153,0.15), rgba(219,39,119,0.05))', 
+                          border: '2px solid rgba(236,72,153,0.4)',
+                          borderRadius: '12px'
+                        }}>
+                          <div style={{ fontSize: '12px', color: '#EC4899', fontWeight: '700', marginBottom: '0.5rem' }}>
+                            🗓️ {month.month}
+                          </div>
+                          <div style={{ fontSize: '32px', fontWeight: '900', color: '#fff' }}>
+                            £{month.total?.toFixed(2)}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#888', marginTop: '0.25rem' }}>
+                            {month.count} transactions
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </>
             )}
 
