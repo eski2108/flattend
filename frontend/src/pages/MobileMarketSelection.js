@@ -276,73 +276,7 @@ export default function MobileMarketSelection() {
             </div>
           )}
 
-          {/* TOP STRIP - Global Stats + Live Tickers - Desktop Only */}
-          {isDesktop && !loading && (
-            <div style={{
-              margin: '12px 32px',
-              padding: '12px 24px',
-              background: '#0B1220',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '32px'
-            }}>
-              {/* Global Market Cap */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase' }}>Market Cap</span>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
-                  {formatNumber(marketSummary.totalMarketCap)}
-                </span>
-              </div>
-              
-              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }} />
-              
-              {/* 24h Volume */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase' }}>24h Vol</span>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
-                  {formatNumber(marketSummary.totalVolume24h)}
-                </span>
-              </div>
-              
-              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }} />
-              
-              {/* BTC Dominance */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase' }}>BTC Dom</span>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#F7931A' }}>
-                  {marketSummary.btcDominance.toFixed(1)}%
-                </span>
-              </div>
-              
-              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }} />
-              
-              {/* Live Tickers: BTC, ETH, SOL, BNB */}
-              {['BTC', 'ETH', 'SOL', 'BNB'].map(symbol => {
-                const coin = tradingPairs.find(p => p.base === symbol);
-                if (!coin) return null;
-                return (
-                  <div key={symbol} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <img 
-                      src={`/crypto-logos/${symbol.toLowerCase()}.png`}
-                      alt={symbol}
-                      style={{ width: '18px', height: '18px' }}
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
-                      {symbol}
-                    </span>
-                    <span style={{ fontSize: '13px', fontWeight: '500', color: '#FFFFFF' }}>
-                      ${coin.lastPrice >= 1 ? coin.lastPrice.toLocaleString('en-US', { maximumFractionDigits: 0 }) : coin.lastPrice.toFixed(2)}
-                    </span>
-                    <span style={{ 
-                      fontSize: '12px', 
-                      fontWeight: '600', 
-                      color: coin.change24h >= 0 ? '#00E599' : '#FF5C5C'
-                    }}>
-                      {coin.change24h >= 0 ? '+' : ''}{coin.change24h.toFixed(2)}%
-                    </span>
+        {/* Search Bar */}
                   </div>
                 );
               })}
