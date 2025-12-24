@@ -569,6 +569,26 @@ export default function SpotTradingPro() {
             </div>
           </div>
 
+          {/* FOOTER */}
+          <div style={{
+            background: '#0D1421',
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            padding: '12px 24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexShrink: 0
+          }}>
+            <div style={{ color: '#6B7280', fontSize: '12px' }}>
+              © 2025 CoinHubX. All rights reserved.
+            </div>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <a href="/terms" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
+              <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Privacy</a>
+              <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
+            </div>
+          </div>
+
         {showBotPanel && (
           <BotPanelDesktop
             pair={selectedPair}
