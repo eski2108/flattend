@@ -284,7 +284,7 @@ export default function SpotTradingPro() {
         flexDirection: 'column'
       }}>
           
-          {/* TOP BAR - PAIR DROPDOWN + STATS */}
+          {/* TOP BAR - PAIR NAME + STATS */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -294,82 +294,13 @@ export default function SpotTradingPro() {
             gap: '32px',
             flexShrink: 0
           }}>
-            {/* PAIR DROPDOWN */}
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setShowPairDropdown(!showPairDropdown)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  background: '#1A2332',
-                  border: '1px solid rgba(0, 212, 255, 0.3)',
-                  borderRadius: '8px',
-                  padding: '10px 16px',
-                  cursor: 'pointer',
-                  minWidth: '180px'
-                }}
-              >
-                <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
-                  {selectedPair.replace('USD', '/USD')}
-                </span>
-                <IoChevronDown style={{ 
-                  color: '#00D4FF', 
-                  fontSize: '16px',
-                  transform: showPairDropdown ? 'rotate(180deg)' : 'rotate(0)',
-                  transition: 'transform 200ms ease'
-                }} />
-              </button>
-              
-              {/* Dropdown Menu */}
-              {showPairDropdown && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  marginTop: '4px',
-                  background: '#1A2332',
-                  border: '1px solid rgba(0, 212, 255, 0.3)',
-                  borderRadius: '8px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-                  zIndex: 1000,
-                  maxHeight: '300px',
-                  overflowY: 'auto',
-                  minWidth: '180px'
-                }}>
-                  {tradingPairs.map(pair => (
-                    <div
-                      key={pair.symbol}
-                      onClick={() => {
-                        setSelectedPair(pair.symbol);
-                        setShowPairDropdown(false);
-                      }}
-                      style={{
-                        padding: '12px 16px',
-                        cursor: 'pointer',
-                        background: selectedPair === pair.symbol ? 'rgba(0, 212, 255, 0.15)' : 'transparent',
-                        color: selectedPair === pair.symbol ? '#00D4FF' : '#FFFFFF',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        borderBottom: '1px solid rgba(255,255,255,0.05)',
-                        transition: 'all 150ms ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (selectedPair !== pair.symbol) {
-                          e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (selectedPair !== pair.symbol) {
-                          e.currentTarget.style.background = 'transparent';
-                        }
-                      }}
-                    >
-                      {pair.name}
-                    </div>
-                  ))}
-                </div>
-              )}
+            {/* PAIR NAME - NO DROPDOWN */}
+            <div style={{ 
+              fontSize: '20px', 
+              fontWeight: '700', 
+              color: '#FFFFFF' 
+            }}>
+              {selectedPair.replace('USD', '/USD')}
             </div>
             
             {/* STATS */}
@@ -563,26 +494,6 @@ export default function SpotTradingPro() {
               </div>
             </div>
           </div>
-
-          {/* FOOTER */}
-          <div style={{
-            background: '#0D1421',
-            borderTop: '1px solid rgba(255,255,255,0.1)',
-            padding: '12px 24px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexShrink: 0
-          }}>
-            <div style={{ color: '#6B7280', fontSize: '12px' }}>
-              © 2025 CoinHubX. All rights reserved.
-            </div>
-            <div style={{ display: 'flex', gap: '24px' }}>
-              <a href="/terms" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
-              <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Privacy</a>
-              <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
-            </div>
-          </div>
         </div>
     );
   }
@@ -742,7 +653,7 @@ export default function SpotTradingPro() {
           boxShadow: '0 0 12px rgba(15,242,242,0.3)'
         }}></div>
 
-        {/* 2. COIN GRID - 4 COLUMN */}
+        {/* COIN GRID - 4 COLUMN */}
         <div style={{ 
           width: '100%',
           display: 'flex',
@@ -763,10 +674,10 @@ export default function SpotTradingPro() {
           {tradingPairs.map((pair, index) => {
             const rowIndex = Math.floor(index / 4);
             const rowColors = [
-              { glow: 'rgba(15,242,242,0.5)', border: '#0FF2F2' }, // Row 1: Aqua
-              { glow: 'rgba(58,141,255,0.5)', border: '#3A8DFF' }, // Row 2: Blue
-              { glow: 'rgba(155,75,255,0.5)', border: '#9B4BFF' }, // Row 3: Purple
-              { glow: 'rgba(255,63,212,0.5)', border: '#FF3FD4' }  // Row 4: Pink
+              { glow: 'rgba(15,242,242,0.5)', border: '#0FF2F2' },
+              { glow: 'rgba(58,141,255,0.5)', border: '#3A8DFF' },
+              { glow: 'rgba(155,75,255,0.5)', border: '#9B4BFF' },
+              { glow: 'rgba(255,63,212,0.5)', border: '#FF3FD4' }
             ];
             const rowColor = rowColors[rowIndex % 4];
             
@@ -808,7 +719,7 @@ export default function SpotTradingPro() {
           })}
         </div>
 
-        {/* 3. TRADINGVIEW CONTAINER */}
+        {/* TRADINGVIEW CONTAINER */}
         <div style={{
           height: '480px',
           width: '100%',
@@ -826,26 +737,6 @@ export default function SpotTradingPro() {
             height: '100%',
             background: 'transparent'
           }}></div>
-        </div>
-
-        {/* Amount input removed - buttons moved to top */}
-
-        {/* MOBILE FOOTER */}
-        <div style={{
-          background: '#0D1421',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          padding: '16px',
-          marginTop: '20px',
-          textAlign: 'center'
-        }}>
-          <div style={{ color: '#6B7280', fontSize: '11px', marginBottom: '8px' }}>
-            © 2025 CoinHubX. All rights reserved.
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-            <a href="/terms" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Terms</a>
-            <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Privacy</a>
-            <a href="/support" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Support</a>
-          </div>
         </div>
       </div>
     </div>
