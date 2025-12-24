@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 // Layout removed - already wrapped by MainLayout in App.js
 import CHXButton from '@/components/CHXButton';
-import { IoTrendingUp, IoTrendingDown, IoChevronDown } from 'react-icons/io5';
+import { IoTrendingUp, IoTrendingDown, IoChevronDown, IoRocket, IoGrid, IoTime } from 'react-icons/io5';
 import DOMPurify from 'dompurify';
 
 const API = process.env.REACT_APP_BACKEND_URL;
