@@ -1654,14 +1654,15 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('bots')}
             style={{
               padding: '0.75rem 1rem',
-              background: activeTab === 'bots' ? 'linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 159, 28, 0.2))' : 'none',
+              background: activeTab === 'bots' ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2))' : 'none',
               border: 'none',
-              borderBottom: activeTab === 'bots' ? '3px solid #FF6B6B' : '3px solid transparent',
-              color: activeTab === 'bots' ? '#FF6B6B' : '#888',
+              borderBottom: activeTab === 'bots' ? '3px solid #00F0FF' : '3px solid transparent',
+              color: activeTab === 'bots' ? '#00F0FF' : '#888',
               fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
-              transition: 'all 0.3s'
+              transition: 'all 0.3s',
+              whiteSpace: 'nowrap'
             }}
           >
             🤖 Trading Bots
