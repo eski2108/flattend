@@ -496,9 +496,23 @@ export default function AdminDashboard() {
         // Also set transactions
         setRevenueTransactions(data.recent_transactions || []);
       }
+      
+      // Also fetch the explicit breakdown
+      fetchRevenueBreakdown(period);
     } catch (error) {
       console.error('Error fetching revenue summary:', error);
       toast.error('Failed to fetch revenue summary');
+    }
+  };
+
+  const fetchRevenueBreakdown = async (period = 'day') => {
+    try {
+      const response = await axios.get(`${API}/api/admin/revenue/breakdown?timeframe=${period}`);
+      if (response.data.success) {
+        setRevenueBreakdown(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching revenue breakdown:', error);
     }
   };
 
