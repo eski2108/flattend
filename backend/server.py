@@ -15353,6 +15353,17 @@ async def place_trading_order(http_request: Request, request: dict = None):
             "status": "completed",
             "created_at": datetime.now(timezone.utc)
         }
+        
+        # BOT METADATA - Add if trade is from a bot (for dashboard filtering)
+        bot_source = request.get("source")
+        bot_id = request.get("bot_id")
+        bot_strategy_type = request.get("strategy_type")
+        
+        if bot_source == "bot" and bot_id:
+            trade_record["source"] = "bot"
+            trade_record["bot_id"] = bot_id
+            trade_record["strategy_type"] = bot_strategy_type
+        
         await db.spot_trades.insert_one(trade_record)
         
         # Log fee transaction
@@ -15365,6 +15376,13 @@ async def place_trading_order(http_request: Request, request: dict = None):
             "related_id": trade_id,
             "timestamp": datetime.now(timezone.utc)
         }
+        
+        # BOT METADATA - Add to fee record for revenue filtering
+        if bot_source == "bot" and bot_id:
+            fee_record["source"] = "bot"
+            fee_record["bot_id"] = bot_id
+            fee_record["strategy_type"] = bot_strategy_type
+        
         await db.fee_transactions.insert_one(fee_record)
         
         # Credit fee to admin wallet - SYNCED
