@@ -4592,12 +4592,12 @@ export default function AdminDashboard() {
             )}
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* DAILY BREAKDOWN TABLE - Scrollable History */}
+            {/* DAILY BREAKDOWN TABLE - Scrollable History (Accountant Clear) */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             {revenueAnalytics && revenueAnalytics.daily && revenueAnalytics.daily.length > 0 && (
               <>
                 <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                  📅 Daily Revenue History (Click to drill down)
+                  📅 Daily Revenue History (Click row for full breakdown)
                 </h3>
                 <div style={{ 
                   background: 'rgba(0,0,0,0.2)', 
@@ -4609,7 +4609,7 @@ export default function AdminDashboard() {
                   {/* Table Header */}
                   <div style={{ 
                     display: 'grid', 
-                    gridTemplateColumns: '140px 120px 1fr 80px',
+                    gridTemplateColumns: '120px 100px 1fr 80px',
                     padding: '1rem',
                     background: 'rgba(0,240,255,0.1)',
                     borderBottom: '1px solid rgba(255,255,255,0.1)',
@@ -4619,88 +4619,120 @@ export default function AdminDashboard() {
                     textTransform: 'uppercase'
                   }}>
                     <div>Date</div>
-                    <div>Total</div>
-                    <div>Revenue by Source</div>
-                    <div>Drill Down</div>
+                    <div>Day Total</div>
+                    <div>Breakdown by Source (All Amounts)</div>
+                    <div>Action</div>
                   </div>
 
                   {/* Daily Rows - Scrollable */}
-                  <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    {revenueAnalytics.daily.map((day, idx) => (
-                      <div 
-                        key={day.date || idx}
-                        onClick={() => day.date && fetchDayDrilldown(day.date)}
-                        style={{ 
-                          display: 'grid', 
-                          gridTemplateColumns: '140px 120px 1fr 80px',
-                          padding: '0.75rem 1rem',
-                          borderBottom: '1px solid rgba(255,255,255,0.05)',
-                          alignItems: 'center',
-                          background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
-                          cursor: 'pointer',
-                          transition: 'background 0.2s'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.1)'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'}
-                      >
-                        <div>
-                          <div style={{ fontWeight: '700', color: '#fff', fontSize: '13px' }}>{day.day_name}</div>
-                          <div style={{ fontSize: '10px', color: '#666' }}>{day.date}</div>
-                        </div>
-                        <div style={{ 
-                          fontWeight: '900', 
-                          color: day.total > 0 ? '#22C55E' : '#666', 
-                          fontSize: '18px' 
-                        }}>
-                          £{day.total?.toFixed(2) || '0.00'}
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                          {Object.entries(day.by_source || {}).filter(([_, d]) => d.amount > 0).map(([src, data]) => (
-                            <span 
-                              key={src}
-                              style={{ 
-                                padding: '3px 8px', 
-                                background: src === 'trading_bots' ? 'rgba(255,107,107,0.3)' : 'rgba(255,255,255,0.1)',
+                  <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                    {revenueAnalytics.daily.map((day, idx) => {
+                      // Get amounts for each source category
+                      const getSourceAmount = (key) => day.by_source?.[key]?.amount || 0;
+                      const spotTrading = getSourceAmount('spot_trading');
+                      const tradingBots = getSourceAmount('trading_bots');
+                      const swapInstant = getSourceAmount('swap_instant');
+                      const p2p = getSourceAmount('p2p');
+                      const depositsWithdrawals = getSourceAmount('deposits_withdrawals');
+                      const savings = getSourceAmount('savings');
+                      const disputes = getSourceAmount('disputes');
+                      const referralsIn = day.referrals_in || getSourceAmount('referrals_in') || getSourceAmount('referrals');
+                      const referralsOut = day.referrals_out || getSourceAmount('referrals_out') || 0;
+                      const referralsNet = day.referrals_net || (referralsIn - referralsOut);
+                      
+                      return (
+                        <div 
+                          key={day.date || idx}
+                          onClick={() => day.date && fetchDayDrilldown(day.date)}
+                          style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '120px 100px 1fr 80px',
+                            padding: '0.75rem 1rem',
+                            borderBottom: '1px solid rgba(255,255,255,0.05)',
+                            alignItems: 'flex-start',
+                            background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.05)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'}
+                        >
+                          {/* Date Column */}
+                          <div>
+                            <div style={{ fontWeight: '700', color: '#fff', fontSize: '13px' }}>{day.day_name}</div>
+                            <div style={{ fontSize: '10px', color: '#666' }}>{day.date}</div>
+                          </div>
+                          
+                          {/* Day Total Column */}
+                          <div style={{ 
+                            fontWeight: '900', 
+                            color: day.total > 0 ? '#22C55E' : '#666', 
+                            fontSize: '16px' 
+                          }}>
+                            £{day.total?.toFixed(2) || '0.00'}
+                          </div>
+                          
+                          {/* Breakdown Column - Accountant Clear Format */}
+                          <div style={{ fontSize: '11px', lineHeight: '1.8' }}>
+                            {day.total > 0 ? (
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.25rem 1rem' }}>
+                                <span style={{ color: spotTrading > 0 ? '#00F0FF' : '#444' }}>
+                                  Manual: £{spotTrading.toFixed(2)}
+                                </span>
+                                <span style={{ color: tradingBots > 0 ? '#FF6B6B' : '#444', fontWeight: tradingBots > 0 ? '700' : '400' }}>
+                                  🤖 Bots: £{tradingBots.toFixed(2)}
+                                </span>
+                                <span style={{ color: swapInstant > 0 ? '#A855F7' : '#444' }}>
+                                  Swap: £{swapInstant.toFixed(2)}
+                                </span>
+                                <span style={{ color: p2p > 0 ? '#EC4899' : '#444' }}>
+                                  P2P: £{p2p.toFixed(2)}
+                                </span>
+                                <span style={{ color: depositsWithdrawals > 0 ? '#F59E0B' : '#444' }}>
+                                  Dep/Wdl: £{depositsWithdrawals.toFixed(2)}
+                                </span>
+                                <span style={{ color: savings > 0 ? '#22C55E' : '#444' }}>
+                                  Savings: £{savings.toFixed(2)}
+                                </span>
+                                <span style={{ color: disputes > 0 ? '#EF4444' : '#444' }}>
+                                  Disputes: £{disputes.toFixed(2)}
+                                </span>
+                                <span style={{ color: referralsIn > 0 ? '#22C55E' : '#444' }}>
+                                  Ref IN: £{referralsIn.toFixed(2)}
+                                </span>
+                                <span style={{ color: referralsOut > 0 ? '#EF4444' : '#444' }}>
+                                  Ref OUT: -£{referralsOut.toFixed(2)}
+                                </span>
+                              </div>
+                            ) : (
+                              <span style={{ color: '#666', fontStyle: 'italic' }}>No revenue this day</span>
+                            )}
+                          </div>
+                          
+                          {/* Action Column */}
+                          <div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                day.date && fetchDayDrilldown(day.date);
+                              }}
+                              style={{
+                                padding: '4px 10px',
+                                background: 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2))',
+                                border: '1px solid rgba(0,240,255,0.4)',
                                 borderRadius: '4px',
+                                color: '#00F0FF',
                                 fontSize: '10px',
-                                color: src === 'trading_bots' ? '#FF6B6B' : '#aaa',
-                                fontWeight: '600'
+                                cursor: 'pointer',
+                                fontWeight: '700'
                               }}
                             >
-                              {src === 'trading_bots' && '🤖 '}
-                              {src === 'spot_trading' && '📈 '}
-                              {src === 'swap_instant' && '🔄 '}
-                              {src === 'p2p' && '🤝 '}
-                              {src === 'disputes' && '⚖️ '}
-                              {src.replace(/_/g, ' ')}: £{data.amount?.toFixed(2)}
-                            </span>
-                          ))}
-                          {Object.keys(day.by_source || {}).filter(k => day.by_source[k].amount > 0).length === 0 && (
-                            <span style={{ fontSize: '10px', color: '#666' }}>No revenue</span>
-                          )}
+                              View →
+                            </button>
+                          </div>
                         </div>
-                        <div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              day.date && fetchDayDrilldown(day.date);
-                            }}
-                            style={{
-                              padding: '4px 10px',
-                              background: 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2))',
-                              border: '1px solid rgba(0,240,255,0.4)',
-                              borderRadius: '4px',
-                              color: '#00F0FF',
-                              fontSize: '10px',
-                              cursor: 'pointer',
-                              fontWeight: '700'
-                            }}
-                          >
-                            View →
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </>
