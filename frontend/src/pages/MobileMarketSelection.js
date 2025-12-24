@@ -98,6 +98,9 @@ export default function MobileMarketSelection() {
             topLoser
           });
           
+          // Set last update time
+          setLastUpdateTime(new Date());
+          
           // Set first coin as selected for info panel
           if (!selectedCoin) {
             setSelectedCoin(enrichedPairs[0]);
