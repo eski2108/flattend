@@ -202,6 +202,27 @@ class BotEngine:
             if params['amount_per_interval'] <= 0:
                 return {"valid": False, "error": "Amount per interval must be positive"}
         
+        elif bot_type == 'signal':
+            # Signal bot requires entry rules at minimum
+            entry_rules = params.get('entry_rules')
+            if not entry_rules:
+                return {"valid": False, "error": "Signal bot requires entry_rules"}
+            
+            if not isinstance(entry_rules, dict) or 'conditions' not in entry_rules:
+                return {"valid": False, "error": "entry_rules must have 'conditions' array"}
+            
+            if not entry_rules['conditions']:
+                return {"valid": False, "error": "At least one entry condition is required"}
+            
+            # Validate order_amount
+            if params.get('order_amount', 0) <= 0:
+                return {"valid": False, "error": "order_amount must be positive"}
+            
+            # Validate side
+            params['side'] = params.get('side', 'buy')
+            if params['side'] not in ['buy', 'sell', 'both']:
+                return {"valid": False, "error": "Side must be 'buy', 'sell', or 'both'"}
+        
         return {"valid": True}
     
     @staticmethod
