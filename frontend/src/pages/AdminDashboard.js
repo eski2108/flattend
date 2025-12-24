@@ -315,6 +315,9 @@ export default function AdminDashboard() {
 
   const [revenuePeriod, setRevenuePeriod] = useState('week');
   const [revenueFilter, setRevenueFilter] = useState('all');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
   const [monetizationBreakdown, setMonetizationBreakdown] = useState(null);
   const [showMonetizationModal, setShowMonetizationModal] = useState(false);
   
