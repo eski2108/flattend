@@ -861,7 +861,253 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                 </>
               )}
 
-              {/* ADVANCED SETTINGS (Both) */}
+              {/* Signal Bot Config */}
+              {selectedType === 'signal' && (
+                <>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Order Amount (USD) *</label>
+                    <input
+                      type="number"
+                      value={params.order_amount}
+                      onChange={(e) => setParams({ ...params, order_amount: e.target.value })}
+                      placeholder="e.g., 100"
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#8B9BB4' }}>Trade Direction</label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['buy', 'sell', 'both'].map(s => (
+                        <button
+                          key={s}
+                          onClick={() => setParams({ ...params, side: s })}
+                          style={{
+                            flex: 1, padding: '10px', borderRadius: '8px',
+                            background: params.side === s ? (s === 'buy' ? 'rgba(0,229,153,0.15)' : s === 'sell' ? 'rgba(255,92,92,0.15)' : 'rgba(0,184,212,0.15)') : 'rgba(255,255,255,0.03)',
+                            border: params.side === s ? `1px solid ${s === 'buy' ? '#00E599' : s === 'sell' ? '#FF5C5C' : '#00B8D4'}` : '1px solid rgba(255,255,255,0.1)',
+                            color: params.side === s ? (s === 'buy' ? '#00E599' : s === 'sell' ? '#FF5C5C' : '#00B8D4') : '#8B9BB4',
+                            fontWeight: '600', cursor: 'pointer', fontSize: '12px', textTransform: 'capitalize'
+                          }}
+                        >{s}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Entry Rules Builder */}
+                  <div style={{ marginTop: '12px', padding: '16px', background: 'rgba(0,229,153,0.05)', borderRadius: '12px', border: '1px solid rgba(0,229,153,0.2)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: '600', color: '#00E599' }}>📈 Entry Rules (When to {params.side === 'sell' ? 'Sell' : 'Buy'})</span>
+                      <select
+                        value={params.entry_rules.operator}
+                        onChange={(e) => setParams({ ...params, entry_rules: { ...params.entry_rules, operator: e.target.value }})}
+                        style={{ padding: '4px 8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                      >
+                        <option value="AND">ALL conditions (AND)</option>
+                        <option value="OR">ANY condition (OR)</option>
+                      </select>
+                    </div>
+                    
+                    {/* Existing conditions */}
+                    {params.entry_rules.conditions.map((cond, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                        <select
+                          value={cond.indicator || ''}
+                          onChange={(e) => {
+                            const newConds = [...params.entry_rules.conditions];
+                            newConds[idx] = { ...newConds[idx], indicator: e.target.value };
+                            setParams({ ...params, entry_rules: { ...params.entry_rules, conditions: newConds }});
+                          }}
+                          style={{ flex: 2, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        >
+                          <option value="">Select indicator</option>
+                          {Object.entries(indicatorCategories).map(([cat, inds]) => (
+                            <optgroup key={cat} label={cat.toUpperCase()}>
+                              {inds.map(ind => <option key={ind} value={ind}>{ind.toUpperCase()}</option>)}
+                            </optgroup>
+                          ))}
+                        </select>
+                        <select
+                          value={cond.timeframe || '1h'}
+                          onChange={(e) => {
+                            const newConds = [...params.entry_rules.conditions];
+                            newConds[idx] = { ...newConds[idx], timeframe: e.target.value };
+                            setParams({ ...params, entry_rules: { ...params.entry_rules, conditions: newConds }});
+                          }}
+                          style={{ flex: 1, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        >
+                          {timeframes.map(tf => <option key={tf} value={tf}>{tf}</option>)}
+                        </select>
+                        <select
+                          value={cond.operator || '<'}
+                          onChange={(e) => {
+                            const newConds = [...params.entry_rules.conditions];
+                            newConds[idx] = { ...newConds[idx], operator: e.target.value };
+                            setParams({ ...params, entry_rules: { ...params.entry_rules, conditions: newConds }});
+                          }}
+                          style={{ width: '60px', padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        >
+                          <option value="<">&lt;</option>
+                          <option value=">">&gt;</option>
+                          <option value="<=">&lt;=</option>
+                          <option value=">=">&gt;=</option>
+                        </select>
+                        <input
+                          type="number"
+                          value={cond.value || ''}
+                          onChange={(e) => {
+                            const newConds = [...params.entry_rules.conditions];
+                            newConds[idx] = { ...newConds[idx], value: parseFloat(e.target.value) || 0 };
+                            setParams({ ...params, entry_rules: { ...params.entry_rules, conditions: newConds }});
+                          }}
+                          placeholder="Value"
+                          style={{ flex: 1, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        />
+                        <button
+                          onClick={() => {
+                            const newConds = params.entry_rules.conditions.filter((_, i) => i !== idx);
+                            setParams({ ...params, entry_rules: { ...params.entry_rules, conditions: newConds }});
+                          }}
+                          style={{ padding: '6px 10px', borderRadius: '6px', background: 'rgba(255,92,92,0.2)', border: 'none', color: '#FF5C5C', cursor: 'pointer', fontSize: '14px' }}
+                        >×</button>
+                      </div>
+                    ))}
+                    
+                    <button
+                      onClick={() => {
+                        const newCond = { indicator: 'rsi', timeframe: '1h', operator: '<', value: 30 };
+                        setParams({ ...params, entry_rules: { ...params.entry_rules, conditions: [...params.entry_rules.conditions, newCond] }});
+                      }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'rgba(0,229,153,0.1)', border: '1px dashed rgba(0,229,153,0.3)', color: '#00E599', cursor: 'pointer', fontSize: '12px' }}
+                    >+ Add Entry Condition</button>
+                  </div>
+
+                  {/* Exit Rules Builder */}
+                  <div style={{ marginTop: '12px', padding: '16px', background: 'rgba(255,92,92,0.05)', borderRadius: '12px', border: '1px solid rgba(255,92,92,0.2)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: '600', color: '#FF5C5C' }}>📉 Exit Rules (When to Close)</span>
+                      <select
+                        value={params.exit_rules?.operator || 'OR'}
+                        onChange={(e) => setParams({ ...params, exit_rules: { ...params.exit_rules, operator: e.target.value }})}
+                        style={{ padding: '4px 8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                      >
+                        <option value="AND">ALL conditions (AND)</option>
+                        <option value="OR">ANY condition (OR)</option>
+                      </select>
+                    </div>
+                    
+                    {/* Exit conditions */}
+                    {(params.exit_rules?.conditions || []).map((cond, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                        <select
+                          value={cond.indicator || ''}
+                          onChange={(e) => {
+                            const newConds = [...(params.exit_rules?.conditions || [])];
+                            newConds[idx] = { ...newConds[idx], indicator: e.target.value };
+                            setParams({ ...params, exit_rules: { ...params.exit_rules, conditions: newConds }});
+                          }}
+                          style={{ flex: 2, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        >
+                          <option value="">Select indicator</option>
+                          {Object.entries(indicatorCategories).map(([cat, inds]) => (
+                            <optgroup key={cat} label={cat.toUpperCase()}>
+                              {inds.map(ind => <option key={ind} value={ind}>{ind.toUpperCase()}</option>)}
+                            </optgroup>
+                          ))}
+                        </select>
+                        <select
+                          value={cond.timeframe || '1h'}
+                          onChange={(e) => {
+                            const newConds = [...(params.exit_rules?.conditions || [])];
+                            newConds[idx] = { ...newConds[idx], timeframe: e.target.value };
+                            setParams({ ...params, exit_rules: { ...params.exit_rules, conditions: newConds }});
+                          }}
+                          style={{ flex: 1, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        >
+                          {timeframes.map(tf => <option key={tf} value={tf}>{tf}</option>)}
+                        </select>
+                        <select
+                          value={cond.operator || '>'}
+                          onChange={(e) => {
+                            const newConds = [...(params.exit_rules?.conditions || [])];
+                            newConds[idx] = { ...newConds[idx], operator: e.target.value };
+                            setParams({ ...params, exit_rules: { ...params.exit_rules, conditions: newConds }});
+                          }}
+                          style={{ width: '60px', padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        >
+                          <option value="<">&lt;</option>
+                          <option value=">">&gt;</option>
+                          <option value="<=">&lt;=</option>
+                          <option value=">=">&gt;=</option>
+                        </select>
+                        <input
+                          type="number"
+                          value={cond.value || ''}
+                          onChange={(e) => {
+                            const newConds = [...(params.exit_rules?.conditions || [])];
+                            newConds[idx] = { ...newConds[idx], value: parseFloat(e.target.value) || 0 };
+                            setParams({ ...params, exit_rules: { ...params.exit_rules, conditions: newConds }});
+                          }}
+                          placeholder="Value"
+                          style={{ flex: 1, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
+                        />
+                        <button
+                          onClick={() => {
+                            const newConds = (params.exit_rules?.conditions || []).filter((_, i) => i !== idx);
+                            setParams({ ...params, exit_rules: { ...params.exit_rules, conditions: newConds }});
+                          }}
+                          style={{ padding: '6px 10px', borderRadius: '6px', background: 'rgba(255,92,92,0.2)', border: 'none', color: '#FF5C5C', cursor: 'pointer', fontSize: '14px' }}
+                        >×</button>
+                      </div>
+                    ))}
+                    
+                    <button
+                      onClick={() => {
+                        const newCond = { indicator: 'rsi', timeframe: '1h', operator: '>', value: 70 };
+                        const exitConds = params.exit_rules?.conditions || [];
+                        setParams({ ...params, exit_rules: { ...params.exit_rules, conditions: [...exitConds, newCond] }});
+                      }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'rgba(255,92,92,0.1)', border: '1px dashed rgba(255,92,92,0.3)', color: '#FF5C5C', cursor: 'pointer', fontSize: '12px' }}
+                    >+ Add Exit Condition</button>
+                  </div>
+
+                  {/* Risk Management for Signal Bot */}
+                  <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Take Profit %</label>
+                      <input
+                        type="number"
+                        value={params.take_profit_percent}
+                        onChange={(e) => setParams({ ...params, take_profit_percent: e.target.value })}
+                        placeholder="e.g., 5"
+                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Stop Loss %</label>
+                      <input
+                        type="number"
+                        value={params.stop_loss_percent}
+                        onChange={(e) => setParams({ ...params, stop_loss_percent: e.target.value })}
+                        placeholder="e.g., 3"
+                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', color: '#8B9BB4' }}>Trailing Stop %</label>
+                      <input
+                        type="number"
+                        value={params.trailing_stop_percent}
+                        onChange={(e) => setParams({ ...params, trailing_stop_percent: e.target.value })}
+                        placeholder="e.g., 2"
+                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.08)', color: '#FFFFFF', fontSize: '13px' }}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ADVANCED SETTINGS (Grid/DCA only) */}
+              {selectedType !== 'signal' && (
               <div style={{ marginTop: '8px', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <div style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF', marginBottom: '12px' }}>⚙️ Advanced Settings (Optional)</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
