@@ -307,71 +307,17 @@ export default function SpotTradingPro() {
         </div>
       </div>
 
-        {/* Box 2: 24h Change */}
-        <div style={{
-          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
-          border: '1px solid #00ffd5',
-          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          height: '80px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}>
-          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>24H CHANGE</span>
-          <span style={{ 
-            fontSize: '24px', 
-            fontWeight: '700', 
-            color: marketStats.change24h >= 0 ? '#00ff88' : '#ff4757'
-          }}>
-            {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
-          </span>
-        </div>
-
-        {/* Box 3: 24h High */}
-        <div style={{
-          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
-          border: '1px solid #00ffd5',
-          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          height: '80px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}>
-          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>24H HIGH</span>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
-            ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        </div>
-
-        {/* Box 4: 24h Low */}
-        <div style={{
-          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
-          border: '1px solid #00ffd5',
-          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          height: '80px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}>
-          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>24H LOW</span>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
-            ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        </div>
-      </div>
-
-      {/* PAIR TABS ROW - Matching screenshot */}
+      {/* PAIR TABS ROW - EXACT SPEC */}
       <div style={{
         display: 'flex',
         gap: '8px',
         flexWrap: 'wrap',
-        padding: '4px 0'
+        padding: '4px 0',
+        background: 'linear-gradient(180deg, #0B1020 0%, #0A0F1E 100%)',
+        borderBottom: '1px solid rgba(110,140,255,0.12)',
+        margin: '0 -16px',
+        paddingLeft: '16px',
+        paddingRight: '16px'
       }}>
         {['BTCUSD', 'ETHUSD', 'SOLUSD', 'XRPUSD', 'BNBUSD'].map((pair) => (
           <button
@@ -383,20 +329,20 @@ export default function SpotTradingPro() {
             style={{
               padding: '10px 20px',
               background: selectedPair === pair 
-                ? 'linear-gradient(135deg, #00ffd5 0%, #00d4aa 100%)' 
-                : 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
+                ? 'linear-gradient(180deg, #20E3A2 0%, #14C98A 100%)' 
+                : 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
               border: selectedPair === pair 
                 ? 'none' 
-                : '1px solid rgba(0, 255, 213, 0.25)',
-              borderRadius: '8px',
-              color: selectedPair === pair ? '#000' : '#00ffd5',
+                : '1px solid rgba(110,140,255,0.18)',
+              borderRadius: '10px',
+              color: selectedPair === pair ? '#06291D' : '#8FA3FF',
               fontSize: '13px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.2s',
               boxShadow: selectedPair === pair 
-                ? '0 0 20px rgba(0, 255, 213, 0.4)' 
-                : '0 0 10px rgba(0, 255, 213, 0.1)'
+                ? '0 6px 20px rgba(32,227,162,0.35)' 
+                : '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65)'
             }}
           >
             {pair.replace('USD', '/USD')}
@@ -404,7 +350,7 @@ export default function SpotTradingPro() {
         ))}
       </div>
 
-      {/* MAIN GRID - Chart + Right Column (Trade Panel + Market Info) */}
+      {/* MAIN GRID - Chart + Right Column */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 360px',
@@ -412,12 +358,12 @@ export default function SpotTradingPro() {
         gap: '16px',
         minHeight: 0
       }}>
-        {/* CHART CONTAINER - With neon border */}
+        {/* CHART CONTAINER - EXACT SPEC */}
         <div style={{
-          background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
-          borderRadius: '12px',
-          border: '1px solid rgba(0, 255, 213, 0.2)',
-          boxShadow: '0 0 30px rgba(0, 255, 213, 0.08)',
+          background: 'linear-gradient(180deg, #0C1326 0%, #0A0F1E 100%)',
+          borderRadius: '14px',
+          border: '1px solid rgba(110,140,255,0.14)',
+          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65)',
           overflow: 'hidden',
           padding: '12px',
           minHeight: '500px'
