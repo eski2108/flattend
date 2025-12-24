@@ -5488,6 +5488,11 @@ export default function AdminDashboard() {
           <AdminSupportChat />
         )}
 
+        {/* TRADING BOTS ADMIN SECTION */}
+        {activeTab === 'bots' && (
+          <AdminBotsSection API={API} adminId={adminId} />
+        )}
+
       </div>
 
       {/* Monetization Breakdown Modal */}
