@@ -21,6 +21,16 @@ export default function TradingBots() {
   const [selectedBotType, setSelectedBotType] = useState(null);
   const [tradingPairs, setTradingPairs] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Filters
+  const [filterType, setFilterType] = useState('all');
+  const [filterPair, setFilterPair] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  
+  // View bot panel
+  const [selectedBot, setSelectedBot] = useState(null);
+  const [botEvents, setBotEvents] = useState([]);
+  const [botTrades, setBotTrades] = useState([]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
