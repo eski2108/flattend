@@ -4785,36 +4785,6 @@ export default function AdminDashboard() {
                         </div>
                       );
                     })}
-                              </div>
-                            ) : (
-                              <span style={{ color: '#666', fontStyle: 'italic' }}>No revenue this day</span>
-                            )}
-                          </div>
-                          
-                          {/* Action Column */}
-                          <div>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                day.date && fetchDayDrilldown(day.date);
-                              }}
-                              style={{
-                                padding: '4px 10px',
-                                background: 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2))',
-                                border: '1px solid rgba(0,240,255,0.4)',
-                                borderRadius: '4px',
-                                color: '#00F0FF',
-                                fontSize: '10px',
-                                cursor: 'pointer',
-                                fontWeight: '700'
-                              }}
-                            >
-                              View →
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
                   </div>
                 </div>
               </>
