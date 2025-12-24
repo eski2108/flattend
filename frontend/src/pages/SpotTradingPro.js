@@ -479,24 +479,24 @@ export default function SpotTradingPro() {
               </div>
             </div>
 
-            {/* BUY / SELL Buttons */}
+            {/* BUY / SELL Buttons - EXACT SPEC */}
             <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={() => handleTrade('buy')}
                 disabled={isLoading}
                 style={{
                   width: '100%',
-                  padding: '14px',
-                  background: 'linear-gradient(135deg, #00ff88 0%, #00cc6a 100%)',
+                  height: '48px',
+                  background: 'linear-gradient(180deg, #20E3A2 0%, #14C98A 100%)',
                   border: 'none',
-                  borderRadius: '8px',
-                  color: '#000',
+                  borderRadius: '12px',
+                  color: '#06291D',
                   fontSize: '16px',
                   fontWeight: '700',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   opacity: isLoading ? 0.7 : 1,
                   transition: 'all 0.2s',
-                  boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)'
+                  boxShadow: '0 6px 20px rgba(32,227,162,0.35)'
                 }}
               >
                 {isLoading ? 'Processing...' : `BUY ${selectedPair.replace('USD', '')}`}
@@ -506,17 +506,17 @@ export default function SpotTradingPro() {
                 disabled={isLoading}
                 style={{
                   width: '100%',
-                  padding: '14px',
-                  background: 'linear-gradient(135deg, #ff4757 0%, #ff2d3b 100%)',
+                  height: '48px',
+                  background: 'linear-gradient(180deg, #FF5C6A 0%, #E64654 100%)',
                   border: 'none',
-                  borderRadius: '8px',
-                  color: '#FFF',
+                  borderRadius: '12px',
+                  color: '#2A060A',
                   fontSize: '16px',
                   fontWeight: '700',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   opacity: isLoading ? 0.7 : 1,
                   transition: 'all 0.2s',
-                  boxShadow: '0 0 20px rgba(255, 71, 87, 0.3)'
+                  boxShadow: '0 6px 20px rgba(255,92,106,0.35)'
                 }}
               >
                 {isLoading ? 'Processing...' : `SELL ${selectedPair.replace('USD', '')}`}
@@ -524,18 +524,18 @@ export default function SpotTradingPro() {
             </div>
           </div>
 
-          {/* MARKET INFO PANEL - Neon style */}
+          {/* MARKET INFO PANEL - EXACT SPEC */}
           <div style={{
-            background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
-            border: '1px solid rgba(0, 255, 213, 0.2)',
-            boxShadow: '0 0 20px rgba(0, 255, 213, 0.08)',
-            borderRadius: '12px',
+            background: 'radial-gradient(100% 120% at 100% 0%, rgba(32,227,162,0.15) 0%, rgba(0,0,0,0) 40%), linear-gradient(180deg, #0F1A2E 0%, #0B1222 100%)',
+            border: '1px solid rgba(110,140,255,0.18)',
+            boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+            borderRadius: '14px',
             padding: '16px'
           }}>
             <div style={{ 
               fontSize: '14px', 
               fontWeight: '600', 
-              color: '#00ffd5', 
+              color: '#E9EEFF', 
               marginBottom: '16px',
               display: 'flex',
               alignItems: 'center',
@@ -546,16 +546,16 @@ export default function SpotTradingPro() {
             
             {/* Pair */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#7dd3d8' }}>Pair</span>
-              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>
+              <span style={{ fontSize: '13px', color: '#8FA3FF', opacity: 0.85 }}>Pair</span>
+              <span style={{ fontSize: '13px', color: '#E9EEFF', fontWeight: '500' }}>
                 {selectedPair.replace('USD', '/USDT')}
               </span>
             </div>
             
             {/* Min Order */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#7dd3d8' }}>Min Order</span>
-              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>$10.00</span>
+              <span style={{ fontSize: '13px', color: '#8FA3FF', opacity: 0.85 }}>Min Order</span>
+              <span style={{ fontSize: '13px', color: '#E9EEFF', fontWeight: '500' }}>$10.00</span>
             </div>
             
             {/* Order Type */}
