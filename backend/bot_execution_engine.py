@@ -1409,11 +1409,94 @@ class BotExecutionEngine:
         state: BotState,
         current_price: float
     ) -> List[str]:
-        """Execute signal bot logic"""
+        """Execute signal bot logic using the Signal Engine"""
         actions = []
-        # Signal bot implementation will be completed in Phase 2
-        # This is the foundation hook
-        actions.append(f"Signal bot tick at price {current_price}")
+        bot_id = config.get("bot_id")
+        pair = config.get("pair")
+        params = config.get("params", {})
+        user_id = config.get("user_id")
+        
+        try:
+            from signal_engine import StrategyBuilder, DecisionEngine, ConditionEvaluator
+            from bot_execution_engine import PositionManager
+            
+            # Build strategy from bot params
+            strategy_config = params.get("strategy", {})
+            if not strategy_config:
+                actions.append("No strategy configured")
+                return actions
+            
+            strategy = StrategyBuilder.from_dict(strategy_config)
+            
+            # Check cooldown
+            if await DecisionEngine.check_cooldown(bot_id, strategy.cooldown_after_trade_minutes):
+                actions.append(f"In cooldown period ({strategy.cooldown_after_trade_minutes} min)")
+                return actions
+            
+            # Determine current position
+            open_positions = await PositionManager.get_open_positions(bot_id)
+            current_position = None
+            if open_positions:
+                current_position = open_positions[0].side
+            
+            # Evaluate strategy
+            signal, eval_details = await DecisionEngine.evaluate_strategy(
+                strategy=strategy,
+                pair=pair,
+                bot_id=bot_id,
+                current_position=current_position
+            )
+            
+            if signal:
+                actions.append(f"Signal generated: {signal.signal_type} ({signal.confidence:.0%} confidence)")
+                
+                # Log the decision
+                await DecisionLogger.log_decision(
+                    bot_id=bot_id,
+                    decision_type=signal.signal_type,
+                    reason=signal.trigger_reason,
+                    indicator_values=signal.indicator_snapshot,
+                    strategy_config={"strategy_id": strategy.strategy_id, "name": strategy.name},
+                    metadata={
+                        "signal_id": signal.signal_id,
+                        "confidence": signal.confidence,
+                        "price": current_price,
+                        "conditions_evaluated": signal.conditions_evaluated
+                    }
+                )
+                
+                # Execute the signal if not in paper mode
+                if not config.get("paper_mode", False):
+                    success, message, order_id = await DecisionEngine.execute_signal(
+                        signal, strategy, user_id
+                    )
+                    if success:
+                        actions.append(f"Order placed: {order_id}")
+                    else:
+                        actions.append(f"Order failed: {message}")
+                else:
+                    actions.append("Paper mode - no real order placed")
+            else:
+                actions.append(f"No signal at price {current_price}")
+                
+                # Log the skip decision
+                await DecisionLogger.log_decision(
+                    bot_id=bot_id,
+                    decision_type="skip",
+                    reason="No entry/exit conditions met",
+                    indicator_values=eval_details.get("indicator_snapshot", {}),
+                    strategy_config={"strategy_id": strategy.strategy_id},
+                    metadata={
+                        "price": current_price,
+                        "entry_result": eval_details.get("entry_evaluation", {}).get("result"),
+                        "exit_result": eval_details.get("exit_evaluation", {}).get("result")
+                    }
+                )
+        
+        except Exception as e:
+            logger.error(f"Signal bot execution error: {e}")
+            actions.append(f"Error: {str(e)}")
+        
         return actions
     
     @staticmethod
