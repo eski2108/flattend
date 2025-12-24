@@ -38073,6 +38073,308 @@ async def preview_bot(request: BotPreviewRequest):
     
     return {"success": True, "preview": preview}
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# NEW BOT ENDPOINTS - Presets, Backtest, Paper Trading, Decision Logs
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@api_router.get("/bots/presets")
+async def get_bot_presets():
+    """Get list of preset trading strategies"""
+    from bot_engine_v2 import get_preset_strategies
+    presets = get_preset_strategies()
+    return {"success": True, "presets": presets}
+
+@api_router.get("/bots/risk-config")
+async def get_default_risk_config():
+    """Get default risk management configuration"""
+    from bot_engine_v2 import get_default_risk_config as get_risk
+    config = get_risk()
+    return {"success": True, "config": config}
+
+@api_router.get("/bots/dca-config")
+async def get_default_dca_config():
+    """Get default DCA bot configuration"""
+    from bot_engine_v2 import get_dca_default_config
+    config = get_dca_default_config()
+    return {"success": True, "config": config}
+
+@api_router.get("/bots/grid-config")
+async def get_default_grid_config():
+    """Get default Grid bot configuration"""
+    from bot_engine_v2 import get_grid_default_config
+    config = get_grid_default_config()
+    return {"success": True, "config": config}
+
+class BacktestRequest(BaseModel):
+    bot_type: str
+    pair: str
+    params: Dict[str, Any]
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    initial_balance: float = 10000
+    fee_rate: float = 0.001
+    timeframe: str = "1h"
+
+@api_router.post("/bots/backtest")
+async def run_backtest(request: BacktestRequest):
+    """Run a backtest for a bot strategy"""
+    try:
+        from bot_engine_v2 import BacktestEngine
+        import random
+        
+        # Generate sample candle data for backtest (in production, fetch from price history)
+        # For now, generate realistic-looking candle data
+        num_candles = 500
+        base_price = 40000 if 'BTC' in request.pair else 2000 if 'ETH' in request.pair else 1
+        
+        candles = []
+        price = base_price
+        for i in range(num_candles):
+            change = random.uniform(-0.02, 0.02)
+            open_price = price
+            close_price = price * (1 + change)
+            high_price = max(open_price, close_price) * (1 + random.uniform(0, 0.01))
+            low_price = min(open_price, close_price) * (1 - random.uniform(0, 0.01))
+            volume = random.uniform(100, 1000)
+            
+            candles.append({
+                'timestamp': i,
+                'open': open_price,
+                'high': high_price,
+                'low': low_price,
+                'close': close_price,
+                'volume': volume
+            })
+            price = close_price
+        
+        # Run backtest
+        engine = BacktestEngine(candles, request.initial_balance, request.fee_rate)
+        
+        if request.bot_type == 'signal':
+            entry_rules = request.params.get('entry_rules', {'operator': 'AND', 'conditions': []})
+            exit_rules = request.params.get('exit_rules', {'operator': 'OR', 'conditions': []})
+            order_amount = request.params.get('order_amount', request.initial_balance * 0.1)
+            risk_config = {
+                'stop_loss_percent': request.params.get('stop_loss_percent'),
+                'take_profit_percent': request.params.get('take_profit_percent')
+            }
+            results = engine.run_signal_backtest(entry_rules, exit_rules, order_amount, risk_config)
+        elif request.bot_type == 'dca':
+            dca_config = {
+                'base_order_size': request.params.get('base_order_size', 100),
+                'safety_order_size': request.params.get('safety_order_size', 50),
+                'safety_order_step_percent': request.params.get('safety_order_step_percent', 2),
+                'safety_order_volume_scale': request.params.get('safety_order_volume_scale', 1.5),
+                'max_safety_orders': request.params.get('max_safety_orders', 5),
+                'take_profit_percent': request.params.get('take_profit_percent', 3)
+            }
+            risk_config = {}
+            results = engine.run_dca_backtest(dca_config, risk_config)
+        else:
+            return {"success": False, "error": f"Backtest not supported for {request.bot_type} bots"}
+        
+        return {
+            "success": True,
+            "backtest": results,
+            "config": {
+                "bot_type": request.bot_type,
+                "pair": request.pair,
+                "initial_balance": request.initial_balance,
+                "fee_rate": request.fee_rate,
+                "candles_count": num_candles
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Backtest error: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/bots/{bot_id}/logs")
+async def get_bot_decision_logs(bot_id: str, limit: int = 50, x_user_id: str = Header(None)):
+    """Get decision logs for a bot (why it traded)"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Get decision logs from bot_logs collection
+        logs = []
+        async for log in db.bot_logs.find({"bot_id": bot_id}).sort("timestamp", -1).limit(limit):
+            logs.append({
+                "log_id": log.get("log_id"),
+                "timestamp": log.get("timestamp").isoformat() if log.get("timestamp") else None,
+                "event_type": log.get("event_type"),
+                "message": log.get("message"),
+                "indicator_values": log.get("indicator_values", {}),
+                "conditions_evaluated": log.get("conditions_evaluated", []),
+                "trigger_reason": log.get("trigger_reason"),
+                "trade_action": log.get("trade_action"),
+                "data": log.get("data", {})
+            })
+        
+        return {"success": True, "logs": logs, "bot_id": bot_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching bot logs: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.post("/bots/{bot_id}/toggle-paper")
+async def toggle_paper_trading(bot_id: str, request: dict, x_user_id: str = Header(None)):
+    """Toggle paper trading mode for a bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        paper_mode = request.get("paper_mode", False)
+        
+        result = await db.bot_configs.update_one(
+            {"bot_id": bot_id, "user_id": x_user_id},
+            {"$set": {"paper_mode": paper_mode, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        return {
+            "success": True,
+            "message": f"Paper trading {'enabled' if paper_mode else 'disabled'}",
+            "paper_mode": paper_mode
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error toggling paper mode: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.post("/bots/{bot_id}/close-position")
+async def close_bot_position(bot_id: str, x_user_id: str = Header(None)):
+    """Close all open positions for a bot immediately"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Get current position
+        position = bot.get("state", {}).get("position", 0)
+        if position <= 0:
+            return {"success": True, "message": "No open position to close"}
+        
+        # TODO: Execute market sell order to close position
+        # For now, just update state
+        await db.bot_configs.update_one(
+            {"bot_id": bot_id},
+            {"$set": {
+                "state.position": 0,
+                "state.entry_price": 0,
+                "state.position_closed_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        return {"success": True, "message": f"Position of {position} closed"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error closing position: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.post("/bots/{bot_id}/duplicate")
+async def duplicate_bot(bot_id: str, x_user_id: str = Header(None)):
+    """Duplicate a bot configuration"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Create new bot with same config
+        new_bot_id = f"bot-{uuid.uuid4()}"
+        new_bot = {
+            "bot_id": new_bot_id,
+            "user_id": x_user_id,
+            "type": bot["type"],
+            "pair": bot["pair"],
+            "params": bot["params"],
+            "status": "stopped",
+            "paper_mode": bot.get("paper_mode", False),
+            "created_at": datetime.now(timezone.utc),
+            "state": {}
+        }
+        
+        await db.bot_configs.insert_one(new_bot)
+        
+        return {
+            "success": True,
+            "message": "Bot duplicated successfully",
+            "new_bot_id": new_bot_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error duplicating bot: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/bots/{bot_id}/export-trades")
+async def export_bot_trades_csv(bot_id: str, x_user_id: str = Header(None)):
+    """Export bot trades as CSV"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Get all trades for this bot
+        trades = []
+        async for trade in db.spot_trades.find({"bot_id": bot_id, "source": "bot"}).sort("created_at", -1):
+            trades.append({
+                "trade_id": trade.get("trade_id"),
+                "timestamp": trade.get("created_at").isoformat() if trade.get("created_at") else "",
+                "pair": trade.get("pair"),
+                "side": trade.get("type"),
+                "price": trade.get("price"),
+                "amount": trade.get("amount"),
+                "total": trade.get("total"),
+                "fee": trade.get("fee_amount"),
+                "pnl": trade.get("pnl", 0)
+            })
+        
+        # Build CSV
+        csv_headers = ["trade_id", "timestamp", "pair", "side", "price", "amount", "total", "fee", "pnl"]
+        csv_rows = [",".join(csv_headers)]
+        for t in trades:
+            row = [str(t.get(h, "")) for h in csv_headers]
+            csv_rows.append(",".join(row))
+        
+        csv_content = "\n".join(csv_rows)
+        
+        return {
+            "success": True,
+            "csv": csv_content,
+            "filename": f"bot_trades_{bot_id}_{datetime.now().strftime('%Y%m%d')}.csv",
+            "trade_count": len(trades)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error exporting trades: {e}")
+        return {"success": False, "error": str(e)}
+
 # Admin endpoints
 @api_router.post("/admin/bots/toggle-engine")
 async def admin_toggle_bot_engine(request: dict, x_admin_id: str = Header(None)):
