@@ -252,8 +252,30 @@ export default function MobileMarketSelection() {
 
         {/* Coin List */}
         <div style={{
-          width: '100%'
+          width: '100%',
+          padding: isDesktop ? '0 32px' : '0'
         }}>
+          {/* Desktop Table Header */}
+          {isDesktop && !loading && sortedPairs.length > 0 && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '50px 2fr 1fr 1fr 1fr',
+              padding: '16px 16px',
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              color: '#8F9BB3',
+              fontSize: '12px',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              <div></div>
+              <div>Pair</div>
+              <div style={{ textAlign: 'right' }}>Price</div>
+              <div style={{ textAlign: 'right' }}>24h Change</div>
+              <div style={{ textAlign: 'right' }}>Volume</div>
+            </div>
+          )}
+          
           {loading ? (
             <div style={{ 
               textAlign: 'center', 
