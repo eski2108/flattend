@@ -4539,11 +4539,11 @@ export default function AdminDashboard() {
             {revenueAnalytics && (
               <>
                 <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                  📊 Revenue by Source
+                  📊 Revenue by Source (Updated Labels)
                 </h3>
                 <div style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
                   gap: '1rem', 
                   marginBottom: '2rem' 
                 }}>
@@ -4553,6 +4553,10 @@ export default function AdminDashboard() {
                       style={{ 
                         background: key === 'trading_bots' 
                           ? 'linear-gradient(135deg, rgba(255,107,107,0.2), rgba(255,159,28,0.1))' 
+                          : key === 'referrals_out'
+                          ? 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.1))'
+                          : key === 'referrals_in'
+                          ? 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(22,163,74,0.1))'
                           : 'rgba(255,255,255,0.03)',
                         border: `2px solid ${cat.color}`,
                         borderRadius: '12px',
@@ -4573,14 +4577,29 @@ export default function AdminDashboard() {
                           fontWeight: '900',
                           color: '#fff'
                         }}>
-                          BOT REVENUE
+                          🤖 BOT REVENUE
                         </div>
                       )}
-                      <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>
+                      {key === 'referrals_out' && (
+                        <div style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          right: '10px', 
+                          background: '#EF4444', 
+                          padding: '2px 8px', 
+                          borderRadius: '4px', 
+                          fontSize: '9px', 
+                          fontWeight: '900',
+                          color: '#fff'
+                        }}>
+                          DEDUCTION
+                        </div>
+                      )}
+                      <div style={{ fontSize: '10px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>
                         {cat.label}
                       </div>
-                      <div style={{ fontSize: '28px', fontWeight: '900', color: cat.color, marginBottom: '0.25rem' }}>
-                        £{cat.amount?.toFixed(2) || '0.00'}
+                      <div style={{ fontSize: '26px', fontWeight: '900', color: cat.is_deduction ? '#EF4444' : cat.color, marginBottom: '0.25rem' }}>
+                        {cat.is_deduction ? '-' : ''}£{cat.amount?.toFixed(2) || '0.00'}
                       </div>
                       <div style={{ fontSize: '10px', color: '#666' }}>
                         {cat.count || 0} transactions
@@ -4588,6 +4607,39 @@ export default function AdminDashboard() {
                     </div>
                   ))}
                 </div>
+                
+                {/* Referrals Summary Box */}
+                {revenueAnalytics.referrals && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(14,165,233,0.1), rgba(168,85,247,0.05))',
+                    border: '2px solid rgba(14,165,233,0.3)',
+                    borderRadius: '12px',
+                    padding: '1rem 1.5rem',
+                    marginBottom: '2rem',
+                    display: 'flex',
+                    gap: '2rem',
+                    alignItems: 'center',
+                    flexWrap: 'wrap'
+                  }}>
+                    <div style={{ fontSize: '12px', fontWeight: '700', color: '#0EA5E9' }}>
+                      REFERRAL SUMMARY:
+                    </div>
+                    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px' }}>
+                        <span style={{ color: '#888' }}>IN:</span>{' '}
+                        <span style={{ color: '#22C55E', fontWeight: '900' }}>£{revenueAnalytics.referrals.income?.toFixed(2)}</span>
+                      </span>
+                      <span style={{ fontSize: '13px' }}>
+                        <span style={{ color: '#888' }}>OUT:</span>{' '}
+                        <span style={{ color: '#EF4444', fontWeight: '900' }}>-£{revenueAnalytics.referrals.payouts?.toFixed(2)}</span>
+                      </span>
+                      <span style={{ fontSize: '13px', padding: '4px 12px', background: 'rgba(14,165,233,0.2)', borderRadius: '6px' }}>
+                        <span style={{ color: '#888' }}>NET:</span>{' '}
+                        <span style={{ color: '#0EA5E9', fontWeight: '900' }}>£{revenueAnalytics.referrals.net?.toFixed(2)}</span>
+                      </span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
