@@ -4430,7 +4430,29 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* 5. SAVINGS / VAULTS */}
+                  {/* 5. DEPOSITS & WITHDRAWALS */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.deposits_withdrawals?.color || '#F59E0B'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative'
+                  }}>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.deposits_withdrawals?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#F59E0B', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.deposits_withdrawals?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.deposits_withdrawals?.trade_count || 0} transactions
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.deposits_withdrawals?.description}
+                    </div>
+                  </div>
+
+                  {/* 6. SAVINGS / VAULTS */}
                   <div style={{ 
                     background: `linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.05))`, 
                     border: `2px solid ${revenueBreakdown.breakdown?.savings_vaults?.color || '#22C55E'}`, 
@@ -4452,29 +4474,29 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* 6. LENDING / BORROWING */}
+                  {/* 7. DISPUTES */}
                   <div style={{ 
-                    background: `linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05))`, 
-                    border: `2px solid ${revenueBreakdown.breakdown?.lending_borrowing?.color || '#F59E0B'}`, 
+                    background: `linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.disputes?.color || '#EF4444'}`, 
                     borderRadius: '16px', 
                     padding: '1.5rem',
                     position: 'relative'
                   }}>
                     <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
-                      {revenueBreakdown.breakdown?.lending_borrowing?.label}
+                      {revenueBreakdown.breakdown?.disputes?.label}
                     </div>
-                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#F59E0B', marginBottom: '0.25rem' }}>
-                      £{revenueBreakdown.breakdown?.lending_borrowing?.total_fees?.toFixed(4) || '0.00'}
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#EF4444', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.disputes?.total_fees?.toFixed(4) || '0.00'}
                     </div>
                     <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
-                      {revenueBreakdown.breakdown?.lending_borrowing?.trade_count || 0} loans
+                      {revenueBreakdown.breakdown?.disputes?.trade_count || 0} disputes
                     </div>
                     <div style={{ fontSize: '11px', color: '#666' }}>
-                      {revenueBreakdown.breakdown?.lending_borrowing?.description}
+                      {revenueBreakdown.breakdown?.disputes?.description}
                     </div>
                   </div>
 
-                  {/* 7. REFERRALS (Outgoing) */}
+                  {/* 8. REFERRALS (Income & Payouts) */}
                   <div style={{ 
                     background: `linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(6, 182, 212, 0.05))`, 
                     border: `2px solid ${revenueBreakdown.breakdown?.referrals?.color || '#0EA5E9'}`, 
@@ -4482,19 +4504,27 @@ export default function AdminDashboard() {
                     padding: '1.5rem',
                     position: 'relative'
                   }}>
-                    <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(239, 68, 68, 0.3)', borderRadius: '4px', padding: '2px 8px', fontSize: '10px', color: '#EF4444' }}>
-                      OUTGOING
-                    </div>
                     <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
                       {revenueBreakdown.breakdown?.referrals?.label}
                     </div>
-                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#0EA5E9', marginBottom: '0.25rem' }}>
-                      £{revenueBreakdown.breakdown?.referrals?.total_paid?.toFixed(4) || '0.00'}
+                    <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
+                      <div>
+                        <div style={{ fontSize: '10px', color: '#22C55E' }}>INCOME</div>
+                        <div style={{ fontSize: '24px', fontWeight: '900', color: '#22C55E' }}>
+                          £{revenueBreakdown.breakdown?.referrals?.total_income?.toFixed(4) || '0.00'}
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '10px', color: '#EF4444' }}>PAID OUT</div>
+                        <div style={{ fontSize: '24px', fontWeight: '900', color: '#EF4444' }}>
+                          £{revenueBreakdown.breakdown?.referrals?.total_paid?.toFixed(4) || '0.00'}
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
-                      {revenueBreakdown.breakdown?.referrals?.payout_count || 0} payouts
+                    <div style={{ fontSize: '14px', color: '#0EA5E9', fontWeight: '700' }}>
+                      Net: £{revenueBreakdown.breakdown?.referrals?.net?.toFixed(4) || '0.00'}
                     </div>
-                    <div style={{ fontSize: '11px', color: '#666' }}>
+                    <div style={{ fontSize: '11px', color: '#666', marginTop: '0.25rem' }}>
                       {revenueBreakdown.breakdown?.referrals?.description}
                     </div>
                   </div>
