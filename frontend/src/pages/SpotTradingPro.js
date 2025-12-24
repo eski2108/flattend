@@ -284,7 +284,7 @@ export default function SpotTradingPro() {
         flexDirection: 'column'
       }}>
           
-          {/* TOP BAR - PAIR DROPDOWN + STATS */}
+          {/* TOP BAR - PAIR NAME + STATS */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -294,82 +294,13 @@ export default function SpotTradingPro() {
             gap: '32px',
             flexShrink: 0
           }}>
-            {/* PAIR DROPDOWN */}
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setShowPairDropdown(!showPairDropdown)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  background: '#1A2332',
-                  border: '1px solid rgba(0, 212, 255, 0.3)',
-                  borderRadius: '8px',
-                  padding: '10px 16px',
-                  cursor: 'pointer',
-                  minWidth: '180px'
-                }}
-              >
-                <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
-                  {selectedPair.replace('USD', '/USD')}
-                </span>
-                <IoChevronDown style={{ 
-                  color: '#00D4FF', 
-                  fontSize: '16px',
-                  transform: showPairDropdown ? 'rotate(180deg)' : 'rotate(0)',
-                  transition: 'transform 200ms ease'
-                }} />
-              </button>
-              
-              {/* Dropdown Menu */}
-              {showPairDropdown && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  marginTop: '4px',
-                  background: '#1A2332',
-                  border: '1px solid rgba(0, 212, 255, 0.3)',
-                  borderRadius: '8px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-                  zIndex: 1000,
-                  maxHeight: '300px',
-                  overflowY: 'auto',
-                  minWidth: '180px'
-                }}>
-                  {tradingPairs.map(pair => (
-                    <div
-                      key={pair.symbol}
-                      onClick={() => {
-                        setSelectedPair(pair.symbol);
-                        setShowPairDropdown(false);
-                      }}
-                      style={{
-                        padding: '12px 16px',
-                        cursor: 'pointer',
-                        background: selectedPair === pair.symbol ? 'rgba(0, 212, 255, 0.15)' : 'transparent',
-                        color: selectedPair === pair.symbol ? '#00D4FF' : '#FFFFFF',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        borderBottom: '1px solid rgba(255,255,255,0.05)',
-                        transition: 'all 150ms ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (selectedPair !== pair.symbol) {
-                          e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (selectedPair !== pair.symbol) {
-                          e.currentTarget.style.background = 'transparent';
-                        }
-                      }}
-                    >
-                      {pair.name}
-                    </div>
-                  ))}
-                </div>
-              )}
+            {/* PAIR NAME - NO DROPDOWN */}
+            <div style={{ 
+              fontSize: '20px', 
+              fontWeight: '700', 
+              color: '#FFFFFF' 
+            }}>
+              {selectedPair.replace('USD', '/USD')}
             </div>
             
             {/* STATS */}
