@@ -4265,7 +4265,7 @@ export default function AdminDashboard() {
         {activeTab === 'revenue' && (
           <Card style={{ background: 'rgba(15, 23, 42, 0.6)', border: '2px solid rgba(0, 240, 255, 0.3)', borderRadius: '16px', padding: '2rem' }}>
             <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#00F0FF', marginBottom: '2rem', textTransform: 'uppercase' }}>
-              💰 Revenue Tracking
+              💰 Revenue Breakdown by Source
             </h2>
 
             {/* Period Filter */}
@@ -4289,10 +4289,218 @@ export default function AdminDashboard() {
                     textTransform: 'capitalize'
                   }}
                 >
-                  {period === 'all' ? 'All Time' : `Last ${period.charAt(0).toUpperCase() + period.slice(1)}`}
+                  {period === 'day' ? 'Today' : period === 'week' ? 'Last 7 Days' : period === 'month' ? 'Last 30 Days' : 'All Time'}
                 </button>
               ))}
             </div>
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* EXPLICIT REVENUE BREAKDOWN BY SOURCE */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {revenueBreakdown && (
+              <>
+                {/* Grand Totals Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1))', border: '2px solid rgba(34, 197, 94, 0.5)', borderRadius: '12px', padding: '1.5rem' }}>
+                    <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>Total Revenue</div>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{revenueBreakdown.totals?.total_revenue?.toFixed(2) || '0.00'}</div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>All fees collected</div>
+                  </div>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.1))', border: '2px solid rgba(168, 85, 247, 0.5)', borderRadius: '12px', padding: '1.5rem' }}>
+                    <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>Referrals Paid</div>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>£{revenueBreakdown.totals?.referral_paid?.toFixed(2) || '0.00'}</div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>Commission payouts</div>
+                  </div>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(14, 165, 233, 0.1))', border: '2px solid rgba(0, 240, 255, 0.5)', borderRadius: '12px', padding: '1.5rem' }}>
+                    <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>Net Profit</div>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>£{revenueBreakdown.totals?.net_profit?.toFixed(2) || '0.00'}</div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>After all deductions</div>
+                  </div>
+                </div>
+
+                {/* Revenue Breakdown Cards */}
+                <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                  📊 Revenue by Source ({revenuePeriod === 'day' ? 'Today' : revenuePeriod === 'week' ? 'Last 7 Days' : revenuePeriod === 'month' ? 'Last 30 Days' : 'All Time'})
+                </h3>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  
+                  {/* 1. SPOT TRADING (MANUAL) */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 180, 220, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.spot_trading_manual?.color || '#00F0FF'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', borderRadius: '4px', padding: '2px 8px', fontSize: '10px', color: '#888' }}>
+                      {revenueBreakdown.breakdown?.spot_trading_manual?.fee_rate}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.spot_trading_manual?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#00F0FF', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.spot_trading_manual?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.spot_trading_manual?.trade_count || 0} trades
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.spot_trading_manual?.description}
+                    </div>
+                  </div>
+
+                  {/* 2. TRADING BOTS - HIGHLIGHTED */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 159, 28, 0.1))`, 
+                    border: `3px solid #FF6B6B`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    boxShadow: '0 0 20px rgba(255, 107, 107, 0.3)'
+                  }}>
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#FF6B6B', borderRadius: '4px', padding: '2px 8px', fontSize: '10px', color: '#fff', fontWeight: '700' }}>
+                      BOT REVENUE
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#FF6B6B', textTransform: 'uppercase', fontWeight: '900', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.trading_bots?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#FF6B6B', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.trading_bots?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.trading_bots?.trade_count || 0} trades • £{revenueBreakdown.breakdown?.trading_bots?.total_volume?.toLocaleString() || '0'} volume
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#FF6B6B', fontWeight: '600', marginBottom: '0.25rem' }}>
+                      {revenueBreakdown.breakdown?.trading_bots?.percentage_of_trading?.toFixed(1) || '0'}% of all trading fees
+                    </div>
+                    {revenueBreakdown.breakdown?.trading_bots?.by_strategy && Object.keys(revenueBreakdown.breakdown.trading_bots.by_strategy).length > 0 && (
+                      <div style={{ fontSize: '10px', color: '#888', marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(0,0,0,0.3)', borderRadius: '6px' }}>
+                        <strong>By Strategy:</strong> {Object.entries(revenueBreakdown.breakdown.trading_bots.by_strategy).map(([s, d]) => `${s}: £${d.amount?.toFixed(4)}`).join(' • ')}
+                      </div>
+                    )}
+                    <div style={{ fontSize: '11px', color: '#666', marginTop: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.trading_bots?.description}
+                    </div>
+                  </div>
+
+                  {/* 3. SWAP / INSTANT BUY-SELL */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(139, 92, 246, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.swap_instant?.color || '#A855F7'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative'
+                  }}>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.swap_instant?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#A855F7', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.swap_instant?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.swap_instant?.trade_count || 0} transactions
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.swap_instant?.description}
+                    </div>
+                  </div>
+
+                  {/* 4. P2P MARKETPLACE */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(219, 39, 119, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.p2p_marketplace?.color || '#EC4899'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative'
+                  }}>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.p2p_marketplace?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#EC4899', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.p2p_marketplace?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.p2p_marketplace?.trade_count || 0} trades
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.p2p_marketplace?.description}
+                    </div>
+                  </div>
+
+                  {/* 5. SAVINGS / VAULTS */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.savings_vaults?.color || '#22C55E'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative'
+                  }}>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.savings_vaults?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#22C55E', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.savings_vaults?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.savings_vaults?.trade_count || 0} events
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.savings_vaults?.description}
+                    </div>
+                  </div>
+
+                  {/* 6. LENDING / BORROWING */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.lending_borrowing?.color || '#F59E0B'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative'
+                  }}>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.lending_borrowing?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#F59E0B', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.lending_borrowing?.total_fees?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.lending_borrowing?.trade_count || 0} loans
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.lending_borrowing?.description}
+                    </div>
+                  </div>
+
+                  {/* 7. REFERRALS (Outgoing) */}
+                  <div style={{ 
+                    background: `linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(6, 182, 212, 0.05))`, 
+                    border: `2px solid ${revenueBreakdown.breakdown?.referrals?.color || '#0EA5E9'}`, 
+                    borderRadius: '16px', 
+                    padding: '1.5rem',
+                    position: 'relative'
+                  }}>
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(239, 68, 68, 0.3)', borderRadius: '4px', padding: '2px 8px', fontSize: '10px', color: '#EF4444' }}>
+                      OUTGOING
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.referrals?.label}
+                    </div>
+                    <div style={{ fontSize: '36px', fontWeight: '900', color: '#0EA5E9', marginBottom: '0.25rem' }}>
+                      £{revenueBreakdown.breakdown?.referrals?.total_paid?.toFixed(4) || '0.00'}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '0.5rem' }}>
+                      {revenueBreakdown.breakdown?.referrals?.payout_count || 0} payouts
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      {revenueBreakdown.breakdown?.referrals?.description}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
             {revenueSummary && (
               <>
