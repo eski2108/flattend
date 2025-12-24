@@ -32570,11 +32570,15 @@ async def get_revenue_analytics(
             "total": 0,
             "count": 0,
             "by_source": defaultdict(lambda: {"amount": 0, "count": 0}),
+            "referrals_in": 0,
+            "referrals_out": 0,
             "transactions": []
         })
         
         # Category totals
         category_totals = defaultdict(lambda: {"amount": 0, "count": 0})
+        referrals_in_total = 0
+        referrals_out_total = 0
         
         for r in filtered_revenue:
             ts = r['_parsed_ts']
@@ -32582,8 +32586,17 @@ async def get_revenue_analytics(
             amount = float(r.get("amount", 0))
             source = r.get("source", "unknown")
             category = get_category(source)
+            fee_type = get_fee_type_label(source)
             
-            # Skip negative (payouts) for revenue totals
+            # Track referrals in/out separately
+            if category == "referrals_in":
+                daily_data[day_key]["referrals_in"] += abs(amount)
+                referrals_in_total += abs(amount)
+            elif category == "referrals_out":
+                daily_data[day_key]["referrals_out"] += abs(amount)
+                referrals_out_total += abs(amount)
+            
+            # Skip negative (payouts) for revenue totals but track referral outs
             if amount > 0:
                 daily_data[day_key]["total"] += amount
                 daily_data[day_key]["count"] += 1
@@ -32603,11 +32616,14 @@ async def get_revenue_analytics(
                     "timestamp": ts.isoformat(),
                     "source": source,
                     "category": category,
+                    "fee_type": fee_type,
                     "amount": amount,
                     "currency": r.get("currency", "GBP"),
+                    "asset": r.get("asset") or r.get("currency", "GBP"),
                     "user_id": r.get("user_id"),
                     "bot_id": r.get("bot_id"),
                     "strategy_type": r.get("strategy_type"),
+                    "reference_id": r.get("related_transaction_id") or r.get("trade_id") or r.get("order_id") or r.get("swap_id") or r.get("revenue_id"),
                     "description": r.get("description")
                 })
         
