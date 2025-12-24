@@ -347,18 +347,6 @@ export default function MobileMarketSelection() {
                       fontSize: '16px', 
                       fontWeight: '700', 
                       color: '#FF5C5C',
-                      background: 'rgba(255,92,92,0.15)',
-                      padding: '4px 8px',
-                      borderRadius: '6px'
-                    }}>
-                      {marketSummary.topLoser.change24h.toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
         {/* Search Bar */}
         <div style={{
           position: 'sticky',
