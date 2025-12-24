@@ -4691,20 +4691,17 @@ export default function AdminDashboard() {
                       const depositsWithdrawals = getSourceAmount('deposits_withdrawals');
                       const savings = getSourceAmount('savings');
                       const disputes = getSourceAmount('disputes');
-                      const referralsIn = day.referrals_in || getSourceAmount('referrals_in') || getSourceAmount('referrals');
+                      const referralsIn = day.referrals_in || getSourceAmount('referrals_in') || getSourceAmount('referrals') || 0;
                       const referralsOut = day.referrals_out || getSourceAmount('referrals_out') || 0;
-                      const referralsNet = day.referrals_net || (referralsIn - referralsOut);
+                      const netDay = day.total - referralsOut;
                       
                       return (
                         <div 
                           key={day.date || idx}
                           onClick={() => day.date && fetchDayDrilldown(day.date)}
                           style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: '120px 100px 1fr 80px',
                             padding: '0.75rem 1rem',
                             borderBottom: '1px solid rgba(255,255,255,0.05)',
-                            alignItems: 'flex-start',
                             background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
                             cursor: 'pointer',
                             transition: 'background 0.2s'
@@ -4712,52 +4709,82 @@ export default function AdminDashboard() {
                           onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.05)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'}
                         >
-                          {/* Date Column */}
-                          <div>
-                            <div style={{ fontWeight: '700', color: '#fff', fontSize: '13px' }}>{day.day_name}</div>
-                            <div style={{ fontSize: '10px', color: '#666' }}>{day.date}</div>
-                          </div>
-                          
-                          {/* Day Total Column */}
+                          {/* Single-line readable format */}
                           <div style={{ 
-                            fontWeight: '900', 
-                            color: day.total > 0 ? '#22C55E' : '#666', 
-                            fontSize: '16px' 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '0.5rem',
+                            flexWrap: 'wrap',
+                            fontSize: '12px'
                           }}>
-                            £{day.total?.toFixed(2) || '0.00'}
+                            {/* Date */}
+                            <span style={{ fontWeight: '700', color: '#fff', minWidth: '100px' }}>
+                              {day.day_name}
+                            </span>
+                            
+                            {/* Separator */}
+                            <span style={{ color: '#444' }}>—</span>
+                            
+                            {/* Total */}
+                            <span style={{ fontWeight: '900', color: day.total > 0 ? '#22C55E' : '#666' }}>
+                              Total £{day.total?.toFixed(2) || '0.00'}
+                            </span>
+                            
+                            {day.total > 0 && (
+                              <>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: spotTrading > 0 ? '#00F0FF' : '#555' }}>Spot £{spotTrading.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: tradingBots > 0 ? '#FF6B6B' : '#555', fontWeight: tradingBots > 0 ? '700' : '400' }}>
+                                  {tradingBots > 0 ? '🤖 ' : ''}Bots £{tradingBots.toFixed(2)}
+                                </span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: swapInstant > 0 ? '#A855F7' : '#555' }}>Swap £{swapInstant.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: p2p > 0 ? '#EC4899' : '#555' }}>P2P £{p2p.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: depositsWithdrawals > 0 ? '#F59E0B' : '#555' }}>Dep/Wdl £{depositsWithdrawals.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: savings > 0 ? '#22C55E' : '#555' }}>Savings £{savings.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: disputes > 0 ? '#EF4444' : '#555' }}>Disputes £{disputes.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: referralsIn > 0 ? '#10B981' : '#555' }}>Ref IN £{referralsIn.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: referralsOut > 0 ? '#EF4444' : '#555' }}>Ref OUT £{referralsOut.toFixed(2)}</span>
+                                <span style={{ color: '#444' }}>|</span>
+                                <span style={{ color: '#00F0FF', fontWeight: '700' }}>Net £{netDay.toFixed(2)}</span>
+                              </>
+                            )}
+                            
+                            {day.total === 0 && (
+                              <span style={{ color: '#666', fontStyle: 'italic' }}>No revenue</span>
+                            )}
+                            
+                            {/* View button */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                day.date && fetchDayDrilldown(day.date);
+                              }}
+                              style={{
+                                marginLeft: 'auto',
+                                padding: '4px 10px',
+                                background: 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2))',
+                                border: '1px solid rgba(0,240,255,0.4)',
+                                borderRadius: '4px',
+                                color: '#00F0FF',
+                                fontSize: '10px',
+                                cursor: 'pointer',
+                                fontWeight: '700'
+                              }}
+                            >
+                              View →
+                            </button>
                           </div>
-                          
-                          {/* Breakdown Column - Accountant Clear Format */}
-                          <div style={{ fontSize: '11px', lineHeight: '1.8' }}>
-                            {day.total > 0 ? (
-                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.25rem 1rem' }}>
-                                <span style={{ color: spotTrading > 0 ? '#00F0FF' : '#444' }}>
-                                  Manual: £{spotTrading.toFixed(2)}
-                                </span>
-                                <span style={{ color: tradingBots > 0 ? '#FF6B6B' : '#444', fontWeight: tradingBots > 0 ? '700' : '400' }}>
-                                  🤖 Bots: £{tradingBots.toFixed(2)}
-                                </span>
-                                <span style={{ color: swapInstant > 0 ? '#A855F7' : '#444' }}>
-                                  Swap: £{swapInstant.toFixed(2)}
-                                </span>
-                                <span style={{ color: p2p > 0 ? '#EC4899' : '#444' }}>
-                                  P2P: £{p2p.toFixed(2)}
-                                </span>
-                                <span style={{ color: depositsWithdrawals > 0 ? '#F59E0B' : '#444' }}>
-                                  Dep/Wdl: £{depositsWithdrawals.toFixed(2)}
-                                </span>
-                                <span style={{ color: savings > 0 ? '#22C55E' : '#444' }}>
-                                  Savings: £{savings.toFixed(2)}
-                                </span>
-                                <span style={{ color: disputes > 0 ? '#EF4444' : '#444' }}>
-                                  Disputes: £{disputes.toFixed(2)}
-                                </span>
-                                <span style={{ color: referralsIn > 0 ? '#22C55E' : '#444' }}>
-                                  Ref IN: £{referralsIn.toFixed(2)}
-                                </span>
-                                <span style={{ color: referralsOut > 0 ? '#EF4444' : '#444' }}>
-                                  Ref OUT: -£{referralsOut.toFixed(2)}
-                                </span>
+                        </div>
+                      );
+                    })}
                               </div>
                             ) : (
                               <span style={{ color: '#666', fontStyle: 'italic' }}>No revenue this day</span>
