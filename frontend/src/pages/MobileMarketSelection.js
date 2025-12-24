@@ -318,7 +318,16 @@ export default function MobileMarketSelection() {
               <div
                 key={pair.symbol}
                 onClick={() => handlePairSelect(pair)}
-                style={{
+                style={isDesktop ? {
+                  display: 'grid',
+                  gridTemplateColumns: '50px 2fr 1fr 1fr 1fr',
+                  alignItems: 'center',
+                  padding: '16px',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 200ms ease',
+                  background: 'transparent'
+                } : {
                   height: '68px',
                   display: 'flex',
                   alignItems: 'center',
@@ -340,13 +349,13 @@ export default function MobileMarketSelection() {
                 <div
                   onClick={(e) => toggleFavorite(pair.symbol, e)}
                   style={{
-                    marginRight: '12px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     width: '24px',
-                    height: '24px'
+                    height: '24px',
+                    marginRight: isDesktop ? '0' : '12px'
                   }}
                 >
                   {favorites.includes(pair.symbol) ? (
@@ -356,43 +365,46 @@ export default function MobileMarketSelection() {
                   )}
                 </div>
 
-                {/* Official Crypto Logo */}
-                <img
-                  src={`/crypto-logos/${pair.base.toLowerCase()}.png`}
-                  alt={pair.base}
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    objectFit: 'contain',
-                    marginRight: '12px'
-                  }}
-                />
-
-                {/* Symbol & Name */}
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    color: '#FFFFFF',
-                    marginBottom: '3px'
-                  }}>
-                    {pair.base}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: 'rgba(255,255,255,0.5)'
-                  }}>
-                    {pair.fullName}
+                {/* Pair Info - Logo + Symbol + Name */}
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  flex: isDesktop ? 'none' : 1
+                }}>
+                  <img
+                    src={`/crypto-logos/${pair.base.toLowerCase()}.png`}
+                    alt={pair.base}
+                    style={{
+                      width: isDesktop ? '32px' : '28px',
+                      height: isDesktop ? '32px' : '28px',
+                      objectFit: 'contain',
+                      marginRight: '12px'
+                    }}
+                  />
+                  <div>
+                    <div style={{
+                      fontSize: isDesktop ? '15px' : '16px',
+                      fontWeight: '700',
+                      color: '#FFFFFF',
+                      marginBottom: '2px'
+                    }}>
+                      {pair.base}/USD
+                    </div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.5)'
+                    }}>
+                      {pair.fullName}
+                    </div>
                   </div>
                 </div>
 
-                {/* Price & Change */}
+                {/* Price */}
                 <div style={{ textAlign: 'right' }}>
                   <div style={{
                     fontSize: '15px',
                     fontWeight: '600',
-                    color: '#FFFFFF',
-                    marginBottom: '3px'
+                    color: '#FFFFFF'
                   }}>
                     {pair.lastPrice > 0 
                       ? `$${pair.lastPrice >= 1 
@@ -400,19 +412,46 @@ export default function MobileMarketSelection() {
                           : pair.lastPrice.toFixed(6)}`
                       : '—'}
                   </div>
-                  <div style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: pair.change24h >= 0 ? '#00FF94' : '#FF4B4B',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    gap: '2px'
-                  }}>
-                    <span>{pair.change24h >= 0 ? '▲' : '▼'}</span>
-                    <span>{pair.change24h >= 0 ? '+' : ''}{pair.change24h.toFixed(2)}%</span>
-                  </div>
+                  {/* Show change below price on mobile only */}
+                  {!isDesktop && (
+                    <div style={{
+                      fontSize: '13px',
+                      fontWeight: '700',
+                      color: pair.change24h >= 0 ? '#00FF94' : '#FF4B4B',
+                      marginTop: '2px'
+                    }}>
+                      {pair.change24h >= 0 ? '+' : ''}{pair.change24h.toFixed(2)}%
+                    </div>
+                  )}
                 </div>
+
+                {/* 24h Change - Desktop Only */}
+                {isDesktop && (
+                  <div style={{ 
+                    textAlign: 'right',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: pair.change24h >= 0 ? '#00FF94' : '#FF4B4B'
+                  }}>
+                    {pair.change24h >= 0 ? '+' : ''}{pair.change24h.toFixed(2)}%
+                  </div>
+                )}
+
+                {/* Volume - Desktop Only */}
+                {isDesktop && (
+                  <div style={{ 
+                    textAlign: 'right',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#FFFFFF'
+                  }}>
+                    {pair.volume24h >= 1e9 
+                      ? `$${(pair.volume24h / 1e9).toFixed(2)}B`
+                      : pair.volume24h >= 1e6
+                        ? `$${(pair.volume24h / 1e6).toFixed(2)}M`
+                        : `$${(pair.volume24h / 1000).toFixed(1)}K`}
+                  </div>
+                )}
               </div>
             ))
           )}
