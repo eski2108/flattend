@@ -222,13 +222,13 @@ User Loads Trading Page
 ## 🎯 LIVE PREVIEW URLS
 
 **Main App:**  
-https://pixelperfect-trade.preview.emergentagent.com/
+https://trade-master-126.preview.emergentagent.com/
 
 **Trading Page:**  
-https://pixelperfect-trade.preview.emergentagent.com/#/trading
+https://trade-master-126.preview.emergentagent.com/#/trading
 
 **Direct API Test:**  
-https://pixelperfect-trade.preview.emergentagent.com/api/prices/live?coins=BTC
+https://trade-master-126.preview.emergentagent.com/api/prices/live?coins=BTC
 
 ---
 
@@ -269,7 +269,7 @@ Size: 2.1 MB
 ## 🚪 NEXT STEPS FOR USER
 
 ### Immediate Testing:
-1. Open: https://pixelperfect-trade.preview.emergentagent.com/#/trading
+1. Open: https://trade-master-126.preview.emergentagent.com/#/trading
 2. Verify stats panel shows price and 24h change
 3. Verify gradient colors match spec (cyan to teal)
 4. Verify timeframe buttons have correct styling

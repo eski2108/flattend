@@ -16,7 +16,7 @@ import json
 import uuid
 from datetime import datetime
 
-BACKEND_URL = "https://pixelperfect-trade.preview.emergentagent.com/api"
+BACKEND_URL = "https://trade-master-126.preview.emergentagent.com/api"
 
 class FocusedFinancialTest:
     def __init__(self):

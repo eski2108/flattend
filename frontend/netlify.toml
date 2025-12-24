@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://pixelperfect-trade.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://trade-master-126.preview.emergentagent.com"

@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://pixelperfect-trade.preview.emergentagent.com
+https://trade-master-126.preview.emergentagent.com
 
 ### Test Route
 
-`https://pixelperfect-trade.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://trade-master-126.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

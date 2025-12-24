@@ -139,7 +139,7 @@ sudo supervisorctl restart frontend
 ```
 
 **Live URL:**
-https://pixelperfect-trade.preview.emergentagent.com/#/trading
+https://trade-master-126.preview.emergentagent.com/#/trading
 
 **Status:** ✅ DEPLOYED TO LIVE PREVIEW
 

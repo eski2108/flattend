@@ -77,7 +77,7 @@
 
 ## 📊 LIVE PREVIEW STATUS
 
-**URL**: https://pixelperfect-trade.preview.emergentagent.com
+**URL**: https://trade-master-126.preview.emergentagent.com
 
 **Build Information**:
 - Latest Build Hash: Deployed Dec 9, 2024 08:55 UTC

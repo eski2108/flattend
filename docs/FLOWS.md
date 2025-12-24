@@ -153,7 +153,7 @@ await db.nowpayment_deposits.insert_one({
 
 **NOWPayments sends POST request to:**
 ```
-POST https://pixelperfect-trade.preview.emergentagent.com/api/nowpayments/ipn
+POST https://trade-master-126.preview.emergentagent.com/api/nowpayments/ipn
 
 Headers:
   x-nowpayments-sig: "hmac_sha512_signature"

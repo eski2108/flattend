@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://pixelperfect-trade.preview.emergentagent.com/#/trading
+**Live URL:** https://trade-master-126.preview.emergentagent.com/#/trading
 
 ---
 

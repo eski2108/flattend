@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime
 
 class P2PWalletServiceTest:
-    def __init__(self, base_url="https://pixelperfect-trade.preview.emergentagent.com"):
+    def __init__(self, base_url="https://trade-master-126.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0

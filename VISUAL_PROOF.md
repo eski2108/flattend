@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://pixelperfect-trade.preview.emergentagent.com/admin/disputes/dispute_123
+https://trade-master-126.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://pixelperfect-trade.preview.emergentagent.com/admin/disputes/dispute_123
 
 ### ✅ AFTER (FIXED)
 ```
-https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://trade-master-126.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://pixelperfect-trade.preview.emergentagent.com/`
+2. Browser loads: `https://trade-master-126.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/dispute_12
 
 #### ❌ BEFORE
 ```html
-<a href="https://pixelperfect-trade.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://trade-master-126.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://trade-master-126.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/dispute_12
 
 #### ❌ BEFORE
 ```
-https://pixelperfect-trade.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://trade-master-126.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://trade-master-126.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/{dispute_i
 
 #### ❌ BEFORE
 ```html
-<a href="https://pixelperfect-trade.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://trade-master-126.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://pixelperfect-trade.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://trade-master-126.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

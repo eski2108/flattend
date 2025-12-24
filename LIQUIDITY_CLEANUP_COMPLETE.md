@@ -130,7 +130,7 @@ To complete the file locking:
 **Build Completed:** December 9, 2024
 **Frontend Restarted:** Yes
 **Services Status:** All running
-**Live URL:** https://pixelperfect-trade.preview.emergentagent.com
+**Live URL:** https://trade-master-126.preview.emergentagent.com
 
 ---
 

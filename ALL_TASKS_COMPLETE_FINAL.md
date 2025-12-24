@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://pixelperfect-trade.preview.emergentagent.com
+**URL:** https://trade-master-126.preview.emergentagent.com
 
 **Services Status:**
 ```bash

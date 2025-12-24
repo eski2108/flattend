@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://pixelperfect-trade.preview.emergentagent.com/p2p-express
+https://trade-master-126.preview.emergentagent.com/p2p-express
 
 ---
 

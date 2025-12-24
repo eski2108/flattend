@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://pixelperfect-trade.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://trade-master-126.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

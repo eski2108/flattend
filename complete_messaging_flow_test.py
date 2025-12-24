@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://pixelperfect-trade.preview.emergentagent.com/api"
+BASE_URL = "https://trade-master-126.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class CompleteMessagingFlowTest:

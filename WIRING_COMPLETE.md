@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://pixelperfect-trade.preview.emergentagent.com/api
-- **Frontend App**: https://pixelperfect-trade.preview.emergentagent.com
+- **Backend API**: https://trade-master-126.preview.emergentagent.com/api
+- **Frontend App**: https://trade-master-126.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

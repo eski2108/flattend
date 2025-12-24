@@ -21,13 +21,117 @@ The application is a crypto exchange with a FastAPI backend and a React frontend
     -   **Next debug checklist**:
         1.  Run yarn run v1.22.22
 $ craco build
-Failed to compile.
+Creating an optimized production build...
+Compiled successfully.
 
-EEXIST: file already exists, mkdir '/app/frontend/build/assets'
+File sizes after gzip:
 
+  602.39 kB (-69 B)  build/static/js/main.76270f29.js
+  156.22 kB          build/static/js/7388.dc870cd5.chunk.js
+  46.09 kB           build/static/js/6722.2913a79d.chunk.js
+  36.94 kB           build/static/css/main.530c9e78.css
+  32.37 kB (-7 B)    build/static/js/2109.4dff5052.chunk.js
+  11.76 kB           build/static/js/3636.b179ed3b.chunk.js
+  11.21 kB (-6 B)    build/static/js/3293.e3a612b6.chunk.js
+  9.89 kB (-4 B)     build/static/js/2451.0b7ce5f7.chunk.js
+  9.1 kB             build/static/css/2451.4c69dac6.chunk.css
+  9 kB (-5 B)        build/static/js/1293.3e9d53ae.chunk.js
+  7.57 kB (-3 B)     build/static/js/6598.1c0d0879.chunk.js
+  6.16 kB (-4 B)     build/static/js/2617.828008e5.chunk.js
+  5.88 kB (-3 B)     build/static/js/887.401de076.chunk.js
+  5.71 kB (-3 B)     build/static/js/9659.3ed74e2b.chunk.js
+  5.57 kB            build/static/js/7394.7fe86ddf.chunk.js
+  5.33 kB (-4 B)     build/static/js/8427.9e121d02.chunk.js
+  5 kB               build/static/js/8659.54df7130.chunk.js
+  4.97 kB (-5 B)     build/static/js/8837.9db20acc.chunk.js
+  4.67 kB (-4 B)     build/static/js/1.3ab78674.chunk.js
+  4.66 kB (-5 B)     build/static/js/3922.6b19c1fd.chunk.js
+  4.54 kB (-4 B)     build/static/js/5727.9c99441b.chunk.js
+  4.05 kB (-4 B)     build/static/js/4918.42042686.chunk.js
+  4.05 kB (-3 B)     build/static/js/1780.2b9cc2d2.chunk.js
+  3.99 kB (-4 B)     build/static/js/7406.1b317b7d.chunk.js
+  3.97 kB (-4 B)     build/static/js/5414.2a71733c.chunk.js
+  3.94 kB (-4 B)     build/static/js/7472.f006543e.chunk.js
+  3.93 kB (-4 B)     build/static/js/1619.fd5ab4ad.chunk.js
+  3.79 kB (-4 B)     build/static/js/9723.892f3806.chunk.js
+  3.73 kB (-4 B)     build/static/js/933.0bfb9991.chunk.js
+  3.68 kB (-3 B)     build/static/js/9444.c08632e4.chunk.js
+  3.66 kB            build/static/js/9436.67e30255.chunk.js
+  3.65 kB (-2 B)     build/static/js/6260.f2ad9081.chunk.js
+  3.59 kB (-3 B)     build/static/js/9226.8b6e066f.chunk.js
+  3.49 kB (-2 B)     build/static/js/1436.89a0d0d8.chunk.js
+  3.35 kB            build/static/js/4067.a89461ae.chunk.js
+  3.22 kB (-4 B)     build/static/js/1541.585e5fd2.chunk.js
+  3.12 kB (-3 B)     build/static/js/1659.b94f5305.chunk.js
+  3.1 kB (-4 B)      build/static/js/7432.83e90fed.chunk.js
+  3.06 kB (-3 B)     build/static/js/9651.31dca435.chunk.js
+  3.05 kB (-3 B)     build/static/js/9952.104c4d70.chunk.js
+  2.99 kB (-3 B)     build/static/js/9564.e763f1b8.chunk.js
+  2.95 kB (-4 B)     build/static/js/1895.ab2f7b5a.chunk.js
+  2.92 kB (-4 B)     build/static/js/5258.ce7d2657.chunk.js
+  2.9 kB (-3 B)      build/static/js/40.e34b7bda.chunk.js
+  2.78 kB (-3 B)     build/static/js/5042.1f6b60cd.chunk.js
+  2.78 kB (-4 B)     build/static/js/1432.b27d11b9.chunk.js
+  2.73 kB            build/static/js/8774.cb5faac3.chunk.js
+  2.7 kB (-5 B)      build/static/js/2629.8de1b127.chunk.js
+  2.55 kB (-3 B)     build/static/js/4977.c266e101.chunk.js
+  2.46 kB (-3 B)     build/static/js/8134.26bd6059.chunk.js
+  2.44 kB (-2 B)     build/static/js/2591.d86bdba7.chunk.js
+  2.39 kB (-3 B)     build/static/js/7634.ec97f2de.chunk.js
+  2.35 kB (-3 B)     build/static/js/911.2564761d.chunk.js
+  2.32 kB (-4 B)     build/static/js/14.52764904.chunk.js
+  2.25 kB (-4 B)     build/static/js/7692.ea6b0d48.chunk.js
+  2.23 kB (-3 B)     build/static/js/6063.06e7ffe5.chunk.js
+  2.13 kB (-4 B)     build/static/js/7276.16211d15.chunk.js
+  2.12 kB (-3 B)     build/static/js/6858.bb3eb1bd.chunk.js
+  2.06 kB (-3 B)     build/static/js/96.2fbc0d8c.chunk.js
+  2.01 kB (-4 B)     build/static/js/8058.a39519ab.chunk.js
+  2.01 kB            build/static/js/164.8fa367f8.chunk.js
+  2 kB               build/static/css/9493.1fbea637.chunk.css
+  1.96 kB (-3 B)     build/static/js/5639.e96c84b2.chunk.js
+  1.95 kB (-3 B)     build/static/js/9493.f96ec769.chunk.js
+  1.93 kB (-3 B)     build/static/js/2436.c8d7a9ac.chunk.js
+  1.92 kB (-3 B)     build/static/js/3640.0eec5c2b.chunk.js
+  1.89 kB (-3 B)     build/static/js/2076.9abcc14e.chunk.js
+  1.85 kB (-3 B)     build/static/js/9516.cae66e52.chunk.js
+  1.77 kB (-4 B)     build/static/js/3227.4c5dfe1c.chunk.js
+  1.73 kB (-7 B)     build/static/js/5413.c4dbcdde.chunk.js
+  1.64 kB            build/static/js/6998.b12bf9b4.chunk.js
+  1.63 kB            build/static/js/1185.86bf110f.chunk.js
+  1.61 kB (-3 B)     build/static/js/4996.1bdcb158.chunk.js
+  1.52 kB (-4 B)     build/static/js/9571.9f9b9308.chunk.js
+  1.43 kB            build/static/css/9659.65360445.chunk.css
+  1.41 kB            build/static/js/8844.0b8147a7.chunk.js
+  1.16 kB (-3 B)     build/static/js/4653.1637bb3b.chunk.js
+  1.03 kB (-4 B)     build/static/js/9138.9cf9f790.chunk.js
+  929 B              build/static/js/265.45ce8f37.chunk.js
+  897 B (-4 B)       build/static/js/9099.4e26a1a5.chunk.js
+  852 B              build/static/js/2011.5ccc8f6b.chunk.js
+  809 B              build/static/js/7873.6f6a0b7e.chunk.js
+  774 B              build/static/js/5904.b3b85d69.chunk.js
+  640 B              build/static/js/7902.5c7cfd85.chunk.js
+  441 B              build/static/js/9087.a069daa1.chunk.js
+  311 B              build/static/js/9174.86a438c2.chunk.js
 
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command..
-        2.  Run frontend: ERROR (not running)
+The bundle size is significantly larger than recommended.
+Consider reducing it with code splitting: https://goo.gl/9VhYWB
+You can also analyze the project dependencies: https://goo.gl/LeUzfb
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  yarn global add serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
+Done in 47.53s..
+        2.  Run frontend: stopped
 frontend: started.
         3.  Navigate to the  page and verify the filters are present and functional.
         4.  Click the View button on a bot card to ensure the Live Bot Panel modal opens and displays correctly.
