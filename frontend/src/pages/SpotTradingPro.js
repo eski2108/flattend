@@ -207,22 +207,98 @@ export default function SpotTradingPro() {
       padding: '16px',
       gap: '12px'
     }}>
-      {/* PAGE TITLE */}
-      <div style={{ marginBottom: '4px' }}>
-        <h1 style={{ 
-          fontSize: '24px', 
-          fontWeight: '700', 
-          color: '#E9EEFF',
+      {/* PAGE TITLE + MODE TOGGLE */}
+      <div style={{ marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 style={{ 
+            fontSize: '24px', 
+            fontWeight: '700', 
+            color: '#E9EEFF',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            margin: 0
+          }}>
+            <span style={{ fontSize: '28px' }}>📈</span> Spot Trading
+          </h1>
+          <p style={{ fontSize: '13px', color: '#8FA3FF', opacity: 0.85, margin: '4px 0 0 0' }}>
+            Advanced trading with TradingView charts and real-time data
+          </p>
+        </div>
+        
+        {/* MODE TOGGLE: Manual | Bots | History */}
+        <div style={{
           display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          margin: 0
+          gap: '4px',
+          background: 'rgba(15, 26, 46, 0.8)',
+          border: '1px solid rgba(110, 140, 255, 0.18)',
+          borderRadius: '10px',
+          padding: '4px'
         }}>
-          <span style={{ fontSize: '28px' }}>📈</span> Spot Trading
-        </h1>
-        <p style={{ fontSize: '13px', color: '#8FA3FF', opacity: 0.85, margin: '4px 0 0 0' }}>
-          Advanced trading with TradingView charts and real-time data
-        </p>
+          <button
+            onClick={() => {}}
+            style={{
+              padding: '8px 16px',
+              background: 'linear-gradient(180deg, rgba(32, 227, 162, 0.15) 0%, rgba(32, 227, 162, 0.25) 100%)',
+              border: '1px solid rgba(32, 227, 162, 0.3)',
+              borderRadius: '8px',
+              color: '#20E3A2',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            Manual
+          </button>
+          <button
+            onClick={() => navigate('/trading-bots')}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              border: '1px solid transparent',
+              borderRadius: '8px',
+              color: '#8FA3FF',
+              fontSize: '13px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(110, 140, 255, 0.1)';
+              e.target.style.borderColor = 'rgba(110, 140, 255, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'transparent';
+              e.target.style.borderColor = 'transparent';
+            }}
+          >
+            🤖 Bots
+          </button>
+          <button
+            onClick={() => navigate('/portfolio')}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              border: '1px solid transparent',
+              borderRadius: '8px',
+              color: '#8FA3FF',
+              fontSize: '13px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(110, 140, 255, 0.1)';
+              e.target.style.borderColor = 'rgba(110, 140, 255, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'transparent';
+              e.target.style.borderColor = 'transparent';
+            }}
+          >
+            History
+          </button>
+        </div>
       </div>
 
       {/* TOP INFO BOXES - EXACT SPEC */}
