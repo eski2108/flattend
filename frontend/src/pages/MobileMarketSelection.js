@@ -383,6 +383,37 @@ export default function MobileMarketSelection() {
               }}
             />
           </div>
+          
+          {/* Quote Toggle - Desktop Only */}
+          {isDesktop && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginLeft: '16px'
+            }}>
+              <IoSwapHorizontal size={16} color="#8B9BB4" />
+              {['USD', 'USDT'].map(quote => (
+                <button
+                  key={quote}
+                  onClick={() => setQuoteFilter(quote)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: quoteFilter === quote ? 'rgba(0,229,153,0.15)' : 'transparent',
+                    border: quoteFilter === quote ? '1px solid #00E599' : '1px solid rgba(255,255,255,0.1)',
+                    color: quoteFilter === quote ? '#00E599' : '#8B9BB4',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 120ms ease'
+                  }}
+                >
+                  {quote}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Tabs */}
@@ -390,7 +421,7 @@ export default function MobileMarketSelection() {
           display: 'flex',
           gap: '8px',
           padding: isDesktop ? '12px 32px' : '12px 16px',
-          background: '#020617',
+          background: isDesktop ? 'transparent' : '#020617',
           position: 'sticky',
           top: isDesktop ? '80px' : '72px',
           zIndex: 9,
@@ -415,7 +446,7 @@ export default function MobileMarketSelection() {
                 fontSize: '13px',
                 fontWeight: activeTab === tab.id ? '700' : '600',
                 cursor: 'pointer',
-                transition: 'all 200ms ease',
+                transition: 'all 120ms ease',
                 boxShadow: activeTab === tab.id 
                   ? '0 0 16px rgba(15,242,242,0.4)'
                   : 'none'
@@ -431,23 +462,28 @@ export default function MobileMarketSelection() {
           width: '100%',
           padding: isDesktop ? '0 32px' : '0'
         }}>
-          {/* Desktop Table Header */}
+          {/* Desktop Table Header with Sorting */}
           {isDesktop && !loading && sortedPairs.length > 0 && (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '50px 2fr 1fr 1fr 1fr',
-              padding: '16px 16px',
+              gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 1fr 1fr 80px 100px',
+              padding: '16px',
               borderBottom: '1px solid rgba(255,255,255,0.1)',
-              color: '#8F9BB3',
-              fontSize: '12px',
+              color: '#8B9BB4',
+              fontSize: '11px',
               fontWeight: '600',
               textTransform: 'uppercase',
               letterSpacing: '0.5px'
             }}>
               <div></div>
               <div>Pair</div>
-              <div style={{ textAlign: 'right' }}>Price</div>
-              <div style={{ textAlign: 'right' }}>24h Change</div>
+              <SortableHeader column="lastPrice" label="Price" />
+              <SortableHeader column="change24h" label="24h %" />
+              <SortableHeader column="volume24h" label="24h Volume" />
+              <SortableHeader column="high24h" label="24h High" />
+              <SortableHeader column="low24h" label="24h Low" />
+              <div style={{ textAlign: 'center' }}>Trend</div>
+              <div></div>
               <div style={{ textAlign: 'right' }}>Volume</div>
             </div>
           )}
