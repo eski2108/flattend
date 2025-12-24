@@ -599,6 +599,7 @@ export default function SpotTradingPro() {
             navigate={navigate}
           />
         )}
+      </div>
     );
   }
 
