@@ -4504,8 +4504,9 @@ export default function AdminDashboard() {
             {/* RECONCILIATION CHECK */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             {revenueAnalytics && (() => {
+              // Backend now excludes referrals_out from by_category, so this should match
               const categorySum = Object.values(revenueAnalytics.by_category || {}).reduce((sum, cat) => sum + (cat.amount || 0), 0);
-              const dailySum = (revenueAnalytics.daily || []).reduce((sum, d) => sum + (d.total || 0), 0);
+              const dailySum = revenueAnalytics.totals?.daily_sum || (revenueAnalytics.daily || []).reduce((sum, d) => sum + (d.total || 0), 0);
               const grandTotal = revenueAnalytics.totals?.grand_total || 0;
               const categoryMatch = Math.abs(categorySum - grandTotal) < 0.01;
               const dailyMatch = Math.abs(dailySum - grandTotal) < 0.01;
@@ -4524,10 +4525,12 @@ export default function AdminDashboard() {
                 }}>
                   <span style={{ fontSize: '16px' }}>{isReconciled ? '✓' : '⚠'}</span>
                   <span style={{ fontSize: '12px', fontWeight: '600', color: isReconciled ? '#22C55E' : '#EF4444' }}>
-                    {isReconciled ? 'Reconciled' : 'Reconciliation Warning'}
+                    {isReconciled ? 'Reconciled ✓' : 'Reconciliation Warning'}
                   </span>
                   <span style={{ fontSize: '11px', color: '#888' }}>
-                    Sum(sources) = £{categorySum.toFixed(2)} | Sum(daily) = £{dailySum.toFixed(2)} | Total = £{grandTotal.toFixed(2)}
+                    Sum(sources) = £{categorySum.toFixed(2)} {categoryMatch ? '✓' : '✗'} | 
+                    Sum(daily) = £{dailySum.toFixed(2)} {dailyMatch ? '✓' : '✗'} | 
+                    Total Revenue = £{grandTotal.toFixed(2)}
                   </span>
                 </div>
               );
