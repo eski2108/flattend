@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTradingPro() {
+  console.log('🔥 SpotTradingPro component rendering');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
