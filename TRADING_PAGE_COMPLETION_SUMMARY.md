@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://fee-analytics.preview.emergentagent.com/#/trading
+**Live URL:** https://tradinghub-7.preview.emergentagent.com/#/trading
 
 ---
 

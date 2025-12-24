@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://fee-analytics.preview.emergentagent.com
+https://tradinghub-7.preview.emergentagent.com
 
 ---
 

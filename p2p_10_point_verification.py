@@ -11,7 +11,7 @@ import json
 from datetime import datetime
 import uuid
 
-BACKEND_URL = "https://fee-analytics.preview.emergentagent.com/api"
+BACKEND_URL = "https://tradinghub-7.preview.emergentagent.com/api"
 MONGO_URL = "mongodb://localhost:27017"
 DB_NAME = "coinhubx"
 

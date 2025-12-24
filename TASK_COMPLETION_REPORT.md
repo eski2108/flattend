@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://fee-analytics.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://tradinghub-7.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://fee-analytics.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://tradinghub-7.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://fee-analytics.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 📧 URLs found in dispute email template:
 
-1. https://fee-analytics.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://tradinghub-7.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://fee-analytics.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://tradinghub-7.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://fee-analytics.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://tradinghub-7.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://fee-analytics.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://tradinghub-7.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

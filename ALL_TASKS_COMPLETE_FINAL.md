@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://fee-analytics.preview.emergentagent.com
+**URL:** https://tradinghub-7.preview.emergentagent.com
 
 **Services Status:**
 ```bash

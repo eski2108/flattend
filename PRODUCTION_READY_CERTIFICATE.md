@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://fee-analytics.preview.emergentagent.com`
-- Backend API: `https://fee-analytics.preview.emergentagent.com/api`
+- Frontend: `https://tradinghub-7.preview.emergentagent.com`
+- Backend API: `https://tradinghub-7.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

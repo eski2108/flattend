@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://fee-analytics.preview.emergentagent.com
+**Live URL:** https://tradinghub-7.preview.emergentagent.com
 
 ---
 

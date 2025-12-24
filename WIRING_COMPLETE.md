@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://fee-analytics.preview.emergentagent.com/api
-- **Frontend App**: https://fee-analytics.preview.emergentagent.com
+- **Backend API**: https://tradinghub-7.preview.emergentagent.com/api
+- **Frontend App**: https://tradinghub-7.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

@@ -21,7 +21,7 @@ import sys
 from datetime import datetime, timezone
 
 # Configuration
-BASE_URL = "https://fee-analytics.preview.emergentagent.com/api"
+BASE_URL = "https://tradinghub-7.preview.emergentagent.com/api"
 
 class BoostOfferTester:
     def __init__(self):

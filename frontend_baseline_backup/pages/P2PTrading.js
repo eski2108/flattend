@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://fee-analytics.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://tradinghub-7.preview.emergentagent.com';
 
 // Seller Link Copy Button Component
 function SellerLinkCopyButton() {

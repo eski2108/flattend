@@ -212,7 +212,7 @@ curl http://localhost:8001/api/trader/stats/{actual_user_id}
 
 **External URL:**
 ```bash
-curl https://fee-analytics.preview.emergentagent.com/api/trader/stats/{user_id}
+curl https://tradinghub-7.preview.emergentagent.com/api/trader/stats/{user_id}
 ```
 
 ---
