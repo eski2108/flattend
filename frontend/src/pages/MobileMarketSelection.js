@@ -15,6 +15,17 @@ export default function MobileMarketSelection() {
   const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  // Detect desktop vs mobile
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth > 768);
+    };
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   useEffect(() => {
     // Load favorites from localStorage
