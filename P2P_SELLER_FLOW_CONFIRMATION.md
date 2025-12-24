@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://gridbot-app.preview.emergentagent.com/#/p2p
+   https://botengine.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://gridbot-app.preview.emergentagent.com/#/p2p/merchant
+   https://botengine.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://gridbot-app.preview.emergentagent.com/#/p2p/create-ad
+   https://botengine.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

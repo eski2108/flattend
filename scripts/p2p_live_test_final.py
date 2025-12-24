@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, '/app/backend')
 
-API_URL = "https://gridbot-app.preview.emergentagent.com"
+API_URL = "https://botengine.preview.emergentagent.com"
 
 async def run_test():
     from motor.motor_asyncio import AsyncIOMotorClient

@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://gridbot-app.preview.emergentagent.com/api"
+BACKEND_URL = "https://botengine.preview.emergentagent.com/api"
 
 class SwapTestRunner:
     def __init__(self):

@@ -92,7 +92,7 @@ currencies.forEach(currency => {
 
 ## Proof from Live Preview
 
-**URL:** https://gridbot-app.preview.emergentagent.com
+**URL:** https://botengine.preview.emergentagent.com
 
 ### Trading Page (Desktop)
 - Header shows: "106 pairs" (reduced from 494)

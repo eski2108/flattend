@@ -1,7 +1,7 @@
 # API PROOF - NOWPayments Wallet Address Generation
 
 ## Live Preview URL
-**https://gridbot-app.preview.emergentagent.com**
+**https://botengine.preview.emergentagent.com**
 
 ---
 
@@ -11,7 +11,7 @@
 
 **API Call:**
 ```bash
-curl -X POST "https://gridbot-app.preview.emergentagent.com/api/nowpayments/create-deposit" \
+curl -X POST "https://botengine.preview.emergentagent.com/api/nowpayments/create-deposit" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","amount":50,"currency":"gbp","pay_currency":"btc"}'
 ```
@@ -35,7 +35,7 @@ curl -X POST "https://gridbot-app.preview.emergentagent.com/api/nowpayments/crea
 
 **API Call:**
 ```bash
-curl -X POST "https://gridbot-app.preview.emergentagent.com/api/nowpayments/create-deposit" \
+curl -X POST "https://botengine.preview.emergentagent.com/api/nowpayments/create-deposit" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","amount":50,"currency":"gbp","pay_currency":"eth"}'
 ```
@@ -59,7 +59,7 @@ curl -X POST "https://gridbot-app.preview.emergentagent.com/api/nowpayments/crea
 
 **API Call:**
 ```bash
-curl -X POST "https://gridbot-app.preview.emergentagent.com/api/nowpayments/create-deposit" \
+curl -X POST "https://botengine.preview.emergentagent.com/api/nowpayments/create-deposit" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","amount":50,"currency":"gbp","pay_currency":"sol"}'
 ```
@@ -149,7 +149,7 @@ curl -X POST "https://gridbot-app.preview.emergentagent.com/api/nowpayments/crea
 
 ## WHAT I NEED FROM YOU
 
-1. **Confirm your EXACT preview URL** - is it `https://gridbot-app.preview.emergentagent.com` or different?
+1. **Confirm your EXACT preview URL** - is it `https://botengine.preview.emergentagent.com` or different?
 2. If different, provide the correct URL immediately
 3. I will then deploy the frontend fixes to the correct environment
 

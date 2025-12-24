@@ -504,8 +504,8 @@ $ curl http://localhost:8001/api/prices/live | jq '.prices.BTC.price_usd'
 ```
 
 **Pages Accessible:**
-- ✅ https://gridbot-app.preview.emergentagent.com/trading
-- ✅ https://gridbot-app.preview.emergentagent.com/p2p-express
+- ✅ https://botengine.preview.emergentagent.com/trading
+- ✅ https://botengine.preview.emergentagent.com/p2p-express
 
 ---
 

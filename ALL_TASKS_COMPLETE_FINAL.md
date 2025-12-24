@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://gridbot-app.preview.emergentagent.com
+**URL:** https://botengine.preview.emergentagent.com
 
 **Services Status:**
 ```bash

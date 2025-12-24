@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://gridbot-app.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://botengine.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

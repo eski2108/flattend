@@ -139,7 +139,7 @@ sudo supervisorctl restart frontend
 ```
 
 **Live URL:**
-https://gridbot-app.preview.emergentagent.com/#/trading
+https://botengine.preview.emergentagent.com/#/trading
 
 **Status:** ✅ DEPLOYED TO LIVE PREVIEW
 

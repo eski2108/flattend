@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://gridbot-app.preview.emergentagent.com
+https://botengine.preview.emergentagent.com
 
 ---
 

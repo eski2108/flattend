@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://gridbot-app.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://botengine.preview.emergentagent.com';
 
 // Responsive Styles
 const styles = {

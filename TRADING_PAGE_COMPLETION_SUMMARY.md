@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://gridbot-app.preview.emergentagent.com/#/trading
+**Live URL:** https://botengine.preview.emergentagent.com/#/trading
 
 ---
 

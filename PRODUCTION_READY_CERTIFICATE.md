@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://gridbot-app.preview.emergentagent.com`
-- Backend API: `https://gridbot-app.preview.emergentagent.com/api`
+- Frontend: `https://botengine.preview.emergentagent.com`
+- Backend API: `https://botengine.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---
