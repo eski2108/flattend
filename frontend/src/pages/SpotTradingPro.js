@@ -312,38 +312,32 @@ export default function SpotTradingPro() {
         </div>
       </div>
 
-      {/* PAIR TABS ROW - Styled like the old version */}
+      {/* SELECTED PAIR DISPLAY (TEXT ONLY - NO TABS) */}
       <div style={{
         display: 'flex',
-        gap: '8px',
-        flexWrap: 'wrap'
+        alignItems: 'center',
+        gap: '12px',
+        padding: '8px 0'
       }}>
-        {['BTCUSD', 'ETHUSD', 'SOLUSD', 'XRPUSD', 'BNBUSD'].map((pair) => (
-          <button
-            key={pair}
-            onClick={() => {
-              setSelectedPair(pair);
-              navigate(`/spot-trading?pair=${pair}`);
-            }}
-            style={{
-              padding: '10px 20px',
-              background: selectedPair === pair 
-                ? 'linear-gradient(135deg, #00f5a0, #00d9f5)' 
-                : 'linear-gradient(135deg, #0b1220, #0f1b2d)',
-              border: selectedPair === pair 
-                ? 'none' 
-                : '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              color: selectedPair === pair ? '#000' : '#fff',
-              fontSize: '13px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            {pair.replace('USD', '/USD')}
-          </button>
-        ))}
+        <span 
+          onClick={() => navigate('/markets')}
+          style={{ 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            color: '#f5f7ff',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+          title="Click to change pair"
+        >
+          {selectedPair.replace('USD', '/USDT')}
+          <span style={{ fontSize: '12px', color: '#8f9bbd' }}>▼</span>
+        </span>
+        <span style={{ fontSize: '12px', color: '#8f9bbd' }}>
+          Click to change pair
+        </span>
       </div>
 
       {/* MAIN GRID - Chart + Right Column (Trade Panel + Market Info) */}
