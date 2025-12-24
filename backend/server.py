@@ -32575,7 +32575,7 @@ async def get_revenue_analytics(
             "transactions": []
         })
         
-        # Category totals
+        # Category totals - EXCLUDING referrals_out (which is a deduction, not revenue)
         category_totals = defaultdict(lambda: {"amount": 0, "count": 0})
         referrals_in_total = 0
         referrals_out_total = 0
@@ -32593,10 +32593,31 @@ async def get_revenue_analytics(
                 daily_data[day_key]["referrals_in"] += abs(amount)
                 referrals_in_total += abs(amount)
             elif category == "referrals_out":
+                # Referral OUT is a DEDUCTION - track separately, don't add to revenue
                 daily_data[day_key]["referrals_out"] += abs(amount)
                 referrals_out_total += abs(amount)
+                # Still store transaction but don't count in totals
+                daily_data[day_key]["date"] = day_key
+                daily_data[day_key]["day_name"] = ts.strftime("%a %d %b")
+                if len(daily_data[day_key]["transactions"]) < 100:
+                    daily_data[day_key]["transactions"].append({
+                        "revenue_id": r.get("revenue_id"),
+                        "timestamp": ts.isoformat(),
+                        "source": source,
+                        "category": category,
+                        "fee_type": fee_type,
+                        "amount": -abs(amount),  # Store as negative for clarity
+                        "currency": r.get("currency", "GBP"),
+                        "asset": r.get("asset") or r.get("currency", "GBP"),
+                        "user_id": r.get("user_id"),
+                        "bot_id": r.get("bot_id"),
+                        "strategy_type": r.get("strategy_type"),
+                        "reference_id": r.get("related_transaction_id") or r.get("trade_id") or r.get("order_id") or r.get("swap_id") or r.get("revenue_id"),
+                        "description": r.get("description")
+                    })
+                continue  # Skip adding to revenue totals
             
-            # Skip negative (payouts) for revenue totals but track referral outs
+            # Only count POSITIVE amounts (actual revenue inflows)
             if amount > 0:
                 daily_data[day_key]["total"] += amount
                 daily_data[day_key]["count"] += 1
