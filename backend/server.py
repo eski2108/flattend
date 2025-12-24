@@ -28472,6 +28472,11 @@ async def start_background_tasks():
     # 🔒 P1: Start auto-cancel expired trades task
     asyncio.create_task(auto_cancel_expired_trades_loop())
     logger.info("✅ Auto-cancel expired trades task started")
+    
+    # 🤖 Start Bot Worker for automated trading
+    from bot_worker import bot_worker_loop
+    asyncio.create_task(bot_worker_loop())
+    logger.info("✅ Trading Bot Worker started")
 
 
 async def auto_cancel_expired_trades_loop():
