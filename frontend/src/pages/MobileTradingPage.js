@@ -770,14 +770,14 @@ export default function MobileTradingPage() {
               onClick={() => handleTrade('buy')}
               disabled={isLoading}
               loading={isLoading}
-              label={`Buy ${selectedCoin}`}
+              label={`Buy ${coinBase}`}
               isMobile={true}
             />
             <SellButton
               onClick={() => handleTrade('sell')}
               disabled={isLoading}
               loading={isLoading}
-              label={`Sell ${selectedCoin}`}
+              label={`Sell ${coinBase}`}
               isMobile={true}
             />
           </TradingButtonsContainer>
