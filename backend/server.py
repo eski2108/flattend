@@ -32486,18 +32486,54 @@ async def get_revenue_analytics(
                 return "spot_trading"
             elif source in ["swap_fee", "instant_buy_fee", "instant_buy_spread", "instant_sell_fee", "instant_sell_spread"]:
                 return "swap_instant"
-            elif source in ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee"]:
+            elif source in ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee", "p2p_escrow_fee"]:
                 return "p2p"
             elif source in ["deposit_fee", "withdrawal_fee", "network_withdrawal_fee"]:
                 return "deposits_withdrawals"
-            elif source in ["savings_early_withdrawal_penalty", "vault_fee"]:
+            elif source in ["savings_early_withdrawal_penalty", "vault_fee", "vault_penalty"]:
                 return "savings"
             elif source == "dispute_fee":
                 return "disputes"
+            elif source in ["referral_commission", "referral_income", "referral_in"]:
+                return "referrals_in"
+            elif source in ["referral_payout", "referral_out"]:
+                return "referrals_out"
             elif "referral" in str(source):
-                return "referrals"
+                # Determine direction by amount or description
+                return "referrals_in"  # Default to income
             else:
                 return "other"
+        
+        # Get fee type label
+        def get_fee_type_label(source):
+            fee_type_map = {
+                "bot": "Bot Trading Fee",
+                "spot_trading_fee": "Spot Trading Fee",
+                "spot_trading": "Spot Trading Fee",
+                "swap_fee": "Swap Fee",
+                "instant_buy_fee": "Instant Buy Fee",
+                "instant_buy_spread": "Instant Buy Spread",
+                "instant_sell_fee": "Instant Sell Fee",
+                "instant_sell_spread": "Instant Sell Spread",
+                "p2p_trade_fee": "P2P Trade Fee",
+                "p2p_maker_fee": "P2P Maker Fee",
+                "p2p_taker_fee": "P2P Taker Fee",
+                "p2p_express_fee": "P2P Express Fee",
+                "p2p_escrow_fee": "P2P Escrow Fee",
+                "deposit_fee": "Deposit Fee",
+                "withdrawal_fee": "Withdrawal Fee",
+                "network_withdrawal_fee": "Network Withdrawal Fee",
+                "savings_early_withdrawal_penalty": "Early Withdrawal Penalty",
+                "vault_fee": "Vault Fee",
+                "vault_penalty": "Vault Penalty",
+                "dispute_fee": "Dispute Fee",
+                "referral_commission": "Referral Commission (IN)",
+                "referral_income": "Referral Income (IN)",
+                "referral_in": "Referral Income (IN)",
+                "referral_payout": "Referral Payout (OUT)",
+                "referral_out": "Referral Payout (OUT)"
+            }
+            return fee_type_map.get(source, source.replace("_", " ").title() if source else "Unknown")
         
         # Fetch all revenue in range
         all_revenue = await db.admin_revenue.find({}).to_list(100000)
