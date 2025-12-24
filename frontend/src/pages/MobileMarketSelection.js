@@ -926,6 +926,62 @@ export default function MobileMarketSelection() {
           </div>
         )}
       </div>
+
+      {/* BOTTOM FOOTER BAR - Desktop Only */}
+      {isDesktop && (
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '40px',
+          background: '#0B1220',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 32px',
+          zIndex: 100
+        }}>
+          {/* Left: Market Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8B9BB4' }}>Spot Trading:</span>
+              <span style={{ fontSize: '11px', color: '#00E599' }}>🟢 Live</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8B9BB4' }}>Deposits:</span>
+              <span style={{ fontSize: '11px', color: '#00E599' }}>🟢 Enabled</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '11px', color: '#8B9BB4' }}>Withdrawals:</span>
+              <span style={{ fontSize: '11px', color: '#00E599' }}>🟢 Enabled</span>
+            </div>
+          </div>
+
+          {/* Center: Live prices info */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{ fontSize: '11px', color: '#8B9BB4' }}>
+              Live prices • Updates every 30s
+            </span>
+            <span style={{ fontSize: '11px', color: '#6B7280' }}>•</span>
+            <span style={{ fontSize: '11px', color: '#8B9BB4' }}>
+              Powered by real-time market data
+            </span>
+            {lastUpdateTime && (
+              <>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>•</span>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>
+                  Last update: {lastUpdateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} UTC
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* Right: Empty (chat icon handled by global component) */}
+          <div style={{ width: '100px' }}></div>
+        </div>
+      )}
     </>
   );
 }
