@@ -588,7 +588,6 @@ export default function SpotTradingPro() {
               <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
             </div>
           </div>
-        </div>
 
         {showBotPanel && (
           <BotPanelDesktop
