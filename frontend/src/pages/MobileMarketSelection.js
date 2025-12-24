@@ -104,7 +104,12 @@ export default function MobileMarketSelection() {
   });
 
   const handlePairSelect = (pair) => {
-    navigate(`/trading/${pair.symbol}`);
+    // Desktop goes to /spot-trading, Mobile goes to /trading/:symbol
+    if (isDesktop) {
+      navigate(`/spot-trading?pair=${pair.symbol}`);
+    } else {
+      navigate(`/trading/${pair.symbol}`);
+    }
   };
 
   const tabs = [
