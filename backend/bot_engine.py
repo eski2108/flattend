@@ -582,7 +582,7 @@ class BotEngine:
             side = params.get('side', 'buy')
             total_budget = params.get('total_budget', order_size * 10)
             
-            interval_days = {'hourly': 1/24, 'daily': 1, 'weekly': 7}
+            interval_days = {'hourly': 1/24, '4h': 1/6, 'daily': 1, 'weekly': 7}
             days = interval_days.get(interval, 1)
             
             total_orders = int(total_budget / order_size) if order_size > 0 else 0
@@ -599,6 +599,49 @@ class BotEngine:
                 "estimated_orders": total_orders,
                 "estimated_duration_days": round(duration_days, 1),
                 "estimated_fees": round(estimated_fees, 2),
+                "fee_rate": f"{trading_fee_percent}%"
+            }
+        
+        elif bot_type == 'signal':
+            order_amount = params.get('order_amount', 0)
+            side = params.get('side', 'buy')
+            entry_rules = params.get('entry_rules', {})
+            exit_rules = params.get('exit_rules', {})
+            take_profit = params.get('take_profit_percent')
+            stop_loss = params.get('stop_loss_percent')
+            trailing_stop = params.get('trailing_stop_percent')
+            
+            # Count indicators used
+            indicators_used = []
+            for cond in entry_rules.get('conditions', []):
+                ind = cond.get('indicator')
+                if ind and ind not in indicators_used:
+                    indicators_used.append(ind)
+            
+            # Estimate orders based on typical signal frequency
+            # This is an estimate only
+            estimated_signals_per_day = 2  # Conservative estimate
+            estimated_fees = order_amount * fee_rate * 2  # Per round trip
+            
+            risk_params = []
+            if stop_loss:
+                risk_params.append(f"SL: {stop_loss}%")
+            if take_profit:
+                risk_params.append(f"TP: {take_profit}%")
+            if trailing_stop:
+                risk_params.append(f"Trail: {trailing_stop}%")
+            
+            return {
+                "bot_type": "signal",
+                "pair": pair,
+                "side": side.upper() if side else "BUY",
+                "order_amount": order_amount,
+                "indicators_count": len(indicators_used),
+                "indicators": indicators_used,
+                "entry_conditions": len(entry_rules.get('conditions', [])),
+                "exit_conditions": len(exit_rules.get('conditions', [])) if exit_rules else 0,
+                "risk_management": ', '.join(risk_params) if risk_params else "None set",
+                "estimated_fees_per_trade": round(estimated_fees, 2),
                 "fee_rate": f"{trading_fee_percent}%"
             }
         
