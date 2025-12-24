@@ -590,7 +590,6 @@ export default function SpotTradingPro() {
           </div>
         </div>
 
-        {/* BOT PANEL OVERLAY */}
         {showBotPanel && (
           <BotPanelDesktop
             pair={selectedPair}
