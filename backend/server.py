@@ -37111,22 +37111,32 @@ async def preview_bot(request: BotPreviewRequest):
 
 # Admin endpoints
 @api_router.post("/admin/bots/toggle-engine")
-async def admin_toggle_bot_engine(enabled: bool, x_admin_id: str = Header(None)):
+async def admin_toggle_bot_engine(request: dict, x_admin_id: str = Header(None)):
     """Admin: Enable/disable the bot engine globally"""
     if not x_admin_id:
         raise HTTPException(status_code=401, detail="Admin access required")
     
+    enabled = request.get("enabled", True)
     result = await BotAdmin.toggle_engine(enabled)
     return result
 
-@api_router.get("/admin/bots/running")
-async def admin_get_running_bots(x_admin_id: str = Header(None)):
-    """Admin: Get all currently running bots"""
+@api_router.get("/admin/bots/stats")
+async def admin_get_bot_stats(x_admin_id: str = Header(None)):
+    """Admin: Get bot statistics for dashboard"""
     if not x_admin_id:
         raise HTTPException(status_code=401, detail="Admin access required")
     
-    bots = await BotAdmin.get_all_running_bots()
-    return {"success": True, "bots": bots}
+    stats = await BotAdmin.get_stats()
+    return {"success": True, "stats": stats}
+
+@api_router.get("/admin/bots/revenue")
+async def admin_get_bot_revenue(x_admin_id: str = Header(None)):
+    """Admin: Get bot revenue breakdown from existing admin_revenue"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    revenue = await BotAdmin.get_bot_revenue_breakdown()
+    return {"success": True, "revenue": revenue}
 
 @api_router.post("/admin/bots/emergency-stop")
 async def admin_emergency_stop(x_admin_id: str = Header(None)):
@@ -37134,7 +37144,7 @@ async def admin_emergency_stop(x_admin_id: str = Header(None)):
     if not x_admin_id:
         raise HTTPException(status_code=401, detail="Admin access required")
     
-    result = await BotAdmin.force_stop_all()
+    result = await BotAdmin.emergency_stop_all()
     return result
 
 logger.info("✅ Trading Bot endpoints registered at /api/bots/*")
