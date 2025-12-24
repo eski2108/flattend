@@ -213,10 +213,10 @@ export default function MobileMarketSelection() {
         <div style={{
           display: 'flex',
           gap: '8px',
-          padding: '12px 16px',
+          padding: isDesktop ? '12px 32px' : '12px 16px',
           background: '#020617',
           position: 'sticky',
-          top: '72px',
+          top: isDesktop ? '80px' : '72px',
           zIndex: 9,
           borderBottom: '1px solid rgba(255,255,255,0.08)'
         }}>
@@ -225,7 +225,8 @@ export default function MobileMarketSelection() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               style={{
-                flex: 1,
+                flex: isDesktop ? 'none' : 1,
+                minWidth: isDesktop ? '120px' : 'auto',
                 height: '36px',
                 borderRadius: '10px',
                 background: activeTab === tab.id 
