@@ -305,12 +305,15 @@ export default function AdminDashboard() {
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [revenueTransactions, setRevenueTransactions] = useState([]);
   const [revenueBreakdown, setRevenueBreakdown] = useState(null);
+  const [revenueAnalytics, setRevenueAnalytics] = useState(null);
+  const [selectedDayDrilldown, setSelectedDayDrilldown] = useState(null);
+  const [drilldownLoading, setDrilldownLoading] = useState(false);
   const [supportedCoins, setSupportedCoins] = useState([]);
   const [editingCoin, setEditingCoin] = useState(null);
   const [addCoinModal, setAddCoinModal] = useState(false);
   const [newCoin, setNewCoin] = useState({ symbol: '', name: '', nowpay_wallet_id: '' });
 
-  const [revenuePeriod, setRevenuePeriod] = useState('day');
+  const [revenuePeriod, setRevenuePeriod] = useState('week');
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [monetizationBreakdown, setMonetizationBreakdown] = useState(null);
   const [showMonetizationModal, setShowMonetizationModal] = useState(false);
