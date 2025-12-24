@@ -32797,7 +32797,7 @@ async def get_revenue_analytics(
 
 @api_router.get("/admin/revenue/drilldown/{date}")
 async def get_revenue_drilldown(date: str):
-    """Get all transactions for a specific date"""
+    """Get all transactions for a specific date with full audit details"""
     try:
         from datetime import datetime, timedelta, timezone
         
@@ -32813,18 +32813,53 @@ async def get_revenue_drilldown(date: str):
                 return "spot_trading"
             elif source in ["swap_fee", "instant_buy_fee", "instant_buy_spread", "instant_sell_fee", "instant_sell_spread"]:
                 return "swap_instant"
-            elif source in ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee"]:
+            elif source in ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee", "p2p_escrow_fee"]:
                 return "p2p"
             elif source in ["deposit_fee", "withdrawal_fee", "network_withdrawal_fee"]:
                 return "deposits_withdrawals"
-            elif source in ["savings_early_withdrawal_penalty", "vault_fee"]:
+            elif source in ["savings_early_withdrawal_penalty", "vault_fee", "vault_penalty"]:
                 return "savings"
             elif source == "dispute_fee":
                 return "disputes"
+            elif source in ["referral_commission", "referral_income", "referral_in"]:
+                return "referrals_in"
+            elif source in ["referral_payout", "referral_out"]:
+                return "referrals_out"
             elif "referral" in str(source):
-                return "referrals"
+                return "referrals_in"
             else:
                 return "other"
+        
+        # Get fee type label
+        def get_fee_type_label(source):
+            fee_type_map = {
+                "bot": "Bot Trading Fee",
+                "spot_trading_fee": "Spot Trading Fee",
+                "spot_trading": "Spot Trading Fee",
+                "swap_fee": "Swap Fee",
+                "instant_buy_fee": "Instant Buy Fee",
+                "instant_buy_spread": "Instant Buy Spread",
+                "instant_sell_fee": "Instant Sell Fee",
+                "instant_sell_spread": "Instant Sell Spread",
+                "p2p_trade_fee": "P2P Trade Fee",
+                "p2p_maker_fee": "P2P Maker Fee",
+                "p2p_taker_fee": "P2P Taker Fee",
+                "p2p_express_fee": "P2P Express Fee",
+                "p2p_escrow_fee": "P2P Escrow Fee",
+                "deposit_fee": "Deposit Fee",
+                "withdrawal_fee": "Withdrawal Fee",
+                "network_withdrawal_fee": "Network Withdrawal Fee",
+                "savings_early_withdrawal_penalty": "Early Withdrawal Penalty",
+                "vault_fee": "Vault Fee",
+                "vault_penalty": "Vault Penalty",
+                "dispute_fee": "Dispute Fee",
+                "referral_commission": "Referral Commission (IN)",
+                "referral_income": "Referral Income (IN)",
+                "referral_in": "Referral Income (IN)",
+                "referral_payout": "Referral Payout (OUT)",
+                "referral_out": "Referral Payout (OUT)"
+            }
+            return fee_type_map.get(source, source.replace("_", " ").title() if source else "Unknown")
         
         # Fetch all revenue
         all_revenue = await db.admin_revenue.find({}).to_list(100000)
@@ -32844,18 +32879,40 @@ async def get_revenue_drilldown(date: str):
                 ts = ts.replace(tzinfo=timezone.utc)
             
             if target_date <= ts < next_date:
+                source = r.get("source", "unknown")
+                category = get_category(source)
+                fee_type = get_fee_type_label(source)
+                
+                # Determine reference ID from various possible fields
+                reference_id = (
+                    r.get("related_transaction_id") or 
+                    r.get("trade_id") or 
+                    r.get("order_id") or 
+                    r.get("swap_id") or 
+                    r.get("p2p_trade_id") or 
+                    r.get("escrow_id") or 
+                    r.get("dispute_id") or 
+                    r.get("deposit_id") or 
+                    r.get("withdrawal_id") or 
+                    r.get("vault_event_id") or 
+                    r.get("referral_id") or 
+                    r.get("revenue_id")
+                )
+                
                 transactions.append({
                     "revenue_id": r.get("revenue_id"),
                     "timestamp": ts.isoformat(),
                     "time": ts.strftime("%H:%M:%S"),
-                    "source": r.get("source"),
-                    "category": get_category(r.get("source")),
+                    "source": source,
+                    "category": category,
+                    "fee_type": fee_type,
                     "amount": float(r.get("amount", 0)),
                     "currency": r.get("currency", "GBP"),
+                    "asset": r.get("asset") or r.get("pair") or r.get("currency", "GBP"),
                     "user_id": r.get("user_id"),
                     "bot_id": r.get("bot_id"),
                     "strategy_type": r.get("strategy_type"),
-                    "related_id": r.get("related_transaction_id"),
+                    "reference_id": reference_id,
                     "description": r.get("description")
                 })
         
@@ -32863,14 +32920,27 @@ async def get_revenue_drilldown(date: str):
         transactions.sort(key=lambda x: x["timestamp"], reverse=True)
         
         # Calculate totals
-        total_amount = sum(t["amount"] for t in transactions if t["amount"] > 0)
+        total_income = sum(t["amount"] for t in transactions if t["amount"] > 0)
+        total_payouts = abs(sum(t["amount"] for t in transactions if t["amount"] < 0))
+        
+        # Category breakdown
+        by_category = {}
+        for t in transactions:
+            cat = t["category"]
+            if cat not in by_category:
+                by_category[cat] = {"amount": 0, "count": 0}
+            by_category[cat]["amount"] += t["amount"]
+            by_category[cat]["count"] += 1
         
         return {
             "success": True,
             "date": date,
             "day_name": target_date.strftime("%A, %d %B %Y"),
-            "total": round(total_amount, 4),
+            "total_income": round(total_income, 4),
+            "total_payouts": round(total_payouts, 4),
+            "net_total": round(total_income - total_payouts, 4),
             "transaction_count": len(transactions),
+            "by_category": {k: {"amount": round(v["amount"], 4), "count": v["count"]} for k, v in by_category.items()},
             "transactions": transactions
         }
         
