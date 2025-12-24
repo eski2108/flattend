@@ -224,7 +224,7 @@ export default function SpotTradingPro() {
         </p>
       </div>
 
-      {/* TOP INFO BOXES - NEON GLOW STYLE (matching screenshot) */}
+      {/* TOP INFO BOXES - STRONG NEON GLOW EDGES */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
@@ -233,9 +233,9 @@ export default function SpotTradingPro() {
       }}>
         {/* Box 1: Last Price */}
         <div style={{
-          background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
-          border: '1px solid rgba(0, 255, 213, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 213, 0.15), inset 0 1px 0 rgba(0, 255, 213, 0.1)',
+          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
+          border: '1px solid #00ffd5',
+          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
           borderRadius: '12px',
           padding: '16px 20px',
           height: '80px',
@@ -243,17 +243,17 @@ export default function SpotTradingPro() {
           flexDirection: 'column',
           justifyContent: 'center'
         }}>
-          <span style={{ fontSize: '12px', color: '#7dd3d8', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase' }}>Last Price</span>
-          <span style={{ fontSize: '22px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>LAST PRICE</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
         {/* Box 2: 24h Change */}
         <div style={{
-          background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
-          border: '1px solid rgba(0, 255, 213, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 213, 0.15), inset 0 1px 0 rgba(0, 255, 213, 0.1)',
+          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
+          border: '1px solid #00ffd5',
+          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
           borderRadius: '12px',
           padding: '16px 20px',
           height: '80px',
@@ -261,24 +261,21 @@ export default function SpotTradingPro() {
           flexDirection: 'column',
           justifyContent: 'center'
         }}>
-          <span style={{ fontSize: '12px', color: '#7dd3d8', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase' }}>24h Change</span>
+          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>24H CHANGE</span>
           <span style={{ 
-            fontSize: '22px', 
+            fontSize: '24px', 
             fontWeight: '700', 
-            color: marketStats.change24h >= 0 ? '#00ff88' : '#ff4757',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
+            color: marketStats.change24h >= 0 ? '#00ff88' : '#ff4757'
           }}>
-            {marketStats.change24h >= 0 ? '↗' : '↘'} {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+            {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
           </span>
         </div>
 
         {/* Box 3: 24h High */}
         <div style={{
-          background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
-          border: '1px solid rgba(0, 255, 213, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 213, 0.15), inset 0 1px 0 rgba(0, 255, 213, 0.1)',
+          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
+          border: '1px solid #00ffd5',
+          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
           borderRadius: '12px',
           padding: '16px 20px',
           height: '80px',
@@ -286,17 +283,17 @@ export default function SpotTradingPro() {
           flexDirection: 'column',
           justifyContent: 'center'
         }}>
-          <span style={{ fontSize: '12px', color: '#7dd3d8', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase' }}>24h High</span>
-          <span style={{ fontSize: '22px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>24H HIGH</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
 
         {/* Box 4: 24h Low */}
         <div style={{
-          background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
-          border: '1px solid rgba(0, 255, 213, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 213, 0.15), inset 0 1px 0 rgba(0, 255, 213, 0.1)',
+          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
+          border: '1px solid #00ffd5',
+          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
           borderRadius: '12px',
           padding: '16px 20px',
           height: '80px',
@@ -304,8 +301,8 @@ export default function SpotTradingPro() {
           flexDirection: 'column',
           justifyContent: 'center'
         }}>
-          <span style={{ fontSize: '12px', color: '#7dd3d8', marginBottom: '6px', fontWeight: '500', textTransform: 'uppercase' }}>24h Low</span>
-          <span style={{ fontSize: '22px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>24H LOW</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
             ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
