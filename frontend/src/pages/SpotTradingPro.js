@@ -194,15 +194,14 @@ export default function SpotTradingPro() {
   }
 
   // =====================================================
-  // DESKTOP LAYOUT - MATCHING SCREENSHOT EXACTLY
-  // Neon glow boxes, pair tabs, purple gradient background
+  // DESKTOP LAYOUT - EXACT COLOR SPEC (LOCKED)
   // =====================================================
   return (
     <div style={{
       display: 'flex',
       flexDirection: 'column',
       minHeight: 'calc(100vh - 80px)',
-      background: 'linear-gradient(180deg, #0a0a1a 0%, #0d0d25 50%, #12122a 100%)',
+      background: '#0B0F1A',
       padding: '16px',
       gap: '12px'
     }}>
@@ -211,7 +210,7 @@ export default function SpotTradingPro() {
         <h1 style={{ 
           fontSize: '24px', 
           fontWeight: '700', 
-          color: '#fff',
+          color: '#E9EEFF',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
@@ -219,12 +218,12 @@ export default function SpotTradingPro() {
         }}>
           <span style={{ fontSize: '28px' }}>📈</span> Spot Trading
         </h1>
-        <p style={{ fontSize: '13px', color: '#6B7280', margin: '4px 0 0 0' }}>
+        <p style={{ fontSize: '13px', color: '#8FA3FF', opacity: 0.85, margin: '4px 0 0 0' }}>
           Advanced trading with TradingView charts and real-time data
         </p>
       </div>
 
-      {/* TOP INFO BOXES - STRONG NEON GLOW EDGES */}
+      {/* TOP INFO BOXES - EXACT SPEC */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
@@ -233,21 +232,80 @@ export default function SpotTradingPro() {
       }}>
         {/* Box 1: Last Price */}
         <div style={{
-          background: 'linear-gradient(180deg, #0d1117 0%, #0a0e14 100%)',
-          border: '1px solid #00ffd5',
-          boxShadow: '0 0 15px #00ffd5, 0 0 30px rgba(0, 255, 213, 0.3), inset 0 0 20px rgba(0, 255, 213, 0.05)',
-          borderRadius: '12px',
+          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
+          border: '1px solid rgba(110,140,255,0.18)',
+          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          borderRadius: '14px',
           padding: '16px 20px',
           height: '80px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center'
         }}>
-          <span style={{ fontSize: '11px', color: '#00ffd5', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.5px' }}>LAST PRICE</span>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>LAST PRICE</span>
+          <span style={{ fontSize: '24px', fontWeight: '600', color: '#E9EEFF' }}>
             ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
+
+        {/* Box 2: 24h Change */}
+        <div style={{
+          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
+          border: '1px solid rgba(110,140,255,0.18)',
+          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>24H CHANGE</span>
+          <span style={{ 
+            fontSize: '24px', 
+            fontWeight: '600', 
+            color: marketStats.change24h >= 0 ? '#20E3A2' : '#FF5C6A'
+          }}>
+            {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
+          </span>
+        </div>
+
+        {/* Box 3: 24h High */}
+        <div style={{
+          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
+          border: '1px solid rgba(110,140,255,0.18)',
+          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>24H HIGH</span>
+          <span style={{ fontSize: '24px', fontWeight: '600', color: '#E9EEFF' }}>
+            ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+
+        {/* Box 4: 24h Low */}
+        <div style={{
+          background: 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
+          border: '1px solid rgba(110,140,255,0.18)',
+          boxShadow: '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          height: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '6px', fontWeight: '500', opacity: 0.85 }}>24H LOW</span>
+          <span style={{ fontSize: '24px', fontWeight: '600', color: '#E9EEFF' }}>
+            ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+      </div>
 
         {/* Box 2: 24h Change */}
         <div style={{
