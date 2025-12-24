@@ -32665,6 +32665,9 @@ async def get_revenue_analytics(
         
         sorted_months = sorted(monthly_data.items(), key=lambda x: x[0], reverse=True)
         
+        # Calculate net profit (total revenue minus referral payouts)
+        net_profit = grand_total - referrals_out_total
+        
         return {
             "success": True,
             "period": period,
@@ -32677,59 +32680,75 @@ async def get_revenue_analytics(
             # Grand totals
             "totals": {
                 "grand_total": round(grand_total, 4),
+                "net_profit": round(net_profit, 4),
+                "referrals_out_deducted": round(referrals_out_total, 4),
                 "transaction_count": total_transactions,
                 "days_with_revenue": len([d for d in sorted_days if d["total"] > 0])
             },
             
-            # By category totals
+            # Referral split
+            "referrals": {
+                "income": round(referrals_in_total, 4),
+                "payouts": round(referrals_out_total, 4),
+                "net": round(referrals_in_total - referrals_out_total, 4)
+            },
+            
+            # By category totals - with updated labels
             "by_category": {
                 "spot_trading": {
-                    "label": "Spot Trading (Manual)",
+                    "label": "Spot Trading (Manual Fees)",
                     "amount": round(category_totals["spot_trading"]["amount"], 4),
                     "count": category_totals["spot_trading"]["count"],
                     "color": "#00F0FF"
                 },
                 "trading_bots": {
-                    "label": "🤖 Trading Bots",
+                    "label": "Trading Bots (Bot Trading Fees)",
                     "amount": round(category_totals["trading_bots"]["amount"], 4),
                     "count": category_totals["trading_bots"]["count"],
                     "color": "#FF6B6B"
                 },
                 "swap_instant": {
-                    "label": "Swap / Instant Buy-Sell",
+                    "label": "Swap (Spread + Fees)",
                     "amount": round(category_totals["swap_instant"]["amount"], 4),
                     "count": category_totals["swap_instant"]["count"],
                     "color": "#A855F7"
                 },
                 "p2p": {
-                    "label": "P2P Marketplace",
+                    "label": "P2P (Escrow + Maker/Taker + Express)",
                     "amount": round(category_totals["p2p"]["amount"], 4),
                     "count": category_totals["p2p"]["count"],
                     "color": "#EC4899"
                 },
                 "deposits_withdrawals": {
-                    "label": "Deposits & Withdrawals",
+                    "label": "Deposits/Withdrawals (Processing Fees)",
                     "amount": round(category_totals["deposits_withdrawals"]["amount"], 4),
                     "count": category_totals["deposits_withdrawals"]["count"],
                     "color": "#F59E0B"
                 },
                 "savings": {
-                    "label": "Savings / Vaults",
+                    "label": "Savings/Vaults (Penalties + Fees)",
                     "amount": round(category_totals["savings"]["amount"], 4),
                     "count": category_totals["savings"]["count"],
                     "color": "#22C55E"
                 },
                 "disputes": {
-                    "label": "Dispute Fees",
+                    "label": "Disputes (Dispute Fees)",
                     "amount": round(category_totals["disputes"]["amount"], 4),
                     "count": category_totals["disputes"]["count"],
                     "color": "#EF4444"
                 },
-                "referrals": {
-                    "label": "Referral Program",
-                    "amount": round(category_totals["referrals"]["amount"], 4),
-                    "count": category_totals["referrals"]["count"],
-                    "color": "#0EA5E9"
+                "referrals_in": {
+                    "label": "Referrals IN (Commission Income)",
+                    "amount": round(category_totals["referrals_in"]["amount"], 4),
+                    "count": category_totals["referrals_in"]["count"],
+                    "color": "#22C55E"
+                },
+                "referrals_out": {
+                    "label": "Referrals OUT (Payouts)",
+                    "amount": round(referrals_out_total, 4),
+                    "count": category_totals["referrals_out"]["count"],
+                    "color": "#EF4444",
+                    "is_deduction": True
                 }
             },
             
@@ -32740,6 +32759,9 @@ async def get_revenue_analytics(
                     "day_name": d["day_name"],
                     "total": round(d["total"], 4),
                     "count": d["count"],
+                    "referrals_in": round(d.get("referrals_in", 0), 4),
+                    "referrals_out": round(d.get("referrals_out", 0), 4),
+                    "referrals_net": round(d.get("referrals_in", 0) - d.get("referrals_out", 0), 4),
                     "by_source": {k: {"amount": round(v["amount"], 4), "count": v["count"]} for k, v in d["by_source"].items()},
                     "transactions": d["transactions"][:20]  # Limit for initial load
                 }
