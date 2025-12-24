@@ -209,36 +209,129 @@ export default function MobileMarketSelection() {
     { id: 'gainers', label: 'Top Gainers' }
   ];
 
+  // Column header component with sorting
+  const SortableHeader = ({ column, label, width }) => (
+    <div 
+      onClick={() => handleSort(column)}
+      style={{ 
+        textAlign: 'right', 
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: '4px',
+        width: width || 'auto'
+      }}
+    >
+      <span>{label}</span>
+      {sortColumn === column && (
+        sortDirection === 'desc' ? <IoChevronDown size={12} /> : <IoChevronUp size={12} />
+      )}
+    </div>
+  );
+
   return (
     <>
       <div style={{
-        maxWidth: isDesktop ? '1400px' : '430px',
+        maxWidth: isDesktop ? '100%' : '430px',
         width: '100%',
-        margin: isDesktop ? '0 auto' : '0 auto',
-        background: '#020617',
+        margin: '0 auto',
+        background: isDesktop ? 'radial-gradient(circle at top, #0E1626 0%, #070B14 60%)' : '#020617',
         minHeight: '100vh',
         paddingTop: '0',
-        paddingBottom: '60px'
+        paddingBottom: '60px',
+        display: isDesktop ? 'flex' : 'block'
       }}>
-        {/* Page Title - Desktop Only */}
-        {isDesktop && (
-          <div style={{
-            padding: '24px 32px 16px 16px',
-            borderBottom: '1px solid rgba(255,255,255,0.08)'
-          }}>
-            <h1 style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              margin: 0
-            }}>Markets</h1>
-            <p style={{
-              fontSize: '14px',
-              color: '#8F9BB3',
-              margin: '8px 0 0'
-            }}>Select a trading pair to view chart and trade</p>
-          </div>
-        )}
+        {/* Main Content Area */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Page Title - Desktop Only */}
+          {isDesktop && (
+            <div style={{
+              padding: '24px 32px 16px',
+              borderBottom: '1px solid rgba(255,255,255,0.08)'
+            }}>
+              <h1 style={{
+                fontSize: '28px',
+                fontWeight: '700',
+                color: '#FFFFFF',
+                margin: 0
+              }}>Markets</h1>
+              <p style={{
+                fontSize: '14px',
+                color: '#8F9BB3',
+                margin: '8px 0 0'
+              }}>Select a trading pair to view chart and trade</p>
+            </div>
+          )}
+
+          {/* MARKET SUMMARY STRIP - Desktop Only */}
+          {isDesktop && !loading && (
+            <div style={{
+              margin: '16px 32px',
+              padding: '18px 24px',
+              background: 'linear-gradient(180deg, #0B1220 0%, #0E1626 100%)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '14px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(5, 1fr)',
+              gap: '24px'
+            }}>
+              {/* Total Market Cap */}
+              <div>
+                <div style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '6px' }}>Total Market Cap</div>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF' }}>
+                  {formatNumber(marketSummary.totalMarketCap)}
+                </div>
+              </div>
+              
+              {/* 24h Volume */}
+              <div>
+                <div style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '6px' }}>24h Volume</div>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF' }}>
+                  {formatNumber(marketSummary.totalVolume24h)}
+                </div>
+              </div>
+              
+              {/* BTC Dominance */}
+              <div>
+                <div style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '6px' }}>BTC Dominance</div>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF' }}>
+                  {marketSummary.btcDominance.toFixed(1)}%
+                </div>
+              </div>
+              
+              {/* Top Gainer */}
+              {marketSummary.topGainer && (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '6px' }}>Top Gainer</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>
+                      {marketSummary.topGainer.base}
+                    </span>
+                    <span style={{ fontSize: '16px', fontWeight: '700', color: '#00E599' }}>
+                      +{marketSummary.topGainer.change24h.toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Top Loser */}
+              {marketSummary.topLoser && (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#8B9BB4', marginBottom: '6px' }}>Top Loser</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>
+                      {marketSummary.topLoser.base}
+                    </span>
+                    <span style={{ fontSize: '16px', fontWeight: '700', color: '#FF5C5C' }}>
+                      {marketSummary.topLoser.change24h.toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
         {/* Search Bar */}
         <div style={{
