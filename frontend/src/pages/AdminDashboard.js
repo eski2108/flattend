@@ -304,6 +304,7 @@ export default function AdminDashboard() {
   const [tradingLiquidityModal, setTradingLiquidityModal] = useState({ show: false, type: 'add', currency: 'BTC', amount: '' });
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [revenueTransactions, setRevenueTransactions] = useState([]);
+  const [revenueBreakdown, setRevenueBreakdown] = useState(null);
   const [supportedCoins, setSupportedCoins] = useState([]);
   const [editingCoin, setEditingCoin] = useState(null);
   const [addCoinModal, setAddCoinModal] = useState(false);
