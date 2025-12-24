@@ -31,6 +31,8 @@ export default function SpotTradingPro() {
   // Default to desktop (false) - useEffect will correct if needed
   const [isMobile, setIsMobile] = useState(false);
   const [showPairDropdown, setShowPairDropdown] = useState(false);
+  const [tradingMode, setTradingMode] = useState('manual'); // 'manual' | 'bot'
+  const [showBotPanel, setShowBotPanel] = useState(false);
 
   // Read pair from URL query parameter
   useEffect(() => {
