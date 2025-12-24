@@ -4463,10 +4463,18 @@ export default function AdminDashboard() {
                 borderRadius: '12px',
                 border: '1px solid rgba(0,240,255,0.2)'
               }}>
-                <div>
-                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>TOTAL REVENUE</div>
-                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{revenueAnalytics.totals?.grand_total?.toFixed(2) || '0.00'}</div>
-                  <div style={{ fontSize: '10px', color: '#666' }}>{revenueAnalytics.totals?.transaction_count || 0} transactions</div>
+                {/* TOTAL REVENUE - Made prominently larger */}
+                <div style={{
+                  gridColumn: 'span 1',
+                  padding: '1rem',
+                  background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(22,163,74,0.1))',
+                  borderRadius: '12px',
+                  border: '2px solid rgba(34,197,94,0.4)',
+                  boxShadow: '0 0 20px rgba(34,197,94,0.2)'
+                }}>
+                  <div style={{ fontSize: '14px', color: '#22C55E', textTransform: 'uppercase', fontWeight: '900', marginBottom: '0.5rem' }}>💰 TOTAL REVENUE</div>
+                  <div style={{ fontSize: '48px', fontWeight: '900', color: '#22C55E', textShadow: '0 0 20px rgba(34,197,94,0.5)' }}>£{revenueAnalytics.totals?.grand_total?.toFixed(2) || '0.00'}</div>
+                  <div style={{ fontSize: '12px', color: '#888', marginTop: '0.25rem' }}>{revenueAnalytics.totals?.transaction_count || 0} total transactions</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>NET PROFIT</div>
