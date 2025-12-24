@@ -15388,6 +15388,22 @@ async def place_trading_order(http_request: Request, request: dict = None):
         # Credit fee to admin wallet - SYNCED
         await sync_credit_balance("PLATFORM_FEES", "GBP", fee_amount, "trading_fee")
         
+        # Log to admin_revenue for dashboard (includes bot metadata for filtering)
+        admin_revenue_record = {
+            "revenue_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "amount": fee_amount,
+            "currency": "GBP",
+            "fee_type": "spot_trading",
+            "related_id": trade_id,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        if bot_source == "bot" and bot_id:
+            admin_revenue_record["source"] = "bot"
+            admin_revenue_record["bot_id"] = bot_id
+            admin_revenue_record["strategy_type"] = bot_strategy_type
+        await db.admin_revenue.insert_one(admin_revenue_record)
+        
         # Process referral commission
         referral_engine = get_referral_engine()
         await referral_engine.process_referral_commission(
