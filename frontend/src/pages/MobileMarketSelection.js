@@ -129,13 +129,15 @@ export default function MobileMarketSelection() {
         `}
       </style>
       <div style={{
-        maxWidth: isDesktop ? '100%' : '430px',
+        maxWidth: isDesktop ? '1400px' : '430px',
         width: '100%',
-        margin: '0 auto',
+        margin: isDesktop ? '0 auto' : '0 auto',
         background: '#020617',
         minHeight: '100vh',
         paddingTop: '0',
-        paddingBottom: '60px'
+        paddingBottom: '60px',
+        paddingLeft: isDesktop ? '20px' : '0',
+        paddingRight: isDesktop ? '20px' : '0'
       }}>
         {/* Page Title - Desktop Only */}
         {isDesktop && (
