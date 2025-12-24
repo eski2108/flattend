@@ -77,7 +77,7 @@ function AdminBotsSection({ API, adminId }) {
         background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1))', 
         border: '2px solid rgba(239, 68, 68, 0.4)', 
         borderRadius: '12px', 
-        padding: '1rem 1.5rem',
+        padding: '0.75rem 1rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
@@ -1416,12 +1416,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('overview')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'overview' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'overview' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1432,12 +1432,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('referrals')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'referrals' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'referrals' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1448,12 +1448,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('golden-referrals')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'golden-referrals' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'golden-referrals' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1464,12 +1464,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('disputes')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'disputes' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'disputes' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1480,12 +1480,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('customers')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'customers' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'customers' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1496,12 +1496,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('liquidity')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'liquidity' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'liquidity' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1512,12 +1512,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('withdrawals')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'withdrawals' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'withdrawals' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1528,12 +1528,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('trading')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'trading' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'trading' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1548,12 +1548,12 @@ export default function AdminDashboard() {
               fetchRevenueTransactions(revenuePeriod, revenueFilter);
             }}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'revenue' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'revenue' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1565,12 +1565,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('coins')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'coins' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'coins' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1582,12 +1582,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('banners')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'banners' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'banners' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1602,12 +1602,12 @@ export default function AdminDashboard() {
               fetchMonetizationSettings();
             }}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'monetization' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'monetization' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1619,12 +1619,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('platform-wallet')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'platform-wallet' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'platform-wallet' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1636,12 +1636,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('support-chat')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: 'none',
               border: 'none',
               borderBottom: activeTab === 'support-chat' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'support-chat' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1653,12 +1653,12 @@ export default function AdminDashboard() {
           <button
             onClick={() => setActiveTab('bots')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: activeTab === 'bots' ? 'linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 159, 28, 0.2))' : 'none',
               border: 'none',
               borderBottom: activeTab === 'bots' ? '3px solid #FF6B6B' : '3px solid transparent',
               color: activeTab === 'bots' ? '#FF6B6B' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -1779,7 +1779,7 @@ export default function AdminDashboard() {
 
               {/* Withdrawal Addresses Quick Setup */}
               <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(0, 240, 255, 0.05)', border: '1px solid rgba(0, 240, 255, 0.2)', borderRadius: '12px' }}>
-                <div style={{ fontSize: '16px', fontWeight: '700', color: '#00F0FF', marginBottom: '1rem' }}>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#00F0FF', marginBottom: '1rem' }}>
                   💡 Set Your Withdrawal Addresses
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
@@ -2584,7 +2584,7 @@ export default function AdminDashboard() {
                       border: '2px solid rgba(0, 240, 255, 0.3)',
                       borderRadius: '8px',
                       color: '#fff',
-                      fontSize: '16px',
+                      fontSize: '14px',
                       fontWeight: '600'
                     }}
                   />
@@ -2612,7 +2612,7 @@ export default function AdminDashboard() {
                       border: '2px solid rgba(0, 240, 255, 0.3)',
                       borderRadius: '8px',
                       color: '#fff',
-                      fontSize: '16px',
+                      fontSize: '14px',
                       fontWeight: '600'
                     }}
                   />
@@ -2640,7 +2640,7 @@ export default function AdminDashboard() {
                       border: '2px solid rgba(0, 240, 255, 0.3)',
                       borderRadius: '8px',
                       color: '#fff',
-                      fontSize: '16px',
+                      fontSize: '14px',
                       fontWeight: '600'
                     }}
                   />
@@ -2668,7 +2668,7 @@ export default function AdminDashboard() {
                       border: '2px solid rgba(0, 240, 255, 0.3)',
                       borderRadius: '8px',
                       color: '#fff',
-                      fontSize: '16px',
+                      fontSize: '14px',
                       fontWeight: '600'
                     }}
                   />
@@ -2704,7 +2704,7 @@ export default function AdminDashboard() {
                         <tr key={earning.user_id} style={{ borderBottom: '1px solid rgba(0, 240, 255, 0.1)' }}>
                           <td style={{ padding: '1rem', color: '#fff', fontSize: '14px' }}>{earning.full_name}</td>
                           <td style={{ padding: '1rem', color: '#888', fontSize: '14px' }}>{earning.email}</td>
-                          <td style={{ padding: '1rem', textAlign: 'right', color: '#00F0FF', fontSize: '16px', fontWeight: '700' }}>
+                          <td style={{ padding: '1rem', textAlign: 'right', color: '#00F0FF', fontSize: '14px', fontWeight: '700' }}>
                             ${earning.total_earned.toFixed(2)}
                           </td>
                           <td style={{ padding: '1rem', textAlign: 'right', color: '#22C55E', fontSize: '14px' }}>
@@ -3359,7 +3359,7 @@ export default function AdminDashboard() {
                     {/* Currency with Logo */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '24px' }}>{coinEmojis[wallet.currency] || '🪙'}</span>
-                      <span style={{ fontSize: '16px', color: '#00F0FF', fontWeight: '700', textTransform: 'uppercase' }}>
+                      <span style={{ fontSize: '14px', color: '#00F0FF', fontWeight: '700', textTransform: 'uppercase' }}>
                         {wallet.currency}
                       </span>
                     </div>
@@ -4375,7 +4375,7 @@ export default function AdminDashboard() {
 
                 {/* Fee Wallet Breakdown */}
                 <Card style={{ background: 'rgba(15, 23, 42, 0.4)', border: '2px solid rgba(0, 240, 255, 0.2)', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Fee Wallet Breakdown by Currency</h3>
+                  <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#fff', marginBottom: '1rem' }}>Fee Wallet Breakdown by Currency</h3>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                     {revenueSummary.fee_wallet_breakdown && Object.entries(revenueSummary.fee_wallet_breakdown).map(([currency, data]) => (
                       <div key={currency} style={{ padding: '1rem', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '8px' }}>
