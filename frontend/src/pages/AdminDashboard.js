@@ -4292,52 +4292,483 @@ export default function AdminDashboard() {
         {/* REVENUE TRACKING TAB */}
         {activeTab === 'revenue' && (
           <Card style={{ background: 'rgba(15, 23, 42, 0.6)', border: '2px solid rgba(0, 240, 255, 0.3)', borderRadius: '16px', padding: '2rem' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#00F0FF', marginBottom: '2rem', textTransform: 'uppercase' }}>
-              💰 Revenue Breakdown by Source
+            <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#00F0FF', marginBottom: '1.5rem', textTransform: 'uppercase' }}>
+              💰 Revenue Analytics Dashboard
             </h2>
 
-            {/* Period Filter */}
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-              {['day', 'week', 'month', 'all'].map((period) => (
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* TIME FILTERS - All periods */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.5rem', 
+              marginBottom: '1.5rem', 
+              flexWrap: 'wrap',
+              padding: '1rem',
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '12px'
+            }}>
+              {[
+                { key: 'today', label: 'Today' },
+                { key: 'yesterday', label: 'Yesterday' },
+                { key: 'week', label: 'Last 7 Days' },
+                { key: 'last_week', label: 'Last Week' },
+                { key: 'month', label: 'Last 30 Days' },
+                { key: 'last_month', label: 'Last Month' },
+                { key: 'all', label: 'All Time' }
+              ].map((period) => (
                 <button
-                  key={period}
+                  key={period.key}
                   onClick={() => {
-                    setRevenuePeriod(period);
-                    fetchRevenueSummary(period);
-                    fetchRevenueTransactions(period, revenueFilter);
+                    setRevenuePeriod(period.key);
+                    fetchRevenueSummary(period.key);
+                    fetchRevenueBreakdown(period.key);
+                    fetchRevenueAnalytics(period.key);
                   }}
                   style={{
-                    padding: '0.75rem 1.5rem',
-                    background: revenuePeriod === period ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(255, 255, 255, 0.1)',
-                    color: revenuePeriod === period ? '#000' : '#fff',
-                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    background: revenuePeriod === period.key ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(255, 255, 255, 0.1)',
+                    color: revenuePeriod === period.key ? '#000' : '#fff',
+                    border: revenuePeriod === period.key ? 'none' : '1px solid rgba(255,255,255,0.2)',
                     borderRadius: '8px',
                     fontWeight: '700',
                     cursor: 'pointer',
-                    textTransform: 'capitalize'
+                    fontSize: '12px',
+                    transition: 'all 0.2s'
                   }}
                 >
-                  {period === 'day' ? 'Today' : period === 'week' ? 'Last 7 Days' : period === 'month' ? 'Last 30 Days' : 'All Time'}
+                  {period.label}
                 </button>
               ))}
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* EXPLICIT REVENUE BREAKDOWN BY SOURCE */}
+            {/* GRAND TOTALS - Summary Row */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {revenueBreakdown && (
-              <>
-                {/* Grand Totals Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                  <div style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1))', border: '2px solid rgba(34, 197, 94, 0.5)', borderRadius: '12px', padding: '1.5rem' }}>
-                    <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>Total Revenue</div>
-                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{revenueBreakdown.totals?.total_revenue?.toFixed(2) || '0.00'}</div>
-                    <div style={{ fontSize: '11px', color: '#666' }}>All fees collected</div>
+            {revenueAnalytics && (
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(4, 1fr)', 
+                gap: '1rem', 
+                marginBottom: '2rem',
+                padding: '1.5rem',
+                background: 'linear-gradient(135deg, rgba(0,240,255,0.05), rgba(168,85,247,0.05))',
+                borderRadius: '12px',
+                border: '1px solid rgba(0,240,255,0.2)'
+              }}>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>TOTAL REVENUE</div>
+                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#22C55E' }}>£{revenueAnalytics.totals?.grand_total?.toFixed(2) || '0.00'}</div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>{revenueAnalytics.totals?.transaction_count || 0} transactions</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>DAYS WITH REVENUE</div>
+                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#00F0FF' }}>{revenueAnalytics.totals?.days_with_revenue || 0}</div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>in selected period</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>AVG PER DAY</div>
+                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#A855F7' }}>
+                    £{revenueAnalytics.totals?.days_with_revenue > 0 
+                      ? (revenueAnalytics.totals.grand_total / revenueAnalytics.totals.days_with_revenue).toFixed(2) 
+                      : '0.00'}
                   </div>
-                  <div style={{ background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.1))', border: '2px solid rgba(168, 85, 247, 0.5)', borderRadius: '12px', padding: '1.5rem' }}>
-                    <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>Referrals Paid</div>
-                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>£{revenueBreakdown.totals?.referral_paid?.toFixed(2) || '0.00'}</div>
-                    <div style={{ fontSize: '11px', color: '#666' }}>Commission payouts</div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>average daily revenue</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>BOT REVENUE</div>
+                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#FF6B6B' }}>
+                    £{revenueAnalytics.by_category?.trading_bots?.amount?.toFixed(2) || '0.00'}
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>
+                    {revenueAnalytics.by_category?.trading_bots?.count || 0} bot trades
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* REVENUE BY SOURCE - Category Cards */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {revenueAnalytics && (
+              <>
+                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                  📊 Revenue by Source
+                </h3>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
+                  gap: '1rem', 
+                  marginBottom: '2rem' 
+                }}>
+                  {Object.entries(revenueAnalytics.by_category || {}).map(([key, cat]) => (
+                    <div 
+                      key={key}
+                      style={{ 
+                        background: key === 'trading_bots' 
+                          ? 'linear-gradient(135deg, rgba(255,107,107,0.2), rgba(255,159,28,0.1))' 
+                          : 'rgba(255,255,255,0.03)',
+                        border: `2px solid ${cat.color}`,
+                        borderRadius: '12px',
+                        padding: '1rem',
+                        position: 'relative',
+                        boxShadow: key === 'trading_bots' ? '0 0 15px rgba(255,107,107,0.2)' : 'none'
+                      }}
+                    >
+                      {key === 'trading_bots' && (
+                        <div style={{ 
+                          position: 'absolute', 
+                          top: '-8px', 
+                          right: '10px', 
+                          background: '#FF6B6B', 
+                          padding: '2px 8px', 
+                          borderRadius: '4px', 
+                          fontSize: '9px', 
+                          fontWeight: '900',
+                          color: '#fff'
+                        }}>
+                          BOT REVENUE
+                        </div>
+                      )}
+                      <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>
+                        {cat.label}
+                      </div>
+                      <div style={{ fontSize: '28px', fontWeight: '900', color: cat.color, marginBottom: '0.25rem' }}>
+                        £{cat.amount?.toFixed(2) || '0.00'}
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#666' }}>
+                        {cat.count || 0} transactions
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* DAILY BREAKDOWN TABLE - Scrollable History */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {revenueAnalytics && revenueAnalytics.daily && revenueAnalytics.daily.length > 0 && (
+              <>
+                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                  📅 Daily Revenue History (Click to drill down)
+                </h3>
+                <div style={{ 
+                  background: 'rgba(0,0,0,0.2)', 
+                  borderRadius: '12px', 
+                  overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  marginBottom: '2rem'
+                }}>
+                  {/* Table Header */}
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '140px 120px 1fr 80px',
+                    padding: '1rem',
+                    background: 'rgba(0,240,255,0.1)',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    fontWeight: '700',
+                    fontSize: '11px',
+                    color: '#888',
+                    textTransform: 'uppercase'
+                  }}>
+                    <div>Date</div>
+                    <div>Total</div>
+                    <div>Revenue by Source</div>
+                    <div>Drill Down</div>
+                  </div>
+
+                  {/* Daily Rows - Scrollable */}
+                  <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    {revenueAnalytics.daily.map((day, idx) => (
+                      <div 
+                        key={day.date || idx}
+                        onClick={() => day.date && fetchDayDrilldown(day.date)}
+                        style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: '140px 120px 1fr 80px',
+                          padding: '0.75rem 1rem',
+                          borderBottom: '1px solid rgba(255,255,255,0.05)',
+                          alignItems: 'center',
+                          background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'}
+                      >
+                        <div>
+                          <div style={{ fontWeight: '700', color: '#fff', fontSize: '13px' }}>{day.day_name}</div>
+                          <div style={{ fontSize: '10px', color: '#666' }}>{day.date}</div>
+                        </div>
+                        <div style={{ 
+                          fontWeight: '900', 
+                          color: day.total > 0 ? '#22C55E' : '#666', 
+                          fontSize: '18px' 
+                        }}>
+                          £{day.total?.toFixed(2) || '0.00'}
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {Object.entries(day.by_source || {}).filter(([_, d]) => d.amount > 0).map(([src, data]) => (
+                            <span 
+                              key={src}
+                              style={{ 
+                                padding: '3px 8px', 
+                                background: src === 'trading_bots' ? 'rgba(255,107,107,0.3)' : 'rgba(255,255,255,0.1)',
+                                borderRadius: '4px',
+                                fontSize: '10px',
+                                color: src === 'trading_bots' ? '#FF6B6B' : '#aaa',
+                                fontWeight: '600'
+                              }}
+                            >
+                              {src === 'trading_bots' && '🤖 '}
+                              {src === 'spot_trading' && '📈 '}
+                              {src === 'swap_instant' && '🔄 '}
+                              {src === 'p2p' && '🤝 '}
+                              {src === 'disputes' && '⚖️ '}
+                              {src.replace(/_/g, ' ')}: £{data.amount?.toFixed(2)}
+                            </span>
+                          ))}
+                          {Object.keys(day.by_source || {}).filter(k => day.by_source[k].amount > 0).length === 0 && (
+                            <span style={{ fontSize: '10px', color: '#666' }}>No revenue</span>
+                          )}
+                        </div>
+                        <div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              day.date && fetchDayDrilldown(day.date);
+                            }}
+                            style={{
+                              padding: '4px 10px',
+                              background: 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2))',
+                              border: '1px solid rgba(0,240,255,0.4)',
+                              borderRadius: '4px',
+                              color: '#00F0FF',
+                              fontSize: '10px',
+                              cursor: 'pointer',
+                              fontWeight: '700'
+                            }}
+                          >
+                            View →
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* WEEKLY TOTALS */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {revenueAnalytics && revenueAnalytics.weekly && revenueAnalytics.weekly.length > 0 && (
+              <>
+                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                  📆 Weekly Totals
+                </h3>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+                  {revenueAnalytics.weekly.slice(0, 6).map((week, idx) => (
+                    <div key={idx} style={{ 
+                      padding: '1rem 1.5rem', 
+                      background: 'linear-gradient(135deg, rgba(168,85,247,0.1), rgba(139,92,246,0.05))', 
+                      border: '1px solid rgba(168,85,247,0.3)',
+                      borderRadius: '10px',
+                      minWidth: '160px'
+                    }}>
+                      <div style={{ fontSize: '11px', color: '#888', fontWeight: '600' }}>Week of {week.week_start}</div>
+                      <div style={{ fontSize: '28px', fontWeight: '900', color: '#A855F7' }}>£{week.total?.toFixed(2)}</div>
+                      <div style={{ fontSize: '10px', color: '#666' }}>{week.count} transactions</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* MONTHLY TOTALS */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {revenueAnalytics && revenueAnalytics.monthly && revenueAnalytics.monthly.length > 0 && (
+              <>
+                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                  📅 Monthly Totals
+                </h3>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+                  {revenueAnalytics.monthly.slice(0, 6).map((month, idx) => (
+                    <div key={idx} style={{ 
+                      padding: '1rem 1.5rem', 
+                      background: 'linear-gradient(135deg, rgba(0,240,255,0.1), rgba(14,165,233,0.05))', 
+                      border: '1px solid rgba(0,240,255,0.3)',
+                      borderRadius: '10px',
+                      minWidth: '160px'
+                    }}>
+                      <div style={{ fontSize: '11px', color: '#888', fontWeight: '600' }}>{month.month}</div>
+                      <div style={{ fontSize: '28px', fontWeight: '900', color: '#00F0FF' }}>£{month.total?.toFixed(2)}</div>
+                      <div style={{ fontSize: '10px', color: '#666' }}>{month.count} transactions</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* DRILL-DOWN MODAL - Transaction Level */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {selectedDayDrilldown && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000
+              }}>
+                <div style={{
+                  background: 'linear-gradient(135deg, #1a1f3a, #0f172a)',
+                  borderRadius: '16px',
+                  padding: '2rem',
+                  maxWidth: '1000px',
+                  width: '95%',
+                  maxHeight: '85vh',
+                  overflow: 'auto',
+                  border: '2px solid rgba(0,240,255,0.4)',
+                  boxShadow: '0 0 40px rgba(0,240,255,0.2)'
+                }}>
+                  {/* Modal Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '22px', fontWeight: '900', color: '#00F0FF', margin: 0 }}>
+                        📋 Revenue Drill-Down
+                      </h3>
+                      <div style={{ fontSize: '16px', color: '#fff', marginTop: '0.5rem', fontWeight: '700' }}>
+                        {selectedDayDrilldown.day_name}
+                      </div>
+                      <div style={{ fontSize: '14px', color: '#888', marginTop: '0.25rem' }}>
+                        Total: <span style={{ color: '#22C55E', fontWeight: '900', fontSize: '18px' }}>£{selectedDayDrilldown.total?.toFixed(4)}</span> 
+                        <span style={{ marginLeft: '1rem' }}>{selectedDayDrilldown.transaction_count} transactions</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSelectedDayDrilldown(null)}
+                      style={{
+                        padding: '0.75rem 1.5rem',
+                        background: 'linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.2))',
+                        border: '2px solid rgba(239,68,68,0.5)',
+                        borderRadius: '8px',
+                        color: '#EF4444',
+                        fontWeight: '900',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                    >
+                      ✕ Close
+                    </button>
+                  </div>
+
+                  {/* Transaction Table */}
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
+                      <thead>
+                        <tr style={{ background: 'rgba(0,240,255,0.1)' }}>
+                          <th style={{ padding: '1rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700' }}>Time</th>
+                          <th style={{ padding: '1rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700' }}>Source</th>
+                          <th style={{ padding: '1rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700' }}>Category</th>
+                          <th style={{ padding: '1rem', textAlign: 'right', color: '#888', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700' }}>Amount</th>
+                          <th style={{ padding: '1rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700' }}>Bot / Strategy</th>
+                          <th style={{ padding: '1rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700' }}>User ID</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(selectedDayDrilldown.transactions || []).map((tx, idx) => (
+                          <tr key={idx} style={{ 
+                            borderBottom: '1px solid rgba(255,255,255,0.05)',
+                            background: tx.category === 'trading_bots' ? 'rgba(255,107,107,0.05)' : 'transparent'
+                          }}>
+                            <td style={{ padding: '0.75rem 1rem', color: '#fff', fontSize: '13px', fontWeight: '600' }}>
+                              {tx.time}
+                            </td>
+                            <td style={{ padding: '0.75rem 1rem' }}>
+                              <span style={{ 
+                                padding: '4px 10px', 
+                                background: tx.category === 'trading_bots' ? 'rgba(255,107,107,0.3)' : 'rgba(255,255,255,0.1)',
+                                borderRadius: '6px',
+                                fontSize: '11px',
+                                color: tx.category === 'trading_bots' ? '#FF6B6B' : '#aaa',
+                                fontWeight: '700'
+                              }}>
+                                {tx.source}
+                              </span>
+                            </td>
+                            <td style={{ padding: '0.75rem 1rem', color: '#888', fontSize: '12px' }}>
+                              {tx.category?.replace(/_/g, ' ')}
+                            </td>
+                            <td style={{ 
+                              padding: '0.75rem 1rem', 
+                              textAlign: 'right', 
+                              fontWeight: '900', 
+                              color: tx.amount > 0 ? '#22C55E' : '#EF4444', 
+                              fontSize: '15px' 
+                            }}>
+                              £{tx.amount?.toFixed(4)}
+                            </td>
+                            <td style={{ padding: '0.75rem 1rem', color: '#FF6B6B', fontSize: '11px' }}>
+                              {tx.bot_id ? (
+                                <span>
+                                  🤖 <strong>{tx.strategy_type || 'Bot'}</strong>
+                                  <br />
+                                  <span style={{ fontSize: '9px', color: '#666' }}>{tx.bot_id?.slice(0, 12)}...</span>
+                                </span>
+                              ) : (
+                                <span style={{ color: '#666' }}>—</span>
+                              )}
+                            </td>
+                            <td style={{ padding: '0.75rem 1rem', color: '#666', fontSize: '10px' }}>
+                              {tx.user_id ? `${tx.user_id.slice(0, 12)}...` : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Summary Footer */}
+                  <div style={{ 
+                    marginTop: '1.5rem', 
+                    padding: '1rem', 
+                    background: 'rgba(34,197,94,0.1)', 
+                    borderRadius: '8px',
+                    border: '1px solid rgba(34,197,94,0.3)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}>
+                    <div style={{ color: '#888', fontSize: '12px' }}>
+                      Showing all {selectedDayDrilldown.transactions?.length || 0} transactions for this day
+                    </div>
+                    <div style={{ color: '#22C55E', fontSize: '18px', fontWeight: '900' }}>
+                      Day Total: £{selectedDayDrilldown.total?.toFixed(4)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* LOADING STATE */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {!revenueAnalytics && (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                <div style={{ fontSize: '16px', marginBottom: '1rem' }}>Loading revenue analytics...</div>
+                <div style={{ fontSize: '12px' }}>Select a time period above to view data</div>
+              </div>
+            )}
+
+            {revenueBreakdown && (
                   </div>
                   <div style={{ background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(14, 165, 233, 0.1))', border: '2px solid rgba(0, 240, 255, 0.5)', borderRadius: '12px', padding: '1.5rem' }}>
                     <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>Net Profit</div>
