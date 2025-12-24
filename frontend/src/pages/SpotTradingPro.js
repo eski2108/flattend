@@ -7,6 +7,12 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTradingPro() {
   console.log('🔥 SpotTradingPro component rendering');
+  
+  // EMERGENCY DEBUG - this should always show if our component renders
+  if (typeof window !== 'undefined') {
+    document.title = 'SPOTPRO-' + Date.now();
+  }
+  
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
