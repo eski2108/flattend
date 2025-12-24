@@ -351,6 +351,14 @@ export default function AdminDashboard() {
     fetchAvailableCoinSymbols();
   }, [navigate]);
   
+  // Load revenue analytics when tab changes to 'revenue'
+  useEffect(() => {
+    if (activeTab === 'revenue') {
+      fetchRevenueAnalytics(revenuePeriod);
+      fetchRevenueBreakdown(revenuePeriod);
+    }
+  }, [activeTab]);
+  
   const fetchAvailableCoinSymbols = async () => {
     try {
       const response = await axios.get(`${API}/api/coins/enabled`);
