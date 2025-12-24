@@ -37280,7 +37280,9 @@ async def get_bot_admin_trades(x_admin_id: str = Header(None), limit: int = 50):
         raise HTTPException(status_code=401, detail="Admin access required")
     
     try:
+        logger.info(f"Admin {x_admin_id} fetching bot trades...")
         trades = await db.spot_trades.find({"source": "bot"}).sort("created_at", -1).limit(limit).to_list(limit)
+        logger.info(f"Found {len(trades)} bot trades")
         
         result = []
         for trade in trades:
@@ -37298,9 +37300,10 @@ async def get_bot_admin_trades(x_admin_id: str = Header(None), limit: int = 50):
                 "fee": trade.get("fee_amount"),  # Use fee_amount
                 "bot_id": trade.get("bot_id"),
                 "strategy_type": trade.get("strategy_type"),
-                "timestamp": trade.get("created_at")  # Use created_at for timestamp
+                "timestamp": str(trade.get("created_at")) if trade.get("created_at") else None
             })
         
+        logger.info(f"Returning {len(result)} bot trades")
         return {"success": True, "trades": result}
     except Exception as e:
         logger.error(f"Error getting bot trades: {e}")
