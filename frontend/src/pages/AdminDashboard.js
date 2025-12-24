@@ -4560,6 +4560,263 @@ export default function AdminDashboard() {
               </>
             )}
 
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* DAILY REVENUE ANALYTICS - Mon-Sun Breakdown */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#fff', margin: 0 }}>
+                  📅 Daily Revenue History
+                </h3>
+                <button
+                  onClick={() => fetchRevenueAnalytics(revenuePeriod)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: 'linear-gradient(135deg, #00F0FF, #A855F7)',
+                    color: '#000',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                  }}
+                >
+                  Load Daily Breakdown
+                </button>
+              </div>
+
+              {revenueAnalytics && (
+                <>
+                  {/* Category Summary Row */}
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
+                    gap: '0.75rem', 
+                    marginBottom: '1.5rem',
+                    padding: '1rem',
+                    background: 'rgba(0,0,0,0.3)',
+                    borderRadius: '12px'
+                  }}>
+                    {Object.entries(revenueAnalytics.by_category || {}).map(([key, cat]) => (
+                      <div key={key} style={{ 
+                        padding: '0.75rem', 
+                        background: `rgba(${key === 'trading_bots' ? '255,107,107' : '255,255,255'}, 0.05)`,
+                        borderRadius: '8px',
+                        borderLeft: `3px solid ${cat.color}`
+                      }}>
+                        <div style={{ fontSize: '10px', color: '#888', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                          {cat.label}
+                        </div>
+                        <div style={{ fontSize: '18px', fontWeight: '900', color: cat.color }}>
+                          £{cat.amount?.toFixed(2)}
+                        </div>
+                        <div style={{ fontSize: '9px', color: '#666' }}>
+                          {cat.count} txns
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Daily Table */}
+                  <div style={{ 
+                    background: 'rgba(0,0,0,0.2)', 
+                    borderRadius: '12px', 
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.1)'
+                  }}>
+                    {/* Table Header */}
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '120px 100px 1fr 80px',
+                      padding: '1rem',
+                      background: 'rgba(0,240,255,0.1)',
+                      borderBottom: '1px solid rgba(255,255,255,0.1)',
+                      fontWeight: '700',
+                      fontSize: '11px',
+                      color: '#888',
+                      textTransform: 'uppercase'
+                    }}>
+                      <div>Date</div>
+                      <div>Total</div>
+                      <div>By Source</div>
+                      <div>Actions</div>
+                    </div>
+
+                    {/* Daily Rows */}
+                    <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                      {(revenueAnalytics.daily || []).map((day, idx) => (
+                        <div 
+                          key={day.date || idx}
+                          style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '120px 100px 1fr 80px',
+                            padding: '0.75rem 1rem',
+                            borderBottom: '1px solid rgba(255,255,255,0.05)',
+                            alignItems: 'center',
+                            background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: '700', color: '#fff', fontSize: '13px' }}>{day.day_name}</div>
+                            <div style={{ fontSize: '10px', color: '#666' }}>{day.date}</div>
+                          </div>
+                          <div style={{ fontWeight: '900', color: day.total > 0 ? '#22C55E' : '#666', fontSize: '16px' }}>
+                            £{day.total?.toFixed(2)}
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            {Object.entries(day.by_source || {}).map(([src, data]) => (
+                              <span 
+                                key={src}
+                                style={{ 
+                                  padding: '2px 6px', 
+                                  background: src === 'trading_bots' ? 'rgba(255,107,107,0.3)' : 'rgba(255,255,255,0.1)',
+                                  borderRadius: '4px',
+                                  fontSize: '10px',
+                                  color: src === 'trading_bots' ? '#FF6B6B' : '#888'
+                                }}
+                              >
+                                {src === 'trading_bots' ? '🤖' : ''} {src.replace('_', ' ')}: £{data.amount?.toFixed(2)}
+                              </span>
+                            ))}
+                          </div>
+                          <div>
+                            <button
+                              onClick={() => fetchDayDrilldown(day.date)}
+                              style={{
+                                padding: '4px 8px',
+                                background: 'rgba(0,240,255,0.2)',
+                                border: '1px solid rgba(0,240,255,0.3)',
+                                borderRadius: '4px',
+                                color: '#00F0FF',
+                                fontSize: '10px',
+                                cursor: 'pointer',
+                                fontWeight: '600'
+                              }}
+                            >
+                              View
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Weekly Summary */}
+                  {revenueAnalytics.weekly && revenueAnalytics.weekly.length > 0 && (
+                    <div style={{ marginTop: '1.5rem' }}>
+                      <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#888', marginBottom: '0.75rem' }}>📊 Weekly Totals</h4>
+                      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        {revenueAnalytics.weekly.slice(0, 4).map((week, idx) => (
+                          <div key={idx} style={{ 
+                            padding: '1rem', 
+                            background: 'rgba(168,85,247,0.1)', 
+                            border: '1px solid rgba(168,85,247,0.3)',
+                            borderRadius: '8px',
+                            minWidth: '150px'
+                          }}>
+                            <div style={{ fontSize: '11px', color: '#888' }}>Week of {week.week_start}</div>
+                            <div style={{ fontSize: '24px', fontWeight: '900', color: '#A855F7' }}>£{week.total?.toFixed(2)}</div>
+                            <div style={{ fontSize: '10px', color: '#666' }}>{week.count} transactions</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Day Drilldown Modal */}
+            {selectedDayDrilldown && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000
+              }}>
+                <div style={{
+                  background: '#1a1f3a',
+                  borderRadius: '16px',
+                  padding: '2rem',
+                  maxWidth: '900px',
+                  width: '90%',
+                  maxHeight: '80vh',
+                  overflow: 'auto',
+                  border: '2px solid rgba(0,240,255,0.3)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '20px', fontWeight: '900', color: '#00F0FF', margin: 0 }}>
+                        📋 {selectedDayDrilldown.day_name}
+                      </h3>
+                      <div style={{ fontSize: '14px', color: '#888', marginTop: '0.25rem' }}>
+                        Total: <span style={{ color: '#22C55E', fontWeight: '700' }}>£{selectedDayDrilldown.total?.toFixed(4)}</span> • {selectedDayDrilldown.transaction_count} transactions
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSelectedDayDrilldown(null)}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: 'rgba(239,68,68,0.2)',
+                        border: '1px solid rgba(239,68,68,0.5)',
+                        borderRadius: '8px',
+                        color: '#EF4444',
+                        fontWeight: '700',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                  {/* Transaction Table */}
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase' }}>Time</th>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase' }}>Source</th>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase' }}>Category</th>
+                        <th style={{ padding: '0.75rem', textAlign: 'right', color: '#888', fontSize: '11px', textTransform: 'uppercase' }}>Amount</th>
+                        <th style={{ padding: '0.75rem', textAlign: 'left', color: '#888', fontSize: '11px', textTransform: 'uppercase' }}>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(selectedDayDrilldown.transactions || []).map((tx, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                          <td style={{ padding: '0.75rem', color: '#fff', fontSize: '12px' }}>{tx.time}</td>
+                          <td style={{ padding: '0.75rem' }}>
+                            <span style={{ 
+                              padding: '2px 8px', 
+                              background: tx.category === 'trading_bots' ? 'rgba(255,107,107,0.3)' : 'rgba(255,255,255,0.1)',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              color: tx.category === 'trading_bots' ? '#FF6B6B' : '#888'
+                            }}>
+                              {tx.source}
+                            </span>
+                          </td>
+                          <td style={{ padding: '0.75rem', color: '#888', fontSize: '12px' }}>{tx.category}</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: '700', color: tx.amount > 0 ? '#22C55E' : '#EF4444', fontSize: '13px' }}>
+                            £{tx.amount?.toFixed(4)}
+                          </td>
+                          <td style={{ padding: '0.75rem', color: '#666', fontSize: '10px' }}>
+                            {tx.bot_id && <span style={{ color: '#FF6B6B' }}>🤖 {tx.strategy_type || 'bot'}</span>}
+                            {tx.user_id && <span style={{ marginLeft: '0.5rem' }}>User: {tx.user_id.slice(0, 8)}...</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
             {revenueSummary && (
               <>
                 {/* Revenue Summary Cards Row */}
