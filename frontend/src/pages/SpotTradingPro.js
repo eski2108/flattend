@@ -307,49 +307,6 @@ export default function SpotTradingPro() {
         </div>
       </div>
 
-      {/* PAIR TABS ROW - EXACT SPEC */}
-      <div style={{
-        display: 'flex',
-        gap: '8px',
-        flexWrap: 'wrap',
-        padding: '4px 0',
-        background: 'linear-gradient(180deg, #0B1020 0%, #0A0F1E 100%)',
-        borderBottom: '1px solid rgba(110,140,255,0.12)',
-        margin: '0 -16px',
-        paddingLeft: '16px',
-        paddingRight: '16px'
-      }}>
-        {['BTCUSD', 'ETHUSD', 'SOLUSD', 'XRPUSD', 'BNBUSD'].map((pair) => (
-          <button
-            key={pair}
-            onClick={() => {
-              setSelectedPair(pair);
-              navigate(`/spot-trading?pair=${pair}`);
-            }}
-            style={{
-              padding: '10px 20px',
-              background: selectedPair === pair 
-                ? 'linear-gradient(180deg, #20E3A2 0%, #14C98A 100%)' 
-                : 'radial-gradient(120% 140% at 0% 0%, rgba(64,115,255,0.18) 0%, rgba(0,0,0,0) 45%), linear-gradient(180deg, #0F1A2E 0%, #0C1222 100%)',
-              border: selectedPair === pair 
-                ? 'none' 
-                : '1px solid rgba(110,140,255,0.18)',
-              borderRadius: '10px',
-              color: selectedPair === pair ? '#06291D' : '#8FA3FF',
-              fontSize: '13px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: selectedPair === pair 
-                ? '0 6px 20px rgba(32,227,162,0.35)' 
-                : '0 0 0 1px rgba(110,140,255,0.06), 0 8px 30px rgba(0,0,0,0.65)'
-            }}
-          >
-            {pair.replace('USD', '/USD')}
-          </button>
-        ))}
-      </div>
-
       {/* MAIN GRID - Chart + Right Column */}
       <div style={{
         display: 'grid',
