@@ -742,6 +742,72 @@ export default function SpotTradingPro() {
           boxShadow: '0 0 12px rgba(15,242,242,0.3)'
         }}></div>
 
+        {/* COIN GRID - 4 COLUMN */}
+        <div style={{ 
+          width: '100%',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          rowGap: '14px',
+          marginTop: '20px',
+          marginBottom: '24px',
+          maxHeight: '300px',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(5,244,244,0.3) rgba(0,0,0,0.2)',
+          boxShadow: '0 0 40px rgba(15,242,242,0.06)',
+          borderRadius: '12px',
+          padding: '4px'
+        }}>
+          {tradingPairs.map((pair, index) => {
+            const rowIndex = Math.floor(index / 4);
+            const rowColors = [
+              { glow: 'rgba(15,242,242,0.5)', border: '#0FF2F2' },
+              { glow: 'rgba(58,141,255,0.5)', border: '#3A8DFF' },
+              { glow: 'rgba(155,75,255,0.5)', border: '#9B4BFF' },
+              { glow: 'rgba(255,63,212,0.5)', border: '#FF3FD4' }
+            ];
+            const rowColor = rowColors[rowIndex % 4];
+            
+            return (
+              <button
+                key={pair.symbol}
+                onClick={() => setSelectedPair(pair.symbol)}
+                onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.97)'}
+                onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                style={{
+                  width: 'calc(25% - 6px)',
+                  height: '74px',
+                  background: 'linear-gradient(180deg, rgba(14,22,44,0.95), rgba(14,22,44,0.75))',
+                  border: selectedPair === pair.symbol 
+                    ? '2px solid #0FF2F2'
+                    : `1.5px solid ${rowColor.border}`,
+                  color: '#0FF2F2',
+                  padding: '0',
+                  borderRadius: '20px',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  textShadow: '0 0 6px #0FF2F2',
+                  transition: 'all 200ms ease',
+                  boxShadow: selectedPair === pair.symbol 
+                    ? '0 0 26px rgba(15,242,242,0.7), inset 0 0 15px rgba(15,242,242,0.15), inset 0 1px 0 rgba(255,255,255,0.07)' 
+                    : `0 0 18px ${rowColor.glow}, 0 4px 12px rgba(0,0,0,0.4), inset 0 0 10px ${rowColor.glow}, inset 0 1px 0 rgba(255,255,255,0.07)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  filter: selectedPair === pair.symbol ? 'brightness(1.2)' : 'brightness(1)'
+                }}
+              >
+                {pair.base || pair.name.split('/')[0]}
+              </button>
+            );
+          })}
+        </div>
+
         {/* TRADINGVIEW CONTAINER */}
         <div style={{
           height: '480px',
