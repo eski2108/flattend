@@ -518,16 +518,16 @@ export default function SpotTradingPro() {
 
           {/* MARKET INFO PANEL */}
           <div style={{
-            background: 'linear-gradient(135deg, #0b1220, #0f1b2d)',
-            border: '1px solid rgba(120, 140, 255, 0.18)',
-            boxShadow: '0 0 16px rgba(120, 140, 255, 0.12)',
+            background: 'linear-gradient(135deg, #0a0f1e, #101a33)',
+            border: '1px solid rgba(120, 140, 255, 0.22)',
+            boxShadow: '0 6px 22px rgba(0, 0, 0, 0.6)',
             borderRadius: '14px',
             padding: '16px'
           }}>
             <div style={{ 
               fontSize: '14px', 
               fontWeight: '600', 
-              color: '#fff', 
+              color: '#f5f7ff', 
               marginBottom: '16px',
               display: 'flex',
               alignItems: 'center',
@@ -538,16 +538,16 @@ export default function SpotTradingPro() {
             
             {/* Pair */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#8b95b7' }}>Pair</span>
-              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>
+              <span style={{ fontSize: '13px', color: '#8f9bbd' }}>Pair</span>
+              <span style={{ fontSize: '13px', color: '#f5f7ff', fontWeight: '500' }}>
                 {selectedPair.replace('USD', '/USDT')}
               </span>
             </div>
             
             {/* Min Order */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#8b95b7' }}>Min Order</span>
-              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>$10.00</span>
+              <span style={{ fontSize: '13px', color: '#8f9bbd' }}>Min Order</span>
+              <span style={{ fontSize: '13px', color: '#f5f7ff', fontWeight: '500' }}>$10.00</span>
             </div>
             
             {/* Order Type */}
