@@ -122,6 +122,16 @@ export default function MobileMarketSelection() {
     localStorage.setItem('favoritePairs', JSON.stringify(newFavorites));
   };
 
+  // Handle column sorting
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('desc');
+    }
+  };
+
   // Filter pairs based on search and active tab
   const filteredPairs = tradingPairs.filter(pair => {
     const matchesSearch = searchQuery === '' || 
@@ -137,22 +147,60 @@ export default function MobileMarketSelection() {
     return true;
   });
 
-  // Sort by different criteria based on active tab
+  // Sort pairs based on selected column
   const sortedPairs = [...filteredPairs].sort((a, b) => {
     if (activeTab === 'gainers') {
-      // Sort by highest % change (top 20 gainers)
       return b.change24h - a.change24h;
     }
-    return b.volume24h - a.volume24h; // Default: sort by volume
+    
+    let aVal = a[sortColumn] || 0;
+    let bVal = b[sortColumn] || 0;
+    
+    if (sortDirection === 'asc') {
+      return aVal - bVal;
+    }
+    return bVal - aVal;
   });
 
   const handlePairSelect = (pair) => {
+    if (isDesktop) {
+      setSelectedCoin(pair);
+    }
     // Desktop goes to /spot-trading, Mobile goes to /trading/:symbol
     if (isDesktop) {
       navigate(`/spot-trading?pair=${pair.symbol}`);
     } else {
       navigate(`/trading/${pair.symbol}`);
     }
+  };
+
+  // Format large numbers
+  const formatNumber = (num) => {
+    if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
+    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
+    if (num >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
+    if (num >= 1e3) return `$${(num / 1e3).toFixed(1)}K`;
+    return `$${num.toFixed(2)}`;
+  };
+
+  // Simple sparkline component
+  const Sparkline = ({ positive }) => {
+    const color = positive ? '#00E599' : '#FF5C5C';
+    const points = positive 
+      ? "0,20 10,18 20,15 30,17 40,10 50,12 60,5"
+      : "0,5 10,8 20,12 30,10 40,15 50,18 60,20";
+    return (
+      <svg width="60" height="24" viewBox="0 0 60 24">
+        <polyline
+          points={points}
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
   };
 
   const tabs = [
