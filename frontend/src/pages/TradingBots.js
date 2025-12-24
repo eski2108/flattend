@@ -492,10 +492,16 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
         grid_count: parseInt(params.grid_count) || 10,
         amount_per_interval: parseFloat(params.amount_per_interval) || 0,
         total_budget: parseFloat(params.total_budget) || 0,
+        order_amount: parseFloat(params.order_amount) || 0,
         stop_loss_price: params.stop_loss_price ? parseFloat(params.stop_loss_price) : null,
         take_profit_price: params.take_profit_price ? parseFloat(params.take_profit_price) : null,
+        stop_loss_percent: params.stop_loss_percent ? parseFloat(params.stop_loss_percent) : null,
+        take_profit_percent: params.take_profit_percent ? parseFloat(params.take_profit_percent) : null,
+        trailing_stop_percent: params.trailing_stop_percent ? parseFloat(params.trailing_stop_percent) : null,
         max_drawdown_percent: params.max_drawdown_percent ? parseFloat(params.max_drawdown_percent) : null,
-        max_daily_loss: params.max_daily_loss ? parseFloat(params.max_daily_loss) : null
+        max_daily_loss: params.max_daily_loss ? parseFloat(params.max_daily_loss) : null,
+        entry_rules: params.entry_rules,
+        exit_rules: params.exit_rules
       };
       const response = await axios.post(`${API}/api/bots/preview`, {
         bot_type: selectedType,
