@@ -32657,10 +32657,6 @@ async def get_revenue_analytics(
             for cat in day["by_source"]:
                 day["by_source"][cat] = dict(day["by_source"][cat])
         
-        # Calculate grand totals
-        grand_total = sum(cat["amount"] for cat in category_totals.values())
-        total_transactions = sum(cat["count"] for cat in category_totals.values())
-        
         # Weekly aggregation
         weekly_data = defaultdict(lambda: {"total": 0, "count": 0, "week_start": None})
         for day in sorted_days:
