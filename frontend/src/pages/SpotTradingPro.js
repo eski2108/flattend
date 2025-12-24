@@ -43,8 +43,8 @@ export default function SpotTradingPro() {
   useEffect(() => {
     const checkMobile = () => {
       const width = window.innerWidth;
-      // console.log('📱 Window width:', width, 'isMobile:', width <= 768);
-      setIsMobile(width <= 768);
+      // Desktop: min-width 1024px, Mobile: max-width 1023px
+      setIsMobile(width < 1024);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
