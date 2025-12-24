@@ -260,19 +260,45 @@ export default function MobileMarketSelection() {
           {isDesktop && (
             <div style={{
               padding: '24px 32px 16px',
-              borderBottom: '1px solid rgba(255,255,255,0.08)'
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start'
             }}>
-              <h1 style={{
-                fontSize: '28px',
-                fontWeight: '700',
-                color: '#FFFFFF',
-                margin: 0
-              }}>Markets</h1>
-              <p style={{
-                fontSize: '14px',
-                color: '#8F9BB3',
-                margin: '8px 0 0'
-              }}>Select a trading pair to view chart and trade</p>
+              <div>
+                <h1 style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: '#FFFFFF',
+                  margin: 0
+                }}>Markets</h1>
+                <p style={{
+                  fontSize: '14px',
+                  color: '#8F9BB3',
+                  margin: '8px 0 0'
+                }}>Select a trading pair to view chart and trade</p>
+              </div>
+              {/* Trading Bots Button */}
+              <button
+                onClick={() => navigate('/trading-bots')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  borderRadius: '10px',
+                  background: 'rgba(0,229,153,0.1)',
+                  border: '1px solid rgba(0,229,153,0.3)',
+                  color: '#00E599',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 150ms ease'
+                }}
+              >
+                <IoRocket size={16} />
+                Trading Bots
+              </button>
             </div>
           )}
 
