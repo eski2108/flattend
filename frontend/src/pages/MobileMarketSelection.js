@@ -573,15 +573,18 @@ export default function MobileMarketSelection() {
                 onMouseLeave={() => setHoveredRow(null)}
                 style={isDesktop ? {
                   display: 'grid',
-                  gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 1fr 1fr 80px 100px',
+                  gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 1fr 1fr 80px 120px',
                   alignItems: 'center',
-                  padding: '12px 16px',
-                  height: '60px',
+                  padding: '16px 16px',
+                  minHeight: '68px',
                   borderBottom: '1px solid rgba(255,255,255,0.05)',
                   cursor: 'pointer',
                   transition: 'all 120ms ease',
-                  background: hoveredRow === pair.symbol ? 'rgba(0,255,200,0.04)' : 'transparent',
+                  background: hoveredRow === pair.symbol 
+                    ? 'linear-gradient(90deg, rgba(0,229,153,0.08) 0%, rgba(0,229,153,0.02) 100%)' 
+                    : 'transparent',
                   borderLeft: hoveredRow === pair.symbol ? '3px solid #00E599' : '3px solid transparent',
+                  boxShadow: hoveredRow === pair.symbol ? '0 0 20px rgba(0,229,153,0.1)' : 'none',
                   position: 'relative'
                 } : {
                   height: '68px',
