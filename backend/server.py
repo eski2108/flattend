@@ -37878,6 +37878,35 @@ async def list_user_bots(x_user_id: str = Header(None)):
     bots = await BotEngine.get_user_bots(x_user_id)
     return {"success": True, "bots": bots}
 
+# ===== STATIC BOT ROUTES - MUST BE BEFORE {bot_id} CATCH-ALL =====
+@api_router.get("/bots/presets")
+async def get_bot_presets_static():
+    """Get list of preset trading strategies"""
+    from bot_engine_v2 import get_preset_strategies
+    presets = get_preset_strategies()
+    return {"success": True, "presets": presets}
+
+@api_router.get("/bots/risk-config")
+async def get_default_risk_config_static():
+    """Get default risk management configuration"""
+    from bot_engine_v2 import get_default_risk_config as get_risk
+    config = get_risk()
+    return {"success": True, "config": config}
+
+@api_router.get("/bots/dca-config")
+async def get_default_dca_config_static():
+    """Get default DCA bot configuration"""
+    from bot_engine_v2 import get_dca_default_config
+    config = get_dca_default_config()
+    return {"success": True, "config": config}
+
+@api_router.get("/bots/grid-config")
+async def get_default_grid_config_static():
+    """Get default Grid bot configuration"""
+    from bot_engine_v2 import get_grid_default_config
+    config = get_grid_default_config()
+    return {"success": True, "config": config}
+
 # ===== ADMIN BOT ROUTES - MUST BE BEFORE {bot_id} CATCH-ALL =====
 @api_router.get("/bots/admin/stats")
 async def get_bot_admin_stats_early(x_admin_id: str = Header(None)):
