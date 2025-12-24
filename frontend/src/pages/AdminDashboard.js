@@ -1386,20 +1386,29 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '2px solid rgba(0, 240, 255, 0.2)', paddingBottom: '0' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap',
+          gap: '0.5rem', 
+          marginBottom: '2rem', 
+          borderBottom: '2px solid rgba(0, 240, 255, 0.2)', 
+          paddingBottom: '0.5rem',
+          alignItems: 'center'
+        }}>
           <button
             onClick={() => setActiveTab('unified')}
             style={{
-              padding: '1rem 1.5rem',
+              padding: '0.75rem 1rem',
               background: activeTab === 'unified' ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2))' : 'none',
               border: 'none',
               borderBottom: activeTab === 'unified' ? '3px solid #00F0FF' : '3px solid transparent',
               color: activeTab === 'unified' ? '#00F0FF' : '#888',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'all 0.3s',
-              borderRadius: '8px 8px 0 0'
+              borderRadius: '8px 8px 0 0',
+              whiteSpace: 'nowrap'
             }}
           >
             🏠 Business Dashboard
