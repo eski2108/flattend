@@ -60,6 +60,30 @@ export default function TradingBots() {
     }
   };
 
+  const fetchBotDetails = async (botId) => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const [detailsRes, eventsRes, tradesRes] = await Promise.all([
+        axios.get(`${API}/api/bots/${botId}`, { headers: { 'x-user-id': userId } }),
+        axios.get(`${API}/api/bots/${botId}/logs`, { headers: { 'x-user-id': userId } }),
+        axios.get(`${API}/api/bots/${botId}/trades`, { headers: { 'x-user-id': userId } })
+      ]);
+      
+      if (detailsRes.data.success) {
+        setSelectedBot(detailsRes.data.bot);
+      }
+      if (eventsRes.data.success) {
+        setBotEvents(eventsRes.data.events || []);
+      }
+      if (tradesRes.data.success) {
+        setBotTrades(tradesRes.data.trades || []);
+      }
+    } catch (error) {
+      console.error('Error fetching bot details:', error);
+      toast.error('Failed to load bot details');
+    }
+  };
+
   const fetchTradingPairs = async () => {
     try {
       const response = await axios.get(`${API}/api/prices/live`);
