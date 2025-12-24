@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://layout-restore-2.preview.emergentagent.com/api
+https://gridbot-app.preview.emergentagent.com/api
 ```
 
 This means:

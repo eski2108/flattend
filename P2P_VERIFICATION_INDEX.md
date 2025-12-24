@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://layout-restore-2.preview.emergentagent.com
-- Backend API: https://layout-restore-2.preview.emergentagent.com/api
-- P2P Marketplace: https://layout-restore-2.preview.emergentagent.com/p2p
+- Frontend: https://gridbot-app.preview.emergentagent.com
+- Backend API: https://gridbot-app.preview.emergentagent.com/api
+- P2P Marketplace: https://gridbot-app.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

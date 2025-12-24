@@ -18,7 +18,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://layout-restore-2.preview.emergentagent.com/api"
+BASE_URL = "https://gridbot-app.preview.emergentagent.com/api"
 
 # Test User as requested
 TEST_USER = {

@@ -487,7 +487,7 @@ const cryptoAmount = netAmount / baseRate;
 - ✅ Frontend hot-reloaded
 
 **Page Accessible:**
-- ✅ https://layout-restore-2.preview.emergentagent.com/p2p-express
+- ✅ https://gridbot-app.preview.emergentagent.com/p2p-express
 
 **API Endpoint:**
 - ✅ POST `/api/p2p/express/create`

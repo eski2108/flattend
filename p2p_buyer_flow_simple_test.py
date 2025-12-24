@@ -3,7 +3,7 @@
 SIMPLIFIED P2P BUYER FLOW TEST - Using Legacy System
 Test Scenario: Complete buyer journey using working legacy P2P endpoints
 
-Backend URL: https://layout-restore-2.preview.emergentagent.com/api
+Backend URL: https://gridbot-app.preview.emergentagent.com/api
 """
 
 import requests
@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import uuid
 
 # Configuration
-BASE_URL = "https://layout-restore-2.preview.emergentagent.com/api"
+BASE_URL = "https://gridbot-app.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class SimplifiedP2PBuyerFlowTester:

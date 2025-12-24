@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://layout-restore-2.preview.emergentagent.com/api"
+BASE_URL = "https://gridbot-app.preview.emergentagent.com/api"
 
 def debug_balance():
     session = requests.Session()

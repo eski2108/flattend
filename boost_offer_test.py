@@ -21,7 +21,7 @@ import sys
 from datetime import datetime, timezone
 
 # Configuration
-BASE_URL = "https://layout-restore-2.preview.emergentagent.com/api"
+BASE_URL = "https://gridbot-app.preview.emergentagent.com/api"
 
 class BoostOfferTester:
     def __init__(self):

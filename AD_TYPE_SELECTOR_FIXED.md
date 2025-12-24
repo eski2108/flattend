@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://layout-restore-2.preview.emergentagent.com
+**Preview URL:** https://gridbot-app.preview.emergentagent.com

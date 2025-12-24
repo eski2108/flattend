@@ -14,7 +14,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://layout-restore-2.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://gridbot-app.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

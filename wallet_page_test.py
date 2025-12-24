@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://layout-restore-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://gridbot-app.preview.emergentagent.com/api"
 
 class WalletPageTester:
     def __init__(self):

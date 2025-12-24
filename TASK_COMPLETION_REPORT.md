@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://layout-restore-2.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://gridbot-app.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://layout-restore-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://gridbot-app.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://layout-restore-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 📧 URLs found in dispute email template:
 
-1. https://layout-restore-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://gridbot-app.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://layout-restore-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://gridbot-app.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://layout-restore-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://gridbot-app.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://layout-restore-2.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://gridbot-app.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

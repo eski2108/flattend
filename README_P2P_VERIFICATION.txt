@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://layout-restore-2.preview.emergentagent.com
-P2P Page:     https://layout-restore-2.preview.emergentagent.com/p2p
-Backend API:  https://layout-restore-2.preview.emergentagent.com/api
+Frontend:     https://gridbot-app.preview.emergentagent.com
+P2P Page:     https://gridbot-app.preview.emergentagent.com/p2p
+Backend API:  https://gridbot-app.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

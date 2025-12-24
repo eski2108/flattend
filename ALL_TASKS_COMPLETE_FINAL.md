@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://layout-restore-2.preview.emergentagent.com
+**URL:** https://gridbot-app.preview.emergentagent.com
 
 **Services Status:**
 ```bash

@@ -20,7 +20,7 @@ Go to: https://console.cloud.google.com
 Add these exact URLs:
 ```
 http://localhost:3000/auth/google/callback
-https://layout-restore-2.preview.emergentagent.com/auth/google/callback
+https://gridbot-app.preview.emergentagent.com/auth/google/callback
 ```
 
 (Add your custom domain if you have one)

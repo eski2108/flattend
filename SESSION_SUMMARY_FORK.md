@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://layout-restore-2.preview.emergentagent.com
+https://gridbot-app.preview.emergentagent.com
 
 ---
 

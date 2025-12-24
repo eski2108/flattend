@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://layout-restore-2.preview.emergentagent.com
+https://gridbot-app.preview.emergentagent.com
 
 ### Test Route
 
-`https://layout-restore-2.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://gridbot-app.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 
