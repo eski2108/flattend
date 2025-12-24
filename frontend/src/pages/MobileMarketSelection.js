@@ -272,92 +272,78 @@ export default function MobileMarketSelection() {
             </div>
           )}
 
-          {/* MARKET SUMMARY STRIP - Desktop Only */}
+          {/* TOP STRIP - Global Stats + Live Tickers - Desktop Only */}
           {isDesktop && !loading && (
             <div style={{
-              margin: '16px 32px',
-              padding: '18px 24px',
-              background: 'linear-gradient(180deg, #0B1220 0%, #0E1626 100%)',
+              margin: '12px 32px',
+              padding: '12px 24px',
+              background: '#0B1220',
               border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '14px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+              borderRadius: '10px',
               display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              gap: '32px'
             }}>
-              {/* Total Market Cap - only show if > 0 */}
-              {marketSummary.totalMarketCap > 0 && (
-                <div>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Market Cap</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF' }}>
-                    {formatNumber(marketSummary.totalMarketCap)}
-                  </div>
-                </div>
-              )}
+              {/* Global Market Cap */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase' }}>Market Cap</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
+                  {formatNumber(marketSummary.totalMarketCap)}
+                </span>
+              </div>
               
-              {/* 24h Volume - only show if > 0 */}
-              {marketSummary.totalVolume24h > 0 && (
-                <div>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>24h Volume</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF' }}>
-                    {formatNumber(marketSummary.totalVolume24h)}
-                  </div>
-                </div>
-              )}
+              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }} />
               
-              {/* BTC Dominance - only show if > 0 */}
-              {marketSummary.btcDominance > 0 && (
-                <div>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>BTC Dominance</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: '#F7931A' }}>
-                    {marketSummary.btcDominance.toFixed(1)}%
-                  </div>
-                </div>
-              )}
+              {/* 24h Volume */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase' }}>24h Vol</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
+                  {formatNumber(marketSummary.totalVolume24h)}
+                </span>
+              </div>
               
-              {/* Top Gainer - only show if exists and positive */}
-              {marketSummary.topGainer && marketSummary.topGainer.change24h > 0 && (
-                <div>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Top Gainer</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }} />
+              
+              {/* BTC Dominance */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '11px', color: '#8B9BB4', textTransform: 'uppercase' }}>BTC Dom</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#F7931A' }}>
+                  {marketSummary.btcDominance.toFixed(1)}%
+                </span>
+              </div>
+              
+              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }} />
+              
+              {/* Live Tickers: BTC, ETH, SOL, BNB */}
+              {['BTC', 'ETH', 'SOL', 'BNB'].map(symbol => {
+                const coin = tradingPairs.find(p => p.base === symbol);
+                if (!coin) return null;
+                return (
+                  <div key={symbol} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <img 
-                      src={`/crypto-logos/${marketSummary.topGainer.base.toLowerCase()}.png`}
-                      alt={marketSummary.topGainer.base}
-                      style={{ width: '24px', height: '24px' }}
+                      src={`/crypto-logos/${symbol.toLowerCase()}.png`}
+                      alt={symbol}
+                      style={{ width: '18px', height: '18px' }}
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
-                    <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
-                      {marketSummary.topGainer.base}
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                      {symbol}
+                    </span>
+                    <span style={{ fontSize: '13px', fontWeight: '500', color: '#FFFFFF' }}>
+                      ${coin.lastPrice >= 1 ? coin.lastPrice.toLocaleString('en-US', { maximumFractionDigits: 0 }) : coin.lastPrice.toFixed(2)}
                     </span>
                     <span style={{ 
-                      fontSize: '16px', 
-                      fontWeight: '700', 
-                      color: '#00E599',
-                      background: 'rgba(0,229,153,0.15)',
-                      padding: '4px 8px',
-                      borderRadius: '6px'
+                      fontSize: '12px', 
+                      fontWeight: '600', 
+                      color: coin.change24h >= 0 ? '#00E599' : '#FF5C5C'
                     }}>
-                      +{marketSummary.topGainer.change24h.toFixed(2)}%
+                      {coin.change24h >= 0 ? '+' : ''}{coin.change24h.toFixed(2)}%
                     </span>
                   </div>
-                </div>
-              )}
-              
-              {/* Top Loser - only show if exists and negative */}
-              {marketSummary.topLoser && marketSummary.topLoser.change24h < 0 && (
-                <div>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Top Loser</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <img 
-                      src={`/crypto-logos/${marketSummary.topLoser.base.toLowerCase()}.png`}
-                      alt={marketSummary.topLoser.base}
-                      style={{ width: '24px', height: '24px' }}
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                    <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>
-                      {marketSummary.topLoser.base}
-                    </span>
-                    <span style={{ 
+                );
+              })}
+            </div>
+          )} 
                       fontSize: '16px', 
                       fontWeight: '700', 
                       color: '#FF5C5C',
