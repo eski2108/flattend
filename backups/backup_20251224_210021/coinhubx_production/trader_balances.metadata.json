@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"trader_id":{"$numberInt":"1"},"currency":{"$numberInt":"1"}},"name":"trader_id_1_currency_1","unique":true,"sparse":true}],"uuid":"3e66aa61e654482d9d45e33b09318440","collectionName":"trader_balances","type":"collection"}

@@ -4452,7 +4452,7 @@ export default function AdminDashboard() {
             {revenueAnalytics && (
               <div style={{ 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(4, 1fr)', 
+                gridTemplateColumns: 'repeat(5, 1fr)', 
                 gap: '1rem', 
                 marginBottom: '2rem',
                 padding: '1.5rem',
@@ -4462,17 +4462,26 @@ export default function AdminDashboard() {
               }}>
                 <div>
                   <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>TOTAL REVENUE</div>
-                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#22C55E' }}>£{revenueAnalytics.totals?.grand_total?.toFixed(2) || '0.00'}</div>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#22C55E' }}>£{revenueAnalytics.totals?.grand_total?.toFixed(2) || '0.00'}</div>
                   <div style={{ fontSize: '10px', color: '#666' }}>{revenueAnalytics.totals?.transaction_count || 0} transactions</div>
                 </div>
                 <div>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>NET PROFIT</div>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#00F0FF' }}>£{revenueAnalytics.totals?.net_profit?.toFixed(2) || revenueAnalytics.totals?.grand_total?.toFixed(2) || '0.00'}</div>
+                  <div style={{ fontSize: '10px', color: '#F59E0B' }}>
+                    {revenueAnalytics.totals?.referrals_out_deducted > 0 
+                      ? `(−£${revenueAnalytics.totals.referrals_out_deducted.toFixed(2)} referral payouts)` 
+                      : 'after referral payouts'}
+                  </div>
+                </div>
+                <div>
                   <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>DAYS WITH REVENUE</div>
-                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#00F0FF' }}>{revenueAnalytics.totals?.days_with_revenue || 0}</div>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#A855F7' }}>{revenueAnalytics.totals?.days_with_revenue || 0}</div>
                   <div style={{ fontSize: '10px', color: '#666' }}>in selected period</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>AVG PER DAY</div>
-                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#A855F7' }}>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#EC4899' }}>
                     £{revenueAnalytics.totals?.days_with_revenue > 0 
                       ? (revenueAnalytics.totals.grand_total / revenueAnalytics.totals.days_with_revenue).toFixed(2) 
                       : '0.00'}
@@ -4480,8 +4489,8 @@ export default function AdminDashboard() {
                   <div style={{ fontSize: '10px', color: '#666' }}>average daily revenue</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>BOT REVENUE</div>
-                  <div style={{ fontSize: '36px', fontWeight: '900', color: '#FF6B6B' }}>
+                  <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: '700' }}>🤖 BOT REVENUE</div>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#FF6B6B' }}>
                     £{revenueAnalytics.by_category?.trading_bots?.amount?.toFixed(2) || '0.00'}
                   </div>
                   <div style={{ fontSize: '10px', color: '#666' }}>
@@ -4490,6 +4499,39 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+            
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* RECONCILIATION CHECK */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {revenueAnalytics && (() => {
+              const categorySum = Object.values(revenueAnalytics.by_category || {}).reduce((sum, cat) => sum + (cat.amount || 0), 0);
+              const dailySum = (revenueAnalytics.daily || []).reduce((sum, d) => sum + (d.total || 0), 0);
+              const grandTotal = revenueAnalytics.totals?.grand_total || 0;
+              const categoryMatch = Math.abs(categorySum - grandTotal) < 0.01;
+              const dailyMatch = Math.abs(dailySum - grandTotal) < 0.01;
+              const isReconciled = categoryMatch && dailyMatch;
+              
+              return (
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '1rem',
+                  padding: '0.75rem 1rem',
+                  background: isReconciled ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+                  borderRadius: '8px',
+                  marginBottom: '1.5rem',
+                  border: `1px solid ${isReconciled ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`
+                }}>
+                  <span style={{ fontSize: '16px' }}>{isReconciled ? '✓' : '⚠'}</span>
+                  <span style={{ fontSize: '12px', fontWeight: '600', color: isReconciled ? '#22C55E' : '#EF4444' }}>
+                    {isReconciled ? 'Reconciled' : 'Reconciliation Warning'}
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#888' }}>
+                    Sum(sources) = £{categorySum.toFixed(2)} | Sum(daily) = £{dailySum.toFixed(2)} | Total = £{grandTotal.toFixed(2)}
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* REVENUE BY SOURCE - Category Cards */}
