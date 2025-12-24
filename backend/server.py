@@ -32426,6 +32426,384 @@ async def get_admin_revenue_breakdown(timeframe: str = "day"):
         traceback.print_exc()
         return {"success": False, "error": str(e)}
 
+@api_router.get("/admin/revenue/analytics")
+async def get_revenue_analytics(
+    period: str = "week",  # today, yesterday, week, month, all, custom
+    start_date: str = None,
+    end_date: str = None
+):
+    """
+    Comprehensive Revenue Analytics API
+    
+    Returns:
+    - Daily breakdown (Mon-Sun rows)
+    - Weekly/Monthly totals
+    - By-source breakdown for each day
+    - Transaction-level drilldown capability
+    """
+    try:
+        from datetime import datetime, timedelta, timezone
+        from collections import defaultdict
+        
+        now = datetime.now(timezone.utc)
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        # Determine date range based on period
+        if period == "today":
+            range_start = today_start
+            range_end = now
+        elif period == "yesterday":
+            range_start = today_start - timedelta(days=1)
+            range_end = today_start
+        elif period == "week":
+            range_start = today_start - timedelta(days=7)
+            range_end = now
+        elif period == "last_week":
+            # Monday to Sunday of last week
+            days_since_monday = now.weekday()
+            this_monday = today_start - timedelta(days=days_since_monday)
+            range_start = this_monday - timedelta(days=7)
+            range_end = this_monday
+        elif period == "month":
+            range_start = today_start - timedelta(days=30)
+            range_end = now
+        elif period == "last_month":
+            first_of_this_month = today_start.replace(day=1)
+            range_end = first_of_this_month
+            range_start = (first_of_this_month - timedelta(days=1)).replace(day=1)
+        elif period == "custom" and start_date and end_date:
+            range_start = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+            range_end = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+        else:  # all
+            range_start = datetime(2020, 1, 1, tzinfo=timezone.utc)
+            range_end = now
+        
+        # Source category mapping
+        def get_category(source):
+            if source == "bot":
+                return "trading_bots"
+            elif source in ["spot_trading_fee", "spot_trading"]:
+                return "spot_trading"
+            elif source in ["swap_fee", "instant_buy_fee", "instant_buy_spread", "instant_sell_fee", "instant_sell_spread"]:
+                return "swap_instant"
+            elif source in ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee"]:
+                return "p2p"
+            elif source in ["deposit_fee", "withdrawal_fee", "network_withdrawal_fee"]:
+                return "deposits_withdrawals"
+            elif source in ["savings_early_withdrawal_penalty", "vault_fee"]:
+                return "savings"
+            elif source == "dispute_fee":
+                return "disputes"
+            elif "referral" in str(source):
+                return "referrals"
+            else:
+                return "other"
+        
+        # Fetch all revenue in range
+        all_revenue = await db.admin_revenue.find({}).to_list(100000)
+        
+        # Filter by date range
+        def parse_timestamp(ts):
+            if not ts:
+                return None
+            if isinstance(ts, datetime):
+                if ts.tzinfo is None:
+                    return ts.replace(tzinfo=timezone.utc)
+                return ts
+            if isinstance(ts, str):
+                try:
+                    dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    return dt
+                except:
+                    return None
+            return None
+        
+        filtered_revenue = []
+        for r in all_revenue:
+            ts = parse_timestamp(r.get("timestamp"))
+            if ts and range_start <= ts <= range_end:
+                r['_parsed_ts'] = ts
+                filtered_revenue.append(r)
+        
+        # Group by day
+        daily_data = defaultdict(lambda: {
+            "date": None,
+            "day_name": None,
+            "total": 0,
+            "count": 0,
+            "by_source": defaultdict(lambda: {"amount": 0, "count": 0}),
+            "transactions": []
+        })
+        
+        # Category totals
+        category_totals = defaultdict(lambda: {"amount": 0, "count": 0})
+        
+        for r in filtered_revenue:
+            ts = r['_parsed_ts']
+            day_key = ts.strftime("%Y-%m-%d")
+            amount = float(r.get("amount", 0))
+            source = r.get("source", "unknown")
+            category = get_category(source)
+            
+            # Skip negative (payouts) for revenue totals
+            if amount > 0:
+                daily_data[day_key]["total"] += amount
+                daily_data[day_key]["count"] += 1
+                daily_data[day_key]["by_source"][category]["amount"] += amount
+                daily_data[day_key]["by_source"][category]["count"] += 1
+                
+                category_totals[category]["amount"] += amount
+                category_totals[category]["count"] += 1
+            
+            daily_data[day_key]["date"] = day_key
+            daily_data[day_key]["day_name"] = ts.strftime("%a %d %b")
+            
+            # Store transaction for drilldown (limit to save memory)
+            if len(daily_data[day_key]["transactions"]) < 100:
+                daily_data[day_key]["transactions"].append({
+                    "revenue_id": r.get("revenue_id"),
+                    "timestamp": ts.isoformat(),
+                    "source": source,
+                    "category": category,
+                    "amount": amount,
+                    "currency": r.get("currency", "GBP"),
+                    "user_id": r.get("user_id"),
+                    "bot_id": r.get("bot_id"),
+                    "strategy_type": r.get("strategy_type"),
+                    "description": r.get("description")
+                })
+        
+        # Sort daily data by date descending (most recent first)
+        sorted_days = sorted(daily_data.values(), key=lambda x: x["date"] or "", reverse=True)
+        
+        # Convert defaultdicts to regular dicts for JSON
+        for day in sorted_days:
+            day["by_source"] = dict(day["by_source"])
+            for cat in day["by_source"]:
+                day["by_source"][cat] = dict(day["by_source"][cat])
+        
+        # Calculate grand totals
+        grand_total = sum(cat["amount"] for cat in category_totals.values())
+        total_transactions = sum(cat["count"] for cat in category_totals.values())
+        
+        # Weekly aggregation
+        weekly_data = defaultdict(lambda: {"total": 0, "count": 0, "week_start": None})
+        for day in sorted_days:
+            if day["date"]:
+                dt = datetime.strptime(day["date"], "%Y-%m-%d")
+                week_start = dt - timedelta(days=dt.weekday())
+                week_key = week_start.strftime("%Y-%m-%d")
+                weekly_data[week_key]["total"] += day["total"]
+                weekly_data[week_key]["count"] += day["count"]
+                weekly_data[week_key]["week_start"] = week_start.strftime("%d %b %Y")
+        
+        sorted_weeks = sorted(weekly_data.items(), key=lambda x: x[0], reverse=True)
+        
+        # Monthly aggregation
+        monthly_data = defaultdict(lambda: {"total": 0, "count": 0, "month_name": None})
+        for day in sorted_days:
+            if day["date"]:
+                month_key = day["date"][:7]  # YYYY-MM
+                dt = datetime.strptime(day["date"], "%Y-%m-%d")
+                monthly_data[month_key]["total"] += day["total"]
+                monthly_data[month_key]["count"] += day["count"]
+                monthly_data[month_key]["month_name"] = dt.strftime("%B %Y")
+        
+        sorted_months = sorted(monthly_data.items(), key=lambda x: x[0], reverse=True)
+        
+        return {
+            "success": True,
+            "period": period,
+            "range": {
+                "start": range_start.isoformat(),
+                "end": range_end.isoformat()
+            },
+            "generated_at": now.isoformat(),
+            
+            # Grand totals
+            "totals": {
+                "grand_total": round(grand_total, 4),
+                "transaction_count": total_transactions,
+                "days_with_revenue": len([d for d in sorted_days if d["total"] > 0])
+            },
+            
+            # By category totals
+            "by_category": {
+                "spot_trading": {
+                    "label": "Spot Trading (Manual)",
+                    "amount": round(category_totals["spot_trading"]["amount"], 4),
+                    "count": category_totals["spot_trading"]["count"],
+                    "color": "#00F0FF"
+                },
+                "trading_bots": {
+                    "label": "🤖 Trading Bots",
+                    "amount": round(category_totals["trading_bots"]["amount"], 4),
+                    "count": category_totals["trading_bots"]["count"],
+                    "color": "#FF6B6B"
+                },
+                "swap_instant": {
+                    "label": "Swap / Instant Buy-Sell",
+                    "amount": round(category_totals["swap_instant"]["amount"], 4),
+                    "count": category_totals["swap_instant"]["count"],
+                    "color": "#A855F7"
+                },
+                "p2p": {
+                    "label": "P2P Marketplace",
+                    "amount": round(category_totals["p2p"]["amount"], 4),
+                    "count": category_totals["p2p"]["count"],
+                    "color": "#EC4899"
+                },
+                "deposits_withdrawals": {
+                    "label": "Deposits & Withdrawals",
+                    "amount": round(category_totals["deposits_withdrawals"]["amount"], 4),
+                    "count": category_totals["deposits_withdrawals"]["count"],
+                    "color": "#F59E0B"
+                },
+                "savings": {
+                    "label": "Savings / Vaults",
+                    "amount": round(category_totals["savings"]["amount"], 4),
+                    "count": category_totals["savings"]["count"],
+                    "color": "#22C55E"
+                },
+                "disputes": {
+                    "label": "Dispute Fees",
+                    "amount": round(category_totals["disputes"]["amount"], 4),
+                    "count": category_totals["disputes"]["count"],
+                    "color": "#EF4444"
+                },
+                "referrals": {
+                    "label": "Referral Program",
+                    "amount": round(category_totals["referrals"]["amount"], 4),
+                    "count": category_totals["referrals"]["count"],
+                    "color": "#0EA5E9"
+                }
+            },
+            
+            # Daily breakdown (for Mon-Sun table)
+            "daily": [
+                {
+                    "date": d["date"],
+                    "day_name": d["day_name"],
+                    "total": round(d["total"], 4),
+                    "count": d["count"],
+                    "by_source": {k: {"amount": round(v["amount"], 4), "count": v["count"]} for k, v in d["by_source"].items()},
+                    "transactions": d["transactions"][:20]  # Limit for initial load
+                }
+                for d in sorted_days[:30]  # Last 30 days
+            ],
+            
+            # Weekly breakdown
+            "weekly": [
+                {
+                    "week_start": w[1]["week_start"],
+                    "total": round(w[1]["total"], 4),
+                    "count": w[1]["count"]
+                }
+                for w in sorted_weeks[:12]  # Last 12 weeks
+            ],
+            
+            # Monthly breakdown
+            "monthly": [
+                {
+                    "month": m[1]["month_name"],
+                    "total": round(m[1]["total"], 4),
+                    "count": m[1]["count"]
+                }
+                for m in sorted_months[:12]  # Last 12 months
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Revenue analytics error: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/admin/revenue/drilldown/{date}")
+async def get_revenue_drilldown(date: str):
+    """Get all transactions for a specific date"""
+    try:
+        from datetime import datetime, timedelta, timezone
+        
+        # Parse date
+        target_date = datetime.strptime(date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        next_date = target_date + timedelta(days=1)
+        
+        # Source category mapping
+        def get_category(source):
+            if source == "bot":
+                return "trading_bots"
+            elif source in ["spot_trading_fee", "spot_trading"]:
+                return "spot_trading"
+            elif source in ["swap_fee", "instant_buy_fee", "instant_buy_spread", "instant_sell_fee", "instant_sell_spread"]:
+                return "swap_instant"
+            elif source in ["p2p_trade_fee", "p2p_maker_fee", "p2p_taker_fee", "p2p_express_fee"]:
+                return "p2p"
+            elif source in ["deposit_fee", "withdrawal_fee", "network_withdrawal_fee"]:
+                return "deposits_withdrawals"
+            elif source in ["savings_early_withdrawal_penalty", "vault_fee"]:
+                return "savings"
+            elif source == "dispute_fee":
+                return "disputes"
+            elif "referral" in str(source):
+                return "referrals"
+            else:
+                return "other"
+        
+        # Fetch all revenue
+        all_revenue = await db.admin_revenue.find({}).to_list(100000)
+        
+        # Filter for this date
+        transactions = []
+        for r in all_revenue:
+            ts = r.get("timestamp")
+            if not ts:
+                continue
+            if isinstance(ts, str):
+                try:
+                    ts = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                except:
+                    continue
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            
+            if target_date <= ts < next_date:
+                transactions.append({
+                    "revenue_id": r.get("revenue_id"),
+                    "timestamp": ts.isoformat(),
+                    "time": ts.strftime("%H:%M:%S"),
+                    "source": r.get("source"),
+                    "category": get_category(r.get("source")),
+                    "amount": float(r.get("amount", 0)),
+                    "currency": r.get("currency", "GBP"),
+                    "user_id": r.get("user_id"),
+                    "bot_id": r.get("bot_id"),
+                    "strategy_type": r.get("strategy_type"),
+                    "related_id": r.get("related_transaction_id"),
+                    "description": r.get("description")
+                })
+        
+        # Sort by timestamp
+        transactions.sort(key=lambda x: x["timestamp"], reverse=True)
+        
+        # Calculate totals
+        total_amount = sum(t["amount"] for t in transactions if t["amount"] > 0)
+        
+        return {
+            "success": True,
+            "date": date,
+            "day_name": target_date.strftime("%A, %d %B %Y"),
+            "total": round(total_amount, 4),
+            "transaction_count": len(transactions),
+            "transactions": transactions
+        }
+        
+    except Exception as e:
+        logger.error(f"Revenue drilldown error: {e}")
+        return {"success": False, "error": str(e)}
+
 @api_router.get("/admin/revenue/summary")
 async def get_admin_revenue_summary():
     """Get comprehensive revenue breakdown - all fees and profits collected"""
