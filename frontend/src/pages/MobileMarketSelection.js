@@ -120,14 +120,6 @@ export default function MobileMarketSelection() {
 
   return (
     <>
-      <style>
-        {`
-          .main-content {
-            padding: 0 !important;
-            margin: 0 !important;
-          }
-        `}
-      </style>
       <div style={{
         maxWidth: isDesktop ? '1400px' : '430px',
         width: '100%',
@@ -135,9 +127,7 @@ export default function MobileMarketSelection() {
         background: '#020617',
         minHeight: '100vh',
         paddingTop: '0',
-        paddingBottom: '60px',
-        paddingLeft: isDesktop ? '20px' : '0',
-        paddingRight: isDesktop ? '20px' : '0'
+        paddingBottom: '60px'
       }}>
         {/* Page Title - Desktop Only */}
         {isDesktop && (
