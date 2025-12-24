@@ -347,61 +347,6 @@ export default function SpotTradingPro() {
       </div>
 
       {/* MAIN GRID - Chart + Right Column (Trade Panel + Market Info) */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px',
-          cursor: 'pointer'
-        }}
-        onClick={() => navigate('/markets')}
-        title="Click to change pair"
-        >
-          <img
-            src={`/crypto-logos/${selectedPair.replace('USD', '').toLowerCase()}.png`}
-            alt={selectedPair}
-            style={{ width: '32px', height: '32px', objectFit: 'contain' }}
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-          <div>
-            <div style={{ fontSize: '20px', fontWeight: '700', color: '#FFF' }}>
-              {selectedPair.replace('USD', ' / USD')}
-            </div>
-            <div style={{ fontSize: '11px', color: '#6B7280' }}>Click to change pair</div>
-          </div>
-        </div>
-        
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <span style={{ fontSize: '24px', fontWeight: '700', color: '#FFF' }}>
-            ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Change</span>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: marketStats.change24h >= 0 ? '#00C853' : '#FF5252' }}>
-              {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
-            </span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '11px', color: '#6B7280' }}>24h High</span>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFF' }}>
-              ${marketStats.high24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Low</span>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFF' }}>
-              ${marketStats.low24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Volume</span>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFF' }}>
-              ${(marketStats.volume24h / 1000000).toFixed(2)}M
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* MAIN GRID - Chart (flex) + Trade Panel (360px fixed) */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 360px',
@@ -421,146 +366,219 @@ export default function SpotTradingPro() {
           <div id="tv-chart-desktop" style={{ width: '100%', height: '100%', minHeight: '480px' }}></div>
         </div>
 
-        {/* TRADE PANEL */}
+        {/* RIGHT COLUMN - Trade Panel + Market Info */}
         <div style={{
-          background: 'rgba(13, 20, 33, 0.9)',
-          borderRadius: '12px',
-          border: '1px solid rgba(255,255,255,0.1)',
-          padding: '16px',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          gap: '16px'
         }}>
-          {/* Order Type Toggle */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            <button
-              onClick={() => setOrderType('market')}
-              style={{
-                flex: 1,
-                padding: '10px',
-                background: orderType === 'market' ? 'rgba(0, 212, 255, 0.2)' : 'transparent',
-                border: orderType === 'market' ? '1px solid #00D4FF' : '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                color: orderType === 'market' ? '#00D4FF' : '#8B9AAB',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              Market
-            </button>
-            <button
-              onClick={() => setOrderType('limit')}
-              style={{
-                flex: 1,
-                padding: '10px',
-                background: orderType === 'limit' ? 'rgba(0, 212, 255, 0.2)' : 'transparent',
-                border: orderType === 'limit' ? '1px solid #00D4FF' : '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                color: orderType === 'limit' ? '#00D4FF' : '#8B9AAB',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              Limit
-            </button>
-          </div>
-
-          {/* Price Display */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Price (USD)</div>
-            <div style={{
-              padding: '12px',
-              background: 'rgba(10, 14, 23, 0.8)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              color: '#FFF',
-              fontSize: '16px',
-              fontWeight: '600'
-            }}>
-              ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {/* TRADE PANEL */}
+          <div style={{
+            background: 'rgba(13, 20, 33, 0.9)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1
+          }}>
+            {/* Order Type Toggle */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+              <button
+                onClick={() => setOrderType('market')}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: orderType === 'market' ? 'rgba(0, 212, 255, 0.2)' : 'transparent',
+                  border: orderType === 'market' ? '1px solid #00D4FF' : '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: orderType === 'market' ? '#00D4FF' : '#8B9AAB',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Market
+              </button>
+              <button
+                onClick={() => setOrderType('limit')}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: orderType === 'limit' ? 'rgba(0, 212, 255, 0.2)' : 'transparent',
+                  border: orderType === 'limit' ? '1px solid #00D4FF' : '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: orderType === 'limit' ? '#00D4FF' : '#8B9AAB',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Limit
+              </button>
             </div>
-          </div>
 
-          {/* Amount Input */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>
-              Amount ({selectedPair.replace('USD', '')})
-            </div>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              style={{
-                width: '100%',
+            {/* Price Display */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Price (USD)</div>
+              <div style={{
                 padding: '12px',
                 background: 'rgba(10, 14, 23, 0.8)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '8px',
                 color: '#FFF',
                 fontSize: '16px',
-                outline: 'none'
-              }}
-            />
-          </div>
+                fontWeight: '600'
+              }}>
+                ${marketStats.lastPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+            </div>
 
-          {/* Total Display */}
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Total (USD)</div>
-            <div style={{
-              padding: '12px',
-              background: 'rgba(10, 14, 23, 0.8)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              color: '#00D4FF',
-              fontSize: '16px',
-              fontWeight: '600'
-            }}>
-              ${(parseFloat(amount || 0) * marketStats.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {/* Amount Input */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>
+                Amount ({selectedPair.replace('USD', '')})
+              </div>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(10, 14, 23, 0.8)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#FFF',
+                  fontSize: '16px',
+                  outline: 'none'
+                }}
+              />
+            </div>
+
+            {/* Total Display */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Total (USD)</div>
+              <div style={{
+                padding: '12px',
+                background: 'rgba(10, 14, 23, 0.8)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px',
+                color: '#00D4FF',
+                fontSize: '16px',
+                fontWeight: '600'
+              }}>
+                ${(parseFloat(amount || 0) * marketStats.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+            </div>
+
+            {/* BUY / SELL Buttons */}
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button
+                onClick={() => handleTrade('buy')}
+                disabled={isLoading}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #00C853 0%, #00E676 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#FFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  opacity: isLoading ? 0.7 : 1,
+                  transition: 'all 0.2s'
+                }}
+              >
+                {isLoading ? 'Processing...' : `BUY ${selectedPair.replace('USD', '')}`}
+              </button>
+              <button
+                onClick={() => handleTrade('sell')}
+                disabled={isLoading}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #FF5252 0%, #FF1744 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#FFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  opacity: isLoading ? 0.7 : 1,
+                  transition: 'all 0.2s'
+                }}
+              >
+                {isLoading ? 'Processing...' : `SELL ${selectedPair.replace('USD', '')}`}
+              </button>
             </div>
           </div>
 
-          {/* BUY / SELL Buttons */}
-          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <button
-              onClick={() => handleTrade('buy')}
-              disabled={isLoading}
-              style={{
-                width: '100%',
-                padding: '14px',
-                background: 'linear-gradient(135deg, #00C853 0%, #00E676 100%)',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#FFF',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.7 : 1,
-                transition: 'all 0.2s'
-              }}
-            >
-              {isLoading ? 'Processing...' : `BUY ${selectedPair.replace('USD', '')}`}
-            </button>
-            <button
-              onClick={() => handleTrade('sell')}
-              disabled={isLoading}
-              style={{
-                width: '100%',
-                padding: '14px',
-                background: 'linear-gradient(135deg, #FF5252 0%, #FF1744 100%)',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#FFF',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.7 : 1,
-                transition: 'all 0.2s'
-              }}
-            >
-              {isLoading ? 'Processing...' : `SELL ${selectedPair.replace('USD', '')}`}
-            </button>
+          {/* MARKET INFO PANEL */}
+          <div style={{
+            background: 'linear-gradient(135deg, #0b1220, #0f1b2d)',
+            border: '1px solid rgba(120, 140, 255, 0.18)',
+            boxShadow: '0 0 16px rgba(120, 140, 255, 0.12)',
+            borderRadius: '14px',
+            padding: '16px'
+          }}>
+            <div style={{ 
+              fontSize: '14px', 
+              fontWeight: '600', 
+              color: '#fff', 
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>📊</span> Market Info
+            </div>
+            
+            {/* Pair */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <span style={{ fontSize: '13px', color: '#8b95b7' }}>Pair</span>
+              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>
+                {selectedPair.replace('USD', '/USDT')}
+              </span>
+            </div>
+            
+            {/* Min Order */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <span style={{ fontSize: '13px', color: '#8b95b7' }}>Min Order</span>
+              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>$10.00</span>
+            </div>
+            
+            {/* Order Type */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <span style={{ fontSize: '13px', color: '#8b95b7' }}>Order Type</span>
+              <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500', textTransform: 'capitalize' }}>
+                {orderType}
+              </span>
+            </div>
+            
+            {/* Status */}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '13px', color: '#8b95b7' }}>Status</span>
+              <span style={{ 
+                fontSize: '13px', 
+                color: '#00f5a0', 
+                fontWeight: '500',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                <span style={{ 
+                  width: '6px', 
+                  height: '6px', 
+                  borderRadius: '50%', 
+                  background: '#00f5a0',
+                  display: 'inline-block'
+                }}></span>
+                Active
+              </span>
+            </div>
           </div>
         </div>
       </div>
