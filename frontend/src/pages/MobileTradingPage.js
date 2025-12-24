@@ -817,27 +817,7 @@ export default function MobileTradingPage() {
           </div>
         </div>
 
-        {/* FOOTER */}
-        <div style={{
-          width: '100%',
-          background: '#0D1421',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          padding: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px'
-        }}>
-          <div style={{ color: '#6B7280', fontSize: '13px' }}>
-            © 2025 CoinHubX. All rights reserved.
-          </div>
-          <div style={{ display: 'flex', gap: '24px' }}>
-            <a href="/terms" style={{ color: '#8B9AAB', fontSize: '13px', textDecoration: 'none' }}>Terms</a>
-            <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '13px', textDecoration: 'none' }}>Privacy</a>
-            <a href="/support" style={{ color: '#8B9AAB', fontSize: '13px', textDecoration: 'none' }}>Support</a>
-          </div>
-        </div>
+        {/* Footer is provided by global Layout - do not add local footer */}
       </div>
     </>
   );
