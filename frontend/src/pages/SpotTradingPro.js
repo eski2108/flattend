@@ -589,6 +589,16 @@ export default function SpotTradingPro() {
             </div>
           </div>
         </div>
+
+        {/* BOT PANEL OVERLAY */}
+        {showBotPanel && (
+          <BotPanelDesktop
+            pair={selectedPair}
+            currentPrice={marketStats.lastPrice}
+            onClose={() => { setShowBotPanel(false); setTradingMode('manual'); }}
+            navigate={navigate}
+          />
+        )}
     );
   }
 
