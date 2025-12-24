@@ -38103,36 +38103,8 @@ async def preview_bot(request: BotPreviewRequest):
     return {"success": True, "preview": preview}
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# NEW BOT ENDPOINTS - Presets, Backtest, Paper Trading, Decision Logs
+# NEW BOT ENDPOINTS - Backtest, Paper Trading, Decision Logs
 # ═══════════════════════════════════════════════════════════════════════════════
-
-@api_router.get("/bots/presets")
-async def get_bot_presets():
-    """Get list of preset trading strategies"""
-    from bot_engine_v2 import get_preset_strategies
-    presets = get_preset_strategies()
-    return {"success": True, "presets": presets}
-
-@api_router.get("/bots/risk-config")
-async def get_default_risk_config():
-    """Get default risk management configuration"""
-    from bot_engine_v2 import get_default_risk_config as get_risk
-    config = get_risk()
-    return {"success": True, "config": config}
-
-@api_router.get("/bots/dca-config")
-async def get_default_dca_config():
-    """Get default DCA bot configuration"""
-    from bot_engine_v2 import get_dca_default_config
-    config = get_dca_default_config()
-    return {"success": True, "config": config}
-
-@api_router.get("/bots/grid-config")
-async def get_default_grid_config():
-    """Get default Grid bot configuration"""
-    from bot_engine_v2 import get_grid_default_config
-    config = get_grid_default_config()
-    return {"success": True, "config": config}
 
 class BacktestRequest(BaseModel):
     bot_type: str
