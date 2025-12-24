@@ -335,6 +335,78 @@ export default function SpotTradingPro() {
             </div>
           </div>
 
+          {/* TRADING MODE BUTTONS - Manual | Bot */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '12px 24px',
+            background: '#0B1220',
+            borderBottom: '1px solid rgba(255,255,255,0.08)'
+          }}>
+            <button
+              onClick={() => { setTradingMode('manual'); setShowBotPanel(false); }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                background: tradingMode === 'manual' ? 'rgba(77,163,255,0.15)' : 'transparent',
+                border: tradingMode === 'manual' ? '1px solid rgba(77,163,255,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                color: tradingMode === 'manual' ? '#4DA3FF' : '#8B9BB4',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 150ms ease'
+              }}
+            >
+              <IoTrendingUp size={14} />
+              Manual
+            </button>
+            <button
+              onClick={() => { setTradingMode('bot'); setShowBotPanel(true); }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                background: tradingMode === 'bot' ? 'rgba(0,229,153,0.15)' : 'transparent',
+                border: tradingMode === 'bot' ? '1px solid rgba(0,229,153,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                color: tradingMode === 'bot' ? '#00E599' : '#8B9BB4',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 150ms ease'
+              }}
+            >
+              <IoRocket size={14} />
+              Bot
+            </button>
+            <button
+              onClick={() => navigate('/transactions')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#8B9BB4',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                marginLeft: 'auto',
+                transition: 'all 150ms ease'
+              }}
+            >
+              <IoTime size={14} />
+              History
+            </button>
+          </div>
+
           {/* MAIN TRADING AREA - FULL WIDTH */}
           <div style={{
             display: 'grid',
