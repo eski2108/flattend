@@ -492,10 +492,24 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
     setCreating(true);
     try {
       const userId = localStorage.getItem('userId');
+      // Convert string params to numbers
+      const cleanParams = {
+        ...params,
+        investment_amount: parseFloat(params.investment_amount) || 0,
+        lower_price: parseFloat(params.lower_price) || 0,
+        upper_price: parseFloat(params.upper_price) || 0,
+        grid_count: parseInt(params.grid_count) || 10,
+        amount_per_interval: parseFloat(params.amount_per_interval) || 0,
+        total_budget: parseFloat(params.total_budget) || 0,
+        stop_loss_price: params.stop_loss_price ? parseFloat(params.stop_loss_price) : null,
+        take_profit_price: params.take_profit_price ? parseFloat(params.take_profit_price) : null,
+        max_drawdown_percent: params.max_drawdown_percent ? parseFloat(params.max_drawdown_percent) : null,
+        max_daily_loss: params.max_daily_loss ? parseFloat(params.max_daily_loss) : null
+      };
       const response = await axios.post(`${API}/api/bots/create`, {
         bot_type: selectedType,
         pair,
-        params
+        params: cleanParams
       }, {
         headers: { 'x-user-id': userId }
       });
