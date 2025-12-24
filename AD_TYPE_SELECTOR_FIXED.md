@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://botengine.preview.emergentagent.com
+**Preview URL:** https://pixelperfect-trade.preview.emergentagent.com

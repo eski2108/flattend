@@ -18,7 +18,7 @@ All wallet backend endpoints are fully functional and tested with real data flow
 
 **Test:**
 ```bash
-curl https://botengine.preview.emergentagent.com/api/wallets/balances/test_user_alice
+curl https://pixelperfect-trade.preview.emergentagent.com/api/wallets/balances/test_user_alice
 ```
 
 **Response:**
@@ -64,7 +64,7 @@ curl https://botengine.preview.emergentagent.com/api/wallets/balances/test_user_
 
 **Test:**
 ```bash
-curl https://botengine.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
+curl https://pixelperfect-trade.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
 ```
 
 **Response:**

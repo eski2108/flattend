@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://botengine.preview.emergentagent.com
+https://pixelperfect-trade.preview.emergentagent.com
 
 ---
 

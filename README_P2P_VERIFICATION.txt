@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://botengine.preview.emergentagent.com
-P2P Page:     https://botengine.preview.emergentagent.com/p2p
-Backend API:  https://botengine.preview.emergentagent.com/api
+Frontend:     https://pixelperfect-trade.preview.emergentagent.com
+P2P Page:     https://pixelperfect-trade.preview.emergentagent.com/p2p
+Backend API:  https://pixelperfect-trade.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

@@ -21,7 +21,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://botengine.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://pixelperfect-trade.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class CoinHubXFocusedTest:

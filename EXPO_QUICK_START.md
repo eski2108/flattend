@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://botengine.preview.emergentagent.com/api
+https://pixelperfect-trade.preview.emergentagent.com/api
 ```
 
 This means:

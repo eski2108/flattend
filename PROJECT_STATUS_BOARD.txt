@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://botengine.preview.emergentagent.com  │
-│ Backend API:    https://botengine.preview.emergentagent.com/api│
+│ Frontend URL:   https://pixelperfect-trade.preview.emergentagent.com  │
+│ Backend API:    https://pixelperfect-trade.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘

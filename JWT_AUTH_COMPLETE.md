@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://botengine.preview.emergentagent.com
+**Live URL:** https://pixelperfect-trade.preview.emergentagent.com
 
 ---
 

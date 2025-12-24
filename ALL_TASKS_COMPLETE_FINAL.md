@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://botengine.preview.emergentagent.com
+**URL:** https://pixelperfect-trade.preview.emergentagent.com
 
 **Services Status:**
 ```bash
