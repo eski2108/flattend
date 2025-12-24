@@ -376,11 +376,12 @@ export default function SpotTradingPro() {
           flexDirection: 'column',
           gap: '16px'
         }}>
-          {/* TRADE PANEL */}
+          {/* TRADE PANEL - Neon style */}
           <div style={{
-            background: 'rgba(13, 20, 33, 0.9)',
+            background: 'linear-gradient(135deg, #0c1220 0%, #0a1628 100%)',
             borderRadius: '12px',
-            border: '1px solid rgba(255,255,255,0.1)',
+            border: '1px solid rgba(0, 255, 213, 0.2)',
+            boxShadow: '0 0 20px rgba(0, 255, 213, 0.08)',
             padding: '16px',
             display: 'flex',
             flexDirection: 'column',
@@ -393,10 +394,10 @@ export default function SpotTradingPro() {
                 style={{
                   flex: 1,
                   padding: '10px',
-                  background: orderType === 'market' ? 'rgba(0, 212, 255, 0.2)' : 'transparent',
-                  border: orderType === 'market' ? '1px solid #00D4FF' : '1px solid rgba(255,255,255,0.1)',
+                  background: orderType === 'market' ? 'rgba(0, 255, 213, 0.15)' : 'transparent',
+                  border: orderType === 'market' ? '1px solid rgba(0, 255, 213, 0.5)' : '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '8px',
-                  color: orderType === 'market' ? '#00D4FF' : '#8B9AAB',
+                  color: orderType === 'market' ? '#00ffd5' : '#7dd3d8',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s'
@@ -409,10 +410,10 @@ export default function SpotTradingPro() {
                 style={{
                   flex: 1,
                   padding: '10px',
-                  background: orderType === 'limit' ? 'rgba(0, 212, 255, 0.2)' : 'transparent',
-                  border: orderType === 'limit' ? '1px solid #00D4FF' : '1px solid rgba(255,255,255,0.1)',
+                  background: orderType === 'limit' ? 'rgba(0, 255, 213, 0.15)' : 'transparent',
+                  border: orderType === 'limit' ? '1px solid rgba(0, 255, 213, 0.5)' : '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '8px',
-                  color: orderType === 'limit' ? '#00D4FF' : '#8B9AAB',
+                  color: orderType === 'limit' ? '#00ffd5' : '#7dd3d8',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s'
@@ -424,11 +425,11 @@ export default function SpotTradingPro() {
 
             {/* Price Display */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Price (USD)</div>
+              <div style={{ fontSize: '12px', color: '#7dd3d8', marginBottom: '8px' }}>Price (USD)</div>
               <div style={{
                 padding: '12px',
-                background: 'rgba(10, 14, 23, 0.8)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'rgba(0, 0, 0, 0.3)',
+                border: '1px solid rgba(0, 255, 213, 0.15)',
                 borderRadius: '8px',
                 color: '#FFF',
                 fontSize: '16px',
@@ -440,7 +441,7 @@ export default function SpotTradingPro() {
 
             {/* Amount Input */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>
+              <div style={{ fontSize: '12px', color: '#7dd3d8', marginBottom: '8px' }}>
                 Amount ({selectedPair.replace('USD', '')})
               </div>
               <input
