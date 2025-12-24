@@ -570,7 +570,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0,0,0,0.85)',
+      background: 'rgba(0,0,0,0.9)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -578,18 +578,20 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
       padding: '20px'
     }}>
       <div style={{
-        background: '#0B1220',
-        borderRadius: '20px',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: 'linear-gradient(180deg, #0B1220 0%, #0A0F1A 100%)',
+        borderRadius: '24px',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.5), 0 0 100px rgba(0,240,255,0.05)',
         width: '100%',
-        maxWidth: '560px',
+        maxWidth: '720px',
         maxHeight: '90vh',
         overflow: 'auto'
       }}>
         {/* Modal Header with Step Indicator */}
         <div style={{
-          padding: '20px',
-          borderBottom: '1px solid rgba(255,255,255,0.06)'
+          padding: '28px',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%)'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h2 style={{ margin: 0, fontSize: '18px', color: '#FFFFFF' }}>
