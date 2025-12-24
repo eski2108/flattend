@@ -220,6 +220,8 @@ function App() {
               <Route path="/trading/:symbol" element={<MobileTradingPage />} />
               {/* Main trading route - redirect to markets on mobile */}
               <Route path="/trading" element={<MobileMarketSelection />} />
+              {/* Trading Bots - ADDITIVE FEATURE */}
+              <Route path="/trading-bots" element={<TradingBots />} />
               {/* Desktop Legacy Routes */}
               <Route path="/spot-trading" element={<SpotTradingPro />} />
               <Route path="/spot-trading-pro" element={<SpotTradingPro />} />
