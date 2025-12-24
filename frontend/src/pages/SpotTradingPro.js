@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import Layout from '@/components/Layout';
+// Layout removed - already wrapped by MainLayout in App.js
 import CHXButton from '@/components/CHXButton';
-import { IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
+import { IoTrendingUp, IoTrendingDown, IoChevronDown } from 'react-icons/io5';
+import DOMPurify from 'dompurify';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function SpotTradingPro() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedPair, setSelectedPair] = useState('BTCUSD');
   const [orderType, setOrderType] = useState('buy');
   const [amount, setAmount] = useState('');
@@ -26,10 +28,24 @@ export default function SpotTradingPro() {
   const [tradingFee, setTradingFee] = useState(0.1);
   const [isLoading, setIsLoading] = useState(false);
   const [tradingPairs, setTradingPairs] = useState([]);
+  // Default to desktop (false) - useEffect will correct if needed
   const [isMobile, setIsMobile] = useState(false);
+  const [showPairDropdown, setShowPairDropdown] = useState(false);
+
+  // Read pair from URL query parameter
+  useEffect(() => {
+    const pairFromUrl = searchParams.get('pair');
+    if (pairFromUrl) {
+      setSelectedPair(pairFromUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 430);
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      // console.log('📱 Window width:', width, 'isMobile:', width <= 768);
+      setIsMobile(width <= 768);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -143,13 +159,16 @@ export default function SpotTradingPro() {
     if (!container) return;
     container.innerHTML = '';
 
+    // SECURITY: Sanitize symbol to prevent injection (only allow alphanumeric)
+    const sanitizedPair = selectedPair.replace(/[^A-Za-z0-9]/g, '');
+
     const widgetHTML = `
       <div class="tradingview-widget-container" style="height:100%;width:100%;background:transparent">
         <div class="tradingview-widget-container__widget" style="height:100%;width:100%;background:transparent"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
         {
           "autosize": true,
-          "symbol": "${selectedPair}",
+          "symbol": "${sanitizedPair}",
           "interval": "15",
           "timezone": "Etc/UTC",
           "theme": "dark",
@@ -170,7 +189,8 @@ export default function SpotTradingPro() {
       </div>
     `;
 
-    container.innerHTML = widgetHTML;
+    // SECURITY: Sanitize widget HTML (though it's not user data)
+    container.innerHTML = DOMPurify.sanitize(widgetHTML, { ADD_TAGS: ['script'], ADD_ATTR: ['async'] });
     const scripts = container.getElementsByTagName('script');
     for (let i = 0; i < scripts.length; i++) {
       if (scripts[i].src) {
@@ -231,7 +251,7 @@ export default function SpotTradingPro() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API}/api/trading/spot/order`, {
+      const response = await axios.post(`${API}/api/trading/place-order`, {
         pair: selectedPair,
         type: orderType,
         amount: parseFloat(amount),
@@ -250,299 +270,271 @@ export default function SpotTradingPro() {
     }
   };
 
-  // DESKTOP VERSION (UNCHANGED)
+  // DESKTOP VERSION - FULL PAGE TRADING LAYOUT LIKE BINANCE
   if (!isMobile) {
     return (
-      <Layout>
-        <div style={{
-          minWidth: '1200px',
-          width: '100%',
-          background: '#020618',
-          padding: '0',
-          margin: '0',
-          fontFamily: 'Inter, sans-serif'
-        }}>
+      <div style={{
+        width: '100%',
+        height: 'calc(100vh - 60px)',
+        background: '#0A0E17',
+        padding: '0',
+        margin: '0',
+        fontFamily: 'Inter, sans-serif',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
           
-          {/* COMPACT STATS BAR */}
+          {/* TOP BAR - PAIR SELECTOR + STATS */}
           <div style={{
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '10px 12px',
-            background: 'linear-gradient(135deg, rgba(10,22,40,0.6) 0%, rgba(13,27,46,0.6) 100%)',
-            backdropFilter: 'blur(10px)',
-            borderBottom: '1px solid rgba(0,240,255,0.2)'
+            padding: '8px 16px',
+            background: '#0D1421',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            gap: '24px',
+            flexShrink: 0
           }}>
-            <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            {/* PAIR SELECTOR */}
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingRight: '16px' }}>
+              {tradingPairs.slice(0, 8).map(pair => (
+                <button
+                  key={pair.symbol}
+                  onClick={() => setSelectedPair(pair.symbol)}
+                  style={{
+                    background: selectedPair === pair.symbol ? '#1E3A5F' : 'transparent',
+                    border: selectedPair === pair.symbol ? '1px solid #00D4FF' : '1px solid transparent',
+                    color: selectedPair === pair.symbol ? '#00D4FF' : '#8B9AAB',
+                    padding: '6px 14px',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {pair.name}
+                </button>
+              ))}
+            </div>
+            
+            {/* STATS */}
+            <div style={{ display: 'flex', gap: '32px', alignItems: 'center', marginLeft: 'auto' }}>
               <div>
-                <span style={{ fontSize: '10px', color: 'rgba(0,240,255,0.85)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>PRICE:</span>
-                <span style={{ fontSize: '18px', fontWeight: '800', color: '#00F0FF', textShadow: '0 2px 10px rgba(0,240,255,0.4)' }}>${marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
+                  ${marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
-              <div>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>24H:</span>
-                <span style={{ fontSize: '16px', fontWeight: '800', color: marketStats.change24h >= 0 ? '#00FF7F' : '#FF3B47', textShadow: `0 2px 10px rgba(${marketStats.change24h >= 0 ? '0,255,127' : '255,59,71'},0.5)` }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Change</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: marketStats.change24h >= 0 ? '#00C853' : '#FF5252' }}>
                   {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
                 </span>
               </div>
-              <div>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>HIGH:</span>
-                <span style={{ fontSize: '14px', fontWeight: '700', color: '#7F8CFF', textShadow: '0 2px 8px rgba(127,140,255,0.4)' }}>${marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h High</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>${marketStats.high24h.toLocaleString()}</span>
               </div>
-              <div>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', marginRight: '8px', fontWeight: '700', textTransform: 'uppercase' }}>LOW:</span>
-                <span style={{ fontSize: '14px', fontWeight: '700', color: '#FFC107', textShadow: '0 2px 8px rgba(255,193,7,0.4)' }}>${marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Low</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>${marketStats.low24h.toLocaleString()}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', color: '#6B7280' }}>24h Volume</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
+                  {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h/1e9).toFixed(2)}B` : `$${(marketStats.volume24h/1e6).toFixed(2)}M`}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* MAIN TRADING AREA */}
+          {/* MAIN TRADING AREA - FULL WIDTH */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 350px',
-            gap: '12px',
-            padding: '0 12px 12px 12px',
-            minHeight: '600px'
+            gridTemplateColumns: '1fr 320px',
+            flex: 1,
+            minHeight: 0
           }}>
-            {/* LEFT: CHART */}
+            {/* LEFT: FULL HEIGHT CHART */}
             <div style={{
-              background: 'linear-gradient(135deg, #0A1628 0%, #0D1B2E 100%)',
-              border: '2px solid rgba(0,240,255,0.2)',
-              borderRadius: '12px',
-              padding: '14px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.08)'
+              background: '#0A0E17',
+              borderRight: '1px solid rgba(255,255,255,0.1)',
+              display: 'flex',
+              flexDirection: 'column'
             }}>
-              {/* PAIR SELECTOR - HORIZONTAL SCROLL */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                marginBottom: '12px', 
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                paddingBottom: '8px',
-                scrollbarWidth: 'thin',
-                scrollbarColor: 'rgba(0,240,255,0.3) rgba(0,0,0,0.2)',
-                WebkitOverflowScrolling: 'touch'
-              }}>
-                {tradingPairs.map(pair => (
-                  <button
-                    key={pair.symbol}
-                    onClick={() => setSelectedPair(pair.symbol)}
-                    style={{
-                      background: selectedPair === pair.symbol 
-                        ? 'linear-gradient(135deg, rgba(0,240,255,0.2), rgba(0,240,255,0.3))' 
-                        : 'rgba(255,255,255,0.06)',
-                      backdropFilter: 'blur(10px)',
-                      border: selectedPair === pair.symbol 
-                        ? '2px solid rgba(0,240,255,0.6)' 
-                        : '2px solid rgba(255,255,255,0.15)',
-                      color: selectedPair === pair.symbol ? '#00F0FF' : '#FFFFFF',
-                      padding: '10px 18px',
-                      borderRadius: '20px',
-                      fontSize: '13px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s',
-                      textShadow: selectedPair === pair.symbol 
-                        ? '0 0 12px rgba(0,240,255,0.6)' 
-                        : 'none',
-                      boxShadow: selectedPair === pair.symbol 
-                        ? '0 6px 20px rgba(0,240,255,0.3), 0 0 40px rgba(0,240,255,0.15)' 
-                        : '0 2px 8px rgba(0,0,0,0.3)',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                      minWidth: 'fit-content',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
-                    }}
-                  >
-                    {pair.name}
-                  </button>
-                ))}
-              </div>
-
-              {/* TRADINGVIEW CHART */}
-              <div id="tradingview-chart" style={{ width: '100%', height: '550px', background: '#0A1628', borderRadius: '10px', overflow: 'hidden' }}></div>
+              {/* TRADINGVIEW CHART - FILLS AVAILABLE SPACE */}
+              <div id="tradingview-chart" style={{ 
+                width: '100%', 
+                flex: 1,
+                minHeight: '500px',
+                background: '#0A0E17'
+              }}></div>
             </div>
 
-            {/* RIGHT: MINI CHART + MARKET INFO */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* MINI CHART */}
-              <div style={{
-                background: 'linear-gradient(135deg, #0A1628 0%, #0D1B2E 100%)',
-                border: '2px solid rgba(0,240,255,0.2)',
-                borderRadius: '12px',
-                padding: '14px',
-                height: '200px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.08)'
-              }}>
-                <div id="tradingview-mini" style={{ width: '100%', height: '100%' }}></div>
+            {/* RIGHT: ORDER PANEL */}
+            <div style={{ 
+              background: '#0D1421',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '16px'
+            }}>
+              {/* ORDER TYPE TABS */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: orderType === 'market' ? '#1E3A5F' : 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '4px',
+                  color: orderType === 'market' ? '#00D4FF' : '#8B9AAB',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }} onClick={() => setOrderType('market')}>Market</button>
+                <button style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: orderType === 'limit' ? '#1E3A5F' : 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '4px',
+                  color: orderType === 'limit' ? '#00D4FF' : '#8B9AAB',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }} onClick={() => setOrderType('limit')}>Limit</button>
               </div>
 
-              {/* MARKET INFO PANEL */}
-              <div style={{
-                background: 'linear-gradient(135deg, #0A1628 0%, #0D1B2E 100%)',
-                border: '2px solid rgba(0,240,255,0.2)',
-                borderRadius: '12px',
-                padding: '16px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,240,255,0.08)',
-                flex: 1
-              }}>
-                <h3 style={{ color: '#00F0FF', fontSize: '13px', fontWeight: '700', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '1px', textShadow: '0 0 10px rgba(0,240,255,0.3)' }}>Market Info</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>24h Volume</div>
-                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF', textShadow: '0 2px 6px rgba(255,255,255,0.15)' }}>
-                      {marketStats.volume24h >= 1000000000 
-                        ? `$${(marketStats.volume24h / 1000000000).toFixed(2)}B` 
-                        : marketStats.volume24h >= 1000000 
-                        ? `$${(marketStats.volume24h / 1000000).toFixed(2)}M`
-                        : marketStats.volume24h > 0 ? `$${marketStats.volume24h.toLocaleString()}` : '—'
-                      }
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Market Cap</div>
-                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#00E8FF', textShadow: '0 2px 8px rgba(0,232,255,0.3)' }}>
-                      {marketStats.marketCap >= 1000000000 
-                        ? `$${(marketStats.marketCap / 1000000000).toFixed(2)}B` 
-                        : marketStats.marketCap >= 1000000 
-                        ? `$${(marketStats.marketCap / 1000000).toFixed(2)}M`
-                        : marketStats.marketCap > 0 ? `$${marketStats.marketCap.toLocaleString()}` : '—'
-                      }
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Circulating Supply</div>
-                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#00E8FF', textShadow: '0 2px 8px rgba(0,232,255,0.3)' }}>
-                      {marketStats.circulatingSupply >= 1000000 
-                        ? `${(marketStats.circulatingSupply / 1000000).toFixed(2)}M` 
-                        : marketStats.circulatingSupply > 0 ? marketStats.circulatingSupply.toLocaleString() : '—'
-                      }
-                    </div>
-                  </div>
+              {/* BUY SECTION */}
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Amount ({selectedPair.split('/')[0]})</div>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#1A2332',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    color: '#FFFFFF',
+                    fontSize: '14px',
+                    marginBottom: '12px'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  {['25%', '50%', '75%', '100%'].map(pct => (
+                    <button key={pct} style={{
+                      flex: 1,
+                      padding: '6px',
+                      background: '#1A2332',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '4px',
+                      color: '#8B9AAB',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}>{pct}</button>
+                  ))}
+                </div>
+                <button style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #00C853, #00E676)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  marginBottom: '8px'
+                }}>BUY {selectedPair.split('/')[0]}</button>
+              </div>
+
+              {/* SELL SECTION */}
+              <div>
+                <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '8px' }}>Amount ({selectedPair.split('/')[0]})</div>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#1A2332',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    color: '#FFFFFF',
+                    fontSize: '14px',
+                    marginBottom: '12px'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  {['25%', '50%', '75%', '100%'].map(pct => (
+                    <button key={pct} style={{
+                      flex: 1,
+                      padding: '6px',
+                      background: '#1A2332',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '4px',
+                      color: '#8B9AAB',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}>{pct}</button>
+                  ))}
+                </div>
+                <button style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(135deg, #FF5252, #FF1744)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}>SELL {selectedPair.split('/')[0]}</button>
+              </div>
+
+              {/* MARKET INFO */}
+              <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '12px' }}>Market Info</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#8B9AAB', fontSize: '12px' }}>Market Cap</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '12px' }}>
+                    {marketStats.marketCap >= 1e9 ? `$${(marketStats.marketCap/1e9).toFixed(2)}B` : `$${(marketStats.marketCap/1e6).toFixed(2)}M`}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8B9AAB', fontSize: '12px' }}>Circulating Supply</span>
+                  <span style={{ color: '#FFFFFF', fontSize: '12px' }}>
+                    {marketStats.circulatingSupply >= 1e6 ? `${(marketStats.circulatingSupply/1e6).toFixed(2)}M` : marketStats.circulatingSupply.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* BOTTOM: BUY/SELL PANEL */}
+          {/* FOOTER */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(10,22,40,0.95) 0%, rgba(13,27,46,0.95) 100%)',
-            backdropFilter: 'blur(15px)',
-            border: '2px solid rgba(0,240,255,0.3)',
-            borderRadius: '16px',
-            padding: '20px',
-            margin: '0 12px 12px 12px',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.8), 0 0 80px rgba(0,240,255,0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
+            background: '#0D1421',
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            padding: '12px 24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexShrink: 0
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-              <div>
-                <h3 style={{ 
-                  color: '#00FF7F', 
-                  fontSize: '16px', 
-                  fontWeight: '800', 
-                  marginBottom: '14px', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '1.5px', 
-                  textShadow: '0 3px 15px rgba(0,255,127,0.6), 0 0 30px rgba(0,255,127,0.4)' 
-                }}>BUY</h3>
-                <input
-                  type="number"
-                  placeholder="Amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  style={{
-                    width: '100%',
-                    background: 'rgba(0,0,0,0.4)',
-                    border: '2px solid rgba(0,255,127,0.3)',
-                    borderRadius: '12px',
-                    padding: '14px',
-                    color: '#FFFFFF',
-                    fontSize: '15px',
-                    marginBottom: '14px',
-                    fontWeight: '600',
-                    outline: 'none',
-                    boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)'
-                  }}
-                />
-                <CHXButton
-                  onClick={() => { setOrderType('buy'); handleTrade(); }}
-                  loading={isLoading && orderType === 'buy'}
-                  style={{ 
-                    width: '100%', 
-                    background: 'linear-gradient(135deg, #00FF7F 0%, #00CC66 100%)', 
-                    color: '#000', 
-                    fontWeight: '800', 
-                    padding: '16px', 
-                    fontSize: '16px', 
-                    borderRadius: '12px',
-                    boxShadow: '0 8px 30px rgba(0,255,127,0.5), 0 0 50px rgba(0,255,127,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}
-                >
-                  BUY {tradingPairs.find(p => p.symbol === selectedPair)?.base || 'CRYPTO'}
-                </CHXButton>
-              </div>
-
-              <div>
-                <h3 style={{ 
-                  color: '#FF3B47', 
-                  fontSize: '16px', 
-                  fontWeight: '800', 
-                  marginBottom: '14px', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '1.5px', 
-                  textShadow: '0 3px 15px rgba(255,59,71,0.6), 0 0 30px rgba(255,59,71,0.4)' 
-                }}>SELL</h3>
-                <input
-                  type="number"
-                  placeholder="Amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  style={{
-                    width: '100%',
-                    background: 'rgba(0,0,0,0.4)',
-                    border: '2px solid rgba(255,59,71,0.3)',
-                    borderRadius: '12px',
-                    padding: '14px',
-                    color: '#FFFFFF',
-                    fontSize: '15px',
-                    marginBottom: '14px',
-                    fontWeight: '600',
-                    outline: 'none',
-                    boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)'
-                  }}
-                />
-                <CHXButton
-                  onClick={() => { setOrderType('sell'); handleTrade(); }}
-                  loading={isLoading && orderType === 'sell'}
-                  style={{ 
-                    width: '100%', 
-                    background: 'linear-gradient(135deg, #FF3B47 0%, #CC2233 100%)', 
-                    color: '#FFF', 
-                    fontWeight: '800', 
-                    padding: '16px', 
-                    fontSize: '16px', 
-                    borderRadius: '12px',
-                    boxShadow: '0 8px 30px rgba(255,59,71,0.5), 0 0 50px rgba(255,59,71,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}
-                >
-                  SELL {tradingPairs.find(p => p.symbol === selectedPair)?.base || 'CRYPTO'}
-                </CHXButton>
-              </div>
+            <div style={{ color: '#6B7280', fontSize: '12px' }}>
+              © 2025 CoinHubX. All rights reserved.
+            </div>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <a href="/terms" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
+              <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Privacy</a>
+              <a href="/support" style={{ color: '#8B9AAB', fontSize: '12px', textDecoration: 'none' }}>Support</a>
             </div>
           </div>
         </div>
-      </Layout>
     );
   }
 
   // MOBILE VERSION
   return (
-    <Layout>
+    <div>
       <style>
         {`
           .main-content {
@@ -563,14 +555,14 @@ export default function SpotTradingPro() {
         `}
       </style>
       <div style={{
-        maxWidth: '430px',
+        maxWidth: '100%',
         width: '100%',
         margin: '0 auto',
         marginTop: '0',
         background: '#060C1A',
         minHeight: '100vh',
         fontFamily: 'Inter, sans-serif',
-        padding: '12px 12px 40px 12px'
+        padding: '12px 16px 40px 16px'
       }}>
         {/* 1. FLOATING STATS CARD */}
         <div style={{
@@ -781,118 +773,26 @@ export default function SpotTradingPro() {
           }}></div>
         </div>
 
-        {/* 4. MARKET INFO CARD */}
+        {/* Amount input removed - buttons moved to top */}
+
+        {/* MOBILE FOOTER */}
         <div style={{
+          background: '#0D1421',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
           padding: '16px',
-          borderRadius: '20px',
-          background: 'rgba(6,12,26,0.60)',
-          boxShadow: '0 0 18px rgba(0,255,255,0.2)',
-          marginTop: '12px',
-          display: 'grid',
-          gridTemplateColumns: '45% 55%',
-          columnGap: '12px',
-          rowGap: '12px',
-          marginBottom: '12px'
+          marginTop: '20px',
+          textAlign: 'center'
         }}>
-          {/* LEFT COLUMN */}
-          {/* 24h High */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>24H High</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
-              ${marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-            </div>
+          <div style={{ color: '#6B7280', fontSize: '11px', marginBottom: '8px' }}>
+            © 2025 CoinHubX. All rights reserved.
           </div>
-
-          {/* RIGHT COLUMN */}
-          {/* Market Cap */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>Market Cap</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
-              {marketStats.marketCap >= 1e9 ? `$${(marketStats.marketCap / 1e9).toFixed(2)}B` : 
-               marketStats.marketCap >= 1e6 ? `$${(marketStats.marketCap / 1e6).toFixed(2)}M` : 
-               `$${marketStats.marketCap.toLocaleString()}`}
-            </div>
-          </div>
-
-          {/* 24h Low */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>24H Low</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
-              ${marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-            </div>
-          </div>
-
-          {/* Circulating Supply */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>Circulating Supply</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
-              {marketStats.circulatingSupply >= 1e6 ? `${(marketStats.circulatingSupply / 1e6).toFixed(2)}M` : 
-               marketStats.circulatingSupply.toLocaleString()}
-            </div>
-          </div>
-
-          {/* 24H Volume */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>24H Volume</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
-              {marketStats.volume24h >= 1e9 ? `$${(marketStats.volume24h / 1e9).toFixed(2)}B` : 
-               marketStats.volume24h >= 1e6 ? `$${(marketStats.volume24h / 1e6).toFixed(2)}M` : 
-               `$${(marketStats.volume24h / 1000).toFixed(1)}K`}
-            </div>
-          </div>
-
-          {/* ATH */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>ATH</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>—</div>
-          </div>
-
-          {/* Sentiment */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>Sentiment</div>
-            <div style={{ 
-              fontSize: '15px', 
-              fontWeight: '700', 
-              color: marketStats.change24h >= 0 ? '#00FF88' : '#FF4D4D'
-            }}>
-              {marketStats.change24h >= 0 ? 'Bullish' : 'Bearish'}
-            </div>
-          </div>
-
-          {/* ATL */}
-          <div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '2px' }}>ATL</div>
-            <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>—</div>
-          </div>
-
-          {/* 24H Range Bar */}
-          <div style={{ gridColumn: '1 / -1', marginTop: '4px' }}>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.50)', marginBottom: '6px' }}>24H Range</div>
-            <div style={{ 
-              position: 'relative', 
-              height: '8px', 
-              borderRadius: '4px',
-              background: 'linear-gradient(90deg, #FF4D4D, #FFD700, #00FF88)',
-              overflow: 'visible'
-            }}>
-              <div style={{
-                position: 'absolute',
-                left: `${((marketStats.lastPrice - marketStats.low24h) / (marketStats.high24h - marketStats.low24h)) * 100}%`,
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '12px',
-                height: '12px',
-                background: '#FFFFFF',
-                borderRadius: '50%',
-                border: '2px solid #060C1A',
-                boxShadow: '0 0 8px rgba(255,255,255,0.5)'
-              }}></div>
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+            <a href="/terms" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Terms</a>
+            <a href="/privacy" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Privacy</a>
+            <a href="/support" style={{ color: '#8B9AAB', fontSize: '11px', textDecoration: 'none' }}>Support</a>
           </div>
         </div>
-
-        {/* Amount input removed - buttons moved to top */}
       </div>
-    </Layout>
+    </div>
   );
 }
