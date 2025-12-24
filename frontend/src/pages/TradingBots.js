@@ -379,7 +379,11 @@ export default function TradingBots() {
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(340px, 1fr))',
           gap: '16px'
         }}>
-          {bots.map(bot => (
+          {bots.filter(b => 
+            (filterType === 'all' || b.type === filterType) &&
+            (filterStatus === 'all' || b.status === filterStatus) &&
+            (filterPair === 'all' || b.pair === filterPair)
+          ).map(bot => (
             <div key={bot.bot_id} style={{
               background: '#0B1220',
               borderRadius: '16px',
