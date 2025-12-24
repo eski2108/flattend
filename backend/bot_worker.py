@@ -368,6 +368,7 @@ class BotWorker:
     async def _evaluate_rules(rules: Dict, indicator_values: Dict) -> bool:
         """Evaluate entry/exit rules against indicator values"""
         if not rules or not rules.get('conditions'):
+            logger.info(f"No rules or conditions to evaluate")
             return False
         
         operator = rules.get('operator', 'AND')
@@ -383,20 +384,29 @@ class BotWorker:
             key = f"{ind}_{tf}"
             current = indicator_values.get(key)
             
+            logger.info(f"Evaluating: {key} = {current} {op} {target}")
+            
             if current is None:
+                logger.warning(f"Indicator value is None for {key}. Available keys: {list(indicator_values.keys())}")
                 results.append(False)
                 continue
             
             if op == '<':
-                results.append(current < target)
+                result = current < target
             elif op == '>':
-                results.append(current > target)
+                result = current > target
             elif op == '<=':
-                results.append(current <= target)
+                result = current <= target
             elif op == '>=':
-                results.append(current >= target)
+                result = current >= target
             else:
-                results.append(False)
+                result = False
+            
+            logger.info(f"Condition result for {key}: {result}")
+            results.append(result)
+        
+        final_result = all(results) if operator == 'AND' else any(results)
+        logger.info(f"Final evaluation ({operator}): {final_result} from {results}")
         
         if operator == 'AND':
             return all(results) if results else False
