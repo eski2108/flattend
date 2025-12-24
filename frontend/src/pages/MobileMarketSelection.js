@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { generateTradingPairs, getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
-import { IoSearchOutline, IoStarOutline, IoStar, IoTrendingUp, IoSwapHorizontal, IoChevronUp, IoChevronDown } from 'react-icons/io5';
+import { IoSearchOutline, IoStarOutline, IoStar, IoTrendingUp, IoSwapHorizontal, IoChevronUp, IoChevronDown, IoRocket } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
