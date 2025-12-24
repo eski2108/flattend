@@ -764,80 +764,23 @@ export default function MobileTradingPage() {
             </div>
           )}
 
-          {/* BUY and SELL Buttons - Premium style matching info boxes */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-            <button
+          {/* BUY and SELL Buttons - PREMIUM NEON STYLE */}
+          <TradingButtonsContainer isMobile={true}>
+            <BuyButton
               onClick={() => handleTrade('buy')}
               disabled={isLoading}
-              style={{
-                height: '48px',
-                borderRadius: '12px',
-                background: isLoading 
-                  ? 'rgba(34,230,161,0.5)'
-                  : 'linear-gradient(180deg, rgba(34,230,161,0.15) 0%, rgba(34,230,161,0.35) 100%)',
-                color: '#22E6A1',
-                fontWeight: '700',
-                fontSize: '15px',
-                border: '1px solid rgba(34,230,161,0.4)',
-                boxShadow: isLoading 
-                  ? 'none'
-                  : '0 0 20px rgba(34,230,161,0.25), inset 0 0 20px rgba(34,230,161,0.1)',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                letterSpacing: '0.5px',
-                transition: 'all 200ms ease',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <span style={{
-                position: 'absolute',
-                bottom: 0,
-                left: '15%',
-                right: '15%',
-                height: '3px',
-                background: '#22E6A1',
-                boxShadow: '0 0 15px #22E6A1, 0 0 30px #22E6A1',
-                filter: 'blur(2px)'
-              }}></span>
-              {isLoading ? 'Processing...' : `Buy ${selectedCoin}`}
-            </button>
-
-            <button
+              loading={isLoading}
+              label={`Buy ${selectedCoin}`}
+              isMobile={true}
+            />
+            <SellButton
               onClick={() => handleTrade('sell')}
               disabled={isLoading}
-              style={{
-                height: '48px',
-                borderRadius: '12px',
-                background: isLoading 
-                  ? 'rgba(255,106,108,0.5)'
-                  : 'linear-gradient(180deg, rgba(255,106,108,0.15) 0%, rgba(255,106,108,0.35) 100%)',
-                color: '#FF6A6C',
-                fontWeight: '700',
-                fontSize: '15px',
-                border: '1px solid rgba(255,106,108,0.4)',
-                boxShadow: isLoading 
-                  ? 'none'
-                  : '0 0 20px rgba(255,106,108,0.25), inset 0 0 20px rgba(255,106,108,0.1)',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                letterSpacing: '0.5px',
-                transition: 'all 200ms ease',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <span style={{
-                position: 'absolute',
-                bottom: 0,
-                left: '15%',
-                right: '15%',
-                height: '3px',
-                background: '#FF6A6C',
-                boxShadow: '0 0 15px #FF6A6C, 0 0 30px #FF6A6C',
-                filter: 'blur(2px)'
-              }}></span>
-              {isLoading ? 'Processing...' : `Sell ${selectedCoin}`}
-            </button>
-          </div>
+              loading={isLoading}
+              label={`Sell ${selectedCoin}`}
+              isMobile={true}
+            />
+          </TradingButtonsContainer>
         </div>
 
         {/* Footer is provided by global Layout - do not add local footer */}
