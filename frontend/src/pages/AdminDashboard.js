@@ -4321,7 +4321,8 @@ export default function AdminDashboard() {
               flexWrap: 'wrap',
               padding: '1rem',
               background: 'rgba(0,0,0,0.2)',
-              borderRadius: '12px'
+              borderRadius: '12px',
+              alignItems: 'center'
             }}>
               {[
                 { key: 'today', label: 'Today' },
@@ -4336,15 +4337,16 @@ export default function AdminDashboard() {
                   key={period.key}
                   onClick={() => {
                     setRevenuePeriod(period.key);
+                    setShowCustomDatePicker(false);
                     fetchRevenueSummary(period.key);
                     fetchRevenueBreakdown(period.key);
                     fetchRevenueAnalytics(period.key);
                   }}
                   style={{
                     padding: '0.5rem 1rem',
-                    background: revenuePeriod === period.key ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(255, 255, 255, 0.1)',
-                    color: revenuePeriod === period.key ? '#000' : '#fff',
-                    border: revenuePeriod === period.key ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                    background: revenuePeriod === period.key && !showCustomDatePicker ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(255, 255, 255, 0.1)',
+                    color: revenuePeriod === period.key && !showCustomDatePicker ? '#000' : '#fff',
+                    border: revenuePeriod === period.key && !showCustomDatePicker ? 'none' : '1px solid rgba(255,255,255,0.2)',
                     borderRadius: '8px',
                     fontWeight: '700',
                     cursor: 'pointer',
@@ -4355,6 +4357,93 @@ export default function AdminDashboard() {
                   {period.label}
                 </button>
               ))}
+              
+              {/* Custom Date Range Button */}
+              <button
+                onClick={() => setShowCustomDatePicker(!showCustomDatePicker)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: showCustomDatePicker ? 'linear-gradient(135deg, #F59E0B, #EF4444)' : 'rgba(255, 255, 255, 0.1)',
+                  color: showCustomDatePicker ? '#000' : '#fff',
+                  border: showCustomDatePicker ? 'none' : '1px solid rgba(245,158,11,0.5)',
+                  borderRadius: '8px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                📅 Custom Range
+              </button>
+              
+              {/* Custom Date Picker Inputs */}
+              {showCustomDatePicker && (
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '0.5rem', 
+                  alignItems: 'center',
+                  marginLeft: '1rem',
+                  padding: '0.5rem',
+                  background: 'rgba(245,158,11,0.1)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(245,158,11,0.3)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '11px', color: '#F59E0B', fontWeight: '600' }}>From:</span>
+                    <input
+                      type="date"
+                      value={customStartDate}
+                      onChange={(e) => setCustomStartDate(e.target.value)}
+                      style={{
+                        padding: '0.4rem 0.5rem',
+                        background: 'rgba(0,0,0,0.3)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '6px',
+                        color: '#fff',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '11px', color: '#F59E0B', fontWeight: '600' }}>To:</span>
+                    <input
+                      type="date"
+                      value={customEndDate}
+                      onChange={(e) => setCustomEndDate(e.target.value)}
+                      style={{
+                        padding: '0.4rem 0.5rem',
+                        background: 'rgba(0,0,0,0.3)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '6px',
+                        color: '#fff',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (customStartDate && customEndDate) {
+                        setRevenuePeriod('custom');
+                        fetchRevenueAnalytics('custom', customStartDate, customEndDate);
+                      } else {
+                        alert('Please select both start and end dates');
+                      }
+                    }}
+                    style={{
+                      padding: '0.4rem 0.75rem',
+                      background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#000',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      fontSize: '11px'
+                    }}
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
