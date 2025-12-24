@@ -21,6 +21,7 @@ export default function MobileMarketSelection() {
   const [sortColumn, setSortColumn] = useState('volume24h');
   const [sortDirection, setSortDirection] = useState('desc');
   const [quoteFilter, setQuoteFilter] = useState('USD');
+  const [lastUpdateTime, setLastUpdateTime] = useState(null);
   const [marketSummary, setMarketSummary] = useState({
     totalMarketCap: 0,
     totalVolume24h: 0,
