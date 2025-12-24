@@ -530,9 +530,13 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchRevenueAnalytics = async (period = 'week') => {
+  const fetchRevenueAnalytics = async (period = 'week', startDate = null, endDate = null) => {
     try {
-      const response = await axios.get(`${API}/api/admin/revenue/analytics?period=${period}`);
+      let url = `${API}/api/admin/revenue/analytics?period=${period}`;
+      if (period === 'custom' && startDate && endDate) {
+        url += `&start_date=${startDate}T00:00:00Z&end_date=${endDate}T23:59:59Z`;
+      }
+      const response = await axios.get(url);
       if (response.data.success) {
         setRevenueAnalytics(response.data);
       }
