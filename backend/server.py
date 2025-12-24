@@ -36926,6 +36926,175 @@ api_router.include_router(integrity_router, tags=["Integrity"])
 logger.info("✅ Integrity router registered at /api/integrity/*")
 
 # =====================================================================
+# 🤖 TRADING BOT ENDPOINTS (ADDITIVE ONLY - NO CORE CHANGES)
+# 🔴🟥 LOCKED: EXISTING TRADING MATCHING/ROUTING/PRICING/LIQUIDITY
+# MUST NOT BE MODIFIED. BOT FEATURE IS ADDITIVE ONLY. 🟥🔴
+# =====================================================================
+from bot_engine import BotEngine, BotAdmin
+
+class CreateBotRequest(BaseModel):
+    bot_type: str  # 'grid' or 'dca'
+    pair: str
+    params: dict
+
+class BotActionRequest(BaseModel):
+    bot_id: str
+
+class StopBotRequest(BaseModel):
+    bot_id: str
+    cancel_orders: bool = True
+
+class BotPreviewRequest(BaseModel):
+    bot_type: str
+    pair: str
+    params: dict
+
+@api_router.post("/bots/create")
+async def create_bot(request: CreateBotRequest, x_user_id: str = Header(None)):
+    """Create a new trading bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    result = await BotEngine.create_bot(
+        user_id=x_user_id,
+        bot_type=request.bot_type,
+        pair=request.pair,
+        params=request.params
+    )
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    return result
+
+@api_router.post("/bots/start")
+async def start_bot(request: BotActionRequest, x_user_id: str = Header(None)):
+    """Start a paused bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    result = await BotEngine.start_bot(request.bot_id, x_user_id)
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    return result
+
+@api_router.post("/bots/pause")
+async def pause_bot(request: BotActionRequest, x_user_id: str = Header(None)):
+    """Pause a running bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    result = await BotEngine.pause_bot(request.bot_id, x_user_id)
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    return result
+
+@api_router.post("/bots/stop")
+async def stop_bot(request: StopBotRequest, x_user_id: str = Header(None)):
+    """Stop a bot and optionally cancel orders"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    result = await BotEngine.stop_bot(request.bot_id, x_user_id, request.cancel_orders)
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    return result
+
+@api_router.delete("/bots/{bot_id}")
+async def delete_bot(bot_id: str, x_user_id: str = Header(None)):
+    """Delete a bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    result = await BotEngine.delete_bot(bot_id, x_user_id)
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    return result
+
+@api_router.get("/bots/list")
+async def list_user_bots(x_user_id: str = Header(None)):
+    """Get all bots for the current user"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    bots = await BotEngine.get_user_bots(x_user_id)
+    return {"success": True, "bots": bots}
+
+@api_router.get("/bots/{bot_id}")
+async def get_bot_details(bot_id: str, x_user_id: str = Header(None)):
+    """Get detailed info for a specific bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    bot = await BotEngine.get_bot(bot_id, x_user_id)
+    if not bot:
+        raise HTTPException(status_code=404, detail="Bot not found")
+    
+    return {"success": True, "bot": bot}
+
+@api_router.get("/bots/{bot_id}/logs")
+async def get_bot_logs(bot_id: str, limit: int = 50, x_user_id: str = Header(None)):
+    """Get action logs for a bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    logs = await BotEngine.get_bot_logs(bot_id, x_user_id, limit)
+    return {"success": True, "logs": logs}
+
+@api_router.post("/bots/preview")
+async def preview_bot(request: BotPreviewRequest):
+    """Get a preview of what the bot will do"""
+    preview = await BotEngine.get_bot_preview(
+        request.bot_type,
+        request.pair,
+        request.params
+    )
+    
+    if preview.get("error"):
+        raise HTTPException(status_code=400, detail=preview.get("error"))
+    
+    return {"success": True, "preview": preview}
+
+# Admin endpoints
+@api_router.post("/admin/bots/toggle-engine")
+async def admin_toggle_bot_engine(enabled: bool, x_admin_id: str = Header(None)):
+    """Admin: Enable/disable the bot engine globally"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    result = await BotAdmin.toggle_engine(enabled)
+    return result
+
+@api_router.get("/admin/bots/running")
+async def admin_get_running_bots(x_admin_id: str = Header(None)):
+    """Admin: Get all currently running bots"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    bots = await BotAdmin.get_all_running_bots()
+    return {"success": True, "bots": bots}
+
+@api_router.post("/admin/bots/emergency-stop")
+async def admin_emergency_stop(x_admin_id: str = Header(None)):
+    """Admin: Emergency stop all running bots"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    result = await BotAdmin.force_stop_all()
+    return result
+
+logger.info("✅ Trading Bot endpoints registered at /api/bots/*")
+# =====================================================================
+
+# =====================================================================
 # FINAL ROUTER REGISTRATION - MUST BE AT END OF FILE
 # This ensures ALL endpoints defined above are registered
 # =====================================================================
