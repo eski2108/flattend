@@ -116,8 +116,8 @@ export default function SpotTradingPro() {
         theme: 'dark',
         style: '1',
         locale: 'en',
-        backgroundColor: '#0B1426',
-        gridColor: 'rgba(110, 140, 255, 0.1)',
+        backgroundColor: '#0B0F1A',
+        gridColor: 'rgba(110, 140, 255, 0.08)',
         hide_top_toolbar: false,
         hide_legend: false,
         save_image: false
