@@ -485,7 +485,7 @@ export default function SpotTradingPro() {
               </div>
             </div>
 
-            {/* BUY / SELL Buttons - FINAL DESIGN (VERSION LOCKED) */}
+            {/* BUY / SELL Buttons - MATCHING INFO BOXES STYLE */}
             <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={() => handleTrade('buy')}
@@ -493,38 +493,30 @@ export default function SpotTradingPro() {
                 style={{
                   width: '100%',
                   height: '50px',
-                  background: 'linear-gradient(90deg, #22E6A1 0%, #17B978 100%)',
-                  border: 'none',
-                  borderRadius: '11px',
-                  color: '#0B1F17',
+                  background: 'linear-gradient(180deg, rgba(34,230,161,0.03) 0%, rgba(34,230,161,0.15) 100%)',
+                  border: '1px solid rgba(34,230,161,0.25)',
+                  borderRadius: '12px',
+                  color: '#22E6A1',
                   fontSize: '15px',
-                  fontWeight: '600',
+                  fontWeight: '700',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   opacity: isLoading ? 0.7 : 1,
                   transition: 'all 0.2s',
-                  boxShadow: 'inset 0 0 6px rgba(34,230,161,0.35), 0 0 10px rgba(34,230,161,0.35)'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isLoading) {
-                    e.target.style.filter = 'brightness(1.05)';
-                    e.target.style.boxShadow = 'inset 0 0 6px rgba(34,230,161,0.35), 0 0 14px rgba(34,230,161,0.55)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.filter = 'brightness(1)';
-                  e.target.style.boxShadow = 'inset 0 0 6px rgba(34,230,161,0.35), 0 0 10px rgba(34,230,161,0.35)';
-                }}
-                onMouseDown={(e) => {
-                  if (!isLoading) {
-                    e.target.style.transform = 'translateY(1px)';
-                    e.target.style.boxShadow = 'inset 0 0 6px rgba(34,230,161,0.35), 0 0 8px rgba(34,230,161,0.3)';
-                  }
-                }}
-                onMouseUp={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = 'inset 0 0 6px rgba(34,230,161,0.35), 0 0 14px rgba(34,230,161,0.55)';
+                  boxShadow: '0 0 20px rgba(34,230,161,0.15), inset 0 0 20px rgba(34,230,161,0.05)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
               >
+                <span style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '10%',
+                  right: '10%',
+                  height: '3px',
+                  background: '#22E6A1',
+                  boxShadow: '0 0 15px #22E6A1, 0 0 30px #22E6A1',
+                  filter: 'blur(2px)'
+                }}></span>
                 {isLoading ? 'Processing...' : `Buy ${selectedPair.replace('USD', '')}`}
               </button>
               <button
@@ -533,38 +525,30 @@ export default function SpotTradingPro() {
                 style={{
                   width: '100%',
                   height: '50px',
-                  background: 'linear-gradient(90deg, #FF6A6C 0%, #E33B3D 100%)',
-                  border: 'none',
-                  borderRadius: '11px',
-                  color: '#2A0B0B',
+                  background: 'linear-gradient(180deg, rgba(255,50,80,0.03) 0%, rgba(255,50,80,0.15) 100%)',
+                  border: '1px solid rgba(255,50,80,0.25)',
+                  borderRadius: '12px',
+                  color: '#ff3250',
                   fontSize: '15px',
-                  fontWeight: '600',
+                  fontWeight: '700',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   opacity: isLoading ? 0.7 : 1,
                   transition: 'all 0.2s',
-                  boxShadow: 'inset 0 0 6px rgba(255,106,108,0.35), 0 0 10px rgba(255,106,108,0.35)'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isLoading) {
-                    e.target.style.filter = 'brightness(1.05)';
-                    e.target.style.boxShadow = 'inset 0 0 6px rgba(255,106,108,0.35), 0 0 14px rgba(255,106,108,0.55)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.filter = 'brightness(1)';
-                  e.target.style.boxShadow = 'inset 0 0 6px rgba(255,106,108,0.35), 0 0 10px rgba(255,106,108,0.35)';
-                }}
-                onMouseDown={(e) => {
-                  if (!isLoading) {
-                    e.target.style.transform = 'translateY(1px)';
-                    e.target.style.boxShadow = 'inset 0 0 6px rgba(255,106,108,0.35), 0 0 8px rgba(255,106,108,0.3)';
-                  }
-                }}
-                onMouseUp={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = 'inset 0 0 6px rgba(255,106,108,0.35), 0 0 14px rgba(255,106,108,0.55)';
+                  boxShadow: '0 0 20px rgba(255,50,80,0.15), inset 0 0 20px rgba(255,50,80,0.05)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
               >
+                <span style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '10%',
+                  right: '10%',
+                  height: '3px',
+                  background: '#ff3250',
+                  boxShadow: '0 0 15px #ff3250, 0 0 30px #ff3250',
+                  filter: 'blur(2px)'
+                }}></span>
                 {isLoading ? 'Processing...' : `Sell ${selectedPair.replace('USD', '')}`}
               </button>
             </div>
