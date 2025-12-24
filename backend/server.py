@@ -37169,6 +37169,161 @@ async def admin_emergency_stop(x_admin_id: str = Header(None)):
     result = await BotAdmin.emergency_stop_all()
     return result
 
+@api_router.get("/bots/admin/stats")
+async def get_bot_admin_stats(x_admin_id: str = Header(None)):
+    """Admin: Get bot statistics for dashboard"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        now = datetime.now(timezone.utc)
+        day_ago = now - timedelta(days=1)
+        
+        # Get counts
+        total_bots = await db.bot_configs.count_documents({})
+        active_bots = await db.bot_configs.count_documents({"status": "running"})
+        paused_bots = await db.bot_configs.count_documents({"status": "paused"})
+        
+        # Unique users with bots
+        bot_users = len(await db.bot_configs.distinct("user_id"))
+        
+        # Bot trades in last 24h (from existing trades table filtered by source=bot)
+        trades_24h = await db.spot_trades.count_documents({
+            "source": "bot",
+            "timestamp": {"$gte": day_ago}
+        })
+        
+        # Bot volume 24h
+        volume_pipeline = [
+            {"$match": {"source": "bot", "timestamp": {"$gte": day_ago}}},
+            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        ]
+        volume_result = await db.spot_trades.aggregate(volume_pipeline).to_list(1)
+        volume_24h = volume_result[0]['total'] if volume_result else 0
+        
+        # Bot fees 24h (from existing fee_transactions filtered by source=bot)
+        fees_pipeline = [
+            {"$match": {"source": "bot", "timestamp": {"$gte": day_ago}}},
+            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        ]
+        fees_result = await db.fee_transactions.aggregate(fees_pipeline).to_list(1)
+        fees_24h = fees_result[0]['total'] if fees_result else 0
+        
+        # Strategy breakdown
+        strategy_pipeline = [
+            {"$group": {"_id": "$type", "count": {"$sum": 1}}}
+        ]
+        strategy_result = await db.bot_configs.aggregate(strategy_pipeline).to_list(10)
+        strategy_breakdown = {r['_id']: r['count'] for r in strategy_result if r['_id']}
+        
+        return {
+            "success": True,
+            "stats": {
+                "total_bots": total_bots,
+                "active_bots": active_bots,
+                "paused_bots": paused_bots,
+                "bot_users": bot_users,
+                "trades_24h": trades_24h,
+                "volume_24h": volume_24h,
+                "fees_24h": fees_24h,
+                "strategy_breakdown": strategy_breakdown
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting bot admin stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/bots/admin/bots")
+async def get_bot_admin_list(x_admin_id: str = Header(None)):
+    """Admin: Get list of all bots with details"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        bots = await db.bot_configs.find({}).sort("created_at", -1).limit(100).to_list(100)
+        
+        result = []
+        for bot in bots:
+            # Get trade count and fees for this bot
+            trade_count = await db.spot_trades.count_documents({"bot_id": bot.get("bot_id")})
+            fees_pipeline = [
+                {"$match": {"bot_id": bot.get("bot_id")}},
+                {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+            ]
+            fees_result = await db.fee_transactions.aggregate(fees_pipeline).to_list(1)
+            fees_generated = fees_result[0]['total'] if fees_result else 0
+            
+            # Get user email
+            user = await db.users.find_one({"user_id": bot.get("user_id")})
+            
+            result.append({
+                "bot_id": bot.get("bot_id"),
+                "user_id": bot.get("user_id"),
+                "user_email": user.get("email") if user else None,
+                "type": bot.get("type"),
+                "pair": bot.get("pair"),
+                "status": bot.get("status"),
+                "created_at": bot.get("created_at"),
+                "trade_count": trade_count,
+                "fees_generated": fees_generated
+            })
+        
+        return {"success": True, "bots": result}
+    except Exception as e:
+        logger.error(f"Error getting bot list: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/bots/admin/trades")
+async def get_bot_admin_trades(x_admin_id: str = Header(None), limit: int = 50):
+    """Admin: Get recent bot trades"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        trades = await db.spot_trades.find({"source": "bot"}).sort("timestamp", -1).limit(limit).to_list(limit)
+        
+        result = []
+        for trade in trades:
+            # Get user email
+            user = await db.users.find_one({"user_id": trade.get("user_id")})
+            
+            result.append({
+                "trade_id": trade.get("trade_id"),
+                "user_id": trade.get("user_id"),
+                "user_email": user.get("email") if user else None,
+                "pair": trade.get("pair"),
+                "side": trade.get("side"),
+                "amount": trade.get("amount"),
+                "price": trade.get("price"),
+                "fee": trade.get("fee"),
+                "bot_id": trade.get("bot_id"),
+                "strategy_type": trade.get("strategy_type"),
+                "timestamp": trade.get("timestamp")
+            })
+        
+        return {"success": True, "trades": result}
+    except Exception as e:
+        logger.error(f"Error getting bot trades: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/bots/admin/emergency-stop")
+async def admin_bot_emergency_stop(request: dict, x_admin_id: str = Header(None)):
+    """Admin: Emergency stop bots (specific, by user, or all)"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        from bot_worker import BotWorker
+        
+        bot_id = request.get("bot_id")
+        user_id = request.get("user_id")
+        
+        result = await BotWorker.emergency_stop(bot_id=bot_id, user_id=user_id)
+        return {"success": True, "stopped_count": result.get("stopped_count", 0)}
+    except Exception as e:
+        logger.error(f"Error in emergency stop: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 logger.info("✅ Trading Bot endpoints registered at /api/bots/*")
 # =====================================================================
 
