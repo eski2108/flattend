@@ -446,6 +446,8 @@ export default function SpotTradingPro() {
   // ============================================================
   return (
     <div style={{ background: '#0A0E17', minHeight: '100vh', padding: '0' }}>
+      {/* DEBUG MARKER - REMOVE AFTER TESTING */}
+      <div style={{ position: 'fixed', top: 0, right: 0, background: 'blue', color: 'white', padding: '5px', zIndex: 9999 }}>MOBILE MODE</div>
       {/* MOBILE PAIR TABS - ONLY ON MOBILE */}
       <div style={{
         display: 'flex',
