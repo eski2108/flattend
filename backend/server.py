@@ -37068,25 +37068,37 @@ async def get_bot_details(bot_id: str, x_user_id: str = Header(None)):
     if not x_user_id:
         raise HTTPException(status_code=401, detail="User ID required")
     
-    bot = await BotEngine.get_bot(bot_id, x_user_id)
+    bot = await BotEngine.get_bot_status(bot_id, x_user_id)
     if not bot:
         raise HTTPException(status_code=404, detail="Bot not found")
     
     return {"success": True, "bot": bot}
 
-@api_router.get("/bots/{bot_id}/logs")
-async def get_bot_logs(bot_id: str, limit: int = 50, x_user_id: str = Header(None)):
-    """Get action logs for a bot"""
+@api_router.get("/bots/{bot_id}/trades")
+async def get_bot_trades(bot_id: str, limit: int = 50, x_user_id: str = Header(None)):
+    """Get trades for a bot from existing spot_trades"""
     if not x_user_id:
         raise HTTPException(status_code=401, detail="User ID required")
     
-    logs = await BotEngine.get_bot_logs(bot_id, x_user_id, limit)
-    return {"success": True, "logs": logs}
+    trades = await BotEngine.get_bot_trades(bot_id, x_user_id, limit)
+    return {"success": True, "trades": trades}
+
+@api_router.get("/bots/{bot_id}/pnl")
+async def get_bot_pnl(bot_id: str, x_user_id: str = Header(None)):
+    """Get PnL for a bot calculated from existing spot_trades"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    pnl = await BotEngine.get_bot_pnl(bot_id, x_user_id)
+    if pnl.get("error"):
+        raise HTTPException(status_code=404, detail=pnl.get("error"))
+    
+    return {"success": True, "pnl": pnl}
 
 @api_router.post("/bots/preview")
 async def preview_bot(request: BotPreviewRequest):
     """Get a preview of what the bot will do"""
-    preview = await BotEngine.get_bot_preview(
+    preview = await BotEngine.get_preview(
         request.bot_type,
         request.pair,
         request.params
