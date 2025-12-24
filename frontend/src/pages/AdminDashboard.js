@@ -22,18 +22,14 @@ function AdminBotsSection({ API, adminId }) {
   const [loading, setLoading] = useState(true);
   const [selectedBot, setSelectedBot] = useState(null);
 
-  useEffect(() => {
-    fetchBotData();
-    const interval = setInterval(fetchBotData, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchBotData = async () => {
+    // Use 'admin' as fallback ID for the header
+    const effectiveAdminId = adminId || 'admin';
     try {
       const [statsRes, botsRes, tradesRes] = await Promise.all([
-        axios.get(`${API}/api/bots/admin/stats`, { headers: { 'x-admin-id': adminId } }),
-        axios.get(`${API}/api/bots/admin/bots`, { headers: { 'x-admin-id': adminId } }),
-        axios.get(`${API}/api/bots/admin/trades`, { headers: { 'x-admin-id': adminId } })
+        axios.get(`${API}/api/bots/admin/stats`, { headers: { 'x-admin-id': effectiveAdminId } }),
+        axios.get(`${API}/api/bots/admin/bots`, { headers: { 'x-admin-id': effectiveAdminId } }),
+        axios.get(`${API}/api/bots/admin/trades`, { headers: { 'x-admin-id': effectiveAdminId } })
       ]);
       
       if (statsRes.data.success) setBotStats(statsRes.data.stats);
@@ -45,6 +41,12 @@ function AdminBotsSection({ API, adminId }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBotData();
+    const interval = setInterval(fetchBotData, 30000);
+    return () => clearInterval(interval);
+  }, [adminId]);
 
   const handleEmergencyStop = async (botId = null, userId = null) => {
     const action = botId ? `bot ${botId}` : userId ? `all bots for user ${userId}` : 'ALL bots';
