@@ -857,73 +857,92 @@ export default function MobileMarketSelection() {
                 </div>
               </div>
 
-              {/* Mini Chart Placeholder */}
+              {/* Mini 24h Chart */}
               <div style={{
-                height: '80px',
-                background: 'rgba(0,0,0,0.2)',
-                borderRadius: '8px',
-                marginBottom: '16px',
+                height: '100px',
+                background: 'linear-gradient(180deg, rgba(0,229,153,0.08) 0%, rgba(0,0,0,0.2) 100%)',
+                borderRadius: '12px',
+                marginBottom: '20px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                border: '1px solid rgba(255,255,255,0.05)'
               }}>
-                <Sparkline positive={selectedCoin.change24h >= 0} />
+                <Sparkline positive={selectedCoin.change24h >= 0} large={true} />
               </div>
 
               {/* Stats */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>Market Cap</span>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
-                    {formatNumber(selectedCoin.marketCap)}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h Volume</span>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
-                    {formatNumber(selectedCoin.volume24h)}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h High</span>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
-                    ${selectedCoin.high24h?.toLocaleString() || '—'}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h Low</span>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
-                    ${selectedCoin.low24h?.toLocaleString() || '—'}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#8B9BB4' }}>Circulating Supply</span>
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
-                    {selectedCoin.circulatingSupply > 0 
-                      ? `${(selectedCoin.circulatingSupply / 1e6).toFixed(2)}M ${selectedCoin.base}`
-                      : '—'}
-                  </span>
-                </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+                {selectedCoin.marketCap > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', color: '#8B9BB4' }}>Market Cap</span>
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                      {formatNumber(selectedCoin.marketCap)}
+                    </span>
+                  </div>
+                )}
+                {selectedCoin.volume24h > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h Volume</span>
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                      {formatNumber(selectedCoin.volume24h)}
+                    </span>
+                  </div>
+                )}
+                {selectedCoin.high24h > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h High</span>
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#00E599' }}>
+                      ${selectedCoin.high24h?.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+                {selectedCoin.low24h > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', color: '#8B9BB4' }}>24h Low</span>
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#FF5C5C' }}>
+                      ${selectedCoin.low24h?.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+                {selectedCoin.circulatingSupply > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', color: '#8B9BB4' }}>Circulating Supply</span>
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#FFFFFF' }}>
+                      {(selectedCoin.circulatingSupply / 1e6).toFixed(2)}M {selectedCoin.base}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* CTA Button */}
+              {/* CTA Button - More Dominant */}
               <button
                 onClick={() => navigate(`/spot-trading?pair=${selectedCoin.symbol}`)}
                 style={{
                   width: '100%',
-                  height: '44px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
+                  height: '52px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #00E599 0%, #00D4AA 50%, #00B8D4 100%)',
                   border: 'none',
-                  fontSize: '14px',
+                  fontSize: '15px',
                   fontWeight: '700',
                   color: '#020617',
                   cursor: 'pointer',
                   transition: 'all 120ms ease',
-                  boxShadow: '0 4px 16px rgba(0,229,153,0.3)'
+                  boxShadow: '0 6px 24px rgba(0,229,153,0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,229,153,0.5), inset 0 1px 0 rgba(255,255,255,0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,229,153,0.4), inset 0 1px 0 rgba(255,255,255,0.2)';
                 }}
               >
-                Open Trading View
+                Open Trading View →
               </button>
             </div>
           </div>
