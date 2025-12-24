@@ -4654,50 +4654,157 @@ export default function AdminDashboard() {
             )}
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* DAILY BREAKDOWN TABLE - Scrollable History (Accountant Clear) */}
+            {/* REVENUE HISTORY - Daily/Weekly/Monthly with Sort & Filter */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {revenueAnalytics && revenueAnalytics.daily && revenueAnalytics.daily.length > 0 && (
+            {revenueAnalytics && (
               <>
-                <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', marginBottom: '1rem', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                  📅 Daily Revenue History (Click row for full breakdown)
-                </h3>
+                {/* View Mode Tabs + Sort + Filter Controls */}
                 <div style={{ 
-                  background: 'rgba(0,0,0,0.2)', 
-                  borderRadius: '12px', 
-                  overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  marginBottom: '2rem'
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: '1rem',
+                  flexWrap: 'wrap',
+                  gap: '1rem'
                 }}>
-                  {/* Daily Rows - Scrollable (single-line readable format) */}
-                  <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                    {revenueAnalytics.daily.map((day, idx) => {
-                      // Get amounts for each source category
-                      const getSourceAmount = (key) => day.by_source?.[key]?.amount || 0;
-                      const spotTrading = getSourceAmount('spot_trading');
-                      const tradingBots = getSourceAmount('trading_bots');
-                      const swapInstant = getSourceAmount('swap_instant');
-                      const p2p = getSourceAmount('p2p');
-                      const depositsWithdrawals = getSourceAmount('deposits_withdrawals');
-                      const savings = getSourceAmount('savings');
-                      const disputes = getSourceAmount('disputes');
-                      const referralsIn = day.referrals_in || getSourceAmount('referrals_in') || getSourceAmount('referrals') || 0;
-                      const referralsOut = day.referrals_out || getSourceAmount('referrals_out') || 0;
-                      const netDay = day.total - referralsOut;
+                  <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', margin: 0 }}>
+                    📅 Revenue History
+                  </h3>
+                  
+                  {/* View Mode Tabs */}
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {[
+                      { key: 'daily', label: '📅 Daily' },
+                      { key: 'weekly', label: '📆 Weekly' },
+                      { key: 'monthly', label: '🗓️ Monthly' }
+                    ].map((mode) => (
+                      <button
+                        key={mode.key}
+                        onClick={() => setRevenueViewMode(mode.key)}
+                        style={{
+                          padding: '0.4rem 1rem',
+                          background: revenueViewMode === mode.key ? 'linear-gradient(135deg, #00F0FF, #A855F7)' : 'rgba(255,255,255,0.1)',
+                          color: revenueViewMode === mode.key ? '#000' : '#fff',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontWeight: '700',
+                          fontSize: '12px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {mode.label}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Sort & Filter (for Daily view only) */}
+                  {revenueViewMode === 'daily' && (
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      {/* Sort Order */}
+                      <select
+                        value={dailySortOrder}
+                        onChange={(e) => setDailySortOrder(e.target.value)}
+                        style={{
+                          padding: '0.4rem 0.75rem',
+                          background: 'rgba(0,0,0,0.3)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '6px',
+                          color: '#fff',
+                          fontSize: '11px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <option value="newest">⬇️ Newest First</option>
+                        <option value="oldest">⬆️ Oldest First</option>
+                      </select>
                       
-                      return (
-                        <div 
-                          key={day.date || idx}
-                          onClick={() => day.date && fetchDayDrilldown(day.date)}
-                          style={{ 
-                            padding: '0.75rem 1rem',
-                            borderBottom: '1px solid rgba(255,255,255,0.05)',
-                            background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
-                            cursor: 'pointer',
-                            transition: 'background 0.2s'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.05)'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'}
-                        >
+                      {/* Source Filter */}
+                      <select
+                        value={dailySourceFilter}
+                        onChange={(e) => setDailySourceFilter(e.target.value)}
+                        style={{
+                          padding: '0.4rem 0.75rem',
+                          background: 'rgba(0,0,0,0.3)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '6px',
+                          color: '#fff',
+                          fontSize: '11px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <option value="all">🔍 All Sources</option>
+                        <option value="spot_trading">📈 Spot Trading</option>
+                        <option value="trading_bots">🤖 Trading Bots</option>
+                        <option value="swap_instant">🔄 Swap</option>
+                        <option value="p2p">🤝 P2P</option>
+                        <option value="deposits_withdrawals">💰 Deposits/Withdrawals</option>
+                        <option value="disputes">⚖️ Disputes</option>
+                        <option value="referrals_in">👥 Referrals</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+                
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {/* DAILY VIEW */}
+                {/* ═══════════════════════════════════════════════════════════════ */}
+                {revenueViewMode === 'daily' && revenueAnalytics.daily && revenueAnalytics.daily.length > 0 && (
+                  <div style={{ 
+                    background: 'rgba(0,0,0,0.2)', 
+                    borderRadius: '12px', 
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    marginBottom: '2rem'
+                  }}>
+                    {/* Daily Rows - Scrollable (single-line readable format) */}
+                    <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                      {(() => {
+                        // Sort daily data
+                        let sortedDaily = [...revenueAnalytics.daily];
+                        if (dailySortOrder === 'oldest') {
+                          sortedDaily = sortedDaily.reverse();
+                        }
+                        
+                        // Filter by source
+                        if (dailySourceFilter !== 'all') {
+                          sortedDaily = sortedDaily.filter(day => {
+                            const hasSource = day.by_source?.[dailySourceFilter]?.amount > 0;
+                            // For referrals, also check referrals_in field
+                            if (dailySourceFilter === 'referrals_in') {
+                              return hasSource || (day.referrals_in > 0);
+                            }
+                            return hasSource;
+                          });
+                        }
+                        
+                        return sortedDaily.map((day, idx) => {
+                          // Get amounts for each source category
+                          const getSourceAmount = (key) => day.by_source?.[key]?.amount || 0;
+                          const spotTrading = getSourceAmount('spot_trading');
+                          const tradingBots = getSourceAmount('trading_bots');
+                          const swapInstant = getSourceAmount('swap_instant');
+                          const p2p = getSourceAmount('p2p');
+                          const depositsWithdrawals = getSourceAmount('deposits_withdrawals');
+                          const savings = getSourceAmount('savings');
+                          const disputes = getSourceAmount('disputes');
+                          const referralsIn = day.referrals_in || getSourceAmount('referrals_in') || getSourceAmount('referrals') || 0;
+                          const referralsOut = day.referrals_out || getSourceAmount('referrals_out') || 0;
+                          const netDay = day.total - referralsOut;
+                          
+                          return (
+                            <div 
+                              key={day.date || idx}
+                              onClick={() => day.date && fetchDayDrilldown(day.date)}
+                              style={{ 
+                                padding: '0.75rem 1rem',
+                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,240,255,0.05)'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)'}
+                            >
                           {/* Single-line readable format */}
                           <div style={{ 
                             display: 'flex', 
