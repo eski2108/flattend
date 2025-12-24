@@ -32686,8 +32686,16 @@ async def get_revenue_analytics(
         
         sorted_months = sorted(monthly_data.items(), key=lambda x: x[0], reverse=True)
         
+        # Calculate totals - ONLY from positive revenue sources (excluding referrals_out)
+        # grand_total should NOT include referrals_out
+        grand_total = sum(cat["amount"] for key, cat in category_totals.items() if key != "referrals_out")
+        total_transactions = sum(cat["count"] for key, cat in category_totals.items() if key != "referrals_out")
+        
         # Calculate net profit (total revenue minus referral payouts)
         net_profit = grand_total - referrals_out_total
+        
+        # Calculate sum of daily totals for reconciliation
+        daily_sum = sum(d["total"] for d in sorted_days)
         
         return {
             "success": True,
@@ -32704,17 +32712,18 @@ async def get_revenue_analytics(
                 "net_profit": round(net_profit, 4),
                 "referrals_out_deducted": round(referrals_out_total, 4),
                 "transaction_count": total_transactions,
-                "days_with_revenue": len([d for d in sorted_days if d["total"] > 0])
+                "days_with_revenue": len([d for d in sorted_days if d["total"] > 0]),
+                "daily_sum": round(daily_sum, 4)  # For reconciliation check
             },
             
-            # Referral split
+            # Referral split (displayed separately, NOT in revenue sources)
             "referrals": {
                 "income": round(referrals_in_total, 4),
                 "payouts": round(referrals_out_total, 4),
                 "net": round(referrals_in_total - referrals_out_total, 4)
             },
             
-            # By category totals - with updated labels
+            # By category totals - REVENUE SOURCES ONLY (no referrals_out)
             "by_category": {
                 "spot_trading": {
                     "label": "Spot Trading (Manual Fees)",
@@ -32760,16 +32769,19 @@ async def get_revenue_analytics(
                 },
                 "referrals_in": {
                     "label": "Referrals IN (Commission Income)",
-                    "amount": round(category_totals["referrals_in"]["amount"], 4),
+                    "amount": round(referrals_in_total, 4),
                     "count": category_totals["referrals_in"]["count"],
-                    "color": "#22C55E"
-                },
+                    "color": "#10B981"
+                }
+            },
+            
+            # Deductions (separate from revenue sources)
+            "deductions": {
                 "referrals_out": {
-                    "label": "Referrals OUT (Payouts)",
+                    "label": "Referrals OUT (Payouts to Referrers)",
                     "amount": round(referrals_out_total, 4),
                     "count": category_totals["referrals_out"]["count"],
-                    "color": "#EF4444",
-                    "is_deduction": True
+                    "color": "#EF4444"
                 }
             },
             
