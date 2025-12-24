@@ -318,6 +318,9 @@ export default function AdminDashboard() {
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [revenueViewMode, setRevenueViewMode] = useState('daily'); // daily, weekly, monthly
+  const [dailySortOrder, setDailySortOrder] = useState('newest'); // newest, oldest
+  const [dailySourceFilter, setDailySourceFilter] = useState('all'); // all, spot_trading, trading_bots, swap_instant, p2p, etc.
   const [monetizationBreakdown, setMonetizationBreakdown] = useState(null);
   const [showMonetizationModal, setShowMonetizationModal] = useState(false);
   
