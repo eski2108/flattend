@@ -8,14 +8,16 @@ NATIVE TRADING BOT ENGINE - CoinHubX
 - Grid Bot (Spot)
 - DCA Bot (Recurring Buy/Sell)
 - Uses USER FUNDS ONLY (wallet balances)
-- Charges trading fees on every fill (same as manual trading)
-- Subscription tiers for monetization
+- Bot is a CONTROLLER - calls EXISTING trading endpoint
+- Fees are charged by EXISTING fee system (same as manual trades)
+- NO new fee logic, NO new revenue collection
 """
 
 import os
 import uuid
 import asyncio
-from datetime import datetime, timedelta
+import httpx
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any
 from motor.motor_asyncio import AsyncIOMotorClient
 import logging
@@ -25,14 +27,13 @@ logger = logging.getLogger(__name__)
 # MongoDB connection
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.coinhubx
+db_name = os.environ.get('DB_NAME', 'coin_hub_x')
+db = client[db_name]
 
-# NEW Collections (bot feature only)
+# NEW Collections (bot feature only - ALLOWED)
 bot_configs = db.bot_configs
 bot_runs = db.bot_runs
-bot_orders = db.bot_orders
-bot_trades = db.bot_trades
-platform_revenue = db.platform_revenue
+bot_orders = db.bot_orders  # References to real trades in spot_trades
 
 # Subscription Tiers
 SUBSCRIPTION_TIERS = {
@@ -41,16 +42,20 @@ SUBSCRIPTION_TIERS = {
     'elite': {'max_bots': 20, 'price_gbp': 49.99}
 }
 
-# Fee Rates (same as manual trading)
-MAKER_FEE = 0.001  # 0.10%
-TAKER_FEE = 0.002  # 0.20%
-
 # Engine Control
 BOT_ENGINE_ENABLED = True
 
 
 class BotEngine:
-    """Native Trading Bot Engine"""
+    """
+    Native Trading Bot Engine
+    
+    IMPORTANT: This bot is a CONTROLLER only.
+    - It decides WHEN to place trades
+    - All trades go through the EXISTING /api/trading/place-order endpoint
+    - EXISTING matching, fees, settlement logic apply
+    - Fees land in EXISTING admin_revenue and fee_transactions tables
+    """
     
     @staticmethod
     async def create_bot(
@@ -94,11 +99,20 @@ class BotEngine:
             return {"success": False, "error": validation["error"]}
         
         bot_id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
-        # Calculate estimated fees
+        # Get trading fee from platform settings (same as manual trading)
+        trading_fee_percent = 0.1  # Default
+        try:
+            fee_config = await db.platform_fees.find_one({"config_id": "main"})
+            if fee_config:
+                trading_fee_percent = fee_config.get("spot_trading_fee_percent", 0.1)
+        except:
+            pass
+        
+        # Calculate estimated fees using platform fee rate
         investment = params.get('investment_amount', 0) or params.get('total_budget', 0)
-        estimated_fees = investment * TAKER_FEE * 2  # Buy + Sell
+        estimated_fees = investment * (trading_fee_percent / 100) * 2  # Buy + Sell
         
         bot_config = {
             "bot_id": bot_id,
@@ -111,12 +125,17 @@ class BotEngine:
             "updated_at": now,
             "started_at": None,
             "stopped_at": None,
-            "total_invested": 0,
-            "realized_pnl": 0,
-            "unrealized_pnl": 0,
-            "total_fees_paid": 0,
-            "trades_count": 0,
-            "orders_count": 0
+            # Stats - calculated from spot_trades where source='bot' and bot_id=this
+            "state": {
+                "total_invested": 0,
+                "realized_pnl": 0,
+                "unrealized_pnl": 0,
+                "total_fees_paid": 0,
+                "trades_count": 0,
+                "total_orders_placed": 0,
+                "active_orders_count": 0,
+                "last_tick_at": None
+            }
         }
         
         await bot_configs.insert_one(bot_config)
@@ -134,7 +153,6 @@ class BotEngine:
     @staticmethod
     async def _get_user_tier(user_id: str) -> str:
         """Get user's subscription tier"""
-        # Check subscriptions collection
         sub = await db.subscriptions.find_one({
             "user_id": user_id,
             "status": "active",
@@ -166,26 +184,23 @@ class BotEngine:
             
             if params['investment_amount'] <= 0:
                 return {"valid": False, "error": "Investment amount must be positive"}
-            
-            # Check mode
-            if params.get('mode') and params['mode'] not in ['arithmetic', 'geometric']:
-                return {"valid": False, "error": "Mode must be 'arithmetic' or 'geometric'"}
         
         elif bot_type == 'dca':
-            required = ['order_size', 'interval', 'side']
+            required = ['amount_per_interval', 'interval']
             for field in required:
                 if field not in params or params[field] is None:
                     return {"valid": False, "error": f"Missing required field: {field}"}
             
+            params['side'] = params.get('side', 'buy')
             if params['side'] not in ['buy', 'sell']:
                 return {"valid": False, "error": "Side must be 'buy' or 'sell'"}
             
-            valid_intervals = ['15m', '30m', '1h', '4h', '1d', '1w']
+            valid_intervals = ['hourly', 'daily', 'weekly']
             if params['interval'] not in valid_intervals:
                 return {"valid": False, "error": f"Interval must be one of: {', '.join(valid_intervals)}"}
             
-            if params['order_size'] <= 0:
-                return {"valid": False, "error": "Order size must be positive"}
+            if params['amount_per_interval'] <= 0:
+                return {"valid": False, "error": "Amount per interval must be positive"}
         
         return {"valid": True}
     
@@ -210,7 +225,7 @@ class BotEngine:
         if not balance_check["sufficient"]:
             return {"success": False, "error": balance_check["error"]}
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         run_id = str(uuid.uuid4())
         
         # Create new run record
@@ -244,27 +259,19 @@ class BotEngine:
         if bot["type"] == "grid":
             required = bot["params"].get("investment_amount", 0)
         else:  # dca
-            required = bot["params"].get("order_size", 0)
+            required = bot["params"].get("amount_per_interval", 0)
         
-        # Get quote currency from pair (e.g., BTCUSD -> USD)
-        pair = bot["pair"]
-        quote = "USD" if pair.endswith("USD") else "USDT"
-        
-        # Check wallet balance
-        wallet = await db.wallets.find_one({"user_id": user_id})
+        # Check GBP wallet balance (using new wallet schema)
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": "GBP"})
         if not wallet:
-            return {"sufficient": False, "error": "Wallet not found"}
+            return {"sufficient": False, "error": "GBP wallet not found"}
         
-        # Check fiat or crypto balance
-        if quote in ["USD", "GBP", "EUR"]:
-            available = wallet.get("fiat_balance", {}).get(quote, 0)
-        else:
-            available = wallet.get("crypto_balances", {}).get(quote, {}).get("available", 0)
+        available = wallet.get("total_balance", 0) - wallet.get("locked_balance", 0)
         
         if available < required:
             return {
                 "sufficient": False, 
-                "error": f"Insufficient {quote} balance. Required: {required}, Available: {available}"
+                "error": f"Insufficient GBP balance. Required: £{required:.2f}, Available: £{available:.2f}"
             }
         
         return {"sufficient": True}
@@ -279,7 +286,7 @@ class BotEngine:
         if bot["status"] != "running":
             return {"success": False, "error": "Bot is not running"}
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         # Update run record
         if bot.get("current_run_id"):
@@ -304,7 +311,7 @@ class BotEngine:
         if not bot:
             return {"success": False, "error": "Bot not found"}
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         cancelled_count = 0
         
         if cancel_orders:
@@ -351,7 +358,7 @@ class BotEngine:
         if bot["status"] == "running":
             await BotEngine.stop_bot(bot_id, user_id, cancel_orders=True)
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         await bot_configs.update_one(
             {"bot_id": bot_id},
             {"$set": {"status": "deleted", "updated_at": now}}
@@ -363,27 +370,71 @@ class BotEngine:
     
     @staticmethod
     async def get_user_bots(user_id: str) -> List[Dict[str, Any]]:
-        """Get all bots for a user"""
+        """Get all bots for a user with real stats from spot_trades"""
         bots = []
         async for bot in bot_configs.find({
             "user_id": user_id, 
             "status": {"$ne": "deleted"}
         }).sort("created_at", -1):
+            
+            # Get real stats from spot_trades (EXISTING table)
+            bot_id = bot["bot_id"]
+            pnl_data = await BotEngine._calculate_pnl_from_trades(bot_id)
+            
             bots.append({
-                "bot_id": bot["bot_id"],
+                "bot_id": bot_id,
                 "type": bot["type"],
                 "pair": bot["pair"],
                 "status": bot["status"],
                 "params": bot["params"],
                 "created_at": bot["created_at"].isoformat() if bot.get("created_at") else None,
                 "started_at": bot["started_at"].isoformat() if bot.get("started_at") else None,
-                "realized_pnl": bot.get("realized_pnl", 0),
-                "unrealized_pnl": bot.get("unrealized_pnl", 0),
-                "total_fees_paid": bot.get("total_fees_paid", 0),
-                "trades_count": bot.get("trades_count", 0),
-                "orders_count": bot.get("orders_count", 0)
+                "pnl": pnl_data,
+                "state": bot.get("state", {})
             })
         return bots
+    
+    @staticmethod
+    async def _calculate_pnl_from_trades(bot_id: str) -> Dict[str, Any]:
+        """
+        Calculate PnL from EXISTING spot_trades table
+        Filters by source='bot' and bot_id
+        """
+        pipeline = [
+            {"$match": {"source": "bot", "bot_id": bot_id}},
+            {"$group": {
+                "_id": None,
+                "total_buy_value": {
+                    "$sum": {"$cond": [{"$eq": ["$type", "buy"]}, "$total", 0]}
+                },
+                "total_sell_value": {
+                    "$sum": {"$cond": [{"$eq": ["$type", "sell"]}, "$total", 0]}
+                },
+                "total_fees": {"$sum": "$fee_amount"},
+                "trade_count": {"$sum": 1}
+            }}
+        ]
+        
+        result = await db.spot_trades.aggregate(pipeline).to_list(1)
+        
+        if result:
+            data = result[0]
+            realized_pnl = data["total_sell_value"] - data["total_buy_value"] - data["total_fees"]
+            return {
+                "realized_pnl": round(realized_pnl, 2),
+                "unrealized_pnl": 0,  # Would need current position value
+                "total_invested": round(data["total_buy_value"], 2),
+                "total_fees_paid": round(data["total_fees"], 2),
+                "trades_count": data["trade_count"]
+            }
+        
+        return {
+            "realized_pnl": 0,
+            "unrealized_pnl": 0,
+            "total_invested": 0,
+            "total_fees_paid": 0,
+            "trades_count": 0
+        }
     
     @staticmethod
     async def get_bot_status(bot_id: str, user_id: str) -> Optional[Dict[str, Any]]:
@@ -397,17 +448,22 @@ class BotEngine:
             "bot_id": bot_id, "status": "pending"
         })
         
-        # Get recent trades
+        # Get recent trades from EXISTING spot_trades
         recent_trades = []
-        async for trade in bot_trades.find({"bot_id": bot_id}).sort("timestamp", -1).limit(10):
+        async for trade in db.spot_trades.find({
+            "source": "bot", 
+            "bot_id": bot_id
+        }).sort("created_at", -1).limit(10):
             recent_trades.append({
                 "trade_id": trade["trade_id"],
-                "side": trade.get("side"),
-                "price": trade["fill_price"],
-                "qty": trade["fill_qty"],
+                "type": trade.get("type"),
+                "price": trade["price"],
+                "amount": trade["amount"],
                 "fee": trade["fee_amount"],
-                "timestamp": trade["timestamp"].isoformat() if trade.get("timestamp") else None
+                "timestamp": trade["created_at"].isoformat() if trade.get("created_at") else None
             })
+        
+        pnl_data = await BotEngine._calculate_pnl_from_trades(bot_id)
         
         return {
             "bot_id": bot["bot_id"],
@@ -419,12 +475,7 @@ class BotEngine:
             "started_at": bot["started_at"].isoformat() if bot.get("started_at") else None,
             "stopped_at": bot["stopped_at"].isoformat() if bot.get("stopped_at") else None,
             "stats": {
-                "realized_pnl": bot.get("realized_pnl", 0),
-                "unrealized_pnl": bot.get("unrealized_pnl", 0),
-                "total_invested": bot.get("total_invested", 0),
-                "total_fees_paid": bot.get("total_fees_paid", 0),
-                "trades_count": bot.get("trades_count", 0),
-                "orders_count": bot.get("orders_count", 0),
+                **pnl_data,
                 "active_orders": active_orders
             },
             "recent_trades": recent_trades
@@ -432,24 +483,26 @@ class BotEngine:
     
     @staticmethod
     async def get_bot_trades(bot_id: str, user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
-        """Get trade history for a bot"""
+        """Get trade history for a bot from EXISTING spot_trades"""
         # Verify ownership
         bot = await bot_configs.find_one({"bot_id": bot_id, "user_id": user_id})
         if not bot:
             return []
         
         trades = []
-        async for trade in bot_trades.find({"bot_id": bot_id}).sort("timestamp", -1).limit(limit):
+        async for trade in db.spot_trades.find({
+            "source": "bot",
+            "bot_id": bot_id
+        }).sort("created_at", -1).limit(limit):
             trades.append({
                 "trade_id": trade["trade_id"],
-                "order_id": trade["order_id"],
-                "side": trade.get("side"),
-                "price": trade["fill_price"],
-                "qty": trade["fill_qty"],
-                "value": trade["fill_price"] * trade["fill_qty"],
+                "type": trade.get("type"),
+                "pair": trade.get("pair"),
+                "price": trade["price"],
+                "amount": trade["amount"],
+                "total": trade["total"],
                 "fee": trade["fee_amount"],
-                "fee_currency": trade["fee_currency"],
-                "timestamp": trade["timestamp"].isoformat() if trade.get("timestamp") else None
+                "timestamp": trade["created_at"].isoformat() if trade.get("created_at") else None
             })
         return trades
     
@@ -460,48 +513,22 @@ class BotEngine:
         if not bot:
             return {"error": "Bot not found"}
         
-        # Calculate from trades
-        pipeline = [
-            {"$match": {"bot_id": bot_id}},
-            {"$group": {
-                "_id": None,
-                "total_buy_value": {
-                    "$sum": {"$cond": [{"$eq": ["$side", "buy"]}, {"$multiply": ["$fill_price", "$fill_qty"]}, 0]}
-                },
-                "total_sell_value": {
-                    "$sum": {"$cond": [{"$eq": ["$side", "sell"]}, {"$multiply": ["$fill_price", "$fill_qty"]}, 0]}
-                },
-                "total_fees": {"$sum": "$fee_amount"},
-                "trade_count": {"$sum": 1}
-            }}
-        ]
-        
-        result = await bot_trades.aggregate(pipeline).to_list(1)
-        
-        if result:
-            data = result[0]
-            realized_pnl = data["total_sell_value"] - data["total_buy_value"] - data["total_fees"]
-            return {
-                "realized_pnl": round(realized_pnl, 2),
-                "unrealized_pnl": bot.get("unrealized_pnl", 0),
-                "total_buy_value": round(data["total_buy_value"], 2),
-                "total_sell_value": round(data["total_sell_value"], 2),
-                "total_fees": round(data["total_fees"], 2),
-                "trade_count": data["trade_count"]
-            }
-        
-        return {
-            "realized_pnl": 0,
-            "unrealized_pnl": 0,
-            "total_buy_value": 0,
-            "total_sell_value": 0,
-            "total_fees": 0,
-            "trade_count": 0
-        }
+        return await BotEngine._calculate_pnl_from_trades(bot_id)
     
     @staticmethod
     async def get_preview(bot_type: str, pair: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get preview of bot configuration"""
+        # Get trading fee from platform settings (SAME as manual trading)
+        trading_fee_percent = 0.1
+        try:
+            fee_config = await db.platform_fees.find_one({"config_id": "main"})
+            if fee_config:
+                trading_fee_percent = fee_config.get("spot_trading_fee_percent", 0.1)
+        except:
+            pass
+        
+        fee_rate = trading_fee_percent / 100
+        
         if bot_type == 'grid':
             lower = params.get('lower_price', 0)
             upper = params.get('upper_price', 0)
@@ -512,61 +539,130 @@ class BotEngine:
             if lower >= upper or grid_count < 2:
                 return {"error": "Invalid parameters"}
             
-            # Calculate grid levels
-            if mode == 'geometric':
-                ratio = (upper / lower) ** (1 / (grid_count - 1))
-                grid_prices = [lower * (ratio ** i) for i in range(grid_count)]
-            else:  # arithmetic
-                step = (upper - lower) / (grid_count - 1)
-                grid_prices = [lower + (i * step) for i in range(grid_count)]
-            
             amount_per_grid = investment / grid_count
-            estimated_fees = investment * TAKER_FEE * 2
+            estimated_fees = investment * fee_rate * 2  # Buy + Sell
             
             return {
-                "bot_type": "Grid Bot",
+                "bot_type": "grid",
                 "pair": pair,
-                "mode": mode.capitalize(),
-                "grid_levels": grid_count,
+                "mode": mode.capitalize() if mode else "Arithmetic",
+                "grid_count": grid_count,
                 "price_range": f"${lower:,.2f} - ${upper:,.2f}",
                 "amount_per_grid": round(amount_per_grid, 2),
                 "total_investment": investment,
                 "estimated_orders": grid_count * 2,
                 "estimated_fees": round(estimated_fees, 2),
-                "maker_fee": f"{MAKER_FEE * 100:.2f}%",
-                "taker_fee": f"{TAKER_FEE * 100:.2f}%"
+                "fee_rate": f"{trading_fee_percent}%"
             }
         
         elif bot_type == 'dca':
-            order_size = params.get('order_size', 0)
-            interval = params.get('interval', '1d')
+            order_size = params.get('amount_per_interval', 0)
+            interval = params.get('interval', 'daily')
             side = params.get('side', 'buy')
             total_budget = params.get('total_budget', order_size * 10)
             
-            interval_hours = {
-                '15m': 0.25, '30m': 0.5, '1h': 1, '4h': 4, '1d': 24, '1w': 168
-            }
-            hours = interval_hours.get(interval, 24)
+            interval_days = {'hourly': 1/24, 'daily': 1, 'weekly': 7}
+            days = interval_days.get(interval, 1)
             
             total_orders = int(total_budget / order_size) if order_size > 0 else 0
-            duration_days = (total_orders * hours) / 24
-            estimated_fees = total_budget * TAKER_FEE
+            duration_days = total_orders * days
+            estimated_fees = total_budget * fee_rate
             
             return {
-                "bot_type": "DCA Bot",
+                "bot_type": "dca",
                 "pair": pair,
-                "side": side.upper(),
+                "side": side.upper() if side else "BUY",
                 "order_size": order_size,
                 "interval": interval,
                 "total_budget": total_budget,
                 "estimated_orders": total_orders,
-                "estimated_duration": f"{duration_days:.1f} days",
+                "estimated_duration_days": round(duration_days, 1),
                 "estimated_fees": round(estimated_fees, 2),
-                "maker_fee": f"{MAKER_FEE * 100:.2f}%",
-                "taker_fee": f"{TAKER_FEE * 100:.2f}%"
+                "fee_rate": f"{trading_fee_percent}%"
             }
         
         return {"error": "Invalid bot type"}
+    
+    @staticmethod
+    async def place_bot_order(
+        bot_id: str,
+        user_id: str,
+        pair: str,
+        order_type: str,
+        amount: float,
+        price: float,
+        strategy_type: str
+    ) -> Dict[str, Any]:
+        """
+        Place a trade order through the EXISTING trading system.
+        
+        THIS IS THE KEY FUNCTION:
+        - Bot calls this to place orders
+        - It calls the EXISTING /api/trading/place-order logic
+        - EXISTING fees apply
+        - EXISTING settlement applies
+        - Just adds bot metadata for filtering
+        """
+        # Get trading fee from platform settings
+        fee_percent = 0.1
+        try:
+            fee_config = await db.platform_fees.find_one({"config_id": "main"})
+            if fee_config:
+                fee_percent = fee_config.get("spot_trading_fee_percent", 0.1)
+        except:
+            pass
+        
+        # Import the trading logic (circular import handled at runtime)
+        try:
+            from server import place_trading_order, Request
+            
+            # Create a mock request object
+            request_data = {
+                "user_id": user_id,
+                "pair": pair,
+                "type": order_type,
+                "amount": amount,
+                "price": price,
+                "fee_percent": fee_percent,
+                # BOT METADATA - will be added to spot_trades and fee_transactions
+                "source": "bot",
+                "bot_id": bot_id,
+                "strategy_type": strategy_type
+            }
+            
+            # Call existing trading endpoint logic directly
+            result = await place_trading_order(None, request_data)
+            
+            if result.get("success"):
+                trade_id = result["trade"]["trade_id"]
+                
+                # Record order reference in bot_orders
+                await bot_orders.insert_one({
+                    "order_id": str(uuid.uuid4()),
+                    "bot_id": bot_id,
+                    "trade_id": trade_id,
+                    "pair": pair,
+                    "type": order_type,
+                    "price": price,
+                    "amount": amount,
+                    "status": "completed",
+                    "created_at": datetime.now(timezone.utc)
+                })
+                
+                # Update bot stats
+                await bot_configs.update_one(
+                    {"bot_id": bot_id},
+                    {
+                        "$inc": {"state.total_orders_placed": 1},
+                        "$set": {"state.last_tick_at": datetime.now(timezone.utc)}
+                    }
+                )
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Bot order placement failed: {e}")
+            return {"success": False, "error": str(e)}
     
     @staticmethod
     async def _log_action(bot_id: str, action: str, payload: Dict[str, Any]):
@@ -574,69 +670,9 @@ class BotEngine:
         await db.bot_actions_log.insert_one({
             "bot_id": bot_id,
             "action": action,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "payload": payload
         })
-    
-    @staticmethod
-    async def record_trade(
-        bot_id: str,
-        order_id: str,
-        side: str,
-        fill_price: float,
-        fill_qty: float,
-        fee_amount: float,
-        fee_currency: str
-    ) -> Dict[str, Any]:
-        """
-        Record a bot trade fill.
-        FEES ARE CHARGED AND RECORDED AS PLATFORM REVENUE.
-        """
-        trade_id = str(uuid.uuid4())
-        now = datetime.utcnow()
-        
-        # Record the trade
-        trade_record = {
-            "bot_id": bot_id,
-            "trade_id": trade_id,
-            "order_id": order_id,
-            "side": side,
-            "fill_price": fill_price,
-            "fill_qty": fill_qty,
-            "fee_amount": fee_amount,
-            "fee_currency": fee_currency,
-            "timestamp": now
-        }
-        await bot_trades.insert_one(trade_record)
-        
-        # Get bot config for user_id
-        bot = await bot_configs.find_one({"bot_id": bot_id})
-        if bot:
-            # Record fee as platform revenue
-            await platform_revenue.insert_one({
-                "revenue_id": str(uuid.uuid4()),
-                "source": "bot_trade",
-                "amount": fee_amount,
-                "currency": fee_currency,
-                "user_id": bot["user_id"],
-                "bot_id": bot_id,
-                "trade_id": trade_id,
-                "timestamp": now
-            })
-            
-            # Update bot stats
-            await bot_configs.update_one(
-                {"bot_id": bot_id},
-                {
-                    "$inc": {
-                        "trades_count": 1,
-                        "total_fees_paid": fee_amount
-                    },
-                    "$set": {"updated_at": now}
-                }
-            )
-        
-        return {"success": True, "trade_id": trade_id}
 
 
 class BotAdmin:
@@ -644,11 +680,14 @@ class BotAdmin:
     
     @staticmethod
     async def get_stats() -> Dict[str, Any]:
-        """Get bot statistics for admin dashboard"""
-        now = datetime.utcnow()
+        """
+        Get bot statistics for admin dashboard
+        Reads from EXISTING tables with source='bot' filter
+        """
+        now = datetime.now(timezone.utc)
         day_ago = now - timedelta(days=1)
         week_ago = now - timedelta(days=7)
-        month_ago = now - timedelta(days=30)
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         
         # Active bots
         active_bots = await bot_configs.count_documents({"status": "running"})
@@ -663,21 +702,31 @@ class BotAdmin:
         user_result = await bot_configs.aggregate(pipeline).to_list(1)
         total_bot_users = user_result[0]["total"] if user_result else 0
         
-        # 24h bot trading fees
+        # 24h bot trading fees from EXISTING fee_transactions (filtered by source='bot')
         fee_pipeline = [
-            {"$match": {"source": "bot_trade", "timestamp": {"$gte": day_ago}}},
+            {"$match": {"source": "bot", "timestamp": {"$gte": day_ago}}},
             {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
         ]
-        fee_result = await platform_revenue.aggregate(fee_pipeline).to_list(1)
+        fee_result = await db.fee_transactions.aggregate(fee_pipeline).to_list(1)
         fees_24h = fee_result[0]["total"] if fee_result else 0
         
-        # Subscription revenue (MTD)
-        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        sub_pipeline = [
-            {"$match": {"source": "bot_subscription", "timestamp": {"$gte": month_start}}},
-            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        # Bot trading volume from EXISTING spot_trades
+        volume_pipeline = [
+            {"$match": {"source": "bot", "created_at": {"$gte": day_ago}}},
+            {"$group": {"_id": None, "total": {"$sum": "$total"}}}
         ]
-        sub_result = await platform_revenue.aggregate(sub_pipeline).to_list(1)
+        volume_result = await db.spot_trades.aggregate(volume_pipeline).to_list(1)
+        volume_24h = volume_result[0]["total"] if volume_result else 0
+        
+        # MTD subscription revenue (if subscriptions exist)
+        sub_pipeline = [
+            {"$match": {
+                "features": {"$in": ["trading_bots", "pro_bots", "elite_bots"]},
+                "created_at": {"$gte": month_start}
+            }},
+            {"$group": {"_id": None, "total": {"$sum": "$price_gbp"}}}
+        ]
+        sub_result = await db.subscriptions.aggregate(sub_pipeline).to_list(1)
         subscription_mtd = sub_result[0]["total"] if sub_result else 0
         
         return {
@@ -685,12 +734,13 @@ class BotAdmin:
             "total_bots": total_bots,
             "total_bot_users": total_bot_users,
             "fees_24h": round(fees_24h, 2),
+            "volume_24h": round(volume_24h, 2),
             "subscription_revenue_mtd": round(subscription_mtd, 2)
         }
     
     @staticmethod
     async def toggle_engine(enabled: bool) -> Dict[str, Any]:
-        """Enable/disable bot engine globally"""
+        """Enable/disable bot engine globally (admin kill-switch)"""
         global BOT_ENGINE_ENABLED
         BOT_ENGINE_ENABLED = enabled
         logger.info(f"Bot engine {'enabled' if enabled else 'disabled'}")
@@ -699,10 +749,50 @@ class BotAdmin:
     @staticmethod
     async def emergency_stop_all() -> Dict[str, Any]:
         """Emergency stop all running bots"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         result = await bot_configs.update_many(
             {"status": "running"},
             {"$set": {"status": "stopped", "stopped_at": now, "updated_at": now}}
         )
         logger.warning(f"Emergency stop: {result.modified_count} bots stopped")
         return {"success": True, "stopped_count": result.modified_count}
+    
+    @staticmethod
+    async def get_bot_revenue_breakdown() -> Dict[str, Any]:
+        """Get bot revenue breakdown from EXISTING admin_revenue"""
+        now = datetime.now(timezone.utc)
+        day_ago = now - timedelta(days=1)
+        week_ago = now - timedelta(days=7)
+        month_ago = now - timedelta(days=30)
+        
+        # Revenue by strategy type
+        strategy_pipeline = [
+            {"$match": {"source": "bot"}},
+            {"$group": {
+                "_id": "$strategy_type",
+                "total": {"$sum": "$amount"},
+                "count": {"$sum": 1}
+            }}
+        ]
+        strategy_result = await db.admin_revenue.aggregate(strategy_pipeline).to_list(10)
+        
+        # Revenue by time period
+        periods = {
+            "24h": day_ago,
+            "7d": week_ago,
+            "30d": month_ago
+        }
+        
+        revenue_by_period = {}
+        for period_name, start_time in periods.items():
+            pipeline = [
+                {"$match": {"source": "bot", "timestamp": {"$gte": start_time}}},
+                {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+            ]
+            result = await db.admin_revenue.aggregate(pipeline).to_list(1)
+            revenue_by_period[period_name] = round(result[0]["total"], 2) if result else 0
+        
+        return {
+            "by_strategy": {item["_id"]: round(item["total"], 2) for item in strategy_result if item["_id"]},
+            "by_period": revenue_by_period
+        }
