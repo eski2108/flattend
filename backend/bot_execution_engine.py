@@ -104,6 +104,52 @@ class PositionSide(Enum):
     SHORT = "short"
     FLAT = "flat"
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXECUTION MODE - HARD SEPARATION (Phase 8)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class ExecutionMode(Enum):
+    """
+    HARD-LOCKED execution modes. No shared code paths between PAPER and LIVE.
+    """
+    PAPER = "paper"   # Simulated trades, internal ledger, no real money
+    LIVE = "live"     # Real exchange orders, real money at risk
+
+# Mode validation requirements
+LIVE_MODE_REQUIREMENTS = {
+    "explicit_confirmation": True,      # User must explicitly confirm
+    "balance_check_required": True,     # Must have sufficient balance
+    "exchange_credentials_required": True,  # Must have valid API keys
+    "risk_acknowledgment": True,        # Must acknowledge risk
+}
+
+def validate_execution_mode(mode: str) -> ExecutionMode:
+    """Strictly validate execution mode string to enum."""
+    mode_lower = mode.lower().strip()
+    if mode_lower == "paper":
+        return ExecutionMode.PAPER
+    elif mode_lower == "live":
+        return ExecutionMode.LIVE
+    else:
+        raise ValueError(f"Invalid execution mode: {mode}. Must be 'paper' or 'live'.")
+
+def get_mode_badge(mode: ExecutionMode) -> dict:
+    """Get visual badge info for mode display."""
+    if mode == ExecutionMode.PAPER:
+        return {
+            "text": "PAPER",
+            "color": "#FFC107",  # Yellow/amber
+            "bg": "rgba(255,193,7,0.15)",
+            "icon": "📝"
+        }
+    else:  # LIVE
+        return {
+            "text": "LIVE",
+            "color": "#EF4444",  # Red
+            "bg": "rgba(239,68,68,0.15)",
+            "icon": "🔴"
+        }
+
 # Trading pair precision (can be extended/loaded from exchange)
 PAIR_PRECISION = {
     "BTCUSD": {"tick_size": 0.01, "lot_size": 0.00001, "min_notional": 10},
