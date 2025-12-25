@@ -70,6 +70,7 @@ export default function AdminBusinessDashboard() {
   });
   
   const [period, setPeriod] = useState('all');
+  const [revenueFilter, setRevenueFilter] = useState('all'); // 'all' | 'bots' | 'manual'
   
   useEffect(() => {
     const userData = localStorage.getItem('cryptobank_user');
