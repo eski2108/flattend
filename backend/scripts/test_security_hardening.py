@@ -117,9 +117,10 @@ async def test_rate_limiting():
     
     # Summary
     all_passed = all(r[1] for r in results)
-    print(f"\n--- Rate Limiting Results ---")
+    print("\n--- Rate Limiting Results ---")
     for name, passed in results:
-        print(f"   {'\u2705' if passed else '\u274c'} {name}")
+        icon = "\u2705" if passed else "\u274c"
+        print(f"   {icon} {name}")
     
     return all_passed
 
