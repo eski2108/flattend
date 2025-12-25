@@ -21,7 +21,9 @@ logger = logging.getLogger(__name__)
 # Bot configuration
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_ADMIN_BOT_TOKEN")
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
-WEB_APP_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://crypto-botui.preview.emergentagent.com")
+WEB_APP_URL = os.environ.get("FRONTEND_URL") or os.environ.get("BACKEND_URL")
+if not WEB_APP_URL:
+    raise ValueError("FRONTEND_URL or BACKEND_URL environment variable is required")
 
 # Database connection
 db_client = None
