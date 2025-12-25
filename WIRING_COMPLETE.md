@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://tradewatch-13.preview.emergentagent.com/api
-- **Frontend App**: https://tradewatch-13.preview.emergentagent.com
+- **Backend API**: https://monitorcrypto.preview.emergentagent.com/api
+- **Frontend App**: https://monitorcrypto.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

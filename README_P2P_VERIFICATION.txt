@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://tradewatch-13.preview.emergentagent.com
-P2P Page:     https://tradewatch-13.preview.emergentagent.com/p2p
-Backend API:  https://tradewatch-13.preview.emergentagent.com/api
+Frontend:     https://monitorcrypto.preview.emergentagent.com
+P2P Page:     https://monitorcrypto.preview.emergentagent.com/p2p
+Backend API:  https://monitorcrypto.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

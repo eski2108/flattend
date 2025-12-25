@@ -212,7 +212,7 @@ curl http://localhost:8001/api/trader/stats/{actual_user_id}
 
 **External URL:**
 ```bash
-curl https://tradewatch-13.preview.emergentagent.com/api/trader/stats/{user_id}
+curl https://monitorcrypto.preview.emergentagent.com/api/trader/stats/{user_id}
 ```
 
 ---

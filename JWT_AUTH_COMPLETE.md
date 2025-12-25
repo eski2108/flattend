@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://tradewatch-13.preview.emergentagent.com
+**Live URL:** https://monitorcrypto.preview.emergentagent.com
 
 ---
 

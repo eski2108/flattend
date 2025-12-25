@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://tradewatch-13.preview.emergentagent.com
-- Backend API: https://tradewatch-13.preview.emergentagent.com/api
-- P2P Marketplace: https://tradewatch-13.preview.emergentagent.com/p2p
+- Frontend: https://monitorcrypto.preview.emergentagent.com
+- Backend API: https://monitorcrypto.preview.emergentagent.com/api
+- P2P Marketplace: https://monitorcrypto.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

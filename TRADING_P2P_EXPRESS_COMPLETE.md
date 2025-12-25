@@ -504,8 +504,8 @@ $ curl http://localhost:8001/api/prices/live | jq '.prices.BTC.price_usd'
 ```
 
 **Pages Accessible:**
-- ✅ https://tradewatch-13.preview.emergentagent.com/trading
-- ✅ https://tradewatch-13.preview.emergentagent.com/p2p-express
+- ✅ https://monitorcrypto.preview.emergentagent.com/trading
+- ✅ https://monitorcrypto.preview.emergentagent.com/p2p-express
 
 ---
 

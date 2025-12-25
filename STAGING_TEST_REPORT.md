@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://tradewatch-13.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://monitorcrypto.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

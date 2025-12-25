@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://tradewatch-13.preview.emergentagent.com
+https://monitorcrypto.preview.emergentagent.com
 
 ### Test Route
 
-`https://tradewatch-13.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://monitorcrypto.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

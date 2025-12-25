@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://tradewatch-13.preview.emergentagent.com
+https://monitorcrypto.preview.emergentagent.com
 
 ---
 

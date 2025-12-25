@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://tradewatch-13.preview.emergentagent.com`
-- Backend API: `https://tradewatch-13.preview.emergentagent.com/api`
+- Frontend: `https://monitorcrypto.preview.emergentagent.com`
+- Backend API: `https://monitorcrypto.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

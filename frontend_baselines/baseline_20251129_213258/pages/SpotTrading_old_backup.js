@@ -14,7 +14,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'https://tradewatch-13.preview.emergentagent.com';
+const API = process.env.REACT_APP_BACKEND_URL || 'https://monitorcrypto.preview.emergentagent.com';
 
 export default function SpotTrading() {
   const navigate = useNavigate();

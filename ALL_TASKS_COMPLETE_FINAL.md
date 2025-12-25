@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://tradewatch-13.preview.emergentagent.com
+**URL:** https://monitorcrypto.preview.emergentagent.com
 
 **Services Status:**
 ```bash
