@@ -54,3 +54,4 @@ slowapi==0.1.9
 aiohttp
 twilio
 pytest-asyncio
+sentry-sdk[fastapi]>=1.40.0
