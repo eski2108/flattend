@@ -28477,6 +28477,14 @@ async def start_background_tasks():
     from bot_worker import bot_worker_loop
     asyncio.create_task(bot_worker_loop())
     logger.info("✅ Trading Bot Worker started")
+    
+    # 🔄 Phase 8: Reload active bots after restart
+    try:
+        from bot_execution_engine import StateManager
+        reloaded_bots = await StateManager.reload_active_bots()
+        logger.info(f"✅ Bot restart resilience: {len(reloaded_bots)} bots reloaded")
+    except Exception as e:
+        logger.error(f"❌ Failed to reload bots on startup: {e}")
 
 
 async def auto_cancel_expired_trades_loop():
