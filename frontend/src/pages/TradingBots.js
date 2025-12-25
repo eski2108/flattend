@@ -322,7 +322,7 @@ export default function TradingBots() {
 
   const fetchBots = async () => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await axios.get(`${API}/api/bots/list`, {
         headers: { 'x-user-id': userId }
       });
@@ -338,7 +338,7 @@ export default function TradingBots() {
 
   const fetchBotDetails = async (botId) => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const [detailsRes, eventsRes, tradesRes] = await Promise.all([
         axios.get(`${API}/api/bots/${botId}`, { headers: { 'x-user-id': userId } }),
         axios.get(`${API}/api/bots/${botId}/logs`, { headers: { 'x-user-id': userId } }),
@@ -377,7 +377,7 @@ export default function TradingBots() {
 
   const handleStartBot = async (botId) => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await axios.post(`${API}/api/bots/start`, 
         { bot_id: botId },
         { headers: { 'x-user-id': userId } }
@@ -393,7 +393,7 @@ export default function TradingBots() {
 
   const handlePauseBot = async (botId) => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await axios.post(`${API}/api/bots/pause`,
         { bot_id: botId },
         { headers: { 'x-user-id': userId } }
@@ -410,7 +410,7 @@ export default function TradingBots() {
   const handleStopBot = async (botId) => {
     if (!window.confirm('Stop this bot and cancel all orders?')) return;
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await axios.post(`${API}/api/bots/stop`,
         { bot_id: botId, cancel_orders: true },
         { headers: { 'x-user-id': userId } }
@@ -427,7 +427,7 @@ export default function TradingBots() {
   const handleDeleteBot = async (botId) => {
     if (!window.confirm('Delete this bot permanently?')) return;
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       await axios.delete(`${API}/api/bots/${botId}`, {
         headers: { 'x-user-id': userId }
       });
@@ -446,7 +446,7 @@ export default function TradingBots() {
   const fetchDecisionLogs = async () => {
     setLoadingLogs(true);
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await axios.get(`${API}/api/trading/audit-log`, {
         headers: { 'x-user-id': userId },
         params: { limit: 100 }
@@ -465,7 +465,7 @@ export default function TradingBots() {
   const handleEmergencyStopAll = async () => {
     setEmergencyLoading(true);
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const runningBots = bots.filter(b => b.status === 'running' || b.status === 'paused');
       
       for (const bot of runningBots) {
@@ -488,7 +488,7 @@ export default function TradingBots() {
   // Duplicate Bot
   const handleDuplicateBot = async (bot) => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await axios.post(`${API}/api/bots/create`, {
         ...bot,
         bot_id: undefined,
@@ -514,7 +514,7 @@ export default function TradingBots() {
   // Toggle Safe Mode for a bot
   const handleToggleSafeMode = async (botId, enabled) => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       // This updates the bot's safe_mode setting (UI control - uses existing risk engine)
       const response = await axios.patch(`${API}/api/bots/${botId}/settings`, 
         { safe_mode: enabled },
@@ -2295,7 +2295,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
     }
     setCreating(true);
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       // Convert string params to numbers
       const cleanParams = {
         ...params,
@@ -3034,7 +3034,7 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                 <button
                   onClick={async () => {
                     try {
-                      const userId = localStorage.getItem('userId');
+                      const userId = getUserId();
                       await axios.post(`${API}/api/bots/start`, { bot_id: botCreated.bot_id }, { headers: { 'x-user-id': userId } });
                       toast.success('Bot started!');
                       onSuccess();
