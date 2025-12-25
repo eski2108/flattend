@@ -285,9 +285,10 @@ async def test_withdrawal_velocity():
     
     # Summary
     all_passed = all(r[1] for r in results)
-    print(f"\n--- Withdrawal Velocity Results ---")
+    print("\n--- Withdrawal Velocity Results ---")
     for name, passed in results:
-        print(f"   {'\u2705' if passed else '\u274c'} {name}")
+        icon = "\u2705" if passed else "\u274c"
+        print(f"   {icon} {name}")
     
     return all_passed
 
