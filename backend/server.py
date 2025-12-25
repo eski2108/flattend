@@ -23924,6 +23924,38 @@ app.add_middleware(
 )
 
 # ============================================================================
+# SECURITY HARDENING v2 - Task 1: Security & Fund Protection
+# ============================================================================
+try:
+    from security_integration import SecurityMiddleware, init_security_services
+    from security_routes import security_router
+    from security_hardening_v2 import (
+        advanced_rate_limiter,
+        waf_engine,
+        two_factor_enforcement,
+        withdrawal_velocity_limiter,
+        address_whitelist,
+        admin_audit_log,
+    )
+    
+    # Add security middleware (WAF + Rate Limiting)
+    app.add_middleware(SecurityMiddleware)
+    
+    # Include security routes
+    app.include_router(security_router, prefix="/api")
+    
+    # Initialize security services with database (async, done on startup)
+    @app.on_event("startup")
+    async def init_security():
+        await init_security_services(db)
+        logger.info("✅ Security hardening v2 initialized")
+    
+    logger.info("✅ Security middleware and routes added")
+except ImportError as e:
+    logger.warning(f"⚠️ Security hardening v2 not available: {e}")
+# ============================================================================
+
+# ============================================================================
 # PAYMENT SYSTEM v2.0 - IDEMPOTENCY MIDDLEWARE (P1.3)
 # INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
 # ============================================================================
