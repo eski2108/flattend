@@ -929,7 +929,22 @@ export default function TradingBots() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                  {getStatusBadge(bot.status)}
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    {/* PAPER / LIVE Mode Badge */}
+                    <span style={{
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      fontSize: '10px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      background: bot.mode === 'live' ? 'rgba(239,68,68,0.15)' : 'rgba(255,193,7,0.15)',
+                      color: bot.mode === 'live' ? '#EF4444' : '#FFC107',
+                      border: bot.mode === 'live' ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,193,7,0.3)'
+                    }}>
+                      {bot.mode === 'live' ? '🔴 LIVE' : '📝 PAPER'}
+                    </span>
+                    {getStatusBadge(bot.status)}
+                  </div>
                   {/* Safe Mode Toggle */}
                   <div 
                     onClick={(e) => {
