@@ -2,16 +2,255 @@
  * 🔴🟥 LOCKED: EXISTING TRADING MATCHING/ROUTING/PRICING/LIQUIDITY MUST NOT BE MODIFIED.
  * BOT FEATURE IS ADDITIVE ONLY. ANY CORE CHANGE REQUIRES WRITTEN APPROVAL. 🟥🔴
  * 
- * Trading Bots Page - Grid Bot & DCA Bot
+ * Trading Bots Page - Phase 7: UX, Presets & Controls
+ * - Grid Bot, DCA Bot, Signal Bot
+ * - Presets/Templates
+ * - Decision Logs
+ * - Safety Controls
  */
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { IoRocket, IoPlay, IoPause, IoStop, IoTrash, IoAdd, IoChevronBack, IoGrid, IoTrendingUp, IoWallet, IoTime, IoCheckmarkCircle, IoAlertCircle, IoPauseCircle } from 'react-icons/io5';
+import { IoRocket, IoPlay, IoPause, IoStop, IoTrash, IoAdd, IoChevronBack, IoGrid, IoTrendingUp, IoWallet, IoTime, IoCheckmarkCircle, IoAlertCircle, IoPauseCircle, IoCopy, IoSettings, IoShield, IoWarning, IoList, IoDocumentText, IoSearch, IoClose, IoFlash, IoHelpCircle } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 7: BOT PRESETS - 10+ templates across Grid/DCA/Signal
+// ═══════════════════════════════════════════════════════════════════════════════
+const BOT_PRESETS = [
+  // BEGINNER SAFE
+  {
+    id: 'beginner-dca-btc',
+    name: 'Beginner Safe DCA',
+    type: 'dca',
+    category: 'beginner',
+    description: 'Low-risk Bitcoin accumulation. Perfect for beginners.',
+    pair: 'BTCUSD',
+    timeframe: '1h',
+    config: {
+      dca_mode: 'time_based',
+      buy_interval_candles: 24,
+      base_order_size_percent: 2,
+      safety_order_size_percent: 3,
+      max_dca_levels: 3,
+      take_profit_percent: 3,
+      stop_loss_percent: 10
+    },
+    risk: { max_daily_trades: 3, require_stop_loss: true, cooldown_minutes: 60 },
+    badge: '🛡️ Safe'
+  },
+  {
+    id: 'beginner-grid-stable',
+    name: 'Conservative Grid',
+    type: 'grid',
+    category: 'beginner',
+    description: 'Tight range grid for stable markets. Low risk.',
+    pair: 'ETHUSD',
+    timeframe: '15m',
+    config: {
+      grid_levels: 5,
+      order_size_percent: 5,
+      price_range_percent: 5
+    },
+    risk: { max_daily_trades: 10, require_stop_loss: true, cooldown_minutes: 30 },
+    badge: '🛡️ Safe'
+  },
+  // TREND-FOLLOWING
+  {
+    id: 'trend-signal-rsi',
+    name: 'RSI Trend Follower',
+    type: 'signal',
+    category: 'trend',
+    description: 'Buy oversold, sell overbought. Classic trend strategy.',
+    pair: 'BTCUSD',
+    timeframe: '1h',
+    config: {
+      position_size_percent: 15,
+      strategy: {
+        indicators: [
+          { indicator: 'RSI', params: { period: 14 }, comparator: '<', threshold: 30 }
+        ],
+        entry_logic: 'AND',
+        exit_logic: 'AND'
+      }
+    },
+    risk: { max_daily_trades: 5, require_stop_loss: true, cooldown_minutes: 30 },
+    badge: '📈 Trend'
+  },
+  {
+    id: 'trend-macd-cross',
+    name: 'MACD Crossover',
+    type: 'signal',
+    category: 'trend',
+    description: 'Trade MACD histogram crossovers for trend entries.',
+    pair: 'ETHUSD',
+    timeframe: '4h',
+    config: {
+      position_size_percent: 20,
+      strategy: {
+        indicators: [
+          { indicator: 'MACD', params: { fast: 12, slow: 26, signal: 9 }, comparator: '>', threshold: 0 }
+        ],
+        entry_logic: 'AND',
+        exit_logic: 'AND'
+      }
+    },
+    risk: { max_daily_trades: 3, require_stop_loss: true, cooldown_minutes: 60 },
+    badge: '📈 Trend'
+  },
+  // RANGE/GRID
+  {
+    id: 'grid-btc-range',
+    name: 'BTC Range Trader',
+    type: 'grid',
+    category: 'range',
+    description: 'Grid bot for sideways BTC markets.',
+    pair: 'BTCUSD',
+    timeframe: '5m',
+    config: {
+      grid_levels: 10,
+      order_size_percent: 8,
+      price_range_percent: 8
+    },
+    risk: { max_daily_trades: 20, require_stop_loss: false, cooldown_minutes: 5 },
+    badge: '📊 Range'
+  },
+  {
+    id: 'grid-eth-scalp',
+    name: 'ETH Grid Scalper',
+    type: 'grid',
+    category: 'range',
+    description: 'Aggressive grid for volatile ETH ranges.',
+    pair: 'ETHUSD',
+    timeframe: '1m',
+    config: {
+      grid_levels: 15,
+      order_size_percent: 5,
+      price_range_percent: 4
+    },
+    risk: { max_daily_trades: 50, require_stop_loss: true, cooldown_minutes: 2 },
+    badge: '📊 Range'
+  },
+  // MEAN REVERSION
+  {
+    id: 'mean-bb-bounce',
+    name: 'Bollinger Bounce',
+    type: 'signal',
+    category: 'mean_reversion',
+    description: 'Buy at lower band, sell at upper band.',
+    pair: 'BTCUSD',
+    timeframe: '15m',
+    config: {
+      position_size_percent: 15,
+      strategy: {
+        indicators: [
+          { indicator: 'BB', params: { period: 20, std_dev: 2 }, comparator: '<', threshold: 0, output: 'lower' }
+        ],
+        entry_logic: 'AND',
+        exit_logic: 'AND'
+      }
+    },
+    risk: { max_daily_trades: 8, require_stop_loss: true, cooldown_minutes: 15 },
+    badge: '🔄 Reversion'
+  },
+  // BREAKOUT
+  {
+    id: 'breakout-volume',
+    name: 'Volume Breakout',
+    type: 'signal',
+    category: 'breakout',
+    description: 'Trade breakouts with volume confirmation.',
+    pair: 'SOLUSD',
+    timeframe: '1h',
+    config: {
+      position_size_percent: 20,
+      strategy: {
+        indicators: [
+          { indicator: 'RSI', params: { period: 14 }, comparator: '>', threshold: 60 }
+        ],
+        entry_logic: 'AND',
+        exit_logic: 'AND'
+      }
+    },
+    risk: { max_daily_trades: 4, require_stop_loss: true, cooldown_minutes: 45 },
+    badge: '🚀 Breakout'
+  },
+  // DCA ACCUMULATION
+  {
+    id: 'dca-weekly-btc',
+    name: 'Weekly BTC Stacker',
+    type: 'dca',
+    category: 'accumulation',
+    description: 'Dollar-cost average into BTC weekly.',
+    pair: 'BTCUSD',
+    timeframe: '1h',
+    config: {
+      dca_mode: 'time_based',
+      buy_interval_candles: 168, // Weekly
+      base_order_size_percent: 5,
+      safety_order_size_percent: 5,
+      max_dca_levels: 5,
+      take_profit_percent: 5
+    },
+    risk: { max_daily_trades: 1, require_stop_loss: false, cooldown_minutes: 120 },
+    badge: '💰 Accumulate'
+  },
+  {
+    id: 'dca-dip-buyer',
+    name: 'Dip Buyer DCA',
+    type: 'dca',
+    category: 'accumulation',
+    description: 'Aggressive buying on price drops.',
+    pair: 'ETHUSD',
+    timeframe: '15m',
+    config: {
+      dca_mode: 'price_drop',
+      price_drop_percent: 3,
+      base_order_size_percent: 3,
+      safety_order_size_percent: 6,
+      max_dca_levels: 5,
+      take_profit_percent: 4
+    },
+    risk: { max_daily_trades: 10, require_stop_loss: true, cooldown_minutes: 15 },
+    badge: '💰 Accumulate'
+  },
+  // AGGRESSIVE
+  {
+    id: 'aggressive-scalp',
+    name: 'Aggressive Scalper',
+    type: 'signal',
+    category: 'advanced',
+    description: '⚠️ High risk, high reward. For experienced traders only.',
+    pair: 'SOLUSD',
+    timeframe: '5m',
+    config: {
+      position_size_percent: 30,
+      strategy: {
+        indicators: [
+          { indicator: 'RSI', params: { period: 7 }, comparator: '<', threshold: 25 }
+        ],
+        entry_logic: 'AND',
+        exit_logic: 'AND'
+      }
+    },
+    risk: { max_daily_trades: 20, require_stop_loss: true, cooldown_minutes: 5 },
+    badge: '⚡ Advanced'
+  }
+];
+
+const PRESET_CATEGORIES = [
+  { id: 'all', name: 'All Presets', icon: '📋' },
+  { id: 'beginner', name: 'Beginner Safe', icon: '🛡️' },
+  { id: 'trend', name: 'Trend Following', icon: '📈' },
+  { id: 'range', name: 'Range/Grid', icon: '📊' },
+  { id: 'mean_reversion', name: 'Mean Reversion', icon: '🔄' },
+  { id: 'breakout', name: 'Breakout', icon: '🚀' },
+  { id: 'accumulation', name: 'DCA Accumulation', icon: '💰' },
+  { id: 'advanced', name: 'Advanced', icon: '⚡' }
+];
 
 export default function TradingBots() {
   const navigate = useNavigate();
