@@ -240,7 +240,7 @@ class SignalBotBacktester:
         Run signal bot backtest.
         Uses EXISTING signal engine logic.
         """
-        from signal_engine import IndicatorConfig, LogicalOperator
+        from signal_engine import SignalIndicatorCalculator as IndicatorCalculator
         
         state = BacktestState(balance=initial_balance, peak_equity=initial_balance)
         
@@ -251,17 +251,6 @@ class SignalBotBacktester:
         exit_logic = strategy_config.get("exit_logic", "AND")
         position_size_pct = config.get("position_size_percent", 10)
         
-        # Build indicator configs
-        indicator_configs = []
-        for ind in indicators:
-            indicator_configs.append(IndicatorConfig(
-                indicator_id=ind.get("indicator", "RSI"),
-                params=ind.get("params", {}),
-                comparator=ind.get("comparator", "<"),
-                threshold=ind.get("threshold", 30),
-                output=ind.get("output", "value")
-            ))
-        
         # Minimum candles needed for indicators
         lookback = max(50, config.get("lookback_candles", 50))
         
@@ -270,23 +259,35 @@ class SignalBotBacktester:
             candle = candles[i]
             historical = candles[max(0, i-lookback):i+1]
             
-            # Calculate indicators using existing engine
             try:
                 # Build OHLCV list for indicator calculation
+                closes = [c.close for c in historical]
                 ohlcv_data = [
                     {"open": c.open, "high": c.high, "low": c.low, "close": c.close, "volume": c.volume}
                     for c in historical
                 ]
-                closes = [c.close for c in historical]
                 
                 # Check entry conditions
-                entry_signal = await SignalBotBacktester._check_conditions(
-                    indicator_configs, ohlcv_data, closes, "entry", entry_logic
+                entry_signal = SignalBotBacktester._check_conditions(
+                    indicators, ohlcv_data, closes, "entry", entry_logic
                 )
                 
-                # Check exit conditions  
-                exit_signal = await SignalBotBacktester._check_conditions(
-                    indicator_configs, ohlcv_data, closes, "exit", exit_logic
+                # Check exit conditions (use opposite logic for exit)
+                exit_indicators = []
+                for ind in indicators:
+                    exit_ind = ind.copy()
+                    # Reverse comparator for exit
+                    comp = exit_ind.get("comparator", "<")
+                    if comp == "<":
+                        exit_ind["comparator"] = ">"
+                        exit_ind["threshold"] = 70 if exit_ind.get("indicator", "").upper() == "RSI" else exit_ind.get("threshold", 0)
+                    elif comp == ">":
+                        exit_ind["comparator"] = "<"
+                        exit_ind["threshold"] = 30 if exit_ind.get("indicator", "").upper() == "RSI" else exit_ind.get("threshold", 0)
+                    exit_indicators.append(exit_ind)
+                
+                exit_signal = SignalBotBacktester._check_conditions(
+                    exit_indicators, ohlcv_data, closes, "exit", exit_logic
                 )
                 
                 current_price = candle.close
@@ -386,38 +387,25 @@ class SignalBotBacktester:
         return state, state.trades
     
     @staticmethod
-    async def _check_conditions(
-        indicators: List,
+    def _check_conditions(
+        indicators: List[Dict],
         ohlcv: List[Dict],
         closes: List[float],
         signal_type: str,
         logic: str
     ) -> bool:
         """Check if entry/exit conditions are met using existing indicator logic"""
-        from signal_engine import IndicatorCalculator, OHLCV
+        from signal_engine import SignalIndicatorCalculator as IndicatorCalculator
         
         if not indicators:
             return False
-        
-        # Convert to OHLCV objects
-        ohlcv_objs = [
-            OHLCV(
-                timestamp=i,
-                open=c["open"],
-                high=c["high"],
-                low=c["low"],
-                close=c["close"],
-                volume=c.get("volume", 0)
-            )
-            for i, c in enumerate(ohlcv)
-        ]
         
         results = []
         for ind in indicators:
             try:
                 # Calculate indicator value
-                indicator_type = ind.indicator_id.upper()
-                params = ind.params or {}
+                indicator_type = ind.get("indicator", "RSI").upper()
+                params = ind.get("params", {})
                 
                 if indicator_type == "RSI":
                     period = params.get("period", 14)
@@ -441,15 +429,15 @@ class SignalBotBacktester:
                     period = params.get("period", 20)
                     std = params.get("std_dev", 2)
                     bb_result = IndicatorCalculator.bollinger_bands(closes, period, std)
-                    output = ind.output or "lower"
+                    output = ind.get("output", "lower")
                     value = bb_result.get(output, [closes[-1]])[-1]
                 else:
                     # Default to close price
                     value = closes[-1]
                 
                 # Compare against threshold
-                threshold = ind.threshold
-                comparator = ind.comparator
+                threshold = ind.get("threshold", 0)
+                comparator = ind.get("comparator", "<")
                 
                 if comparator == "<":
                     condition_met = value < threshold
@@ -462,7 +450,6 @@ class SignalBotBacktester:
                 elif comparator == "==":
                     condition_met = abs(value - threshold) < 0.0001
                 elif comparator == "crosses_above":
-                    # Would need previous value - simplified
                     condition_met = value > threshold
                 elif comparator == "crosses_below":
                     condition_met = value < threshold
@@ -472,7 +459,7 @@ class SignalBotBacktester:
                 results.append(condition_met)
                 
             except Exception as e:
-                logger.error(f"Error calculating indicator {ind.indicator_id}: {e}")
+                logger.error(f"Error calculating indicator {ind.get('indicator', 'unknown')}: {e}")
                 results.append(False)
         
         if not results:
