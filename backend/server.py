@@ -39294,7 +39294,9 @@ async def confirm_live_mode(bot_id: str, request: dict, x_user_id: str = Header(
         # 2FA ENFORCEMENT - MANDATORY FOR LIVE MODE ACTIVATION
         # ═══════════════════════════════════════════════════════════════════════
         # Check 2FA directly using server's db connection
+        logger.info(f"[2FA CHECK] Looking up user: {x_user_id}")
         user = await db.users.find_one({"user_id": x_user_id})
+        logger.info(f"[2FA CHECK] User found: {user is not None}, 2FA enabled: {user.get('two_factor_enabled') if user else 'N/A'}")
         if not user:
             raise HTTPException(status_code=403, detail="LIVE_MODE_BLOCKED: User not found")
         
