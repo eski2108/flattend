@@ -282,6 +282,30 @@ class LiveModeValidator:
             "ip_address": ip_address,
             "confirmation_type": "bot_live_start"
         })
+    
+    @staticmethod
+    async def check_2fa_for_live_trading(user_id: str) -> Tuple[bool, str]:
+        """
+        Standalone 2FA check for LIVE trading.
+        Called before any LIVE trade execution.
+        Returns (allowed, error_message).
+        """
+        # Check users collection
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            return False, "User not found"
+        
+        twofa_enabled = user.get("two_factor_enabled", False)
+        
+        # Also check two_factor_auth collection
+        if not twofa_enabled:
+            tfa_data = await db.two_factor_auth.find_one({"user_id": user_id})
+            twofa_enabled = tfa_data and tfa_data.get("enabled", False)
+        
+        if not twofa_enabled:
+            return False, "2FA_REQUIRED: Two-factor authentication must be enabled for LIVE trading. Enable 2FA in Settings → Security."
+        
+        return True, "2FA verified for LIVE trading"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
