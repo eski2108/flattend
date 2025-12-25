@@ -418,6 +418,112 @@ export default function TradingBots() {
     }
   };
 
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // PHASE 7: Additional Functions
+  // ═══════════════════════════════════════════════════════════════════════════════
+
+  // Fetch Decision Logs
+  const fetchDecisionLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await axios.get(`${API}/api/trading/audit-log`, {
+        headers: { 'x-user-id': userId },
+        params: { limit: 100 }
+      });
+      if (response.data.success) {
+        setDecisionLogs(response.data.trades || []);
+      }
+    } catch (error) {
+      console.error('Error fetching decision logs:', error);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  // Emergency Stop All Bots
+  const handleEmergencyStopAll = async () => {
+    setEmergencyLoading(true);
+    try {
+      const userId = localStorage.getItem('userId');
+      const runningBots = bots.filter(b => b.status === 'running' || b.status === 'paused');
+      
+      for (const bot of runningBots) {
+        await axios.post(`${API}/api/bots/stop`, 
+          { bot_id: bot.bot_id, cancel_orders: true },
+          { headers: { 'x-user-id': userId } }
+        );
+      }
+      
+      toast.success(`Stopped ${runningBots.length} bots`);
+      setShowEmergencyModal(false);
+      fetchBots();
+    } catch (error) {
+      toast.error('Failed to stop all bots');
+    } finally {
+      setEmergencyLoading(false);
+    }
+  };
+
+  // Duplicate Bot
+  const handleDuplicateBot = async (bot) => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await axios.post(`${API}/api/bots/create`, {
+        ...bot,
+        bot_id: undefined,
+        name: `${bot.name || bot.type} (Copy)`,
+        status: 'draft'
+      }, { headers: { 'x-user-id': userId } });
+      
+      if (response.data.success) {
+        toast.success('Bot duplicated');
+        fetchBots();
+      }
+    } catch (error) {
+      toast.error('Failed to duplicate bot');
+    }
+  };
+
+  // Create Bot from Preset
+  const handleCreateFromPreset = (preset) => {
+    setSelectedPreset(preset);
+    setShowPresetModal(true);
+  };
+
+  // Get Risk Badge
+  const getRiskBadge = (bot) => {
+    const riskStatus = bot.risk_status || 'ok';
+    const styles = {
+      ok: { bg: 'rgba(0,229,153,0.15)', color: '#00E599', text: 'OK', icon: IoShield },
+      warning: { bg: 'rgba(255,193,7,0.15)', color: '#FFC107', text: 'WARNING', icon: IoWarning },
+      blocked: { bg: 'rgba(255,92,92,0.15)', color: '#FF5C5C', text: 'BLOCKED', icon: IoAlertCircle }
+    };
+    const style = styles[riskStatus] || styles.ok;
+    const Icon = style.icon;
+    return (
+      <div style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        padding: '3px 8px',
+        borderRadius: '4px',
+        background: style.bg,
+        color: style.color,
+        fontSize: '10px',
+        fontWeight: '700'
+      }}>
+        <Icon size={10} />
+        {style.text}
+      </div>
+    );
+  };
+
+  // Filter presets by category
+  const filteredPresets = selectedPresetCategory === 'all' 
+    ? BOT_PRESETS 
+    : BOT_PRESETS.filter(p => p.category === selectedPresetCategory);
+
   const getStatusBadge = (status) => {
     const styles = {
       running: { bg: 'rgba(0,229,153,0.15)', color: '#00E599', icon: IoCheckmarkCircle, text: 'RUNNING' },
