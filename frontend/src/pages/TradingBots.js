@@ -1856,6 +1856,18 @@ export default function TradingBots() {
                   }}>{selectedLogExplanation.side}</span>
                 </div>
                 <div>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>MODE</div>
+                  <span style={{
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    background: selectedLogExplanation.mode === 'live' ? 'rgba(239,68,68,0.15)' : 'rgba(255,193,7,0.15)',
+                    color: selectedLogExplanation.mode === 'live' ? '#EF4444' : '#FFC107',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase'
+                  }}>{selectedLogExplanation.mode === 'live' ? '🔴 LIVE' : '📝 PAPER'}</span>
+                </div>
+                <div>
                   <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>PAIR</div>
                   <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{selectedLogExplanation.pair}</div>
                 </div>
@@ -1864,8 +1876,8 @@ export default function TradingBots() {
                   <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>${selectedLogExplanation.entry_price?.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>TIME</div>
-                  <div style={{ fontSize: '12px', color: '#8B9BB4' }}>{new Date(selectedLogExplanation.timestamp_ms).toLocaleString()}</div>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>TIME (UTC)</div>
+                  <div style={{ fontSize: '12px', color: '#8B9BB4' }}>{new Date(selectedLogExplanation.timestamp_ms).toISOString().replace('T', ' ').slice(0, 19)} UTC</div>
                 </div>
               </div>
             </div>
