@@ -2461,24 +2461,46 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%)'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0, fontSize: '18px', color: '#FFFFFF' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={{ margin: 0, fontSize: '17px', fontWeight: '600', color: '#FFFFFF', letterSpacing: '-0.01em' }}>
               {stepTitles[step - 1]}
             </h2>
-            <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#8B9BB4', fontSize: '24px', cursor: 'pointer' }}>×</button>
+            <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#8B9BB4', fontSize: '20px', cursor: 'pointer', opacity: 0.7 }}>×</button>
           </div>
-          {/* Step Progress */}
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {[1, 2, 3, 4, 5].map((s) => (
-              <div key={s} style={{
-                flex: 1,
-                height: '4px',
-                borderRadius: '2px',
-                background: s <= step ? 'linear-gradient(90deg, #00E599, #00B8D4)' : 'rgba(255,255,255,0.1)'
-              }} />
+          
+          {/* Step Labels */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            {['Type', 'Pair', 'Strategy', 'Risk', 'Review'].map((label, idx) => (
+              <span key={label} style={{
+                fontSize: '10px',
+                fontWeight: idx + 1 <= step ? '600' : '400',
+                color: idx + 1 <= step ? '#00E599' : COLORS.secondaryDim,
+                letterSpacing: '0.03em',
+                textTransform: 'uppercase',
+                opacity: idx + 1 <= step ? 1 : 0.5
+              }}>{label}</span>
             ))}
           </div>
-          <div style={{ fontSize: '12px', color: '#8B9BB4', marginTop: '8px' }}>Step {step} of 5</div>
+          
+          {/* Thin Progress Line */}
+          <div style={{ 
+            position: 'relative', 
+            height: '2px', 
+            background: 'rgba(255,255,255,0.06)', 
+            borderRadius: '1px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              height: '100%',
+              width: `${(step / 5) * 100}%`,
+              background: '#00E599',
+              borderRadius: '1px',
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
         </div>
 
         {/* Modal Content */}
