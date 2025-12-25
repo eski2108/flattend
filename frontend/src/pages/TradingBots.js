@@ -562,7 +562,9 @@ export default function TradingBots() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: '24px'
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '16px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
@@ -585,29 +587,52 @@ export default function TradingBots() {
               Trading Bots
             </h1>
             <p style={{ fontSize: '13px', color: '#8B9BB4', margin: '4px 0 0' }}>
-              Automate your trading with Grid and DCA bots
+              Automate your trading • Grid • DCA • Signal
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 20px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
-            border: 'none',
-            color: '#020617',
-            fontSize: '14px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(0,229,153,0.3)'
-          }}
-        >
-          <IoAdd size={18} />
-          Create Bot
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* PHASE 7: Emergency Stop Button */}
+          {bots.filter(b => b.status === 'running').length > 0 && (
+            <button
+              onClick={() => setShowEmergencyModal(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '10px 16px',
+                borderRadius: '10px',
+                background: 'rgba(255,92,92,0.15)',
+                border: '1px solid rgba(255,92,92,0.3)',
+                color: '#FF5C5C',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              <IoStop size={16} />
+              Emergency Stop All
+            </button>
+          )}
+          <button
+            onClick={() => setShowCreateModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 20px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
+              border: 'none',
+              color: '#020617',
+              fontSize: '14px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0,229,153,0.3)'
+            }}
+          >
+            <IoAdd size={18} />
+            Create Bot
         </button>
       </div>
 
