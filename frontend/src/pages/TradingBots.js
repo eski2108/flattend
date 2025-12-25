@@ -2743,8 +2743,8 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                         onChange={(e) => setParams({ ...params, entry_rules: { ...params.entry_rules, operator: e.target.value }})}
                         style={{ padding: '4px 8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
                       >
-                        <option value="AND">🔗 ALL conditions (AND)</option>
-                        <option value="OR">⚡ ANY condition (OR)</option>
+                        <option value="AND">ALL conditions (AND)</option>
+                        <option value="OR">ANY condition (OR)</option>
                       </select>
                     </div>
                     
