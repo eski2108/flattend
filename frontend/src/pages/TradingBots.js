@@ -1612,10 +1612,10 @@ export default function TradingBots() {
                 minWidth: '140px'
               }}
             >
-              <option value="all">All Bots</option>
+              <option value="all">🤖 All Bots</option>
               {bots.map(bot => (
                 <option key={bot.bot_id} value={bot.bot_id}>
-                  {bot.type.toUpperCase()} - {bot.pair}
+                  {bot.type === 'grid' ? '📊' : bot.type === 'dca' ? '💰' : '📈'} {bot.type.toUpperCase()} - {bot.pair}
                 </option>
               ))}
             </select>
@@ -1629,12 +1629,12 @@ export default function TradingBots() {
                 border: '1px solid rgba(255,255,255,0.1)',
                 color: '#FFFFFF',
                 fontSize: '13px',
-                minWidth: '120px'
+                minWidth: '140px'
               }}
             >
-              <option value="all">All Actions</option>
-              <option value="buy">Buy</option>
-              <option value="sell">Sell</option>
+              <option value="all">📋 All Actions</option>
+              <option value="buy">🟢 Buy</option>
+              <option value="sell">🔴 Sell</option>
             </select>
             <select
               value={logFilters.dateRange}
@@ -1646,13 +1646,13 @@ export default function TradingBots() {
                 border: '1px solid rgba(255,255,255,0.1)',
                 color: '#FFFFFF',
                 fontSize: '13px',
-                minWidth: '120px'
+                minWidth: '140px'
               }}
             >
-              <option value="24h">Last 24h</option>
-              <option value="7d">Last 7 Days</option>
-              <option value="30d">Last 30 Days</option>
-              <option value="all">All Time</option>
+              <option value="24h">🕐 Last 24h</option>
+              <option value="7d">📅 Last 7 Days</option>
+              <option value="30d">🗓️ Last 30 Days</option>
+              <option value="all">♾️ All Time</option>
             </select>
             {/* Search */}
             <div style={{ 
