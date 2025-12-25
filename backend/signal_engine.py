@@ -257,19 +257,28 @@ class SignalIndicatorCalculator:
     """
     Calculate indicator values for signal evaluation.
     Supports multi-timeframe data.
+    Uses CandleManager as SINGLE SOURCE OF TRUTH.
     """
     
     @staticmethod
     async def calculate_indicators(
         pair: str,
         indicators: List[IndicatorConfig],
-        lookback_candles: int = 100
-    ) -> Dict[str, Any]:
+        lookback_candles: int = 100,
+        is_live_mode: bool = False,
+        user_id: str = None,
+        bot_id: str = None
+    ) -> Tuple[Dict[str, Any], Optional[Dict], Optional[str]]:
         """
         Calculate all required indicators for a pair.
-        Returns a dictionary of indicator values keyed by cache_key.
+        
+        Returns:
+            (indicator_results, candle_source, error_message)
+            
+        If error_message is set, indicators will be empty and NO TRADE should occur.
         """
         results = {}
+        candle_source = None
         
         # Group indicators by timeframe
         by_timeframe = defaultdict(list)
@@ -278,7 +287,24 @@ class SignalIndicatorCalculator:
         
         # Fetch candles and calculate for each timeframe
         for timeframe, tf_indicators in by_timeframe.items():
-            candles = await CandleManager.get_candles(pair, timeframe, lookback_candles)
+            # Use CandleManager with full source tracking
+            candles, source_info, error = await CandleManager.get_candles_with_source(
+                pair=pair,
+                timeframe=timeframe,
+                limit=lookback_candles,
+                is_live_mode=is_live_mode,
+                user_id=user_id,
+                bot_id=bot_id
+            )
+            
+            # Store source for audit
+            candle_source = source_info
+            
+            # Guardrail: If error occurred, return immediately with NO_TRADE
+            if error:
+                logger.error(f"[SignalIndicatorCalculator] Candle fetch error: {error}")
+                return {}, candle_source, error
+            
             if not candles:
                 logger.warning(f"No candles for {pair} {timeframe}")
                 continue
@@ -312,6 +338,30 @@ class SignalIndicatorCalculator:
                 except Exception as e:
                     logger.error(f"Error calculating {ind.indicator_id}: {e}")
                     results[ind.get_cache_key()] = {"current": None, "previous": None, "series": []}
+        
+        return results, candle_source, None
+    
+    @staticmethod
+    async def calculate_indicators_legacy(
+        pair: str,
+        indicators: List[IndicatorConfig],
+        lookback_candles: int = 100
+    ) -> Dict[str, Any]:
+        """
+        Legacy interface - returns just indicator results.
+        For full audit info, use calculate_indicators() with source tracking.
+        """
+        results, _, error = await SignalIndicatorCalculator.calculate_indicators(
+            pair=pair,
+            indicators=indicators,
+            lookback_candles=lookback_candles,
+            is_live_mode=False
+        )
+        
+        if error:
+            logger.warning(f"[SignalIndicatorCalculator] Legacy call returned error: {error}")
+        
+        return results
         
         return results
     
