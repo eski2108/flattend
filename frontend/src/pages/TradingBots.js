@@ -824,68 +824,125 @@ export default function TradingBots() {
             (filterType === 'all' || b.type === filterType) &&
             (filterStatus === 'all' || b.status === filterStatus) &&
             (filterPair === 'all' || b.pair === filterPair)
-          ).map(bot => (
+          ).map(bot => {
+            // Calculate runtime
+            const runtime = bot.created_at ? (() => {
+              const diff = Date.now() - new Date(bot.created_at).getTime();
+              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              if (days > 0) return `${days}d ${hours}h`;
+              const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+            })() : '--';
+            
+            return (
             <div key={bot.bot_id} style={{
-              background: '#0B1220',
+              background: 'linear-gradient(145deg, #0B1220 0%, #0A0F18 100%)',
               borderRadius: '16px',
               border: '1px solid rgba(255,255,255,0.06)',
               padding: '20px',
-              transition: 'all 150ms ease'
+              transition: 'all 150ms ease',
+              position: 'relative'
             }}>
               {/* Bot Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                    {bot.type === 'grid' ? <IoGrid size={18} style={{ color: '#00E599' }} /> : <IoTrendingUp size={18} style={{ color: '#00B8D4' }} />}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                    {bot.type === 'grid' ? <IoGrid size={18} style={{ color: '#00E599' }} /> : 
+                     bot.type === 'dca' ? <IoTrendingUp size={18} style={{ color: '#00B8D4' }} /> :
+                     <IoRocket size={18} style={{ color: '#FF6B6B' }} />}
                     <span style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>
-                      {bot.type === 'grid' ? 'Grid Bot' : 'DCA Bot'}
+                      {bot.type === 'grid' ? 'Grid Bot' : bot.type === 'dca' ? 'DCA Bot' : 'Signal Bot'}
+                    </span>
+                    {getRiskBadge(bot)}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: '#8B9BB4' }}>
+                    <span style={{ fontWeight: '600', color: '#FFFFFF' }}>{bot.pair}</span>
+                    <span>•</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <IoTime size={12} /> {runtime}
                     </span>
                   </div>
-                  <div style={{ fontSize: '14px', color: '#8B9BB4' }}>{bot.pair}</div>
                 </div>
-                {getStatusBadge(bot.status)}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+                  {getStatusBadge(bot.status)}
+                  {/* Safe Mode Toggle */}
+                  <div 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleSafeMode(bot.bot_id, !bot.safe_mode);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      background: bot.safe_mode ? 'rgba(0,229,153,0.1)' : 'rgba(255,255,255,0.05)',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      color: bot.safe_mode ? '#00E599' : '#8B9BB4'
+                    }}
+                  >
+                    <IoShield size={10} />
+                    Safe Mode {bot.safe_mode ? 'ON' : 'OFF'}
+                  </div>
+                </div>
               </div>
 
-              {/* Stats */}
+              {/* Stats Grid - Enhanced */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '12px',
-                marginBottom: '16px'
+                gridTemplateColumns: '1fr 1fr 1fr',
+                gap: '10px',
+                marginBottom: '12px'
               }}>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '4px' }}>Invested</div>
-                  <div style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF' }}>
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px', textTransform: 'uppercase' }}>Invested</div>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF' }}>
                     ${bot.pnl?.total_invested?.toFixed(2) || '0.00'}
                   </div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '4px' }}>PnL</div>
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px', textTransform: 'uppercase' }}>PnL</div>
                   <div style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
+                    fontSize: '15px',
+                    fontWeight: '700',
                     color: (bot.pnl?.realized_pnl || 0) >= 0 ? '#00E599' : '#FF5C5C'
                   }}>
                     {(bot.pnl?.realized_pnl || 0) >= 0 ? '+' : ''}${bot.pnl?.realized_pnl?.toFixed(2) || '0.00'}
                   </div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '4px' }}>Orders</div>
-                  <div style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF' }}>
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px', textTransform: 'uppercase' }}>Trades</div>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF' }}>
                     {bot.state?.total_orders_placed || 0}
-                  </div>
-                </div>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '11px', color: '#8B9BB4', marginBottom: '4px' }}>Active</div>
-                  <div style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF' }}>
-                    {bot.state?.active_orders_count || 0}
                   </div>
                 </div>
               </div>
 
-              {/* Actions */}
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {bot.status === 'paused' || bot.status === 'stopped' ? (
+              {/* Last Trade Info */}
+              <div style={{
+                padding: '10px 12px',
+                background: 'rgba(255,255,255,0.02)',
+                borderRadius: '8px',
+                marginBottom: '14px',
+                fontSize: '12px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span style={{ color: '#8B9BB4' }}>Last Trade:</span>
+                <span style={{ color: '#FFFFFF' }}>
+                  {bot.state?.last_trade_at 
+                    ? new Date(bot.state.last_trade_at).toLocaleString() 
+                    : 'No trades yet'}
+                </span>
+              </div>
+
+              {/* Actions Row 1 - Primary */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                {bot.status === 'paused' || bot.status === 'stopped' || bot.status === 'draft' ? (
                   <button
                     onClick={() => handleStartBot(bot.bot_id)}
                     style={{
@@ -896,7 +953,7 @@ export default function TradingBots() {
                       gap: '6px',
                       padding: '10px',
                       borderRadius: '8px',
-                      background: 'rgba(0,229,153,0.15)',
+                      background: 'linear-gradient(135deg, rgba(0,229,153,0.2) 0%, rgba(0,184,212,0.2) 100%)',
                       border: '1px solid rgba(0,229,153,0.3)',
                       color: '#00E599',
                       fontSize: '13px',
@@ -936,23 +993,15 @@ export default function TradingBots() {
                     background: 'rgba(108,117,125,0.15)',
                     border: '1px solid rgba(108,117,125,0.3)',
                     color: '#6C757D',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    fontSize: '12px'
                   }}
+                  title="Stop Bot"
                 >
                   <IoStop size={14} />
-                </button>
-                <button
-                  onClick={() => handleDeleteBot(bot.bot_id)}
-                  style={{
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    background: 'rgba(255,92,92,0.15)',
-                    border: '1px solid rgba(255,92,92,0.3)',
-                    color: '#FF5C5C',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <IoTrash size={14} />
                 </button>
                 <button
                   onClick={() => fetchBotDetails(bot.bot_id)}
@@ -970,8 +1019,95 @@ export default function TradingBots() {
                   View
                 </button>
               </div>
+
+              {/* Actions Row 2 - Secondary */}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => {
+                    setSelectedBot(bot);
+                    setActiveTab('logs');
+                    fetchDecisionLogs();
+                  }}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    background: 'rgba(168,85,247,0.1)',
+                    border: '1px solid rgba(168,85,247,0.2)',
+                    color: '#A855F7',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <IoList size={12} /> Logs
+                </button>
+                <button
+                  onClick={() => handleDuplicateBot(bot)}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#8B9BB4',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <IoCopy size={12} /> Duplicate
+                </button>
+                <button
+                  onClick={() => {
+                    // Edit functionality - open modal with bot data
+                    setSelectedBotType(bot.type);
+                    toast('Edit mode coming soon', { icon: '🔧' });
+                  }}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#8B9BB4',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <IoSettings size={12} /> Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteBot(bot.bot_id)}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: 'rgba(255,92,92,0.1)',
+                    border: '1px solid rgba(255,92,92,0.2)',
+                    color: '#FF5C5C',
+                    cursor: 'pointer',
+                    fontSize: '11px'
+                  }}
+                  title="Delete Bot"
+                >
+                  <IoTrash size={12} />
+                </button>
+              </div>
             </div>
-          ))}
+          );})}
         </div>
       )}
 
