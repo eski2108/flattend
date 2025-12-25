@@ -17,6 +17,25 @@ import { IoRocket, IoPlay, IoPause, IoStop, IoTrash, IoAdd, IoChevronBack, IoGri
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
+// Helper function to get user_id from localStorage
+const getUserId = () => {
+  // First try 'userId' (direct storage)
+  const directUserId = localStorage.getItem('userId');
+  if (directUserId) return directUserId;
+  
+  // Fall back to extracting from 'user' object
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      return user.user_id || user.id || null;
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // PHASE 7: BOT PRESETS - 10+ templates across Grid/DCA/Signal
 // ═══════════════════════════════════════════════════════════════════════════════
