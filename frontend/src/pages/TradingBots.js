@@ -2544,9 +2544,9 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                   fontSize: '15px'
                 }}
               >
-                <option value="">Choose a trading pair</option>
+                <option value="">💱 Choose a trading pair</option>
                 {tradingPairs.map(p => (
-                  <option key={p.symbol} value={p.symbol}>{p.name}</option>
+                  <option key={p.symbol} value={p.symbol}>{p.emoji || '🪙'} {p.name}</option>
                 ))}
               </select>
               <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
