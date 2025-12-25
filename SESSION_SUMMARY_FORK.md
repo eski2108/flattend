@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://crypto-botui.preview.emergentagent.com
+https://tradingbots-ui.preview.emergentagent.com
 
 ---
 

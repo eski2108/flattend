@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://crypto-botui.preview.emergentagent.com
+**Live URL:** https://tradingbots-ui.preview.emergentagent.com
 
 ---
 

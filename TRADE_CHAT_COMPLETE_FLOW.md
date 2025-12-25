@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://crypto-botui.preview.emergentagent.com
+**Test it now at:** https://tradingbots-ui.preview.emergentagent.com

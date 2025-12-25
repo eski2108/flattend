@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://crypto-botui.preview.emergentagent.com
+https://tradingbots-ui.preview.emergentagent.com
 
 ### Test Route
 
-`https://crypto-botui.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://tradingbots-ui.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

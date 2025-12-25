@@ -88,7 +88,7 @@ INFO:     Will watch for changes in these directories: ['/app/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
 INFO:     Started reloader process [28753] using WatchFiles
 2025-12-25 10:58:51,680 - cache_service - WARNING - ⚠️  Redis not available: Error 99 connecting to localhost:6379. Cannot assign requested address.. Running without cache.
-2025-12-25 10:58:51,681 - coin_hub_x - INFO - 🔗 BACKEND_URL: https://crypto-botui.preview.emergentagent.com
+2025-12-25 10:58:51,681 - coin_hub_x - INFO - 🔗 BACKEND_URL: https://tradingbots-ui.preview.emergentagent.com
 2025-12-25 10:58:51,681 - coin_hub_x - INFO - 🔗 FRONTEND_URL: https://coinhubx.net
 2025-12-25 10:58:51,886 - coin_hub_x - INFO - 🔵 DATABASE CONNECTED: coinhubx_production
 2025-12-25 10:58:51,887 - coin_hub_x - INFO - 🚀 RUNNING IN PRODUCTION MODE
@@ -142,7 +142,7 @@ INFO:     Will watch for changes in these directories: ['/app/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
 INFO:     Started reloader process [29009] using WatchFiles
 2025-12-25 11:00:07,110 - cache_service - WARNING - ⚠️  Redis not available: Error 99 connecting to localhost:6379. Cannot assign requested address.. Running without cache.
-2025-12-25 11:00:07,111 - coin_hub_x - INFO - 🔗 BACKEND_URL: https://crypto-botui.preview.emergentagent.com
+2025-12-25 11:00:07,111 - coin_hub_x - INFO - 🔗 BACKEND_URL: https://tradingbots-ui.preview.emergentagent.com
 2025-12-25 11:00:07,111 - coin_hub_x - INFO - 🔗 FRONTEND_URL: https://coinhubx.net
 2025-12-25 11:00:07,288 - coin_hub_x - INFO - 🔵 DATABASE CONNECTED: coinhubx_production
 2025-12-25 11:00:07,288 - coin_hub_x - INFO - 🚀 RUNNING IN PRODUCTION MODE
@@ -164,7 +164,7 @@ INFO:     Will watch for changes in these directories: ['/app/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
 INFO:     Started reloader process [29015] using WatchFiles
 2025-12-25 11:00:08,267 - cache_service - WARNING - ⚠️  Redis not available: Error 99 connecting to localhost:6379. Cannot assign requested address.. Running without cache.
-2025-12-25 11:00:08,267 - coin_hub_x - INFO - 🔗 BACKEND_URL: https://crypto-botui.preview.emergentagent.com
+2025-12-25 11:00:08,267 - coin_hub_x - INFO - 🔗 BACKEND_URL: https://tradingbots-ui.preview.emergentagent.com
 2025-12-25 11:00:08,267 - coin_hub_x - INFO - 🔗 FRONTEND_URL: https://coinhubx.net
 2025-12-25 11:00:08,417 - coin_hub_x - INFO - 🔵 DATABASE CONNECTED: coinhubx_production
 2025-12-25 11:00:08,417 - coin_hub_x - INFO - 🚀 RUNNING IN PRODUCTION MODE
@@ -407,7 +407,7 @@ INFO:     10.64.130.33:36076 - "GET /api/banners/active HTTP/1.1" 200 OK
 INFO:     10.64.130.47:51802 - "GET /api/prices/live HTTP/1.1" 200 OK
 INFO:     10.64.130.33:36082 - "GET /api/bots/list HTTP/1.1" 200 OK
 INFO:     10.64.128.214:57760 - "GET /api/trading/audit-log?limit=100 HTTP/1.1" 200 OK
-INFO:     10.64.128.90:52884 - "GET /api/trading/audit-log?user_id=917cd9b3-3c7c-4a67-99bd-88b3c6b5b968 HTTP/1.1" 401 Unauthorized
+INFO:     10.64.128.90:52884 - "GET /api/trading/audit-log?user_id=tradingbots-ui HTTP/1.1" 401 Unauthorized
 INFO:     10.64.128.89:46028 - "GET /api/trading/audit-log HTTP/1.1" 200 OK
 INFO:     10.64.128.214:44268 - "GET /api/trading/audit-log HTTP/1.1" 200 OK
 INFO:     10.64.128.90:49370 - "GET /api/trading/audit-log HTTP/1.1" 200 OK

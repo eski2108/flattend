@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://crypto-botui.preview.emergentagent.com
+**URL:** https://tradingbots-ui.preview.emergentagent.com
 
 **Services Status:**
 ```bash

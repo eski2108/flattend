@@ -255,11 +255,11 @@ await db.bot_logs.insert_one({
 
 ```bash
 # Presets endpoint
-curl https://crypto-botui.preview.emergentagent.com/api/bots/presets
+curl https://tradingbots-ui.preview.emergentagent.com/api/bots/presets
 # Returns 8 presets
 
 # Backtest endpoint
-curl -X POST https://crypto-botui.preview.emergentagent.com/api/bots/backtest \
+curl -X POST https://tradingbots-ui.preview.emergentagent.com/api/bots/backtest \
   -H "Content-Type: application/json" \
   -d '{"bot_type":"signal","pair":"BTC/USDT","params":{...}}'
 # Returns: total_return, win_rate, max_drawdown, trade_count

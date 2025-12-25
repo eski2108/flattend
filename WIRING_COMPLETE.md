@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://crypto-botui.preview.emergentagent.com/api
-- **Frontend App**: https://crypto-botui.preview.emergentagent.com
+- **Backend API**: https://tradingbots-ui.preview.emergentagent.com/api
+- **Frontend App**: https://tradingbots-ui.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

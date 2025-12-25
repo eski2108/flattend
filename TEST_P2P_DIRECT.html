@@ -8,7 +8,7 @@
     <div id="result"></div>
     
     <script>
-        fetch('https://crypto-botui.preview.emergentagent.com/api/p2p/marketplace/offers')
+        fetch('https://tradingbots-ui.preview.emergentagent.com/api/p2p/marketplace/offers')
             .then(r => r.json())
             .then(data => {
                 document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
