@@ -759,28 +759,31 @@ class SimulatedAdapter(IExchangeAdapter):
         return mapping.get(symbol.upper(), "bitcoin")
     
     async def get_ticker(self, symbol: str) -> Ticker:
-        """Get ticker - uses Bybit public API."""
+        """Get ticker from CoinGecko simple price API."""
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                bybit_symbol = symbol.upper().replace("/", "")
-                if not bybit_symbol.endswith("USDT"):
-                    bybit_symbol = bybit_symbol.replace("USD", "USDT")
+                coin_id = self._symbol_to_coingecko(symbol)
                 
                 response = await client.get(
-                    "https://api.bybit.com/v5/market/tickers",
-                    params={"category": "spot", "symbol": bybit_symbol}
+                    "https://api.coingecko.com/api/v3/simple/price",
+                    params={
+                        "ids": coin_id,
+                        "vs_currencies": "usd",
+                        "include_24hr_vol": "true",
+                        "include_24hr_change": "true"
+                    }
                 )
                 
                 if response.status_code == 200:
                     data = response.json()
-                    if data.get("retCode") == 0 and data.get("result", {}).get("list"):
-                        ticker_data = data["result"]["list"][0]
+                    if coin_id in data:
+                        price = float(data[coin_id].get("usd", 0))
                         return Ticker(
                             symbol=symbol,
-                            last_price=float(ticker_data.get("lastPrice", 0)),
-                            bid=float(ticker_data.get("bid1Price", 0)),
-                            ask=float(ticker_data.get("ask1Price", 0)),
-                            volume_24h=float(ticker_data.get("volume24h", 0)),
+                            last_price=price,
+                            bid=price * 0.9999,  # Simulate bid slightly below
+                            ask=price * 1.0001,  # Simulate ask slightly above
+                            volume_24h=float(data[coin_id].get("usd_24h_vol", 0)),
                             timestamp=int(time.time() * 1000)
                         )
         except Exception as e:
