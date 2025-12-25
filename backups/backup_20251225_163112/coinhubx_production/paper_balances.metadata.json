@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"8b594a761e15483da6b4cc93a4c5eaf2","collectionName":"paper_balances","type":"collection"}
