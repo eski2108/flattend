@@ -47,6 +47,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         "/api/metrics",
         "/api/prices",
         "/api/exchange-rates",
+        "/api/exchange",
         "/api/coins",
         "/api/p2p/offers",
         "/api/p2p/marketplace",
