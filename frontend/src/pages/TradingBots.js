@@ -785,13 +785,13 @@ export default function TradingBots() {
             border: '1px solid rgba(255,255,255,0.1)',
             color: '#FFFFFF',
             fontSize: '13px',
-            minWidth: '120px'
+            minWidth: '140px'
           }}
         >
-          <option value="all">All Types</option>
-          <option value="grid">Grid Bot</option>
-          <option value="dca">DCA Bot</option>
-          <option value="signal">Signal Bot</option>
+          <option value="all">🤖 All Types</option>
+          <option value="grid">📊 Grid Bot</option>
+          <option value="dca">💰 DCA Bot</option>
+          <option value="signal">📈 Signal Bot</option>
         </select>
         <select
           value={filterStatus}
@@ -803,14 +803,14 @@ export default function TradingBots() {
             border: '1px solid rgba(255,255,255,0.1)',
             color: '#FFFFFF',
             fontSize: '13px',
-            minWidth: '120px'
+            minWidth: '140px'
           }}
         >
-          <option value="all">All Status</option>
-          <option value="running">Running</option>
-          <option value="paused">Paused</option>
-          <option value="stopped">Stopped</option>
-          <option value="draft">Draft</option>
+          <option value="all">📋 All Status</option>
+          <option value="running">✅ Running</option>
+          <option value="paused">⏸️ Paused</option>
+          <option value="stopped">⏹️ Stopped</option>
+          <option value="draft">📝 Draft</option>
         </select>
         <select
           value={filterPair}
@@ -822,12 +822,12 @@ export default function TradingBots() {
             border: '1px solid rgba(255,255,255,0.1)',
             color: '#FFFFFF',
             fontSize: '13px',
-            minWidth: '120px'
+            minWidth: '140px'
           }}
         >
-          <option value="all">All Pairs</option>
+          <option value="all">💱 All Pairs</option>
           {tradingPairs.map(p => (
-            <option key={p.symbol} value={p.symbol}>{p.name}</option>
+            <option key={p.symbol} value={p.symbol}>{p.emoji || '🪙'} {p.name}</option>
           ))}
         </select>
         <div style={{ flex: 1 }} />
