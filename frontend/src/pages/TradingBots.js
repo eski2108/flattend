@@ -36,6 +36,28 @@ const getUserId = () => {
   return null;
 };
 
+// Helper function to format indicator values for display
+const formatIndicatorValue = (val) => {
+  if (val === null || val === undefined) return 'N/A';
+  if (typeof val === 'number') return val.toFixed(2);
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object') {
+    // Handle {current, period, std_dev} format
+    const current = val.current;
+    if (current !== undefined) {
+      const formatted = typeof current === 'number' ? current.toFixed(2) : String(current);
+      // Optionally show period if available
+      if (val.period) {
+        return `${formatted} (p${val.period})`;
+      }
+      return formatted;
+    }
+    // Fallback to JSON for unknown object structures
+    return JSON.stringify(val);
+  }
+  return String(val);
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // PHASE 7: BOT PRESETS - 10+ templates across Grid/DCA/Signal
 // ═══════════════════════════════════════════════════════════════════════════════
