@@ -414,20 +414,10 @@ export default function TradingBots() {
     try {
       const response = await axios.get(`${API}/api/prices/live`);
       if (response.data.success && response.data.prices) {
-        // Coin symbols - same as PriceTickerEnhanced.js
-        const COIN_SYMBOLS = {
-          'BTC': '₿', 'ETH': 'Ξ', 'USDT': '₮', 'USDC': '◈', 'BNB': '◆', 
-          'XRP': '✕', 'SOL': '◎', 'LTC': 'Ł', 'DOGE': 'Ð', 'ADA': '₳', 
-          'MATIC': '⬡', 'TRX': '◈', 'DOT': '●', 'AVAX': '▲', 'XLM': '✦', 
-          'BCH': '₿', 'SHIB': '◆', 'TON': '◆', 'DAI': '◈', 'LINK': '⬡', 
-          'ATOM': '⚛', 'XMR': '◈', 'FIL': '⬡', 'UNI': '◆', 'ETC': '◈', 
-          'ALGO': '◎', 'VET': '◆', 'WBTC': '₿', 'APT': '◆', 'ARB': '◈',
-          'OP': '◎', 'ICP': '∞', 'NEAR': '◈'
-        };
         const pairs = Object.keys(response.data.prices).map(symbol => ({
           symbol: `${symbol}USD`,
-          name: `${symbol}/USD`,
-          emoji: COIN_SYMBOLS[symbol] || '◆'
+          name: `${symbol} / USD`,
+          baseSymbol: symbol
         }));
         setTradingPairs(pairs);
       }
