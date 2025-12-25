@@ -1583,10 +1583,13 @@ class DecisionLogger:
 
 class CandleManager:
     """
-    Handle multi-timeframe candle data for bots.
-    Provides normalized OHLCV data for indicator calculations.
+    SINGLE SOURCE OF TRUTH for candle data in bot execution.
+    All indicator calculations and trade decisions MUST go through here.
     
-    Phase 8: Uses exchange adapters - LIVE mode requires real exchange data.
+    Phase 8 Guardrails:
+    - LIVE mode MUST use is_live_exchange=True source
+    - Adapter errors → NO_TRADE, log DATA_SOURCE_ERROR
+    - Source info stored for audit trail
     """
     
     TIMEFRAME_SECONDS = {
@@ -1599,8 +1602,104 @@ class CandleManager:
         "1d": 86400
     }
     
-    # Store last candle source for audit
+    # Store last candle source for audit (keyed by pair:timeframe:bot_id)
     _last_candle_source: Dict[str, Any] = {}
+    _last_error: Dict[str, str] = {}
+    
+    @staticmethod
+    async def get_candles_with_source(
+        pair: str,
+        timeframe: str,
+        limit: int = 200,
+        is_live_mode: bool = False,
+        user_id: str = None,
+        bot_id: str = None,
+        adapter: Any = None
+    ) -> Tuple[List[Dict], Dict, Optional[str]]:
+        """
+        Get OHLCV candles with full source info for audit.
+        
+        Returns:
+            (candles, source_info, error_message)
+            If error_message is not None, candles will be empty and NO TRADE should occur.
+        """
+        from exchange_adapters import (
+            SimulatedAdapter, ExchangeAdapterFactory, LiveModeDataEnforcer,
+            ExchangeType
+        )
+        
+        source_info = {
+            "exchange": "unknown",
+            "symbol": pair,
+            "timeframe": timeframe,
+            "candle_open_time": 0,
+            "candle_close_time": 0,
+            "fetched_at": int(datetime.now(timezone.utc).timestamp() * 1000),
+            "is_live_exchange": False,
+            "mode": "live" if is_live_mode else "paper",
+            "bot_id": bot_id,
+            "user_id": user_id
+        }
+        
+        try:
+            # Get adapter based on mode
+            if adapter is None:
+                if is_live_mode and user_id:
+                    # LIVE mode: Get adapter from factory with credentials
+                    adapter = await ExchangeAdapterFactory.get_adapter_for_bot(
+                        bot_id=bot_id or "unknown",
+                        user_id=user_id,
+                        is_live_mode=True
+                    )
+                else:
+                    # PAPER mode: Use SimulatedAdapter (fixture data)
+                    adapter = SimulatedAdapter()
+            
+            # Fetch candles via adapter
+            candles_raw, source = await adapter.get_ohlcv(pair, timeframe, limit)
+            
+            # Update source info
+            source_info.update({
+                "exchange": source.exchange,
+                "symbol": source.symbol,
+                "timeframe": source.timeframe,
+                "candle_open_time": source.candle_open_time,
+                "candle_close_time": source.candle_close_time,
+                "fetched_at": source.fetched_at,
+                "is_live_exchange": source.is_live_exchange
+            })
+            
+            # ═══════════════════════════════════════════════════════════════
+            # GUARDRAIL A: LIVE mode must use live exchange data
+            # ═══════════════════════════════════════════════════════════════
+            if is_live_mode and not source.is_live_exchange:
+                error_msg = f"LIVE_SOURCE_REJECTED: Source '{source.exchange}' is not a live exchange. LIVE mode requires is_live_exchange=True."
+                logger.error(f"[GUARDRAIL A] {error_msg} | bot_id={bot_id} user_id={user_id}")
+                CandleManager._last_error[f"{pair}:{timeframe}:{bot_id}"] = error_msg
+                return [], source_info, error_msg
+            
+            # Store source for audit
+            cache_key = f"{pair}:{timeframe}:{bot_id or 'default'}"
+            CandleManager._last_candle_source[cache_key] = source_info
+            CandleManager._last_error.pop(cache_key, None)
+            
+            # Convert to dict format
+            candles = [c.to_dict() for c in candles_raw]
+            
+            logger.info(f"[CandleManager] Fetched {len(candles)} candles | exchange={source.exchange} pair={pair} tf={timeframe} mode={'LIVE' if is_live_mode else 'PAPER'} bot_id={bot_id}")
+            
+            return candles, source_info, None
+            
+        except Exception as e:
+            # ═══════════════════════════════════════════════════════════════
+            # GUARDRAIL C: Any adapter/indicator error → NO_TRADE
+            # ═══════════════════════════════════════════════════════════════
+            import traceback
+            error_msg = f"DATA_SOURCE_ERROR: {str(e)}"
+            stack = traceback.format_exc()
+            logger.error(f"[GUARDRAIL C] {error_msg}\n{stack} | bot_id={bot_id} user_id={user_id}")
+            CandleManager._last_error[f"{pair}:{timeframe}:{bot_id}"] = error_msg
+            return [], source_info, error_msg
     
     @staticmethod
     async def get_candles(
@@ -1608,46 +1707,63 @@ class CandleManager:
         timeframe: str,
         limit: int = 200,
         is_live_mode: bool = False,
-        adapter: Any = None
+        adapter: Any = None,
+        user_id: str = None,
+        bot_id: str = None
     ) -> List[Dict]:
         """
-        Get OHLCV candles for a pair and timeframe.
-        
-        Args:
-            pair: Trading pair (e.g., BTCUSDT)
-            timeframe: Timeframe (e.g., 1h)
-            limit: Number of candles
-            is_live_mode: If True, MUST use exchange data (no CoinGecko)
-            adapter: Exchange adapter to use (optional)
-        
-        Returns list of {timestamp, open, high, low, close, volume}
+        Simplified interface - returns just candles.
+        For full audit info, use get_candles_with_source().
         """
-        from exchange_adapters import (
-            SimulatedAdapter, LiveModeDataEnforcer, CandleSource
+        candles, _, error = await CandleManager.get_candles_with_source(
+            pair=pair,
+            timeframe=timeframe,
+            limit=limit,
+            is_live_mode=is_live_mode,
+            user_id=user_id,
+            bot_id=bot_id,
+            adapter=adapter
         )
         
-        # Try to get from cache first (only if PAPER mode)
-        if not is_live_mode:
-            cache_key = f"candles:{pair}:{timeframe}"
-            cached = await db.candle_cache.find_one({"cache_key": cache_key})
-            if cached:
-                updated_at = cached.get("updated_at")
-                if updated_at:
-                    if updated_at.tzinfo is None:
-                        updated_at = updated_at.replace(tzinfo=timezone.utc)
-                    age = datetime.now(timezone.utc) - updated_at
-                    if age.total_seconds() < CandleManager.TIMEFRAME_SECONDS.get(timeframe, 3600) / 2:
-                        return cached.get("candles", [])[:limit]
+        if error:
+            logger.warning(f"[CandleManager] Returning empty candles due to error: {error}")
+            return []
         
-        # Use adapter if provided, otherwise create SimulatedAdapter
+        return candles
+    
+    @staticmethod
+    def get_last_candle_source(pair: str, timeframe: str, bot_id: str = None) -> Optional[Dict]:
+        """Get the source info for last fetched candles (for audit logging)."""
+        cache_key = f"{pair}:{timeframe}:{bot_id or 'default'}"
+        return CandleManager._last_candle_source.get(cache_key)
+    
+    @staticmethod
+    def get_last_error(pair: str, timeframe: str, bot_id: str = None) -> Optional[str]:
+        """Get the last error message if any."""
+        cache_key = f"{pair}:{timeframe}:{bot_id or 'default'}"
+        return CandleManager._last_error.get(cache_key)
+    
+    @staticmethod
+    async def get_latest_price(pair: str, adapter: Any = None, is_live_mode: bool = False, user_id: str = None) -> Optional[float]:
+        """Get latest price for a pair"""
+        from exchange_adapters import SimulatedAdapter
+        
         if adapter is None:
             adapter = SimulatedAdapter()
         
-        # Fetch candles via adapter
-        candles_raw, source = await adapter.get_ohlcv(pair, timeframe, limit)
+        try:
+            ticker = await adapter.get_ticker(pair)
+            if ticker.last_price > 0:
+                return ticker.last_price
+        except Exception as e:
+            logger.error(f"Error fetching price via adapter: {e}")
         
-        # LIVE MODE ENFORCEMENT: Block if data source is not from live exchange
-        if is_live_mode:
+        # Fallback to candles
+        candles = await CandleManager.get_candles(pair, "1h", limit=1, adapter=adapter)
+        if candles:
+            return candles[-1]["close"]
+        
+        return None
             is_valid, message = LiveModeDataEnforcer.validate_candle_source(source, is_live_mode)
             if not is_valid:
                 logger.error(f"[LIVE MODE BLOCKED] {message}")
