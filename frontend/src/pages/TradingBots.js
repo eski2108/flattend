@@ -1885,7 +1885,13 @@ export default function TradingBots() {
                   {Object.entries(selectedLogExplanation.indicator_values).map(([key, val]) => (
                     <div key={key} style={{ padding: '10px', background: 'rgba(0,184,212,0.05)', borderRadius: '8px', border: '1px solid rgba(0,184,212,0.1)' }}>
                       <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>{key.toUpperCase()}</div>
-                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{typeof val === 'number' ? val.toFixed(4) : val}</div>
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
+                        {typeof val === 'number' 
+                          ? val.toFixed(4) 
+                          : typeof val === 'object' && val !== null
+                            ? (val.current !== undefined ? val.current.toFixed ? val.current.toFixed(2) : val.current : JSON.stringify(val))
+                            : String(val)}
+                      </div>
                     </div>
                   ))}
                 </div>
