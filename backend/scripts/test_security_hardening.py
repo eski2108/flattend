@@ -233,9 +233,10 @@ async def test_2fa_enforcement():
     
     # Summary
     all_passed = all(r[1] for r in results)
-    print(f"\n--- 2FA Enforcement Results ---")
+    print("\n--- 2FA Enforcement Results ---")
     for name, passed in results:
-        print(f"   {'\u2705' if passed else '\u274c'} {name}")
+        icon = "\u2705" if passed else "\u274c"
+        print(f"   {icon} {name}")
     
     return all_passed
 
