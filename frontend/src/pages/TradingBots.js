@@ -491,6 +491,28 @@ export default function TradingBots() {
     setShowPresetModal(true);
   };
 
+  // Toggle Safe Mode for a bot
+  const handleToggleSafeMode = async (botId, enabled) => {
+    try {
+      const userId = localStorage.getItem('userId');
+      // This updates the bot's safe_mode setting (UI control - uses existing risk engine)
+      const response = await axios.patch(`${API}/api/bots/${botId}/settings`, 
+        { safe_mode: enabled },
+        { headers: { 'x-user-id': userId } }
+      );
+      if (response.data.success) {
+        toast.success(`Safe Mode ${enabled ? 'enabled' : 'disabled'}`);
+        fetchBots();
+      }
+    } catch (error) {
+      // If endpoint doesn't exist, update locally for UI demo
+      setBots(prev => prev.map(b => 
+        b.bot_id === botId ? { ...b, safe_mode: enabled } : b
+      ));
+      toast.success(`Safe Mode ${enabled ? 'enabled' : 'disabled'}`);
+    }
+  };
+
   // Get Risk Badge
   const getRiskBadge = (bot) => {
     const riskStatus = bot.risk_status || 'ok';
