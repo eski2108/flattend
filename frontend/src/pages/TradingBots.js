@@ -13,9 +13,36 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { IoRocket, IoPlay, IoPause, IoStop, IoTrash, IoAdd, IoChevronBack, IoGrid, IoTrendingUp, IoWallet, IoTime, IoCheckmarkCircle, IoAlertCircle, IoPauseCircle, IoCopy, IoSettings, IoShield, IoWarning, IoList, IoDocumentText, IoSearch, IoClose, IoFlash, IoHelpCircle } from 'react-icons/io5';
+import { IoRocket, IoPlay, IoPause, IoStop, IoTrash, IoAdd, IoChevronBack, IoGrid, IoTrendingUp, IoWallet, IoTime, IoCheckmarkCircle, IoAlertCircle, IoPauseCircle, IoCopy, IoSettings, IoShield, IoWarning, IoList, IoDocumentText, IoSearch, IoClose, IoFlash, IoHelpCircle, IoSpeedometer, IoRepeat, IoSwapVertical } from 'react-icons/io5';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DESIGN TOKENS - Institutional Polish
+// ═══════════════════════════════════════════════════════════════════════════════
+const COLORS = {
+  primary: '#00E599',
+  secondary: '#8B9BB4',
+  secondaryDim: 'rgba(139, 155, 180, 0.7)',
+  background: '#0B1220',
+  cardBg: 'linear-gradient(145deg, #0B1220 0%, #0A0F18 100%)',
+  border: 'rgba(255,255,255,0.06)',
+  borderSubtle: 'rgba(255,255,255,0.04)'
+};
+
+// Format pair as "BTC / USD" instead of "BTCUSD"
+const formatPair = (pair) => {
+  if (!pair) return '--';
+  const base = pair.replace(/USD$|USDT$/i, '');
+  const quote = pair.includes('USDT') ? 'USDT' : 'USD';
+  return `${base} / ${quote}`;
+};
+
+// Format timeframe as "1 h" instead of "1h"
+const formatTimeframe = (tf) => {
+  if (!tf) return '--';
+  return tf.replace(/(\d+)([mhd])/gi, '$1 $2');
+};
 
 // Helper function to get user_id from localStorage
 const getUserId = () => {
