@@ -634,6 +634,55 @@ export default function TradingBots() {
             <IoAdd size={18} />
             Create Bot
         </button>
+        </div>
+      </div>
+
+      {/* PHASE 7: Main Tabs */}
+      <div style={{
+        display: 'flex',
+        gap: '4px',
+        marginBottom: '20px',
+        padding: '4px',
+        background: 'rgba(14,22,38,0.8)',
+        borderRadius: '12px',
+        border: '1px solid rgba(255,255,255,0.05)'
+      }}>
+        {[
+          { id: 'my-bots', label: 'My Bots', icon: IoRocket },
+          { id: 'presets', label: 'Presets', icon: IoFlash },
+          { id: 'logs', label: 'Decision Logs', icon: IoDocumentText }
+        ].map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id);
+                if (tab.id === 'logs') fetchDecisionLogs();
+              }}
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '12px 20px',
+                borderRadius: '10px',
+                background: isActive ? 'linear-gradient(135deg, rgba(0,229,153,0.2) 0%, rgba(0,184,212,0.2) 100%)' : 'transparent',
+                border: isActive ? '1px solid rgba(0,229,153,0.3)' : '1px solid transparent',
+                color: isActive ? '#00E599' : '#8B9BB4',
+                fontSize: '14px',
+                fontWeight: isActive ? '600' : '500',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Icon size={18} />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Disclaimer */}
