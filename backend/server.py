@@ -38638,7 +38638,9 @@ async def validate_order_intent(request: dict, x_user_id: str = Header(None)):
             dca_level=request.get("dca_level", 0),
             grid_level=request.get("grid_level", 0),
             spread_percent=request.get("spread_percent", 0),
-            volume_24h=request.get("volume_24h", 1000000)
+            volume_24h=request.get("volume_24h", 1000000),
+            stop_loss_price=request.get("stop_loss_price"),
+            take_profit_price=request.get("take_profit_price")
         )
         
         # Validate
