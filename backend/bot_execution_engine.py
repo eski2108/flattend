@@ -547,18 +547,27 @@ class RateLimiter:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class KillSwitch:
-    """Global and per-bot kill switch for emergency stops"""
+    """Global, per-user, and per-bot kill switch for emergency stops"""
     
     @staticmethod
-    async def is_killed(bot_id: Optional[str] = None) -> Tuple[bool, str]:
+    async def is_killed(bot_id: Optional[str] = None, user_id: Optional[str] = None) -> Tuple[bool, str]:
         """
-        Check if global or bot-specific kill switch is active.
+        Check if global, user, or bot-specific kill switch is active.
         Returns (is_killed, reason)
         """
         # Check global kill switch
         global_config = await db.platform_config.find_one({"config_id": "bot_engine"})
         if global_config and global_config.get("global_kill_switch"):
             return True, "Global kill switch is active"
+        
+        # Check user kill switch (Phase 8)
+        if user_id:
+            if USER_KILL_SWITCHES.get(user_id):
+                return True, f"User {user_id} kill switch is active"
+            
+            user_kill = await db.user_kill_switches.find_one({"user_id": user_id, "active": True})
+            if user_kill:
+                return True, f"User {user_id} kill switch is active in DB"
         
         # Check bot-specific kill switch
         if bot_id:
@@ -572,7 +581,7 @@ class KillSwitch:
         return False, "OK"
     
     @staticmethod
-    async def activate_global():
+    async def activate_global(admin_id: str = None, reason: str = "admin_triggered"):
         """Activate global kill switch - stops ALL bots"""
         global GLOBAL_KILL_SWITCH
         GLOBAL_KILL_SWITCH = True
@@ -582,7 +591,9 @@ class KillSwitch:
             {
                 "$set": {
                     "global_kill_switch": True,
-                    "kill_switch_activated_at": datetime.now(timezone.utc)
+                    "kill_switch_activated_at": datetime.now(timezone.utc),
+                    "kill_switch_activated_by": admin_id,
+                    "kill_switch_reason": reason
                 }
             },
             upsert=True
@@ -601,6 +612,38 @@ class KillSwitch:
         )
         
         logger.warning("🚨 GLOBAL KILL SWITCH ACTIVATED - All bots stopped")
+    
+    @staticmethod
+    async def activate_user(user_id: str, admin_id: str = None, reason: str = "admin_triggered"):
+        """Activate kill switch for all bots of a specific user"""
+        USER_KILL_SWITCHES[user_id] = True
+        
+        await db.user_kill_switches.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "active": True,
+                    "activated_at": datetime.now(timezone.utc),
+                    "activated_by": admin_id,
+                    "reason": reason
+                }
+            },
+            upsert=True
+        )
+        
+        # Stop all running bots for this user
+        await bot_configs.update_many(
+            {"user_id": user_id, "status": "running"},
+            {
+                "$set": {
+                    "status": "killed",
+                    "stopped_at": datetime.now(timezone.utc),
+                    "stop_reason": f"user_kill_switch: {reason}"
+                }
+            }
+        )
+        
+        logger.warning(f"🚨 USER KILL SWITCH ACTIVATED for {user_id}: {reason}")
     
     @staticmethod
     async def activate_bot(bot_id: str, reason: str = "kill_switch"):
@@ -622,7 +665,7 @@ class KillSwitch:
         logger.warning(f"🚨 KILL SWITCH ACTIVATED for bot {bot_id}: {reason}")
     
     @staticmethod
-    async def deactivate_global():
+    async def deactivate_global(admin_id: str = None):
         """Deactivate global kill switch"""
         global GLOBAL_KILL_SWITCH
         GLOBAL_KILL_SWITCH = False
@@ -632,12 +675,31 @@ class KillSwitch:
             {
                 "$set": {
                     "global_kill_switch": False,
-                    "kill_switch_deactivated_at": datetime.now(timezone.utc)
+                    "kill_switch_deactivated_at": datetime.now(timezone.utc),
+                    "kill_switch_deactivated_by": admin_id
                 }
             }
         )
         
         logger.info("✅ Global kill switch deactivated")
+    
+    @staticmethod
+    async def deactivate_user(user_id: str, admin_id: str = None):
+        """Deactivate kill switch for a user"""
+        USER_KILL_SWITCHES.pop(user_id, None)
+        
+        await db.user_kill_switches.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "active": False,
+                    "deactivated_at": datetime.now(timezone.utc),
+                    "deactivated_by": admin_id
+                }
+            }
+        )
+        
+        logger.info(f"✅ User kill switch deactivated for {user_id}")
     
     @staticmethod
     async def deactivate_bot(bot_id: str):
