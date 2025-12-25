@@ -819,11 +819,12 @@ export default function TradingBots() {
           style={{
             padding: '10px 14px',
             borderRadius: '8px',
-            background: '#0E1626',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#FFFFFF',
+            background: 'rgba(14,22,38,0.6)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(255,255,255,0.8)',
             fontSize: '13px',
-            minWidth: '140px'
+            minWidth: '130px',
+            cursor: 'pointer'
           }}
         >
           <option value="all">All Types</option>
@@ -837,11 +838,12 @@ export default function TradingBots() {
           style={{
             padding: '10px 14px',
             borderRadius: '8px',
-            background: '#0E1626',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#FFFFFF',
+            background: 'rgba(14,22,38,0.6)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(255,255,255,0.8)',
             fontSize: '13px',
-            minWidth: '140px'
+            minWidth: '130px',
+            cursor: 'pointer'
           }}
         >
           <option value="all">All Status</option>
@@ -856,11 +858,12 @@ export default function TradingBots() {
           style={{
             padding: '10px 14px',
             borderRadius: '8px',
-            background: '#0E1626',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#FFFFFF',
+            background: 'rgba(14,22,38,0.6)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(255,255,255,0.8)',
             fontSize: '13px',
-            minWidth: '140px'
+            minWidth: '130px',
+            cursor: 'pointer'
           }}
         >
           <option value="all">All Pairs</option>
