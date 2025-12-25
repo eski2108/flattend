@@ -1234,23 +1234,42 @@ class CandleManager:
     @staticmethod
     async def get_latest_price(pair: str) -> Optional[float]:
         """Get latest price for a pair"""
-        candles = await CandleManager.get_candles(pair, "1m", limit=1)
+        candles = await CandleManager.get_candles(pair, "1h", limit=1)
         if candles:
             return candles[-1]["close"]
+        
+        # Map trading pair to CoinGecko coin ID
+        COIN_ID_MAP = {
+            "BTC": "bitcoin",
+            "ETH": "ethereum",
+            "SOL": "solana",
+            "XRP": "ripple",
+            "ADA": "cardano",
+            "DOGE": "dogecoin",
+            "LINK": "chainlink",
+            "DOT": "polkadot",
+            "AVAX": "avalanche-2",
+            "MATIC": "matic-network",
+            "LTC": "litecoin",
+            "UNI": "uniswap",
+            "ATOM": "cosmos",
+            "BCH": "bitcoin-cash"
+        }
         
         # Fallback to price service
         try:
             import httpx
-            base = pair[:3].lower() if len(pair) >= 6 else pair.lower()
+            base = pair[:3].upper() if len(pair) >= 6 else pair.upper()
+            coin_id = COIN_ID_MAP.get(base, base.lower())
             async with httpx.AsyncClient() as client:
                 response = await client.get(
                     f"https://api.coingecko.com/api/v3/simple/price",
-                    params={"ids": base, "vs_currencies": "usd"},
+                    params={"ids": coin_id, "vs_currencies": "usd"},
                     timeout=5.0
                 )
                 if response.status_code == 200:
                     data = response.json()
-                    return data.get(base, {}).get("usd")
+                    return data.get(coin_id, {}).get("usd")
         except Exception as e:
             logger.error(f"Error fetching price for {pair}: {e}")
         
