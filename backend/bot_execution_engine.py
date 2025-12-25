@@ -1845,47 +1845,6 @@ class LiveOrderValidator:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-        
-        return candles
-    
-    @staticmethod
-    def get_last_candle_source(pair: str, timeframe: str) -> Optional[Dict]:
-        """Get the source info for last fetched candles (for audit logging)."""
-        return CandleManager._last_candle_source.get(f"{pair}:{timeframe}")
-    
-    @staticmethod
-    async def _fetch_candles(pair: str, timeframe: str, limit: int) -> List[Dict]:
-        """
-        Legacy method - now uses SimulatedAdapter.
-        Kept for backward compatibility.
-        """
-        from exchange_adapters import SimulatedAdapter
-        
-        adapter = SimulatedAdapter()
-        candles_raw, _ = await adapter.get_ohlcv(pair, timeframe, limit)
-        return [c.to_dict() for c in candles_raw]
-    
-    @staticmethod
-    async def get_latest_price(pair: str, adapter: Any = None) -> Optional[float]:
-        """Get latest price for a pair"""
-        from exchange_adapters import SimulatedAdapter
-        
-        if adapter is None:
-            adapter = SimulatedAdapter()
-        
-        try:
-            ticker = await adapter.get_ticker(pair)
-            if ticker.last_price > 0:
-                return ticker.last_price
-        except Exception as e:
-            logger.error(f"Error fetching price via adapter: {e}")
-        
-        # Fallback to candles
-        candles = await CandleManager.get_candles(pair, "1h", limit=1, adapter=adapter)
-        if candles:
-            return candles[-1]["close"]
-        
-        return None
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
