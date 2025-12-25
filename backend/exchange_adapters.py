@@ -689,66 +689,23 @@ class SimulatedAdapter(IExchangeAdapter):
         limit: int = 100
     ) -> Tuple[List[OHLCV], CandleSource]:
         """
-        Fetch OHLCV - tries multiple sources for PAPER mode.
-        Priority: Bybit -> CoinGecko -> Generated data
+        Fetch OHLCV from public APIs for PAPER mode.
+        Uses CoinGecko which aggregates from real exchanges.
         """
         import time
         
-        # Try Bybit public API (usually not geo-blocked)
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                bybit_symbol = symbol.upper().replace("/", "")
-                if not bybit_symbol.endswith("USDT"):
-                    bybit_symbol = bybit_symbol.replace("USD", "USDT")
-                
-                tf_map = {"1m": "1", "5m": "5", "15m": "15", "30m": "30", "1h": "60", "4h": "240", "1d": "D"}
-                bybit_tf = tf_map.get(timeframe, "60")
-                
-                response = await client.get(
-                    "https://api.bybit.com/v5/market/kline",
-                    params={
-                        "category": "spot",
-                        "symbol": bybit_symbol,
-                        "interval": bybit_tf,
-                        "limit": limit
-                    }
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if data.get("retCode") == 0 and data.get("result", {}).get("list"):
-                        raw_candles = data["result"]["list"]
-                        candles = [OHLCV(
-                            timestamp=int(k[0]),
-                            open=float(k[1]),
-                            high=float(k[2]),
-                            low=float(k[3]),
-                            close=float(k[4]),
-                            volume=float(k[5])
-                        ) for k in reversed(raw_candles)]  # Bybit returns newest first
-                        
-                        source = CandleSource(
-                            exchange="bybit_public",
-                            symbol=bybit_symbol,
-                            timeframe=timeframe,
-                            candle_open_time=candles[0].timestamp if candles else 0,
-                            candle_close_time=candles[-1].timestamp if candles else 0,
-                            fetched_at=int(time.time() * 1000),
-                            is_live_exchange=True  # Bybit is a real exchange
-                        )
-                        
-                        logger.info(f"[SIMULATED] Got {len(candles)} candles from Bybit public API")
-                        return candles, source
-        except Exception as e:
-            logger.warning(f"[SIMULATED] Bybit API failed: {e}")
-                
-        # CoinGecko fallback (PAPER mode only)
+        # CoinGecko (aggregates from real exchanges)
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
                 coin_id = self._symbol_to_coingecko(symbol)
+                
+                # Map timeframe to days
+                days_map = {"1m": 1, "5m": 1, "15m": 1, "1h": 7, "4h": 30, "1d": 90}
+                days = days_map.get(timeframe, 7)
+                
                 response = await client.get(
                     f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc",
-                    params={"vs_currency": "usd", "days": "7"}
+                    params={"vs_currency": "usd", "days": days}
                 )
                 
                 if response.status_code == 200:
@@ -763,19 +720,19 @@ class SimulatedAdapter(IExchangeAdapter):
                     ) for k in data[-limit:]]
                     
                     source = CandleSource(
-                        exchange="coingecko",
+                        exchange="coingecko_aggregated",
                         symbol=symbol,
                         timeframe=timeframe,
                         candle_open_time=candles[0].timestamp if candles else 0,
                         candle_close_time=candles[-1].timestamp if candles else 0,
                         fetched_at=int(time.time() * 1000),
-                        is_live_exchange=False  # CoinGecko is NOT live exchange
+                        is_live_exchange=False  # Mark as NOT live exchange for LIVE mode blocking
                     )
                     
-                    logger.warning(f"[SIMULATED] Using CoinGecko fallback - NOT for LIVE mode!")
+                    logger.info(f"[SIMULATED] Got {len(candles)} candles from CoinGecko")
                     return candles, source
         except Exception as e:
-            logger.error(f"[SIMULATED] CoinGecko also failed: {e}")
+            logger.error(f"[SIMULATED] CoinGecko failed: {e}")
         
         # Return empty with error source
         return [], CandleSource(
