@@ -210,7 +210,7 @@ class CanonicalLedger:
         checksum_data = f"{entry_id}:{transaction_id}:{entry_type}:{amount}:{currency}:{from_account_id}:{to_account_id}"
         entry["checksum"] = hashlib.sha256(checksum_data.encode()).hexdigest()[:16]
         
-        if self.db:
+        if self.db is not None:
             await self.db[self._collection_name].insert_one(entry)
         
         logger.info(f"[LEDGER] {entry_type}: {amount} {currency} from {from_account_id} to {to_account_id}")
