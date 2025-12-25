@@ -302,9 +302,10 @@ async def send_dispute_emails(trade_id, dispute_id, buyer_id, seller_id):
     )
     print(f"✅ Sent dispute email to admin: {admin_email}")
     
-    frontend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://crypto-botui.preview.emergentagent.com')
-    print("\n🔗 Email contains link to:")
-    print(f"   {frontend_url}/admin/disputes/{dispute_id}")
+    frontend_url = os.getenv('FRONTEND_URL') or os.getenv('BACKEND_URL')
+    if frontend_url:
+        print("\n🔗 Email contains link to:")
+        print(f"   {frontend_url}/admin/disputes/{dispute_id}")
     
     return True
 
