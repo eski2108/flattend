@@ -1168,8 +1168,27 @@ class CandleManager:
         """Fetch candles from external source"""
         import httpx
         
+        # Map trading pair to CoinGecko coin ID
+        COIN_ID_MAP = {
+            "BTC": "bitcoin",
+            "ETH": "ethereum",
+            "SOL": "solana",
+            "XRP": "ripple",
+            "ADA": "cardano",
+            "DOGE": "dogecoin",
+            "LINK": "chainlink",
+            "DOT": "polkadot",
+            "AVAX": "avalanche-2",
+            "MATIC": "matic-network",
+            "LTC": "litecoin",
+            "UNI": "uniswap",
+            "ATOM": "cosmos",
+            "BCH": "bitcoin-cash"
+        }
+        
         # Extract base currency from pair (e.g., BTC from BTCUSD)
-        base = pair[:3].lower() if len(pair) >= 6 else pair.lower()
+        base = pair[:3].upper() if len(pair) >= 6 else pair.upper()
+        coin_id = COIN_ID_MAP.get(base, base.lower())
         
         # Map timeframe to CoinGecko days
         days_map = {
@@ -1186,7 +1205,7 @@ class CandleManager:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    f"https://api.coingecko.com/api/v3/coins/{base}/ohlc",
+                    f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc",
                     params={"vs_currency": "usd", "days": days},
                     timeout=10.0
                 )
@@ -1205,6 +1224,8 @@ class CandleManager:
                         for c in data[-limit:]
                     ]
                     return candles
+                else:
+                    logger.warning(f"CoinGecko API returned {response.status_code} for {coin_id}")
         except Exception as e:
             logger.error(f"Error fetching candles for {pair}: {e}")
         
