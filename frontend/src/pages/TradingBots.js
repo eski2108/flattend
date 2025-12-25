@@ -2580,33 +2580,54 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
           {/* STEP 2: Select Pair */}
           {step === 2 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ fontSize: '13px', color: '#8B9BB4', marginBottom: '8px' }}>
+              <div style={{ fontSize: '13px', color: COLORS.secondaryDim, marginBottom: '8px' }}>
                 Select a trading pair for your {selectedType === 'grid' ? 'Grid' : selectedType === 'dca' ? 'DCA' : 'Signal'} Bot
               </div>
-              <select
-                value={pair}
-                onChange={(e) => setPair(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  borderRadius: '10px',
-                  background: '#0E1626',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  color: '#FFFFFF',
-                  fontSize: '15px'
-                }}
-              >
-                <option value="">Select trading pair</option>
+              
+              {/* Custom Pair Grid with 3D Icons */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '10px',
+                maxHeight: '280px',
+                overflowY: 'auto',
+                padding: '4px'
+              }}>
                 {tradingPairs.map(p => (
-                  <option key={p.symbol} value={p.symbol}>{p.emoji} {p.name}</option>
+                  <button
+                    key={p.symbol}
+                    onClick={() => setPair(p.symbol)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      background: pair === p.symbol ? 'rgba(0,229,153,0.1)' : 'rgba(255,255,255,0.02)',
+                      border: pair === p.symbol ? '1px solid rgba(0,229,153,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <Coin3DIcon symbol={p.baseSymbol} size={28} />
+                    <span style={{ 
+                      fontSize: '13px', 
+                      fontWeight: '600', 
+                      color: pair === p.symbol ? '#00E599' : '#FFFFFF',
+                      fontFamily: 'SF Mono, Monaco, monospace'
+                    }}>
+                      {p.name}
+                    </span>
+                  </button>
                 ))}
-              </select>
+              </div>
+              
               <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
                   onClick={() => { setStep(1); setSelectedType(null); }}
                   style={{
                     flex: 1, padding: '14px', borderRadius: '10px', background: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.2)', color: '#8B9BB4', fontSize: '14px', fontWeight: '600', cursor: 'pointer'
+                    border: '1px solid rgba(255,255,255,0.15)', color: COLORS.secondaryDim, fontSize: '13px', fontWeight: '600', cursor: 'pointer'
                   }}
                 >Back</button>
                 <button
@@ -2614,8 +2635,8 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                   disabled={!pair}
                   style={{
                     flex: 2, padding: '14px', borderRadius: '10px',
-                    background: pair ? 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)' : '#2A3441',
-                    border: 'none', color: pair ? '#020617' : '#6C757D', fontSize: '14px', fontWeight: '700',
+                    background: pair ? '#00E599' : '#2A3441',
+                    border: 'none', color: pair ? '#020617' : '#6C757D', fontSize: '13px', fontWeight: '600',
                     cursor: pair ? 'pointer' : 'not-allowed'
                   }}
                 >Continue</button>
