@@ -40,11 +40,17 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     to all incoming requests.
     """
     
-    # Paths to skip (health checks, static, monitoring, etc.)
+    # Paths to skip (health checks, static, monitoring, public data, etc.)
     SKIP_PATHS = [
         "/api/health",
         "/api/ready",
         "/api/metrics",
+        "/api/prices",
+        "/api/exchange-rates",
+        "/api/coins",
+        "/api/p2p/offers",
+        "/api/p2p/marketplace",
+        "/api/savings/products",
         "/health",
         "/ready",
         "/metrics",
