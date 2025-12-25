@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"8cda5e0c348c4ea0b1017db2efeef476","collectionName":"admin_liquidity_wallets","type":"collection"}
