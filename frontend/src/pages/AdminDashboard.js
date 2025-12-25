@@ -21,6 +21,11 @@ function AdminBotsSection({ API, adminId }) {
   const [recentBotTrades, setRecentBotTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedBot, setSelectedBot] = useState(null);
+  
+  // PHASE 7: Activity filters
+  const [botTypeFilter, setBotTypeFilter] = useState('all');
+  const [botStatusFilter, setBotStatusFilter] = useState('all');
+  const [tradeFilter, setTradeFilter] = useState('all');
 
   const fetchBotData = async () => {
     // Use 'admin' as fallback ID for the header
