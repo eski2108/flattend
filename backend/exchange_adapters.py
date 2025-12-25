@@ -742,32 +742,6 @@ class SimulatedAdapter(IExchangeAdapter):
         except Exception as e:
             logger.warning(f"[SIMULATED] Bybit API failed: {e}")
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    candles = [OHLCV(
-                        timestamp=int(k[0]),
-                        open=float(k[1]),
-                        high=float(k[2]),
-                        low=float(k[3]),
-                        close=float(k[4]),
-                        volume=float(k[5])
-                    ) for k in data]
-                    
-                    source = CandleSource(
-                        exchange="binance_public",
-                        symbol=binance_symbol,
-                        timeframe=binance_tf,
-                        candle_open_time=candles[0].timestamp if candles else 0,
-                        candle_close_time=candles[-1].timestamp if candles else 0,
-                        fetched_at=int(time.time() * 1000),
-                        is_live_exchange=True  # Public Binance data is real
-                    )
-                    
-                    logger.info(f"[SIMULATED] Got {len(candles)} candles from Binance public API")
-                    return candles, source
-        except Exception as e:
-            logger.warning(f"[SIMULATED] Binance public API failed: {e}, trying CoinGecko")
-        
         # CoinGecko fallback (PAPER mode only)
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
