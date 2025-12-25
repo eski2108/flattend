@@ -676,6 +676,26 @@ async def log_admin_action(
 
 # Create the main app without a prefix with custom response class
 app = FastAPI(default_response_class=SafeJSONResponse)
+
+# ============================================================================
+# ROOT-LEVEL HEALTH ENDPOINTS (Required for Kubernetes probes)
+# These must be at root level, not under /api prefix
+# ============================================================================
+@app.get("/health")
+async def root_health_check():
+    """Root-level health check for Kubernetes liveness probe"""
+    return {"status": "healthy", "service": "coinhubx-backend", "timestamp": datetime.now(timezone.utc).isoformat(), "version": "1.0.0"}
+
+@app.get("/ready")
+async def root_ready_check():
+    """Root-level readiness check for Kubernetes readiness probe"""
+    try:
+        # Quick DB ping to verify connection
+        await db.command("ping")
+        return {"status": "ready", "database": "connected"}
+    except Exception as e:
+        return JSONResponse(status_code=503, content={"status": "not_ready", "error": str(e)})
+
 # Rate Limiting Storage
 registration_attempts = defaultdict(list)
 RATE_LIMIT_REGISTRATIONS = 3  # Max registrations per IP
