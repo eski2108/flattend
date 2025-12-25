@@ -261,6 +261,23 @@ export default function TradingBots() {
   const [tradingPairs, setTradingPairs] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   
+  // PHASE 7: Main tabs
+  const [activeTab, setActiveTab] = useState('my-bots'); // 'my-bots' | 'presets' | 'logs'
+  
+  // PHASE 7: Presets state
+  const [selectedPresetCategory, setSelectedPresetCategory] = useState('all');
+  const [selectedPreset, setSelectedPreset] = useState(null);
+  const [showPresetModal, setShowPresetModal] = useState(false);
+  
+  // PHASE 7: Decision Logs state
+  const [decisionLogs, setDecisionLogs] = useState([]);
+  const [logFilters, setLogFilters] = useState({ action: 'all', botId: 'all', dateRange: '7d' });
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  
+  // PHASE 7: Emergency Stop state
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [emergencyLoading, setEmergencyLoading] = useState(false);
+  
   // Filters
   const [filterType, setFilterType] = useState('all');
   const [filterPair, setFilterPair] = useState('all');
