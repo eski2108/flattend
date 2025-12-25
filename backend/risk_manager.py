@@ -890,7 +890,13 @@ class RiskManager:
         
         # 9. CHECK STOP LOSS REQUIRED
         if global_config.require_stop_loss and intent.action == "BUY":
-            if not intent.stop_loss_price and (not bot_config or not bot_config.stop_loss_enabled):
+            # Stop loss is valid if either:
+            # 1. stop_loss_price is provided in the intent
+            # 2. bot has stop_loss_enabled in its risk config
+            has_stop_loss = intent.stop_loss_price is not None and intent.stop_loss_price > 0
+            bot_has_sl_config = bot_config and bot_config.stop_loss_enabled
+            
+            if not has_stop_loss and not bot_has_sl_config:
                 result.result = RiskResult.BLOCK.value
                 result.passed = False
                 result.reason = RiskBlockReason.NO_STOP_LOSS.value
