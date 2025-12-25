@@ -147,73 +147,54 @@ async def test_canonical_ledger():
 
 
 # =============================================================================
-# TEST 2: RECONCILIATION ENGINE
+# TEST 2: RECONCILIATION ENGINE (using real DB)
 # =============================================================================
 
 async def test_reconciliation_engine():
     print_header("TEST 2: Reconciliation Engine")
     
-    # Create mock DB with some data
-    mock_db = MagicMock()
-    
-    # Mock canonical_ledger collection
-    mock_db.canonical_ledger = MagicMock()
-    mock_db.canonical_ledger.count_documents = AsyncMock(return_value=10)
-    mock_db.canonical_ledger.aggregate = MagicMock(return_value=MagicMock())
-    mock_db.canonical_ledger.aggregate.return_value.to_list = AsyncMock(return_value=[
-        {"_id": {"entry_type": "DEPOSIT", "currency": "GBP"}, "total": 10000},
-        {"_id": {"entry_type": "WITHDRAWAL", "currency": "GBP"}, "total": 5000},
-        {"_id": {"entry_type": "SWAP_FEE", "currency": "GBP"}, "total": 150},
-        {"_id": {"entry_type": "TRADING_FEE", "currency": "GBP"}, "total": 250},
-    ])
-    
-    # Mock admin_revenue collection
-    mock_db.admin_revenue = MagicMock()
-    mock_db.admin_revenue.aggregate = MagicMock(return_value=MagicMock())
-    mock_db.admin_revenue.aggregate.return_value.to_list = AsyncMock(return_value=[
-        {"_id": "GBP", "total": 400}  # Should match ledger fees
-    ])
-    
-    # Mock fee_transactions collection
-    mock_db.fee_transactions = MagicMock()
-    mock_db.fee_transactions.aggregate = MagicMock(return_value=MagicMock())
-    mock_db.fee_transactions.aggregate.return_value.to_list = AsyncMock(return_value=[])
-    
-    # Mock reports collection
-    mock_db.reconciliation_reports = MagicMock()
-    mock_db.reconciliation_reports.insert_one = AsyncMock()
-    
-    # Mock alerts collection
-    mock_db.reconciliation_alerts = MagicMock()
-    mock_db.reconciliation_alerts.insert_one = AsyncMock()
-    
-    engine = ReconciliationEngine(db=mock_db)
     results = []
     
-    # Test 2.1: Run daily reconciliation
-    print("\n--- 2.1: Run daily reconciliation ---")
-    result = await engine.run_daily_reconciliation()
-    results.append(("Daily reconciliation runs", result is not None))
-    print(f"   Report ID: {result.report_id}")
-    print(f"   Period: {result.period}")
-    print(f"   Reconciled: {result.reconciled}")
-    print(f"   Inflows: {result.total_inflows}")
-    print(f"   Outflows: {result.total_outflows}")
-    print(f"   Fees: {result.total_fees}")
-    
-    # Test 2.2: Check mismatch detection
-    print("\n--- 2.2: Mismatch detection ---")
-    has_mismatch_detection = hasattr(result, 'mismatches')
-    results.append(("Mismatch detection exists", has_mismatch_detection))
-    print(f"   Mismatch count: {len(result.mismatches)}")
-    if result.mismatches:
-        print(f"   First mismatch: {result.mismatches[0]}")
-    
-    # Test 2.3: Revenue sources tracked
-    print("\n--- 2.3: Revenue sources tracked ---")
-    sources_tracked = len(engine.REVENUE_SOURCES) > 0
-    results.append(("Revenue sources defined", sources_tracked))
-    print(f"   Tracked sources: {engine.REVENUE_SOURCES}")
+    try:
+        from motor.motor_asyncio import AsyncIOMotorClient
+        
+        client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
+        db = client['coinhubx_production']
+        
+        engine = ReconciliationEngine(db=db)
+        
+        # Test 2.1: Run daily reconciliation
+        print("\n--- 2.1: Run daily reconciliation ---")
+        result = await engine.run_daily_reconciliation()
+        results.append(("Daily reconciliation runs", result is not None))
+        print(f"   Report ID: {result.report_id}")
+        print(f"   Period: {result.period}")
+        print(f"   Reconciled: {result.reconciled}")
+        print(f"   Inflows: {result.total_inflows}")
+        print(f"   Outflows: {result.total_outflows}")
+        print(f"   Fees: {result.total_fees}")
+        
+        # Test 2.2: Check mismatch detection
+        print("\n--- 2.2: Mismatch detection ---")
+        has_mismatch_detection = hasattr(result, 'mismatches')
+        results.append(("Mismatch detection exists", has_mismatch_detection))
+        print(f"   Mismatch count: {len(result.mismatches)}")
+        if result.mismatches:
+            print(f"   First mismatch: {result.mismatches[0]}")
+        
+        # Test 2.3: Revenue sources tracked
+        print("\n--- 2.3: Revenue sources tracked ---")
+        sources_tracked = len(engine.REVENUE_SOURCES) > 0
+        results.append(("Revenue sources defined", sources_tracked))
+        print(f"   Tracked sources: {engine.REVENUE_SOURCES}")
+        
+        # Cleanup test report
+        if result.report_id:
+            await db.reconciliation_reports.delete_one({"report_id": result.report_id})
+        
+    except Exception as e:
+        print(f"   Error: {e}")
+        results.append(("Reconciliation test", False))
     
     # Summary
     all_passed = all(r[1] for r in results)
