@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { IoRocket, IoPlay, IoPause, IoStop, IoTrash, IoAdd, IoChevronBack, IoGrid, IoTrendingUp, IoWallet, IoTime, IoCheckmarkCircle, IoAlertCircle, IoPauseCircle, IoCopy, IoSettings, IoShield, IoWarning, IoList, IoDocumentText, IoSearch, IoClose, IoFlash, IoHelpCircle, IoSpeedometer, IoRepeat, IoSwapVertical } from 'react-icons/io5';
+import Coin3DIcon from '../components/Coin3DIcon';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
