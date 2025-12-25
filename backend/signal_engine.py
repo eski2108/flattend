@@ -362,8 +362,6 @@ class SignalIndicatorCalculator:
             logger.warning(f"[SignalIndicatorCalculator] Legacy call returned error: {error}")
         
         return results
-        
-        return results
     
     @staticmethod
     def _calculate_single(
