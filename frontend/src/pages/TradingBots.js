@@ -728,9 +728,9 @@ export default function TradingBots() {
               border: 'none',
               color: '#020617',
               fontSize: '14px',
-              fontWeight: '700',
+              fontWeight: '600',
               cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(0,229,153,0.3)'
+              boxShadow: '0 2px 8px rgba(0,229,153,0.2)'
             }}
           >
             <IoAdd size={18} />
@@ -739,15 +739,15 @@ export default function TradingBots() {
         </div>
       </div>
 
-      {/* PHASE 7: Main Tabs */}
+      {/* PHASE 7: Main Tabs - Flat, no glow */}
       <div style={{
         display: 'flex',
         gap: '4px',
         marginBottom: '20px',
         padding: '4px',
-        background: 'rgba(14,22,38,0.8)',
+        background: 'rgba(14,22,38,0.6)',
         borderRadius: '12px',
-        border: '1px solid rgba(255,255,255,0.05)'
+        border: '1px solid rgba(255,255,255,0.04)'
       }}>
         {[
           { id: 'my-bots', label: 'My Bots', icon: IoRocket },
@@ -771,13 +771,13 @@ export default function TradingBots() {
                 gap: '8px',
                 padding: '12px 20px',
                 borderRadius: '10px',
-                background: isActive ? 'linear-gradient(135deg, rgba(0,229,153,0.2) 0%, rgba(0,184,212,0.2) 100%)' : 'transparent',
-                border: isActive ? '1px solid rgba(0,229,153,0.3)' : '1px solid transparent',
-                color: isActive ? '#00E599' : '#8B9BB4',
-                fontSize: '14px',
+                background: isActive ? 'rgba(0,229,153,0.1)' : 'transparent',
+                border: isActive ? '1px solid rgba(0,229,153,0.2)' : '1px solid transparent',
+                color: isActive ? '#00E599' : COLORS.secondaryDim,
+                fontSize: '13px',
                 fontWeight: isActive ? '600' : '500',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.15s ease'
               }}
             >
               <Icon size={18} />
