@@ -552,6 +552,35 @@ class DCABotExecutor:
         if not state.get("position_open"):
             quantity = dca_config.initial_order_size / current_price
             
+            # === RISK VALIDATION ===
+            from risk_manager import RiskManager, OrderIntent, DailyPnLTracker
+            
+            daily_pnl = await DailyPnLTracker.get_daily_pnl(user_id, bot_id)
+            
+            order_intent = OrderIntent(
+                bot_id=bot_id,
+                user_id=user_id,
+                action="BUY" if dca_config.side == "long" else "SELL",
+                symbol=pair,
+                timeframe="1h",
+                quantity=quantity,
+                current_price=current_price,
+                current_positions=0,
+                current_orders=0,
+                daily_pnl=daily_pnl,
+                bot_type="dca",
+                dca_level=0
+            )
+            
+            risk_result = await RiskManager.validate_order_intent(order_intent)
+            
+            if not risk_result.passed:
+                actions.append(f"RISK_BLOCK: {risk_result.reason} - {risk_result.reason_detail}")
+                return {"actions": actions, "state": state}
+            
+            actions.append(f"RISK_PASS: {len(risk_result.checks_passed)} checks passed")
+            # === END RISK VALIDATION ===
+            
             if not paper_mode:
                 position = await PositionManager.open_position(
                     bot_id=bot_id,
