@@ -18,7 +18,10 @@ DB_NAME = os.environ.get('DB_NAME', 'coinhubx_production')
 async def get_nowpayments_currencies():
     """Fetch all supported currencies from NowPayments"""
     try:
-        response = requests.get('https://crypto-botui.preview.emergentagent.com/api/nowpayments/currencies', timeout=10)
+        backend_url = os.getenv('BACKEND_URL')
+        if not backend_url:
+            raise ValueError("BACKEND_URL environment variable is required")
+        response = requests.get(f'{backend_url}/api/nowpayments/currencies', timeout=10)
         data = response.json()
         return [c.upper() for c in data.get('currencies', [])]
     except:
