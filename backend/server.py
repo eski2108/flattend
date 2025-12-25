@@ -38177,6 +38177,10 @@ async def evaluate_strategy_now(request: dict, x_user_id: str = Header(None)):
             current_position=None
         )
         
+        # Safely get evaluation results
+        entry_eval = details.get("entry_evaluation") or {}
+        exit_eval = details.get("exit_evaluation") or {}
+        
         return {
             "success": True,
             "signal": {
@@ -38185,18 +38189,21 @@ async def evaluate_strategy_now(request: dict, x_user_id: str = Header(None)):
                 "side": signal.side if signal else None,
                 "confidence": signal.confidence if signal else 0,
                 "trigger_reason": signal.trigger_reason if signal else None
-            } if signal else None,
+            } if signal else {"generated": False},
             "evaluation": {
-                "entry_result": details.get("entry_evaluation", {}).get("result"),
-                "entry_confidence": details.get("entry_evaluation", {}).get("confidence"),
-                "exit_result": details.get("exit_evaluation", {}).get("result"),
-                "exit_confidence": details.get("exit_evaluation", {}).get("confidence")
+                "entry_result": entry_eval.get("result"),
+                "entry_confidence": entry_eval.get("confidence"),
+                "entry_conditions": entry_eval.get("conditions", []),
+                "exit_result": exit_eval.get("result"),
+                "exit_confidence": exit_eval.get("confidence")
             },
             "indicator_snapshot": details.get("indicator_snapshot", {}),
             "current_price": details.get("current_price")
         }
     except Exception as e:
         logger.error(f"Strategy evaluation error: {e}")
+        import traceback
+        traceback.print_exc()
         return {"success": False, "error": str(e)}
 
 
