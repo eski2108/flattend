@@ -859,7 +859,7 @@ export default function TradingBots() {
         >
           <option value="all">All Pairs</option>
           {tradingPairs.map(p => (
-            <option key={p.symbol} value={p.symbol}>{p.emoji} {p.name}</option>
+            <option key={p.symbol} value={p.symbol}>{p.name}</option>
           ))}
         </select>
         <div style={{ flex: 1 }} />
