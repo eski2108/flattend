@@ -666,13 +666,12 @@ class BinanceAdapter(IExchangeAdapter):
 class SimulatedAdapter(IExchangeAdapter):
     """
     Simulated exchange adapter for PAPER mode.
-    Uses real price data but simulates order execution.
+    Uses LOCAL FIXTURE DATA - NO external API calls.
     
-    In PAPER mode: Can use CoinGecko as fallback
-    In LIVE mode: Should NOT be used
+    For external price data, use CoinGeckoAdapter separately.
     """
     
-    def __init__(self, initial_balances: Dict[str, float] = None):
+    def __init__(self, initial_balances: Dict[str, float] = None, fixture_file: str = None):
         self.balances = initial_balances or {
             "USDT": 100000,
             "BTC": 1.0,
@@ -681,6 +680,47 @@ class SimulatedAdapter(IExchangeAdapter):
         self.orders: Dict[str, Dict] = {}
         self.positions: List[Dict] = []
         self._order_counter = 0
+        self.fixture_file = fixture_file
+        
+        # Pre-generated deterministic candle data (BTC-like price action)
+        self._fixture_candles = self._generate_fixture_candles()
+    
+    def _generate_fixture_candles(self) -> List[OHLCV]:
+        """Generate deterministic fixture candles for testing."""
+        import time
+        
+        base_price = 87000.0
+        candles = []
+        
+        # Generate 200 hourly candles with realistic price action
+        now_ms = int(time.time() * 1000)
+        hour_ms = 3600 * 1000
+        
+        for i in range(200):
+            # Deterministic "random" based on index
+            seed = (i * 17 + 31) % 100
+            volatility = 0.002 + (seed / 10000)  # 0.2% - 1.2% per candle
+            direction = 1 if (i * 7) % 3 != 0 else -1
+            
+            open_price = base_price
+            change = base_price * volatility * direction
+            close_price = base_price + change
+            high_price = max(open_price, close_price) * (1 + volatility * 0.5)
+            low_price = min(open_price, close_price) * (1 - volatility * 0.5)
+            volume = 1000 + (seed * 100)
+            
+            candles.append(OHLCV(
+                timestamp=now_ms - (200 - i) * hour_ms,
+                open=round(open_price, 2),
+                high=round(high_price, 2),
+                low=round(low_price, 2),
+                close=round(close_price, 2),
+                volume=round(volume, 2)
+            ))
+            
+            base_price = close_price
+        
+        return candles
     
     async def get_ohlcv(
         self, 
@@ -689,110 +729,53 @@ class SimulatedAdapter(IExchangeAdapter):
         limit: int = 100
     ) -> Tuple[List[OHLCV], CandleSource]:
         """
-        Fetch OHLCV from public APIs for PAPER mode.
-        Uses CoinGecko which aggregates from real exchanges.
+        Return LOCAL FIXTURE candles - NO external API calls.
+        This is deterministic data for PAPER mode testing.
         """
         import time
         
-        # CoinGecko (aggregates from real exchanges)
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                coin_id = self._symbol_to_coingecko(symbol)
-                
-                # Map timeframe to days
-                days_map = {"1m": 1, "5m": 1, "15m": 1, "1h": 7, "4h": 30, "1d": 90}
-                days = days_map.get(timeframe, 7)
-                
-                response = await client.get(
-                    f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc",
-                    params={"vs_currency": "usd", "days": days}
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    candles = [OHLCV(
-                        timestamp=int(k[0]),
-                        open=float(k[1]),
-                        high=float(k[2]),
-                        low=float(k[3]),
-                        close=float(k[4]),
-                        volume=0  # CoinGecko OHLC doesn't have volume
-                    ) for k in data[-limit:]]
-                    
-                    source = CandleSource(
-                        exchange="coingecko_aggregated",
-                        symbol=symbol,
-                        timeframe=timeframe,
-                        candle_open_time=candles[0].timestamp if candles else 0,
-                        candle_close_time=candles[-1].timestamp if candles else 0,
-                        fetched_at=int(time.time() * 1000),
-                        is_live_exchange=False  # Mark as NOT live exchange for LIVE mode blocking
-                    )
-                    
-                    logger.info(f"[SIMULATED] Got {len(candles)} candles from CoinGecko")
-                    return candles, source
-        except Exception as e:
-            logger.error(f"[SIMULATED] CoinGecko failed: {e}")
+        candles = self._fixture_candles[-limit:]
         
-        # Return empty with error source
-        return [], CandleSource(
-            exchange="none",
+        source = CandleSource(
+            exchange="simulated_fixture",
             symbol=symbol,
             timeframe=timeframe,
-            candle_open_time=0,
-            candle_close_time=0,
+            candle_open_time=candles[0].timestamp if candles else 0,
+            candle_close_time=candles[-1].timestamp if candles else 0,
             fetched_at=int(time.time() * 1000),
-            is_live_exchange=False
+            is_live_exchange=False  # Fixture data is NOT live exchange
         )
-    
-    def _symbol_to_coingecko(self, symbol: str) -> str:
-        mapping = {
-            "BTCUSDT": "bitcoin",
-            "BTCUSD": "bitcoin",
-            "ETHUSDT": "ethereum",
-            "ETHUSD": "ethereum",
-            "SOLUSDT": "solana",
-            "XRPUSDT": "ripple",
-            "ADAUSDT": "cardano",
-            "DOGEUSDT": "dogecoin",
-        }
-        return mapping.get(symbol.upper(), "bitcoin")
+        
+        logger.info(f"[SIMULATED] Returned {len(candles)} fixture candles for {symbol}")
+        return candles, source
     
     async def get_ticker(self, symbol: str) -> Ticker:
-        """Get ticker from CoinGecko simple price API."""
-        try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                coin_id = self._symbol_to_coingecko(symbol)
-                
-                response = await client.get(
-                    "https://api.coingecko.com/api/v3/simple/price",
-                    params={
-                        "ids": coin_id,
-                        "vs_currencies": "usd",
-                        "include_24hr_vol": "true",
-                        "include_24hr_change": "true"
-                    }
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if coin_id in data:
-                        price = float(data[coin_id].get("usd", 0))
-                        return Ticker(
-                            symbol=symbol,
-                            last_price=price,
-                            bid=price * 0.9999,  # Simulate bid slightly below
-                            ask=price * 1.0001,  # Simulate ask slightly above
-                            volume_24h=float(data[coin_id].get("usd_24h_vol", 0)),
-                            timestamp=int(time.time() * 1000)
-                        )
-        except Exception as e:
-            logger.error(f"[SIMULATED] Ticker fetch failed: {e}")
+        """Return ticker based on last fixture candle."""
+        import time
+        
+        if self._fixture_candles:
+            last = self._fixture_candles[-1]
+            return Ticker(
+                symbol=symbol,
+                last_price=last.close,
+                bid=last.close * 0.9999,
+                ask=last.close * 1.0001,
+                volume_24h=sum(c.volume for c in self._fixture_candles[-24:]),
+                timestamp=int(time.time() * 1000)
+            )
         
         return Ticker(symbol=symbol, last_price=0, bid=0, ask=0, volume_24h=0, timestamp=0)
     
     async def get_orderbook(self, symbol: str, limit: int = 20) -> Dict:
-        return {"bids": [], "asks": []}
+        """Return simulated orderbook."""
+        if not self._fixture_candles:
+            return {"bids": [], "asks": []}
+        
+        last_price = self._fixture_candles[-1].close
+        bids = [[last_price * (1 - 0.0001 * i), 1.0] for i in range(1, limit + 1)]
+        asks = [[last_price * (1 + 0.0001 * i), 1.0] for i in range(1, limit + 1)]
+        
+        return {"bids": bids, "asks": asks}
     
     async def place_order(
         self,
@@ -804,15 +787,15 @@ class SimulatedAdapter(IExchangeAdapter):
         stop_price: Optional[float] = None,
         client_order_id: Optional[str] = None
     ) -> OrderResult:
-        """Simulate order placement."""
+        """Simulate order placement with fixture data."""
+        import time
+        
         self._order_counter += 1
         order_id = f"SIM-{self._order_counter}-{int(time.time())}"
         
-        # Get current price
-        ticker = await self.get_ticker(symbol)
-        fill_price = price if price else ticker.last_price
+        # Get price from fixture
+        fill_price = price if price else (self._fixture_candles[-1].close if self._fixture_candles else 0)
         
-        # Simulate instant fill for market orders
         self.orders[order_id] = {
             "order_id": order_id,
             "symbol": symbol,
@@ -831,7 +814,7 @@ class SimulatedAdapter(IExchangeAdapter):
             status="filled",
             filled_price=fill_price,
             filled_quantity=quantity,
-            fee=quantity * fill_price * 0.001,  # 0.1% fee
+            fee=quantity * fill_price * 0.001,
             fee_currency="USDT"
         )
     
@@ -864,7 +847,164 @@ class SimulatedAdapter(IExchangeAdapter):
         return ExchangeType.SIMULATED
     
     def is_live_exchange(self) -> bool:
-        return False  # Simulated is NOT live
+        return False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COINGECKO ADAPTER (Optional PAPER fallback)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class CoinGeckoAdapter(IExchangeAdapter):
+    """
+    CoinGecko adapter - OPTIONAL fallback for PAPER mode only.
+    NOT allowed in LIVE mode (is_live_exchange=False).
+    """
+    
+    COIN_ID_MAP = {
+        "BTCUSDT": "bitcoin",
+        "BTCUSD": "bitcoin",
+        "ETHUSDT": "ethereum",
+        "ETHUSD": "ethereum",
+        "SOLUSDT": "solana",
+        "XRPUSDT": "ripple",
+        "ADAUSDT": "cardano",
+        "DOGEUSDT": "dogecoin",
+    }
+    
+    def __init__(self):
+        self._balances = {"USDT": 100000, "BTC": 1.0, "ETH": 10.0}
+    
+    def _symbol_to_coin_id(self, symbol: str) -> str:
+        return self.COIN_ID_MAP.get(symbol.upper(), "bitcoin")
+    
+    async def get_ohlcv(
+        self, 
+        symbol: str, 
+        timeframe: str, 
+        limit: int = 100
+    ) -> Tuple[List[OHLCV], CandleSource]:
+        """Fetch OHLCV from CoinGecko API."""
+        import time
+        
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                coin_id = self._symbol_to_coin_id(symbol)
+                days_map = {"1m": 1, "5m": 1, "15m": 1, "1h": 7, "4h": 30, "1d": 90}
+                days = days_map.get(timeframe, 7)
+                
+                response = await client.get(
+                    f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc",
+                    params={"vs_currency": "usd", "days": days}
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    candles = [OHLCV(
+                        timestamp=int(k[0]),
+                        open=float(k[1]),
+                        high=float(k[2]),
+                        low=float(k[3]),
+                        close=float(k[4]),
+                        volume=0
+                    ) for k in data[-limit:]]
+                    
+                    source = CandleSource(
+                        exchange="coingecko",
+                        symbol=symbol,
+                        timeframe=timeframe,
+                        candle_open_time=candles[0].timestamp if candles else 0,
+                        candle_close_time=candles[-1].timestamp if candles else 0,
+                        fetched_at=int(time.time() * 1000),
+                        is_live_exchange=False  # CoinGecko is NOT a live exchange
+                    )
+                    
+                    logger.info(f"[COINGECKO] Got {len(candles)} candles")
+                    return candles, source
+                    
+        except Exception as e:
+            logger.error(f"[COINGECKO] Failed: {e}")
+        
+        return [], CandleSource(
+            exchange="coingecko_error",
+            symbol=symbol,
+            timeframe=timeframe,
+            candle_open_time=0,
+            candle_close_time=0,
+            fetched_at=int(time.time() * 1000),
+            is_live_exchange=False
+        )
+    
+    async def get_ticker(self, symbol: str) -> Ticker:
+        """Get ticker from CoinGecko."""
+        import time
+        
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                coin_id = self._symbol_to_coin_id(symbol)
+                response = await client.get(
+                    "https://api.coingecko.com/api/v3/simple/price",
+                    params={"ids": coin_id, "vs_currencies": "usd", "include_24hr_vol": "true"}
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if coin_id in data:
+                        price = float(data[coin_id].get("usd", 0))
+                        return Ticker(
+                            symbol=symbol,
+                            last_price=price,
+                            bid=price * 0.9999,
+                            ask=price * 1.0001,
+                            volume_24h=float(data[coin_id].get("usd_24h_vol", 0)),
+                            timestamp=int(time.time() * 1000)
+                        )
+        except Exception as e:
+            logger.error(f"[COINGECKO] Ticker failed: {e}")
+        
+        return Ticker(symbol=symbol, last_price=0, bid=0, ask=0, volume_24h=0, timestamp=0)
+    
+    async def get_orderbook(self, symbol: str, limit: int = 20) -> Dict:
+        return {"bids": [], "asks": []}  # CoinGecko doesn't have orderbook
+    
+    async def place_order(self, symbol: str, side: OrderSide, order_type: OrderType,
+                         quantity: float, price: Optional[float] = None,
+                         stop_price: Optional[float] = None,
+                         client_order_id: Optional[str] = None) -> OrderResult:
+        return OrderResult(success=False, order_id="", error="CoinGecko doesn't support order execution")
+    
+    async def cancel_order(self, order_id: str, symbol: str) -> bool:
+        return False
+    
+    async def get_order(self, order_id: str, symbol: str) -> Dict:
+        return {}
+    
+    async def get_open_orders(self, symbol: Optional[str] = None) -> List[Dict]:
+        return []
+    
+    async def get_balance(self, currency: str) -> Balance:
+        return Balance(currency=currency, total=0, available=0, locked=0)
+    
+    async def get_all_balances(self) -> List[Balance]:
+        return []
+    
+    async def get_positions(self, symbol: Optional[str] = None) -> List[Dict]:
+        return []
+    
+    async def test_connection(self) -> Tuple[bool, str]:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get("https://api.coingecko.com/api/v3/ping")
+                if response.status_code == 200:
+                    return True, "CoinGecko connected"
+        except Exception as e:
+            return False, str(e)
+        return False, "CoinGecko unavailable"
+    
+    def get_exchange_type(self) -> ExchangeType:
+        return ExchangeType.SIMULATED  # Treat as simulated for mode purposes
+    
+    def is_live_exchange(self) -> bool:
+        return False  # CoinGecko is NOT a live exchange
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
