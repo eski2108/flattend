@@ -33,6 +33,17 @@ class BackupSystem:
         Returns: dict with backup info
         """
         try:
+            # Check if mongodump is available
+            try:
+                subprocess.run(["which", "mongodump"], capture_output=True, check=True)
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                logger.warning("⚠️ mongodump not available - skipping backup (this is normal in containerized environments)")
+                return {
+                    "success": False,
+                    "error": "mongodump not available in this environment",
+                    "skipped": True
+                }
+            
             timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
             backup_name = f"backup_{timestamp}"
             backup_path = self.backup_dir / backup_name
