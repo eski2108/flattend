@@ -37921,6 +37921,21 @@ async def start_bot(request: BotActionRequest, x_user_id: str = Header(None)):
     if not x_user_id:
         raise HTTPException(status_code=401, detail="User ID required")
     
+    # ═══════════════════════════════════════════════════════════════════════════
+    # 2FA ENFORCEMENT FOR LIVE MODE
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Check if bot is in LIVE mode - if so, require 2FA
+    bot = await db.trading_bots.find_one({"bot_id": request.bot_id})
+    if bot and bot.get("mode", "paper").lower() == "live":
+        from bot_execution_engine import LiveModeValidator
+        allowed, error = await LiveModeValidator.check_2fa_for_live_trading(x_user_id)
+        if not allowed:
+            raise HTTPException(
+                status_code=403, 
+                detail=f"LIVE_MODE_BLOCKED: {error}"
+            )
+    # ═══════════════════════════════════════════════════════════════════════════
+    
     result = await BotEngine.start_bot(request.bot_id, x_user_id)
     
     if not result.get("success"):
