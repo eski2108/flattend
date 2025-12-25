@@ -37875,9 +37875,7 @@ async def list_user_bots(x_user_id: str = Header(None)):
     if not x_user_id:
         raise HTTPException(status_code=401, detail="User ID required")
     
-    logger.info(f"🔍 Fetching bots for user: {x_user_id}")
     bots = await BotEngine.get_user_bots(x_user_id)
-    logger.info(f"🔍 Found {len(bots)} bots for user {x_user_id}")
     return {"success": True, "bots": bots}
 
 # ===== STATIC BOT ROUTES - MUST BE BEFORE {bot_id} CATCH-ALL =====
