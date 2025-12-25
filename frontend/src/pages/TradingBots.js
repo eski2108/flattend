@@ -2627,8 +2627,8 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                         onChange={(e) => setParams({ ...params, mode: e.target.value })}
                         style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
                       >
-                        <option value="arithmetic">Arithmetic</option>
-                        <option value="geometric">Geometric</option>
+                        <option value="arithmetic">📏 Arithmetic</option>
+                        <option value="geometric">📐 Geometric</option>
                       </select>
                     </div>
                   </div>
