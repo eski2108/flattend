@@ -39277,12 +39277,24 @@ async def confirm_live_mode(bot_id: str, request: dict, x_user_id: str = Header(
     """
     Record explicit LIVE mode confirmation for audit trail.
     User must explicitly confirm they understand the risks.
+    REQUIRES 2FA to be enabled.
     """
     if not x_user_id:
         raise HTTPException(status_code=401, detail="User ID required")
     
     try:
         from bot_execution_engine import LiveModeValidator
+        
+        # ═══════════════════════════════════════════════════════════════════════
+        # 2FA ENFORCEMENT - MANDATORY FOR LIVE MODE ACTIVATION
+        # ═══════════════════════════════════════════════════════════════════════
+        allowed, error = await LiveModeValidator.check_2fa_for_live_trading(x_user_id)
+        if not allowed:
+            raise HTTPException(
+                status_code=403, 
+                detail=f"LIVE_MODE_BLOCKED: {error}"
+            )
+        # ═══════════════════════════════════════════════════════════════════════
         
         # Verify bot ownership
         bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
