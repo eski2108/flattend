@@ -393,11 +393,14 @@ class BotEngine:
     @staticmethod
     async def get_user_bots(user_id: str) -> List[Dict[str, Any]]:
         """Get all bots for a user with real stats from spot_trades"""
+        logger.info(f"🔍 BotEngine.get_user_bots called for user: {user_id}")
+        logger.info(f"🔍 Using database: {db_name}")
         bots = []
         async for bot in bot_configs.find({
             "user_id": user_id, 
             "status": {"$ne": "deleted"}
         }).sort("created_at", -1):
+            logger.info(f"🔍 Found bot: {bot.get('bot_id')} - {bot.get('status')}")
             
             # Get real stats from spot_trades (EXISTING table)
             bot_id = bot["bot_id"]
