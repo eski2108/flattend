@@ -39288,11 +39288,20 @@ async def confirm_live_mode(bot_id: str, request: dict, x_user_id: str = Header(
         # ═══════════════════════════════════════════════════════════════════════
         # 2FA ENFORCEMENT - MANDATORY FOR LIVE MODE ACTIVATION
         # ═══════════════════════════════════════════════════════════════════════
-        allowed, error = await LiveModeValidator.check_2fa_for_live_trading(x_user_id)
-        if not allowed:
+        # Check 2FA directly using server's db connection
+        user = await db.users.find_one({"user_id": x_user_id})
+        if not user:
+            raise HTTPException(status_code=403, detail="LIVE_MODE_BLOCKED: User not found")
+        
+        twofa_enabled = user.get("two_factor_enabled", False)
+        if not twofa_enabled:
+            tfa_data = await db.two_factor_auth.find_one({"user_id": x_user_id})
+            twofa_enabled = tfa_data and tfa_data.get("enabled", False)
+        
+        if not twofa_enabled:
             raise HTTPException(
                 status_code=403, 
-                detail=f"LIVE_MODE_BLOCKED: {error}"
+                detail="LIVE_MODE_BLOCKED: 2FA_REQUIRED: Two-factor authentication must be enabled for LIVE trading. Enable 2FA in Settings → Security."
             )
         # ═══════════════════════════════════════════════════════════════════════
         
