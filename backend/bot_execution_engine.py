@@ -170,10 +170,102 @@ RATE_LIMIT_ORDERS_PER_HOUR = 5000
 # Kill-switch flags
 GLOBAL_KILL_SWITCH = False
 BOT_KILL_SWITCHES: Dict[str, bool] = {}
+USER_KILL_SWITCHES: Dict[str, bool] = {}  # Phase 8: User-level kill switch
 
 # Slippage defaults
 DEFAULT_SLIPPAGE_PERCENT = 0.5  # 0.5% max slippage
 MAX_SLIPPAGE_PERCENT = 5.0      # Never allow more than 5%
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LIVE MODE VALIDATOR (Phase 8)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class LiveModeValidator:
+    """
+    Validates all requirements before allowing LIVE mode execution.
+    This is the ONLY gateway to LIVE trading - no bypasses allowed.
+    """
+    
+    @staticmethod
+    async def validate_live_mode(
+        user_id: str,
+        bot_id: str,
+        pair: str,
+        required_balance: float,
+        explicit_confirmation: bool = False
+    ) -> Tuple[bool, str]:
+        """
+        Validate all LIVE mode requirements.
+        Returns (is_valid, error_message).
+        """
+        errors = []
+        
+        # 1. Check explicit confirmation
+        if not explicit_confirmation:
+            errors.append("LIVE mode requires explicit user confirmation (live_confirmed=True)")
+        
+        # 2. Check global kill switch
+        if GLOBAL_KILL_SWITCH:
+            errors.append("Global kill switch is active - LIVE trading disabled")
+        
+        # 3. Check user kill switch
+        if USER_KILL_SWITCHES.get(user_id, False):
+            errors.append(f"User kill switch is active for {user_id}")
+        
+        # 4. Check bot kill switch
+        if BOT_KILL_SWITCHES.get(bot_id, False):
+            errors.append(f"Bot kill switch is active for {bot_id}")
+        
+        # 5. Check user has valid exchange credentials
+        creds = await db.exchange_credentials.find_one({
+            "user_id": user_id,
+            "is_active": True
+        })
+        if not creds:
+            errors.append("No valid exchange credentials found - required for LIVE mode")
+        
+        # 6. Check user balance
+        wallet = await db.wallets.find_one({"user_id": user_id})
+        if not wallet:
+            errors.append("User wallet not found")
+        else:
+            # Determine quote currency from pair (e.g., BTCUSD -> USD)
+            quote_currency = "USD"
+            if pair.endswith("USDT"):
+                quote_currency = "USDT"
+            elif pair.endswith("USD"):
+                quote_currency = "USD"
+            elif pair.endswith("GBP"):
+                quote_currency = "GBP"
+            
+            balances = wallet.get("balances", {})
+            available = balances.get(quote_currency, {}).get("available", 0)
+            
+            if available < required_balance:
+                errors.append(f"Insufficient balance: {available} {quote_currency} < {required_balance} required")
+        
+        # 7. Check live mode acknowledgment in user profile
+        user = await db.users.find_one({"user_id": user_id})
+        if user and not user.get("live_trading_acknowledged", False):
+            errors.append("User has not acknowledged LIVE trading risks")
+        
+        if errors:
+            return False, "; ".join(errors)
+        
+        return True, "LIVE mode validation passed"
+    
+    @staticmethod
+    async def record_live_confirmation(user_id: str, bot_id: str, ip_address: str = None):
+        """Record that user explicitly confirmed LIVE mode for audit trail."""
+        await db.live_confirmations.insert_one({
+            "confirmation_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "bot_id": bot_id,
+            "confirmed_at": datetime.now(timezone.utc),
+            "ip_address": ip_address,
+            "confirmation_type": "bot_live_start"
+        })
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
