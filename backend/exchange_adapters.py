@@ -1179,6 +1179,7 @@ __all__ = [
     # Adapters
     "BinanceAdapter",
     "SimulatedAdapter",
+    "CoinGeckoAdapter",
     
     # Factory & Enforcer
     "ExchangeAdapterFactory",
