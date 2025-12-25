@@ -38343,56 +38343,6 @@ async def validate_bot_type_config(bot_type: str, request: dict):
         return {"success": False, "error": str(e)}
 
 
-@api_router.get("/bots/types")
-async def get_available_bot_types():
-    """Get all available bot types with descriptions"""
-    return {
-        "success": True,
-        "bot_types": [
-            {
-                "id": "signal",
-                "name": "Signal Bot",
-                "description": "Strategy-based trading with entry/exit signals",
-                "features": [
-                    "RSI, MACD, EMA and 15+ indicators",
-                    "Custom entry/exit rules with AND/OR logic",
-                    "Trailing stop loss and take profit",
-                    "Multi-timeframe analysis"
-                ]
-            },
-            {
-                "id": "dca",
-                "name": "DCA Bot",
-                "description": "Dollar Cost Averaging with safety orders",
-                "features": [
-                    "Automatic safety orders on price drop",
-                    "Configurable order scaling",
-                    "Average entry price tracking",
-                    "Trailing take profit"
-                ]
-            },
-            {
-                "id": "grid",
-                "name": "Grid Bot",
-                "description": "Grid trading within price ranges",
-                "features": [
-                    "Arithmetic or geometric grid spacing",
-                    "Auto-profit on grid completion",
-                    "Breakout protection",
-                    "Neutral/Long/Short modes"
-                ]
-            },
-            {
-                "id": "arbitrage",
-                "name": "Arbitrage Bot",
-                "description": "Cross-exchange arbitrage (Coming Soon)",
-                "features": ["Coming soon"],
-                "coming_soon": True
-            }
-        ]
-    }
-
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # NEW BOT ENDPOINTS - Backtest, Paper Trading, Decision Logs
 # ═══════════════════════════════════════════════════════════════════════════════
