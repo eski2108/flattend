@@ -1525,7 +1525,7 @@ export default function TradingBots() {
       ═══════════════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'logs' && (
         <div>
-          {/* Log Filters */}
+          {/* Log Filters - Enhanced */}
           <div style={{
             display: 'flex',
             gap: '12px',
@@ -1533,6 +1533,27 @@ export default function TradingBots() {
             flexWrap: 'wrap',
             alignItems: 'center'
           }}>
+            {/* Bot Filter */}
+            <select
+              value={logFilters.botId}
+              onChange={(e) => setLogFilters(prev => ({ ...prev, botId: e.target.value }))}
+              style={{
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: '#0E1626',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#FFFFFF',
+                fontSize: '13px',
+                minWidth: '140px'
+              }}
+            >
+              <option value="all">All Bots</option>
+              {bots.map(bot => (
+                <option key={bot.bot_id} value={bot.bot_id}>
+                  {bot.type.toUpperCase()} - {bot.pair}
+                </option>
+              ))}
+            </select>
             <select
               value={logFilters.action}
               onChange={(e) => setLogFilters(prev => ({ ...prev, action: e.target.value }))}
@@ -1568,12 +1589,44 @@ export default function TradingBots() {
               <option value="30d">Last 30 Days</option>
               <option value="all">All Time</option>
             </select>
+            {/* Search */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              background: '#0E1626',
+              border: '1px solid rgba(255,255,255,0.1)',
+              flex: isMobile ? '1' : 'none',
+              minWidth: '200px'
+            }}>
+              <IoSearch size={16} style={{ color: '#8B9BB4' }} />
+              <input
+                type="text"
+                placeholder="Search logs..."
+                value={logFilters.search || ''}
+                onChange={(e) => setLogFilters(prev => ({ ...prev, search: e.target.value }))}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  fontSize: '13px',
+                  outline: 'none',
+                  width: '100%'
+                }}
+              />
+            </div>
             <div style={{ marginLeft: 'auto', color: '#8B9BB4', fontSize: '13px' }}>
-              {decisionLogs.length} entries
+              {decisionLogs.filter(log => 
+                (logFilters.action === 'all' || log.side === logFilters.action) &&
+                (logFilters.botId === 'all' || log.bot_id === logFilters.botId) &&
+                (!logFilters.search || log.pair?.toLowerCase().includes(logFilters.search.toLowerCase()))
+              ).length} entries
             </div>
           </div>
 
-          {/* Decision Log Table */}
+          {/* Decision Log Table - Enhanced with "Why did it trade?" */}
           <div style={{
             background: 'rgba(14,22,38,0.9)',
             borderRadius: '16px',
@@ -1599,18 +1652,23 @@ export default function TradingBots() {
                       <th style={{ padding: '16px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Pair</th>
                       <th style={{ padding: '16px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Action</th>
                       <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Price</th>
-                      <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Quantity</th>
+                      <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Qty</th>
                       <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Fee</th>
                       <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>PnL</th>
                       <th style={{ padding: '16px', textAlign: 'center', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Mode</th>
+                      <th style={{ padding: '16px', textAlign: 'center', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Why?</th>
                     </tr>
                   </thead>
                   <tbody>
                     {decisionLogs
-                      .filter(log => logFilters.action === 'all' || log.side === logFilters.action)
+                      .filter(log => 
+                        (logFilters.action === 'all' || log.side === logFilters.action) &&
+                        (logFilters.botId === 'all' || log.bot_id === logFilters.botId) &&
+                        (!logFilters.search || log.pair?.toLowerCase().includes(logFilters.search.toLowerCase()))
+                      )
                       .map((log, idx) => (
                       <tr key={log.log_id || idx} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '14px 16px', color: '#8B9BB4', fontSize: '13px' }}>
+                        <td style={{ padding: '14px 16px', color: '#8B9BB4', fontSize: '12px' }}>
                           {new Date(log.timestamp_ms).toLocaleString()}
                         </td>
                         <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '13px', fontWeight: '500' }}>
@@ -1630,14 +1688,14 @@ export default function TradingBots() {
                         <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '13px', textAlign: 'right' }}>
                           ${log.entry_price?.toFixed(2)}
                         </td>
-                        <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '13px', textAlign: 'right' }}>
+                        <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '12px', textAlign: 'right' }}>
                           {log.quantity?.toFixed(6)}
                         </td>
-                        <td style={{ padding: '14px 16px', color: '#FBBF24', fontSize: '13px', textAlign: 'right' }}>
+                        <td style={{ padding: '14px 16px', color: '#FBBF24', fontSize: '12px', textAlign: 'right' }}>
                           ${log.fees?.toFixed(4)}
                         </td>
                         <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                          <span style={{ color: (log.pnl || 0) >= 0 ? '#22C55E' : '#EF4444', fontWeight: '600' }}>
+                          <span style={{ color: (log.pnl || 0) >= 0 ? '#22C55E' : '#EF4444', fontWeight: '600', fontSize: '12px' }}>
                             {(log.pnl || 0) >= 0 ? '+' : ''}{log.pnl?.toFixed(2) || '0.00'}
                           </span>
                         </td>
@@ -1652,12 +1710,205 @@ export default function TradingBots() {
                             textTransform: 'uppercase'
                           }}>{log.mode || 'paper'}</span>
                         </td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <button
+                            onClick={() => setSelectedLogExplanation(log)}
+                            style={{
+                              padding: '6px 10px',
+                              borderRadius: '6px',
+                              background: 'rgba(168,85,247,0.1)',
+                              border: '1px solid rgba(168,85,247,0.2)',
+                              color: '#A855F7',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            <IoHelpCircle size={12} /> Why?
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* "Why Did It Trade?" Explanation Modal */}
+      {selectedLogExplanation && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1001,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(145deg, #1A1F35 0%, #0E1626 100%)',
+            borderRadius: '20px',
+            border: '1px solid rgba(168,85,247,0.3)',
+            padding: '28px',
+            maxWidth: '520px',
+            width: '100%',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <IoHelpCircle size={22} style={{ color: '#A855F7' }} />
+                Why Did It Trade?
+              </h2>
+              <button
+                onClick={() => setSelectedLogExplanation(null)}
+                style={{ background: 'transparent', border: 'none', color: '#8B9BB4', cursor: 'pointer' }}
+              >
+                <IoClose size={24} />
+              </button>
+            </div>
+
+            {/* Trade Summary */}
+            <div style={{
+              padding: '16px',
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '12px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>ACTION</div>
+                  <span style={{
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    background: selectedLogExplanation.side === 'buy' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+                    color: selectedLogExplanation.side === 'buy' ? '#22C55E' : '#EF4444',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase'
+                  }}>{selectedLogExplanation.side}</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>PAIR</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{selectedLogExplanation.pair}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>PRICE</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>${selectedLogExplanation.entry_price?.toFixed(2)}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>TIME</div>
+                  <div style={{ fontSize: '12px', color: '#8B9BB4' }}>{new Date(selectedLogExplanation.timestamp_ms).toLocaleString()}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Explanation - Signal/Trigger Reason */}
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#00E599', marginBottom: '12px' }}>📊 Trigger Reason</h3>
+              <div style={{
+                padding: '16px',
+                background: 'rgba(0,229,153,0.05)',
+                borderRadius: '12px',
+                border: '1px solid rgba(0,229,153,0.2)',
+                fontSize: '13px',
+                color: '#FFFFFF',
+                lineHeight: '1.6'
+              }}>
+                {selectedLogExplanation.reason || selectedLogExplanation.trigger_reason || (
+                  <>
+                    {selectedLogExplanation.side === 'buy' ? (
+                      <span>
+                        <strong>Entry Signal Triggered:</strong> The bot's configured entry conditions were met. 
+                        {selectedLogExplanation.indicators_met && (
+                          <span> Indicators: {JSON.stringify(selectedLogExplanation.indicators_met)}</span>
+                        )}
+                        {!selectedLogExplanation.indicators_met && (
+                          <span> This could be a grid level buy, DCA interval, or signal rule match based on the bot type and configuration.</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span>
+                        <strong>Exit Signal Triggered:</strong> The bot's exit conditions were met.
+                        {selectedLogExplanation.exit_reason && (
+                          <span> Reason: {selectedLogExplanation.exit_reason}</span>
+                        )}
+                        {!selectedLogExplanation.exit_reason && (
+                          <span> This could be a take-profit hit, stop-loss trigger, grid level sell, or signal exit rule match.</span>
+                        )}
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Indicators at Time of Trade (if available) */}
+            {selectedLogExplanation.indicator_values && (
+              <div style={{ marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#00B8D4', marginBottom: '12px' }}>📈 Indicator Values</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '10px'
+                }}>
+                  {Object.entries(selectedLogExplanation.indicator_values).map(([key, val]) => (
+                    <div key={key} style={{ padding: '10px', background: 'rgba(0,184,212,0.05)', borderRadius: '8px', border: '1px solid rgba(0,184,212,0.1)' }}>
+                      <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>{key.toUpperCase()}</div>
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{typeof val === 'number' ? val.toFixed(4) : val}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Risk Check (if available) */}
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#FFC107', marginBottom: '12px' }}>🛡️ Risk Check</h3>
+              <div style={{
+                padding: '14px',
+                background: 'rgba(255,193,7,0.05)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255,193,7,0.2)',
+                fontSize: '13px',
+                color: '#8B9BB4'
+              }}>
+                {selectedLogExplanation.risk_status === 'blocked' ? (
+                  <span style={{ color: '#FF5C5C' }}>⚠️ This trade was flagged by risk management but proceeded based on override settings.</span>
+                ) : selectedLogExplanation.risk_check ? (
+                  <span>✅ Passed all risk checks: {JSON.stringify(selectedLogExplanation.risk_check)}</span>
+                ) : (
+                  <span>✅ Trade passed risk validation (max daily trades, cooldown, stop-loss requirements).</span>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setSelectedLogExplanation(null)}
+              style={{
+                width: '100%',
+                padding: '14px',
+                borderRadius: '10px',
+                background: 'rgba(168,85,247,0.15)',
+                border: '1px solid rgba(168,85,247,0.3)',
+                color: '#A855F7',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
