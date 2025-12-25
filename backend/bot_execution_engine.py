@@ -715,6 +715,162 @@ class KillSwitch:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# RISK LIMITS ENFORCER (Phase 8) - Backend-Only Enforcement
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class RiskLimitsEnforcer:
+    """
+    Enforces risk limits at the backend level - UI cannot bypass these.
+    Checks are performed BEFORE every trade execution.
+    """
+    
+    # Default limits (can be overridden per-bot)
+    DEFAULT_MAX_DAILY_LOSS_PERCENT = 10.0   # 10% of allocated capital
+    DEFAULT_MAX_TRADES_PER_DAY = 50
+    DEFAULT_COOLDOWN_AFTER_LOSS_MINUTES = 15
+    DEFAULT_COOLDOWN_AFTER_TRADE_MINUTES = 1
+    
+    @staticmethod
+    async def check_all_limits(
+        bot_id: str,
+        user_id: str,
+        trade_amount: float
+    ) -> Tuple[bool, str]:
+        """
+        Check ALL risk limits before allowing a trade.
+        Returns (is_allowed, error_message).
+        This is called from the execution engine - NO UI BYPASS POSSIBLE.
+        """
+        errors = []
+        
+        # Load bot config and state
+        bot_config = await bot_configs.find_one({"bot_id": bot_id})
+        if not bot_config:
+            return False, "Bot config not found"
+        
+        state = await StateManager.load_state(bot_id)
+        risk_settings = bot_config.get("risk_settings", {})
+        
+        # 1. Check max daily loss
+        max_daily_loss_percent = risk_settings.get(
+            "max_daily_loss_percent", 
+            RiskLimitsEnforcer.DEFAULT_MAX_DAILY_LOSS_PERCENT
+        )
+        capital_allocated = state.capital_allocated if state else bot_config.get("capital_allocated", 0)
+        
+        if capital_allocated > 0:
+            daily_pnl = await RiskLimitsEnforcer._get_daily_pnl(bot_id)
+            max_loss = capital_allocated * (max_daily_loss_percent / 100)
+            
+            if daily_pnl < -max_loss:
+                errors.append(f"Max daily loss exceeded: {daily_pnl:.2f} < -{max_loss:.2f}")
+        
+        # 2. Check max trades per day
+        max_trades = risk_settings.get(
+            "max_trades_per_day",
+            RiskLimitsEnforcer.DEFAULT_MAX_TRADES_PER_DAY
+        )
+        daily_trades = await RiskLimitsEnforcer._get_daily_trade_count(bot_id)
+        
+        if daily_trades >= max_trades:
+            errors.append(f"Max daily trades reached: {daily_trades} >= {max_trades}")
+        
+        # 3. Check cooldown after loss
+        if state and state.realized_pnl < 0:
+            cooldown_minutes = risk_settings.get(
+                "cooldown_after_loss_minutes",
+                RiskLimitsEnforcer.DEFAULT_COOLDOWN_AFTER_LOSS_MINUTES
+            )
+            last_loss_trade = await RiskLimitsEnforcer._get_last_losing_trade(bot_id)
+            
+            if last_loss_trade:
+                cooldown_end = last_loss_trade + timedelta(minutes=cooldown_minutes)
+                if datetime.now(timezone.utc) < cooldown_end:
+                    remaining = (cooldown_end - datetime.now(timezone.utc)).seconds // 60
+                    errors.append(f"In loss cooldown: {remaining} minutes remaining")
+        
+        # 4. Check general trade cooldown
+        cooldown_minutes = risk_settings.get(
+            "cooldown_after_trade_minutes",
+            RiskLimitsEnforcer.DEFAULT_COOLDOWN_AFTER_TRADE_MINUTES
+        )
+        last_trade = await RiskLimitsEnforcer._get_last_trade_time(bot_id)
+        
+        if last_trade:
+            cooldown_end = last_trade + timedelta(minutes=cooldown_minutes)
+            if datetime.now(timezone.utc) < cooldown_end:
+                remaining = (cooldown_end - datetime.now(timezone.utc)).seconds
+                errors.append(f"Trade cooldown active: {remaining} seconds remaining")
+        
+        # 5. Check stop-loss requirement
+        if risk_settings.get("require_stop_loss", False):
+            has_stop_loss = bot_config.get("params", {}).get("stop_loss_percent")
+            if not has_stop_loss:
+                errors.append("Stop-loss is required but not configured")
+        
+        if errors:
+            # Log the risk violation
+            await db.risk_violations.insert_one({
+                "violation_id": str(uuid.uuid4()),
+                "bot_id": bot_id,
+                "user_id": user_id,
+                "violations": errors,
+                "trade_amount": trade_amount,
+                "timestamp": datetime.now(timezone.utc)
+            })
+            return False, "; ".join(errors)
+        
+        return True, "All risk checks passed"
+    
+    @staticmethod
+    async def _get_daily_pnl(bot_id: str) -> float:
+        """Get today's realized PnL for a bot"""
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        pipeline = [
+            {"$match": {
+                "bot_id": bot_id,
+                "timestamp": {"$gte": today_start}
+            }},
+            {"$group": {
+                "_id": None,
+                "total_pnl": {"$sum": "$pnl"}
+            }}
+        ]
+        
+        result = await db.bot_trades.aggregate(pipeline).to_list(1)
+        return result[0]["total_pnl"] if result else 0
+    
+    @staticmethod
+    async def _get_daily_trade_count(bot_id: str) -> int:
+        """Get today's trade count for a bot"""
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        return await db.bot_trades.count_documents({
+            "bot_id": bot_id,
+            "timestamp": {"$gte": today_start}
+        })
+    
+    @staticmethod
+    async def _get_last_trade_time(bot_id: str) -> Optional[datetime]:
+        """Get timestamp of last trade"""
+        trade = await db.bot_trades.find_one(
+            {"bot_id": bot_id},
+            sort=[("timestamp", -1)]
+        )
+        return trade.get("timestamp") if trade else None
+    
+    @staticmethod
+    async def _get_last_losing_trade(bot_id: str) -> Optional[datetime]:
+        """Get timestamp of last losing trade"""
+        trade = await db.bot_trades.find_one(
+            {"bot_id": bot_id, "pnl": {"$lt": 0}},
+            sort=[("timestamp", -1)]
+        )
+        return trade.get("timestamp") if trade else None
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # STATE MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════════
 
