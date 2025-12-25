@@ -38670,77 +38670,82 @@ class BacktestRequest(BaseModel):
     timeframe: str = "1h"
 
 @api_router.post("/bots/backtest")
-async def run_backtest(request: BacktestRequest):
-    """Run a backtest for a bot strategy"""
+async def run_backtest(request: dict):
+    """
+    Run a backtest for a bot strategy - PHASE 5.
+    Uses EXISTING bot execution logic and fee configuration.
+    Returns ONLY: total_pnl, max_drawdown, win_rate, fees_paid, trades_count
+    """
     try:
-        from bot_engine_v2 import BacktestEngine
-        import random
+        from backtesting_engine import BacktestEngine
         
-        # Generate sample candle data for backtest (in production, fetch from price history)
-        # For now, generate realistic-looking candle data
-        num_candles = 500
-        base_price = 40000 if 'BTC' in request.pair else 2000 if 'ETH' in request.pair else 1
+        bot_type = request.get("bot_type", "signal")
+        pair = request.get("pair", "BTCUSD")
+        timeframe = request.get("timeframe", "1h")
+        config = request.get("config", {})
+        initial_balance = request.get("initial_balance", 10000)
+        start_time = request.get("start_time")
+        end_time = request.get("end_time")
         
-        candles = []
-        price = base_price
-        for i in range(num_candles):
-            change = random.uniform(-0.02, 0.02)
-            open_price = price
-            close_price = price * (1 + change)
-            high_price = max(open_price, close_price) * (1 + random.uniform(0, 0.01))
-            low_price = min(open_price, close_price) * (1 - random.uniform(0, 0.01))
-            volume = random.uniform(100, 1000)
-            
-            candles.append({
-                'timestamp': i,
-                'open': open_price,
-                'high': high_price,
-                'low': low_price,
-                'close': close_price,
-                'volume': volume
-            })
-            price = close_price
-        
-        # Run backtest
-        engine = BacktestEngine(candles, request.initial_balance, request.fee_rate)
-        
-        if request.bot_type == 'signal':
-            entry_rules = request.params.get('entry_rules', {'operator': 'AND', 'conditions': []})
-            exit_rules = request.params.get('exit_rules', {'operator': 'OR', 'conditions': []})
-            order_amount = request.params.get('order_amount', request.initial_balance * 0.1)
-            risk_config = {
-                'stop_loss_percent': request.params.get('stop_loss_percent'),
-                'take_profit_percent': request.params.get('take_profit_percent')
-            }
-            results = engine.run_signal_backtest(entry_rules, exit_rules, order_amount, risk_config)
-        elif request.bot_type == 'dca':
-            dca_config = {
-                'base_order_size': request.params.get('base_order_size', 100),
-                'safety_order_size': request.params.get('safety_order_size', 50),
-                'safety_order_step_percent': request.params.get('safety_order_step_percent', 2),
-                'safety_order_volume_scale': request.params.get('safety_order_volume_scale', 1.5),
-                'max_safety_orders': request.params.get('max_safety_orders', 5),
-                'take_profit_percent': request.params.get('take_profit_percent', 3)
-            }
-            risk_config = {}
-            results = engine.run_dca_backtest(dca_config, risk_config)
-        else:
-            return {"success": False, "error": f"Backtest not supported for {request.bot_type} bots"}
+        # Run backtest using existing bot execution logic
+        result = await BacktestEngine.run_backtest(
+            bot_type=bot_type,
+            pair=pair,
+            timeframe=timeframe,
+            config=config,
+            initial_balance=initial_balance,
+            start_time=start_time,
+            end_time=end_time
+        )
         
         return {
             "success": True,
-            "backtest": results,
-            "config": {
-                "bot_type": request.bot_type,
-                "pair": request.pair,
-                "initial_balance": request.initial_balance,
-                "fee_rate": request.fee_rate,
-                "candles_count": num_candles
-            }
+            "result": result.to_dict()
         }
         
     except Exception as e:
         logger.error(f"Backtest error: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/backtest/{backtest_id}")
+async def get_backtest_result(backtest_id: str):
+    """Get a previous backtest result"""
+    try:
+        from backtesting_engine import BacktestEngine
+        
+        result = await BacktestEngine.get_backtest(backtest_id)
+        if not result:
+            raise HTTPException(status_code=404, detail="Backtest not found")
+        
+        return {"success": True, "backtest": result}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting backtest: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/backtest/{backtest_id}/trades")
+async def get_backtest_trades(backtest_id: str):
+    """Get trades from a backtest run"""
+    try:
+        from backtesting_engine import BacktestEngine
+        
+        trades = await BacktestEngine.get_backtest_trades(backtest_id)
+        
+        return {
+            "success": True,
+            "backtest_id": backtest_id,
+            "trades": trades,
+            "count": len(trades)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting backtest trades: {e}")
         return {"success": False, "error": str(e)}
 
 @api_router.get("/bots/{bot_id}/logs")
