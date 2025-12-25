@@ -23956,6 +23956,32 @@ except ImportError as e:
 # ============================================================================
 
 # ============================================================================
+# LEDGER & RECONCILIATION SYSTEM - Task 2
+# ============================================================================
+try:
+    from ledger_system import (
+        canonical_ledger,
+        reconciliation_engine,
+        legacy_importer,
+        init_ledger_services,
+    )
+    from reconciliation_routes import reconciliation_router
+    
+    # Include reconciliation routes
+    app.include_router(reconciliation_router, prefix="/api")
+    
+    # Initialize ledger services with database (async, done on startup)
+    @app.on_event("startup")
+    async def init_ledger():
+        await init_ledger_services(db)
+        logger.info("✅ Ledger & Reconciliation services initialized")
+    
+    logger.info("✅ Ledger & Reconciliation routes added")
+except ImportError as e:
+    logger.warning(f"⚠️ Ledger & Reconciliation not available: {e}")
+# ============================================================================
+
+# ============================================================================
 # PAYMENT SYSTEM v2.0 - IDEMPOTENCY MIDDLEWARE (P1.3)
 # INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
 # ============================================================================
