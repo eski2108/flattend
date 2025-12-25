@@ -33,6 +33,7 @@ export default function SpotTradingPro() {
   const [amount, setAmount] = useState('');
   const [orderType, setOrderType] = useState('market');
   const [isLoading, setIsLoading] = useState(false);
+  const [userBalance, setUserBalance] = useState({ usd: 0, crypto: 0 });
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
     high24h: 0,
@@ -40,6 +41,47 @@ export default function SpotTradingPro() {
     volume24h: 0,
     change24h: 0
   });
+
+  // Fetch user wallet balance
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
+        if (!userData.user_id) return;
+        
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${API}/api/wallet/balance/${userData.user_id}`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        
+        if (res.data.success || res.data.balances) {
+          const balances = res.data.balances || res.data;
+          const cryptoSymbol = selectedPair.replace('USD', '').toLowerCase();
+          setUserBalance({
+            usd: balances.usd || balances.USD || 0,
+            crypto: balances[cryptoSymbol] || balances[cryptoSymbol.toUpperCase()] || 0
+          });
+        }
+      } catch (e) {
+        console.error('Failed to fetch balance:', e);
+      }
+    };
+    
+    fetchBalance();
+    const interval = setInterval(fetchBalance, 15000);
+    return () => clearInterval(interval);
+  }, [selectedPair]);
+
+  // Handle percentage button clicks
+  const handlePercentage = (percent) => {
+    const cryptoSymbol = selectedPair.replace('USD', '');
+    // For buying: use USD balance / price
+    // For selling: use crypto balance
+    // Default to crypto balance for the amount field
+    const maxCrypto = userBalance.crypto;
+    const calculatedAmount = (maxCrypto * percent / 100).toFixed(8);
+    setAmount(calculatedAmount);
+  };
 
   // Responsive breakpoint detection
   useEffect(() => {
