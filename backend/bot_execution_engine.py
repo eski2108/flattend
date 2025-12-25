@@ -1585,6 +1585,8 @@ class CandleManager:
     """
     Handle multi-timeframe candle data for bots.
     Provides normalized OHLCV data for indicator calculations.
+    
+    Phase 8: Uses exchange adapters - LIVE mode requires real exchange data.
     """
     
     TIMEFRAME_SECONDS = {
@@ -1597,40 +1599,83 @@ class CandleManager:
         "1d": 86400
     }
     
+    # Store last candle source for audit
+    _last_candle_source: Dict[str, Any] = {}
+    
     @staticmethod
     async def get_candles(
         pair: str,
         timeframe: str,
-        limit: int = 200
+        limit: int = 200,
+        is_live_mode: bool = False,
+        adapter: Any = None
     ) -> List[Dict]:
         """
         Get OHLCV candles for a pair and timeframe.
+        
+        Args:
+            pair: Trading pair (e.g., BTCUSDT)
+            timeframe: Timeframe (e.g., 1h)
+            limit: Number of candles
+            is_live_mode: If True, MUST use exchange data (no CoinGecko)
+            adapter: Exchange adapter to use (optional)
+        
         Returns list of {timestamp, open, high, low, close, volume}
         """
-        # Try to get from cache/database first
-        cache_key = f"candles:{pair}:{timeframe}"
+        from exchange_adapters import (
+            SimulatedAdapter, LiveModeDataEnforcer, CandleSource
+        )
         
-        cached = await db.candle_cache.find_one({"cache_key": cache_key})
-        if cached:
-            updated_at = cached.get("updated_at")
-            if updated_at:
-                # Ensure timezone-aware comparison
-                if updated_at.tzinfo is None:
-                    updated_at = updated_at.replace(tzinfo=timezone.utc)
-                age = datetime.now(timezone.utc) - updated_at
-                if age.total_seconds() < CandleManager.TIMEFRAME_SECONDS.get(timeframe, 3600) / 2:
-                    return cached.get("candles", [])[:limit]
+        # Try to get from cache first (only if PAPER mode)
+        if not is_live_mode:
+            cache_key = f"candles:{pair}:{timeframe}"
+            cached = await db.candle_cache.find_one({"cache_key": cache_key})
+            if cached:
+                updated_at = cached.get("updated_at")
+                if updated_at:
+                    if updated_at.tzinfo is None:
+                        updated_at = updated_at.replace(tzinfo=timezone.utc)
+                    age = datetime.now(timezone.utc) - updated_at
+                    if age.total_seconds() < CandleManager.TIMEFRAME_SECONDS.get(timeframe, 3600) / 2:
+                        return cached.get("candles", [])[:limit]
         
-        # Fetch from external source (CoinGecko or similar)
-        candles = await CandleManager._fetch_candles(pair, timeframe, limit)
+        # Use adapter if provided, otherwise create SimulatedAdapter
+        if adapter is None:
+            adapter = SimulatedAdapter()
         
-        # Cache the result
-        if candles:
+        # Fetch candles via adapter
+        candles_raw, source = await adapter.get_ohlcv(pair, timeframe, limit)
+        
+        # LIVE MODE ENFORCEMENT: Block if data source is not from live exchange
+        if is_live_mode:
+            is_valid, message = LiveModeDataEnforcer.validate_candle_source(source, is_live_mode)
+            if not is_valid:
+                logger.error(f"[LIVE MODE BLOCKED] {message}")
+                raise ValueError(message)
+        
+        # Store source for audit
+        CandleManager._last_candle_source[f"{pair}:{timeframe}"] = {
+            "exchange": source.exchange,
+            "symbol": source.symbol,
+            "timeframe": source.timeframe,
+            "candle_open_time": source.candle_open_time,
+            "candle_close_time": source.candle_close_time,
+            "fetched_at": source.fetched_at,
+            "is_live_exchange": source.is_live_exchange
+        }
+        
+        # Convert to dict format
+        candles = [c.to_dict() for c in candles_raw]
+        
+        # Cache the result (PAPER mode only)
+        if candles and not is_live_mode:
+            cache_key = f"candles:{pair}:{timeframe}"
             await db.candle_cache.update_one(
                 {"cache_key": cache_key},
                 {
                     "$set": {
                         "candles": candles,
+                        "source": CandleManager._last_candle_source[f"{pair}:{timeframe}"],
                         "updated_at": datetime.now(timezone.utc)
                     }
                 },
@@ -1640,114 +1685,41 @@ class CandleManager:
         return candles
     
     @staticmethod
-    async def _fetch_candles(pair: str, timeframe: str, limit: int) -> List[Dict]:
-        """Fetch candles from external source"""
-        import httpx
-        
-        # Map trading pair to CoinGecko coin ID
-        COIN_ID_MAP = {
-            "BTC": "bitcoin",
-            "ETH": "ethereum",
-            "SOL": "solana",
-            "XRP": "ripple",
-            "ADA": "cardano",
-            "DOGE": "dogecoin",
-            "LINK": "chainlink",
-            "DOT": "polkadot",
-            "AVAX": "avalanche-2",
-            "MATIC": "matic-network",
-            "LTC": "litecoin",
-            "UNI": "uniswap",
-            "ATOM": "cosmos",
-            "BCH": "bitcoin-cash"
-        }
-        
-        # Extract base currency from pair (e.g., BTC from BTCUSD)
-        base = pair[:3].upper() if len(pair) >= 6 else pair.upper()
-        coin_id = COIN_ID_MAP.get(base, base.lower())
-        
-        # Map timeframe to CoinGecko days
-        days_map = {
-            "1m": 1,
-            "5m": 1,
-            "15m": 1,
-            "30m": 2,
-            "1h": 7,
-            "4h": 30,
-            "1d": 90
-        }
-        days = days_map.get(timeframe, 7)
-        
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc",
-                    params={"vs_currency": "usd", "days": days},
-                    timeout=10.0
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    candles = [
-                        {
-                            "timestamp": int(c[0] / 1000),
-                            "open": c[1],
-                            "high": c[2],
-                            "low": c[3],
-                            "close": c[4],
-                            "volume": 0  # CoinGecko OHLC doesn't include volume
-                        }
-                        for c in data[-limit:]
-                    ]
-                    return candles
-                else:
-                    logger.warning(f"CoinGecko API returned {response.status_code} for {coin_id}")
-        except Exception as e:
-            logger.error(f"Error fetching candles for {pair}: {e}")
-        
-        return []
+    def get_last_candle_source(pair: str, timeframe: str) -> Optional[Dict]:
+        """Get the source info for last fetched candles (for audit logging)."""
+        return CandleManager._last_candle_source.get(f"{pair}:{timeframe}")
     
     @staticmethod
-    async def get_latest_price(pair: str) -> Optional[float]:
+    async def _fetch_candles(pair: str, timeframe: str, limit: int) -> List[Dict]:
+        """
+        Legacy method - now uses SimulatedAdapter.
+        Kept for backward compatibility.
+        """
+        from exchange_adapters import SimulatedAdapter
+        
+        adapter = SimulatedAdapter()
+        candles_raw, _ = await adapter.get_ohlcv(pair, timeframe, limit)
+        return [c.to_dict() for c in candles_raw]
+    
+    @staticmethod
+    async def get_latest_price(pair: str, adapter: Any = None) -> Optional[float]:
         """Get latest price for a pair"""
-        candles = await CandleManager.get_candles(pair, "1h", limit=1)
+        from exchange_adapters import SimulatedAdapter
+        
+        if adapter is None:
+            adapter = SimulatedAdapter()
+        
+        try:
+            ticker = await adapter.get_ticker(pair)
+            if ticker.last_price > 0:
+                return ticker.last_price
+        except Exception as e:
+            logger.error(f"Error fetching price via adapter: {e}")
+        
+        # Fallback to candles
+        candles = await CandleManager.get_candles(pair, "1h", limit=1, adapter=adapter)
         if candles:
             return candles[-1]["close"]
-        
-        # Map trading pair to CoinGecko coin ID
-        COIN_ID_MAP = {
-            "BTC": "bitcoin",
-            "ETH": "ethereum",
-            "SOL": "solana",
-            "XRP": "ripple",
-            "ADA": "cardano",
-            "DOGE": "dogecoin",
-            "LINK": "chainlink",
-            "DOT": "polkadot",
-            "AVAX": "avalanche-2",
-            "MATIC": "matic-network",
-            "LTC": "litecoin",
-            "UNI": "uniswap",
-            "ATOM": "cosmos",
-            "BCH": "bitcoin-cash"
-        }
-        
-        # Fallback to price service
-        try:
-            import httpx
-            base = pair[:3].upper() if len(pair) >= 6 else pair.upper()
-            coin_id = COIN_ID_MAP.get(base, base.lower())
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    "https://api.coingecko.com/api/v3/simple/price",
-                    params={"ids": coin_id, "vs_currencies": "usd"},
-                    timeout=5.0
-                )
-                if response.status_code == 200:
-                    data = response.json()
-                    return data.get(coin_id, {}).get("usd")
-        except Exception as e:
-            logger.error(f"Error fetching price for {pair}: {e}")
         
         return None
 
