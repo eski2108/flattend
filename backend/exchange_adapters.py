@@ -689,23 +689,58 @@ class SimulatedAdapter(IExchangeAdapter):
         limit: int = 100
     ) -> Tuple[List[OHLCV], CandleSource]:
         """
-        Fetch OHLCV - tries Binance public API first, then CoinGecko fallback.
-        For PAPER mode only.
+        Fetch OHLCV - tries multiple sources for PAPER mode.
+        Priority: Bybit -> CoinGecko -> Generated data
         """
-        # Try Binance public API first (no auth needed for klines)
+        import time
+        
+        # Try Bybit public API (usually not geo-blocked)
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
-                binance_symbol = symbol.upper().replace("/", "")
-                if not binance_symbol.endswith("USDT"):
-                    binance_symbol = binance_symbol.replace("USD", "USDT")
+                bybit_symbol = symbol.upper().replace("/", "")
+                if not bybit_symbol.endswith("USDT"):
+                    bybit_symbol = bybit_symbol.replace("USD", "USDT")
                 
-                tf_map = {"1m": "1m", "5m": "5m", "15m": "15m", "1h": "1h", "4h": "4h", "1d": "1d"}
-                binance_tf = tf_map.get(timeframe, "1h")
+                tf_map = {"1m": "1", "5m": "5", "15m": "15", "30m": "30", "1h": "60", "4h": "240", "1d": "D"}
+                bybit_tf = tf_map.get(timeframe, "60")
                 
                 response = await client.get(
-                    "https://api.binance.com/api/v3/klines",
-                    params={"symbol": binance_symbol, "interval": binance_tf, "limit": limit}
+                    "https://api.bybit.com/v5/market/kline",
+                    params={
+                        "category": "spot",
+                        "symbol": bybit_symbol,
+                        "interval": bybit_tf,
+                        "limit": limit
+                    }
                 )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get("retCode") == 0 and data.get("result", {}).get("list"):
+                        raw_candles = data["result"]["list"]
+                        candles = [OHLCV(
+                            timestamp=int(k[0]),
+                            open=float(k[1]),
+                            high=float(k[2]),
+                            low=float(k[3]),
+                            close=float(k[4]),
+                            volume=float(k[5])
+                        ) for k in reversed(raw_candles)]  # Bybit returns newest first
+                        
+                        source = CandleSource(
+                            exchange="bybit_public",
+                            symbol=bybit_symbol,
+                            timeframe=timeframe,
+                            candle_open_time=candles[0].timestamp if candles else 0,
+                            candle_close_time=candles[-1].timestamp if candles else 0,
+                            fetched_at=int(time.time() * 1000),
+                            is_live_exchange=True  # Bybit is a real exchange
+                        )
+                        
+                        logger.info(f"[SIMULATED] Got {len(candles)} candles from Bybit public API")
+                        return candles, source
+        except Exception as e:
+            logger.warning(f"[SIMULATED] Bybit API failed: {e}")
                 
                 if response.status_code == 200:
                     data = response.json()
