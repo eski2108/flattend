@@ -436,28 +436,73 @@ export default function AdminBusinessDashboard() {
         
         {activeTab === 'revenue' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff' }}>Revenue Analytics</h2>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {['day', 'week', 'month', 'all'].map(p => (
-                  <button
-                    key={p}
-                    onClick={() => setPeriod(p)}
-                    style={{
-                      padding: '8px 16px',
-                      background: period === p ? '#00F0FF' : 'rgba(255,255,255,0.05)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: period === p ? '#000' : '#fff',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {p.toUpperCase()}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {/* Bots vs Manual Filter */}
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(15,26,46,0.8)', borderRadius: '10px', padding: '4px', border: '1px solid rgba(110,140,255,0.18)' }}>
+                  {[
+                    { id: 'all', label: 'All Revenue' },
+                    { id: 'bots', label: '🤖 Bots' },
+                    { id: 'manual', label: '👤 Manual' }
+                  ].map(f => (
+                    <button
+                      key={f.id}
+                      onClick={() => setRevenueFilter(f.id)}
+                      style={{
+                        padding: '6px 12px',
+                        background: revenueFilter === f.id ? 'linear-gradient(135deg, rgba(0,229,153,0.2) 0%, rgba(0,184,212,0.2) 100%)' : 'transparent',
+                        border: revenueFilter === f.id ? '1px solid rgba(0,229,153,0.3)' : '1px solid transparent',
+                        borderRadius: '8px',
+                        color: revenueFilter === f.id ? '#00E599' : '#8B9BB4',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                {/* Period Filter */}
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {['day', 'week', 'month', 'all'].map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setPeriod(p)}
+                      style={{
+                        padding: '8px 16px',
+                        background: period === p ? '#00F0FF' : 'rgba(255,255,255,0.05)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: period === p ? '#000' : '#fff',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {p.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
+            
+            {/* Revenue Filter Notice */}
+            {revenueFilter !== 'all' && (
+              <div style={{
+                padding: '12px 16px',
+                background: revenueFilter === 'bots' ? 'rgba(0,229,153,0.1)' : 'rgba(0,184,212,0.1)',
+                border: `1px solid ${revenueFilter === 'bots' ? 'rgba(0,229,153,0.3)' : 'rgba(0,184,212,0.3)'}`,
+                borderRadius: '10px',
+                marginBottom: '1.5rem',
+                fontSize: '13px',
+                color: revenueFilter === 'bots' ? '#00E599' : '#00B8D4'
+              }}>
+                {revenueFilter === 'bots' 
+                  ? '🤖 Showing revenue from automated trading bots only (fees from bot-generated trades)'
+                  : '👤 Showing revenue from manual user trades only (excludes bot-generated trades)'}
+              </div>
+            )}
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
               {[
