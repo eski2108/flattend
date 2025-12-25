@@ -698,6 +698,11 @@ export default function TradingBots() {
         ⚠️ Bots do not guarantee profit. Trades use your wallet balance. Past performance does not indicate future results.
       </div>
 
+      {/* ═══════════════════════════════════════════════════════════════════════════════
+          TAB CONTENT: MY BOTS
+      ═══════════════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'my-bots' && (
+        <>
       {/* Filters Row */}
       <div style={{
         display: 'flex',
