@@ -1141,9 +1141,14 @@ class CandleManager:
         
         cached = await db.candle_cache.find_one({"cache_key": cache_key})
         if cached:
-            age = datetime.now(timezone.utc) - cached.get("updated_at", datetime.min.replace(tzinfo=timezone.utc))
-            if age.total_seconds() < CandleManager.TIMEFRAME_SECONDS.get(timeframe, 3600) / 2:
-                return cached.get("candles", [])[:limit]
+            updated_at = cached.get("updated_at")
+            if updated_at:
+                # Ensure timezone-aware comparison
+                if updated_at.tzinfo is None:
+                    updated_at = updated_at.replace(tzinfo=timezone.utc)
+                age = datetime.now(timezone.utc) - updated_at
+                if age.total_seconds() < CandleManager.TIMEFRAME_SECONDS.get(timeframe, 3600) / 2:
+                    return cached.get("candles", [])[:limit]
         
         # Fetch from external source (CoinGecko or similar)
         candles = await CandleManager._fetch_candles(pair, timeframe, limit)
