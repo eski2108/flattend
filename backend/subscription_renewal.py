@@ -12,10 +12,11 @@ import uuid
 
 logger = logging.getLogger(__name__)
 
-# MongoDB connection
+# MongoDB connection - use DB_NAME from environment
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+DB_NAME = os.environ.get('DB_NAME', 'coinhubx_production')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client['coinhubx_db']
+db = client[DB_NAME]
 
 async def process_subscription_renewals():
     """Process monthly subscription renewals for arbitrage alerts"""
