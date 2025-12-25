@@ -802,24 +802,30 @@ class SimulatedAdapter(IExchangeAdapter):
         return mapping.get(symbol.upper(), "bitcoin")
     
     async def get_ticker(self, symbol: str) -> Ticker:
-        """Get ticker - uses Binance public API."""
+        """Get ticker - uses Bybit public API."""
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                binance_symbol = symbol.upper().replace("/", "").replace("USD", "USDT")
+                bybit_symbol = symbol.upper().replace("/", "")
+                if not bybit_symbol.endswith("USDT"):
+                    bybit_symbol = bybit_symbol.replace("USD", "USDT")
+                
                 response = await client.get(
-                    "https://api.binance.com/api/v3/ticker/24hr",
-                    params={"symbol": binance_symbol}
+                    "https://api.bybit.com/v5/market/tickers",
+                    params={"category": "spot", "symbol": bybit_symbol}
                 )
+                
                 if response.status_code == 200:
                     data = response.json()
-                    return Ticker(
-                        symbol=symbol,
-                        last_price=float(data["lastPrice"]),
-                        bid=float(data["bidPrice"]),
-                        ask=float(data["askPrice"]),
-                        volume_24h=float(data["volume"]),
-                        timestamp=int(time.time() * 1000)
-                    )
+                    if data.get("retCode") == 0 and data.get("result", {}).get("list"):
+                        ticker_data = data["result"]["list"][0]
+                        return Ticker(
+                            symbol=symbol,
+                            last_price=float(ticker_data.get("lastPrice", 0)),
+                            bid=float(ticker_data.get("bid1Price", 0)),
+                            ask=float(ticker_data.get("ask1Price", 0)),
+                            volume_24h=float(ticker_data.get("volume24h", 0)),
+                            timestamp=int(time.time() * 1000)
+                        )
         except Exception as e:
             logger.error(f"[SIMULATED] Ticker fetch failed: {e}")
         
