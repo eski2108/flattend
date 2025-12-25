@@ -463,7 +463,7 @@ class CanonicalLedger:
         limit: int = 100
     ) -> List[Dict]:
         """Get all ledger entries for a user"""
-        if not self.db:
+        if self.db is None:
             return []
         
         query = {
@@ -501,7 +501,7 @@ class CanonicalLedger:
         limit: int = 1000
     ) -> List[Dict]:
         """Get all revenue entries"""
-        if not self.db:
+        if self.db is None:
             return []
         
         query = {"is_revenue": True}
@@ -647,7 +647,7 @@ class ReconciliationEngine:
         """
         Core reconciliation logic.
         """
-        if not self.db:
+        if self.db is None:
             return ReconciliationResult(
                 reconciled=False,
                 period=period,
@@ -965,7 +965,7 @@ class ReconciliationEngine:
         """
         Reconcile a single user's balance against ledger.
         """
-        if not self.db:
+        if self.db is None:
             return {"error": "No database connection"}
         
         # Get user's current wallet balances
@@ -1023,7 +1023,7 @@ class ReconciliationEngine:
         limit: int = 50
     ) -> List[Dict]:
         """Get reconciliation reports."""
-        if not self.db:
+        if self.db is None:
             return []
         
         query = {}
@@ -1046,7 +1046,7 @@ class ReconciliationEngine:
         limit: int = 100
     ) -> List[Dict]:
         """Get reconciliation alerts."""
-        if not self.db:
+        if self.db is None:
             return []
         
         query = {}
@@ -1085,7 +1085,7 @@ class LegacyDataImporter:
     
     async def import_all(self) -> Dict:
         """Import all legacy data into canonical ledger."""
-        if not self.db:
+        if self.db is None:
             return {"error": "No database connection"}
         
         results = {
