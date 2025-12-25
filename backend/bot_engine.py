@@ -280,23 +280,54 @@ class BotEngine:
         # Get required amount based on bot type
         if bot["type"] == "grid":
             required = bot["params"].get("investment_amount", 0)
-        else:  # dca
+        elif bot["type"] == "dca":
             required = bot["params"].get("amount_per_interval", 0)
+        else:  # signal bot
+            required = bot["params"].get("order_amount", 0)
         
-        # Check GBP wallet balance (using new wallet schema)
-        wallet = await db.wallets.find_one({"user_id": user_id, "currency": "GBP"})
+        # Derive quote currency from pair (e.g., BTCUSDT → USDT, BTCGBP → GBP)
+        pair = bot.get("pair", "BTCUSDT").upper()
+        quote_currency = "USDT"  # Default
+        for suffix in ["USDT", "USD", "GBP", "EUR", "BUSD", "USDC"]:
+            if pair.endswith(suffix):
+                quote_currency = suffix
+                break
+        
+        # Get mode - PAPER mode allows start with 0 balance
+        mode = bot.get("mode", bot.get("params", {}).get("mode", "paper")).lower()
+        
+        # Get or create wallet (idempotent)
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": quote_currency})
         if not wallet:
-            return {"sufficient": False, "error": "GBP wallet not found"}
+            # Auto-create wallet
+            wallet_id = str(uuid.uuid4())
+            wallet = {
+                "wallet_id": wallet_id,
+                "user_id": user_id,
+                "currency": quote_currency,
+                "total_balance": 0,
+                "locked_balance": 0,
+                "available_balance": 0,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+            await db.wallets.insert_one(wallet)
+            logger.info(f"Auto-created {quote_currency} wallet for user {user_id}")
         
         available = wallet.get("total_balance", 0) - wallet.get("locked_balance", 0)
         
+        # PAPER mode: allow start even with 0 balance (simulated)
+        if mode == "paper":
+            return {"sufficient": True, "mode": "paper", "quote_currency": quote_currency}
+        
+        # LIVE mode: enforce balance check
         if available < required:
             return {
                 "sufficient": False, 
-                "error": f"Insufficient GBP balance. Required: £{required:.2f}, Available: £{available:.2f}"
+                "error": f"Insufficient {quote_currency} balance. Required: {required:.2f}, Available: {available:.2f}"
             }
         
-        return {"sufficient": True}
+        return {"sufficient": True, "quote_currency": quote_currency}
     
     @staticmethod
     async def pause_bot(bot_id: str, user_id: str) -> Dict[str, Any]:
