@@ -39094,6 +39094,148 @@ async def get_supported_trading_options():
     }
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 8: LIVE MODE VALIDATION ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@api_router.post("/bots/{bot_id}/validate-live-mode")
+async def validate_live_mode(bot_id: str, request: dict, x_user_id: str = Header(None)):
+    """
+    Validate all requirements before enabling LIVE mode.
+    Must pass ALL checks before LIVE trading is allowed.
+    """
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from bot_execution_engine import LiveModeValidator
+        
+        # Get bot config
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Extract required balance from request or bot config
+        required_balance = request.get("required_balance", bot.get("params", {}).get("capital", 0))
+        explicit_confirmation = request.get("live_confirmed", False)
+        
+        is_valid, message = await LiveModeValidator.validate_live_mode(
+            user_id=x_user_id,
+            bot_id=bot_id,
+            pair=bot.get("pair", "BTCUSDT"),
+            required_balance=required_balance,
+            explicit_confirmation=explicit_confirmation
+        )
+        
+        return {
+            "success": is_valid,
+            "valid": is_valid,
+            "message": message,
+            "requirements": {
+                "explicit_confirmation": explicit_confirmation,
+                "balance_check": required_balance,
+                "pair": bot.get("pair"),
+                "mode": "live"
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error validating live mode: {e}")
+        return {"success": False, "valid": False, "error": str(e)}
+
+
+@api_router.post("/bots/{bot_id}/confirm-live-mode")
+async def confirm_live_mode(bot_id: str, request: dict, x_user_id: str = Header(None)):
+    """
+    Record explicit LIVE mode confirmation for audit trail.
+    User must explicitly confirm they understand the risks.
+    """
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from bot_execution_engine import LiveModeValidator
+        
+        # Verify bot ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Must acknowledge risk
+        risk_acknowledged = request.get("risk_acknowledged", False)
+        if not risk_acknowledged:
+            return {
+                "success": False,
+                "error": "You must acknowledge LIVE trading risks (risk_acknowledged=true)"
+            }
+        
+        # Record confirmation
+        await LiveModeValidator.record_live_confirmation(
+            user_id=x_user_id,
+            bot_id=bot_id,
+            ip_address=request.get("ip_address")
+        )
+        
+        # Update bot to live mode
+        await db.bot_configs.update_one(
+            {"bot_id": bot_id},
+            {
+                "$set": {
+                    "mode": "live",
+                    "paper_mode": False,
+                    "live_confirmed_at": datetime.utcnow(),
+                    "live_confirmed_by": x_user_id
+                }
+            }
+        )
+        
+        return {
+            "success": True,
+            "message": "LIVE mode confirmed and enabled",
+            "bot_id": bot_id,
+            "mode": "live"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error confirming live mode: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/{bot_id}/mode-badge")
+async def get_bot_mode_badge(bot_id: str, x_user_id: str = Header(None)):
+    """Get visual badge info for bot's current mode."""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from bot_execution_engine import get_mode_badge, ExecutionMode
+        
+        bot = await db.bot_configs.find_one({"bot_id": bot_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        mode_str = bot.get("mode", "paper")
+        mode = ExecutionMode.PAPER if mode_str == "paper" else ExecutionMode.LIVE
+        badge = get_mode_badge(mode)
+        
+        return {
+            "success": True,
+            "bot_id": bot_id,
+            "mode": mode_str,
+            "badge": badge
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting mode badge: {e}")
+        return {"success": False, "error": str(e)}
+
+
 @api_router.get("/bots/{bot_id}/logs")
 async def get_bot_decision_logs(bot_id: str, limit: int = 50, x_user_id: str = Header(None)):
     """Get decision logs for a bot (why it traded)"""
