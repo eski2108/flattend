@@ -2028,12 +2028,24 @@ class BotExecutionEngine:
         state: BotState,
         current_price: float
     ) -> List[str]:
-        """Execute signal bot logic using the Signal Engine"""
+        """
+        Execute signal bot logic using the Signal Engine.
+        
+        Phase 8 Guardrails:
+        - Guardrail A: LIVE mode must use is_live_exchange=True data (in CandleManager)
+        - Guardrail B: LIVE mode requires valid credentials + sufficient balance (here)
+        - Guardrail C: Adapter errors → NO_TRADE (in CandleManager)
+        """
         actions = []
         bot_id = config.get("bot_id")
         pair = config.get("pair")
         params = config.get("params", {})
         user_id = config.get("user_id")
+        
+        # Determine execution mode (Phase 8)
+        is_paper_mode = config.get("paper_mode", True)  # Default to paper for safety
+        execution_mode = config.get("execution_mode", "paper")
+        is_live_mode = not is_paper_mode and execution_mode.lower() == "live"
         
         try:
             from signal_engine import StrategyBuilder, DecisionEngine, ConditionEvaluator
@@ -2058,18 +2070,38 @@ class BotExecutionEngine:
             if open_positions:
                 current_position = open_positions[0].side
             
-            # Evaluate strategy
+            # Evaluate strategy WITH MODE AWARENESS (Phase 8)
             signal, eval_details = await DecisionEngine.evaluate_strategy(
                 strategy=strategy,
                 pair=pair,
                 bot_id=bot_id,
-                current_position=current_position
+                current_position=current_position,
+                is_live_mode=is_live_mode,
+                user_id=user_id
             )
+            
+            # Check for data source errors (Guardrail C output)
+            if eval_details.get("error"):
+                error_msg = eval_details["error"]
+                actions.append(f"NO_TRADE: {error_msg}")
+                await DecisionLogger.log_decision(
+                    bot_id=bot_id,
+                    decision_type="error",
+                    reason=f"DATA_SOURCE_ERROR: {error_msg}",
+                    indicator_values={},
+                    strategy_config={"strategy_id": strategy.strategy_id},
+                    metadata={
+                        "error": error_msg,
+                        "candle_source": eval_details.get("candle_source"),
+                        "mode": "live" if is_live_mode else "paper"
+                    }
+                )
+                return actions
             
             if signal:
                 actions.append(f"Signal generated: {signal.signal_type} ({signal.confidence:.0%} confidence)")
                 
-                # Log the decision
+                # Log the decision with candle source (Phase 8 audit)
                 await DecisionLogger.log_decision(
                     bot_id=bot_id,
                     decision_type=signal.signal_type,
@@ -2080,21 +2112,74 @@ class BotExecutionEngine:
                         "signal_id": signal.signal_id,
                         "confidence": signal.confidence,
                         "price": current_price,
-                        "conditions_evaluated": signal.conditions_evaluated
+                        "conditions_evaluated": signal.conditions_evaluated,
+                        # Phase 8: Candle source audit
+                        "candle_source": eval_details.get("candle_source"),
+                        "is_live_exchange": eval_details.get("is_live_exchange"),
+                        "mode": "live" if is_live_mode else "paper"
                     }
                 )
                 
-                # Execute the signal if not in paper mode
-                if not config.get("paper_mode", False):
+                # ═══════════════════════════════════════════════════════════════
+                # GUARDRAIL B: LIVE mode requires valid credentials + balance
+                # ═══════════════════════════════════════════════════════════════
+                if is_live_mode:
+                    # Get trade amount from strategy
+                    trade_amount = strategy.order_size_value
+                    
+                    # Validate LIVE mode requirements
+                    live_valid, live_error = await LiveModeValidator.validate_live_mode(
+                        user_id=user_id,
+                        bot_id=bot_id,
+                        pair=pair,
+                        required_balance=trade_amount,
+                        explicit_confirmation=True  # Already confirmed at bot start
+                    )
+                    
+                    if not live_valid:
+                        actions.append(f"LIVE_ORDER_BLOCKED: {live_error}")
+                        await DecisionLogger.log_decision(
+                            bot_id=bot_id,
+                            decision_type="blocked",
+                            reason=f"LIVE_ORDER_BLOCKED: {live_error}",
+                            indicator_values=signal.indicator_snapshot,
+                            strategy_config={"strategy_id": strategy.strategy_id},
+                            metadata={
+                                "signal_id": signal.signal_id,
+                                "live_validation_error": live_error,
+                                "trade_amount": trade_amount
+                            }
+                        )
+                        return actions
+                    
+                    # Execute LIVE order
                     success, message, order_id = await DecisionEngine.execute_signal(
                         signal, strategy, user_id
                     )
                     if success:
-                        actions.append(f"Order placed: {order_id}")
+                        actions.append(f"LIVE Order placed: {order_id}")
                     else:
-                        actions.append(f"Order failed: {message}")
+                        actions.append(f"LIVE Order failed: {message}")
                 else:
-                    actions.append("Paper mode - no real order placed")
+                    # PAPER mode - simulate order (no real money)
+                    actions.append("PAPER mode - simulated trade recorded")
+                    
+                    # Record simulated trade in paper ledger
+                    await db.paper_trades.insert_one({
+                        "trade_id": str(uuid.uuid4()),
+                        "bot_id": bot_id,
+                        "user_id": user_id,
+                        "pair": pair,
+                        "signal_id": signal.signal_id,
+                        "signal_type": signal.signal_type,
+                        "side": signal.side,
+                        "price": current_price,
+                        "quantity": strategy.order_size_value,
+                        "confidence": signal.confidence,
+                        "timestamp": datetime.now(timezone.utc),
+                        "candle_source": eval_details.get("candle_source"),
+                        "mode": "paper"
+                    })
             else:
                 actions.append(f"No signal at price {current_price}")
                 
