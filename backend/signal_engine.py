@@ -135,7 +135,7 @@ class IndicatorConfig:
     Supports editable parameters.
     """
     indicator_id: str               # e.g., "rsi", "macd", "ema"
-    params: Dict[str, Any]          # e.g., {"period": 14} or {"fast": 12, "slow": 26}
+    params: Dict[str, Any] = field(default_factory=dict)  # e.g., {"period": 14} or {"fast": 12, "slow": 26}
     timeframe: str = "1h"           # Timeframe for this indicator
     output: str = "value"           # Which output to use (for multi-output indicators)
     offset: int = 0                 # Look back N candles (0 = current)
@@ -143,6 +143,15 @@ class IndicatorConfig:
     def get_cache_key(self) -> str:
         """Generate unique key for caching"""
         return f"{self.indicator_id}_{json.dumps(self.params, sort_keys=True)}_{self.timeframe}_{self.output}"
+    
+    def __hash__(self):
+        """Make hashable for use in sets"""
+        return hash(self.get_cache_key())
+    
+    def __eq__(self, other):
+        if not isinstance(other, IndicatorConfig):
+            return False
+        return self.get_cache_key() == other.get_cache_key()
 
 
 @dataclass
