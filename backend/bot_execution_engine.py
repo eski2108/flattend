@@ -1001,6 +1001,121 @@ class StateManager:
         state.updated_at = datetime.now(timezone.utc)
         await StateManager.save_state(state)
         return state
+    
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # RESTART RESILIENCE (Phase 8)
+    # ═══════════════════════════════════════════════════════════════════════════════
+    
+    @staticmethod
+    async def reload_active_bots() -> List[Dict]:
+        """
+        Reload all bots that were running before restart.
+        Called on backend startup to resume bot operations.
+        Returns list of bots that were reloaded.
+        """
+        reloaded = []
+        
+        # Find all bots that were running before shutdown
+        running_bots = await bot_configs.find({
+            "status": {"$in": ["running", "paused"]}
+        }).to_list(None)
+        
+        for bot in running_bots:
+            bot_id = bot["bot_id"]
+            
+            try:
+                # Load persisted state
+                state = await StateManager.load_state(bot_id)
+                
+                if state:
+                    # Verify no duplicate trade in progress
+                    pending_orders = await StateManager._check_pending_orders(bot_id)
+                    
+                    if pending_orders:
+                        # Mark bot for manual review - potential duplicate risk
+                        await bot_configs.update_one(
+                            {"bot_id": bot_id},
+                            {
+                                "$set": {
+                                    "status": "paused",
+                                    "pause_reason": f"restart_pending_orders:{len(pending_orders)}",
+                                    "requires_review": True
+                                }
+                            }
+                        )
+                        logger.warning(f"Bot {bot_id} paused on restart - has {len(pending_orders)} pending orders")
+                    else:
+                        reloaded.append({
+                            "bot_id": bot_id,
+                            "user_id": bot["user_id"],
+                            "status": bot["status"],
+                            "last_tick": state.last_tick_at,
+                            "open_positions": len(state.open_position_ids)
+                        })
+                        logger.info(f"Bot {bot_id} reloaded successfully")
+                else:
+                    # No state found - create fresh state
+                    state = await StateManager.create_state(
+                        bot_id=bot_id,
+                        user_id=bot["user_id"],
+                        initial_capital=bot.get("params", {}).get("capital", 0)
+                    )
+                    reloaded.append({
+                        "bot_id": bot_id,
+                        "user_id": bot["user_id"],
+                        "status": "fresh_state",
+                        "last_tick": None,
+                        "open_positions": 0
+                    })
+                    
+            except Exception as e:
+                logger.error(f"Failed to reload bot {bot_id}: {e}")
+                await bot_configs.update_one(
+                    {"bot_id": bot_id},
+                    {"$set": {"status": "error", "last_error": str(e)}}
+                )
+        
+        logger.info(f"Restart complete: {len(reloaded)} bots reloaded")
+        return reloaded
+    
+    @staticmethod
+    async def _check_pending_orders(bot_id: str) -> List[str]:
+        """Check for any orders that were pending before restart"""
+        pending = await db.bot_orders.find({
+            "bot_id": bot_id,
+            "status": {"$in": ["pending", "open", "partially_filled"]}
+        }).to_list(None)
+        
+        return [o["order_id"] for o in pending]
+    
+    @staticmethod
+    async def create_restart_checkpoint():
+        """Create a checkpoint before graceful shutdown"""
+        await db.system_checkpoints.insert_one({
+            "checkpoint_id": str(uuid.uuid4()),
+            "checkpoint_type": "pre_shutdown",
+            "timestamp": datetime.now(timezone.utc),
+            "running_bots": await bot_configs.count_documents({"status": "running"}),
+            "paused_bots": await bot_configs.count_documents({"status": "paused"})
+        })
+        logger.info("Pre-shutdown checkpoint created")
+    
+    @staticmethod
+    async def verify_no_duplicate_trades(bot_id: str, trade_id: str) -> bool:
+        """
+        Verify a trade hasn't already been executed (idempotency check).
+        Returns True if trade is safe to execute, False if duplicate.
+        """
+        existing = await db.bot_trades.find_one({
+            "bot_id": bot_id,
+            "idempotency_key": trade_id
+        })
+        
+        if existing:
+            logger.warning(f"Duplicate trade detected: {trade_id} for bot {bot_id}")
+            return False
+        
+        return True
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
