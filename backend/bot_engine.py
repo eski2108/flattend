@@ -27,8 +27,9 @@ logger = logging.getLogger(__name__)
 # MongoDB connection
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(MONGO_URL)
-db_name = os.environ.get('DB_NAME', 'coin_hub_x')
+db_name = os.environ.get('DB_NAME', 'coinhubx_production')  # Fixed default to match server.py
 db = client[db_name]
+logger.info(f"🤖 BotEngine connected to database: {db_name}")
 
 # NEW Collections (bot feature only - ALLOWED)
 bot_configs = db.bot_configs
