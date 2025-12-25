@@ -2110,6 +2110,7 @@ __all__ = [
     "OrderSide",
     "BotStatus",
     "PositionSide",
+    "ExecutionMode",  # Phase 8
     
     # Data Classes
     "OrderRequest",
@@ -2128,4 +2129,11 @@ __all__ = [
     "DecisionLogger",
     "CandleManager",
     "BotExecutionEngine",
+    
+    # Phase 8 Additions
+    "LiveModeValidator",
+    "RiskLimitsEnforcer",
+    "validate_execution_mode",
+    "get_mode_badge",
+    "LIVE_MODE_REQUIREMENTS",
 ]
