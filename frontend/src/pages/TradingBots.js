@@ -1830,7 +1830,7 @@ export default function TradingBots() {
                   <>
                     {selectedLogExplanation.side === 'buy' ? (
                       <span>
-                        <strong>Entry Signal Triggered:</strong> The bot's configured entry conditions were met. 
+                        <strong>Entry Signal Triggered:</strong> The bot&apos;s configured entry conditions were met. 
                         {selectedLogExplanation.indicators_met && (
                           <span> Indicators: {JSON.stringify(selectedLogExplanation.indicators_met)}</span>
                         )}
@@ -1840,7 +1840,7 @@ export default function TradingBots() {
                       </span>
                     ) : (
                       <span>
-                        <strong>Exit Signal Triggered:</strong> The bot's exit conditions were met.
+                        <strong>Exit Signal Triggered:</strong> The bot&apos;s exit conditions were met.
                         {selectedLogExplanation.exit_reason && (
                           <span> Reason: {selectedLogExplanation.exit_reason}</span>
                         )}
