@@ -1739,7 +1739,7 @@ class CandleManager:
             coin_id = COIN_ID_MAP.get(base, base.lower())
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    f"https://api.coingecko.com/api/v3/simple/price",
+                    "https://api.coingecko.com/api/v3/simple/price",
                     params={"ids": coin_id, "vs_currencies": "usd"},
                     timeout=5.0
                 )
