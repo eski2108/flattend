@@ -17,8 +17,11 @@ ADMIN_EMAIL_FALLBACK = "info@coinhubx.net"
 # 🔒 END LOCKED SECTION
 
 def get_frontend_url():
-    """Get frontend URL dynamically from environment"""
-    return os.environ.get('FRONTEND_URL') or os.environ.get('BACKEND_URL') or os.environ.get('REACT_APP_BACKEND_URL') or 'https://crypto-botui.preview.emergentagent.com'
+    """Get frontend URL dynamically from environment - REQUIRED"""
+    url = os.environ.get('FRONTEND_URL') or os.environ.get('BACKEND_URL')
+    if not url:
+        raise ValueError("FRONTEND_URL or BACKEND_URL environment variable is required")
+    return url
 
 class EmailService:
     def __init__(self, api_key: Optional[str] = None, sender_email: Optional[str] = None):
