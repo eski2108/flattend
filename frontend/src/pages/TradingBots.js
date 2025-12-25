@@ -965,6 +965,7 @@ export default function TradingBots() {
                     {getRiskBadge(bot)}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: COLORS.secondaryDim }}>
+                    <Coin3DIcon symbol={bot.pair?.replace(/USD$|USDT$/i, '')} size={24} />
                     <span style={{ fontWeight: '600', color: '#FFFFFF', fontFamily: 'SF Mono, Monaco, monospace', letterSpacing: '0.02em' }}>{formatPair(bot.pair)}</span>
                     <span style={{ opacity: 0.4 }}>•</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
