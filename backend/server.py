@@ -39489,35 +39489,45 @@ async def get_exchange_candles(
     symbol: str,
     timeframe: str,
     limit: int = 100,
-    use_adapter: bool = True,
+    adapter_type: str = "simulated",
     x_user_id: str = Header(None)
 ):
     """
     Get candles from exchange adapter.
     Returns candle source info for audit.
+    
+    adapter_type: 'simulated' (fixture data) or 'coingecko' (live API)
     """
     try:
-        from exchange_adapters import SimulatedAdapter
-        from bot_execution_engine import CandleManager
+        from exchange_adapters import SimulatedAdapter, CoinGeckoAdapter
         
-        adapter = SimulatedAdapter()
-        candles = await CandleManager.get_candles(
-            pair=symbol,
-            timeframe=timeframe,
-            limit=limit,
-            is_live_mode=False,
-            adapter=adapter
-        )
+        if adapter_type == "coingecko":
+            adapter = CoinGeckoAdapter()
+        else:
+            adapter = SimulatedAdapter()
         
-        source = CandleManager.get_last_candle_source(symbol, timeframe)
+        # Get candles directly from adapter (bypass cache)
+        candles_raw, source = await adapter.get_ohlcv(symbol, timeframe, limit)
+        
+        # Convert to dict
+        candles = [c.to_dict() for c in candles_raw]
         
         return {
             "success": True,
             "symbol": symbol,
             "timeframe": timeframe,
+            "adapter": adapter_type,
             "count": len(candles),
             "candles": candles[-20:],  # Return last 20 for display
-            "source": source
+            "source": {
+                "exchange": source.exchange,
+                "symbol": source.symbol,
+                "timeframe": source.timeframe,
+                "candle_open_time": source.candle_open_time,
+                "candle_close_time": source.candle_close_time,
+                "fetched_at": source.fetched_at,
+                "is_live_exchange": source.is_live_exchange
+            }
         }
         
     except Exception as e:
