@@ -700,7 +700,9 @@ class DecisionEngine:
         strategy: Strategy,
         pair: str,
         bot_id: str,
-        current_position: Optional[str] = None  # "long", "short", or None
+        current_position: Optional[str] = None,  # "long", "short", or None
+        is_live_mode: bool = False,
+        user_id: str = None
     ) -> Tuple[Optional[Signal], Dict[str, Any]]:
         """
         Evaluate a strategy and return a signal if conditions are met.
@@ -710,6 +712,8 @@ class DecisionEngine:
             pair: Trading pair (e.g., "BTCUSD")
             bot_id: Bot ID for tracking
             current_position: Current position state
+            is_live_mode: True if LIVE mode, False for PAPER
+            user_id: User ID for credential/balance lookup
         
         Returns:
             (Signal or None, evaluation_details)
@@ -719,13 +723,28 @@ class DecisionEngine:
         # Extract all required indicators
         required_indicators = DecisionEngine.extract_indicators_from_strategy(strategy)
         
-        # Calculate indicator values
-        indicator_values = await SignalIndicatorCalculator.calculate_indicators(
-            pair, required_indicators
+        # Calculate indicator values WITH SOURCE TRACKING
+        indicator_values, candle_source, data_error = await SignalIndicatorCalculator.calculate_indicators(
+            pair=pair,
+            indicators=required_indicators,
+            lookback_candles=100,
+            is_live_mode=is_live_mode,
+            user_id=user_id,
+            bot_id=bot_id
         )
         
+        # Guardrail: If candle source returned error, NO TRADE
+        if data_error:
+            logger.error(f"[DecisionEngine] Data error prevented evaluation: {data_error}")
+            return None, {
+                "error": f"DATA_SOURCE_ERROR: {data_error}",
+                "candle_source": candle_source,
+                "mode": "live" if is_live_mode else "paper",
+                "bot_id": bot_id
+            }
+        
         # Get current price
-        current_price = await CandleManager.get_latest_price(pair)
+        current_price = await CandleManager.get_latest_price(pair, is_live_mode=is_live_mode, user_id=user_id)
         if not current_price:
             return None, {"error": "Could not fetch current price"}
         
