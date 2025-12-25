@@ -365,9 +365,10 @@ async def main():
             print(f"   Disputed Trade ID: {dispute_trade_id}")
             print(f"   Dispute ID: {dispute_id}")
             print("\n📧 EMAILS SENT TO: info@coinhubx.net")
-            frontend_url = os.getenv('REACT_APP_BACKEND_URL', 'https://crypto-botui.preview.emergentagent.com')
-            print("\n🔗 DISPUTE LINK:")
-            print(f"   {frontend_url}/admin/disputes/{dispute_id}")
+            frontend_url = os.getenv('FRONTEND_URL') or os.getenv('BACKEND_URL')
+            if frontend_url:
+                print("\n🔗 DISPUTE LINK:")
+                print(f"   {frontend_url}/admin/disputes/{dispute_id}")
             print("\n✅ Check your email inbox at info@coinhubx.net")
             print("✅ Click the link to verify it routes correctly")
             print("✅ Stats should now show 1 completed trade for both users")
