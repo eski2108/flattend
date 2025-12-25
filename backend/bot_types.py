@@ -410,6 +410,46 @@ class SignalBotExecutor:
             if signal:
                 actions.append(f"ENTRY SIGNAL: {signal.side} ({signal.confidence:.0%} confidence)")
                 
+                # === RISK VALIDATION ===
+                from risk_manager import RiskManager, OrderIntent
+                
+                # Get current positions and orders count
+                current_positions = len(open_positions)
+                active_orders = await db.bot_orders.count_documents({
+                    "bot_id": bot_id,
+                    "status": {"$in": ["pending", "submitted", "open"]}
+                })
+                
+                # Get daily PnL
+                from risk_manager import DailyPnLTracker
+                daily_pnl = await DailyPnLTracker.get_daily_pnl(user_id, bot_id)
+                
+                # Build order intent
+                order_intent = OrderIntent(
+                    bot_id=bot_id,
+                    user_id=user_id,
+                    action="BUY" if signal.side == "buy" else "SELL",
+                    symbol=pair,
+                    timeframe=strategy.primary_timeframe,
+                    quantity=signal_config.position_size_value / current_price,
+                    current_price=current_price,
+                    current_positions=current_positions,
+                    current_orders=active_orders,
+                    daily_pnl=daily_pnl,
+                    bot_type="signal",
+                    stop_loss_price=current_price * (1 - signal_config.stop_loss_percent / 100) if signal.side == "buy" else current_price * (1 + signal_config.stop_loss_percent / 100)
+                )
+                
+                # Validate with Risk Manager
+                risk_result = await RiskManager.validate_order_intent(order_intent)
+                
+                if not risk_result.passed:
+                    actions.append(f"RISK_BLOCK: {risk_result.reason} - {risk_result.reason_detail}")
+                    return {"actions": actions, "state": state}
+                
+                actions.append(f"RISK_PASS: {len(risk_result.checks_passed)} checks passed")
+                # === END RISK VALIDATION ===
+                
                 if not paper_mode:
                     # Open position
                     position = await PositionManager.open_position(
@@ -435,7 +475,7 @@ class SignalBotExecutor:
                     reason=signal.trigger_reason,
                     indicator_values=signal.indicator_snapshot,
                     strategy_config={"strategy_id": strategy.strategy_id},
-                    metadata={"price": current_price, "confidence": signal.confidence}
+                    metadata={"price": current_price, "confidence": signal.confidence, "risk_checks": risk_result.checks_passed}
                 )
             else:
                 actions.append(f"No entry signal at ${current_price:.2f}")
