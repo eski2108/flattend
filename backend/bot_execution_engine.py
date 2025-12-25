@@ -1412,24 +1412,32 @@ class BotExecutionEngine:
         for position_id in state.open_position_ids:
             await PositionManager.update_position(position_id, current_price)
         
-        # Execute based on bot type
+        # Execute based on bot type - using new Phase 3 Bot Types
         try:
-            if bot_type == "signal":
-                actions = await BotExecutionEngine._execute_signal_bot(
-                    config, state, current_price
-                )
-            elif bot_type == "dca":
-                actions = await BotExecutionEngine._execute_dca_bot(
-                    config, state, current_price
-                )
-            elif bot_type == "grid":
-                actions = await BotExecutionEngine._execute_grid_bot(
-                    config, state, current_price
-                )
-            else:
-                result["status"] = "error"
-                result["errors"].append(f"Unknown bot type: {bot_type}")
-                return result
+            from bot_types import BotTypeFactory
+            
+            # Get bot-specific state (separate from main state)
+            bot_state_doc = await db.bot_type_states.find_one({"bot_id": bot_id})
+            bot_type_state = bot_state_doc.get("state", {}) if bot_state_doc else {}
+            
+            # Execute using factory
+            exec_result = await BotTypeFactory.execute_bot(
+                bot_type=bot_type,
+                bot_id=bot_id,
+                config=config,
+                state=bot_type_state,
+                current_price=current_price
+            )
+            
+            actions = exec_result.get("actions", [])
+            new_state = exec_result.get("state", {})
+            
+            # Save bot-specific state
+            await db.bot_type_states.update_one(
+                {"bot_id": bot_id},
+                {"$set": {"state": new_state, "updated_at": datetime.now(timezone.utc)}},
+                upsert=True
+            )
             
             result["actions"] = actions
             
