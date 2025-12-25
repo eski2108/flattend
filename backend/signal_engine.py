@@ -936,8 +936,8 @@ class StrategyBuilder:
         if "exit_rules" in config:
             strategy.exit_rules = StrategyBuilder._parse_condition_group(config["exit_rules"])
         
-        # Parse confirmation rules
-        if "confirmation_rules" in config:
+        # Parse confirmation rules (only if not None)
+        if "confirmation_rules" in config and config["confirmation_rules"] is not None:
             strategy.confirmation_rules = StrategyBuilder._parse_condition_group(config["confirmation_rules"])
         
         return strategy
