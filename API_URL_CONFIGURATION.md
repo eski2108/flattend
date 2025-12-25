@@ -14,7 +14,7 @@ Created a **SINGLE source of truth** for API configuration.
 ### Environment Variable
 **`/app/frontend/.env`:**
 ```
-REACT_APP_BACKEND_URL=https://tradingbots-ui.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://signal-shield-4.preview.emergentagent.com
 ```
 - Does NOT include `/api` at the end
 - The config file adds it automatically
@@ -38,7 +38,7 @@ const API = API_BASE_URL;
 ## Testing
 ```bash
 # Test login
-curl -X POST https://tradingbots-ui.preview.emergentagent.com/api/auth/login \
+curl -X POST https://signal-shield-4.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"gads21083@gmail.com","password":"Test123!"}'
 ```

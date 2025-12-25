@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://tradingbots-ui.preview.emergentagent.com
-- Backend API: https://tradingbots-ui.preview.emergentagent.com/api
-- P2P Marketplace: https://tradingbots-ui.preview.emergentagent.com/p2p
+- Frontend: https://signal-shield-4.preview.emergentagent.com
+- Backend API: https://signal-shield-4.preview.emergentagent.com/api
+- P2P Marketplace: https://signal-shield-4.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

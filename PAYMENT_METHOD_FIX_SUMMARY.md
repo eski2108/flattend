@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://tradingbots-ui.preview.emergentagent.com
+https://signal-shield-4.preview.emergentagent.com
 
 ### Test Route
 
-`https://tradingbots-ui.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://signal-shield-4.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

@@ -11,7 +11,7 @@ from datetime import datetime
 import uuid
 
 # Configuration
-BASE_URL = "https://tradingbots-ui.preview.emergentagent.com/api"
+BASE_URL = "https://signal-shield-4.preview.emergentagent.com/api"
 TEST_USER_EMAIL = "gads21083@gmail.com"
 TEST_USER_PASSWORD = "123456789"
 

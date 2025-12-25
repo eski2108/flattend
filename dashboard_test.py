@@ -18,7 +18,7 @@ from datetime import datetime
 import time
 
 # Configuration
-BASE_URL = "https://tradingbots-ui.preview.emergentagent.com/api"
+BASE_URL = "https://signal-shield-4.preview.emergentagent.com/api"
 
 # Test User as requested
 TEST_USER = {

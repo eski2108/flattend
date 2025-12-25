@@ -2,7 +2,7 @@
 
 **Deployment Date:** December 9, 2024, 9:47 PM UTC  
 **Status:** ✅ LIVE AND FULLY FUNCTIONAL  
-**Preview URL:** https://tradingbots-ui.preview.emergentagent.com/#/trading
+**Preview URL:** https://signal-shield-4.preview.emergentagent.com/#/trading
 
 ---
 
@@ -575,7 +575,7 @@ Glow: Strong cyan neon effect
 ## 🔗 LIVE PREVIEW
 
 **Trading Page:**  
-https://tradingbots-ui.preview.emergentagent.com/#/trading
+https://signal-shield-4.preview.emergentagent.com/#/trading
 
 **What to Verify:**
 1. Panel shows all 5 data fields

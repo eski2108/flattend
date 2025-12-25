@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://tradingbots-ui.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://signal-shield-4.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

@@ -8,4 +8,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_BACKEND_URL = "https://tradingbots-ui.preview.emergentagent.com"
+  REACT_APP_BACKEND_URL = "https://signal-shield-4.preview.emergentagent.com"

@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://tradingbots-ui.preview.emergentagent.com/login
-2. Visit marketplace: https://tradingbots-ui.preview.emergentagent.com/p2p
+1. Login at: https://signal-shield-4.preview.emergentagent.com/login
+2. Visit marketplace: https://signal-shield-4.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

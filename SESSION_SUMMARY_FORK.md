@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://tradingbots-ui.preview.emergentagent.com
+https://signal-shield-4.preview.emergentagent.com
 
 ---
 

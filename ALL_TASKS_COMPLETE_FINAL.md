@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://tradingbots-ui.preview.emergentagent.com
+**URL:** https://signal-shield-4.preview.emergentagent.com
 
 **Services Status:**
 ```bash

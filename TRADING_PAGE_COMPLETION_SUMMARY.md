@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://tradingbots-ui.preview.emergentagent.com/#/trading
+**Live URL:** https://signal-shield-4.preview.emergentagent.com/#/trading
 
 ---
 
