@@ -386,9 +386,17 @@ export default function TradingBots() {
     try {
       const response = await axios.get(`${API}/api/prices/live`);
       if (response.data.success && response.data.prices) {
+        // Emoji mapping for coins
+        const coinEmojis = {
+          BTC: '₿', ETH: '⟠', USDT: '💵', USDC: '💲', BNB: '🔶',
+          SOL: '◎', XRP: '✕', ADA: '🔵', DOGE: '🐕', DOT: '⬡',
+          AVAX: '🔺', MATIC: '💜', LINK: '🔗', UNI: '🦄', ATOM: '⚛️',
+          LTC: '🪙', BCH: '💚', XLM: '✨', ALGO: '🔷', VET: '♦️'
+        };
         const pairs = Object.keys(response.data.prices).map(symbol => ({
           symbol: `${symbol}USD`,
-          name: `${symbol}/USD`
+          name: `${symbol}/USD`,
+          emoji: coinEmojis[symbol] || '🪙'
         }));
         setTradingPairs(pairs);
       }
