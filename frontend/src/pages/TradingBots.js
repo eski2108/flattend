@@ -2760,9 +2760,9 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                           }}
                           style={{ flex: 2, padding: '8px', borderRadius: '6px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '12px' }}
                         >
-                          <option value="">📊 Select indicator</option>
+                          <option value="">Select indicator</option>
                           {Object.entries(indicatorCategories).map(([cat, inds]) => (
-                            <optgroup key={cat} label={cat === 'momentum' ? '⚡ MOMENTUM' : cat === 'trend' ? '📈 TREND' : cat === 'volatility' ? '🌊 VOLATILITY' : cat === 'volume' ? '📊 VOLUME' : cat.toUpperCase()}>
+                            <optgroup key={cat} label={cat.toUpperCase()}>
                               {inds.map(ind => <option key={ind} value={ind}>{ind.toUpperCase()}</option>)}
                             </optgroup>
                           ))}
