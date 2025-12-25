@@ -37903,6 +37903,20 @@ async def create_bot(request: CreateBotRequest, x_user_id: str = Header(None)):
     if not x_user_id:
         raise HTTPException(status_code=401, detail="User ID required")
     
+    # ═══════════════════════════════════════════════════════════════════════════
+    # 2FA ENFORCEMENT FOR LIVE MODE BOT CREATION
+    # ═══════════════════════════════════════════════════════════════════════════
+    mode = request.params.get("mode", "paper").lower() if request.params else "paper"
+    if mode == "live":
+        from bot_execution_engine import LiveModeValidator
+        allowed, error = await LiveModeValidator.check_2fa_for_live_trading(x_user_id)
+        if not allowed:
+            raise HTTPException(
+                status_code=403, 
+                detail=f"LIVE_MODE_BLOCKED: {error}"
+            )
+    # ═══════════════════════════════════════════════════════════════════════════
+    
     result = await BotEngine.create_bot(
         user_id=x_user_id,
         bot_type=request.bot_type,
