@@ -566,9 +566,14 @@ export default function SpotTradingPro() {
             </div>
 
             {/* Amount Input */}
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '12px', color: '#8FA3FF', marginBottom: '8px', opacity: 0.85 }}>
-                Amount ({selectedPair.replace('USD', '')})
+            <div style={{ marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '12px', color: '#8FA3FF', opacity: 0.85 }}>
+                  Amount ({selectedPair.replace('USD', '')})
+                </span>
+                <span style={{ fontSize: '11px', color: '#8FA3FF', opacity: 0.7 }}>
+                  Available: {userBalance.crypto.toFixed(6)} {selectedPair.replace('USD', '')}
+                </span>
               </div>
               <input
                 type="number"
@@ -586,6 +591,44 @@ export default function SpotTradingPro() {
                   outline: 'none'
                 }}
               />
+            </div>
+
+            {/* Percentage Buttons */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '8px', 
+              marginBottom: '16px' 
+            }}>
+              {[25, 50, 75, 100].map((percent) => (
+                <button
+                  key={percent}
+                  onClick={() => handlePercentage(percent)}
+                  style={{
+                    flex: 1,
+                    padding: '8px 0',
+                    background: 'rgba(110, 140, 255, 0.1)',
+                    border: '1px solid rgba(110, 140, 255, 0.25)',
+                    borderRadius: '8px',
+                    color: '#8FA3FF',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(110, 140, 255, 0.25)';
+                    e.target.style.borderColor = 'rgba(110, 140, 255, 0.5)';
+                    e.target.style.color = '#E9EEFF';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'rgba(110, 140, 255, 0.1)';
+                    e.target.style.borderColor = 'rgba(110, 140, 255, 0.25)';
+                    e.target.style.color = '#8FA3FF';
+                  }}
+                >
+                  {percent}%
+                </button>
+              ))}
             </div>
 
             {/* Total Display */}
