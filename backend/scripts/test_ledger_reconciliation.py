@@ -60,12 +60,15 @@ async def test_canonical_ledger():
     
     # Create mock DB
     mock_db = MagicMock()
-    mock_db.canonical_ledger = MagicMock()
-    mock_db.canonical_ledger.insert_one = AsyncMock()
-    mock_db.canonical_ledger.find = MagicMock(return_value=MagicMock())
-    mock_db.canonical_ledger.find.return_value.sort = MagicMock(return_value=MagicMock())
-    mock_db.canonical_ledger.find.return_value.sort.return_value.limit = MagicMock(return_value=MagicMock())
-    mock_db.canonical_ledger.find.return_value.sort.return_value.limit.return_value.to_list = AsyncMock(return_value=[])
+    mock_collection = MagicMock()
+    mock_collection.insert_one = AsyncMock()
+    mock_collection.find = MagicMock(return_value=MagicMock())
+    mock_collection.find.return_value.sort = MagicMock(return_value=MagicMock())
+    mock_collection.find.return_value.sort.return_value.limit = MagicMock(return_value=MagicMock())
+    mock_collection.find.return_value.sort.return_value.limit.return_value.to_list = AsyncMock(return_value=[])
+    
+    mock_db.__getitem__ = MagicMock(return_value=mock_collection)
+    mock_db.canonical_ledger = mock_collection
     
     ledger = CanonicalLedger(db=mock_db)
     results = []
