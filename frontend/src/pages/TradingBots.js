@@ -1615,10 +1615,10 @@ export default function TradingBots() {
                 minWidth: '140px'
               }}
             >
-              <option value="all">🤖 All Bots</option>
+              <option value="all">All Bots</option>
               {bots.map(bot => (
                 <option key={bot.bot_id} value={bot.bot_id}>
-                  {bot.type === 'grid' ? '📊' : bot.type === 'dca' ? '💰' : '📈'} {bot.type.toUpperCase()} - {bot.pair}
+                  {bot.type.toUpperCase()} - {bot.pair}
                 </option>
               ))}
             </select>
@@ -1635,9 +1635,9 @@ export default function TradingBots() {
                 minWidth: '140px'
               }}
             >
-              <option value="all">📋 All Actions</option>
-              <option value="buy">🟢 Buy</option>
-              <option value="sell">🔴 Sell</option>
+              <option value="all">All Actions</option>
+              <option value="buy">▲ Buy</option>
+              <option value="sell">▼ Sell</option>
             </select>
             <select
               value={logFilters.dateRange}
@@ -1652,10 +1652,10 @@ export default function TradingBots() {
                 minWidth: '140px'
               }}
             >
-              <option value="24h">🕐 Last 24h</option>
-              <option value="7d">📅 Last 7 Days</option>
-              <option value="30d">🗓️ Last 30 Days</option>
-              <option value="all">♾️ All Time</option>
+              <option value="24h">Last 24h</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="all">All Time</option>
             </select>
             {/* Search */}
             <div style={{ 
