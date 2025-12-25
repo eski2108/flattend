@@ -201,23 +201,40 @@ class LiveModeValidator:
         """
         errors = []
         
-        # 1. Check explicit confirmation
+        # ═══════════════════════════════════════════════════════════════════════
+        # 1. 2FA ENFORCEMENT - MANDATORY FOR LIVE TRADING
+        # ═══════════════════════════════════════════════════════════════════════
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            errors.append("User not found")
+        else:
+            # Check 2FA is enabled - REQUIRED for LIVE mode
+            twofa_enabled = user.get("two_factor_enabled", False)
+            if not twofa_enabled:
+                # Also check the two_factor_auth collection
+                tfa_data = await db.two_factor_auth.find_one({"user_id": user_id})
+                twofa_enabled = tfa_data and tfa_data.get("enabled", False)
+            
+            if not twofa_enabled:
+                errors.append("2FA_REQUIRED: Two-factor authentication must be enabled for LIVE trading. Enable 2FA in Settings → Security before activating LIVE mode.")
+        
+        # 2. Check explicit confirmation
         if not explicit_confirmation:
             errors.append("LIVE mode requires explicit user confirmation (live_confirmed=True)")
         
-        # 2. Check global kill switch
+        # 3. Check global kill switch
         if GLOBAL_KILL_SWITCH:
             errors.append("Global kill switch is active - LIVE trading disabled")
         
-        # 3. Check user kill switch
+        # 4. Check user kill switch
         if USER_KILL_SWITCHES.get(user_id, False):
             errors.append(f"User kill switch is active for {user_id}")
         
-        # 4. Check bot kill switch
+        # 5. Check bot kill switch
         if BOT_KILL_SWITCHES.get(bot_id, False):
             errors.append(f"Bot kill switch is active for {bot_id}")
         
-        # 5. Check user has valid exchange credentials
+        # 6. Check user has valid exchange credentials
         creds = await db.exchange_credentials.find_one({
             "user_id": user_id,
             "is_active": True
@@ -225,7 +242,7 @@ class LiveModeValidator:
         if not creds:
             errors.append("No valid exchange credentials found - required for LIVE mode")
         
-        # 6. Check user balance
+        # 7. Check user balance
         wallet = await db.wallets.find_one({"user_id": user_id})
         if not wallet:
             errors.append("User wallet not found")
@@ -245,8 +262,7 @@ class LiveModeValidator:
             if available < required_balance:
                 errors.append(f"Insufficient balance: {available} {quote_currency} < {required_balance} required")
         
-        # 7. Check live mode acknowledgment in user profile
-        user = await db.users.find_one({"user_id": user_id})
+        # 8. Check live mode acknowledgment in user profile
         if user and not user.get("live_trading_acknowledged", False):
             errors.append("User has not acknowledged LIVE trading risks")
         
