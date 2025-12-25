@@ -1,24 +1,47 @@
 /**
- * SINGLE SOURCE OF TRUTH FOR API CONFIGURATION
- * 
- * FORCED TO USE PRODUCTION URL
+ * Centralized API Configuration
+ * All API URLs should use these constants - NO hardcoded URLs elsewhere
  */
 
-// FORCE production URL
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL.replace('/api', '');
+// Base URLs from environment
+export const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
+export const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL || '';
+export const WS_BASE_URL = process.env.REACT_APP_WS_URL || API_BASE_URL.replace('https://', 'wss://').replace('http://', 'ws://');
 
-// Ensure it ALWAYS has /api at the end
-export const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+// Helper to construct API endpoints
+export const getApiUrl = (path) => `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 
-// For backward compatibility - some pages might use this
-export const BACKEND_URL_WITH_API = API_BASE_URL;
-export const BACKEND_URL_WITHOUT_API = BACKEND_URL;
+// Common API endpoints
+export const API_ENDPOINTS = {
+  // Auth
+  LOGIN: '/api/auth/login',
+  REGISTER: '/api/auth/register',
+  LOGOUT: '/api/auth/logout',
+  
+  // User
+  USER_PROFILE: '/api/user/profile',
+  
+  // Wallets
+  WALLETS: '/api/wallet/balances',
+  
+  // Trading
+  SPOT_TRADING: '/api/spot',
+  
+  // Bots
+  BOTS_LIST: '/api/bots/list',
+  BOTS_CREATE: '/api/bots/create',
+  
+  // Admin
+  ADMIN_DASHBOARD: '/api/admin/dashboard',
+  
+  // Health
+  HEALTH: '/api/health',
+};
 
-// Export default as API_BASE_URL for convenience
-export default API_BASE_URL;
-
-console.log('API Configuration loaded:', {
-  BACKEND_URL,
+export default {
   API_BASE_URL,
-  timestamp: new Date().toISOString()
-});
+  FRONTEND_URL,
+  WS_BASE_URL,
+  getApiUrl,
+  API_ENDPOINTS,
+};
