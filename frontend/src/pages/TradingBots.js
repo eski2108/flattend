@@ -271,8 +271,9 @@ export default function TradingBots() {
   
   // PHASE 7: Decision Logs state
   const [decisionLogs, setDecisionLogs] = useState([]);
-  const [logFilters, setLogFilters] = useState({ action: 'all', botId: 'all', dateRange: '7d' });
+  const [logFilters, setLogFilters] = useState({ action: 'all', botId: 'all', dateRange: '7d', search: '' });
   const [loadingLogs, setLoadingLogs] = useState(false);
+  const [selectedLogExplanation, setSelectedLogExplanation] = useState(null);
   
   // PHASE 7: Emergency Stop state
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
