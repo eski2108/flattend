@@ -24,7 +24,11 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 BASE_URL = "http://127.0.0.1:8001/api"
-HEADERS = {"x-admin": "true"}
+HEADERS = {
+    "x-admin": "true",
+    "User-Agent": "CoinHubX-Monitoring-Test/1.0",
+    "Accept": "application/json"
+}
 
 def print_header(text: str):
     print(f"\n{'='*70}")
