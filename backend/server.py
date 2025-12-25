@@ -39335,6 +39335,196 @@ async def close_bot_position(bot_id: str, x_user_id: str = Header(None)):
         logger.error(f"Error closing position: {e}")
         return {"success": False, "error": str(e)}
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 8: EXCHANGE CREDENTIALS & ADAPTER ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@api_router.post("/exchange/credentials")
+async def save_exchange_credentials(request: dict, x_user_id: str = Header(None)):
+    """
+    Save exchange API credentials for a user.
+    Required for LIVE mode trading.
+    """
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        exchange = request.get("exchange", "binance_testnet")
+        api_key = request.get("api_key")
+        api_secret = request.get("api_secret")
+        label = request.get("label", "Default")
+        
+        if not api_key or not api_secret:
+            return {"success": False, "error": "API key and secret required"}
+        
+        # Test connection before saving
+        from exchange_adapters import BinanceAdapter, ExchangeType
+        
+        testnet = "testnet" in exchange.lower()
+        adapter = BinanceAdapter(api_key=api_key, api_secret=api_secret, testnet=testnet)
+        
+        is_connected, message = await adapter.test_connection()
+        
+        if not is_connected:
+            return {
+                "success": False,
+                "error": f"Connection test failed: {message}",
+                "connection_tested": False
+            }
+        
+        # Save credentials (encrypt in production)
+        cred_id = str(uuid.uuid4())
+        await db.exchange_credentials.update_one(
+            {"user_id": x_user_id, "exchange": exchange},
+            {
+                "$set": {
+                    "credential_id": cred_id,
+                    "user_id": x_user_id,
+                    "exchange": exchange,
+                    "api_key": api_key,  # Should be encrypted
+                    "api_secret": api_secret,  # Should be encrypted
+                    "label": label,
+                    "is_active": True,
+                    "connection_tested": True,
+                    "last_tested_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+            },
+            upsert=True
+        )
+        
+        return {
+            "success": True,
+            "credential_id": cred_id,
+            "exchange": exchange,
+            "connection_tested": True,
+            "message": "Credentials saved and connection verified"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error saving exchange credentials: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/exchange/credentials")
+async def get_exchange_credentials(x_user_id: str = Header(None)):
+    """Get user's saved exchange credentials (masked)."""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        credentials = []
+        async for cred in db.exchange_credentials.find({"user_id": x_user_id}):
+            credentials.append({
+                "credential_id": cred.get("credential_id"),
+                "exchange": cred.get("exchange"),
+                "label": cred.get("label"),
+                "api_key_masked": cred.get("api_key", "")[:8] + "..." if cred.get("api_key") else None,
+                "is_active": cred.get("is_active"),
+                "connection_tested": cred.get("connection_tested"),
+                "last_tested_at": cred.get("last_tested_at").isoformat() if cred.get("last_tested_at") else None
+            })
+        
+        return {"success": True, "credentials": credentials}
+        
+    except Exception as e:
+        logger.error(f"Error getting credentials: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/exchange/test-connection")
+async def test_exchange_connection(request: dict, x_user_id: str = Header(None)):
+    """Test exchange connection with provided or saved credentials."""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from exchange_adapters import BinanceAdapter
+        
+        # Get credentials from request or load from DB
+        api_key = request.get("api_key")
+        api_secret = request.get("api_secret")
+        exchange = request.get("exchange", "binance_testnet")
+        
+        if not api_key or not api_secret:
+            # Try to load from DB
+            cred = await db.exchange_credentials.find_one({
+                "user_id": x_user_id,
+                "exchange": exchange,
+                "is_active": True
+            })
+            if cred:
+                api_key = cred.get("api_key")
+                api_secret = cred.get("api_secret")
+            else:
+                return {"success": False, "error": "No credentials provided or saved"}
+        
+        testnet = "testnet" in exchange.lower()
+        adapter = BinanceAdapter(api_key=api_key, api_secret=api_secret, testnet=testnet)
+        
+        is_connected, message = await adapter.test_connection()
+        
+        # Also fetch balances if connected
+        balances = []
+        if is_connected:
+            raw_balances = await adapter.get_all_balances()
+            balances = [{"currency": b.currency, "available": b.available, "total": b.total} for b in raw_balances[:10]]
+        
+        return {
+            "success": is_connected,
+            "connected": is_connected,
+            "message": message,
+            "exchange": exchange,
+            "balances": balances
+        }
+        
+    except Exception as e:
+        logger.error(f"Error testing connection: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/exchange/candles/{symbol}/{timeframe}")
+async def get_exchange_candles(
+    symbol: str,
+    timeframe: str,
+    limit: int = 100,
+    use_adapter: bool = True,
+    x_user_id: str = Header(None)
+):
+    """
+    Get candles from exchange adapter.
+    Returns candle source info for audit.
+    """
+    try:
+        from exchange_adapters import SimulatedAdapter
+        from bot_execution_engine import CandleManager
+        
+        adapter = SimulatedAdapter()
+        candles = await CandleManager.get_candles(
+            pair=symbol,
+            timeframe=timeframe,
+            limit=limit,
+            is_live_mode=False,
+            adapter=adapter
+        )
+        
+        source = CandleManager.get_last_candle_source(symbol, timeframe)
+        
+        return {
+            "success": True,
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "count": len(candles),
+            "candles": candles[-20:],  # Return last 20 for display
+            "source": source
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching candles: {e}")
+        return {"success": False, "error": str(e)}
+
+
 @api_router.post("/bots/{bot_id}/duplicate")
 async def duplicate_bot(bot_id: str, x_user_id: str = Header(None)):
     """Duplicate a bot configuration"""
