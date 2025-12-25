@@ -22,7 +22,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://signal-shield-4.preview.emergentagent.com/api"
+BASE_URL = "https://tradewatch-13.preview.emergentagent.com/api"
 TEST_USERS = [
     {"email": "alice@test.com", "password": "Test123456", "name": "Alice Test"},
     {"email": "bob@test.com", "password": "Test123456", "name": "Bob Test"}

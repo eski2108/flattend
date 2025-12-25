@@ -18,7 +18,7 @@ load_dotenv(Path('/app/backend/.env'))
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-API_URL = "https://signal-shield-4.preview.emergentagent.com"
+API_URL = "https://tradewatch-13.preview.emergentagent.com"
 
 async def run_test():
     mongo_url = os.environ.get('MONGO_URL')

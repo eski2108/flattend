@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Get API URL from environment or use default
 // For Android emulator: 10.0.2.2 maps to localhost
 // For production: Use actual backend URL
-const API_BASE_URL = process.env.API_BASE_URL || 'https://signal-shield-4.preview.emergentagent.com';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://tradewatch-13.preview.emergentagent.com';
 
 export const API_URL = `${API_BASE_URL}/api`;
 

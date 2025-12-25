@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://signal-shield-4.preview.emergentagent.com/api"
+BASE_URL = "https://tradewatch-13.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

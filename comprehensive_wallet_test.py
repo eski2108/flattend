@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://signal-shield-4.preview.emergentagent.com/api"
+BACKEND_URL = "https://tradewatch-13.preview.emergentagent.com/api"
 
 class ComprehensiveWalletTester:
     def __init__(self):

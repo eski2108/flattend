@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://signal-shield-4.preview.emergentagent.com/api
-- **Frontend App**: https://signal-shield-4.preview.emergentagent.com
+- **Backend API**: https://tradewatch-13.preview.emergentagent.com/api
+- **Frontend App**: https://tradewatch-13.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

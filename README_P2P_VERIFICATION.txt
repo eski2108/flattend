@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://signal-shield-4.preview.emergentagent.com
-P2P Page:     https://signal-shield-4.preview.emergentagent.com/p2p
-Backend API:  https://signal-shield-4.preview.emergentagent.com/api
+Frontend:     https://tradewatch-13.preview.emergentagent.com
+P2P Page:     https://tradewatch-13.preview.emergentagent.com/p2p
+Backend API:  https://tradewatch-13.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

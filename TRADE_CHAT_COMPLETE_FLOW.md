@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://signal-shield-4.preview.emergentagent.com
+**Test it now at:** https://tradewatch-13.preview.emergentagent.com

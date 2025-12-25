@@ -53,7 +53,7 @@ Tests all major backend systems thoroughly as requested in review:
 - Add funds (POST /api/trader/balance/add-funds)
 - Verify total_balance, locked_balance, available_balance structure
 
-**Backend URL:** https://signal-shield-4.preview.emergentagent.com/api
+**Backend URL:** https://tradewatch-13.preview.emergentagent.com/api
 """
 
 import requests
@@ -65,7 +65,7 @@ import jwt
 import base64
 
 # Configuration
-BASE_URL = "https://signal-shield-4.preview.emergentagent.com/api"
+BASE_URL = "https://tradewatch-13.preview.emergentagent.com/api"
 
 # Test Users
 TEST_USERS = {

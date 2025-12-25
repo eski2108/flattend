@@ -100,7 +100,7 @@
 
 ### Test P2P Express (Instant Buy):
 
-1. Go to https://signal-shield-4.preview.emergentagent.com/p2p-express
+1. Go to https://tradewatch-13.preview.emergentagent.com/p2p-express
 2. If redirected to login, login first: gads21083@gmail.com / 123456789
 3. Enter amount: £30
 4. Click "Buy Now"

@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://signal-shield-4.preview.emergentagent.com
+**Preview URL:** https://tradewatch-13.preview.emergentagent.com

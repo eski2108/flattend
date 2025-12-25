@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://signal-shield-4.preview.emergentagent.com/api"
+BASE_URL = "https://tradewatch-13.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class BuyerSellerMessagingTest:

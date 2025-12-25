@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://signal-shield-4.preview.emergentagent.com`
-- Backend API: `https://signal-shield-4.preview.emergentagent.com/api`
+- Frontend: `https://tradewatch-13.preview.emergentagent.com`
+- Backend API: `https://tradewatch-13.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---
