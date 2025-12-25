@@ -40,10 +40,14 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     to all incoming requests.
     """
     
-    # Paths to skip (health checks, static, etc.)
+    # Paths to skip (health checks, static, monitoring, etc.)
     SKIP_PATHS = [
         "/api/health",
+        "/api/ready",
+        "/api/metrics",
         "/health",
+        "/ready",
+        "/metrics",
         "/docs",
         "/openapi.json",
         "/redoc",
