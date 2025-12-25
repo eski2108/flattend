@@ -51,6 +51,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         "/api/p2p/offers",
         "/api/p2p/marketplace",
         "/api/savings/products",
+        "/api/bots",
         "/health",
         "/ready",
         "/metrics",
