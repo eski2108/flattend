@@ -1013,24 +1013,26 @@ export default function TradingBots() {
                 </div>
               </div>
 
-              {/* Stats Grid - Enhanced */}
+              {/* Stats Grid - Institutional Style */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr 1fr',
                 gap: '10px',
                 marginBottom: '12px'
               }}>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px', textTransform: 'uppercase' }}>Invested</div>
-                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF' }}>
+                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '10px', color: COLORS.secondaryDim, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Invested</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF', fontFamily: 'SF Mono, Monaco, monospace', fontVariantNumeric: 'tabular-nums' }}>
                     ${bot.pnl?.total_invested?.toFixed(2) || '0.00'}
                   </div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px', textTransform: 'uppercase' }}>PnL</div>
+                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '10px', color: COLORS.secondaryDim, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PnL</div>
                   <div style={{
-                    fontSize: '15px',
-                    fontWeight: '700',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    fontFamily: 'SF Mono, Monaco, monospace',
+                    fontVariantNumeric: 'tabular-nums',
                     color: (bot.pnl?.realized_pnl || 0) >= 0 ? '#00E599' : '#FF5C5C'
                   }}>
                     {(bot.pnl?.realized_pnl || 0) >= 0 ? '+' : ''}${bot.pnl?.realized_pnl?.toFixed(2) || '0.00'}
