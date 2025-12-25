@@ -38223,6 +38223,7 @@ async def evaluate_strategy_now(request: dict, x_user_id: str = Header(None)):
         
         strategy_config = request.get("strategy")
         pair = request.get("pair", "BTCUSD")
+        is_live_mode = request.get("is_live_mode", False)  # Phase 8: Support mode
         
         if not strategy_config:
             return {"success": False, "error": "Strategy configuration required"}
@@ -38230,13 +38231,19 @@ async def evaluate_strategy_now(request: dict, x_user_id: str = Header(None)):
         # Build strategy
         strategy = StrategyBuilder.from_dict(strategy_config)
         
-        # Evaluate
+        # Evaluate with mode awareness
         signal, details = await DecisionEngine.evaluate_strategy(
             strategy=strategy,
             pair=pair,
             bot_id="test_evaluation",
-            current_position=None
+            current_position=None,
+            is_live_mode=is_live_mode,
+            user_id=x_user_id
         )
+        
+        # Check for data errors
+        if details.get("error"):
+            return {"success": False, "error": details["error"]}
         
         # Safely get evaluation results
         entry_eval = details.get("entry_evaluation") or {}
