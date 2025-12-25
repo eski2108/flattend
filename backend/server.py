@@ -38748,6 +38748,344 @@ async def get_backtest_trades(backtest_id: str):
         logger.error(f"Error getting backtest trades: {e}")
         return {"success": False, "error": str(e)}
 
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════
+# PHASE 6: UNIFIED EXECUTION ENGINE ENDPOINTS - Paper Trading + Live Trading
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════
+
+@api_router.post("/trading/session/create")
+async def create_trading_session(request: dict, x_user_id: str = Header(None)):
+    """
+    Create a new trading session (paper or live).
+    For live mode, requires explicit opt-in.
+    """
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import (
+            get_execution_engine, ExecutionMode
+        )
+        
+        engine = get_execution_engine()
+        
+        mode_str = request.get("mode", "paper").lower()
+        if mode_str == "backtest":
+            return {"success": False, "error": "Use /bots/backtest endpoint for backtesting"}
+        
+        mode = ExecutionMode.PAPER if mode_str == "paper" else ExecutionMode.LIVE
+        
+        session = await engine.create_session(
+            user_id=x_user_id,
+            bot_id=request.get("bot_id", str(uuid.uuid4())),
+            mode=mode,
+            pair=request.get("pair", "BTCUSD"),
+            timeframe=request.get("timeframe", "1h"),
+            config=request.get("config", {}),
+            initial_balance=request.get("initial_balance", 10000),
+            live_opt_in=request.get("live_opt_in", False)
+        )
+        
+        return {
+            "success": True,
+            "session": session.to_dict()
+        }
+        
+    except ValueError as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        logger.error(f"Error creating trading session: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/trading/session/{session_id}/order")
+async def execute_trading_order(session_id: str, request: dict, x_user_id: str = Header(None)):
+    """
+    Execute an order in a trading session.
+    Works for both paper and live modes - strategy is mode-agnostic.
+    """
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import (
+            get_execution_engine, OrderRequest, OrderType, OrderSide
+        )
+        
+        engine = get_execution_engine()
+        
+        # Build order request
+        order = OrderRequest(
+            pair=request.get("pair", "BTCUSD"),
+            side=OrderSide.BUY if request.get("side", "buy").lower() == "buy" else OrderSide.SELL,
+            order_type=OrderType(request.get("order_type", "market").lower()),
+            quantity=request.get("quantity", 0),
+            price=request.get("price"),
+            stop_price=request.get("stop_price"),
+            take_profit_price=request.get("take_profit_price"),
+            stop_loss_price=request.get("stop_loss_price"),
+            trailing_stop_percent=request.get("trailing_stop_percent")
+        )
+        
+        result = await engine.execute_order(session_id, order)
+        
+        return {
+            "success": result.success,
+            "order": result.to_dict()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error executing order: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/trading/session/{session_id}/stop")
+async def stop_trading_session(session_id: str, x_user_id: str = Header(None)):
+    """Stop a trading session"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import get_execution_engine
+        
+        engine = get_execution_engine()
+        success = await engine.stop_session(session_id, x_user_id)
+        
+        return {"success": success}
+        
+    except Exception as e:
+        logger.error(f"Error stopping session: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/trading/session/{session_id}")
+async def get_trading_session(session_id: str, x_user_id: str = Header(None)):
+    """Get trading session status and stats"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import get_execution_engine
+        
+        engine = get_execution_engine()
+        session = await engine.get_session_status(session_id)
+        
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        # Verify ownership
+        if session.get("user_id") != x_user_id:
+            raise HTTPException(status_code=403, detail="Access denied")
+        
+        return {"success": True, "session": session}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting session: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/trading/session/{session_id}/reset-balance")
+async def reset_paper_balance(session_id: str, request: dict, x_user_id: str = Header(None)):
+    """Reset paper trading balance"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import get_execution_engine
+        
+        engine = get_execution_engine()
+        new_balance = request.get("balance", 10000)
+        success = await engine.reset_paper_balance(session_id, new_balance)
+        
+        return {"success": success, "new_balance": new_balance}
+        
+    except Exception as e:
+        logger.error(f"Error resetting balance: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/trading/sessions")
+async def get_user_trading_sessions(
+    x_user_id: str = Header(None),
+    mode: Optional[str] = None,
+    status: Optional[str] = None
+):
+    """Get all trading sessions for a user"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        query = {"user_id": x_user_id}
+        if mode:
+            query["mode"] = mode
+        if status:
+            query["status"] = status
+        
+        sessions = []
+        async for doc in db.trading_sessions.find(query).sort("created_at", -1).limit(100):
+            doc.pop("_id", None)
+            doc.pop("config", None)  # Don't send full config
+            sessions.append(doc)
+        
+        return {"success": True, "sessions": sessions, "count": len(sessions)}
+        
+    except Exception as e:
+        logger.error(f"Error getting sessions: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/trading/audit-log")
+async def get_trade_audit_log(
+    x_user_id: str = Header(None),
+    session_id: Optional[str] = None,
+    mode: Optional[str] = None,
+    limit: int = 100
+):
+    """Get immutable trade audit log"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import AuditLogger
+        
+        trades = await AuditLogger.get_trade_history(
+            user_id=x_user_id,
+            session_id=session_id,
+            mode=mode,
+            limit=limit
+        )
+        
+        return {"success": True, "trades": trades, "count": len(trades)}
+        
+    except Exception as e:
+        logger.error(f"Error getting audit log: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/trading/kill-switch/global")
+async def activate_global_kill_switch(request: dict, x_user_id: str = Header(None)):
+    """Activate global kill switch (admin only)"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    # Check if admin
+    user = await db.users.find_one({"user_id": x_user_id})
+    if not user or not user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        from unified_execution_engine import KillSwitch
+        
+        action = request.get("action", "activate")
+        reason = request.get("reason", "Admin triggered")
+        
+        if action == "activate":
+            await KillSwitch.activate_global(x_user_id, reason)
+        else:
+            await KillSwitch.deactivate_global(x_user_id)
+        
+        return {"success": True, "action": action}
+        
+    except Exception as e:
+        logger.error(f"Error with global kill switch: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/trading/kill-switch/user/{target_user_id}")
+async def activate_user_kill_switch(target_user_id: str, request: dict, x_user_id: str = Header(None)):
+    """Activate user-level kill switch (admin only)"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    # Check if admin
+    user = await db.users.find_one({"user_id": x_user_id})
+    if not user or not user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        from unified_execution_engine import KillSwitch
+        
+        reason = request.get("reason", "Admin triggered")
+        await KillSwitch.activate_user(target_user_id, x_user_id, reason)
+        
+        return {"success": True, "user_id": target_user_id}
+        
+    except Exception as e:
+        logger.error(f"Error with user kill switch: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/trading/kill-switch/session/{session_id}")
+async def activate_session_kill_switch(session_id: str, request: dict, x_user_id: str = Header(None)):
+    """Activate session-level kill switch (user can do this for their own sessions)"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import KillSwitch
+        
+        # Verify session ownership
+        session = await db.trading_sessions.find_one({"session_id": session_id})
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        if session.get("user_id") != x_user_id:
+            raise HTTPException(status_code=403, detail="Access denied")
+        
+        reason = request.get("reason", "User triggered")
+        await KillSwitch.activate_session(session_id, x_user_id, reason)
+        
+        return {"success": True, "session_id": session_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error with session kill switch: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/trading/kill-switch/status")
+async def get_kill_switch_status(x_user_id: str = Header(None)):
+    """Get kill switch status for current user"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from unified_execution_engine import KillSwitch
+        
+        global_killed = await KillSwitch.is_killed_global()
+        user_killed = await KillSwitch.is_killed_user(x_user_id)
+        
+        return {
+            "success": True,
+            "global_kill_switch": global_killed,
+            "user_kill_switch": user_killed
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting kill switch status: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/trading/supported")
+async def get_supported_trading_options():
+    """Get supported timeframes and pairs"""
+    from unified_execution_engine import SUPPORTED_TIMEFRAMES, SUPPORTED_PAIRS
+    
+    return {
+        "success": True,
+        "timeframes": SUPPORTED_TIMEFRAMES,
+        "pairs": SUPPORTED_PAIRS,
+        "modes": ["paper", "live"],
+        "order_types": ["market", "limit", "stop_loss", "take_profit"]
+    }
+
+
 @api_router.get("/bots/{bot_id}/logs")
 async def get_bot_decision_logs(bot_id: str, limit: int = 50, x_user_id: str = Header(None)):
     """Get decision logs for a bot (why it traded)"""
