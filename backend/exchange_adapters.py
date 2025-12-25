@@ -929,7 +929,6 @@ class ExchangeAdapterFactory:
         Get adapter for a specific bot, loading credentials from DB.
         """
         from motor.motor_asyncio import AsyncIOMotorClient
-        import os
         
         MONGO_URL = os.environ.get('MONGO_URL')
         client = AsyncIOMotorClient(MONGO_URL)
