@@ -65,7 +65,9 @@ class NOWPaymentsRealSync:
             async with aiohttp.ClientSession() as session:
                 headers = {"x-api-key": self.api_key, "Content-Type": "application/json"}
                 
-                backend_url = os.getenv("REACT_APP_BACKEND_URL", "https://crypto-botui.preview.emergentagent.com")
+                backend_url = os.getenv("BACKEND_URL")
+                if not backend_url:
+                    raise ValueError("BACKEND_URL environment variable is required")
                 
                 # Create invoice for this currency
                 payload = {
