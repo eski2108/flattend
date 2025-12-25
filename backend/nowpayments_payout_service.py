@@ -107,8 +107,10 @@ class NOWPaymentsPayoutService:
             Dict with payout details or None if failed
         """
         try:
-            # Get backend URL from environment
-            backend_url = os.getenv('BACKEND_URL', 'https://crypto-botui.preview.emergentagent.com')
+            # Get backend URL from environment - REQUIRED, no hardcoded fallback
+            backend_url = os.getenv('BACKEND_URL')
+            if not backend_url:
+                raise ValueError("BACKEND_URL environment variable is required")
             
             payload = {
                 "withdrawals": [
