@@ -1764,39 +1764,87 @@ class CandleManager:
             return candles[-1]["close"]
         
         return None
-            is_valid, message = LiveModeDataEnforcer.validate_candle_source(source, is_live_mode)
-            if not is_valid:
-                logger.error(f"[LIVE MODE BLOCKED] {message}")
-                raise ValueError(message)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LIVE MODE ORDER VALIDATOR (Guardrail B)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class LiveOrderValidator:
+    """
+    Guardrail B: Validates credentials and balance before LIVE orders.
+    """
+    
+    @staticmethod
+    async def validate_before_order(
+        user_id: str,
+        bot_id: str,
+        pair: str,
+        side: str,
+        quantity: float,
+        price: float,
+        adapter: Any = None
+    ) -> Tuple[bool, str]:
+        """
+        Validate credentials and balance before placing a LIVE order.
+        Returns (is_valid, error_message).
+        """
+        from exchange_adapters import ExchangeAdapterFactory, ExchangeType
         
-        # Store source for audit
-        CandleManager._last_candle_source[f"{pair}:{timeframe}"] = {
-            "exchange": source.exchange,
-            "symbol": source.symbol,
-            "timeframe": source.timeframe,
-            "candle_open_time": source.candle_open_time,
-            "candle_close_time": source.candle_close_time,
-            "fetched_at": source.fetched_at,
-            "is_live_exchange": source.is_live_exchange
-        }
-        
-        # Convert to dict format
-        candles = [c.to_dict() for c in candles_raw]
-        
-        # Cache the result (PAPER mode only)
-        if candles and not is_live_mode:
-            cache_key = f"candles:{pair}:{timeframe}"
-            await db.candle_cache.update_one(
-                {"cache_key": cache_key},
-                {
-                    "$set": {
-                        "candles": candles,
-                        "source": CandleManager._last_candle_source[f"{pair}:{timeframe}"],
-                        "updated_at": datetime.now(timezone.utc)
-                    }
-                },
-                upsert=True
-            )
+        try:
+            # 1. Test connection with adapter
+            if adapter:
+                is_connected, msg = await adapter.test_connection()
+                if not is_connected:
+                    error = f"LIVE_CREDS_INVALID: Connection test failed: {msg}"
+                    logger.error(f"[GUARDRAIL B] {error} | bot_id={bot_id} user_id={user_id}")
+                    return False, error
+            else:
+                # Try to get adapter and test
+                try:
+                    adapter = await ExchangeAdapterFactory.get_adapter_for_bot(
+                        bot_id=bot_id,
+                        user_id=user_id,
+                        is_live_mode=True
+                    )
+                    is_connected, msg = await adapter.test_connection()
+                    if not is_connected:
+                        error = f"LIVE_CREDS_INVALID: {msg}"
+                        logger.error(f"[GUARDRAIL B] {error} | bot_id={bot_id} user_id={user_id}")
+                        return False, error
+                except ValueError as e:
+                    error = f"LIVE_CREDS_MISSING: {str(e)}"
+                    logger.error(f"[GUARDRAIL B] {error} | bot_id={bot_id} user_id={user_id}")
+                    return False, error
+            
+            # 2. Check balance
+            quote_currency = "USDT"
+            if pair.endswith("USD"):
+                quote_currency = "USD"
+            elif pair.endswith("USDT"):
+                quote_currency = "USDT"
+            elif pair.endswith("GBP"):
+                quote_currency = "GBP"
+            
+            required_amount = quantity * price if side.lower() == "buy" else quantity
+            
+            balance = await adapter.get_balance(quote_currency)
+            if balance.available < required_amount:
+                error = f"INSUFFICIENT_BALANCE: Required {required_amount} {quote_currency}, available {balance.available}"
+                logger.error(f"[GUARDRAIL B] {error} | bot_id={bot_id} user_id={user_id}")
+                return False, error
+            
+            logger.info(f"[GUARDRAIL B] LIVE order validated | bot_id={bot_id} user_id={user_id} balance={balance.available}")
+            return True, "OK"
+            
+        except Exception as e:
+            import traceback
+            error = f"LIVE_VALIDATION_ERROR: {str(e)}"
+            logger.error(f"[GUARDRAIL B] {error}\n{traceback.format_exc()} | bot_id={bot_id} user_id={user_id}")
+            return False, error
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
         
         return candles
     
