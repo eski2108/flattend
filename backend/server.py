@@ -38344,6 +38344,316 @@ async def validate_bot_type_config(bot_type: str, request: dict):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 4 - RISK MANAGEMENT ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@api_router.get("/bots/risk/global")
+async def get_global_risk_config(x_admin_id: str = Header(None)):
+    """Get global risk configuration"""
+    try:
+        from risk_manager import GlobalRiskConfigManager
+        from dataclasses import asdict
+        
+        config = await GlobalRiskConfigManager.get_config()
+        config_dict = asdict(config)
+        
+        # Convert datetime to string
+        if config_dict.get("updated_at"):
+            config_dict["updated_at"] = config_dict["updated_at"].isoformat()
+        
+        return {"success": True, "config": config_dict}
+    except Exception as e:
+        logger.error(f"Error getting global risk config: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.put("/bots/risk/global")
+async def update_global_risk_config(request: dict, x_admin_id: str = Header(None)):
+    """Update global risk configuration (Admin only)"""
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        from risk_manager import GlobalRiskConfigManager, GlobalRiskConfig
+        
+        current = await GlobalRiskConfigManager.get_config()
+        
+        # Update fields from request
+        for key, value in request.items():
+            if hasattr(current, key):
+                setattr(current, key, value)
+        
+        await GlobalRiskConfigManager.save_config(current, x_admin_id)
+        
+        return {"success": True, "message": "Global risk config updated"}
+    except Exception as e:
+        logger.error(f"Error updating global risk config: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/risk/global/defaults")
+async def get_global_risk_defaults():
+    """Get default global risk configuration values"""
+    try:
+        from risk_manager import GlobalRiskConfig
+        from dataclasses import asdict
+        
+        defaults = asdict(GlobalRiskConfig())
+        if defaults.get("updated_at"):
+            defaults["updated_at"] = defaults["updated_at"].isoformat()
+        
+        return {"success": True, "defaults": defaults}
+    except Exception as e:
+        logger.error(f"Error getting risk defaults: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/bots/risk/kill-switch")
+async def risk_kill_switch(request: dict, x_admin_id: str = Header(None)):
+    """
+    Activate/deactivate kill switch.
+    
+    Request body:
+    {
+        "scope": "global" | "user" | "bot",
+        "target_id": "<user_id or bot_id>",  // Required for user/bot scope
+        "enabled": true | false,
+        "reason": "optional reason",
+        "close_positions": false  // Optional: close all positions
+    }
+    """
+    if not x_admin_id:
+        raise HTTPException(status_code=401, detail="Admin access required")
+    
+    try:
+        from risk_manager import KillSwitchManager
+        
+        scope = request.get("scope", "global")
+        target_id = request.get("target_id", "")
+        enabled = request.get("enabled", True)
+        reason = request.get("reason", "admin_action")
+        close_positions = request.get("close_positions", False)
+        
+        result = {"success": True, "scope": scope, "enabled": enabled}
+        
+        if scope == "global":
+            if enabled:
+                bots_affected = await KillSwitchManager.activate_global(reason, x_admin_id)
+                result["bots_affected"] = bots_affected
+            else:
+                await KillSwitchManager.deactivate_global(x_admin_id)
+        
+        elif scope == "user":
+            if not target_id:
+                return {"success": False, "error": "target_id (user_id) required for user scope"}
+            if enabled:
+                bots_affected = await KillSwitchManager.activate_user(target_id, reason, x_admin_id)
+                result["bots_affected"] = bots_affected
+            else:
+                await KillSwitchManager.deactivate_user(target_id, x_admin_id)
+        
+        elif scope == "bot":
+            if not target_id:
+                return {"success": False, "error": "target_id (bot_id) required for bot scope"}
+            if enabled:
+                await KillSwitchManager.activate_bot(target_id, reason)
+            else:
+                await KillSwitchManager.deactivate_bot(target_id)
+        
+        else:
+            return {"success": False, "error": f"Invalid scope: {scope}"}
+        
+        # Close positions if requested
+        if close_positions and enabled:
+            close_result = await KillSwitchManager.close_all_positions(scope, target_id, x_admin_id)
+            result["positions_closed"] = close_result["positions_closed"]
+            result["close_pnl"] = close_result["total_pnl"]
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error in kill switch: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/risk/kill-switch/status")
+async def get_kill_switch_status(x_admin_id: str = Header(None)):
+    """Get current kill switch status at all levels"""
+    try:
+        from risk_manager import GlobalRiskConfigManager, risk_user_config, risk_bot_config
+        
+        global_config = await GlobalRiskConfigManager.get_config()
+        
+        # Get killed users
+        killed_users = []
+        async for doc in risk_user_config.find({"kill_switch": True}):
+            killed_users.append({
+                "user_id": doc["user_id"],
+                "reason": doc.get("kill_switch_reason", ""),
+                "at": doc.get("kill_switch_at").isoformat() if doc.get("kill_switch_at") else None
+            })
+        
+        # Get killed bots
+        killed_bots = []
+        async for doc in risk_bot_config.find({"kill_switch": True}):
+            killed_bots.append({
+                "bot_id": doc["bot_id"],
+                "reason": doc.get("kill_switch_reason", ""),
+                "at": doc.get("kill_switch_at").isoformat() if doc.get("kill_switch_at") else None
+            })
+        
+        return {
+            "success": True,
+            "global": {
+                "enabled": global_config.global_kill_switch,
+                "updated_at": global_config.updated_at.isoformat() if global_config.updated_at else None
+            },
+            "killed_users": killed_users,
+            "killed_bots": killed_bots,
+            "total_killed_users": len(killed_users),
+            "total_killed_bots": len(killed_bots)
+        }
+    except Exception as e:
+        logger.error(f"Error getting kill switch status: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/{bot_id}/risk")
+async def get_bot_risk_config(bot_id: str, x_user_id: str = Header(None)):
+    """Get risk configuration for a specific bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from risk_manager import BotRiskConfigManager
+        from dataclasses import asdict
+        
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        config = await BotRiskConfigManager.get_config(bot_id)
+        
+        if not config:
+            # Create default
+            config = await BotRiskConfigManager.create_default(bot_id)
+        
+        config_dict = asdict(config)
+        
+        # Convert datetime fields
+        for key in ["cooldown_until", "created_at", "updated_at"]:
+            if config_dict.get(key):
+                config_dict[key] = config_dict[key].isoformat()
+        
+        return {"success": True, "risk_config": config_dict}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting bot risk config: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.put("/bots/{bot_id}/risk")
+async def update_bot_risk_config(bot_id: str, request: dict, x_user_id: str = Header(None)):
+    """Update risk configuration for a specific bot"""
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from risk_manager import BotRiskConfigManager, BotRiskConfig
+        
+        # Verify ownership
+        bot = await db.bot_configs.find_one({"bot_id": bot_id, "user_id": x_user_id})
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot not found")
+        
+        # Get current config or create new
+        current = await BotRiskConfigManager.get_config(bot_id)
+        if not current:
+            current = BotRiskConfig(bot_id=bot_id)
+        
+        # Update fields
+        for key, value in request.items():
+            if hasattr(current, key) and key not in ["bot_id", "created_at"]:
+                setattr(current, key, value)
+        
+        await BotRiskConfigManager.save_config(current)
+        
+        return {"success": True, "message": "Bot risk config updated"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating bot risk config: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/bots/risk/violations")
+async def get_risk_violations(
+    bot_id: str = None,
+    user_id: str = None,
+    limit: int = 100,
+    x_admin_id: str = Header(None)
+):
+    """Get risk violation logs"""
+    try:
+        from risk_manager import RiskManager
+        
+        violations = await RiskManager.get_violations(bot_id, user_id, limit)
+        
+        return {
+            "success": True,
+            "violations": violations,
+            "count": len(violations)
+        }
+    except Exception as e:
+        logger.error(f"Error getting risk violations: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.post("/bots/risk/validate")
+async def validate_order_intent(request: dict, x_user_id: str = Header(None)):
+    """
+    Test risk validation for an order intent (without executing).
+    Useful for testing risk rules.
+    """
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="User ID required")
+    
+    try:
+        from risk_manager import RiskManager, OrderIntent
+        
+        # Build order intent from request
+        intent = OrderIntent(
+            bot_id=request.get("bot_id", "test"),
+            user_id=x_user_id,
+            action=request.get("action", "BUY"),
+            symbol=request.get("symbol", "BTCUSD"),
+            timeframe=request.get("timeframe", "1h"),
+            quantity=request.get("quantity", 0),
+            current_price=request.get("current_price", 0),
+            current_positions=request.get("current_positions", 0),
+            current_orders=request.get("current_orders", 0),
+            daily_pnl=request.get("daily_pnl", 0),
+            bot_type=request.get("bot_type", "signal"),
+            dca_level=request.get("dca_level", 0),
+            grid_level=request.get("grid_level", 0),
+            spread_percent=request.get("spread_percent", 0),
+            volume_24h=request.get("volume_24h", 1000000)
+        )
+        
+        # Validate
+        result = await RiskManager.validate_order_intent(intent)
+        
+        return {
+            "success": True,
+            "validation": result.to_dict()
+        }
+    except Exception as e:
+        logger.error(f"Error validating order intent: {e}")
+        return {"success": False, "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # NEW BOT ENDPOINTS - Backtest, Paper Trading, Decision Logs
 # ═══════════════════════════════════════════════════════════════════════════════
 
