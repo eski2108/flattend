@@ -693,9 +693,9 @@ class ReconciliationEngine:
         for currency in set(list(ledger_totals["inflows"].keys()) + list(ledger_totals["outflows"].keys())):
             inflows = ledger_totals["inflows"].get(currency, 0)
             outflows = ledger_totals["outflows"].get(currency, 0)
-            fees = ledger_totals["fees"].get(currency, 0)
+            fees = ledger_totals["fees"].get(currency, 0)  # Fees stay in system
             
-            # Net should be: inflows - outflows + fees (fees stay in system)
+            # Net should be: inflows - outflows (fees are internal transfers)
             net = inflows - outflows
             if abs(net) > 1:  # More than 1 unit difference
                 mismatches.append({
@@ -703,6 +703,7 @@ class ReconciliationEngine:
                     "currency": currency,
                     "inflows": inflows,
                     "outflows": outflows,
+                    "fees": fees,
                     "net": net,
                     "severity": "medium"
                 })
