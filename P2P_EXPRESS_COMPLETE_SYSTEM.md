@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://tradingbot-hub-13.preview.emergentagent.com/p2p-express
+https://crypto-botui.preview.emergentagent.com/p2p-express
 
 ---
 

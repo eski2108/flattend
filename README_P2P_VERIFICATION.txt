@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://tradingbot-hub-13.preview.emergentagent.com
-P2P Page:     https://tradingbot-hub-13.preview.emergentagent.com/p2p
-Backend API:  https://tradingbot-hub-13.preview.emergentagent.com/api
+Frontend:     https://crypto-botui.preview.emergentagent.com
+P2P Page:     https://crypto-botui.preview.emergentagent.com/p2p
+Backend API:  https://crypto-botui.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

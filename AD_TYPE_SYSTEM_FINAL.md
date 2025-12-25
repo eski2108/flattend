@@ -1,7 +1,7 @@
 # ✅ AD TYPE SYSTEM - COMPLETE IMPLEMENTATION
 
 **Date:** December 12, 2025 00:00 UTC  
-**Preview URL:** https://tradingbot-hub-13.preview.emergentagent.com  
+**Preview URL:** https://crypto-botui.preview.emergentagent.com  
 **Status:** DEPLOYED AND OPERATIONAL
 
 ---
@@ -176,7 +176,7 @@ Max: {ad.max_order_limit || ad.max_amount || 0}
 
 1. **Navigate:**
    ```
-   https://tradingbot-hub-13.preview.emergentagent.com
+   https://crypto-botui.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -245,5 +245,5 @@ All 12 requirements implemented:
 
 **Deployed:** December 12, 2025 00:00 UTC  
 **Test User:** aby@test.com / test123  
-**Preview:** https://tradingbot-hub-13.preview.emergentagent.com  
+**Preview:** https://crypto-botui.preview.emergentagent.com  
 **Status:** LIVE AND OPERATIONAL

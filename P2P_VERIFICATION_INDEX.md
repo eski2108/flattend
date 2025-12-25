@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://tradingbot-hub-13.preview.emergentagent.com
-- Backend API: https://tradingbot-hub-13.preview.emergentagent.com/api
-- P2P Marketplace: https://tradingbot-hub-13.preview.emergentagent.com/p2p
+- Frontend: https://crypto-botui.preview.emergentagent.com
+- Backend API: https://crypto-botui.preview.emergentagent.com/api
+- P2P Marketplace: https://crypto-botui.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

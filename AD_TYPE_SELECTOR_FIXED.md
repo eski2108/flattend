@@ -333,4 +333,4 @@ ad_type: adType.toLowerCase()
 - All existing features still working
 
 **Status:** LIVE and DEPLOYED  
-**Preview URL:** https://tradingbot-hub-13.preview.emergentagent.com
+**Preview URL:** https://crypto-botui.preview.emergentagent.com
