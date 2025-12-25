@@ -334,9 +334,10 @@ async def test_address_whitelist():
     
     # Summary
     all_passed = all(r[1] for r in results)
-    print(f"\n--- Address Whitelist Results ---")
+    print("\n--- Address Whitelist Results ---")
     for name, passed in results:
-        print(f"   {'\u2705' if passed else '\u274c'} {name}")
+        icon = "\u2705" if passed else "\u274c"
+        print(f"   {icon} {name}")
     
     return all_passed
 
