@@ -1221,6 +1221,531 @@ export default function TradingBots() {
         </div>
       )}
 
+      {/* End of My Bots Tab */}
+        </>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════════════
+          TAB CONTENT: PRESETS
+      ═══════════════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'presets' && (
+        <div>
+          {/* Preset Category Filter */}
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            marginBottom: '24px',
+            flexWrap: 'wrap'
+          }}>
+            {PRESET_CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedPresetCategory(cat.id)}
+                style={{
+                  padding: '10px 16px',
+                  borderRadius: '10px',
+                  background: selectedPresetCategory === cat.id 
+                    ? 'linear-gradient(135deg, rgba(0,229,153,0.2) 0%, rgba(0,184,212,0.2) 100%)' 
+                    : 'rgba(14,22,38,0.8)',
+                  border: selectedPresetCategory === cat.id 
+                    ? '1px solid rgba(0,229,153,0.3)' 
+                    : '1px solid rgba(255,255,255,0.1)',
+                  color: selectedPresetCategory === cat.id ? '#00E599' : '#8B9BB4',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <span>{cat.icon}</span>
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Preset Cards Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '20px'
+          }}>
+            {filteredPresets.map(preset => (
+              <div
+                key={preset.id}
+                style={{
+                  background: 'rgba(14,22,38,0.9)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  padding: '24px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.border = '1px solid rgba(0,229,153,0.3)'}
+                onMouseLeave={(e) => e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)'}
+              >
+                {/* Preset Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <span style={{
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        background: preset.type === 'grid' ? 'rgba(0,229,153,0.15)' : preset.type === 'dca' ? 'rgba(0,184,212,0.15)' : 'rgba(255,107,107,0.15)',
+                        color: preset.type === 'grid' ? '#00E599' : preset.type === 'dca' ? '#00B8D4' : '#FF6B6B',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        textTransform: 'uppercase'
+                      }}>{preset.type}</span>
+                      <span style={{ fontSize: '12px' }}>{preset.badge}</span>
+                    </div>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#FFFFFF', margin: 0 }}>{preset.name}</h3>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p style={{ fontSize: '13px', color: '#8B9BB4', margin: '0 0 16px', lineHeight: '1.5' }}>
+                  {preset.description}
+                </p>
+
+                {/* Preset Details */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '12px',
+                  marginBottom: '20px'
+                }}>
+                  <div style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>PAIR</div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{preset.pair}</div>
+                  </div>
+                  <div style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>TIMEFRAME</div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{preset.timeframe}</div>
+                  </div>
+                  <div style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>MAX DAILY TRADES</div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{preset.risk.max_daily_trades}</div>
+                  </div>
+                  <div style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>COOLDOWN</div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{preset.risk.cooldown_minutes}m</div>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() => handleCreateFromPreset(preset)}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
+                    border: 'none',
+                    color: '#020617',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <IoFlash size={16} />
+                  Use This Preset
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════════════
+          TAB CONTENT: DECISION LOGS
+      ═══════════════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'logs' && (
+        <div>
+          {/* Log Filters */}
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            marginBottom: '20px',
+            flexWrap: 'wrap',
+            alignItems: 'center'
+          }}>
+            <select
+              value={logFilters.action}
+              onChange={(e) => setLogFilters(prev => ({ ...prev, action: e.target.value }))}
+              style={{
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: '#0E1626',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#FFFFFF',
+                fontSize: '13px',
+                minWidth: '120px'
+              }}
+            >
+              <option value="all">All Actions</option>
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+            </select>
+            <select
+              value={logFilters.dateRange}
+              onChange={(e) => setLogFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+              style={{
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: '#0E1626',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#FFFFFF',
+                fontSize: '13px',
+                minWidth: '120px'
+              }}
+            >
+              <option value="24h">Last 24h</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="all">All Time</option>
+            </select>
+            <div style={{ marginLeft: 'auto', color: '#8B9BB4', fontSize: '13px' }}>
+              {decisionLogs.length} entries
+            </div>
+          </div>
+
+          {/* Decision Log Table */}
+          <div style={{
+            background: 'rgba(14,22,38,0.9)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255,255,255,0.08)',
+            overflow: 'hidden'
+          }}>
+            {loadingLogs ? (
+              <div style={{ padding: '60px', textAlign: 'center', color: '#8B9BB4' }}>
+                Loading decision logs...
+              </div>
+            ) : decisionLogs.length === 0 ? (
+              <div style={{ padding: '60px', textAlign: 'center', color: '#8B9BB4' }}>
+                <IoDocumentText size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+                <p>No decision logs yet</p>
+                <p style={{ fontSize: '12px' }}>Start a bot to see trade decisions here</p>
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(0,0,0,0.3)' }}>
+                      <th style={{ padding: '16px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Time</th>
+                      <th style={{ padding: '16px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Pair</th>
+                      <th style={{ padding: '16px', textAlign: 'left', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Action</th>
+                      <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Price</th>
+                      <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Quantity</th>
+                      <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Fee</th>
+                      <th style={{ padding: '16px', textAlign: 'right', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>PnL</th>
+                      <th style={{ padding: '16px', textAlign: 'center', color: '#8B9BB4', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Mode</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {decisionLogs
+                      .filter(log => logFilters.action === 'all' || log.side === logFilters.action)
+                      .map((log, idx) => (
+                      <tr key={log.log_id || idx} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                        <td style={{ padding: '14px 16px', color: '#8B9BB4', fontSize: '13px' }}>
+                          {new Date(log.timestamp_ms).toLocaleString()}
+                        </td>
+                        <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '13px', fontWeight: '500' }}>
+                          {log.pair}
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <span style={{
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            background: log.side === 'buy' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+                            color: log.side === 'buy' ? '#22C55E' : '#EF4444',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase'
+                          }}>{log.side}</span>
+                        </td>
+                        <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '13px', textAlign: 'right' }}>
+                          ${log.entry_price?.toFixed(2)}
+                        </td>
+                        <td style={{ padding: '14px 16px', color: '#FFFFFF', fontSize: '13px', textAlign: 'right' }}>
+                          {log.quantity?.toFixed(6)}
+                        </td>
+                        <td style={{ padding: '14px 16px', color: '#FBBF24', fontSize: '13px', textAlign: 'right' }}>
+                          ${log.fees?.toFixed(4)}
+                        </td>
+                        <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                          <span style={{ color: (log.pnl || 0) >= 0 ? '#22C55E' : '#EF4444', fontWeight: '600' }}>
+                            {(log.pnl || 0) >= 0 ? '+' : ''}{log.pnl?.toFixed(2) || '0.00'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            background: log.mode === 'live' ? 'rgba(239,68,68,0.15)' : 'rgba(0,184,212,0.15)',
+                            color: log.mode === 'live' ? '#EF4444' : '#00B8D4',
+                            fontSize: '10px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase'
+                          }}>{log.mode || 'paper'}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════════════
+          EMERGENCY STOP ALL MODAL
+      ═══════════════════════════════════════════════════════════════════════════════ */}
+      {showEmergencyModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(145deg, #1A1F35 0%, #0E1626 100%)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255,92,92,0.3)',
+            padding: '32px',
+            maxWidth: '440px',
+            width: '100%',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: 'rgba(255,92,92,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px'
+            }}>
+              <IoStop size={32} style={{ color: '#FF5C5C' }} />
+            </div>
+            <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#FFFFFF', marginBottom: '12px' }}>
+              Emergency Stop All Bots
+            </h2>
+            <p style={{ fontSize: '14px', color: '#8B9BB4', marginBottom: '24px', lineHeight: '1.6' }}>
+              This will immediately stop ALL running bots and cancel pending orders. 
+              This action cannot be undone.
+            </p>
+            <div style={{
+              padding: '16px',
+              background: 'rgba(255,92,92,0.1)',
+              borderRadius: '10px',
+              marginBottom: '24px',
+              fontSize: '14px',
+              color: '#FF5C5C'
+            }}>
+              {bots.filter(b => b.status === 'running').length} bot(s) will be stopped
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowEmergencyModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#8B9BB4',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >Cancel</button>
+              <button
+                onClick={handleEmergencyStopAll}
+                disabled={emergencyLoading}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: '#FF5C5C',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: emergencyLoading ? 'not-allowed' : 'pointer',
+                  opacity: emergencyLoading ? 0.7 : 1
+                }}
+              >{emergencyLoading ? 'Stopping...' : 'Stop All Bots'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════════════
+          PRESET LAUNCH MODAL
+      ═══════════════════════════════════════════════════════════════════════════════ */}
+      {showPresetModal && selectedPreset && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(145deg, #1A1F35 0%, #0E1626 100%)',
+            borderRadius: '20px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            padding: '32px',
+            maxWidth: '500px',
+            width: '100%',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', margin: 0 }}>
+                Launch: {selectedPreset.name}
+              </h2>
+              <button
+                onClick={() => { setShowPresetModal(false); setSelectedPreset(null); }}
+                style={{ background: 'transparent', border: 'none', color: '#8B9BB4', cursor: 'pointer' }}
+              >
+                <IoClose size={24} />
+              </button>
+            </div>
+
+            {/* Preset Summary */}
+            <div style={{
+              padding: '20px',
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '12px',
+              marginBottom: '24px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  background: selectedPreset.type === 'grid' ? 'rgba(0,229,153,0.15)' : selectedPreset.type === 'dca' ? 'rgba(0,184,212,0.15)' : 'rgba(255,107,107,0.15)',
+                  color: selectedPreset.type === 'grid' ? '#00E599' : selectedPreset.type === 'dca' ? '#00B8D4' : '#FF6B6B',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  textTransform: 'uppercase'
+                }}>{selectedPreset.type}</span>
+                <span style={{ fontSize: '12px' }}>{selectedPreset.badge}</span>
+              </div>
+              <p style={{ fontSize: '13px', color: '#8B9BB4', margin: 0 }}>{selectedPreset.description}</p>
+            </div>
+
+            {/* Config Details */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF', marginBottom: '12px' }}>Configuration</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>PAIR</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{selectedPreset.pair}</div>
+                </div>
+                <div style={{ padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>TIMEFRAME</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{selectedPreset.timeframe}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Risk Settings */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF', marginBottom: '12px' }}>Risk Settings</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>MAX DAILY TRADES</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{selectedPreset.risk.max_daily_trades}</div>
+                </div>
+                <div style={{ padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>COOLDOWN</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>{selectedPreset.risk.cooldown_minutes} min</div>
+                </div>
+                <div style={{ padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>STOP LOSS</div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: selectedPreset.risk.require_stop_loss ? '#22C55E' : '#8B9BB4' }}>
+                    {selectedPreset.risk.require_stop_loss ? 'Required' : 'Optional'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fee Notice */}
+            <div style={{
+              padding: '12px 16px',
+              background: 'rgba(0,184,212,0.1)',
+              borderRadius: '8px',
+              marginBottom: '24px',
+              fontSize: '12px',
+              color: '#00B8D4'
+            }}>
+              💡 Fees charged using existing maker/taker schedule (no bot-only fees)
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => { setShowPresetModal(false); setSelectedPreset(null); }}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#8B9BB4',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >Cancel</button>
+              <button
+                onClick={() => {
+                  setShowPresetModal(false);
+                  setSelectedPreset(null);
+                  // Open create modal with preset values
+                  setSelectedBotType(selectedPreset.type);
+                  setShowCreateModal(true);
+                  toast.success(`Preset loaded: ${selectedPreset.name}`);
+                }}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #00E599 0%, #00B8D4 100%)',
+                  border: 'none',
+                  color: '#020617',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >Create Bot from Preset</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Create Bot Modal */}
       {showCreateModal && (
         <CreateBotModal
