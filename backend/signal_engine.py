@@ -760,7 +760,11 @@ class DecisionEngine:
             "entry_evaluation": None,
             "exit_evaluation": None,
             "confirmation_evaluation": None,
-            "signal": None
+            "signal": None,
+            # Phase 8: Add candle source tracking for audit
+            "candle_source": candle_source,
+            "mode": "live" if is_live_mode else "paper",
+            "is_live_exchange": candle_source.get("is_live_exchange", False) if candle_source else False
         }
         
         # Create indicator snapshot for logging
