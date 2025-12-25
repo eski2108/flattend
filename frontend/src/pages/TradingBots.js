@@ -1901,18 +1901,14 @@ export default function TradingBots() {
                 <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#00B8D4', marginBottom: '12px' }}>📈 Indicator Values</h3>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
                   gap: '10px'
                 }}>
                   {Object.entries(selectedLogExplanation.indicator_values).map(([key, val]) => (
                     <div key={key} style={{ padding: '10px', background: 'rgba(0,184,212,0.05)', borderRadius: '8px', border: '1px solid rgba(0,184,212,0.1)' }}>
-                      <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px' }}>{key.toUpperCase()}</div>
+                      <div style={{ fontSize: '10px', color: '#8B9BB4', marginBottom: '4px', textTransform: 'uppercase' }}>{key.replace(/_/g, ' ')}</div>
                       <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFFFFF' }}>
-                        {typeof val === 'number' 
-                          ? val.toFixed(4) 
-                          : typeof val === 'object' && val !== null
-                            ? (val.current !== undefined ? val.current.toFixed ? val.current.toFixed(2) : val.current : JSON.stringify(val))
-                            : String(val)}
+                        {formatIndicatorValue(val)}
                       </div>
                     </div>
                   ))}
