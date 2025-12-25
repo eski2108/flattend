@@ -425,9 +425,10 @@ async def test_admin_audit():
     
     # Summary
     all_passed = all(r[1] for r in results)
-    print(f"\n--- Admin Audit Results ---")
+    print("\n--- Admin Audit Results ---")
     for name, passed in results:
-        print(f"   {'\u2705' if passed else '\u274c'} {name}")
+        icon = "\u2705" if passed else "\u274c"
+        print(f"   {icon} {name}")
     
     return all_passed
 
