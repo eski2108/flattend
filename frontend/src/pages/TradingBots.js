@@ -945,10 +945,22 @@ export default function TradingBots() {
               background: 'linear-gradient(145deg, #0B1220 0%, #0A0F18 100%)',
               borderRadius: '16px',
               border: '1px solid rgba(255,255,255,0.06)',
+              borderTop: '1px solid rgba(0,229,153,0.15)',
               padding: '20px',
               transition: 'all 150ms ease',
               position: 'relative'
             }}>
+              {/* Subtle top gradient accent */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: '20px',
+                right: '20px',
+                height: '1px',
+                background: 'linear-gradient(90deg, transparent, rgba(0,229,153,0.3), transparent)',
+                borderRadius: '1px'
+              }} />
+              
               {/* Bot Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                 <div>
@@ -956,16 +968,16 @@ export default function TradingBots() {
                     {bot.type === 'grid' ? <IoGrid size={18} style={{ color: '#00E599' }} /> : 
                      bot.type === 'dca' ? <IoTrendingUp size={18} style={{ color: '#00B8D4' }} /> :
                      <IoRocket size={18} style={{ color: '#FF6B6B' }} />}
-                    <span style={{ fontSize: '16px', fontWeight: '700', color: '#FFFFFF' }}>
+                    <span style={{ fontSize: '15px', fontWeight: '600', color: '#FFFFFF', letterSpacing: '-0.01em' }}>
                       {bot.type === 'grid' ? 'Grid Bot' : bot.type === 'dca' ? 'DCA Bot' : 'Signal Bot'}
                     </span>
                     {getRiskBadge(bot)}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: '#8B9BB4' }}>
-                    <span style={{ fontWeight: '600', color: '#FFFFFF' }}>{bot.pair}</span>
-                    <span>•</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: COLORS.secondaryDim }}>
+                    <span style={{ fontWeight: '600', color: '#FFFFFF', fontFamily: 'SF Mono, Monaco, monospace', letterSpacing: '0.02em' }}>{formatPair(bot.pair)}</span>
+                    <span style={{ opacity: 0.4 }}>•</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <IoTime size={12} /> {runtime}
+                      <IoTime size={11} style={{ opacity: 0.7 }} /> {runtime}
                     </span>
                   </div>
                 </div>
@@ -976,36 +988,27 @@ export default function TradingBots() {
                       padding: '3px 8px',
                       borderRadius: '6px',
                       fontSize: '10px',
-                      fontWeight: '700',
+                      fontWeight: '600',
                       textTransform: 'uppercase',
-                      background: bot.mode === 'live' ? 'rgba(239,68,68,0.15)' : 'rgba(255,193,7,0.15)',
-                      color: bot.mode === 'live' ? '#EF4444' : '#FFC107',
-                      border: bot.mode === 'live' ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,193,7,0.3)'
+                      letterSpacing: '0.03em',
+                      background: bot.mode === 'live' ? 'rgba(239,68,68,0.1)' : 'rgba(255,193,7,0.1)',
+                      color: bot.mode === 'live' ? '#EF4444' : 'rgba(255,193,7,0.9)',
+                      border: bot.mode === 'live' ? '1px solid rgba(239,68,68,0.2)' : '1px solid rgba(255,193,7,0.2)'
                     }}>
-                      {bot.mode === 'live' ? '🔴 LIVE' : '📝 PAPER'}
+                      {bot.mode === 'live' ? '● LIVE' : '○ PAPER'}
                     </span>
                     {getStatusBadge(bot.status)}
                   </div>
-                  {/* Safe Mode Toggle */}
-                  <div 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleSafeMode(bot.bot_id, !bot.safe_mode);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      background: bot.safe_mode ? 'rgba(0,229,153,0.1)' : 'rgba(255,255,255,0.05)',
-                      cursor: 'pointer',
-                      fontSize: '10px',
-                      color: bot.safe_mode ? '#00E599' : '#8B9BB4'
-                    }}
-                  >
-                    <IoShield size={10} />
-                    Safe Mode {bot.safe_mode ? 'ON' : 'OFF'}
+                  {/* Micro-icons row for strategy info */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+                    <div title="Strategy Type" style={{ display: 'flex', alignItems: 'center', gap: '3px', color: COLORS.secondaryDim, fontSize: '10px' }}>
+                      <IoSpeedometer size={10} style={{ opacity: 0.6 }} />
+                      <span style={{ opacity: 0.7 }}>{bot.type === 'grid' ? 'Range' : bot.type === 'dca' ? 'Time' : 'Signal'}</span>
+                    </div>
+                    <div title="Trade Frequency" style={{ display: 'flex', alignItems: 'center', gap: '3px', color: COLORS.secondaryDim, fontSize: '10px' }}>
+                      <IoRepeat size={10} style={{ opacity: 0.6 }} />
+                      <span style={{ opacity: 0.7 }}>{bot.config?.interval || 'Auto'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
