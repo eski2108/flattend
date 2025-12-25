@@ -240,7 +240,7 @@ class SignalBotBacktester:
         Run signal bot backtest.
         Uses EXISTING signal engine logic.
         """
-        from signal_engine import StrategyEngine, IndicatorConfig, StrategyConfig, LogicalOperator
+        from signal_engine import IndicatorConfig, LogicalOperator
         
         state = BacktestState(balance=initial_balance, peak_equity=initial_balance)
         
