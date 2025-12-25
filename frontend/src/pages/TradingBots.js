@@ -2682,10 +2682,10 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
                         onChange={(e) => setParams({ ...params, interval: e.target.value })}
                         style={{ width: '100%', padding: '12px', borderRadius: '10px', background: '#0E1626', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', fontSize: '14px' }}
                       >
-                        <option value="hourly">🕐 Every Hour</option>
-                        <option value="4h">🕓 Every 4 Hours</option>
-                        <option value="daily">📆 Daily</option>
-                        <option value="weekly">📅 Weekly</option>
+                        <option value="hourly">Every Hour</option>
+                        <option value="4h">Every 4 Hours</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
                       </select>
                     </div>
                     <div>
