@@ -2508,77 +2508,77 @@ function CreateBotModal({ onClose, onSuccess, tradingPairs, selectedType, setSel
           
           {/* STEP 1: Choose Type */}
           {step === 1 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button
                 onClick={() => { setSelectedType('grid'); setStep(2); }}
                 style={{
-                  padding: '24px',
-                  borderRadius: '16px',
-                  background: 'linear-gradient(135deg, rgba(0,229,153,0.08) 0%, rgba(0,229,153,0.02) 100%)',
-                  border: '1px solid rgba(0,229,153,0.2)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  background: 'rgba(0,229,153,0.04)',
+                  border: '1px solid rgba(0,229,153,0.15)',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  transition: 'all 0.25s ease'
+                  transition: 'all 0.15s ease'
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#00E599'; e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,229,153,0.15) 0%, rgba(0,229,153,0.05) 100%)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(0,229,153,0.15)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,229,153,0.2)'; e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,229,153,0.08) 0%, rgba(0,229,153,0.02) 100%)'; e.currentTarget.style.boxShadow = 'none'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,229,153,0.4)'; e.currentTarget.style.background = 'rgba(0,229,153,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,229,153,0.15)'; e.currentTarget.style.background = 'rgba(0,229,153,0.04)'; }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '10px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,229,153,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <IoGrid size={26} style={{ color: '#00E599' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0,229,153,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <IoGrid size={22} style={{ color: '#00E599' }} />
                   </div>
-                  <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>Grid Bot</span>
+                  <span style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF' }}>Grid Bot</span>
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: '#8B9BB4', lineHeight: '1.5' }}>
-                  Automatically buy low and sell high within a price range. Best for sideways/ranging markets.
+                <p style={{ margin: 0, fontSize: '13px', color: COLORS.secondaryDim, lineHeight: '1.5' }}>
+                  Automatically buy low and sell high within a price range. Best for sideways markets.
                 </p>
               </button>
               <button
                 onClick={() => { setSelectedType('dca'); setStep(2); }}
                 style={{
-                  padding: '24px',
-                  borderRadius: '16px',
-                  background: 'linear-gradient(135deg, rgba(0,184,212,0.08) 0%, rgba(0,184,212,0.02) 100%)',
-                  border: '1px solid rgba(0,184,212,0.2)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  background: 'rgba(0,184,212,0.04)',
+                  border: '1px solid rgba(0,184,212,0.15)',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  transition: 'all 0.25s ease'
+                  transition: 'all 0.15s ease'
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#00B8D4'; e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,184,212,0.15) 0%, rgba(0,184,212,0.05) 100%)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(0,184,212,0.15)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,184,212,0.2)'; e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,184,212,0.08) 0%, rgba(0,184,212,0.02) 100%)'; e.currentTarget.style.boxShadow = 'none'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,184,212,0.4)'; e.currentTarget.style.background = 'rgba(0,184,212,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,184,212,0.15)'; e.currentTarget.style.background = 'rgba(0,184,212,0.04)'; }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '10px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,184,212,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <IoTrendingUp size={26} style={{ color: '#00B8D4' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0,184,212,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <IoTrendingUp size={22} style={{ color: '#00B8D4' }} />
                   </div>
-                  <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>DCA Bot</span>
+                  <span style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF' }}>DCA Bot</span>
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: '#8B9BB4', lineHeight: '1.5' }}>
+                <p style={{ margin: 0, fontSize: '13px', color: COLORS.secondaryDim, lineHeight: '1.5' }}>
                   Dollar-cost average into a position over time. Best for long-term accumulation.
                 </p>
               </button>
               <button
                 onClick={() => { setSelectedType('signal'); setStep(2); }}
                 style={{
-                  padding: '24px',
-                  borderRadius: '16px',
-                  background: 'linear-gradient(135deg, rgba(255,107,107,0.08) 0%, rgba(255,107,107,0.02) 100%)',
-                  border: '1px solid rgba(255,107,107,0.2)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,107,107,0.04)',
+                  border: '1px solid rgba(255,107,107,0.15)',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  transition: 'all 0.25s ease'
+                  transition: 'all 0.15s ease'
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF6B6B'; e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255,107,107,0.15) 0%, rgba(255,107,107,0.05) 100%)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(255,107,107,0.15)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,107,107,0.2)'; e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255,107,107,0.08) 0%, rgba(255,107,107,0.02) 100%)'; e.currentTarget.style.boxShadow = 'none'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,107,107,0.4)'; e.currentTarget.style.background = 'rgba(255,107,107,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,107,107,0.15)'; e.currentTarget.style.background = 'rgba(255,107,107,0.04)'; }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '10px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255,107,107,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <IoRocket size={26} style={{ color: '#FF6B6B' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(255,107,107,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <IoRocket size={22} style={{ color: '#FF6B6B' }} />
                   </div>
-                  <span style={{ fontSize: '18px', fontWeight: '700', color: '#FFFFFF' }}>Signal Bot</span>
-                  <span style={{ fontSize: '10px', background: 'rgba(0,229,153,0.2)', color: '#00E599', padding: '3px 10px', borderRadius: '6px', fontWeight: '600' }}>NEW</span>
+                  <span style={{ fontSize: '16px', fontWeight: '600', color: '#FFFFFF' }}>Signal Bot</span>
+                  <span style={{ fontSize: '9px', background: 'rgba(0,229,153,0.15)', color: '#00E599', padding: '2px 8px', borderRadius: '4px', fontWeight: '600', letterSpacing: '0.03em' }}>NEW</span>
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: '#8B9BB4', lineHeight: '1.5' }}>
+                <p style={{ margin: 0, fontSize: '13px', color: COLORS.secondaryDim, lineHeight: '1.5' }}>
                   Trade based on technical indicators. Build custom rules with 20+ indicators.
                 </p>
               </button>
