@@ -157,7 +157,46 @@ function AdminBotsSection({ API, adminId }) {
 
       {/* Active Bots Table */}
       <Card style={{ background: 'rgba(0,0,0,0.3)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '1.5rem' }}>
-        <h3 style={{ margin: '0 0 1rem', color: '#FFF', fontSize: '16px' }}>🤖 Active Bots</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '12px' }}>
+          <h3 style={{ margin: '0', color: '#FFF', fontSize: '16px' }}>🤖 Active Bots</h3>
+          {/* PHASE 7: Bot Activity Filters */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <select
+              value={botTypeFilter}
+              onChange={(e) => setBotTypeFilter(e.target.value)}
+              style={{
+                padding: '6px 12px',
+                background: '#0E1626',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '6px',
+                color: '#FFF',
+                fontSize: '12px'
+              }}
+            >
+              <option value="all">All Types</option>
+              <option value="grid">Grid</option>
+              <option value="dca">DCA</option>
+              <option value="signal">Signal</option>
+            </select>
+            <select
+              value={botStatusFilter}
+              onChange={(e) => setBotStatusFilter(e.target.value)}
+              style={{
+                padding: '6px 12px',
+                background: '#0E1626',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '6px',
+                color: '#FFF',
+                fontSize: '12px'
+              }}
+            >
+              <option value="all">All Status</option>
+              <option value="running">Running</option>
+              <option value="paused">Paused</option>
+              <option value="stopped">Stopped</option>
+            </select>
+          </div>
+        </div>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
@@ -173,11 +212,15 @@ function AdminBotsSection({ API, adminId }) {
               </tr>
             </thead>
             <tbody>
-              {activeBots.length === 0 ? (
+              {activeBots
+                .filter(bot => (botTypeFilter === 'all' || bot.type === botTypeFilter) && (botStatusFilter === 'all' || bot.status === botStatusFilter))
+                .length === 0 ? (
                 <tr>
-                  <td colSpan="8" style={{ padding: '24px', textAlign: 'center', color: '#666' }}>No active bots</td>
+                  <td colSpan="8" style={{ padding: '24px', textAlign: 'center', color: '#666' }}>No bots match filters</td>
                 </tr>
-              ) : activeBots.map(bot => (
+              ) : activeBots
+                .filter(bot => (botTypeFilter === 'all' || bot.type === botTypeFilter) && (botStatusFilter === 'all' || bot.status === botStatusFilter))
+                .map(bot => (
                 <tr key={bot.bot_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <td style={{ padding: '12px 8px', color: '#00F0FF', fontSize: '12px', fontFamily: 'monospace' }}>{bot.bot_id?.slice(0, 8)}...</td>
                   <td style={{ padding: '12px 8px', color: '#FFF', fontSize: '13px' }}>{bot.user_email || bot.user_id?.slice(0, 8)}</td>
