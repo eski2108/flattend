@@ -23982,6 +23982,38 @@ except ImportError as e:
 # ============================================================================
 
 # ============================================================================
+# RELIABILITY & MONITORING SYSTEM - Task 3
+# ============================================================================
+try:
+    from monitoring_system import (
+        structured_logger,
+        error_tracker,
+        health_checker,
+        metrics,
+        job_monitor,
+        MonitoringMiddleware,
+        init_monitoring_services,
+    )
+    from monitoring_routes import monitoring_router
+    
+    # Add monitoring middleware (request tracking, metrics, logging)
+    app.add_middleware(MonitoringMiddleware)
+    
+    # Include monitoring routes
+    app.include_router(monitoring_router, prefix="/api")
+    
+    # Initialize monitoring services with database (async, done on startup)
+    @app.on_event("startup")
+    async def init_monitoring():
+        await init_monitoring_services(db)
+        logger.info("✅ Monitoring services initialized")
+    
+    logger.info("✅ Monitoring middleware and routes added")
+except ImportError as e:
+    logger.warning(f"⚠️ Monitoring system not available: {e}")
+# ============================================================================
+
+# ============================================================================
 # PAYMENT SYSTEM v2.0 - IDEMPOTENCY MIDDLEWARE (P1.3)
 # INTEGRITY_CHECKSUM: 8f3a7c2e1d5b9a4f
 # ============================================================================
