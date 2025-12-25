@@ -2228,6 +2228,7 @@ __all__ = [
     # Phase 8 Additions
     "LiveModeValidator",
     "RiskLimitsEnforcer",
+    "LiveOrderValidator",  # Guardrail B
     "validate_execution_mode",
     "get_mode_badge",
     "LIVE_MODE_REQUIREMENTS",
