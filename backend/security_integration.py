@@ -240,7 +240,7 @@ async def check_whitelist(
                 status_code=403,
                 detail={
                     "error": "address_in_cooldown",
-                    "message": f"This address was recently added. Available after cooldown.",
+                    "message": "This address was recently added. Available after cooldown.",
                     "available_at": activation.isoformat() if activation else None
                 }
             )
