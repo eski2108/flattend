@@ -518,14 +518,15 @@ class HealthChecker:
             return HealthCheckResult(
                 name="redis",
                 status="healthy",
-                message="Redis not installed"
+                message="Redis not installed (using in-memory cache)"
             )
         except Exception as e:
+            # Redis is optional - mark as degraded, not unhealthy
             return HealthCheckResult(
                 name="redis",
-                status="unhealthy",
+                status="degraded",
                 latency_ms=(time.time() - start) * 1000,
-                message=str(e)
+                message=f"Redis unavailable (using in-memory cache): {str(e)[:50]}"
             )
     
     async def check_queue(self) -> HealthCheckResult:
