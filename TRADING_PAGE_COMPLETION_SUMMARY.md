@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://tradinghub-7.preview.emergentagent.com/#/trading
+**Live URL:** https://tradingbot-hub-13.preview.emergentagent.com/#/trading
 
 ---
 

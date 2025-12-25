@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://tradinghub-7.preview.emergentagent.com
+**URL:** https://tradingbot-hub-13.preview.emergentagent.com
 
 **Services Status:**
 ```bash

@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://tradinghub-7.preview.emergentagent.com/api
+https://tradingbot-hub-13.preview.emergentagent.com/api
 ```
 
 This means:

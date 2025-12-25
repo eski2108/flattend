@@ -155,10 +155,10 @@ All fees now accessible and editable:
 ### API Testing Results:
 
 ```bash
-$ curl https://tradinghub-7.preview.emergentagent.com/api/admin/fees/test
+$ curl https://tradingbot-hub-13.preview.emergentagent.com/api/admin/fees/test
 {"success": true, "message": "Fee endpoints are working!"}
 
-$ curl https://tradinghub-7.preview.emergentagent.com/api/admin/fees/all
+$ curl https://tradingbot-hub-13.preview.emergentagent.com/api/admin/fees/all
 {
   "success": true,
   "fees": {

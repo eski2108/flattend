@@ -1,6 +1,6 @@
 # ✅ ALL CHANGES DEPLOYED TO PREVIEW
 
-**Preview URL:** https://tradinghub-7.preview.emergentagent.com  
+**Preview URL:** https://tradingbot-hub-13.preview.emergentagent.com  
 **Deployment Time:** December 11, 2025 23:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -86,7 +86,7 @@
 
 1. **Navigate to Preview:**
    ```
-   https://tradinghub-7.preview.emergentagent.com
+   https://tradingbot-hub-13.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -139,10 +139,10 @@
 sudo supervisorctl status
 
 # Test preview URL
-curl https://tradinghub-7.preview.emergentagent.com
+curl https://tradingbot-hub-13.preview.emergentagent.com
 
 # Test API health
-curl https://tradinghub-7.preview.emergentagent.com/api/health
+curl https://tradingbot-hub-13.preview.emergentagent.com/api/health
 
 # All return 200 OK ✅
 ```
@@ -183,7 +183,7 @@ curl https://tradinghub-7.preview.emergentagent.com/api/health
 
 **All changes are LIVE at:**
 ```
-https://tradinghub-7.preview.emergentagent.com
+https://tradingbot-hub-13.preview.emergentagent.com
 ```
 
 **Test Account:**

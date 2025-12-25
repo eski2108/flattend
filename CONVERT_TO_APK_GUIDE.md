@@ -14,7 +14,7 @@ This HTML file contains your entire app ready to be converted to APK.
 
 ### **Step 2:** Fill in the form:
 - **App Name:** Coin Hub X
-- **Website URL:** https://tradinghub-7.preview.emergentagent.com
+- **Website URL:** https://tradingbot-hub-13.preview.emergentagent.com
 - **App Icon:** Upload your logo (optional)
 - **Package Name:** com.coinhubx.app
 
@@ -34,7 +34,7 @@ This HTML file contains your entire app ready to be converted to APK.
 
 ### **Step 2:** Enter your website URL:
 ```
-https://tradinghub-7.preview.emergentagent.com
+https://tradingbot-hub-13.preview.emergentagent.com
 ```
 
 ### **Step 3:** Configure:
@@ -58,7 +58,7 @@ https://tradinghub-7.preview.emergentagent.com
 
 ### **Step 3:** Create new app:
 - Type: Website to App
-- URL: https://tradinghub-7.preview.emergentagent.com
+- URL: https://tradingbot-hub-13.preview.emergentagent.com
 
 ### **Step 4:** Customize:
 - App name
@@ -80,7 +80,7 @@ https://tradinghub-7.preview.emergentagent.com
 
 ### **Step 3:** Enter URL:
 ```
-https://tradinghub-7.preview.emergentagent.com
+https://tradingbot-hub-13.preview.emergentagent.com
 ```
 
 ### **Step 4:** Customize app

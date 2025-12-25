@@ -8,7 +8,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://tradinghub-7.preview.emergentagent.com/api"
+BASE_URL = "https://tradingbot-hub-13.preview.emergentagent.com/api"
 
 class FocusedIssueAnalyzer:
     def __init__(self):

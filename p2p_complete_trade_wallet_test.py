@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradinghub-7.preview.emergentagent.com/api"
+BASE_URL = "https://tradingbot-hub-13.preview.emergentagent.com/api"
 
 # Test credentials as specified in the request
 BUYER_EMAIL = "buyer_proof@test.com"

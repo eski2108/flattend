@@ -72,8 +72,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ DEPLOYMENT INFO                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Frontend URL:   https://tradinghub-7.preview.emergentagent.com  │
-│ Backend API:    https://tradinghub-7.preview.emergentagent.com/api│
+│ Frontend URL:   https://tradingbot-hub-13.preview.emergentagent.com  │
+│ Backend API:    https://tradingbot-hub-13.preview.emergentagent.com/api│
 │ Database:       mongodb://localhost:27017/coinhubx                  │
 │ Admin Login:    admin@coinhubx.com / Admin@12345                    │
 └──────────────────────────────────────────────────────────────────────┘

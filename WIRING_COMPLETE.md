@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://tradinghub-7.preview.emergentagent.com/api
-- **Frontend App**: https://tradinghub-7.preview.emergentagent.com
+- **Backend API**: https://tradingbot-hub-13.preview.emergentagent.com/api
+- **Frontend App**: https://tradingbot-hub-13.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

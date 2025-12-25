@@ -46,7 +46,7 @@ Referrals:    0  (no test data)
 ### ✅ Fixed 30 Files
 
 **Removed ALL hardcoded URLs:**
-- ❌ `https://tradinghub-7.preview.emergentagent.com`
+- ❌ `https://tradingbot-hub-13.preview.emergentagent.com`
 - ❌ `http://localhost:8001`
 - ❌ Any other hardcoded references
 
