@@ -2432,6 +2432,8 @@ function P2PMarketplace() {
                       </div>
                       {/* Real trader stats from backend API - NO MOCKS */}
                       <TraderStats userId={offer.seller_id} compact={true} />
+                      {/* 30-day stats compact line from seller profile */}
+                      {render30dStatsCompact(offer.seller_id)}
                     </div>
 
                     {/* Price Section */}
