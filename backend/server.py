@@ -3616,7 +3616,10 @@ async def get_marketplace_filters():
 
 @api_router.get("/p2p/seller/profile/{seller_id}")
 async def get_seller_profile(seller_id: str):
-    """Get detailed seller profile information"""
+    """
+    Get detailed seller profile information.
+    Returns: seller info, stats_30d, badges[], verifications, collateral status
+    """
     try:
         # Get seller user info
         seller = await db.users.find_one({"user_id": seller_id}, {"_id": 0})
@@ -3624,52 +3627,80 @@ async def get_seller_profile(seller_id: str):
         if not seller:
             raise HTTPException(status_code=404, detail="Seller not found")
         
-        # Calculate seller stats from completed trades
-        completed_trades = await db.p2p_trades.find({
-            "seller_id": seller_id,
-            "status": "completed"
-        }).to_list(10000)
+        # Get 30-day stats (raw data for tuning)
+        stats_30d = await compute_seller_stats_30d(db, seller_id)
         
-        total_trades = len(completed_trades)
-        total_volume = sum(trade.get("total_fiat", 0) for trade in completed_trades)
+        # Get badges (single source of truth)
+        badges = await compute_seller_badges(db, seller_id, seller, stats_30d)
         
-        # Calculate completion rate
-        all_trades = await db.p2p_trades.find({"seller_id": seller_id}).to_list(10000)
-        completion_rate = (total_trades / len(all_trades) * 100) if all_trades else 100
+        # Get first trade date
+        first_trade = await db.p2p_trades.find_one(
+            {"$or": [{"seller_id": seller_id}, {"buyer_id": seller_id}]},
+            sort=[("created_at", 1)]
+        )
+        first_trade_at = first_trade.get("created_at") if first_trade else None
         
-        # Calculate average release time
-        release_times = []
-        for trade in completed_trades:
-            if trade.get("completed_at") and trade.get("payment_marked_at"):
-                try:
-                    completed = datetime.fromisoformat(trade["completed_at"].replace('Z', '+00:00'))
-                    marked = datetime.fromisoformat(trade["payment_marked_at"].replace('Z', '+00:00'))
-                    diff_minutes = (completed - marked).total_seconds() / 60
-                    if diff_minutes > 0:
-                        release_times.append(diff_minutes)
-                except Exception:
-                    pass
+        # Calculate account age
+        created_at = seller.get("created_at")
+        account_age_days = 0
+        if created_at:
+            try:
+                created_dt = datetime.fromisoformat(str(created_at).replace('Z', '+00:00'))
+                account_age_days = (datetime.now(timezone.utc) - created_dt).days
+            except:
+                pass
         
-        avg_release_time = sum(release_times) / len(release_times) if release_times else 15
+        # Get collateral status
+        collateral_doc = await db.p2p_collateral.find_one({"user_id": seller_id})
+        collateral = None
+        if collateral_doc:
+            collateral = {
+                "status": collateral_doc.get("status", "none"),
+                "amount": collateral_doc.get("amount", 0),
+                "asset": collateral_doc.get("asset", "USDT"),
+                "locked_at": collateral_doc.get("locked_at"),
+                "unlocking_at": collateral_doc.get("unlock_available_at")
+            }
         
-        # Get seller badges
-        is_trusted = seller.get("is_trusted_seller", False)
-        is_fast_payment = seller.get("is_fast_payment", False)
+        # Verifications
+        verifications = {
+            "email_verified": seller.get("email_verified", False),
+            "phone_verified": seller.get("phone_verified", False),
+            "kyc_verified": seller.get("kyc_verified", False),
+            "address_verified": seller.get("address_verified", False)
+        }
         
         profile = {
             "seller_id": seller_id,
             "username": seller.get("username", seller.get("email", "").split("@")[0]),
+            "avatar_url": seller.get("avatar_url"),
             "country": seller.get("country", "Global"),
             "region": seller.get("region", "Global"),
-            "total_trades": total_trades,
-            "total_volume": round(total_volume, 2),
-            "completion_rate": round(completion_rate, 1),
-            "average_release_time_minutes": round(avg_release_time, 1),
-            "join_date": seller.get("created_at", datetime.now(timezone.utc).isoformat()),
+            "account_age_days": account_age_days,
+            "first_trade_at": first_trade_at,
+            "join_date": seller.get("created_at"),
             "rating": seller.get("rating", 5.0),
-            "is_trusted": is_trusted,
-            "is_fast_payment": is_fast_payment,
-            "is_verified": seller.get("is_verified", False)
+            
+            # 30-day stats (raw for tuning)
+            "stats_30d": stats_30d,
+            
+            # Verifications
+            "verifications": verifications,
+            
+            # Badges (single array - source of truth)
+            "badges": badges,
+            
+            # Collateral status
+            "collateral": collateral,
+            
+            # Legacy fields for backward compatibility
+            "total_trades": stats_30d.get("trades_total", 0),
+            "total_volume": stats_30d.get("volume_fiat_total", 0),
+            "completion_rate": stats_30d.get("completion_rate", 100),
+            "average_release_time_minutes": round(stats_30d.get("avg_release_time_sec", 0) / 60, 1),
+            "is_trusted": any(b["key"] == "trusted" for b in badges),
+            "is_fast_payment": any(b["key"] == "fast_trader" for b in badges),
+            "is_verified": verifications.get("kyc_verified", False)
         }
         
         return {
@@ -3679,6 +3710,7 @@ async def get_seller_profile(seller_id: str):
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Error getting seller profile: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
