@@ -443,15 +443,15 @@ export default function P2POrderPage() {
                 <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#FFFFFF', marginBottom: '16px' }}>Order Details</h3>
                 <div style={{ display: 'grid', gap: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8F9BB3' }}>Amount</span>
+                    <span style={{ color: '#8F9BB3' }}>You receive</span>
                     <span style={{ color: '#FFFFFF', fontWeight: '600' }}>{trade.crypto_amount} {trade.crypto_currency}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8F9BB3' }}>Price</span>
-                    <span style={{ color: '#FFFFFF', fontWeight: '600' }}>£{(trade.fiat_amount / trade.crypto_amount).toFixed(2)}</span>
+                    <span style={{ color: '#8F9BB3' }}>Rate</span>
+                    <span style={{ color: '#FFFFFF', fontWeight: '600' }}>£{(trade.fiat_amount / trade.crypto_amount).toFixed(2)} / {trade.crypto_currency}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8F9BB3' }}>Total</span>
+                    <span style={{ color: '#8F9BB3' }}>You pay</span>
                     <span style={{ color: '#00C6FF', fontWeight: '700', fontSize: '20px' }}>£{trade.fiat_amount.toFixed(2)}</span>
                   </div>
                 </div>
