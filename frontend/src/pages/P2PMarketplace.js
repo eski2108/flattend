@@ -85,6 +85,10 @@ function P2PMarketplace() {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [confirmProcessing, setConfirmProcessing] = useState(false);
   
+  // Seller profile cache (keyed by seller_id)
+  const sellerProfileCache = useRef(new Map());
+  const [offerSellerProfiles, setOfferSellerProfiles] = useState({});
+  
   // Fiat currencies available
   const fiatCurrencies = ['GBP', 'USD', 'EUR'];
   
