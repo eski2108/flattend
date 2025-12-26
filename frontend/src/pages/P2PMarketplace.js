@@ -191,17 +191,69 @@ function P2PMarketplace() {
     }
   };
 
-  const fetchSellerProfile = async (sellerId) => {
-    try {
-      const response = await axios.get(`${API}/api/p2p/seller/profile/${sellerId}`);
-      if (response.data.success) {
-        setSelectedSeller(response.data.profile);
+  const fetchSellerProfile = async (sellerId, forModal = true) => {
+    // Check cache first
+    if (sellerProfileCache.current.has(sellerId)) {
+      const cached = sellerProfileCache.current.get(sellerId);
+      if (forModal) {
+        setSelectedSeller(cached);
         setShowSellerProfile(true);
       }
-    } catch (error) {
-      console.error('Error fetching seller profile:', error);
-      toast.error('Failed to load seller profile');
+      return cached;
     }
+    
+    try {
+      const response = await axios.get(`${API}/api/p2p/sellers/${sellerId}/profile`);
+      if (response.data.success) {
+        const profile = response.data.profile;
+        // Cache the profile
+        sellerProfileCache.current.set(sellerId, profile);
+        
+        if (forModal) {
+          setSelectedSeller(profile);
+          setShowSellerProfile(true);
+        }
+        return profile;
+      }
+    } catch (error) {
+      // Fail silently - don't break offers list
+      console.error('Error fetching seller profile:', error);
+    }
+    return null;
+  };
+  
+  // Fetch seller profiles for visible offers (batch)
+  const fetchSellerProfilesForOffers = async (offersList) => {
+    const uniqueSellerIds = [...new Set(offersList.map(o => o.seller_id).filter(Boolean))];
+    const profilesToFetch = uniqueSellerIds.filter(id => !sellerProfileCache.current.has(id));
+    
+    if (profilesToFetch.length === 0) {
+      // All cached, just update state
+      const profiles = {};
+      uniqueSellerIds.forEach(id => {
+        if (sellerProfileCache.current.has(id)) {
+          profiles[id] = sellerProfileCache.current.get(id);
+        }
+      });
+      setOfferSellerProfiles(prev => ({ ...prev, ...profiles }));
+      return;
+    }
+    
+    // Fetch in parallel (limit concurrency)
+    const fetchPromises = profilesToFetch.slice(0, 10).map(sellerId => 
+      fetchSellerProfile(sellerId, false).catch(() => null)
+    );
+    
+    await Promise.all(fetchPromises);
+    
+    // Update state with all profiles
+    const profiles = {};
+    uniqueSellerIds.forEach(id => {
+      if (sellerProfileCache.current.has(id)) {
+        profiles[id] = sellerProfileCache.current.get(id);
+      }
+    });
+    setOfferSellerProfiles(prev => ({ ...prev, ...profiles }));
   };
 
   const fetchAvailableCoins = async () => {
