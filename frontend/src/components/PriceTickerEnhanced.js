@@ -124,40 +124,45 @@ export default function PriceTickerEnhanced() {
       borderBottom: '2px solid rgba(0, 229, 255, 0.3)',
       height: '48px',
       maxHeight: '48px',
+      minHeight: '48px',
       overflow: 'hidden',
       padding: 0,
       margin: 0,
       boxShadow: '0 4px 20px rgba(0, 229, 255, 0.15)',
       position: 'relative',
-      flexShrink: 0
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center'
     }}>
       <style>{`
         .price-ticker-single {
           height: 48px !important;
           max-height: 48px !important;
-          overflow: hidden !important;
-        }
-        .price-ticker-single .rfm-marquee-container {
-          height: 48px !important;
-          max-height: 48px !important;
+          min-height: 48px !important;
           overflow: hidden !important;
           display: flex !important;
+          align-items: center !important;
+        }
+        .price-ticker-single * {
           flex-wrap: nowrap !important;
         }
-        .price-ticker-single .rfm-marquee-container > .rfm-marquee:nth-child(2) {
-          display: none !important;
-          visibility: hidden !important;
-          height: 0 !important;
-          width: 0 !important;
-          overflow: hidden !important;
-        }
-        .price-ticker-single .rfm-marquee {
+        .ticker-scroll-container {
           height: 48px !important;
           max-height: 48px !important;
+          min-height: 48px !important;
+          overflow: hidden !important;
           display: flex !important;
+          align-items: center !important;
           flex-wrap: nowrap !important;
         }
-        .price-ticker-single .rfm-initial-child-container {
+        .ticker-scroll-track {
+          display: inline-flex !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
+          height: 48px !important;
+          white-space: nowrap !important;
+        }
+      `}</style>
           height: 48px !important;
           display: flex !important;
           flex-wrap: nowrap !important;
