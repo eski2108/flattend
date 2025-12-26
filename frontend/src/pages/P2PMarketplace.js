@@ -291,7 +291,135 @@ function P2PMarketplace() {
   };
 
   // Open buy modal when clicking "Buy BTC" on an offer
-  const openBuyModal = (offer) => {
+  // =====================================================
+  // AMOUNT WIDGET LOGIC (per specification)
+  // =====================================================
+  
+  // Get decimal places based on crypto
+  const getCryptoDecimals = (crypto) => {
+    switch (crypto) {
+      case 'BTC': return 8;
+      case 'ETH': return 6;
+      case 'USDT':
+      case 'USDC': return 2;
+      default: return 6;
+    }
+  };
+
+  // Calculate conversion based on offer price (NOT global ticker)
+  const calculateConversion = (amount, offer, mode) => {
+    if (!amount || !offer) return '';
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) return '';
+    
+    const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
+    if (offerPrice <= 0) return '';
+    
+    if (mode === 'pay') {
+      // User entered fiat, calculate crypto
+      const cryptoAmount = numAmount / offerPrice;
+      return cryptoAmount.toFixed(getCryptoDecimals(selectedCrypto));
+    } else {
+      // User entered crypto, calculate fiat
+      const fiatAmount = numAmount * offerPrice;
+      return fiatAmount.toFixed(2);
+    }
+  };
+
+  // Get average price from offers for preview conversion (before offer selected)
+  const getAverageOfferPrice = () => {
+    if (!offers || offers.length === 0) return 0;
+    const prices = offers
+      .map(o => parseFloat(o.price_per_unit || o.price || 0))
+      .filter(p => p > 0);
+    if (prices.length === 0) return 0;
+    return prices.reduce((a, b) => a + b, 0) / prices.length;
+  };
+
+  // Handle amount input change (from the widget above offers)
+  const handleAmountInputChange = (value) => {
+    setInputAmount(value);
+    setAmountError('');
+    
+    // Calculate preview conversion using average price (or selected offer if any)
+    const price = selectedOffer 
+      ? parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0)
+      : getAverageOfferPrice();
+    
+    if (price > 0 && value) {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && numValue > 0) {
+        if (amountMode === 'pay') {
+          const cryptoAmount = numValue / price;
+          setConvertedAmount(cryptoAmount.toFixed(getCryptoDecimals(selectedCrypto)));
+        } else {
+          const fiatAmount = numValue * price;
+          setConvertedAmount(fiatAmount.toFixed(2));
+        }
+      } else {
+        setConvertedAmount('');
+      }
+    } else {
+      setConvertedAmount('');
+    }
+  };
+
+  // Handle chip click
+  const handleChipClick = (value) => {
+    handleAmountInputChange(value.toString());
+  };
+
+  // Handle MAX click
+  const handleMaxClick = () => {
+    if (selectedOffer) {
+      const available = parseFloat(selectedOffer.crypto_amount || selectedOffer.available_amount || 0);
+      if (amountMode === 'receive') {
+        handleAmountInputChange(available.toFixed(getCryptoDecimals(selectedCrypto)));
+      } else {
+        const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+        const maxFiat = available * price;
+        handleAmountInputChange(maxFiat.toFixed(2));
+      }
+    }
+  };
+
+  // Validate amount against offer limits
+  const validateAmount = (offer) => {
+    if (!inputAmount || !offer) return { valid: false, error: 'Enter an amount' };
+    
+    const amount = parseFloat(inputAmount);
+    if (isNaN(amount) || amount <= 0) return { valid: false, error: 'Enter a valid amount' };
+    
+    const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
+    const availableAmount = parseFloat(offer.crypto_amount || offer.available_amount || 0);
+    const minLimit = parseFloat(offer.min_order_limit || offer.min_amount || 0);
+    const maxLimit = parseFloat(offer.max_order_limit || offer.max_amount || availableAmount);
+    
+    // Convert input to crypto amount for validation
+    let cryptoAmount;
+    if (amountMode === 'pay') {
+      cryptoAmount = amount / offerPrice;
+    } else {
+      cryptoAmount = amount;
+    }
+    
+    if (minLimit > 0 && cryptoAmount < minLimit) {
+      return { valid: false, error: `Minimum is ${minLimit} ${selectedCrypto}` };
+    }
+    
+    if (maxLimit > 0 && cryptoAmount > maxLimit) {
+      return { valid: false, error: `Maximum is ${maxLimit} ${selectedCrypto}` };
+    }
+    
+    if (cryptoAmount > availableAmount) {
+      return { valid: false, error: `Seller only has ${availableAmount.toFixed(getCryptoDecimals(selectedCrypto))} ${selectedCrypto} available` };
+    }
+    
+    return { valid: true, error: '' };
+  };
+
+  // Open confirm trade modal when clicking Buy on an offer
+  const openConfirmModal = (offer) => {
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
       toast.error('Please login to continue');
@@ -306,13 +434,123 @@ function P2PMarketplace() {
       return;
     }
     
+    // Validate amount if entered
+    if (inputAmount) {
+      const validation = validateAmount(offer);
+      if (!validation.valid) {
+        setAmountError(validation.error);
+        toast.error(validation.error);
+        return;
+      }
+    }
+    
     setSelectedOffer(offer);
-    setBuyAmount('');
-    setBuyAmountFiat('');
-    setShowBuyModal(true);
+    setShowConfirmModal(true);
   };
 
-  // Handle amount change in buy modal (crypto amount)
+  // Handle confirm buy from modal
+  const handleConfirmTrade = async () => {
+    if (!selectedOffer) {
+      toast.error('No offer selected');
+      return;
+    }
+    
+    if (!inputAmount) {
+      toast.error('Please enter an amount');
+      return;
+    }
+    
+    const validation = validateAmount(selectedOffer);
+    if (!validation.valid) {
+      setAmountError(validation.error);
+      toast.error(validation.error);
+      return;
+    }
+    
+    setConfirmProcessing(true);
+    
+    try {
+      const userData = localStorage.getItem('cryptobank_user');
+      if (!userData) {
+        toast.error('Please login to continue');
+        navigate('/login');
+        return;
+      }
+      
+      const user = JSON.parse(userData);
+      const offerPrice = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+      
+      // Calculate amounts based on mode
+      let fiatAmount, cryptoAmount;
+      if (amountMode === 'pay') {
+        fiatAmount = parseFloat(inputAmount);
+        cryptoAmount = fiatAmount / offerPrice;
+      } else {
+        cryptoAmount = parseFloat(inputAmount);
+        fiatAmount = cryptoAmount * offerPrice;
+      }
+      
+      // Generate idempotency key
+      const idempotencyKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      
+      // Create trade via API
+      const response = await axios.post(`${API}/api/p2p/trade/create`, {
+        offer_id: selectedOffer.offer_id,
+        side: activeTab.toUpperCase(),
+        fiat_currency: selectedInputFiat,
+        fiat_amount: fiatAmount,
+        crypto_amount: cryptoAmount,
+        crypto_currency: selectedCrypto,
+        price: offerPrice,
+        payment_method: selectedOffer.payment_methods?.[0] || selectedOffer.payment_method || 'Bank Transfer',
+        buyer_user_id: user.user_id
+      }, {
+        headers: {
+          'Idempotency-Key': idempotencyKey
+        }
+      });
+      
+      if (response.data.success || response.data.trade_id) {
+        const tradeId = response.data.trade_id;
+        toast.success('✅ Trade created! Redirecting to order page...');
+        setShowConfirmModal(false);
+        
+        setTimeout(() => {
+          navigate(`/p2p/order/${tradeId}`);
+        }, 500);
+      } else {
+        throw new Error(response.data.detail || 'Failed to create trade');
+      }
+    } catch (error) {
+      console.error('Trade creation error:', error);
+      const errorMsg = error.response?.data?.detail || error.message;
+      
+      // Handle specific error codes
+      if (error.response?.data?.code === 'LIMIT_TOO_LOW') {
+        setAmountError('Amount is below minimum limit');
+      } else if (error.response?.data?.code === 'LIMIT_TOO_HIGH') {
+        setAmountError('Amount exceeds maximum limit');
+      } else if (error.response?.data?.code === 'INSUFFICIENT_LIQUIDITY') {
+        setAmountError('Seller does not have enough crypto');
+      } else if (error.response?.data?.code === 'OFFER_INACTIVE') {
+        setAmountError('This offer is no longer active');
+      }
+      
+      toast.error(errorMsg);
+    } finally {
+      setConfirmProcessing(false);
+    }
+  };
+
+  // Legacy function - kept for compatibility with existing buy modal
+  const openBuyModal = (offer) => {
+    openConfirmModal(offer);
+  };
+
+  // Handle amount change in buy modal (crypto amount) - legacy
   const handleBuyAmountChange = (value) => {
     setBuyAmount(value);
     if (selectedOffer && value) {
@@ -326,7 +564,7 @@ function P2PMarketplace() {
     }
   };
 
-  // Handle amount change in buy modal (fiat amount)
+  // Handle amount change in buy modal (fiat amount) - legacy
   const handleBuyAmountFiatChange = (value) => {
     setBuyAmountFiat(value);
     if (selectedOffer && value) {
@@ -341,7 +579,7 @@ function P2PMarketplace() {
     }
   };
 
-  // Confirm buy from modal
+  // Confirm buy from legacy modal
   const handleConfirmBuy = async () => {
     if (!selectedOffer || !buyAmount) {
       toast.error('Please enter an amount');
@@ -349,8 +587,6 @@ function P2PMarketplace() {
     }
     
     const amount = parseFloat(buyAmount);
-    const minLimit = parseFloat(selectedOffer.min_order_limit || selectedOffer.min_amount || 0);
-    const maxLimit = parseFloat(selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || 0);
     const availableAmount = parseFloat(selectedOffer.crypto_amount || selectedOffer.available_amount || 0);
     
     if (isNaN(amount) || amount <= 0) {
@@ -363,7 +599,6 @@ function P2PMarketplace() {
       return;
     }
     
-    // Now proceed with the actual buy
     setShowBuyModal(false);
     await handleBuyOffer(selectedOffer, amount);
   };
