@@ -34882,6 +34882,12 @@ async def auto_match_trade(request: dict):
             }
             
             logger.info(f"🔍 Searching p2p_offers with query: {query}")
+            logger.info(f"🔍 Database name: {db.name}")
+            
+            # Debug: Count all documents first
+            total_count = await db.p2p_offers.count_documents({})
+            active_count = await db.p2p_offers.count_documents({"status": "active"})
+            logger.info(f"🔍 DEBUG: Total p2p_offers={total_count}, active={active_count}")
             
             # Find best match from p2p_offers
             offers = await db.p2p_offers.find(query).sort([
