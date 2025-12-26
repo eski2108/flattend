@@ -2433,12 +2433,9 @@ function P2PMarketplace() {
                         onClick={(e) => {
                           e.stopPropagation();
                           console.error('🚀 Buy BTC BUTTON CLICKED! Offer:', JSON.stringify(offer));
-                          console.error('🚀 Processing state:', processing);
                           if (!processing) {
-                            console.error('🚀 Opening buy modal...');
-                            openBuyModal(offer);
-                          } else {
-                            console.error('🚫 Button disabled - processing is true');
+                            console.error('🚀 Opening confirm modal...');
+                            openConfirmModal(offer);
                           }
                         }}
                         disabled={processing}
