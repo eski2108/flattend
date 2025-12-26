@@ -1823,7 +1823,13 @@ function P2PMarketplace() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleBuyOffer(offer);
+                          console.log('🚀 Buy BTC BUTTON CLICKED! Offer:', offer);
+                          console.log('🚀 Processing state:', processing);
+                          if (!processing) {
+                            handleBuyOffer(offer);
+                          } else {
+                            console.log('🚫 Button disabled - processing is true');
+                          }
                         }}
                         disabled={processing}
                         style={{
