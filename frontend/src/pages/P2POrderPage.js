@@ -232,9 +232,18 @@ export default function P2POrderPage() {
     
     setProcessing(true);
     try {
+      const idempotencyKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      
       const response = await axios.post(`${API}/api/p2p/trade/cancel`, {
         trade_id: tradeId,
         user_id: currentUser.user_id
+      }, {
+        headers: {
+          'Idempotency-Key': idempotencyKey
+        }
       });
       
       if (response.data.success) {
@@ -256,10 +265,19 @@ export default function P2POrderPage() {
     
     setProcessing(true);
     try {
+      const idempotencyKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      
       const response = await axios.post(`${API}/api/p2p/trade/${tradeId}/feedback`, {
         from_user_id: currentUser.user_id,
         rating: feedbackRating,
         comment: feedbackComment.trim()
+      }, {
+        headers: {
+          'Idempotency-Key': idempotencyKey
+        }
       });
       
       if (response.data.success) {
