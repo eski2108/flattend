@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://monitorcrypto.preview.emergentagent.com/api"
+BASE_URL = "https://coinhub-rescue.preview.emergentagent.com/api"
 
 def test_fee_tracking():
     print("\n" + "="*60)

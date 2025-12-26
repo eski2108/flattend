@@ -18,7 +18,7 @@ All wallet backend endpoints are fully functional and tested with real data flow
 
 **Test:**
 ```bash
-curl https://monitorcrypto.preview.emergentagent.com/api/wallets/balances/test_user_alice
+curl https://coinhub-rescue.preview.emergentagent.com/api/wallets/balances/test_user_alice
 ```
 
 **Response:**
@@ -64,7 +64,7 @@ curl https://monitorcrypto.preview.emergentagent.com/api/wallets/balances/test_u
 
 **Test:**
 ```bash
-curl https://monitorcrypto.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
+curl https://coinhub-rescue.preview.emergentagent.com/api/wallets/portfolio/test_user_alice
 ```
 
 **Response:**

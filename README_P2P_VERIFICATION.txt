@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://monitorcrypto.preview.emergentagent.com
-P2P Page:     https://monitorcrypto.preview.emergentagent.com/p2p
-Backend API:  https://monitorcrypto.preview.emergentagent.com/api
+Frontend:     https://coinhub-rescue.preview.emergentagent.com
+P2P Page:     https://coinhub-rescue.preview.emergentagent.com/p2p
+Backend API:  https://coinhub-rescue.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

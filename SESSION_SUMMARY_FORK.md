@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://monitorcrypto.preview.emergentagent.com
+https://coinhub-rescue.preview.emergentagent.com
 
 ---
 

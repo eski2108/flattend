@@ -8,7 +8,7 @@ Run these from YOUR machine (not the blocked server).
 
 ## Backend URL
 ```
-BACKEND=https://monitorcrypto.preview.emergentagent.com
+BACKEND=https://coinhub-rescue.preview.emergentagent.com
 USER_ID=no2fa-curl-test
 ```
 

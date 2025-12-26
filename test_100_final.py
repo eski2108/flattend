@@ -4,7 +4,7 @@
 import requests
 import json
 
-BASE_URL = "https://monitorcrypto.preview.emergentagent.com/api"
+BASE_URL = "https://coinhub-rescue.preview.emergentagent.com/api"
 
 print("🎯 FINAL 100% SUCCESS RATE TEST")
 print("=" * 70)

@@ -526,7 +526,7 @@ frontend   RUNNING   ✅
 ```
 
 **Page URL:**
-https://monitorcrypto.preview.emergentagent.com/p2p-express
+https://coinhub-rescue.preview.emergentagent.com/p2p-express
 
 ---
 

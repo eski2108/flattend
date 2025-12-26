@@ -261,13 +261,13 @@ const fetchAvailableCryptos = async () => {
 **Test the complete flow here:**
 
 1. **Marketplace with "Become a Seller" button:**
-   https://monitorcrypto.preview.emergentagent.com/#/p2p
+   https://coinhub-rescue.preview.emergentagent.com/#/p2p
 
 2. **Seller Dashboard/Onboarding:**
-   https://monitorcrypto.preview.emergentagent.com/#/p2p/merchant
+   https://coinhub-rescue.preview.emergentagent.com/#/p2p/merchant
 
 3. **Create New Offer:**
-   https://monitorcrypto.preview.emergentagent.com/#/p2p/create-ad
+   https://coinhub-rescue.preview.emergentagent.com/#/p2p/create-ad
 
 **Note:** You must be logged in to access Merchant Center and Create Ad pages.
 

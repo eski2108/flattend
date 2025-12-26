@@ -130,7 +130,7 @@ To complete the file locking:
 **Build Completed:** December 9, 2024
 **Frontend Restarted:** Yes
 **Services Status:** All running
-**Live URL:** https://monitorcrypto.preview.emergentagent.com
+**Live URL:** https://coinhub-rescue.preview.emergentagent.com
 
 ---
 

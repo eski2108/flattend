@@ -121,7 +121,7 @@ Test Sequence Completed:
 - **Test Result:** ✅ PASS - Complete flow working
 
 ### 10. Live Preview Deployment ✅
-- All changes pushed to: https://monitorcrypto.preview.emergentagent.com
+- All changes pushed to: https://coinhub-rescue.preview.emergentagent.com
 - Backend running and accessible
 - Frontend running and accessible
 - No breaking changes to existing features
@@ -231,7 +231,7 @@ Test Sequence Completed:
 
 ## PRODUCTION DEPLOYMENT
 
-**Live URL:** https://monitorcrypto.preview.emergentagent.com
+**Live URL:** https://coinhub-rescue.preview.emergentagent.com
 
 **Status:**
 - ✅ Backend: RUNNING

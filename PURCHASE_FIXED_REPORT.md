@@ -46,7 +46,7 @@ db.users.insertOne({
 
 ### Backend API Test (Direct):
 ```bash
-curl -X POST "https://monitorcrypto.preview.emergentagent.com/api/p2p/express/create"
+curl -X POST "https://coinhub-rescue.preview.emergentagent.com/api/p2p/express/create"
 
 Response:
 {

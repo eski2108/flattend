@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://monitorcrypto.preview.emergentagent.com
+**Live URL:** https://coinhub-rescue.preview.emergentagent.com
 
 ---
 

@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://monitorcrypto.preview.emergentagent.com"
+BACKEND_URL = "https://coinhub-rescue.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test data

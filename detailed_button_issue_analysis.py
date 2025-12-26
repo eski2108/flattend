@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://monitorcrypto.preview.emergentagent.com/api"
+BASE_URL = "https://coinhub-rescue.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

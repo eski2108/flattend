@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://monitorcrypto.preview.emergentagent.com
+https://coinhub-rescue.preview.emergentagent.com
 
 ### Test Route
 
-`https://monitorcrypto.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://coinhub-rescue.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

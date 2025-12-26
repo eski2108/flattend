@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://monitorcrypto.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://coinhub-rescue.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

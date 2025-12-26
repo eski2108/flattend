@@ -17,7 +17,7 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-BACKEND_URL = "https://monitorcrypto.preview.emergentagent.com/api"
+BACKEND_URL = "https://coinhub-rescue.preview.emergentagent.com/api"
 
 async def final_dispute_email_test():
     """Create real trade and dispute with email verification"""

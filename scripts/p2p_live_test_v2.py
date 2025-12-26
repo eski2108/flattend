@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, '/app/backend')
 
-API_URL = "https://monitorcrypto.preview.emergentagent.com"
+API_URL = "https://coinhub-rescue.preview.emergentagent.com"
 
 async def run_test():
     from motor.motor_asyncio import AsyncIOMotorClient

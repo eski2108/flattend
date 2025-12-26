@@ -104,7 +104,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             allowed_origins = [
                 "https://coinhubx.net",
                 "https://cryptovault-29.emergent.host",
-                "https://monitorcrypto.preview.emergentagent.com",
+                "https://coinhub-rescue.preview.emergentagent.com",
                 "http://localhost:3000",
             ]
             

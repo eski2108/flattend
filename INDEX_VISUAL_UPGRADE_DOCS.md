@@ -6,7 +6,7 @@
 **Status:** ✅ COMPLETE  
 **Date:** December 12, 2024  
 **Environment:** Preview (Production-Ready)  
-**URL:** https://monitorcrypto.preview.emergentagent.com/p2p
+**URL:** https://coinhub-rescue.preview.emergentagent.com/p2p
 
 ---
 
@@ -186,7 +186,7 @@ Code file modified:
 ## 🔗 QUICK LINKS
 
 ### Preview Environment:
-- **URL:** https://monitorcrypto.preview.emergentagent.com/p2p
+- **URL:** https://coinhub-rescue.preview.emergentagent.com/p2p
 - **Status:** LIVE
 - **Last Updated:** December 12, 2024
 

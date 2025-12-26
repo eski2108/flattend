@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://monitorcrypto.preview.emergentagent.com
+**URL:** https://coinhub-rescue.preview.emergentagent.com
 
 **Services Status:**
 ```bash
