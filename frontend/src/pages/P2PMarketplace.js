@@ -72,10 +72,11 @@ function P2PMarketplace() {
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
-  // Amount Widget State (MANDATORY per spec)
-  const [amountMode, setAmountMode] = useState('pay'); // 'pay' = fiat input, 'receive' = crypto input
-  const [inputAmount, setInputAmount] = useState('');
-  const [convertedAmount, setConvertedAmount] = useState('');
+  // Amount Widget State (FINAL SPEC - No Pay/Receive toggle)
+  // BUY mode: User edits fiat (You pay), crypto auto-calculates (You receive)
+  // SELL mode: User edits crypto (You sell), fiat auto-calculates (You receive)
+  const [fiatAmount, setFiatAmount] = useState('');
+  const [cryptoAmount, setCryptoAmount] = useState('');
   const [selectedInputFiat, setSelectedInputFiat] = useState('GBP');
   const [amountError, setAmountError] = useState('');
   
@@ -84,17 +85,18 @@ function P2PMarketplace() {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [confirmProcessing, setConfirmProcessing] = useState(false);
   
-  // Legacy buy modal state (kept for compatibility)
-  const [showBuyModal, setShowBuyModal] = useState(false);
-  const [buyAmount, setBuyAmount] = useState('');
-  const [buyAmountFiat, setBuyAmountFiat] = useState('');
-  
   // Fiat currencies available
   const fiatCurrencies = ['GBP', 'USD', 'EUR'];
   
-  // Quick chips for amount selection
+  // Quick chips based on mode
   const fiatChips = [50, 100, 250, 500, 1000];
-  const cryptoChips = [0.001, 0.005, 0.01, 0.05, 0.1];
+  const cryptoChipsBTC = [0.001, 0.005, 0.01, 0.05, 0.1];
+  const cryptoChipsETH = [0.01, 0.05, 0.1, 0.5, 1];
+  
+  // Legacy state (kept for compatibility)
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [buyAmount, setBuyAmount] = useState('');
+  const [buyAmountFiat, setBuyAmountFiat] = useState('');
 
   const sortOptions = [
     { value: 'best_price', label: 'Best Price' },
