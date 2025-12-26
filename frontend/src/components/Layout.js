@@ -326,8 +326,8 @@ export default function Layout({ children }) {
 
       {/* Main Content */}
       <main className="main-content" data-testid="main-content">
-        {/* Show price ticker - hide only on admin dispute pages */}
-        {!location.pathname.startsWith('/admin/disputes') && <PriceTickerEnhanced />}
+        {/* Show price ticker - hide only on admin dispute pages - use key to prevent duplicates */}
+        {!location.pathname.startsWith('/admin/disputes') && <PriceTickerEnhanced key="global-price-ticker" />}
         
         <PromoBanner />
         
