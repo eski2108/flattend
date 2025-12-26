@@ -981,11 +981,12 @@ async def compute_seller_badges(db, seller_id: str, seller_data: dict = None, st
             "variant": "success"
         })
     
-    # 3. PRO_TRADER badge
+    # 3. PRO_TRADER badge (minimum 5 trades required)
     total_trades = stats_30d.get("trades_total", 0)
     completion_rate = stats_30d.get("completion_rate", 0)
     if (total_trades >= P2P_BADGE_CONFIG["pro_trader_min_trades"] and 
-        completion_rate >= P2P_BADGE_CONFIG["pro_trader_min_completion"]):
+        completion_rate >= P2P_BADGE_CONFIG["pro_trader_min_completion"] and
+        total_trades >= 5):
         badges.append({
             "key": "pro_trader",
             "label": "Pro Trader",
