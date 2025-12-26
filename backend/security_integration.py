@@ -88,8 +88,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         path = request.url.path
         
-        # TEMPORARILY DISABLE WAF - Allow all requests through
-        return await call_next(request)
+        # Skip WAF for all /api/ routes - only block actual attacks on sensitive endpoints
+        if path.startswith("/api/"):
+            return await call_next(request)
         
         ip = request.client.host if request.client else "unknown"
         user_id = request.headers.get("x-user-id")
