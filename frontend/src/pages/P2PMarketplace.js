@@ -290,12 +290,19 @@ function P2PMarketplace() {
       
       // AUTO-MATCH: Find best counterparty
       try {
+        // Generate unique idempotency key for this request
+        const idempotencyKey = `p2p-match-${user.user_id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
         const matchResponse = await axios.post(`${API}/api/p2p/auto-match`, {
           user_id: user.user_id,
           type: activeTab,
           crypto: selectedCrypto,
           amount: cryptoAmount,
           payment_method: offer.payment_method || null
+        }, {
+          headers: {
+            'Idempotency-Key': idempotencyKey
+          }
         });
         
         if (matchResponse.data.success) {
