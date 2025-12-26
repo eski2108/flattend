@@ -527,13 +527,15 @@ export default function P2POrderPage() {
                       disabled={processing}
                       style={{
                         padding: '16px 24px',
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        border: '1px solid rgba(239, 68, 68, 0.4)',
                         borderRadius: '12px',
                         color: '#EF4444',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: processing ? 'not-allowed' : 'pointer'
+                        cursor: processing ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 0 15px rgba(239, 68, 68, 0.2)',
+                        transition: 'all 0.3s ease'
                       }}
                     >
                       <IoWarning size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
@@ -552,7 +554,8 @@ export default function P2POrderPage() {
                           color: '#8F9BB3',
                           fontSize: '16px',
                           fontWeight: '600',
-                          cursor: processing ? 'not-allowed' : 'pointer'
+                          cursor: processing ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.3s ease'
                         }}
                       >
                         {t('p2p.buttons.cancelOrder')}
