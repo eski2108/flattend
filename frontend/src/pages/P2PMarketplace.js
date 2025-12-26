@@ -1303,6 +1303,277 @@ function P2PMarketplace() {
             }
           </div>
 
+          {/* ========== AMOUNT INPUT WIDGET (MANDATORY) ========== */}
+          <div style={{
+            width: '100%',
+            padding: '16px',
+            background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(10, 22, 40, 0.95) 100%)',
+            border: '1px solid rgba(0, 198, 255, 0.15)',
+            borderRadius: '14px',
+            marginBottom: '24px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+          }}>
+            {/* Row A: Pay/Receive Toggle */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '8px',
+              marginBottom: '16px'
+            }}>
+              <button
+                onClick={() => {
+                  setAmountMode('pay');
+                  setInputAmount('');
+                  setConvertedAmount('');
+                }}
+                style={{
+                  flex: 1,
+                  height: '44px',
+                  background: amountMode === 'pay'
+                    ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                    : 'rgba(255, 255, 255, 0.05)',
+                  border: `1px solid ${amountMode === 'pay' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  boxShadow: amountMode === 'pay' ? '0 0 20px rgba(16, 185, 129, 0.4)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                I want to pay
+              </button>
+              <button
+                onClick={() => {
+                  setAmountMode('receive');
+                  setInputAmount('');
+                  setConvertedAmount('');
+                }}
+                style={{
+                  flex: 1,
+                  height: '44px',
+                  background: amountMode === 'receive'
+                    ? 'linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)'
+                    : 'rgba(255, 255, 255, 0.05)',
+                  border: `1px solid ${amountMode === 'receive' ? 'rgba(0, 198, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  boxShadow: amountMode === 'receive' ? '0 0 20px rgba(0, 198, 255, 0.4)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                I want to receive
+              </button>
+            </div>
+
+            {/* Row B: Amount Input + Currency + Conversion Preview */}
+            <div style={{
+              display: isMobile ? 'flex' : 'grid',
+              flexDirection: isMobile ? 'column' : undefined,
+              gridTemplateColumns: isMobile ? undefined : '2fr 1fr 1.5fr',
+              gap: '12px',
+              marginBottom: '16px'
+            }}>
+              {/* Column 1: Amount Input */}
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  pointerEvents: 'none'
+                }}>
+                  {amountMode === 'pay' ? (selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€') : COIN_EMOJIS[selectedCrypto] || '₿'}
+                </div>
+                <input
+                  type="number"
+                  step={amountMode === 'pay' ? '0.01' : '0.00000001'}
+                  min="0"
+                  value={inputAmount}
+                  onChange={(e) => handleAmountInputChange(e.target.value)}
+                  placeholder={amountMode === 'pay' ? '0.00' : `0.${'0'.repeat(getCryptoDecimals(selectedCrypto) - 1)}1`}
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    padding: '0 16px 0 40px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: amountError ? '1px solid #EF4444' : '1px solid rgba(0, 198, 255, 0.2)',
+                    borderRadius: '12px',
+                    color: '#fff',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* Column 2: Currency Selector */}
+              <div>
+                {amountMode === 'pay' ? (
+                  <select
+                    value={selectedInputFiat}
+                    onChange={(e) => setSelectedInputFiat(e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: '48px',
+                      padding: '0 16px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(0, 198, 255, 0.2)',
+                      borderRadius: '12px',
+                      color: '#fff',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 12px center'
+                    }}
+                  >
+                    {fiatCurrencies.map(curr => (
+                      <option key={curr} value={curr}>{curr}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '48px',
+                    padding: '0 16px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(0, 198, 255, 0.2)',
+                    borderRadius: '12px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    {COIN_EMOJIS[selectedCrypto] || '₿'} {selectedCrypto}
+                  </div>
+                )}
+              </div>
+
+              {/* Column 3: Conversion Preview */}
+              <div style={{
+                height: '48px',
+                padding: '0 16px',
+                background: 'rgba(0, 198, 255, 0.08)',
+                border: '1px solid rgba(0, 198, 255, 0.15)',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: convertedAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.4)',
+                fontSize: '14px',
+                fontWeight: '600'
+              }}>
+                {convertedAmount ? (
+                  amountMode === 'pay' 
+                    ? `≈ ${convertedAmount} ${selectedCrypto}`
+                    : `≈ ${selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}${parseFloat(convertedAmount).toLocaleString()}`
+                ) : (
+                  'Enter amount'
+                )}
+              </div>
+            </div>
+
+            {/* Error message */}
+            {amountError && (
+              <div style={{
+                color: '#EF4444',
+                fontSize: '13px',
+                fontWeight: '500',
+                marginBottom: '12px',
+                padding: '8px 12px',
+                background: 'rgba(239, 68, 68, 0.1)',
+                borderRadius: '8px',
+                border: '1px solid rgba(239, 68, 68, 0.3)'
+              }}>
+                ⚠️ {amountError}
+              </div>
+            )}
+
+            {/* Row C: Quick Chips + Limits */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px'
+            }}>
+              {/* Quick chips */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {(amountMode === 'pay' ? fiatChips : cryptoChips).map((value) => (
+                  <button
+                    key={value}
+                    onClick={() => handleChipClick(value)}
+                    style={{
+                      height: '34px',
+                      padding: '0 14px',
+                      background: inputAmount === value.toString()
+                        ? 'linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)'
+                        : 'rgba(255, 255, 255, 0.05)',
+                      border: `1px solid ${inputAmount === value.toString() ? 'rgba(0, 198, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                      borderRadius: '999px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {amountMode === 'pay' 
+                      ? `${selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}${value.toLocaleString()}`
+                      : value
+                    }
+                  </button>
+                ))}
+                <button
+                  onClick={handleMaxClick}
+                  disabled={!selectedOffer}
+                  style={{
+                    height: '34px',
+                    padding: '0 14px',
+                    background: selectedOffer 
+                      ? 'rgba(168, 85, 247, 0.2)'
+                      : 'rgba(255, 255, 255, 0.02)',
+                    border: `1px solid ${selectedOffer ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255, 255, 255, 0.05)'}`,
+                    borderRadius: '999px',
+                    color: selectedOffer ? '#A855F7' : 'rgba(255, 255, 255, 0.3)',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    cursor: selectedOffer ? 'pointer' : 'not-allowed',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Max
+                </button>
+              </div>
+
+              {/* Limits display */}
+              <div style={{
+                fontSize: '12px',
+                color: 'rgba(255, 255, 255, 0.5)',
+                fontStyle: 'italic'
+              }}>
+                {selectedOffer ? (
+                  `Offer limits: ${selectedOffer.min_order_limit || selectedOffer.min_amount || '0.001'} - ${selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || '?'} ${selectedCrypto}`
+                ) : (
+                  'Select an offer to see limits'
+                )}
+              </div>
+            </div>
+          </div>
+          {/* ========== END AMOUNT INPUT WIDGET ========== */}
+
         {/* EXPANDED FILTERS PANEL */}
         {showFilters && (
           <div style={{
