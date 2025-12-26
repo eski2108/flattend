@@ -280,7 +280,8 @@ function P2PMarketplace() {
       const user = JSON.parse(userData);
       setProcessing(true);
       
-      const cryptoAmount = parseFloat(offer.crypto_amount || offer.amount || 0);
+      // Check multiple possible amount fields
+      const cryptoAmount = parseFloat(offer.crypto_amount || offer.amount || offer.available_amount || 0);
       
       if (!cryptoAmount || cryptoAmount <= 0) {
         toast.error('Invalid crypto amount');
