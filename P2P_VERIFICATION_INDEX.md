@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://p2p-repair-1.preview.emergentagent.com
-- Backend API: https://p2p-repair-1.preview.emergentagent.com/api
-- P2P Marketplace: https://p2p-repair-1.preview.emergentagent.com/p2p
+- Frontend: https://order-confirmation-2.preview.emergentagent.com
+- Backend API: https://order-confirmation-2.preview.emergentagent.com/api
+- P2P Marketplace: https://order-confirmation-2.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

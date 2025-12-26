@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://p2p-repair-1.preview.emergentagent.com
-P2P Page:     https://p2p-repair-1.preview.emergentagent.com/p2p
-Backend API:  https://p2p-repair-1.preview.emergentagent.com/api
+Frontend:     https://order-confirmation-2.preview.emergentagent.com
+P2P Page:     https://order-confirmation-2.preview.emergentagent.com/p2p
+Backend API:  https://order-confirmation-2.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

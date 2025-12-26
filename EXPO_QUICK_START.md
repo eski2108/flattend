@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://p2p-repair-1.preview.emergentagent.com/api
+https://order-confirmation-2.preview.emergentagent.com/api
 ```
 
 This means:

@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://p2p-repair-1.preview.emergentagent.com
+**URL:** https://order-confirmation-2.preview.emergentagent.com
 
 **Services Status:**
 ```bash

@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://p2p-repair-1.preview.emergentagent.com
+https://order-confirmation-2.preview.emergentagent.com
 
 ### Test Route
 
-`https://p2p-repair-1.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://order-confirmation-2.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

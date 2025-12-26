@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://p2p-repair-1.preview.emergentagent.com
+https://order-confirmation-2.preview.emergentagent.com
 
 ---
 

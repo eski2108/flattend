@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://p2p-repair-1.preview.emergentagent.com/api
-- **Frontend App**: https://p2p-repair-1.preview.emergentagent.com
+- **Backend API**: https://order-confirmation-2.preview.emergentagent.com/api
+- **Frontend App**: https://order-confirmation-2.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

@@ -11,7 +11,7 @@ from datetime import datetime
 import uuid
 
 # Configuration
-BASE_URL = "https://p2p-repair-1.preview.emergentagent.com/api"
+BASE_URL = "https://order-confirmation-2.preview.emergentagent.com/api"
 TEST_USER_EMAIL = "gads21083@gmail.com"
 TEST_USER_PASSWORD = "123456789"
 
