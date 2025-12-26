@@ -292,7 +292,7 @@ The backend API at `/api/prices/live` returns:
 - No console errors
 - All tests passing
 
-**Live URL:** https://coinhub-rescue.preview.emergentagent.com/#/trading
+**Live URL:** https://p2p-repair-1.preview.emergentagent.com/#/trading
 
 ---
 

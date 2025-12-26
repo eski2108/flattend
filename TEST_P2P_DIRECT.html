@@ -8,7 +8,7 @@
     <div id="result"></div>
     
     <script>
-        fetch('https://coinhub-rescue.preview.emergentagent.com/api/p2p/marketplace/offers')
+        fetch('https://p2p-repair-1.preview.emergentagent.com/api/p2p/marketplace/offers')
             .then(r => r.json())
             .then(data => {
                 document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';

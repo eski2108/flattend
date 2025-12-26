@@ -16,7 +16,7 @@ import json
 import uuid
 from datetime import datetime
 
-BACKEND_URL = "https://coinhub-rescue.preview.emergentagent.com/api"
+BACKEND_URL = "https://p2p-repair-1.preview.emergentagent.com/api"
 
 class FocusedFinancialTest:
     def __init__(self):

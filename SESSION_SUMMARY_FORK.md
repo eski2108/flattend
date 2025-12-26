@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://coinhub-rescue.preview.emergentagent.com
+https://p2p-repair-1.preview.emergentagent.com
 
 ---
 

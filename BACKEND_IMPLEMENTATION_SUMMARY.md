@@ -212,7 +212,7 @@ curl http://localhost:8001/api/trader/stats/{actual_user_id}
 
 **External URL:**
 ```bash
-curl https://coinhub-rescue.preview.emergentagent.com/api/trader/stats/{user_id}
+curl https://p2p-repair-1.preview.emergentagent.com/api/trader/stats/{user_id}
 ```
 
 ---

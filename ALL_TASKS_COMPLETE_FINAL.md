@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://coinhub-rescue.preview.emergentagent.com
+**URL:** https://p2p-repair-1.preview.emergentagent.com
 
 **Services Status:**
 ```bash

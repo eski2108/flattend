@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://coinhub-rescue.preview.emergentagent.com`
-- Backend API: `https://coinhub-rescue.preview.emergentagent.com/api`
+- Frontend: `https://p2p-repair-1.preview.emergentagent.com`
+- Backend API: `https://p2p-repair-1.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

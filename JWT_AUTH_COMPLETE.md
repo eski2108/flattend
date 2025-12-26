@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://coinhub-rescue.preview.emergentagent.com
+**Live URL:** https://p2p-repair-1.preview.emergentagent.com
 
 ---
 
