@@ -7833,6 +7833,52 @@ async def get_all_trader_balances(limit: int = 100):
 # TRADER BADGE SYSTEM - Phase 2
 # ============================================================================
 
+@api_router.get("/trader/stats/{trader_id}")
+async def get_trader_stats(trader_id: str):
+    """Get stats for a specific trader - used by P2P marketplace"""
+    try:
+        # First check merchant_stats collection
+        stats = await db.merchant_stats.find_one({"user_id": trader_id}, {"_id": 0})
+        
+        if not stats:
+            # Check trader_stats collection
+            stats = await db.trader_stats.find_one({"user_id": trader_id}, {"_id": 0})
+        
+        if not stats:
+            # Return default stats for new traders
+            return {
+                "success": True,
+                "stats": {
+                    "user_id": trader_id,
+                    "total_trades": 0,
+                    "completed_trades": 0,
+                    "cancelled_trades": 0,
+                    "completion_rate": 100.0,
+                    "average_release_time_seconds": 900,
+                    "total_volume_usd": 0,
+                    "rating": 5.0,
+                    "is_verified": False,
+                    "badges": []
+                }
+            }
+        
+        return {
+            "success": True,
+            "stats": stats
+        }
+    except Exception as e:
+        logger.error(f"Error fetching trader stats: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "stats": {
+                "user_id": trader_id,
+                "total_trades": 0,
+                "completion_rate": 100.0,
+                "rating": 5.0
+            }
+        }
+
 @api_router.get("/trader/badges/{trader_id}")
 async def get_badges_for_trader(trader_id: str):
     """
