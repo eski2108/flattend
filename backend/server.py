@@ -2027,30 +2027,50 @@ async def liquidate_loan(request: LiquidateRequest):
         "message": "Loan liquidated successfully"
     }
 
-@api_router.get("/user/profile/{wallet_address}")
-async def get_user_profile(wallet_address: str):
-    """Get user profile and stats"""
-    user = await db.users.find_one({"wallet_address": wallet_address}, {"_id": 0})
+@api_router.get("/user/profile/{identifier}")
+async def get_user_profile(identifier: str):
+    """Get user profile and stats - supports both wallet_address and user_id"""
+    # Try to find by user_id first (UUID format)
+    user = await db.users.find_one({"user_id": identifier}, {"_id": 0})
+    
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        # Try by wallet_address
+        user = await db.users.find_one({"wallet_address": identifier}, {"_id": 0})
+    
+    if not user:
+        # Return minimal profile for unknown users
+        return {
+            "success": True,
+            "user": {
+                "user_id": identifier,
+                "email": "",
+                "display_name": "User",
+                "is_verified": False,
+                "created_at": None
+            },
+            "active_borrows": [],
+            "active_lends": [],
+            "pending_offers": []
+        }
     
     # Get active loans as borrower
+    wallet_address = user.get("wallet_address", "")
     active_borrows = await db.loans.find(
         {"borrower_address": wallet_address, "status": "active"},
         {"_id": 0}
-    ).to_list(100)
+    ).to_list(100) if wallet_address else []
     
     # Get active loans as lender
     active_lends = await db.loans.find(
         {"lender_address": wallet_address, "status": "active"},
         {"_id": 0}
-    ).to_list(100)
+    ).to_list(100) if wallet_address else []
     
     # Get pending offers
     pending_offers = await db.loan_offers.find(
         {"lender_address": wallet_address, "status": "available"},
         {"_id": 0}
-    ).to_list(100)
+    ).to_list(100) if wallet_address else []
     
     return {
         "success": True,
