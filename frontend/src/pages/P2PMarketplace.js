@@ -339,6 +339,9 @@ function P2PMarketplace() {
         });
         
         setOffers(fetchedOffers);
+        
+        // Fetch seller profiles for visible offers (async, no blocking)
+        fetchSellerProfilesForOffers(fetchedOffers);
       }
     } catch (error) {
       console.error('Error fetching offers:', error);
