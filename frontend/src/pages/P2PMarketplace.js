@@ -268,7 +268,7 @@ function P2PMarketplace() {
 
   const handleBuyOffer = async (offer) => {
     try {
-      console.log('🔥 handleBuyOffer called!', offer);
+      console.error('🔥 handleBuyOffer called!', JSON.stringify(offer));
       
       const userData = localStorage.getItem('cryptobank_user');
       if (!userData) {
@@ -278,6 +278,7 @@ function P2PMarketplace() {
       }
       
       const user = JSON.parse(userData);
+      console.error('🔥 User data loaded:', user.user_id);
       setProcessing(true);
       
       // Check multiple possible amount fields
