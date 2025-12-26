@@ -175,6 +175,12 @@
       "disputed": "Disputed",
       "pending_escrow": "Pending Escrow"
     },
+    "dispute": {
+      "title": "Open Dispute",
+      "description": "Please describe the issue you're experiencing with this trade.",
+      "placeholder": "Explain the problem in detail...",
+      "submit": "Submit Dispute"
+    },
     "order": {
       "title": "Order Details",
       "amount": "Amount",
