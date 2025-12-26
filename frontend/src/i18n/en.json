@@ -175,6 +175,9 @@
       "disputed": "Disputed",
       "pending_escrow": "Pending Escrow"
     },
+    "paymentMarkedSuccess": "Payment marked as sent! Waiting for seller to release crypto.",
+    "orderCancelledSuccess": "Order cancelled successfully.",
+    "disputeOpenedSuccess": "Dispute opened. Our support team will review your case.",
     "dispute": {
       "title": "Open Dispute",
       "description": "Please describe the issue you're experiencing with this trade.",
