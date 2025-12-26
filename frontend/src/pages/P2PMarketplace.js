@@ -3109,7 +3109,8 @@ function P2PMarketplace() {
           </div>
         )}
 
-        {/* ========== CONFIRM TRADE MODAL (per specification) ========== */}
+        {/* ========== CONFIRM TRADE MODAL (FINAL SPEC) ========== */}
+        {/* Order: 1. Amount Summary (MOST PROMINENT) 2. Seller Card 3. Payment Methods 4. Offer Limits 5. Confirm Button */}
         {showConfirmModal && selectedOffer && (
           <div style={{
             position: 'fixed',
@@ -3140,20 +3141,15 @@ function P2PMarketplace() {
                 display: 'flex', 
                 justifyContent: 'space-between', 
                 alignItems: 'center',
-                marginBottom: '24px',
-                paddingBottom: '16px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                marginBottom: '24px'
               }}>
                 <h2 style={{ 
                   color: '#FFFFFF', 
-                  fontSize: '22px', 
+                  fontSize: '20px', 
                   fontWeight: '700',
-                  margin: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px'
+                  margin: 0
                 }}>
-                  {activeTab === 'buy' ? '🛒' : '💰'} Confirm {activeTab === 'buy' ? 'Purchase' : 'Sale'}
+                  Confirm {activeTab === 'buy' ? 'Purchase' : 'Sale'}
                 </h2>
                 <button
                   onClick={() => setShowConfirmModal(false)}
@@ -3161,33 +3157,104 @@ function P2PMarketplace() {
                     background: 'rgba(143, 155, 179, 0.2)',
                     border: 'none',
                     borderRadius: '50%',
-                    width: '40px',
-                    height: '40px',
+                    width: '36px',
+                    height: '36px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
                     color: '#8F9BB3',
-                    fontSize: '22px',
-                    transition: 'all 0.2s'
+                    fontSize: '20px'
                   }}
                 >
                   ×
                 </button>
               </div>
 
-              {/* Seller Info Card */}
+              {/* 1. AMOUNT SUMMARY - MOST PROMINENT */}
               <div style={{
-                background: 'rgba(0, 198, 255, 0.05)',
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)',
                 borderRadius: '16px',
-                padding: '20px',
+                padding: '24px',
                 marginBottom: '20px',
-                border: '1px solid rgba(0, 198, 255, 0.1)'
+                border: '1px solid rgba(16, 185, 129, 0.3)'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                {/* You pay */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.6)', 
+                    fontSize: '13px', 
+                    fontWeight: '600',
+                    marginBottom: '6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    You pay
+                  </div>
+                  <div style={{ 
+                    color: '#FFFFFF', 
+                    fontSize: '28px', 
+                    fontWeight: '800',
+                    letterSpacing: '-0.5px'
+                  }}>
+                    {getFiatSymbol(selectedInputFiat)}{parseFloat(fiatAmount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+                
+                {/* Arrow */}
+                <div style={{ 
+                  color: 'rgba(255, 255, 255, 0.3)', 
+                  fontSize: '20px',
+                  marginBottom: '16px'
+                }}>
+                  ↓
+                </div>
+                
+                {/* You receive */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.6)', 
+                    fontSize: '13px', 
+                    fontWeight: '600',
+                    marginBottom: '6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    You receive
+                  </div>
+                  <div style={{ 
+                    color: '#00C6FF', 
+                    fontSize: '28px', 
+                    fontWeight: '800',
+                    letterSpacing: '-0.5px'
+                  }}>
+                    {parseFloat(cryptoAmount || 0).toFixed(getCryptoDecimals(selectedCrypto))} {selectedCrypto}
+                  </div>
+                </div>
+                
+                {/* Rate */}
+                <div style={{ 
+                  color: 'rgba(255, 255, 255, 0.5)', 
+                  fontSize: '13px',
+                  paddingTop: '12px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  Rate: {getFiatSymbol(selectedInputFiat)}{(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()} / {selectedCrypto}
+                </div>
+              </div>
+
+              {/* 2. SELLER CARD */}
+              <div style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '14px',
+                padding: '16px',
+                marginBottom: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.05)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{
-                    width: '48px',
-                    height: '48px',
+                    width: '44px',
+                    height: '44px',
                     borderRadius: '50%',
                     background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
                     display: 'flex',
@@ -3195,160 +3262,85 @@ function P2PMarketplace() {
                     justifyContent: 'center',
                     color: '#fff',
                     fontWeight: '700',
-                    fontSize: '18px'
+                    fontSize: '16px'
                   }}>
                     {(selectedOffer.seller_info?.username || selectedOffer.seller_name || 'S')[0].toUpperCase()}
                   </div>
-                  <div>
-                    <div style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#fff', fontWeight: '600', fontSize: '15px' }}>
                       {selectedOffer.seller_info?.username || selectedOffer.seller_name || 'Seller'}
                     </div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>⭐ {selectedOffer.seller_info?.rating?.toFixed(1) || '5.0'}</span>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>⭐ {(selectedOffer.seller_info?.rating || 5.0).toFixed(1)}</span>
                       <span>•</span>
                       <span>{selectedOffer.seller_info?.total_trades || 0} trades</span>
                       {selectedOffer.seller_info?.verified && (
                         <>
                           <span>•</span>
-                          <span style={{ color: '#10B981' }}>✓ Verified</span>
+                          <span style={{ color: '#10B981' }}>✓</span>
                         </>
                       )}
                     </div>
                   </div>
                 </div>
-
-                {/* Price and Payment Methods */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', marginBottom: '4px' }}>Price per {selectedCrypto}</div>
-                    <div style={{ color: '#22C55E', fontWeight: '700', fontSize: '18px' }}>
-                      {selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}
-                      {(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', marginBottom: '4px' }}>Payment Methods</div>
-                    <div style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
-                      {(selectedOffer.payment_methods || [selectedOffer.payment_method || 'Bank Transfer']).slice(0, 2).join(', ')}
-                    </div>
-                  </div>
-                </div>
               </div>
 
-              {/* Order Limits */}
+              {/* 3. PAYMENT METHODS */}
               <div style={{
-                background: 'rgba(143, 155, 179, 0.1)',
-                borderRadius: '12px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '14px',
                 padding: '14px 16px',
-                marginBottom: '20px',
+                marginBottom: '16px',
                 display: 'flex',
                 justifyContent: 'space-between',
-                fontSize: '13px'
+                alignItems: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.05)'
               }}>
-                <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Order Limits</span>
-                <span style={{ color: '#fff', fontWeight: '600' }}>
-                  {selectedOffer.min_order_limit || selectedOffer.min_amount || '0.001'} - {selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || '?'} {selectedCrypto}
+                <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '13px' }}>Payment</span>
+                <span style={{ color: '#fff', fontWeight: '600', fontSize: '13px' }}>
+                  {(selectedOffer.payment_methods || [selectedOffer.payment_method || 'Bank Transfer']).slice(0, 2).join(', ')}
                 </span>
               </div>
 
-              {/* Amount Input in Modal (pre-filled from widget) */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ 
-                  display: 'block', 
-                  color: 'rgba(255, 255, 255, 0.7)', 
-                  fontSize: '13px', 
-                  marginBottom: '8px',
-                  fontWeight: '600'
-                }}>
-                  {amountMode === 'pay' ? 'You Pay' : 'You Receive'}
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type="number"
-                    step={amountMode === 'pay' ? '0.01' : '0.00000001'}
-                    value={inputAmount}
-                    onChange={(e) => handleAmountInputChange(e.target.value)}
-                    placeholder="Enter amount"
-                    style={{
-                      width: '100%',
-                      height: '56px',
-                      padding: '0 80px 0 20px',
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: amountError ? '2px solid #EF4444' : '2px solid rgba(0, 198, 255, 0.3)',
-                      borderRadius: '14px',
-                      color: '#fff',
-                      fontSize: '20px',
-                      fontWeight: '700',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    right: '20px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    {amountMode === 'pay' ? selectedInputFiat : selectedCrypto}
-                  </div>
-                </div>
-                {amountError && (
-                  <div style={{ color: '#EF4444', fontSize: '13px', marginTop: '6px' }}>
-                    ⚠️ {amountError}
-                  </div>
-                )}
-              </div>
-
-              {/* Conversion Breakdown */}
+              {/* 4. OFFER LIMITS */}
               <div style={{
-                background: 'rgba(16, 185, 129, 0.08)',
+                background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '14px',
-                padding: '20px',
+                padding: '14px 16px',
                 marginBottom: '24px',
-                border: '1px solid rgba(16, 185, 129, 0.2)'
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.05)'
               }}>
-                <div style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '12px', fontWeight: '600' }}>
-                  Order Summary
-                </div>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>You {amountMode === 'pay' ? 'pay' : 'receive'}</span>
-                  <span style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
-                    {amountMode === 'pay' 
-                      ? `${selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}${parseFloat(inputAmount || 0).toLocaleString()}`
-                      : `${parseFloat(inputAmount || 0).toFixed(getCryptoDecimals(selectedCrypto))} ${selectedCrypto}`
-                    }
-                  </span>
-                </div>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>You {amountMode === 'pay' ? 'receive' : 'pay'}</span>
-                  <span style={{ color: '#00C6FF', fontWeight: '700', fontSize: '16px' }}>
-                    {amountMode === 'pay'
-                      ? `${convertedAmount || '0'} ${selectedCrypto}`
-                      : `${selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}${parseFloat(convertedAmount || 0).toLocaleString()}`
-                    }
-                  </span>
-                </div>
-                
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  paddingTop: '10px',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Rate</span>
-                  <span style={{ color: '#22C55E', fontWeight: '600' }}>
-                    1 {selectedCrypto} = {selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}
-                    {(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()}
-                  </span>
-                </div>
+                <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '13px' }}>Limits</span>
+                <span style={{ color: '#fff', fontWeight: '600', fontSize: '13px' }}>
+                  {(() => {
+                    const minCrypto = selectedOffer.min_order_limit || selectedOffer.min_amount || 0.001;
+                    const maxCrypto = selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || 1;
+                    const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+                    return `${getFiatSymbol(selectedInputFiat)}${(minCrypto * price).toFixed(0)} – ${getFiatSymbol(selectedInputFiat)}${(maxCrypto * price).toFixed(0)}`;
+                  })()}
+                </span>
               </div>
 
-              {/* Action Buttons */}
+              {/* Error message */}
+              {amountError && (
+                <div style={{
+                  color: '#EF4444',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  marginBottom: '16px',
+                  padding: '12px 14px',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(239, 68, 68, 0.3)'
+                }}>
+                  ⚠️ {amountError}
+                </div>
+              )}
+
+              {/* 5. ACTION BUTTONS */}
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
                   onClick={() => setShowConfirmModal(false)}
@@ -3359,21 +3351,20 @@ function P2PMarketplace() {
                     border: '1px solid rgba(143, 155, 179, 0.3)',
                     borderRadius: '14px',
                     color: '#8F9BB3',
-                    fontSize: '16px',
+                    fontSize: '15px',
                     fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    cursor: 'pointer'
                   }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmTrade}
-                  disabled={confirmProcessing || !inputAmount || parseFloat(inputAmount) <= 0 || !!amountError}
+                  disabled={confirmProcessing || !fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError}
                   style={{
                     flex: 2,
                     padding: '16px',
-                    background: (!inputAmount || parseFloat(inputAmount) <= 0 || !!amountError)
+                    background: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError)
                       ? 'rgba(143, 155, 179, 0.3)'
                       : activeTab === 'buy'
                         ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
@@ -3381,15 +3372,14 @@ function P2PMarketplace() {
                     border: 'none',
                     borderRadius: '14px',
                     color: '#FFFFFF',
-                    fontSize: '16px',
+                    fontSize: '15px',
                     fontWeight: '700',
-                    cursor: (!inputAmount || parseFloat(inputAmount) <= 0 || !!amountError) ? 'not-allowed' : 'pointer',
-                    boxShadow: (!inputAmount || parseFloat(inputAmount) <= 0 || !!amountError)
+                    cursor: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError) ? 'not-allowed' : 'pointer',
+                    boxShadow: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError)
                       ? 'none'
                       : activeTab === 'buy'
-                        ? '0 0 30px rgba(16, 185, 129, 0.5)'
-                        : '0 0 30px rgba(239, 68, 68, 0.5)',
-                    transition: 'all 0.2s',
+                        ? '0 0 25px rgba(16, 185, 129, 0.5)'
+                        : '0 0 25px rgba(239, 68, 68, 0.5)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -3399,8 +3389,8 @@ function P2PMarketplace() {
                   {confirmProcessing ? (
                     <>
                       <div style={{
-                        width: '18px',
-                        height: '18px',
+                        width: '16px',
+                        height: '16px',
                         border: '2px solid rgba(255,255,255,0.3)',
                         borderTopColor: '#fff',
                         borderRadius: '50%',
