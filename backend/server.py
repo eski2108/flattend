@@ -3155,17 +3155,22 @@ async def get_enhanced_offers(
 async def get_marketplace_offers(crypto_currency: Optional[str] = None):
     """Get marketplace offers for buyers (showing SELL offers)"""
     try:
-        query = {"status": "active", "offer_type": "sell"}
+        query = {"status": "active"}
         
         if crypto_currency and crypto_currency != 'all':
             query["crypto_currency"] = crypto_currency
         
-        offers = await db.enhanced_sell_orders.find(query, {"_id": 0}).sort("price_per_unit", 1).to_list(100)
+        # Check both collections for offers
+        offers = await db.p2p_offers.find(query, {"_id": 0}).sort("price", 1).to_list(100)
+        
+        if not offers:
+            offers = await db.enhanced_sell_orders.find({"status": "active", "offer_type": "sell"}, {"_id": 0}).sort("price_per_unit", 1).to_list(100)
         
         # Enrich with seller info
         enriched_offers = []
         for offer in offers:
-            seller = await db.users.find_one({"user_id": offer.get("seller_id")}, {"_id": 0})
+            seller_id = offer.get("seller_id") or offer.get("user_id")
+            seller = await db.users.find_one({"user_id": seller_id}, {"_id": 0})
             if seller:
                 offer["seller_username"] = seller.get("full_name") or seller.get("email", "Unknown")
                 offer["seller_rating"] = seller.get("rating", 0)
