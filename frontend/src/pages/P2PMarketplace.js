@@ -2350,6 +2350,253 @@ function P2PMarketplace() {
             </div>
           </div>
         )}
+
+        {/* Buy Amount Modal */}
+        {showBuyModal && selectedOffer && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            backdropFilter: 'blur(8px)'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #0D1F2D 0%, #0A1628 100%)',
+              borderRadius: '24px',
+              padding: '32px',
+              maxWidth: '450px',
+              width: '90%',
+              border: '1px solid rgba(0, 198, 255, 0.2)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+            }}>
+              {/* Header */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: '24px'
+              }}>
+                <h2 style={{ 
+                  color: '#FFFFFF', 
+                  fontSize: '24px', 
+                  fontWeight: '700',
+                  margin: 0
+                }}>
+                  {activeTab === 'buy' ? 'Buy' : 'Sell'} {selectedCrypto}
+                </h2>
+                <button
+                  onClick={() => setShowBuyModal(false)}
+                  style={{
+                    background: 'rgba(143, 155, 179, 0.2)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: '#8F9BB3',
+                    fontSize: '20px'
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Seller Info */}
+              <div style={{
+                background: 'rgba(0, 198, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '24px',
+                border: '1px solid rgba(0, 198, 255, 0.1)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#8F9BB3', fontSize: '14px' }}>Seller</span>
+                  <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                    {selectedOffer.seller_info?.username || selectedOffer.seller_name || 'Seller'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#8F9BB3', fontSize: '14px' }}>Price</span>
+                  <span style={{ color: '#22C55E', fontWeight: '700' }}>
+                    £{(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()} / {selectedCrypto}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8F9BB3', fontSize: '14px' }}>Available</span>
+                  <span style={{ color: '#00C6FF', fontWeight: '600' }}>
+                    {(selectedOffer.crypto_amount || selectedOffer.available_amount || 0).toFixed(8)} {selectedCrypto}
+                  </span>
+                </div>
+              </div>
+
+              {/* Amount Input - Crypto */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ 
+                  display: 'block', 
+                  color: '#8F9BB3', 
+                  fontSize: '14px', 
+                  marginBottom: '8px',
+                  fontWeight: '500'
+                }}>
+                  Amount ({selectedCrypto})
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="number"
+                    step="0.00000001"
+                    min="0"
+                    max={selectedOffer.crypto_amount || selectedOffer.available_amount || 0}
+                    value={buyAmount}
+                    onChange={(e) => handleBuyAmountChange(e.target.value)}
+                    placeholder={`0.00 ${selectedCrypto}`}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      background: 'rgba(143, 155, 179, 0.1)',
+                      border: '1px solid rgba(0, 198, 255, 0.2)',
+                      borderRadius: '12px',
+                      color: '#FFFFFF',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                  <button
+                    onClick={() => handleBuyAmountChange((selectedOffer.crypto_amount || selectedOffer.available_amount || 0).toString())}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'rgba(0, 198, 255, 0.2)',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '6px 12px',
+                      color: '#00C6FF',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    MAX
+                  </button>
+                </div>
+              </div>
+
+              {/* Amount Input - Fiat */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ 
+                  display: 'block', 
+                  color: '#8F9BB3', 
+                  fontSize: '14px', 
+                  marginBottom: '8px',
+                  fontWeight: '500'
+                }}>
+                  Amount (GBP)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={buyAmountFiat}
+                  onChange={(e) => handleBuyAmountFiatChange(e.target.value)}
+                  placeholder="£0.00"
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    background: 'rgba(143, 155, 179, 0.1)',
+                    border: '1px solid rgba(0, 198, 255, 0.2)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* Order Limits Info */}
+              <div style={{
+                background: 'rgba(143, 155, 179, 0.1)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '24px',
+                fontSize: '13px',
+                color: '#8F9BB3'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Min Order:</span>
+                  <span style={{ color: '#FFFFFF' }}>
+                    {selectedOffer.min_order_limit || selectedOffer.min_amount || '0.001'} {selectedCrypto}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Max Order:</span>
+                  <span style={{ color: '#FFFFFF' }}>
+                    {selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || '1.0'} {selectedCrypto}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => setShowBuyModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '16px',
+                    background: 'rgba(143, 155, 179, 0.2)',
+                    border: '1px solid rgba(143, 155, 179, 0.3)',
+                    borderRadius: '12px',
+                    color: '#8F9BB3',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmBuy}
+                  disabled={processing || !buyAmount || parseFloat(buyAmount) <= 0}
+                  style={{
+                    flex: 2,
+                    padding: '16px',
+                    background: (!buyAmount || parseFloat(buyAmount) <= 0)
+                      ? 'rgba(143, 155, 179, 0.3)'
+                      : activeTab === 'buy'
+                        ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                        : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: (!buyAmount || parseFloat(buyAmount) <= 0) ? 'not-allowed' : 'pointer',
+                    boxShadow: (!buyAmount || parseFloat(buyAmount) <= 0)
+                      ? 'none'
+                      : activeTab === 'buy'
+                        ? '0 0 25px rgba(16, 185, 129, 0.5)'
+                        : '0 0 25px rgba(239, 68, 68, 0.5)'
+                  }}
+                >
+                  {processing ? 'Processing...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
   );
 }
