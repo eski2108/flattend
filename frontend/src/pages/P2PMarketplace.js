@@ -85,6 +85,14 @@ function P2PMarketplace() {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [confirmProcessing, setConfirmProcessing] = useState(false);
   
+  // Buyer verification state
+  const [buyerVerification, setBuyerVerification] = useState({
+    email_verified: false,
+    phone_verified: false,
+    kyc_verified: false,
+    checked: false
+  });
+  
   // Seller profile cache (keyed by seller_id)
   const sellerProfileCache = useRef(new Map());
   const [offerSellerProfiles, setOfferSellerProfiles] = useState({});
