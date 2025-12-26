@@ -3714,6 +3714,229 @@ async def get_seller_profile(seller_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ============================================================
+# P2P COLLATERAL SYSTEM
+# ============================================================
+
+@api_router.post("/p2p/collateral/lock")
+async def lock_collateral(request: dict):
+    """
+    Lock collateral/deposit for seller badge eligibility.
+    """
+    try:
+        user_id = request.get("user_id")
+        amount = float(request.get("amount", 0))
+        asset = request.get("asset", "USDT")
+        
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        if amount < P2P_BADGE_CONFIG["collateral_min_amount_gbp"]:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Minimum collateral is £{P2P_BADGE_CONFIG['collateral_min_amount_gbp']}"
+            )
+        
+        # Check if user has existing active collateral
+        existing = await db.p2p_collateral.find_one({"user_id": user_id, "status": "active"})
+        if existing:
+            raise HTTPException(status_code=400, detail="You already have active collateral locked")
+        
+        # Check user has sufficient balance
+        user = await db.users.find_one({"user_id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        wallet = user.get("wallets", {}).get(asset, {})
+        available = float(wallet.get("available_balance", 0))
+        
+        if available < amount:
+            raise HTTPException(status_code=400, detail=f"Insufficient {asset} balance. Available: {available}")
+        
+        # Deduct from user wallet
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$inc": {f"wallets.{asset}.available_balance": -amount}}
+        )
+        
+        # Create collateral record
+        collateral_id = f"collateral_{user_id}_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+        collateral_doc = {
+            "collateral_id": collateral_id,
+            "user_id": user_id,
+            "amount": amount,
+            "asset": asset,
+            "status": "active",
+            "locked_at": datetime.now(timezone.utc).isoformat(),
+            "unlock_requested_at": None,
+            "unlock_available_at": None
+        }
+        
+        await db.p2p_collateral.insert_one(collateral_doc)
+        
+        logger.info(f"✅ Collateral locked: {user_id} locked {amount} {asset}")
+        
+        return {
+            "success": True,
+            "collateral_id": collateral_id,
+            "amount": amount,
+            "asset": asset,
+            "status": "active",
+            "message": "Collateral locked successfully. You now have the 'Deposit Secured' badge."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error locking collateral: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/collateral/request-unlock")
+async def request_collateral_unlock(request: dict):
+    """
+    Request to unlock collateral. Starts cooldown period.
+    """
+    try:
+        user_id = request.get("user_id")
+        
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        # Find active collateral
+        collateral = await db.p2p_collateral.find_one({"user_id": user_id, "status": "active"})
+        if not collateral:
+            raise HTTPException(status_code=404, detail="No active collateral found")
+        
+        # Calculate unlock available time
+        cooldown_hours = P2P_BADGE_CONFIG["collateral_unlock_cooldown_hours"]
+        unlock_available_at = datetime.now(timezone.utc) + timedelta(hours=cooldown_hours)
+        
+        # Update status to unlocking
+        await db.p2p_collateral.update_one(
+            {"user_id": user_id, "status": "active"},
+            {
+                "$set": {
+                    "status": "unlocking",
+                    "unlock_requested_at": datetime.now(timezone.utc).isoformat(),
+                    "unlock_available_at": unlock_available_at.isoformat()
+                }
+            }
+        )
+        
+        logger.info(f"🔓 Collateral unlock requested: {user_id}, available at {unlock_available_at}")
+        
+        return {
+            "success": True,
+            "status": "unlocking",
+            "unlock_available_at": unlock_available_at.isoformat(),
+            "cooldown_hours": cooldown_hours,
+            "message": f"Unlock requested. Collateral will be available in {cooldown_hours} hours. 'Deposit Secured' badge removed."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error requesting collateral unlock: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/p2p/collateral/cancel-unlock")
+async def cancel_collateral_unlock(request: dict):
+    """
+    Cancel unlock request and keep collateral locked.
+    """
+    try:
+        user_id = request.get("user_id")
+        
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        # Find unlocking collateral
+        collateral = await db.p2p_collateral.find_one({"user_id": user_id, "status": "unlocking"})
+        if not collateral:
+            raise HTTPException(status_code=404, detail="No pending unlock request found")
+        
+        # Revert to active
+        await db.p2p_collateral.update_one(
+            {"user_id": user_id, "status": "unlocking"},
+            {
+                "$set": {
+                    "status": "active",
+                    "unlock_requested_at": None,
+                    "unlock_available_at": None
+                }
+            }
+        )
+        
+        logger.info(f"🔒 Collateral unlock cancelled: {user_id}")
+        
+        return {
+            "success": True,
+            "status": "active",
+            "message": "Unlock cancelled. Collateral remains locked and 'Deposit Secured' badge restored."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling collateral unlock: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/p2p/collateral/me")
+async def get_my_collateral(user_id: str):
+    """
+    Get current user's collateral status.
+    """
+    try:
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id required")
+        
+        collateral = await db.p2p_collateral.find_one(
+            {"user_id": user_id},
+            {"_id": 0}
+        )
+        
+        if not collateral:
+            return {
+                "success": True,
+                "collateral": None,
+                "message": "No collateral locked"
+            }
+        
+        # Check if unlock period has passed
+        if collateral.get("status") == "unlocking":
+            unlock_at = collateral.get("unlock_available_at")
+            if unlock_at:
+                try:
+                    unlock_dt = datetime.fromisoformat(unlock_at.replace('Z', '+00:00'))
+                    if datetime.now(timezone.utc) >= unlock_dt:
+                        # Auto-release collateral
+                        await db.p2p_collateral.update_one(
+                            {"user_id": user_id},
+                            {"$set": {"status": "released", "released_at": datetime.now(timezone.utc).isoformat()}}
+                        )
+                        
+                        # Return funds to user
+                        await db.users.update_one(
+                            {"user_id": user_id},
+                            {"$inc": {f"wallets.{collateral['asset']}.available_balance": collateral["amount"]}}
+                        )
+                        
+                        collateral["status"] = "released"
+                        logger.info(f"✅ Collateral auto-released: {user_id} received {collateral['amount']} {collateral['asset']}")
+                except:
+                    pass
+        
+        return {
+            "success": True,
+            "collateral": collateral
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting collateral: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.post("/p2p/favorites/add")
 async def add_favorite_seller(request: dict):
     """Add a seller to user's favorites"""
