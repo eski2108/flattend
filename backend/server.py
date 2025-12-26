@@ -4836,6 +4836,59 @@ async def get_user_trades(user_id: str):
         "trades": trades
     }
 
+@api_router.get("/p2p/my-trades")
+async def get_my_p2p_trades(status: Optional[str] = None, request: Request = None):
+    """Get trades for the current user - used by P2P marketplace"""
+    try:
+        # Try to get user_id from authorization or query
+        user_id = None
+        
+        # Check authorization header
+        auth_header = request.headers.get("Authorization") if request else None
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            try:
+                import jwt
+                payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+                user_id = payload.get("user_id")
+            except:
+                pass
+        
+        if not user_id:
+            # Return empty trades for non-authenticated users
+            return {
+                "success": True,
+                "trades": [],
+                "count": 0
+            }
+        
+        # Build query
+        query = {
+            "$or": [
+                {"buyer_id": user_id},
+                {"seller_id": user_id}
+            ]
+        }
+        
+        if status:
+            query["status"] = status
+        
+        # Fetch from p2p_trades collection
+        trades = await db.p2p_trades.find(query, {"_id": 0}).sort("created_at", -1).to_list(50)
+        
+        return {
+            "success": True,
+            "trades": trades,
+            "count": len(trades)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching my trades: {e}")
+        return {
+            "success": True,
+            "trades": [],
+            "count": 0
+        }
+
 @api_router.post("/p2p/trade/message")
 async def send_trade_message(message_data: Dict):
     """Send a message in trade chat"""
