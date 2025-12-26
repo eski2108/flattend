@@ -364,17 +364,13 @@ export default function P2POrderPage() {
 
   if (loading) {
     return (
-      <Layout>
-        <div style={{ padding: '40px', textAlign: 'center', color: '#fff' }}>Loading...</div>
-      </Layout>
+      <div style={{ padding: '40px', textAlign: 'center', color: '#fff' }}>Loading...</div>
     );
   }
 
   if (!trade) {
     return (
-      <Layout>
-        <div style={{ padding: '40px', textAlign: 'center', color: '#fff' }}>Trade not found</div>
-      </Layout>
+      <div style={{ padding: '40px', textAlign: 'center', color: '#fff' }}>Trade not found</div>
     );
   }
 
@@ -382,8 +378,7 @@ export default function P2POrderPage() {
   const counterparty = isBuyer ? 'Seller' : 'Buyer';
 
   return (
-    <Layout>
-      <div style={{ minHeight: '100vh', padding: '40px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 100%)' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 100%)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           {/* Header */}
