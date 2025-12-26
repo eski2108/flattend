@@ -3390,20 +3390,64 @@ function P2PMarketplace() {
                     {(selectedOffer.seller_info?.username || selectedOffer.seller_name || 'S')[0].toUpperCase()}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ color: '#fff', fontWeight: '600', fontSize: '15px' }}>
-                      {selectedOffer.seller_info?.username || selectedOffer.seller_name || 'Seller'}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <span style={{ color: '#fff', fontWeight: '600', fontSize: '15px' }}>
+                        {selectedOffer.seller_info?.username || selectedOffer.seller_name || 'Seller'}
+                      </span>
+                      {/* Verified indicator from profile */}
+                      {offerSellerProfiles[selectedOffer.seller_id]?.verifications?.kyc_verified && (
+                        <div title="KYC Verified" style={{ 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          background: 'rgba(16, 185, 129, 0.15)',
+                          padding: '2px 4px',
+                          borderRadius: '4px'
+                        }}>
+                          <CheckCircle size={12} color="#10B981" />
+                        </div>
+                      )}
                     </div>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                       <span>⭐ {(selectedOffer.seller_info?.rating || 5.0).toFixed(1)}</span>
                       <span>•</span>
                       <span>{selectedOffer.seller_info?.total_trades || 0} trades</span>
-                      {selectedOffer.seller_info?.verified && (
-                        <>
-                          <span>•</span>
-                          <span style={{ color: '#10B981' }}>✓</span>
-                        </>
-                      )}
+                      {/* Account age from profile */}
+                      {(() => {
+                        const profile = offerSellerProfiles[selectedOffer.seller_id];
+                        if (!profile) return null;
+                        let ageDays = profile.account_age_days;
+                        // If 0 and join_date exists, calculate client-side
+                        if (ageDays === 0 && profile.join_date) {
+                          const joinDate = new Date(profile.join_date);
+                          ageDays = Math.floor((Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+                        }
+                        return (
+                          <>
+                            <span>•</span>
+                            <span>{ageDays} days</span>
+                          </>
+                        );
+                      })()}
                     </div>
+                    {/* Badges row (top 3 by priority) */}
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {renderBadges(selectedOffer.seller_id, 3)}
+                    </div>
+                    {/* Avg release/payment times (hide if 0) */}
+                    {(() => {
+                      const profile = offerSellerProfiles[selectedOffer.seller_id];
+                      if (!profile || !profile.stats_30d) return null;
+                      const releaseMin = formatTimeMinutes(profile.stats_30d.avg_release_time_sec);
+                      const paymentMin = formatTimeMinutes(profile.stats_30d.avg_payment_time_sec);
+                      if (!releaseMin && !paymentMin) return null;
+                      return (
+                        <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '11px', marginTop: '6px' }}>
+                          {releaseMin && <span>Avg release: {releaseMin} min</span>}
+                          {releaseMin && paymentMin && <span> • </span>}
+                          {paymentMin && <span>Avg payment: {paymentMin} min</span>}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
