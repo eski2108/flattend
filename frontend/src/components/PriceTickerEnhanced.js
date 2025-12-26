@@ -163,24 +163,6 @@ export default function PriceTickerEnhanced() {
           white-space: nowrap !important;
         }
       `}</style>
-          height: 48px !important;
-          display: flex !important;
-          flex-wrap: nowrap !important;
-          align-items: center !important;
-          white-space: nowrap !important;
-        }
-        .price-ticker-single .rfm-child {
-          height: 48px !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          white-space: nowrap !important;
-          flex-shrink: 0 !important;
-        }
-        .price-ticker-single .rfm-child > div {
-          display: inline-flex !important;
-          flex-shrink: 0 !important;
-        }
-      `}</style>
       <div style={{
         position: 'absolute',
         top: 0,
