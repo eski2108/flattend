@@ -34838,6 +34838,178 @@ async def approve_address_verification(verification_id: str):
         logger.error(f"Error approving verification: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# =====================================================
+# P2P TRADE CREATE ENDPOINT (per specification)
+# =====================================================
+@api_router.post("/p2p/trade/create")
+async def create_p2p_trade(request: dict):
+    """
+    Create a P2P trade for a specific offer.
+    This is called when user clicks 'Confirm Buy' in the confirm modal.
+    
+    Required fields:
+    - offer_id: The offer to trade with
+    - side: "BUY" or "SELL"
+    - fiat_currency: "GBP", "USD", or "EUR"
+    - fiat_amount OR crypto_amount: The trade amount
+    - crypto_currency: e.g. "BTC", "ETH"
+    - price: The locked price at time of trade
+    - payment_method: Selected payment method
+    - buyer_user_id: The user creating the trade
+    """
+    try:
+        offer_id = request.get("offer_id")
+        side = request.get("side", "BUY").upper()
+        fiat_currency = request.get("fiat_currency", "GBP")
+        fiat_amount = request.get("fiat_amount")
+        crypto_amount = request.get("crypto_amount")
+        crypto_currency = request.get("crypto_currency", "BTC")
+        price = request.get("price")
+        payment_method = request.get("payment_method", "Bank Transfer")
+        buyer_user_id = request.get("buyer_user_id")
+        
+        logger.info(f"🛒 P2P Trade Create: offer={offer_id}, side={side}, buyer={buyer_user_id}, crypto_amount={crypto_amount}, fiat_amount={fiat_amount}")
+        
+        # Validate required fields
+        if not offer_id:
+            raise HTTPException(status_code=400, detail="offer_id is required", headers={"X-Error-Code": "MISSING_OFFER_ID"})
+        if not buyer_user_id:
+            raise HTTPException(status_code=400, detail="buyer_user_id is required", headers={"X-Error-Code": "MISSING_USER_ID"})
+        if not price or float(price) <= 0:
+            raise HTTPException(status_code=400, detail="Valid price is required", headers={"X-Error-Code": "INVALID_PRICE"})
+        
+        # Calculate amounts
+        if crypto_amount and float(crypto_amount) > 0:
+            crypto_amount = float(crypto_amount)
+            fiat_amount = crypto_amount * float(price)
+        elif fiat_amount and float(fiat_amount) > 0:
+            fiat_amount = float(fiat_amount)
+            crypto_amount = fiat_amount / float(price)
+        else:
+            raise HTTPException(status_code=400, detail="Either fiat_amount or crypto_amount is required", headers={"X-Error-Code": "MISSING_AMOUNT"})
+        
+        # 1. Find the offer
+        offer = await db.p2p_offers.find_one({"offer_id": offer_id})
+        source_collection = "p2p_offers"
+        
+        if not offer:
+            offer = await db.p2p_ads.find_one({"ad_id": offer_id})
+            source_collection = "p2p_ads"
+        
+        if not offer:
+            raise HTTPException(status_code=404, detail="Offer not found", headers={"X-Error-Code": "OFFER_NOT_FOUND"})
+        
+        # 2. Validate offer is active
+        if offer.get("status") != "active":
+            raise HTTPException(status_code=400, detail="This offer is no longer active", headers={"X-Error-Code": "OFFER_INACTIVE"})
+        
+        # 3. Validate amount within limits
+        min_limit = float(offer.get("min_order_limit") or offer.get("min_amount") or 0)
+        max_limit = float(offer.get("max_order_limit") or offer.get("max_amount") or offer.get("available_amount") or 0)
+        available_amount = float(offer.get("available_amount") or offer.get("crypto_amount") or offer.get("max_amount") or 0)
+        
+        if min_limit > 0 and crypto_amount < min_limit:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Amount {crypto_amount} is below minimum {min_limit} {crypto_currency}",
+                headers={"X-Error-Code": "LIMIT_TOO_LOW"}
+            )
+        
+        if max_limit > 0 and crypto_amount > max_limit:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Amount {crypto_amount} exceeds maximum {max_limit} {crypto_currency}",
+                headers={"X-Error-Code": "LIMIT_TOO_HIGH"}
+            )
+        
+        # 4. Validate available liquidity
+        if crypto_amount > available_amount:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Seller only has {available_amount} {crypto_currency} available",
+                headers={"X-Error-Code": "INSUFFICIENT_LIQUIDITY"}
+            )
+        
+        # 5. Lock crypto in escrow (reduce available amount)
+        if source_collection == "p2p_offers":
+            await db.p2p_offers.update_one(
+                {"offer_id": offer_id},
+                {"$inc": {"available_amount": -crypto_amount}}
+            )
+        else:
+            await db.p2p_ads.update_one(
+                {"ad_id": offer_id},
+                {"$inc": {"max_amount": -crypto_amount}}
+            )
+        
+        # 6. Create trade record
+        trade_id = f"trade_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+        seller_id = offer.get("seller_id") or offer.get("user_id")
+        seller_name = offer.get("seller_name") or "P2P Seller"
+        
+        # Get seller's payment instructions
+        seller = await db.users.find_one({"user_id": seller_id})
+        payment_instructions = None
+        if seller:
+            payment_settings = seller.get("payment_settings", {})
+            if payment_method == "Bank Transfer":
+                payment_instructions = {
+                    "bank_name": payment_settings.get("bank_name", ""),
+                    "account_name": payment_settings.get("account_name", ""),
+                    "account_number": payment_settings.get("account_number", ""),
+                    "sort_code": payment_settings.get("sort_code", "")
+                }
+        
+        trade = {
+            "trade_id": trade_id,
+            "offer_id": offer_id,
+            "buyer_id": buyer_user_id,
+            "seller_id": seller_id,
+            "seller_name": seller_name,
+            "crypto": crypto_currency,
+            "crypto_currency": crypto_currency,
+            "crypto_amount": round(crypto_amount, 8),
+            "fiat_amount": round(fiat_amount, 2),
+            "fiat_currency": fiat_currency,
+            "price_per_unit": float(price),
+            "status": "pending_payment",  # AWAITING_PAYMENT
+            "created_at": datetime.now(timezone.utc),
+            "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30),
+            "timer_start": datetime.now(timezone.utc).isoformat(),
+            "payment_method": payment_method,
+            "payment_methods": offer.get("payment_methods", [payment_method]),
+            "payment_instructions": payment_instructions,
+            "escrow_locked": True,
+            "source_collection": source_collection,
+            "side": side
+        }
+        
+        await db.p2p_trades.insert_one(trade)
+        
+        logger.info(f"✅ P2P Trade Created: {trade_id} | Buyer: {buyer_user_id} | Seller: {seller_id} | Amount: {crypto_amount} {crypto_currency} @ {price} = {fiat_amount} {fiat_currency}")
+        
+        # 7. Return success with trade details
+        return {
+            "success": True,
+            "trade_id": trade_id,
+            "order_page": f"/p2p/order/{trade_id}",
+            "trade": {
+                "crypto_amount": round(crypto_amount, 8),
+                "fiat_amount": round(fiat_amount, 2),
+                "price": float(price),
+                "status": "AWAITING_PAYMENT",
+                "expires_at": trade["expires_at"].isoformat()
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating P2P trade: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Auto-Match System
 @api_router.post("/p2p/auto-match")
 async def auto_match_trade(request: dict):
