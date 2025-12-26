@@ -85,42 +85,30 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         if any(path.startswith(skip) for skip in self.SKIP_PATHS):
             return await call_next(request)
         
-        # Allow all standard API methods
-        if method in ["GET", "POST", "PUT", "PATCH", "DELETE"]:
-            # Check Origin header for allowed domains
-            origin = request.headers.get("origin", "")
-            allowed_origins = [
-                "https://coinhubx.net",
-                "https://cryptovault-29.emergent.host",
-                "https://p2p-repair-1.preview.emergentagent.com",
-                "http://localhost:3000",
-            ]
-            
-            # If no origin (server-to-server) or origin is allowed, proceed
-            if not origin or any(origin.startswith(ao) for ao in allowed_origins):
-                # For authenticated endpoints, apply rate limiting only
-                ip = request.client.host if request.client else "unknown"
-                user_id = request.headers.get("x-user-id")
-                
-                # Apply rate limiting for sensitive endpoints only
-                action = self.PATH_TO_ACTION.get(path)
-                if action:
-                    passed, result = await self.rate_limiter.check_and_update(action, user_id or ip)
-                    if not passed:
-                        return JSONResponse(
-                            status_code=429,
-                            content={"detail": result.get("message", "Rate limit exceeded")}
-                        )
-                
-                return await call_next(request)
-        
         ip = request.client.host if request.client else "unknown"
         user_id = request.headers.get("x-user-id")
         
-        # 1. WAF Check
+        # Check Origin header for allowed domains (CORS protection)
+        origin = request.headers.get("origin", "")
+        allowed_origins = [
+            "https://coinhubx.net",
+            "https://cryptovault-29.emergent.host",
+            "https://p2p-repair-1.preview.emergentagent.com",
+            "http://localhost:3000",
+        ]
+        
+        # Block requests from disallowed origins (if origin is present)
+        if origin and not any(origin.startswith(ao) for ao in allowed_origins):
+            logger.warning(f"[SECURITY] Blocked request from disallowed origin: {origin}")
+            return JSONResponse(
+                status_code=403,
+                content={"error": "Origin not allowed", "code": "CORS_001"}
+            )
+        
+        # 1. WAF Check - Apply to all non-skipped paths
         try:
             body = None
-            if request.method in ["POST", "PUT", "PATCH"]:
+            if method in ["POST", "PUT", "PATCH"]:
                 # Read body for WAF inspection (limited size)
                 body_bytes = await request.body()
                 if len(body_bytes) < 10000:  # Only inspect bodies < 10KB
@@ -142,22 +130,21 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             logger.error(f"WAF check error: {e}")
             # Continue on WAF error to not block legitimate traffic
         
-        # 2. Rate Limit Check
+        # 2. Rate Limit Check - Apply to sensitive endpoints
         try:
-            # Determine rate limit action based on path
-            action = "default"
-            for prefix, act in self.PATH_TO_ACTION.items():
-                if path.startswith(prefix):
-                    action = act
-                    break
-            
-            rl_allowed, rl_reason, retry_after = await advanced_rate_limiter.check_rate_limit(
-                ip, user_id, action
-            )
-            
-            if not rl_allowed:
-                logger.warning(f"[SECURITY] Rate limit for {ip}/{user_id}: {rl_reason}")
-                return JSONResponse(
+            action = self.PATH_TO_ACTION.get(path)
+            if action:
+                passed, result = await self.rate_limiter.check_and_update(action, user_id or ip)
+                if not passed:
+                    return JSONResponse(
+                        status_code=429,
+                        content={"detail": result.get("message", "Rate limit exceeded")}
+                    )
+        except Exception as e:
+            logger.error(f"Rate limit check error: {e}")
+        
+        # All checks passed, proceed
+        return await call_next(request)
                     status_code=429,
                     content={
                         "error": "rate_limit_exceeded",
